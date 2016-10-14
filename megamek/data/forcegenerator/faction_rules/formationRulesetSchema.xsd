@@ -75,7 +75,7 @@ elementFormDefault="qualified">
 				<xs:element name="eschelon">
 					<xs:complexType>
 						<xs:simpleContent>
-							<xs:extension base="xs:integer">
+							<xs:extension base="xs:string">
 								<xs:attributeGroup
 									ref="predicateAttributeGroup" />
 							</xs:extension>
@@ -85,7 +85,7 @@ elementFormDefault="qualified">
 				<xs:element name="rankSystem">
 					<xs:complexType>
 						<xs:simpleContent>
-							<xs:extension base="xs:integer">
+							<xs:extension base="xs:string">
 								<xs:attributeGroup
 									ref="predicateAttributeGroup" />
 							</xs:extension>
@@ -120,11 +120,11 @@ elementFormDefault="qualified">
 	<xs:element name="customRanks">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element minOccurs="0" name="base" type="xs:integer"/>
+				<xs:element minOccurs="0" name="base" type="xs:string"/>
 				<xs:element maxOccurs="unbounded" name="rank">
 					<xs:simpleType>
 						<xs:restriction base="xs:string">
-							<xs:pattern value="[0-9]+:.+" />
+							<xs:pattern value=".+:.+" />
 						</xs:restriction>
 					</xs:simpleType>
 				</xs:element>
@@ -135,7 +135,6 @@ elementFormDefault="qualified">
 	<xs:element name="force">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="eschelon" type="xs:integer" />
 				<xs:element name="name" minOccurs="0"
 						maxOccurs="unbounded">
 					<xs:complexType>
@@ -162,6 +161,7 @@ elementFormDefault="qualified">
 					minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 
+			<xs:attribute name="eschelon" type="xs:string" use="required"/>
 			<xs:attribute name="eschName" type="xs:string" />
 			<xs:attributeGroup ref="predicateAttributeGroup" />
 		</xs:complexType>
@@ -185,7 +185,7 @@ elementFormDefault="qualified">
 	
 	<xs:complexType name="commanderType">
 		<xs:simpleContent>
-			<xs:extension base="xs:integer">
+			<xs:extension base="xs:string">
 				<xs:attribute name="position" type="xs:integer" />
 				<xs:attribute name="title" type="xs:string" />
 				<xs:attribute name="unitType" type="xs:string" />
@@ -259,7 +259,7 @@ elementFormDefault="qualified">
 			
 	<xs:simpleType name="eschelonDefinition">
 			<xs:restriction base="xs:string">
-				<xs:pattern value="[0-9]+[+-]?" />
+				<xs:pattern value="[0-9A-Z]+[+-]?" />
 			</xs:restriction>
 	</xs:simpleType>
 

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <!-- The Calderon Protectorate follows the same organization as the Taurian Concordat. -->
 
@@ -7,8 +6,8 @@
 
 	<defaults>
 		<unitType>Mek</unitType>
-		<eschelon>&BATTALION;</eschelon>
-		<rankSystem>&RANK_TC;</rankSystem>
+		<eschelon>BATTALION</eschelon>
+		<rankSystem>RANK_TC</rankSystem>
 		<rating>C</rating>
 	</defaults>
 

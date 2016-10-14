@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <ruleset faction="CFM.S" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
-		<eschelon>&CLUSTER;</eschelon>
-		<rankSystem>&RANK_CUSTOM;</rankSystem>
+		<eschelon>CLUSTER</eschelon>
+		<rankSystem>RANK_CUSTOM</rankSystem>
 		<rating>FL</rating>
 	</defaults>
 	
@@ -17,9 +16,9 @@
 		</unitType>
 		
 		<eschelon>
-			<option ifUnitType="">&GALAXY;,&CLUSTER;</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">&TRINARY;^,&TRINARY;,&BINARY;^,&BINARY;,&STAR;^,&STAR;</option>
-			<option>&TRINARY;,&BINARY;,&STAR;</option>
+			<option ifUnitType="">GALAXY,CLUSTER</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
 		<rating>
@@ -35,28 +34,26 @@
 		</flags>
 	</toc>
 	
-	<force eschName="Kindraa">
-		<eschelon>&GALAXY;</eschelon>
-		<co>&GALAXY_CMDR;</co>
+	<force eschelon="GALAXY" eschName="Kindraa">
+		<co>GALAXY_CMDR</co>
 		
 		<subforces>
 			<subforce role="command" rating="Keshik"
-				unitType="Mek">&TRINARY;</subforce>
+				unitType="Mek">TRINARY</subforce>
 			<subforceOption>
-				<option num="2" rating="FL">&CLUSTER;</option>
-				<option num="3" rating="FL">&CLUSTER;</option>
+				<option num="2" rating="FL">CLUSTER</option>
+				<option num="3" rating="FL">CLUSTER</option>
 			</subforceOption>
 			<subforceOption>
-				<option num="1" rating="SL">&CLUSTER;</option>
-				<option num="2" rating="SL">&CLUSTER;</option>
+				<option num="1" rating="SL">CLUSTER</option>
+				<option num="2" rating="SL">CLUSTER</option>
 			</subforceOption>
 		</subforces>
 	</force>
 	
 	<!-- Standard cluster includes one trinary each of Mek, Aero, BA
 	and an additional cluster of mixed Mek/BA-->
-	<force eschName="Cluster">
-		<eschelon>&CLUSTER;</eschelon>
+	<force eschelon="CLUSTER" eschName="Cluster">
 		<name ifRating="FL" ifWeightClass="A|H">Assault Cluster</name>
 		<name ifRating="FL" ifWeightClass="M">Battle Cluster</name>
 		<name ifRating="FL" ifWeightClass="L">Striker Cluster</name>
@@ -66,7 +63,7 @@
 			ifWeightClass="M">Rear Guard Battle Cluster</name>
 		<name ifRating="SL"
 			ifWeightClass="L">Rear Guard Striker Cluster</name>
-		<co>&STAR_COL;</co>
+		<co>STAR_COL</co>
 		
 		<weightClass>
 			<option weight="2">H</option>
@@ -77,81 +74,81 @@
 		<subforces>
 			<subforceOption ifWeightClass="H|A">
 				<option weightClass="A" unitType="Mek"
-					weight="2">&TRINARY;</option>
+					weight="2">TRINARY</option>
 				<option weightClass="H" unitType="Mek"
-					weight="3">&TRINARY;</option>
+					weight="3">TRINARY</option>
 				<option weightClass="M" unitType="Mek"
-					weight="1">&TRINARY;</option>
+					weight="1">TRINARY</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="H" unitType="Mek"
-					weight="3">&TRINARY;</option>
+					weight="3">TRINARY</option>
 				<option weightClass="M" unitType="Mek"
-					weight="3">&TRINARY;</option>
+					weight="3">TRINARY</option>
 				<option weightClass="L" unitType="Mek"
-					weight="1">&TRINARY;</option>
+					weight="1">TRINARY</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M" unitType="Mek">&TRINARY;</option>
-				<option weightClass="L" unitType="Mek">&TRINARY;</option>
+				<option weightClass="M" unitType="Mek">TRINARY</option>
+				<option weightClass="L" unitType="Mek">TRINARY</option>
 			</subforceOption>
 
 			<subforceOption ifWeightClass="H|A">
 				<option weightClass="H" unitType="Aero"
-					weight="3">&TRINARY;</option>
+					weight="3">TRINARY</option>
 				<option weightClass="M" unitType="Aero"
-					weight="2">&TRINARY;</option>
+					weight="2">TRINARY</option>
 				<option weightClass="L" unitType="Aero"
-					weight="1">&TRINARY;</option>
+					weight="1">TRINARY</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="H" unitType="Aero"
-					weight="2">&TRINARY;</option>
+					weight="2">TRINARY</option>
 				<option weightClass="M" unitType="Aero"
-					weight="3">&TRINARY;</option>
+					weight="3">TRINARY</option>
 				<option weightClass="L" unitType="Aero"
-					weight="2">&TRINARY;</option>
+					weight="2">TRINARY</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="H" unitType="Aero"
-					weight="1">&TRINARY;</option>
+					weight="1">TRINARY</option>
 				<option weightClass="M" unitType="Aero"
-					weight="2">&TRINARY;</option>
+					weight="2">TRINARY</option>
 				<option weightClass="L" unitType="Aero"
-					weight="3">&TRINARY;</option>
+					weight="3">TRINARY</option>
 			</subforceOption>
 			
 			<subforceOption ifRating="FL|Keshik">
 				<option ifDateBetween="2870,"
-					unitType="BattleArmor">&TRINARY;</option>
+					unitType="BattleArmor">TRINARY</option>
 				<option ifDateBetween=",2900" />
 			</subforceOption>
 			<subforceOption ifRating="SL|PG|Sol">
-				<option unitType="Infantry" rating="Sol">&BINARY;</option>
-				<option unitType="Infantry" rating="Sol">&TRINARY;</option>
+				<option unitType="Infantry" rating="Sol">BINARY</option>
+				<option unitType="Infantry" rating="Sol">TRINARY</option>
 			</subforceOption>
 
 			<subforceOption ifWeightClass="H|A">
 				<option weightClass="A" unitType="Mek"
-					flags="mixedMekBA" weight="2">&TRINARY;</option>
+					flags="mixedMekBA" weight="2">TRINARY</option>
 				<option weightClass="H" unitType="Mek"
-					flags="mixedMekBA" weight="3">&TRINARY;</option>
+					flags="mixedMekBA" weight="3">TRINARY</option>
 				<option weightClass="M" unitType="Mek"
-					flags="mixedMekBA" weight="1">&TRINARY;</option>
+					flags="mixedMekBA" weight="1">TRINARY</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="H" unitType="Mek"
-					flags="mixedMekBA" weight="3">&TRINARY;</option>
+					flags="mixedMekBA" weight="3">TRINARY</option>
 				<option weightClass="M" unitType="Mek"
-					flags="mixedMekBA" weight="3">&TRINARY;</option>
+					flags="mixedMekBA" weight="3">TRINARY</option>
 				<option weightClass="L" unitType="Mek"
-					flags="mixedMekBA" weight="1">&TRINARY;</option>
+					flags="mixedMekBA" weight="1">TRINARY</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="M" unitType="Mek"
-					flags="mixedMekBA">&TRINARY;</option>
+					flags="mixedMekBA">TRINARY</option>
 				<option weightClass="L" unitType="Mek"
-					flags="mixedMekBA">&TRINARY;</option>
+					flags="mixedMekBA">TRINARY</option>
 			</subforceOption>
 		</subforces>
 		
@@ -159,10 +156,10 @@
 			<subforceOption>
 				<option ifRating="FL|Keshik" unitType="Mek"
 					role="artillery"
-					name="Binary Artillery">&BINARY;</option>
+					name="Binary Artillery">BINARY</option>
 				<option ifRating="SL|PG|Sol" unitType="Tank"
 					role="artillery"
-					name="Binary Artillery">&BINARY;</option>
+					name="Binary Artillery">BINARY</option>
 				<option weight="11" />
 			</subforceOption>
 		</attachedForces>
@@ -173,9 +170,9 @@
 	have MASC, but selects faster units by adding the cavalry role.-->
 	<force eschName="Trinary" ifUnitType="Mek"
 			 ifDateBetween="2870," ifRating="Keshik">
-		<eschelon>&TRINARY;</eschelon>
+		<eschelon>TRINARY</eschelon>
 		<name>Trinary Kindraa [Command]</name>
-		<co>&GALAXY_CMDR;</co>
+		<co>GALAXY_CMDR</co>
 		
 		<ruleGroup>
 			<weightClass>
@@ -189,101 +186,101 @@
 		<subforces>
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A" weight="2"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 				<option weightClass="H" weight="2"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 				<option weightClass="M" weight="1"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
 				<option weightClass="A" weight="1"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 				<option weightClass="H" weight="3"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 				<option weightClass="M" weight="2"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="H" weight="2"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 				<option weightClass="M" weight="2"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 				<option weightClass="L" weight="1"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="H" weight="1"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 				<option weightClass="M" weight="2"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 				<option weightClass="L" weight="2"
-					role="+cavalry">&STAR;</option>
+					role="+cavalry">STAR</option>
 			</subforceOption>
 
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A" weight="3"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="H" weight="2"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="M" weight="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
 				<option weightClass="A" weight="2"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="H" weight="3"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="M" weight="2"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="H" weight="2"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="M" weight="3"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="L" weight="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="H" weight="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="M" weight="2"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="L" weight="3"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 			</subforceOption>
 
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A" weight="3" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="H" weight="2" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="M" weight="1" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
 				<option weightClass="A" weight="2" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="H" weight="3" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="M" weight="2" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="H" weight="2" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="M" weight="3" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="L" weight="1" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="H" weight="1" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="M" weight="2" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 				<option weightClass="L" weight="3" augmented="1"
-					role="-command">&STAR;</option>
+					role="-command">STAR</option>
 			</subforceOption>
 		</subforces>
 	</force>

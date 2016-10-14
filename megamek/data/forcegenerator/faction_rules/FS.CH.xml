@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <!-- A Ceti Hussars RCT has the same number of regiments as others (1 Mek, 3 Armor, 5 Infantry),
 but rather than being organized into brigades they are organized into three combat commands,
@@ -9,8 +8,8 @@ are often combined down to the company level. -->
 <ruleset faction="FS.CH" parent="FS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
-		<eschelon>&DIVISION;</eschelon>
-		<rankSystem>&RANK_FS;</rankSystem>
+		<eschelon>DIVISION</eschelon>
+		<rankSystem>RANK_FS</rankSystem>
 		<rating>D</rating>
 	</defaults>
 
@@ -20,11 +19,11 @@ are often combined down to the company level. -->
 		</unitType>
 		
 		<eschelon>
-			<option ifUnitType="">&DIVISION;,&BRIGADE;,&REGIMENT;,&BATTALION;,&COMPANY;</option>
-			<option ifUnitType="Mek|Tank|VTOL">&COMPANY;,&LANCE;</option>
-			<option ifUnitType="Infantry">&BATTALION;,&COMPANY;</option>
-			<option ifUnitType="BattleArmor">&BATTALION;,&COMPANY;,&PLATOON;</option>
-			<option ifUnitType="Aero|Conventional Fighter">&WING;,&SQUADRON;,&FLIGHT;</option>
+			<option ifUnitType="">DIVISION,BRIGADE,REGIMENT,BATTALION,COMPANY</option>
+			<option ifUnitType="Mek|Tank|VTOL">COMPANY,LANCE</option>
+			<option ifUnitType="Infantry">BATTALION,COMPANY</option>
+			<option ifUnitType="BattleArmor">BATTALION,COMPANY,PLATOON</option>
+			<option ifUnitType="Aero|Conventional Fighter">WING,SQUADRON,FLIGHT</option>
 		</eschelon>
 		
 		<rating>
@@ -32,30 +31,28 @@ are often combined down to the company level. -->
 		</rating>
 	</toc>
 	
-	<force eschName="RCT">
-		<eschelon>&DIVISION;</eschelon>
+	<force eschelon="DIVISION" eschName="RCT">
 		<name>Ceti Hussars RCT</name>
-		<co position="0">&O11;</co>
-		<xo position="0">&LT_GENERAL;</xo>
+		<co position="0">O11</co>
+		<xo position="0">LT_GENERAL</xo>
 		
 		<subforces>
-			<subforce num="3">&BRIGADE;</subforce>
+			<subforce num="3">BRIGADE</subforce>
 			<subforceOption>
-				<option num="1" unitType="Tank" role="artillery">&BATTALION;</option>
-				<option num="2" unitType="Tank" role="artillery">&BATTALION;</option>
-				<option num="3" unitType="Tank" role="artillery">&BATTALION;</option>
+				<option num="1" unitType="Tank" role="artillery">BATTALION</option>
+				<option num="2" unitType="Tank" role="artillery">BATTALION</option>
+				<option num="3" unitType="Tank" role="artillery">BATTALION</option>
 			</subforceOption>
-			<subforce num="2" unitType="Aero">&WING;</subforce>
+			<subforce num="2" unitType="Aero">WING</subforce>
 		</subforces>
 	</force>
 	
-	<force eschName="Combat Command">
-		<eschelon>&BRIGADE;</eschelon>
+	<force eschelon="BRIGADE" eschName="Combat Command">
 		<name>Combat Command {greek}</name>
-		<co position="0">&LT_GENERAL;</co>
+		<co position="0">LT_GENERAL</co>
 		
 		<subforces>
-			<subforce num="3">&REGIMENT;</subforce>
+			<subforce num="3">REGIMENT</subforce>
 		</subforces>
 	</force>
 
@@ -65,9 +62,8 @@ are often combined down to the company level. -->
 	a second. The remainder will be divided between Meks and armor at the battalion and
 	company levels.  -->
 	
-	<force eschName="Regiment">
-		<eschelon>&REGIMENT;</eschelon>
-		<co position="0">&COLONEL;</co>
+	<force eschelon="REGIMENT" eschName="Regiment">
+		<co position="0">COLONEL</co>
 		
 		<weightClass>
 			<option weight="1">H</option>
@@ -76,18 +72,17 @@ are often combined down to the company level. -->
 		</weightClass>
 		
 		<subforces>
-			<subforce>&BATTALION;</subforce>
-			<subforce unitType="Infantry">&BATTALION;</subforce>
+			<subforce>BATTALION</subforce>
+			<subforce unitType="Infantry">BATTALION</subforce>
 			<subforceOption>
-				<option weight="2" unitType="Infantry">&BATTALION;</option>
-				<option>&BATTALION;</option>
+				<option weight="2" unitType="Infantry">BATTALION</option>
+				<option>BATTALION</option>
 			</subforceOption>
 		</subforces>
 	</force>
 	
-	<force eschName="Battalion" ifUnitType="">
-		<eschelon>&BATTALION;</eschelon>
-		<co>&MAJOR;</co>
+	<force eschelon="BATTALION" eschName="Battalion" ifUnitType="">
+		<co>MAJOR</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -98,33 +93,32 @@ are often combined down to the company level. -->
 		
 		<subforces>
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A,A">&COMPANY;</option>
-				<option weightClass="A,A,H" weight="2">&COMPANY;</option>
-				<option weightClass="A,H,H" weight="3">&COMPANY;</option>
+				<option weightClass="A,A,A">COMPANY</option>
+				<option weightClass="A,A,H" weight="2">COMPANY</option>
+				<option weightClass="A,H,H" weight="3">COMPANY</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A,H,H">&COMPANY;</option>
-				<option weightClass="H,H,H" weight="2">&COMPANY;</option>
-				<option weightClass="H,H,M" weight="3">&COMPANY;</option>
+				<option weightClass="A,H,H">COMPANY</option>
+				<option weightClass="H,H,H" weight="2">COMPANY</option>
+				<option weightClass="H,H,M" weight="3">COMPANY</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,M,M">&COMPANY;</option>
-				<option weightClass="M,M,M" weight="2">&COMPANY;</option>
-				<option weightClass="M,M,L">&COMPANY;</option>
+				<option weightClass="H,M,M">COMPANY</option>
+				<option weightClass="M,M,M" weight="2">COMPANY</option>
+				<option weightClass="M,M,L">COMPANY</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M,M,L" weight="2">&COMPANY;</option>
-				<option weightClass="M,L,L" weight="2">&COMPANY;</option>
-				<option weightClass="L,L,L">&COMPANY;</option>
+				<option weightClass="M,M,L" weight="2">COMPANY</option>
+				<option weightClass="M,L,L" weight="2">COMPANY</option>
+				<option weightClass="L,L,L">COMPANY</option>
 			</subforceOption>
 		</subforces>
 	</force>
 	
 	<!-- We'll make about half the companies pure Mek or Armor formations. -->
 	
-	<force eschName="Company" ifUnitType="">
-		<eschelon>&COMPANY;</eschelon>
-		<co>&CAPTAIN;</co>
+	<force eschelon="COMPANY" eschName="Company" ifUnitType="">
+		<co>CAPTAIN</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -134,43 +128,42 @@ are often combined down to the company level. -->
 		</weightClass>
 		
 		<changeEschelon>
-			<option weight="1" unitType="Mek">&COMPANY;</option>
-			<option weight="3" unitType="Tank">&COMPANY;</option>
+			<option weight="1" unitType="Mek">COMPANY</option>
+			<option weight="3" unitType="Tank">COMPANY</option>
 			<option weight="4"/>
 		</changeEschelon>
 		
 		<subforces>
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A,A">&LANCE;</option>
-				<option weightClass="A,A,H">&LANCE;</option>
-				<option weightClass="A,H,H">&LANCE;</option>
+				<option weightClass="A,A,A">LANCE</option>
+				<option weightClass="A,A,H">LANCE</option>
+				<option weightClass="A,H,H">LANCE</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A,H,M">&LANCE;</option>
-				<option weightClass="H,H,H">&LANCE;</option>
-				<option weightClass="H,H,M">&LANCE;</option>
+				<option weightClass="A,H,M">LANCE</option>
+				<option weightClass="H,H,H">LANCE</option>
+				<option weightClass="H,H,M">LANCE</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,M,M">&LANCE;</option>
-				<option weightClass="H,M,L">&LANCE;</option>
-				<option weightClass="M,M,M">&LANCE;</option>
-				<option weightClass="M,M,L">&LANCE;</option>
+				<option weightClass="H,M,M">LANCE</option>
+				<option weightClass="H,M,L">LANCE</option>
+				<option weightClass="M,M,M">LANCE</option>
+				<option weightClass="M,M,L">LANCE</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M,L,L">&LANCE;</option>
-				<option weightClass="L,L,L">&LANCE;</option>
-				<option weightClass="L,L,L">&LANCE;</option>
+				<option weightClass="M,L,L">LANCE</option>
+				<option weightClass="L,L,L">LANCE</option>
+				<option weightClass="L,L,L">LANCE</option>
 			</subforceOption>
 		</subforces>		
 	</force>
 	
-	<force eschName="Lance" ifUnitType="">
-		<eschelon>&LANCE;</eschelon>
-		<co>&LT;</co>
+	<force eschelon="LANCE" eschName="Lance" ifUnitType="">
+		<co>LT</co>
 
 		<changeEschelon>
-			<option weight="1" unitType="Mek">&LANCE;</option>
-			<option weight="3" unitType="Tank">&LANCE;</option>
+			<option weight="1" unitType="Mek">LANCE</option>
+			<option weight="3" unitType="Tank">LANCE</option>
 		</changeEschelon>		
 	</force>
 </ruleset>

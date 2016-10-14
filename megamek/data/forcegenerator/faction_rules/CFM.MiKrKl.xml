@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <ruleset faction="CFM.MiKrKl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
-		<eschelon>&CLUSTER;</eschelon>
-		<rankSystem>&RANK_CUSTOM;</rankSystem>
+		<eschelon>CLUSTER</eschelon>
+		<rankSystem>RANK_CUSTOM</rankSystem>
 		<rating>FL</rating>
 	</defaults>
 	
@@ -17,10 +16,10 @@
 		</unitType>
 		
 		<eschelon>
-			<option ifUnitType="">&GALAXY;,&CLUSTER;</option>
-			<option ifUnitType="BattleArmor">&CLUSTER;,&TRINARY;^,&TRINARY;,&BINARY;^,&BINARY;,&STAR;^,&STAR;</option>
-			<option ifUnitType="Mek|Aero" ifDateBetween="2870,">&TRINARY;^,&TRINARY;,&BINARY;^,&BINARY;,&STAR;^,&STAR;</option>
-			<option>&TRINARY;,&BINARY;,&STAR;</option>
+			<option ifUnitType="">GALAXY,CLUSTER</option>
+			<option ifUnitType="BattleArmor">CLUSTER,TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek|Aero" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
 		<rating>
@@ -34,43 +33,42 @@
 		<flags>
 			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="Trinary|Binary">mixedMekBA:Combined Mek/BA unit</option>
 			<option ifUnitType="null|Mek|Aero" ifEschelon="Trinary|Binary">mixedMekAero:Combined Mek/Aero unit</option>
-			<option ifUnitType="null|Mek|Aero" ifEschelon="Star|Star^">mekAeroNova:Mek+Aero Nova</option>
+			<option ifUnitType="null|Mek|Aero" ifEschelon="Star|Star+">mekAeroNova:Mek+Aero Nova</option>
 		</flags>
 	</toc>
 	
-	<force eschName="Kindraa">
-		<eschelon>&GALAXY;</eschelon>
-		<co>&GALAXY_CMDR;</co>
+	<force eschelon="GALAXY" eschName="Kindraa">
+		<co>GALAXY_CMDR</co>
 		
 		<subforces>
 			<subforce role="command" rating="Keshik"
-				unitType="Mek" faction="CFM.Kl">&TRINARY;</subforce>
+				unitType="Mek" faction="CFM.Kl">TRINARY</subforce>
 			<subforceOption>
 				<option num="1" rating="FL"
-					faction="CFM.MiKr">&CLUSTER;</option>
+					faction="CFM.MiKr">CLUSTER</option>
 				<option num="2" rating="FL"
-					faction="CFM.MiKr">&CLUSTER;</option>
+					faction="CFM.MiKr">CLUSTER</option>
 			</subforceOption>
 			<subforce num="1" rating="FL" faction="CFM.MiKr"
-				unitType="Aero">&CLUSTER;</subforce>
+				unitType="Aero">CLUSTER</subforce>
 			<subforce num="1" rating="FL" faction="CFM.MiKr"
-				unitType="BattleArmor">&CLUSTER;</subforce>
+				unitType="BattleArmor">CLUSTER</subforce>
 			<subforceOption>
 				<option num="2" rating="SL"
-					faction="CFM.Kl">&CLUSTER;</option>
+					faction="CFM.Kl">CLUSTER</option>
 				<option num="3" rating="SL"
-					faction="CFM.Kl">&CLUSTER;</option>
+					faction="CFM.Kl">CLUSTER</option>
 			</subforceOption>
-			<subforce rating="SL" faction="CFM.MiKr">&CLUSTER;</subforce>
+			<subforce rating="SL" faction="CFM.MiKr">CLUSTER</subforce>
 		</subforces>
 
 		<attachedForces>
 			<subforce unitType="Warship" fluffName="CFM Jungle Fever"
 				chassis="Potemkin Troop Cruiser"
-				ifDateBetween=",3071">&ELEMENT;</subforce>
+				ifDateBetween=",3071">ELEMENT</subforce>
 			<subforce unitType="Warship" fluffName="CFM Rancor"
 				chassis="Lola III Destroyer"
-				ifDateBetween=",3071">&ELEMENT;</subforce>
+				ifDateBetween=",3071">ELEMENT</subforce>
 		</attachedForces>
 	</force>
 </ruleset>	

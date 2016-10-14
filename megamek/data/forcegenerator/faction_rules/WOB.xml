@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <ruleset faction="WOB" parent="CS"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
     <defaults>
-        <eschelon>&LEVEL_IV;</eschelon>
-        <rankSystem>&RANK_WOB;</rankSystem>
+        <eschelon>LEVEL_IV</eschelon>
+        <rankSystem>RANK_WOB</rankSystem>
         <rating>A</rating>
     </defaults>
 
@@ -30,8 +29,8 @@
 		</unitType>
 		
 		<eschelon>
-			<option ifFaction="WOB.SD">&LEVEL_IV;,&LEVEL_III;,&LEVEL_II;,&CHOIR;</option>
-			<option>&LEVEL_IV;,&LEVEL_III;,&LEVEL_II;</option>
+			<option ifFaction="WOB.SD">LEVEL_IV,LEVEL_III,LEVEL_II,CHOIR</option>
+			<option>LEVEL_IV,LEVEL_III,LEVEL_II</option>
 		</eschelon>
 		
 		<rating>
@@ -43,11 +42,10 @@
 		</flags>
 	</toc>
 	
-    <force eschName="Level III" ifRole="command" ifFlags="alpha" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="alpha" ifFaction="WOB.SD">
         <name>III-alpha</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
@@ -56,67 +54,64 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="4020">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="4020">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="4200">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="4200">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_3">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2022">&LEVEL_II;</subforce>
-            <subforce num="2" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="2022">LEVEL_II</subforce>
+            <subforce num="2" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="beta" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="beta" ifFaction="WOB.SD">
         <name>III-beta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="gamma" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="gamma" ifFaction="WOB.SD">
         <name>III-gamma</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="delta" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="delta" ifFaction="WOB.SD">
         <name>III-delta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
@@ -124,34 +119,33 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="4200">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="4200">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2022">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="2022">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="epsilon" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="epsilon" ifFaction="WOB.SD">
         <name>III-epsilon</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
@@ -163,311 +157,298 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0240">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0240">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0420">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0420">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="4020">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="4020">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_3">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="4200">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="4200">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_4">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="2">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="2">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_5">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="2" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="2" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_6">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2022">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="2022">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="zeta" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="zeta" ifFaction="WOB.SD">
         <name>III-zeta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="eta" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="eta" ifFaction="WOB.SD">
         <name>III-eta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="theta" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="theta" ifFaction="WOB.SD">
         <name>III-theta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="iota" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="iota" ifFaction="WOB.SD">
         <name>III-iota</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="kappa" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="kappa" ifFaction="WOB.SD">
         <name>III-kappa</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="lambda" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="lambda" ifFaction="WOB.SD">
         <name>III-lambda</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="2">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="2">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="2" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="2" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="mu" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="mu" ifFaction="WOB.SD">
         <name>III-mu</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="nu" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="nu" ifFaction="WOB.SD">
         <name>III-nu</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="xi" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="xi" ifFaction="WOB.SD">
         <name>III-xi</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="omicron" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="omicron" ifFaction="WOB.SD">
         <name>III-omicron</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="pi" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="pi" ifFaction="WOB.SD">
         <name>III-pi</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="rho" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="rho" ifFaction="WOB.SD">
         <name>III-rho</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="3" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="3" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="sigma" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="sigma" ifFaction="WOB.SD">
         <name>III-sigma</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
@@ -477,80 +458,77 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2040">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2040">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="3" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2400">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="3" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2400">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_3">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2022">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2022">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_4">
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2022">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2022">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="tau" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="tau" ifFaction="WOB.SD">
         <name>III-tau</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="upsilon" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="upsilon" ifFaction="WOB.SD">
         <name>III-upsilon</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="phi" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="phi" ifFaction="WOB.SD">
         <name>III-phi</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <flags>
             <option>+formation_0</option>
             <option>+formation_1</option>
@@ -559,56 +537,55 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2040">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="2040">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2400">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="2400">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_3">
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2022">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="2022">LEVEL_II</subforce>
+            <subforce num="2" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
-    <force eschName="Level III" ifRole="command" ifFlags="psi" ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+    <force eschelon="LEVEL_III" eschName="Level III" ifRole="command" ifFlags="psi" ifFaction="WOB.SD">
         <name>III-psi</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>        
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>        
         <subforces>
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3003" role="command">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="2" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3003" role="command">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="alpha"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-alpha</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -616,56 +593,56 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="4200">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="4200">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="2" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="2" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="beta"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-beta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="2">&CHOIR;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="2">CHOIR</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="gamma"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-gamma</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="delta"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-delta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -675,56 +652,56 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="4020">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="4020">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="4200">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="4200">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
 
         <subforces ifFlags="formation_3">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2022">&LEVEL_II;</subforce>
-            <subforce num="2" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="2022">LEVEL_II</subforce>
+            <subforce num="2" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="epsilon"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-epsilon</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="zeta"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-zeta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -732,26 +709,26 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
-            <subforce num="2">&CHOIR;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
+            <subforce num="2">CHOIR</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="2" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="2" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="eta"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-eta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -759,27 +736,27 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="2">&CHOIR;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="2">CHOIR</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="2" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="2" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="theta"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-theta</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -788,32 +765,32 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="2">&CHOIR;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="2">CHOIR</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="3" flags="6000">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="3" flags="6000">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="iota"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-iota</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -821,77 +798,77 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="kappa"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-kappa</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="lambda"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-lambda</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="mu"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-mu</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="nu"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-nu</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -899,28 +876,28 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="xi"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-xi</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -930,55 +907,55 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="3" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0060">&LEVEL_II;</subforce>
+            <subforce num="3" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="2" flags="0060">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="2">&CHOIR;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="2">CHOIR</subforce>
         </subforces>
 
         <subforces ifFlags="formation_3">
-            <subforce num="3" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="2" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
+            <subforce num="3" flags="0042">LEVEL_II</subforce>
+            <subforce num="2" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="omicron"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-omicron</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="pi"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-pi</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -986,29 +963,29 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="rho"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-rho</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -1016,57 +993,57 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="3" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="3" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="sigma"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-sigma</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="2" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
+            <subforce num="2" flags="4002">LEVEL_II</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="tau"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-tau</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="upsilon"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-upsilon</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -1074,27 +1051,27 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="6000">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0060">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="6000">LEVEL_II</subforce>
+            <subforce num="2" flags="0060">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1">&CHOIR;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1">CHOIR</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="phi"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-phi</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -1104,74 +1081,74 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2040">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="2040">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2400">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="2400">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_3">
-            <subforce num="2" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2022">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3030">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="2022">LEVEL_II</subforce>
+            <subforce num="2" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3030">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="chi"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-chi</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="1" flags="4002">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
+            <subforce num="1" flags="4002">LEVEL_II</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="psi"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-psi</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <subforces>
-            <subforce num="3" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="3300">&LEVEL_II;</subforce>
+            <subforce num="3" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="3300">LEVEL_II</subforce>
         </subforces>
     </force>
     
     <force eschName="Level III" ifFlags="omega"
             ifFaction="WOB.SD">
-        <eschelon>&LEVEL_III;</eschelon>
+        <eschelon>LEVEL_III</eschelon>
         <name>III-omega</name>
-        <co ifFlags="precentor">&PRECENTOR;</co>
-        <co ifFlags="adept">&PRECENTOR;</co>
+        <co ifFlags="precentor">PRECENTOR</co>
+        <co ifFlags="adept">PRECENTOR</co>
         
         <flags>
             <option>+formation_0</option>
@@ -1180,32 +1157,31 @@
         </flags>
 
         <subforces ifFlags="formation_0">
-            <subforce num="3" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2040">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
+            <subforce num="3" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="2040">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_1">
-            <subforce num="1" flags="0402">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2202">&LEVEL_II;</subforce>
-            <subforce num="2" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
+            <subforce num="1" flags="0402">LEVEL_II</subforce>
+            <subforce num="1" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2202">LEVEL_II</subforce>
+            <subforce num="2" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
         </subforces>
 
         <subforces ifFlags="formation_2">
-            <subforce num="2" flags="0042">&LEVEL_II;</subforce>
-            <subforce num="1" flags="2022">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0600">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0060">&LEVEL_II;</subforce>
-            <subforce num="1" flags="0330">&LEVEL_II;</subforce>
+            <subforce num="2" flags="0042">LEVEL_II</subforce>
+            <subforce num="1" flags="2022">LEVEL_II</subforce>
+            <subforce num="1" flags="0600">LEVEL_II</subforce>
+            <subforce num="1" flags="0060">LEVEL_II</subforce>
+            <subforce num="1" flags="0330">LEVEL_II</subforce>
         </subforces>
     </force>
-    <force eschName="Choir">
-        <eschelon>&CHOIR;</eschelon>
+    <force eschelon="CHOIR" eschName="Choir">
         <name>Choir</name>
-        <co>&ADEPT;</co>
+        <co>ADEPT</co>
         
 		<weightClass>
 			<option weight="3">A</option>
@@ -1221,55 +1197,55 @@
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A,A,A,A,A,A" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="A,A,A,A,A,H" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="A,A,A,A,H,H" weight="4"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="A,A,A,H,H,M"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
 				<option weightClass="A,A,H,H,H,H"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="A,H,H,H,H,H" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="A,H,H,H,H,M" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="H,H,H,H,H,H" weight="4"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="H,H,H,H,H,M" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="H,H,H,H,M,M"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="H,H,H,M,M,M"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="H,H,M,M,M,M" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="H,M,M,M,M,L" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="H,M,M,M,M,M" weight="4"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="M,M,M,M,M,L" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="M,M,M,M,L,L"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="H,M,M,L,L,L"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="M,M,L,L,L,L" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="M,L,L,L,L,L" weight="4"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 				<option weightClass="L,L,L,L,L,L" weight="2"
-				    unitType="Mek">&ELEMENT;</option>
+				    unitType="Mek">ELEMENT</option>
 			</subforceOption>
 			
 			<subforce num="6" generate="group"
-			    unitType="BattleArmor">&ELEMENT;</subforce>
+			    unitType="BattleArmor">ELEMENT</subforce>
 		</subforces>
     </force>
 </ruleset>

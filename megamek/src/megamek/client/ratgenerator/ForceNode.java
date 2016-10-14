@@ -343,6 +343,11 @@ public class ForceNode extends RulesetNode {
 	protected void loadFromXml(Node node) {
 		super.loadFromXml(node);
 		
+		if (assertions.containsKey("eschelon")) {
+			eschelon = Ruleset.getConstantVal(assertions.getProperty("eschelon"));
+			assertions.remove("eschelon");
+		}
+		
 		if (assertions.containsKey("eschName")) {
 			eschelonName = assertions.getProperty("eschName");
 			assertions.remove("eschName");
@@ -353,9 +358,6 @@ public class ForceNode extends RulesetNode {
 			Node wn = nl.item(x);
 			
 			switch (wn.getNodeName()) {
-			case "eschelon":
-				eschelon = Integer.valueOf(wn.getTextContent());
-				break;
 			case "name":
 				nameNodes.add(ValueNode.createFromXml(wn));
 				break;

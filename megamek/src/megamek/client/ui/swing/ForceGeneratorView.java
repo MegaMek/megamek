@@ -14,12 +14,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.HashMap;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -29,7 +28,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.ListCellRenderer;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
@@ -44,6 +42,7 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ratgenerator.TOCNode;
 import megamek.client.ratgenerator.ValueNode;
+import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
 import megamek.common.UnitType;
 
@@ -66,15 +65,21 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 	private ForceDescriptor forceDesc = new ForceDescriptor();
 	
 	private JTextField txtYear;
-	private KeyValueComboBox cbFaction;
-	private KeyValueComboBox cbSubfaction;
-	private JComboBox<String> cbUnitType;	
-	private KeyValueComboBox cbFormation;
-	private KeyValueComboBox cbRating;
-	private KeyValueComboBox cbFlags;
+	private JComboBox<FactionRecord> cbFaction;
+	private JComboBox<FactionRecord> cbSubfaction;
+	private JComboBox<Integer> cbUnitType;	
+	private JComboBox<String> cbFormation;
+	private JComboBox<String> cbRating;
+	private JComboBox<String> cbFlags;
 
 	private JComboBox<String> cbExperience;
-	private JComboBox<String> cbWeightClass;
+	private JComboBox<Integer> cbWeightClass;
+	
+	private DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>("General",
+			fRec -> fRec.getName(currentYear));
+	
+	private HashMap<String,String> formationDisplayNames = new HashMap<>();
+	private HashMap<String,String> flagDisplayNames = new HashMap<>();
 	
 	private JPanel panGroundRole;
 	private JPanel panInfRole;
@@ -143,7 +148,8 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 0;
 		gbc.gridy = y;
 		add(new JLabel("Faction:"), gbc);
-		cbFaction = new KeyValueComboBox("General");
+		cbFaction = new JComboBox<>();
+		cbFaction.setRenderer(factionRenderer);
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbFaction, gbc);
@@ -151,7 +157,8 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 2;
 		gbc.gridy = y;
 		add(new JLabel("Subfaction:"), gbc);
-		cbSubfaction = new KeyValueComboBox("General");
+		cbSubfaction = new JComboBox<>();
+		cbSubfaction.setRenderer(factionRenderer);
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbSubfaction, gbc);
@@ -159,8 +166,9 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 0;
 		gbc.gridy = y;
 		add(new JLabel("Unit Type:"), gbc);
-		cbUnitType = new JComboBox<String>();
-		cbUnitType.setRenderer(unitTypeCbRenderer);
+		cbUnitType = new JComboBox<Integer>();
+		cbUnitType.setRenderer(new CBRenderer<Integer>("Combined",
+				ut -> UnitType.getTypeName(ut)));
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbUnitType, gbc);
@@ -168,7 +176,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 2;
 		gbc.gridy = y;
 		add(new JLabel("Formation:"), gbc);
-		cbFormation = new KeyValueComboBox("Default");
+		cbFormation = new JComboBox<>();
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbFormation, gbc);
@@ -176,7 +184,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 0;
 		gbc.gridy = y;
 		add(new JLabel("Rating:"), gbc);
-		cbRating = new KeyValueComboBox("Random");
+		cbRating = new JComboBox<>();
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbRating, gbc);
@@ -184,12 +192,14 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 2;
 		gbc.gridy = y;
 		add(new JLabel("Weight:"), gbc);
-		cbWeightClass = new JComboBox<String>();
-		cbWeightClass.addItem("Random");
-		cbWeightClass.addItem("Light");
-		cbWeightClass.addItem("Medium");
-		cbWeightClass.addItem("Heavy");
-		cbWeightClass.addItem("Assault");
+		cbWeightClass = new JComboBox<Integer>();
+		cbWeightClass.setRenderer(new CBRenderer<Integer>("Random",
+				wc -> EntityWeightClass.getClassName(wc)));
+		cbWeightClass.addItem(null);
+		cbWeightClass.addItem(EntityWeightClass.WEIGHT_LIGHT);
+		cbWeightClass.addItem(EntityWeightClass.WEIGHT_MEDIUM);
+		cbWeightClass.addItem(EntityWeightClass.WEIGHT_HEAVY);
+		cbWeightClass.addItem(EntityWeightClass.WEIGHT_ASSAULT);
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbWeightClass, gbc);
@@ -197,7 +207,9 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 0;
 		gbc.gridy = y;
 		add(new JLabel("Other:"), gbc);
-		cbFlags = new KeyValueComboBox("---");
+		cbFlags = new JComboBox<>();
+		cbFlags.setRenderer(new CBRenderer<String>("---",
+				f -> flagDisplayNames.get(f)));
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbFlags, gbc);
@@ -472,14 +484,14 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		cbFaction.removeAllItems();
 		for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
 			if (!fRec.getKey().contains(".") && fRec.isActiveInYear(currentYear)) {
-				cbFaction.addItem(fRec.getKey(), fRec.getName(forceDesc.getYear()));
+				cbFaction.addItem(fRec);
 			}
 		}
 		
 		if (oldFaction != null) {
 			cbFaction.setSelectedItem(oldFaction.split("\\.")[0]);			
 		} else {
-			forceDesc.setFaction((cbFaction.getSelectedKey()));
+			forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
 		}
 		if (cbFaction.getSelectedIndex() < 0) {
 			cbFaction.setSelectedIndex(0);
@@ -492,12 +504,12 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		cbSubfaction.removeAllItems();
 		if (forceDesc.getFactionRec() != null) {
 			cbSubfaction.addItem(null);
-			if (cbFaction.getSelectedKey() != null) {
-				String currentFaction = cbFaction.getSelectedKey();
+			if (cbFaction.getSelectedItem() != null) {
+				String currentFaction = ((FactionRecord)cbFaction.getSelectedItem()).getKey();
 				for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
 					if (fRec.getPctSalvage(currentYear) != null &&
 							fRec.getKey().startsWith(currentFaction + ".")) {
-						cbSubfaction.addItem(fRec.getKey(), fRec.getName(forceDesc.getYear()));
+						cbSubfaction.addItem(fRec);
 					}
 				}
 			}
@@ -530,7 +542,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 							hasCurrent = true;
 						}
 					} else {
-						cbUnitType.addItem(unitType);
+						cbUnitType.addItem(AbstractUnitRecord.parseUnitType(unitType));
 						if (currentType != null && currentType.equals(unitType)) {
 							hasCurrent = true;
 						}
@@ -548,28 +560,30 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 			cbUnitType.setSelectedItem(currentType);
 		} else {
 			Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
-			String unitType = rs.getDefaultUnitType(forceDesc);
+			Integer unitType = rs.getDefaultUnitType(forceDesc);
 			if (unitType == null && cbUnitType.getItemCount() > 0) {
-				unitType = cbUnitType.getItemAt(0);
+				unitType = (Integer)cbUnitType.getItemAt(0);
 			}
-			if (unitType != null) {
-				cbUnitType.setSelectedItem(unitType);
-				forceDesc.setUnitType(AbstractUnitRecord.parseUnitType(unitType));
-			}
+			cbUnitType.setSelectedItem(unitType);
+			forceDesc.setUnitType(unitType);
 		}
 		refreshFormations();
 	}
 	
 	private void refreshFormations() {
 		if (cbUnitType.getSelectedItem() != null) {
-			String unitType = (String)cbUnitType.getSelectedItem();
-			panGroundRole.setVisible(unitType.equals("Mek") || unitType.equals("Tank"));
-			panInfRole.setVisible(unitType.equals("Infantry"));
-			panAirRole.setVisible(unitType.equals("Aero"));
+			Integer unitType = (Integer)cbUnitType.getSelectedItem();
+			if (unitType != null) {
+				panGroundRole.setVisible(unitType == UnitType.MEK || unitType == UnitType.TANK);
+				panInfRole.setVisible(unitType == UnitType.INFANTRY
+						|| unitType == UnitType.BATTLE_ARMOR);
+				panAirRole.setVisible(unitType == UnitType.AERO
+						|| unitType == UnitType.CONV_FIGHTER);
+			}
 		}
 		
 		TOCNode tocNode = findTOCNode();
-		String currentFormation = cbFormation.getSelectedKey();
+		String currentFormation = (String)cbFormation.getSelectedItem();
 		boolean hasCurrent = false;
 		Ruleset ruleset = Ruleset.findRuleset(forceDesc);
 		cbFormation.removeAllItems();
@@ -580,10 +594,11 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 				for (String formation : n.getContent().split(",")) {
 					Ruleset rs = ruleset;
 					ForceNode fn = null;
+					formationDisplayNames.clear();
 					do {
 						fn = rs.findForceNode(forceDesc,
-								Integer.parseInt(formation.replaceAll("[^0-9]", "")),
-										formation.endsWith("^"));
+								Ruleset.getConstantVal(formation.replaceAll("[^0-9A-Z]", "")),
+										formation.endsWith("+"));
 						if (fn == null) {
 							if (rs.getParent() != null) {
 								rs = Ruleset.findRuleset(rs.getParent());
@@ -599,7 +614,8 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 					if (formation.endsWith("-")) {
 						formName = "Understrength " + formName;
 					}
-					cbFormation.addItem(formation, formName);
+					formationDisplayNames.put(formation, formName);
+					cbFormation.addItem(formation);
 					if (currentFormation != null && currentFormation.equals(formation)) {
 						hasCurrent = true;
 					}
@@ -614,9 +630,9 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		} else {
 			Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
 			String esch = rs.getDefaultEschelon(forceDesc);
-			if ((esch == null || !cbFormation.containsKey(esch)
+			if ((esch == null || !!formationDisplayNames.containsKey(esch)
 					&& cbFormation.getItemCount() > 0)) {
-				esch = cbFormation.getKeyAt(0);
+				esch = (String)cbFormation.getItemAt(0);
 			}
 			if (esch != null) {
 				cbFormation.setSelectedItem(esch);
@@ -639,9 +655,9 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 				for (String rating : n.getContent().split(",")) {
 					if (rating.contains(":")) {
 						String[] fields = rating.split(":");
-						cbRating.addItem(fields[0],fields[1]);
+						cbRating.addItem(fields[1]);
 					} else {
-						cbRating.addItem(rating, rating);
+						cbRating.addItem(rating);
 					}
 				}
 			} else {
@@ -655,7 +671,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 			Ruleset rs = Ruleset.findRuleset(forceDesc.getFaction());
 			String rating = rs.getDefaultRating(forceDesc);
 			if (rating == null && cbRating.getItemCount() > 0) {
-				rating = cbRating.getKeyAt(0);
+				rating = cbRating.getItemAt(0);
 			}
 			if (rating != null) {
 				cbRating.setSelectedItem(rating);
@@ -667,19 +683,21 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 	
 	private void refreshFlags() {
 		TOCNode tocNode = findTOCNode();
-		String currentFlag = cbFlags.getSelectedKey();
+		String currentFlag = (String)cbFlags.getSelectedItem();
 		boolean hasCurrent = false;
 		cbFlags.removeAllItems();
 		cbFlags.addItem(null);
 		if (tocNode != null) {
 			ValueNode n = tocNode.findFlags(forceDesc);
 			if (n != null && n.getContent() != null) {
-				for (String rating : n.getContent().split(",")) {
-					if (rating.contains(":")) {
-						String[] fields = rating.split(":");
-						cbFlags.addItem(fields[0],fields[1]);
+				for (String flag : n.getContent().split(",")) {
+					if (flag.contains(":")) {
+						String[] fields = flag.split(":");
+						flagDisplayNames.put(fields[0], fields[1]);
+						cbFlags.addItem(fields[0]);
 					} else {
-						cbFlags.addItem(rating, rating);
+						flagDisplayNames.put(flag, flag);
+						cbFlags.addItem(flag);
 					}
 				}
 			}
@@ -691,8 +709,8 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 			cbFlags.setSelectedIndex(0);
 		}
 		forceDesc.getFlags().clear();
-		if (cbFlags.getSelectedKey() != null) {
-			forceDesc.getFlags().add(cbFlags.getSelectedKey());
+		if (cbFlags.getSelectedItem() != null) {
+			forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
 		}
 	}
 	
@@ -752,30 +770,30 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 			removeListeners();
 			if (arg0.getSource() == cbFaction) {
 				if (cbFaction.getSelectedItem() != null) {
-					forceDesc.setFaction(cbFaction.getSelectedKey());
+					forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
 				}
 				refreshSubfactions();
 			} else if (arg0.getSource() == cbSubfaction) {
-				if (cbSubfaction.getSelectedKey() != null) {
-					forceDesc.setFaction(cbSubfaction.getSelectedKey());
+				if (cbSubfaction.getSelectedItem() != null) {
+					forceDesc.setFaction(((FactionRecord)cbSubfaction.getSelectedItem()).getKey());
 				} else {
-					forceDesc.setFaction(cbFaction.getSelectedKey());
+					forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
 				}
 				refreshUnitTypes();
 			} else if (arg0.getSource() == cbUnitType) {
 				forceDesc.setUnitType(AbstractUnitRecord.parseUnitType((String)cbUnitType.getSelectedItem()));
 				refreshFormations();
 			} else if (arg0.getSource() == cbFormation) {
-				String esch = cbFormation.getSelectedKey();
+				String esch = (String)cbFormation.getSelectedItem();
 				setFormation(esch);
 				refreshRatings();
 			} else if (arg0.getSource() == cbRating) {
-				forceDesc.setRating(cbRating.getSelectedKey());
+				forceDesc.setRating((String)cbRating.getSelectedItem());
 				refreshFlags();
 			} else if (arg0.getSource() == cbFlags) {
 				forceDesc.getFlags().clear();
-				if (cbFlags.getSelectedKey() != null) {
-					forceDesc.getFlags().add(cbFlags.getSelectedKey());
+				if (cbFlags.getSelectedItem() != null) {
+					forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
 				}
 			} else if (arg0.getSource() == cbWeightClass) {
 				if (cbWeightClass.getSelectedIndex() < 1) {
@@ -789,7 +807,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 	};	
 
 	private void setFormation(String esch) {
-		forceDesc.setEschelon(Integer.parseInt(esch.replaceAll("[^0-9]", "")));
+		forceDesc.setEschelon(Ruleset.getConstantVal(esch.replaceAll("[^0-9A-Z]", "")));
 		forceDesc.setAugmented(esch.contains("^"));
 		if (esch.endsWith("+")) {
 			forceDesc.setSizeMod(1);
@@ -821,107 +839,38 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		RATGenerator.getInstance().loadYear(currentYear);
 	}
 
-	private ListCellRenderer<? super String> unitTypeCbRenderer = new DefaultListCellRenderer() {
-		private static final long serialVersionUID = 8738837254686639184L;
+	static class CBRenderer<T> extends DefaultListCellRenderer {
+		
+		private static final long serialVersionUID = 4895258839502183158L;
 
-		@Override
-		public Component getListCellRendererComponent(JList<? extends Object> arg0, Object arg1,
-				int arg2, boolean arg3, boolean arg4) {
-			if (arg1 == null) {
-				setText("Combined");
+		private String nullVal = "Default";
+		private Function<T,String> toString;
+		
+		public CBRenderer(String nullVal) {
+			this(nullVal, null);
+		}
+		
+		public CBRenderer(String nullVal, Function<T,String> strConverter) {
+			if (strConverter == null) {
+				toString = obj -> obj.toString();
 			} else {
-				setText((String)arg1);
+				toString = strConverter;
+			}
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public Component getListCellRendererComponent(JList<? extends Object> list, Object entry,
+				int position, boolean arg3, boolean arg4) {
+			if (entry == null) {
+				setText(nullVal);
+			} else {
+				setText(toString.apply((T)entry));
 			}
 			return this;
 		}
 	};
-
-    static class KeyValueComboBox extends JComboBox<Map.Entry<String, String>> {
-    	
-    	private static final long serialVersionUID = -2428807516349658212L;
-
-    	private String nullVal;
-    	
-    	public KeyValueComboBox() {
-    		this("Default");
-    	}
-    	
-    	public KeyValueComboBox(String nullVal) {
-    		super();
-    		this.nullVal = nullVal;
-    		setRenderer(renderer);
-    	}
-    	
-    	public void setSelectedItem(String key) {
-    		DefaultComboBoxModel<Map.Entry<String,String>> model =
-    				(DefaultComboBoxModel<Map.Entry<String,String>>)getModel();
-    		for (int i = 0; i < getModel().getSize(); i++) {
-    			if ((key == null && model.getElementAt(i) == null)
-    					|| (model.getElementAt(i) != null
-    						&& key.equals(model.getElementAt(i).getKey()))){
-    				setSelectedIndex(i);
-    				return;
-    			}
-    		}
-    	}
-    	
-    	public void addItem(String key, String value) {
-    		Map.Entry<String, String> entry = new AbstractMap.SimpleEntry<String,String>(key,value);
-    		addItem(entry);
-    	}
-    	
-    	@SuppressWarnings("unchecked")
-    	public String getSelectedKey() {
-    		Object entry = getSelectedItem();
-    		if (entry == null) {
-    			return null;
-    		}
-    		return ((Map.Entry<String, String>)entry).getKey();
-    	}
-
-    	public String getKeyAt(int index) {
-    		Map.Entry<String,String> entry = getItemAt(index);
-    		if (entry == null) {
-    			return null;
-    		}
-    		return entry.getKey();
-    	}
-    	
-    	public boolean containsKey(String key) {
-    		for (int i = 0; i < getItemCount(); i++) {
-    			if (getItemAt(i).getKey().equals(key)) {
-    				return true;
-    			}
-    		}
-    		return false;
-    	}
-
-    	public boolean containsValue(String val) {
-    		for (int i = 0; i < getItemCount(); i++) {
-    			if (getItemAt(i).getValue().equals(val)) {
-    				return true;
-    			}
-    		}
-    		return false;
-    	}
-
-    	private ListCellRenderer<Object> renderer = new DefaultListCellRenderer() {
-    		private static final long serialVersionUID = -4136501574366312512L;
-
-    		@Override
-			@SuppressWarnings("unchecked")
-    		public Component getListCellRendererComponent(JList<? extends Object> list, Object entry,
-    				int position, boolean arg3, boolean arg4) {
-    			if (entry == null) {
-    				setText(nullVal);
-    			} else {
-    				setText(((Map.Entry<String,String>)entry).getValue());
-    			}
-    			return this;
-    		}
-    	};
-    }
-    
+	
     static class ForceTreeModel implements TreeModel {
     	
     	private ForceDescriptor root;

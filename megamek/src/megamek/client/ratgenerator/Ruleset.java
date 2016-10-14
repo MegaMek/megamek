@@ -13,8 +13,14 @@
  */
 package megamek.client.ratgenerator;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,7 +42,9 @@ import org.w3c.dom.NodeList;
 public class Ruleset {
 	
 	private final static String directory = "data/forcegenerator/faction_rules";
+	private final static String CONSTANTS_FILE = "constants.txt";
 	
+	private static HashMap<String,Integer> constants;
 	private static HashMap<String,Ruleset> rulesets;
 	private static boolean initialized;
 	private static boolean initializing;
@@ -54,6 +62,13 @@ public class Ruleset {
 		forceNodes = new ArrayList<>();
 		customRanks = new HashMap<>();
 		parent = null;
+	}
+	
+	public static Integer getConstantVal(String key) {
+		if (constants.containsKey(key)) {
+			return constants.get(key);
+		}
+		return Integer.valueOf(key);
 	}
 	
 	public static Ruleset findRuleset(ForceDescriptor fd) {
@@ -147,8 +162,12 @@ public class Ruleset {
 		}
 	}
 	
-	public String getDefaultUnitType(ForceDescriptor fd) {
-		return defaults.getUnitType(fd);
+	public Integer getDefaultUnitType(ForceDescriptor fd) {
+		String def = defaults.getUnitType(fd);
+		if (def != null) {
+			return ModelRecord.parseUnitType(def);
+		}
+		return null;
 	}
 	
 	public String getDefaultEschelon(ForceDescriptor fd) {
@@ -230,6 +249,34 @@ public class Ruleset {
 		return parent;
 	}
 	
+	public static void loadConstants(File f) {
+		constants = new HashMap<>();
+		InputStream is;
+		try {
+			is = new FileInputStream(f);
+	        BufferedReader reader = new BufferedReader(new InputStreamReader(is,
+	        		Charset.forName("UTF-8")));
+	        String line = null;
+	        while ((line = reader.readLine()) != null) {
+	        	if (!line.startsWith("#") && line.contains(":")) {
+	        		String[] fields = line.split(":");
+        			try {
+        				constants.put(fields[0], Integer.valueOf(fields[1]));
+        			} catch (NumberFormatException e) {
+	        			System.err.println("Malformed line in force generator constants file: " + line);
+        			}
+	        	}
+	        }
+	        reader.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public static void loadData() {
 		initialized = false;
 		initializing = true;
@@ -240,6 +287,9 @@ public class Ruleset {
 			System.err.println("Could not locate force generator faction rules.");
 			initializing = false;
 		}
+		
+		loadConstants(new File(dir, CONSTANTS_FILE));
+		
 		for (File f : dir.listFiles()) {
 			if (!f.getPath().endsWith(".xml")) {
 				continue;
@@ -320,11 +370,11 @@ public class Ruleset {
 					Node wn2 = wn.getChildNodes().item(y);
 					switch (wn2.getNodeName()) {
 					case "base":
-						retVal.customRankBase = Integer.parseInt(wn2.getTextContent());
+						retVal.customRankBase = getConstantVal(wn2.getTextContent());
 						break;
 					case "rank":
 						String[] fields = wn2.getTextContent().split(":");
-						int rank = Integer.parseInt(fields[0]);
+						int rank = getConstantVal(fields[0]);
 						retVal.customRanks.put(rank, fields[1]);
 						break;
 					}

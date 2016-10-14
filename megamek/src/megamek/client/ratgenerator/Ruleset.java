@@ -381,8 +381,9 @@ public class Ruleset {
 				}
 				break;
 			case "force":
+				ForceNode fn = null;
 				try {
-					retVal.forceNodes.add(ForceNode.createFromXml(wn));
+					fn = ForceNode.createFromXml(wn);
 				} catch (IllegalArgumentException ex) {
 					System.err.println("In file " + f.getName()
 							+ " while processing force node" + 
@@ -390,6 +391,9 @@ public class Ruleset {
 								" " + wn.getAttributes().getNamedItem("eschName")) +
 								": ");
 					System.err.println(ex.getMessage());
+				}
+				if (fn != null) {
+					retVal.forceNodes.add(fn);
 				}
 				break;
 			}

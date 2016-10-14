@@ -17,7 +17,7 @@
 		
 		<eschelon>
 			<option ifUnitType="">GALAXY,CLUSTER</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -189,9 +189,8 @@
 	
 	<!-- The command trinary includes two novas of Meks+BA and
 	one of Meks+ASFs.-->
-	<force eschName="Supernova Trinary"
+	<force eschelon="TRINARY" eschName="Supernova Trinary"
 			ifFlags="kindraa_command">
-		<eschelon>TRINARY</eschelon>
 		<name>Trinary Kindraa [Command]</name>
 		<co>STAR_CAPTAIN</co>
 		

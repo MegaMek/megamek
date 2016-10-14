@@ -580,9 +580,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="alpha"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="alpha"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-alpha</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -607,9 +606,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="beta"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="beta"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-beta</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -621,9 +619,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="gamma"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="gamma"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-gamma</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -637,9 +634,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="delta"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="delta"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-delta</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -681,9 +677,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="epsilon"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="epsilon"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-epsilon</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -696,9 +691,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="zeta"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="zeta"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-zeta</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -723,9 +717,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="eta"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="eta"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-eta</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -751,9 +744,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="theta"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="theta"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-theta</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -785,9 +777,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="iota"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="iota"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-iota</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -814,9 +805,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="kappa"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="kappa"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-kappa</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -831,9 +821,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="lambda"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="lambda"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-lambda</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -847,9 +836,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="mu"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="mu"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-mu</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -863,9 +851,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="nu"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="nu"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-nu</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -892,9 +879,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="xi"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="xi"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-xi</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -934,9 +920,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="omicron"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="omicron"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-omicron</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -950,9 +935,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="pi"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="pi"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-pi</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -980,9 +964,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="rho"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="rho"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-rho</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -1008,9 +991,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="sigma"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="sigma"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-sigma</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -1023,9 +1005,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="tau"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="tau"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-tau</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -1038,9 +1019,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="upsilon"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="upsilon"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-upsilon</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -1066,9 +1046,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="phi"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="phi"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-phi</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -1112,9 +1091,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="chi"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="chi"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-chi</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -1128,9 +1106,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="psi"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="psi"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-psi</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>
@@ -1143,9 +1120,8 @@
         </subforces>
     </force>
     
-    <force eschName="Level III" ifFlags="omega"
+    <force eschelon="LEVEL_III" eschName="Level III" ifFlags="omega"
             ifFaction="WOB.SD">
-        <eschelon>LEVEL_III</eschelon>
         <name>III-omega</name>
         <co ifFlags="precentor">PRECENTOR</co>
         <co ifFlags="adept">PRECENTOR</co>

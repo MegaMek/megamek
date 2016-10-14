@@ -17,7 +17,7 @@
 		
 		<eschelon>
 			<option ifUnitType="">GALAXY,CLUSTER</option>
-			<option ifUnitType="Mek|Aero" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek|Aero" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -389,9 +389,8 @@
 	
 	<!--SL command binary is one star of ASF and one nova of ASF+BA.-->
 	
-	<force eschName="Binary" ifRating="SL|PG" ifRole="command"
+	<force eschelon="BINARY" eschName="Binary" ifRating="SL|PG" ifRole="command"
 			ifUnitType="Aero">
-		<eschelon>BINARY</eschelon>
 		<name>Binary [Command]</name>
 		<co>STAR_COL</co>
 		

@@ -17,8 +17,8 @@
 		
 		<eschelon>
 			<option ifUnitType="">GALAXY,CLUSTER</option>
-			<option ifUnitType="BattleArmor">CLUSTER,TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
-			<option ifUnitType="Mek|Aero" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="BattleArmor">CLUSTER,TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
+			<option ifUnitType="Mek|Aero" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		

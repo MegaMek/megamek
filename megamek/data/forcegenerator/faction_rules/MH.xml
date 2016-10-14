@@ -610,9 +610,8 @@ support wing (cohort). -->
 		</subforces>
 	</force>
 	
-	<force eschName="Century" ifUnitType="Infantry"
+	<force eschelon="COMPANY" eschName="Century" ifUnitType="Infantry"
 			ifRole="artillery|missle_artillery">
-		<eschelon>COMPANY</eschelon>
 		<co>CAPTAIN</co>
 
 		<subforces generate="group">

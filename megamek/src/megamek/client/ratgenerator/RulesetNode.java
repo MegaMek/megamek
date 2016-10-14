@@ -144,7 +144,7 @@ public class RulesetNode {
 			String property = predicates.getProperty((String)key);
 			switch ((String)key) {
 			case "ifUnitType":
-				if (!matches(UnitType.getTypeName(fd.getUnitType()), property)) {
+				if (!matches(fd.getUnitType() == null?"":UnitType.getTypeName(fd.getUnitType()), property)) {
 					return false;
 				}
 				break;

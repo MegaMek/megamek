@@ -34,7 +34,7 @@ but with more independence.-->
 		<eschelon>
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Warship|Dropship|Jumpship">STAR</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -851,9 +851,8 @@ but with more independence.-->
 		</subforces>
 	</force>
 
-	<force eschName="Naval Star" ifUnitType="Warship"
+	<force eschelon="STAR" eschName="Naval Star" ifUnitType="Warship"
 	        ifDateBetween="2986,3099" ifFlags="navalFluff">
-		<eschelon>STAR</eschelon>
 		<name>Warship Star {phonetic}</name>
 		<co>GALAXY_CMDR</co>
 		
@@ -903,9 +902,8 @@ but with more independence.-->
 	
 	<!--Same as previous entry, but with fluff names
 	reflecting the original name of the Clan-->
-	<force eschName="Naval Star" ifUnitType="Warship"
+	<force eschelon="STAR" eschName="Naval Star" ifUnitType="Warship"
 	        ifDateBetween=",2985" ifFlags="navalFluff">
-		<eschelon>STAR</eschelon>
 		<name>Warship Star {phonetic}</name>
 		<co>GALAXY_CMDR</co>
 		

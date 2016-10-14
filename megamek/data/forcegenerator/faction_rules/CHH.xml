@@ -19,8 +19,8 @@
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Warship">CLUSTER,STAR</option>
 			<option ifUnitType="Dropship|Jumpship">STAR</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
-			<option ifUnitType="Tank">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
+			<option ifUnitType="Tank">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option ifUnitType="BattleArmor|Infantry">STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
@@ -34,13 +34,13 @@
 		
 		<flags>
 			<option ifDateBetween="3080," ifRating="FL"
-				ifEschelon="Cluster|Trinary+|Trinary|Binary+|Binary|Star+|Star">assault:Assault Cluster,strike:Strike Cluster,cavalry:Cavalry Cluster,horde:Horde Cluster</option>
+				ifEschelon="Cluster|TRINARY^|Trinary|BINARY^|Binary|STAR^|Star">assault:Assault Cluster,strike:Strike Cluster,cavalry:Cavalry Cluster,horde:Horde Cluster</option>
 			<option ifDateBetween="3090," ifRating="SL|PG|Sol"
-				ifEschelon="Cluster|Trinary+|Trinary|Binary+|Binary|Star+|Star">assault:Assault Cluster,strike:Strike Cluster,cavalry:Cavalry Cluster,adhoc:Ad-Hoc Cluster,ranger:Ranger Cluster</option>
+				ifEschelon="Cluster|TRINARY^|Trinary|BINARY^|Binary|STAR^|Star">assault:Assault Cluster,strike:Strike Cluster,cavalry:Cavalry Cluster,adhoc:Ad-Hoc Cluster,ranger:Ranger Cluster</option>
 
 			<option ifRating="SL|PG|Sol"
-				ifEschelon="Cluster|Trinary+|Trinary|Binary+|Binary|Star+|Star">assault:Assault Cluster,strike:Strike Cluster,cavalry:Cavalry Cluster,adhoc:Ad-Hoc Cluster</option>
-			<option ifEschelon="Cluster|Trinary+|Trinary|Binary+|Binary|Star+|Star">assault:Assault Cluster,strike:Strike Cluster,cavalry:Cavalry Cluster</option>
+				ifEschelon="Cluster|TRINARY^|Trinary|BINARY^|Binary|STAR^|Star">assault:Assault Cluster,strike:Strike Cluster,cavalry:Cavalry Cluster,adhoc:Ad-Hoc Cluster</option>
+			<option ifEschelon="Cluster|TRINARY^|Trinary|BINARY^|Binary|STAR^|Star">assault:Assault Cluster,strike:Strike Cluster,cavalry:Cavalry Cluster</option>
 		</flags>
 	</toc>
 	

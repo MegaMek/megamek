@@ -504,9 +504,8 @@
 		</subforces>
 	</force>
 	
-	<force eschName="Company" ifUnitType="Infantry"
+	<force eschelon="COMPANY" eschName="Company" ifUnitType="Infantry"
 			ifRole="artillery|missle_artillery">
-		<eschelon>COMPANY</eschelon>
 		<name>{ordinal} Field Artillery Company</name>
 		<co>CAPTAIN</co>
 

@@ -17,7 +17,7 @@
 		
 		<eschelon>
 			<option ifUnitType="">GALAXY,CLUSTER</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -168,9 +168,8 @@
 	<!-- Kindraa command trinary includes one nova. This rule does not
 	meet the description in FMCC that all Meks in the command star
 	have MASC, but selects faster units by adding the cavalry role.-->
-	<force eschName="Trinary" ifUnitType="Mek"
+	<force eschelon="TRINARY" eschName="Trinary" ifUnitType="Mek"
 			 ifDateBetween="2870," ifRating="Keshik">
-		<eschelon>TRINARY</eschelon>
 		<name>Trinary Kindraa [Command]</name>
 		<co>GALAXY_CMDR</co>
 		

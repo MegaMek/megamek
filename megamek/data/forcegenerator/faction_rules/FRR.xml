@@ -29,7 +29,7 @@
 			<option ifUnitType="Mek|Tank|VTOL">REGIMENT,BATTALION,COMPANY,LANCE</option>
 			<option ifUnitType="Infantry">REGIMENT,BATTALION,COMPANY</option>
 			<option ifUnitType="BattleArmor">BATTALION,COMPANY,PLATOON</option>
-			<option ifUnitType="Aero|Conventional Fighter">WING,SQUADRON+,SQUADRON,FLIGHT</option>
+			<option ifUnitType="Aero|Conventional Fighter">WING,SQUADRON^,SQUADRON,FLIGHT</option>
 		</eschelon>
 		
 		<rating>
@@ -127,9 +127,8 @@
 		</attachedForces>
 	</force>
 	
-	<force eschName="Company" ifAugmented="1" ifDateBetween=",3075"
-			ifUnitType="Aero|Conventional Fighter">
-		<eschelon>SQUADRON</eschelon>
+	<force eschelon="SQUADRON" eschName="Company" ifAugmented="1"
+	        ifDateBetween=",3075" ifUnitType="Aero|Conventional Fighter">
 		<co>MAJOR</co>
 		
 		<weightClass>
@@ -166,9 +165,8 @@
 		</subforces>
 	</force>
 	
-	<force eschName="Flight" ifAugmented="0" ifDateBetween=",3075"
-			ifUnitType="Aero|Conventional Fighter">
-		<eschelon>SQUADRON</eschelon>
+	<force eschelon="SQUADRON" eschName="Flight" ifAugmented="0"
+	        ifDateBetween=",3075" ifUnitType="Aero|Conventional Fighter">
 		<co>CAPTAIN</co>
 		
 		<weightClass>

@@ -340,12 +340,16 @@ public class ForceNode extends RulesetNode {
 	}
 	
 	@Override
-	protected void loadFromXml(Node node) {
+	protected void loadFromXml(Node node) throws IllegalArgumentException {
 		super.loadFromXml(node);
 		
-		if (assertions.containsKey("eschelon")) {
+		try {
 			eschelon = Ruleset.getConstantVal(assertions.getProperty("eschelon"));
 			assertions.remove("eschelon");
+		} catch (NullPointerException ex) {
+			throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");
+		} catch (NumberFormatException ex) {
+			throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");
 		}
 		
 		if (assertions.containsKey("eschName")) {

@@ -138,9 +138,8 @@ expanding to a full wing per regiment by the Dark Age. -->
 		</subforces>
 	</force>
 	
-	<force eschName="Company" ifUnitType="Infantry"
+	<force eschelon="COMPANY" eschName="Company" ifUnitType="Infantry"
 			ifRole="artillery|missle_artillery">
-		<eschelon>COMPANY</eschelon>
 		<name>{ordinal} Field Artillery Company</name>
 		<co>CAPTAIN</co>
 

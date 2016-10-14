@@ -27,9 +27,9 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		
 		<eschelon>
 			<option ifDateBetween="3060,"
-				ifUnitType="Mek">REGIMENT,BATTALION+,BATTALION,COMPANY+,COMPANY,LANCE+,LANCE</option>
+				ifUnitType="Mek">REGIMENT,BATTALION^,BATTALION,COMPANY^,COMPANY,LANCE^,LANCE</option>
 			<option ifDateBetween="3060,"
-				ifUnitType="Tank">REGIMENT,BATTALION,COMPANY+,COMPANY,LANCE+,LANCE</option>
+				ifUnitType="Tank">REGIMENT,BATTALION,COMPANY^,COMPANY,LANCE^,LANCE</option>
 			<option ifUnitType="Mek|Tank|VTOL">REGIMENT,BATTALION,COMPANY,LANCE</option>
 			<option ifUnitType="Infantry">REGIMENT,BATTALION,COMPANY</option>
 			<option ifUnitType="BattleArmor">BATTALION,COMPANY,PLATOON</option>
@@ -41,8 +41,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</rating>
 		
 		<flags>
-			<option ifDateBetween="3060," ifEschelon="Company+|Lance+" ifUnitType="Mek">:+Vehicle,ba:+BattleArmor</option>
-			<option ifDateBetween="3060," ifEschelon="Company+|Lance+" ifUnitType="Tank">mekVee:+Mek,ba:+BattleArmor,inf:+Infantry</option>
+			<option ifDateBetween="3060," ifEschelon="COMPANY^|LANCE^" ifUnitType="Mek">:+Vehicle,ba:+BattleArmor</option>
+			<option ifDateBetween="3060," ifEschelon="COMPANY^|LANCE^" ifUnitType="Tank">mekVee:+Mek,ba:+BattleArmor,inf:+Infantry</option>
 		</flags>
 	</toc>
 	

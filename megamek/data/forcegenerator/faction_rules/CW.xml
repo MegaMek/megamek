@@ -141,9 +141,8 @@
 		</subforces>
 	</force>
 
-	<force eschName="Galaxy" ifName="Epsilon Galaxy"
+	<force eschelon="GALAXY" eschName="Galaxy" ifName="Epsilon Galaxy"
 			ifDateBetween="3020,3057">
-		<eschelon>GALAXY</eschelon>
 		<name>{greek} Galaxy</name>
 		<co>GALAXY_CMDR</co>
 		
@@ -817,9 +816,8 @@
 	replace the Mek/Mek/BA command trinary with a Mek trinary, which also
 	bypasses this rule.-->
 	
-	<force eschName="Star" ifFlags="keshik" ifUnitType="Mek|BattleArmor"
-			ifRating="Keshik">
-		<eschelon>STAR</eschelon>
+	<force eschelon="STAR" eschName="Star" ifFlags="keshik"
+	        ifUnitType="Mek|BattleArmor" ifRating="Keshik">
 		<name>{phonetic} {name:parent} Star</name>
 		<co>STAR_CMDR</co>
 		

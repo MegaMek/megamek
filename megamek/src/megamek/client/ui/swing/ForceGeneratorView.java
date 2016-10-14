@@ -175,14 +175,17 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbUnitType, gbc);
+		cbUnitType.addActionListener(this);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
 		add(new JLabel("Formation:"), gbc);
 		cbFormation = new JComboBox<>();
+		cbFormation.setRenderer(new CBRenderer<String>("Random", f -> formationDisplayNames.get(f)));
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbFormation, gbc);
+		cbFormation.addActionListener(this);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
@@ -381,6 +384,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridy = 2;
 		panAirRole.add(chkRoleAirTransport, gbc);
 		
+		ignoreActions = true;
 		refreshFactions();
 		ignoreActions = false;
 	}
@@ -600,10 +604,10 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		if (tocNode != null) {
 			ValueNode n = tocNode.findEschelons(forceDesc);
 			if (n != null) {
+				formationDisplayNames.clear();
 				for (String formation : n.getContent().split(",")) {
 					Ruleset rs = ruleset;
 					ForceNode fn = null;
-					formationDisplayNames.clear();
 					do {
 						fn = rs.findForceNode(forceDesc,
 								Ruleset.getConstantVal(formation.replaceAll("[^0-9A-Z]", "")),
@@ -758,11 +762,13 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 			}
 			refreshUnitTypes();
 		} else if (arg0.getSource() == cbUnitType) {
-			forceDesc.setUnitType(AbstractUnitRecord.parseUnitType((String)cbUnitType.getSelectedItem()));
+			forceDesc.setUnitType((Integer)cbUnitType.getSelectedItem());
 			refreshFormations();
 		} else if (arg0.getSource() == cbFormation) {
 			String esch = (String)cbFormation.getSelectedItem();
-			setFormation(esch);
+			if (esch != null) {
+				setFormation(esch);
+			}
 			refreshRatings();
 		} else if (arg0.getSource() == cbRating) {
 			forceDesc.setRating((String)cbRating.getSelectedItem());

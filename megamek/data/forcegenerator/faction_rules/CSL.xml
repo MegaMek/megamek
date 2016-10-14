@@ -23,8 +23,8 @@
 		<eschelon>
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Dropship|Jumpship">STAR</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
-			<option ifUnitType="Tank">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
+			<option ifUnitType="Tank">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option ifUnitType="BattleArmor|Infantry">STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
@@ -211,9 +211,8 @@
 		</attachedForces>
 	</force>
 	
-	<force eschName="Trinary" ifUnitType="Mek" ifAugmented="0" 
+	<force eschelon="TRINARY" eschName="Trinary" ifUnitType="Mek" ifAugmented="0" 
 			ifRating="FL">
-		<eschelon>TRINARY</eschelon>
 		<name ifRole="command">Command Trinary</name>
 		<name>Trinary {greek}</name>
 		<co>STAR_CAPTAIN</co>
@@ -456,9 +455,8 @@
 		</subforces>
 	</force>
 	
-	<force eschName="Trinary" ifUnitType="Mek" ifAugmented="0"
+	<force eschelon="TRINARY" eschName="Trinary" ifUnitType="Mek" ifAugmented="0"
 			ifRating="SL|PG">
-		<eschelon>TRINARY</eschelon>
 		<name ifRole="command">Command Trinary</name>
 		<name>Trinary {greek}</name>
 		<co>STAR_CAPTAIN</co>
@@ -697,9 +695,8 @@
 	<!--Solahma trinaries have no novas and use conventional infantry
 	instead of BA.-->
 	
-	<force eschName="Trinary" ifUnitType="Mek" ifAugmented="0"
+	<force eschelon="TRINARY" eschName="Trinary" ifUnitType="Mek" ifAugmented="0"
 			ifRating="Sol">
-		<eschelon>TRINARY</eschelon>
 		<name ifRole="command">Command Trinary</name>
 		<name>Trinary {greek}</name>
 		<co>STAR_CAPTAIN</co>
@@ -876,9 +873,8 @@
 		</subforces>
 	</force>
 	
-	<force eschName="Supernova Trinary" ifUnitType="Mek" ifAugmented="1" 
+	<force eschelon="TRINARY" eschName="Supernova Trinary" ifUnitType="Mek" ifAugmented="1" 
 			ifRating="FL">
-		<eschelon>TRINARY</eschelon>
 		<name ifRole="command">Command Trinary</name>
 		<name>Trinary {greek}</name>
 		<co>NOVA_CAPTAIN</co>
@@ -971,9 +967,8 @@
 		</subforces>
 	</force>
 
-	<force eschName="Supernova Binary" ifUnitType="Mek" ifAugmented="1" 
+	<force eschelon="BINARY" eschName="Supernova Binary" ifUnitType="Mek" ifAugmented="1" 
 			ifRating="FL">
-		<eschelon>BINARY</eschelon>
 		<name ifRole="command">Command Binary</name>
 		<name>Binary {greek}</name>
 		<co>NOVA_CAPTAIN</co>
@@ -997,9 +992,8 @@
 	a third of the time, and Solahma binaries include only Mek+BA. Strike
 	clusters are less likely to have an independent BA star.-->
 	
-	<force eschName="Binary" ifUnitType="Mek" ifAugmented="0" 
+	<force eschelon="TRINARY" eschName="Binary" ifUnitType="Mek" ifAugmented="0" 
 			ifRating="FL">
-		<eschelon>TRINARY</eschelon>
 		<name ifRole="command">Command Binary</name>
 		<name>Binary {greek}</name>
 		<co>STAR_CAPTAIN</co>

@@ -404,7 +404,7 @@ public class RulesetNode {
 				}
 				break;
 			case "eschelon":
-				fd.setEschelon(Integer.valueOf(property));
+				fd.setEschelon(Ruleset.getConstantVal(property));
 				break;
 			case "faction":
 				fd.setFaction(property);
@@ -412,7 +412,7 @@ public class RulesetNode {
 				fd.setTopLevel(true);
 				break;
 			case "rankSystem":
-				fd.setRankSystem(Integer.valueOf(property));
+				fd.setRankSystem(Ruleset.getConstantVal(property));
 				break;
 			case "name":
 				fd.setName(property);

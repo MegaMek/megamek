@@ -64,11 +64,24 @@ public class Ruleset {
 		parent = null;
 	}
 	
+	public static String subConstants(String val) {
+		if (val == null) {
+			return val;
+		}
+		constants.keySet().stream()
+			.reduce(val, (v, k) -> v.replaceAll(k, constants.get(k).toString()));
+		return val;
+	}
+	
 	public static Integer getConstantVal(String key) {
 		if (constants.containsKey(key)) {
 			return constants.get(key);
 		}
 		return Integer.valueOf(key);
+	}
+	
+	public static boolean isConstant(String key) {
+		return constants.containsKey(key);
 	}
 	
 	public static Ruleset findRuleset(ForceDescriptor fd) {

@@ -183,7 +183,7 @@ public class ForceNode extends RulesetNode {
 					} else if (content.endsWith("-")) {
 						fd.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
 					} 
-					fd.setEschelon(Integer.valueOf(n.getContent().replaceAll("[\\+\\-]", "")));
+					fd.setEschelon(Ruleset.getConstantVal(n.getContent().replaceAll("[\\+\\-]", "")));
 					return false;
 				}
 			}

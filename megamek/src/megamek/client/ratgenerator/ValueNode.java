@@ -87,7 +87,8 @@ public class ValueNode extends RulesetNode {
 			num = Integer.valueOf(assertions.getProperty("num"));
 			assertions.remove("num");
 		}
-		content = node.getTextContent().trim().length() == 0?null:node.getTextContent().trim();
+		content = node.getTextContent().trim().length() == 0?
+				null : Ruleset.subConstants(node.getTextContent().trim());
 	}
 }
 

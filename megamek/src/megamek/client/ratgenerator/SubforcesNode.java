@@ -57,7 +57,7 @@ public class SubforcesNode extends RulesetNode {
 						continue;
 					}
 					ForceDescriptor sub = fd.createChild();
-					sub.setEschelon(Integer.valueOf(n.getContent().trim()));
+					sub.setEschelon(Ruleset.getConstantVal(n.getContent().trim()));
 					apply(sub, i);
 					n.apply(sub, i);
 //					if (sub.getEschelon() == 0) {
@@ -67,7 +67,7 @@ public class SubforcesNode extends RulesetNode {
 				}
 				if (useSizeMod && fd.getSizeMod() == ForceDescriptor.REINFORCED) {
 					ForceDescriptor sub = fd.createChild();
-					sub.setEschelon(Integer.valueOf(n.getContent().trim()));
+					sub.setEschelon(Ruleset.getConstantVal(n.getContent().trim()));
 					apply(sub, n.getNum() / 2);
 					n.apply(sub, n.getNum() / 2);
 					subs.add(sub);
@@ -104,12 +104,12 @@ public class SubforcesNode extends RulesetNode {
 						ForceDescriptor sub = fd.createChild();
 						if (vn.getContent().endsWith("+")) {
 							sub.setSizeMod(ForceDescriptor.REINFORCED);
-							sub.setEschelon(Integer.valueOf(vn.getContent().replace("+", "")));
+							sub.setEschelon(Ruleset.getConstantVal(vn.getContent().replace("+", "")));
 						} else if (vn.getContent().endsWith("-")) {
 							sub.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
-							sub.setEschelon(Integer.valueOf(vn.getContent().replace("-", "")));
+							sub.setEschelon(Ruleset.getConstantVal(vn.getContent().replace("-", "")));
 						} else 
-						sub.setEschelon(Integer.valueOf(vn.getContent()));
+						sub.setEschelon(Ruleset.getConstantVal(vn.getContent()));
 						apply(sub, i);
 						n.apply(sub, i);
 						vn.apply(sub, i);
@@ -120,7 +120,7 @@ public class SubforcesNode extends RulesetNode {
 					}
 					if (fd.getSizeMod() == ForceDescriptor.REINFORCED) {
 						ForceDescriptor sub = fd.createChild();
-						sub.setEschelon(Integer.valueOf(vn.getContent().trim()));
+						sub.setEschelon(Ruleset.getConstantVal(vn.getContent().trim()));
 						apply(sub, vn.getNum() / 2);
 						n.apply(sub, vn.getNum() / 2);
 						subs.add(sub);

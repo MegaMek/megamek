@@ -14,6 +14,7 @@
 package megamek.client.ratgenerator;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -159,9 +160,15 @@ public class RulesetNode {
 				}
 				break;
 			case "ifRole":
-				if (!collectionMatchesProperty(fd.getRoles().stream().map(r -> r.toString())
+				try {
+				if (!collectionMatchesProperty(fd.getRoles().stream()
+//						.filter(Objects::nonNull)
+						.map(r -> r.toString())
 						.collect(Collectors.toList()), predicates.getProperty((String)key))) {
 					return false;
+				}
+				}catch (NullPointerException ex) {
+					System.out.println(key);
 				}
 				break;
 			case "ifFlags":
@@ -336,7 +343,12 @@ public class RulesetNode {
 					if (p.startsWith("-")) {
 						fd.getRoles().remove(p.replace("-", ""));
 					} else {
-						fd.getRoles().add(MissionRole.parseRole(p.replace("+", "")));
+						MissionRole role = MissionRole.parseRole(p.replace("+", ""));
+						if (role != null) {
+							fd.getRoles().add(role);
+						} else {
+							System.err.println("Force generator could not parse role " + p);
+						}
 					}
 				}
 				break;

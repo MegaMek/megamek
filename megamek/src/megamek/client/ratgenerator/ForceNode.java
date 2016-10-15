@@ -142,7 +142,12 @@ public class ForceNode extends RulesetNode {
 						fd.getRoles().clear();
 					}
 					for (String p : content.split(",")) {
-						fd.getRoles().add(MissionRole.parseRole(p));
+						MissionRole role = MissionRole.parseRole(p);
+						if (role != null) {
+							fd.getRoles().add(role);
+						} else {
+							System.err.println("Force generator could not parse mission role " + p);
+						}
 					}
 					break;
 				case "flags":

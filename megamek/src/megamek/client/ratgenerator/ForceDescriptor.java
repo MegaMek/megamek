@@ -499,7 +499,7 @@ public class ForceDescriptor {
 			}
 		};
 		
-		System.err.println("Could not find unit for " + unitType);
+//		System.err.println("Could not find unit for " + unitType);
 		return null;
 	}
 	

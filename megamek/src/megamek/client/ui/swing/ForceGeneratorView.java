@@ -423,7 +423,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 					fd.getRoles().add(MissionRole.RAIDER);
 				}
 				if (chkRoleIncindiary.isSelected()) {
-					fd.getRoles().add(MissionRole.INCINDIARY);
+					fd.getRoles().add(MissionRole.INCENDIARY);
 				}
 				if (chkRoleAntiAircraft.isSelected()) {
 					fd.getRoles().add(MissionRole.ANTI_AIRCRAFT);

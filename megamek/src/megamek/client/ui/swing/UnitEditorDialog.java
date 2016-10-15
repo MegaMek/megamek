@@ -862,8 +862,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 1.0;
         panSystem.add(lifeSupportCrit, gridBagConstraints);
 
-        if ((aero instanceof Dropship) || (aero instanceof Jumpship)
-        		|| aero instanceof SmallCraft) {
+        if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy = 6;
             gridBagConstraints.weightx = 0.0;

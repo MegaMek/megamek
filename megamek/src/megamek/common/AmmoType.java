@@ -390,6 +390,16 @@ public class AmmoType extends EquipmentType {
                 .getRackSize()));
     }
 
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = ammoType;
+		result = prime * result
+				+ ((flags == null) ? 0 : flags.hashCode());
+		result = prime * result + rackSize;
+		return result;
+	}
+
     public int getAmmoType() {
         return ammoType;
     }

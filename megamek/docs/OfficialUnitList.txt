@@ -2317,19 +2317,25 @@ LRM Turret LRM20|
 Laser Turret (Dual) LL|
 LRM Turret LRM10|
 Laser Bay LL|
+MG Turret Single|
 SRM Turret (Dual) SRM2|
 Laser Bay MLx2|
 Laser Bay ML|
 SRM Turret (Dual) SRM6|
 SRM Turret SRM6|
+MG Turret Dual|
 LRM Turret LRM15|
 Laser Bay LLx2|
 AC Turret AC2|
 Laser Turret SL|
 Laser Bay SL|
 Static (ML)|
+Artillery Turret Thumper|
+Artillery Turret Sniper|
 LRM Turret (Dual) LRM20|
 AC Turret (Dual) AC10|
+Artillery Turret Long Tom|
+Artillery Turret Thumper (Dual)|
 Turret ER Large Laser|
 Laser Turret (Dual) SL|
 Turret Cruise Missile|
@@ -2338,6 +2344,7 @@ Turret (ML)|
 Laser Bay (Dual) SL|
 Turret ER PPC|
 LRM Turret (Dual) LRM15|
+MG Turret Quad|
 Gauss Turret (Dual) Gauss|
 Drake SDS Control Station (Standard)|
 Snowden Mining Station Mk I|

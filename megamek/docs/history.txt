@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.25-git
+v0.41.25 (2016-10-15 14:40 UTC)
 + Added movement type filters to RAT Generator for BA.
 + Issue #356: Almost all dropships have 2/3 movement
 + Data: New Sprites

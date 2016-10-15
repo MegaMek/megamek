@@ -26,7 +26,7 @@ import megamek.common.UnitType;
  */
 public enum MissionRole {
 	/*General combat roles */
-	RECON, RAIDER, INCENDIARY, EW_SUPPORT, ARTILLERY, MISSILE_ARTILLERY, APC, TRAINING,
+	RECON, RAIDER, INCENDIARY, EW_SUPPORT, ARTILLERY, MISSILE_ARTILLERY, APC, TRAINING, COMMAND,
 	/* Non-combat roles */
 	CARGO, SUPPORT, CIVILIAN,
 	/* Ground forces */
@@ -49,6 +49,7 @@ public enum MissionRole {
 		switch (this) {
 		case RECON:
 		case CIVILIAN:
+		case COMMAND:
 			return true;
 			
 		case SUPPORT:
@@ -192,6 +193,16 @@ public enum MissionRole {
 								avRating -= avAdj[0];
 							}
 						}
+					}
+					break;
+				case COMMAND:
+					if (mRec.getRoles().contains(COMMAND)) {
+						avRating += avAdj[2];
+					}
+					if ((ModelRecord.NETWORK_COMPANY_COMMAND & mRec.getNetworkMask()) != 0) {
+						avRating += avAdj[1];
+					} else if ((ModelRecord.NETWORK_C3_MASTER & mRec.getNetworkMask()) != 0) {
+						avRating += avAdj[0];
 					}
 					break;
 				case FIELD_GUN:
@@ -453,6 +464,8 @@ public enum MissionRole {
 			return RECON;
 		case "fire support":
 			return FIRE_SUPPORT;
+		case "command":
+			return COMMAND;
 		case "sr fire support":
 			return SR_FIRE_SUPPORT;
 		case "spotter":

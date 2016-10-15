@@ -26,7 +26,7 @@ import megamek.common.UnitType;
  */
 public enum MissionRole {
 	/*General combat roles */
-	RECON, RAIDER, INCINDIARY, EW_SUPPORT, ARTILLERY, MISSILE_ARTILLERY, APC, TRAINING,
+	RECON, RAIDER, INCENDIARY, EW_SUPPORT, ARTILLERY, MISSILE_ARTILLERY, APC, TRAINING,
 	/* Non-combat roles */
 	CARGO, SUPPORT, CIVILIAN,
 	/* Ground forces */
@@ -68,7 +68,7 @@ public enum MissionRole {
 		case APC:
 			return unitType <= UnitType.TANK || unitType == UnitType.VTOL;
 			
-		case INCINDIARY:
+		case INCENDIARY:
 		case ANTI_AIRCRAFT:
 			return unitType <= UnitType.PROTOMEK; // all ground units
 			
@@ -230,7 +230,7 @@ public enum MissionRole {
 							if (mRec.getRoles().contains(MOUNTAINEER) ||
 									mRec.getRoles().contains(PARATROOPER)) {
 								avRating -= avAdj[2];
-							} else if (mRec.getRoles().contains(INCINDIARY) ||
+							} else if (mRec.getRoles().contains(INCENDIARY) ||
 									mRec.getRoles().contains(MARINE) ||
 									mRec.getRoles().contains(XCT)) {
 								avRating -= avAdj[3];
@@ -308,8 +308,8 @@ public enum MissionRole {
 						}
 					}
 					break;
-				case INCINDIARY:
-					if (mRec.getRoles().contains(INCINDIARY)) {
+				case INCENDIARY:
+					if (mRec.getRoles().contains(INCENDIARY)) {
 						avRating += avAdj[2];
 					} else {
 						if (isSpecialized(desiredRoles, mRec)) {
@@ -425,7 +425,7 @@ public enum MissionRole {
 					mRec.getRoles().contains(PARATROOPER)) {
 				avRating -= avAdj[1];
 			}
-			if (mRec.getRoles().contains(INCINDIARY) ||
+			if (mRec.getRoles().contains(INCENDIARY) ||
 					mRec.getRoles().contains(MARINE) ||
 					mRec.getRoles().contains(XCT)) {
 				avRating -= avAdj[2];
@@ -448,11 +448,10 @@ public enum MissionRole {
 	}
 	
 	public static MissionRole parseRole(String role) {
-		switch (role.toLowerCase()) {
+		switch (role.toLowerCase().replace("_", " ")) {
 		case "recon":
 			return RECON;
 		case "fire support":
-		case "fire_support":
 			return FIRE_SUPPORT;
 		case "sr fire support":
 			return SR_FIRE_SUPPORT;
@@ -461,13 +460,15 @@ public enum MissionRole {
 		case "urban":
 			return URBAN;
 		case "infantry support":
+		case "inf support":
 			return INF_SUPPORT;
 		case "cavalry":
 			return CAVALRY;
 		case "raider":
 			return RAIDER;
+		case "incendiary":
 		case "incindiary":
-			return INCINDIARY;
+			return INCENDIARY;
 		case "ew support":
 			return EW_SUPPORT;
 		case "artillery":

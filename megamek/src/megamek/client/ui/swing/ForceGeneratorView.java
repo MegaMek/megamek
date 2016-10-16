@@ -217,6 +217,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbWeightClass, gbc);
+		cbWeightClass.addActionListener(this);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
@@ -227,6 +228,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbFlags, gbc);
+		cbFlags.addActionListener(this);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
@@ -240,6 +242,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbExperience, gbc);
+		cbExperience.addActionListener(this);
 		
 		gbc.gridwidth = 4;
 		panGroundRole = new JPanel(new GridBagLayout());

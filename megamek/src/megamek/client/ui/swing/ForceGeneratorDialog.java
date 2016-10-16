@@ -71,7 +71,7 @@ public class ForceGeneratorDialog extends JDialog {
 	}
 
 	private void initUi() {
-		panControls = new ForceGeneratorView(clientGui.getClient().getGame(), fd -> setGeneratedForce(fd));
+		panControls = new ForceGeneratorView(clientGui, fd -> setGeneratedForce(fd));
 		
 		panForce = new JPanel();
 		panForce = new JPanel(new GridBagLayout());
@@ -186,7 +186,7 @@ public class ForceGeneratorDialog extends JDialog {
 	private void setGeneratedForce(ForceDescriptor fd) {
 		forceTree.setModel(new ForceTreeModel(fd));
 		
-		lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(UnitType.getTypeName(fd.getUnitType())).get(fd.getEschelonCode()));
+		lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null? "" : UnitType.getTypeName(fd.getUnitType())).get(fd.getEschelonCode()));
 		lblFaction.setText(RATGenerator.getInstance().getFaction(fd.getFaction()).getName(fd.getYear()));
 		lblRating.setText(RandomSkillsGenerator.getLevelDisplayableName(fd.getExperience()) + "/"
 				+ ((fd.getRating() == null)?"":"/" + fd.getRating()));

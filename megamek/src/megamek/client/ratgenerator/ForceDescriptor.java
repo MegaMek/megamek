@@ -1162,6 +1162,16 @@ public class ForceDescriptor {
 	public Entity getEntity() {
 		return entity;
 	}
+	
+	public void addAllEntities(List<Entity> list) {
+		if (isElement()) {
+			if (entity != null) {
+				list.add(entity);
+			}
+		}
+		subforces.stream().forEach(sf -> sf.addAllEntities(list));
+		attached.stream().forEach(sf -> sf.addAllEntities(list));
+	}
 
 	public ForceDescriptor createChild() {
 		ForceDescriptor retVal = new ForceDescriptor();

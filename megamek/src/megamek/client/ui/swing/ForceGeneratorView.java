@@ -42,8 +42,10 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.Ruleset;
 import megamek.client.ratgenerator.TOCNode;
 import megamek.client.ratgenerator.ValueNode;
+import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
-import megamek.common.IGame;
+import megamek.common.Game;
+import megamek.common.Player;
 import megamek.common.UnitType;
 
 /**
@@ -58,7 +60,6 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	
 	private static final long serialVersionUID = 5269823128861856001L;
 	
-	private IGame game;
 	private int currentYear;
 	private Consumer<ForceDescriptor> onGenerate = null;
 	private boolean ignoreActions;
@@ -113,9 +114,12 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	private JCheckBox chkRoleAirTransport;
 
 	private JButton btnGenerate;
+	private JButton btnExportMUL;
 	
-	public ForceGeneratorView(IGame game, Consumer<ForceDescriptor> onGenerate) {
-		this.game = game;
+	private ClientGUI clientGui;
+	
+	public ForceGeneratorView(ClientGUI gui, Consumer<ForceDescriptor> onGenerate) {
+		clientGui = gui;
 		this.onGenerate = onGenerate;
 		if (!Ruleset.isInitialized()) {
 			Ruleset.loadData();
@@ -124,7 +128,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	}
 	
 	private void initUi() {
-		currentYear = game.getOptions().intOption("year");
+		currentYear = clientGui.getClient().getGame().getOptions().intOption("year");
 		forceDesc.setYear(currentYear);
 		RATGenerator rg = RATGenerator.getInstance();
 		rg.loadYear(currentYear);
@@ -252,14 +256,21 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		add(panAirRole, gbc);
 		panAirRole.setVisible(false);
 
-		gbc.gridwidth = 1;
 		btnGenerate = new JButton("Generate");
 		gbc.gridx = 0;
 		gbc.gridy = y;
 		gbc.gridwidth = 1;
 		gbc.weighty = 1.0;
 		add(btnGenerate, gbc);
-		btnGenerate.addActionListener(ev -> generateForce());
+		btnGenerate.addActionListener(this);
+
+		btnExportMUL = new JButton("Export MUL");
+		gbc.gridx = 1;
+		gbc.gridy = y;
+		gbc.weighty = 1.0;
+		add(btnExportMUL, gbc);
+		btnExportMUL.addActionListener(this);
+		btnExportMUL.setEnabled(false);
 
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -745,46 +756,63 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
+	public void actionPerformed(ActionEvent ev) {
 		if (ignoreActions) {
 			return;
 		}
 		ignoreActions = true;
-		if (arg0.getSource() == cbFaction) {
+		if (ev.getSource() == cbFaction) {
 			if (cbFaction.getSelectedItem() != null) {
 				forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
 			}
 			refreshSubfactions();
-		} else if (arg0.getSource() == cbSubfaction) {
+		} else if (ev.getSource() == cbSubfaction) {
 			if (cbSubfaction.getSelectedItem() != null) {
 				forceDesc.setFaction(((FactionRecord)cbSubfaction.getSelectedItem()).getKey());
 			} else {
 				forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
 			}
 			refreshUnitTypes();
-		} else if (arg0.getSource() == cbUnitType) {
+		} else if (ev.getSource() == cbUnitType) {
 			forceDesc.setUnitType((Integer)cbUnitType.getSelectedItem());
 			refreshFormations();
-		} else if (arg0.getSource() == cbFormation) {
+		} else if (ev.getSource() == cbFormation) {
 			String esch = (String)cbFormation.getSelectedItem();
 			if (esch != null) {
 				setFormation(esch);
 			}
 			refreshRatings();
-		} else if (arg0.getSource() == cbRating) {
+		} else if (ev.getSource() == cbRating) {
 			forceDesc.setRating((String)cbRating.getSelectedItem());
 			refreshFlags();
-		} else if (arg0.getSource() == cbFlags) {
+		} else if (ev.getSource() == cbFlags) {
 			forceDesc.getFlags().clear();
 			if (cbFlags.getSelectedItem() != null) {
 				forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
 			}
-		} else if (arg0.getSource() == cbWeightClass) {
+		} else if (ev.getSource() == cbWeightClass) {
 			if (cbWeightClass.getSelectedIndex() < 1) {
 				forceDesc.setWeightClass(null);
 			} else {
 				forceDesc.setWeightClass(cbWeightClass.getSelectedIndex());
 			}
+		} else if (ev.getSource() == btnGenerate) {
+			generateForce();
+			btnExportMUL.setEnabled(true);
+		} else if (ev.getSource() == btnExportMUL) {
+			ArrayList<Entity> list = new ArrayList<>();
+			forceDesc.addAllEntities(list);
+			//Create a fake game so we can write the entities to a file without adding them to the real game.
+			Game game = new Game();
+			//Add a player to prevent complaining in the log file
+			Player p = new Player(1, "Observer");
+			game.addPlayer(1, p);
+			game.setOptions(clientGui.getClient().getGame().getOptions());
+			list.stream().forEach(en -> {
+				en.setOwner(p);
+				game.addEntity(en);
+			});
+			clientGui.saveListFile(list, clientGui.getClient().getLocalPlayer().getName());
 		}
 		ignoreActions = false;
 	}

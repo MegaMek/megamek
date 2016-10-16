@@ -2366,13 +2366,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 .getCustomUnitWidth(), GUIPreferences.getInstance()
                 .getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits")); //$NON-NLS-1$
-        if (cmdSelectedTab != -1) {
-            cmd.setSelectedTab(cmdSelectedTab);
-        }
         cmd.setVisible(true);
         GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
         GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
-        cmdSelectedTab = cmd.getSelectedTab();
         if (editable && cmd.isOkay()) {
             // send changes
             for (Entity entity : entities) {
@@ -2388,10 +2384,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
                 // Customizations to a Squadron can effect the fighters
                 if (entity instanceof FighterSquadron) {
-                    for (Aero fighter : ((FighterSquadron) entity)
-                            .getFighters()) {
-                        client.sendUpdateEntity(fighter);
-                    }
+                    entity.getSubEntities().ifPresent(ents -> ents.forEach(client::sendUpdateEntity));
                 }
             }
         }
@@ -2470,10 +2463,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
                 // Customizations to a Squadron can effect the fighters
                 if (entity instanceof FighterSquadron) {
-                    for (Aero fighter : ((FighterSquadron) entity)
-                            .getFighters()) {
-                        c.sendUpdateEntity(fighter);
-                    }
+                    entity.getSubEntities().ifPresent(ents -> ents.forEach(c::sendUpdateEntity));
                 }
 
                 // Do we need to update the members of our C3 network?
@@ -3955,6 +3945,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             continue;
                         }
                         m.setHotLoad(hotLoad);
+                        // Set the mode too, so vehicles can switch back
+                        int numModes = m.getType().getModesCount();
+                        for (int i = 0; i < numModes; i++) {
+                            if (m.getType().getMode(i).getName()
+                                    .equals("HotLoad")) {
+                                m.setMode(i);
+                            }
+                        }
                     }
                 }
             } else if (command.equalsIgnoreCase("SEARCHLIGHT_OFF")
@@ -4074,8 +4072,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         && !allInfantry) {
                     allSameEntityType = false;
                 }
-                if (isRapidFireMG) {
-                    for (Mounted m : en.getEquipment()) {
+                if (isRapidFireMG || isHotLoad) {
+                    for (Mounted m : en.getWeaponList()) {
                         EquipmentType etype = m.getType();
                         if (etype.hasFlag(WeaponType.F_MG)) {
                             hasMGs |= true;

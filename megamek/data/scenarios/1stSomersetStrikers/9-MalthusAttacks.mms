@@ -22,10 +22,10 @@ Unit_FalconsClaws_8=Elemental Battle Armor [Flamer],Point 3,4,4,N,07,33
 Unit_FalconsClaws_9=Elemental Battle Armor [MG],Point 4,4,4,N,09,33
 Unit_FalconsClaws_10=Elemental Battle Armor [MG],Point 5,4,4,N,10,33
 # Strikers Lance: 
-Unit_1stSomersetStrikers_1=Awesome AWS-9Ma,Major Adam Steiner,1,1,N,17,08
+Unit_1stSomersetStrikers_1=Awesome AWS-9Ma,Major Adam Steiner,1,1,N,16,08
 Unit_1stSomersetStrikers_2=Mauler MAL-1R,Captain Zachary Miles Hawkins,3,4,N,08,12
-Unit_1stSomersetStrikers_3=Bushwacker BSW-X1,Captain Valten Ryder,4,3,N,17,09
-Unit_1stSomersetStrikers_4=Sloth Battle Armor (Standard), Franklin Sakamoto,5,5,N,17,10
+Unit_1stSomersetStrikers_3=Bushwacker BSW-X1,Captain Valten Ryder,4,3,N,16,09
+Unit_1stSomersetStrikers_4=Sloth Battle Armor (Standard), Franklin Sakamoto,5,5,N,16,10
 # Somerset Cadet Corps:
 Unit_1stSomersetStrikers_5=Axman AXM-2N,Commander Andrew Steiner,3,4,N,07,06
 Unit_1stSomersetStrikers_6=Foot Platoon (Laser),A1,5,5,N,07,12

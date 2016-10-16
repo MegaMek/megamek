@@ -1,7 +1,0 @@
-Neoancient Liao 3055 Light Aerospace Fighters A
-@Neoancient Davion 3050 Light Aerospace Fighters B,2
-@Neoancient Marik 3050 Light Aerospace Fighters B,1
-@Neoancient St. Ives 3050 Light Aerospace Fighters B,1
-Centurion CNT-1D,25
-Centurion CNT-2D,9
-Thrush TR-7,100

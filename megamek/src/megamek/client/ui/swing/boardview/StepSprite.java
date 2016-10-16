@@ -11,11 +11,9 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.common.Aero;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -59,9 +57,7 @@ class StepSprite extends Sprite {
             return;
         }
 
-        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                baseScaleImage.getSource(), new KeyAlphaFilter(
-                        BoardView1.TRANSPARENT))), false);
+        image = bv.getScaledImage(baseScaleImage, false);
     }
 
     @Override

@@ -1,9 +1,0 @@
-Neoancient Canopus 2765 Medium Vehicles B
-@Neoancient Liao 2700 Medium Vehicles C,2
-@Neoancient Marik 2700 Medium Vehicles C,12
-@Neoancient Star League 2700 Medium Vehicles C,1
-Condor Heavy Hover Tank (Standard),80
-Goblin Medium Tank (Standard),60
-Korvin Tank KRV-3,48
-Maxim Heavy Hover Transport (Standard),100
-Thor Artillery Vehicle (Standard),20

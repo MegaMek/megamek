@@ -1,6 +1,0 @@
-Neoancient Outworlds 2860 Medium Vehicles C
-@Neoancient Davion 2830 Medium Vehicles D,8
-@Neoancient Kurita 2830 Medium Vehicles D,5
-Condor Heavy Hover Tank (Standard),88
-Goblin Medium Tank (Standard),66
-Maxim Heavy Hover Transport (Standard),100

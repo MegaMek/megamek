@@ -1,7 +1,0 @@
-Neoancient Liao 2700 Warships
-Aegis Heavy Cruiser (2372),91
-Aegis Heavy Cruiser (2582),23
-Baron Destroyer (Standard),60
-Black Lion I-Battlecruiser,20
-Du Shi Wang Battleship (Standard),100
-Lola I Destroyer (Standard),40

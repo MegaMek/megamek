@@ -1,7 +1,0 @@
-Neoancient General 2830 Assault Vehicles B
-Demolisher Heavy Tank (Defensive),1
-Demolisher Heavy Tank (Standard Mk. I),1
-Demolisher Heavy Tank (Standard Mk. II),3
-Mobile Long Tom Artillery (Unofficial) (+ Carriage),1
-Partisan Heavy Tank (Standard),3
-Schrek PPC Carrier (Standard),3

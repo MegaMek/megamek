@@ -31,6 +31,7 @@ public class MULParser {
      */
     private static final String RECORD = "record";
     private static final String SURVIVORS = "survivors";
+    private static final String ALLIES = "allies";
     private static final String SALVAGE = "salvage";
     private static final String DEVASTATED = "devastated";
     private static final String UNIT = "unit";
@@ -149,6 +150,16 @@ public class MULParser {
     private static final String KILLED = "killed";
     private static final String KILLER = "killer";
 
+    public static final String ARMOR_DIVISOR = "armorDivisor";
+    public static final String ARMOR_ENC = "armorEncumbering";
+    public static final String DEST_ARMOR = "destArmor";
+    public static final String SPACESUIT = "spacesuit";
+    public static final String SNEAK_CAMO = "sneakCamo";
+    public static final String SNEAK_IR = "sneakIR";
+    public static final String SNEAK_ECM = "sneakECM";
+    public static final String INF_SPEC = "infantrySpecializations";
+
+
     /**
      * Special values recognized by this parser.
      */
@@ -172,6 +183,10 @@ public class MULParser {
      */
     Vector<Entity> survivors;
     
+    /**
+     * Stores all of the allied Entity's read in. 
+     */
+    Vector<Entity> allies;
     
     /**
      * Stores all the salvage entities read in 
@@ -202,6 +217,7 @@ public class MULParser {
         warning = new StringBuffer();
         entities = new Vector<Entity>();
         survivors = new Vector<Entity>();
+        allies = new Vector<Entity>();
         salvage = new Vector<Entity>();
         devastated = new Vector<Entity>();
         kills = new Hashtable<String, String>();
@@ -220,6 +236,7 @@ public class MULParser {
         // Clear the entities.
         entities.removeAllElements();
         survivors.removeAllElements();
+        allies.removeAllElements();
         salvage.removeAllElements();
         devastated.removeAllElements();
         pilots.removeAllElements();
@@ -286,6 +303,8 @@ public class MULParser {
                     parseUnit((Element)currNode, entities);
                 } else if (nodeName.equalsIgnoreCase(SURVIVORS)){
                     parseUnit((Element)currNode, survivors);
+                } else if (nodeName.equalsIgnoreCase(ALLIES)){
+                    parseUnit((Element)currNode, allies);
                 } else if (nodeName.equalsIgnoreCase(SALVAGE)){
                     parseUnit((Element)currNode, salvage);
                 } else if (nodeName.equalsIgnoreCase(DEVASTATED)){
@@ -644,6 +663,38 @@ public class MULParser {
         String c3uuid = entityTag.getAttribute(C3UUID);
         if (c3uuid.length() > 0) {
             entity.setC3UUIDAsString(c3uuid);
+        }
+
+        // Load some values for conventional infantry
+        if ((entity instanceof Infantry)
+                && !(entity instanceof BattleArmor)) {
+            Infantry inf = (Infantry) entity;
+            String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
+            if (armorDiv.length() > 0) {
+                inf.setDamageDivisor(Double.parseDouble(armorDiv));
+            }
+            if (entityTag.getAttribute(ARMOR_ENC).length() > 0) {
+                inf.setArmorEncumbering(true);
+            }
+            if (entityTag.getAttribute(SPACESUIT).length() > 0) {
+                inf.setSpaceSuit(true);
+            }
+            if (entityTag.getAttribute(DEST_ARMOR).length() > 0) {
+                inf.setDEST(true);
+            }
+            if (entityTag.getAttribute(SNEAK_CAMO).length() > 0) {
+                inf.setSneakCamo(true);
+            }
+            if (entityTag.getAttribute(SNEAK_IR).length() > 0) {
+                inf.setSneakIR(true);
+            }
+            if (entityTag.getAttribute(SNEAK_ECM).length() > 0) {
+                inf.setSneakECM(true);
+            }
+            String infSpec = entityTag.getAttribute(INF_SPEC);
+            if (infSpec.length() > 0) {
+                inf.setSpecializations(Integer.parseInt(infSpec));
+            }
         }
     }
     
@@ -1964,6 +2015,15 @@ public class MULParser {
      */
     public Vector<Entity> getSurvivors(){
         return survivors;
+    }
+    
+    /**
+     * Returns a list of all of the allied Entity's parsed from the input, should be
+     * called after <code>parse</code>.
+     * @return
+     */
+    public Vector<Entity> getAllies(){
+        return allies;
     }
     
     /**

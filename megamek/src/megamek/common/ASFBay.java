@@ -139,7 +139,7 @@ public final class ASFBay extends Bay {
                     + String.format("%1$,.0f", currentSpace) + " units ("
                     + getRecoverySlots() + " recovery open)";
         }
-        return String.format("Aerospace Fighter Bay (%d doors) - %1$,.0f",
+        return String.format("Aerospace Fighter Bay (%1$d doors) - %2$,.0f",
                 getDoors(), currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }

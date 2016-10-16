@@ -62,7 +62,8 @@ public class StreakHandler extends MissileWeaponHandler {
             int toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             return toReturn;
         }
         return 2;

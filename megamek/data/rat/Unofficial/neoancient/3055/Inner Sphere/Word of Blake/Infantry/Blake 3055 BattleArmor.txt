@@ -1,9 +1,0 @@
-Neoancient Blake 3055 BattleArmor
-IS Standard Battle Armor (Level I) [Flamer],88
-IS Standard Battle Armor (Level I) [Laser],75
-IS Standard Battle Armor (Level I) [MG],100
-IS Standard Battle Armor (Level I) [SRM],88
-IS Standard Battle Armor [Flamer],88
-IS Standard Battle Armor [Laser],75
-IS Standard Battle Armor [MG],100
-IS Standard Battle Armor [SRM],88

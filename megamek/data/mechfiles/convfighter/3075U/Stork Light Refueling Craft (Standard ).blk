@@ -17,7 +17,7 @@ Stork Light Refueling Craft
 </Name>
 
 <model>
-(Original)
+(Standard)
 </model>
 
 <Tonnage>
@@ -45,7 +45,6 @@ Stork Light Refueling Craft
 
 <Nose Equipment>
 ISSRM4
-ISAntiMissileSystem
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -56,7 +55,7 @@ ISAntiMissileSystem
 
 <Aft Equipment>
 ISSRM4
-ISAntiMissileSystem
+
 RefuelingDrogue
 </Aft Equipment>
 
@@ -64,9 +63,6 @@ RefuelingDrogue
 Advanced Fire Control
 Armored Chassis
 ISSRM4 Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
 </Body Equipment>
 
 <heatsinks>
@@ -110,6 +106,6 @@ aerodyne
 </motion_type>
 
 <transporters>
-liquidcargobay:19.58:1
+liquidcargobay:23.98:1
 </transporters>
 

@@ -367,7 +367,7 @@ public class TestTank extends TestEntity {
             correct = false;
         }
         // only tanks with fusion engine can be vacuum protected
-        if (!(tank.getEngine().isFusion() 
+        if(tank.hasEngine() && !(tank.getEngine().isFusion() 
                 || (tank.getEngine().getEngineType() == Engine.FUEL_CELL)
                 || (tank.getEngine().getEngineType() == Engine.SOLAR)
                 || (tank.getEngine().getEngineType() == Engine.BATTERY)

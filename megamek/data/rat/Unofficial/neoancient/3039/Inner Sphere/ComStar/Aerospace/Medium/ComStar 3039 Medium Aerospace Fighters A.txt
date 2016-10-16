@@ -1,9 +1,0 @@
-Neoancient ComStar 3039 Medium Aerospace Fighters A
-Gotha GTHA-100,2
-Gotha GTHA-300,1
-Gotha GTHA-500,1
-Hellcat II HCT-214,6
-Ironsides IRN-SD1,2
-Ironsides IRN-SD2,1
-Lightning LTN-G15,2
-Stingray F-90,1

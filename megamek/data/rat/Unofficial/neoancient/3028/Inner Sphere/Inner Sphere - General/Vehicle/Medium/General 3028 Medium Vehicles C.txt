@@ -1,8 +1,0 @@
-Neoancient General 3028 Medium Vehicles C
-Condor Heavy Hover Tank (Flamer),9
-Condor Heavy Hover Tank (Standard),37
-Hetzer Wheeled Assault Gun (SRM),31
-Hetzer Wheeled Assault Gun (Standard),82
-Maxim Heavy Hover Transport (Standard),42
-Vedette Medium Tank (AC2),63
-Vedette Medium Tank (Standard),100

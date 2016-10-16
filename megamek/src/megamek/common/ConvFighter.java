@@ -43,6 +43,9 @@ public class ConvFighter extends Aero {
 
     @Override
     public int getFuelUsed(int thrust) {
+        if(!hasEngine()) {
+            return 0;
+        }
         int overThrust =  Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
         int used = safeThrust + (2 * overThrust);
@@ -84,8 +87,10 @@ public class ConvFighter extends Aero {
         cost += 25000 + (10 * getWeight());
 
         // engine
-        cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
-
+        if(hasEngine()) {
+            cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
+        }
+        
         // fuel tanks
         cost += (200 * getFuel()) / 160.0;
 
@@ -125,6 +130,9 @@ public class ConvFighter extends Aero {
 
     @Override
     protected int calculateWalk() {
+        if(!hasEngine()) {
+            return 0;
+        }
         if (isPrimitive()) {
             double rating = getEngine().getRating();
             rating /= 1.2;

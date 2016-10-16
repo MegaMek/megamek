@@ -12,8 +12,8 @@ information on the board file format, and the tileset file format.
 
     Saving a map is accomplished with the Save or Save As buttons, right below
     the New and Load buttons.  The MegaMek server only checks files in the 
-    data/boards directory, and with the .board extention, when determining which 
-    boards to load.  This means you should add a .board extention to all your
+    data/boards directory, and with the .board extension, when determining which 
+    boards to load.  This means you should add a .board extension to all your
     filenames when saving.
     
   Quick Reference:
@@ -154,16 +154,16 @@ information on the board file format, and the tileset file format.
   
 
 The board file format is plain text.  You will probably not need to edit the
-board files by hand.  This refrence is just for creating a different editor.
+board files by hand.  This reference is just for creating a different editor.
 
   The Board File Format
     As mentioned earlier, the server scans for files that have a .board
-    extention, in the data/boards directory.
+    extension, in the data/boards directory.
 
     Board files consist of a keyword, usually followed by several parameters.  
     The four keywords used are "size", "option", "hex", and "end".  Keywords
-    should begin the line of text they are on.  Parameters are seperated by a
-    space.  String parameters with a space in them, or empty string paramters
+    should begin the line of text they are on.  Parameters are separated by a
+    space.  String parameters with a space in them, or empty string parameters
     can be quoted.  Comment lines are preceded by the hash (#) character.
 
   The "size" Keyword
@@ -194,14 +194,14 @@ board files by hand.  This refrence is just for creating a different editor.
     The elevation should be an integer, unquoted.
 
     All terrain attributes, if any, for the hex should be a single, quoted
-    string.  Within this string, terran is specified as:
+    string.  Within this string, terrain is specified as:
         <terrain>:<level>[:<exits>]
 
-    The terrian should be a lower-case string of one of the terrain types
-    listed above.  The level is seperated by the terrain by a colon (:).
-    Optionally, the exits parameter is appended, seperated with a : again.
+    The terrain should be a lower-case string of one of the terrain types
+    listed above.  The level is separated by the terrain by a colon (:).
+    Optionally, the exits parameter is appended, separated with a : again.
 
-    Multiple terrain types should be in the same string, seperated with the
+    Multiple terrain types should be in the same string, separated with the
     semicolon (;) character.
 
     The theme of the hex is purely for cosmetic purposes.  It should be left

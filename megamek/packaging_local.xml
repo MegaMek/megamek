@@ -79,7 +79,7 @@
 		<os family="mac" />
 	</condition>
 
-	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar"/>
+	<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpath="${util}/jarbundler-core-3.3.0.jar"/>
 
 	<!-- if we're using a Mac then we'll use the launch4j for Mac OS -->
     <target name="checkOSMac" if="isOsMac">
@@ -108,7 +108,7 @@
 
 	<!-- following localdev-* tasks get, build & package the current version from local sources -->
 	<target name="localdev-get" depends="localdev-init" description="get the local source">
-		<copy todir="${localdir}" >
+		<copy todir="${localdir}" encoding="UTF-8" >
 			<fileset dir="${basedir}">
 				<exclude name="${localdir}" />
 			</fileset>
@@ -120,7 +120,7 @@
 
 		<!-- compile -->
 		<echo message="building MegaMek from local sources" />
-		<javac debug="true" debuglevel="lines,source" target="1.7" source="1.7" destdir="${localbuilddir}" srcdir="${localdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
+		<javac debug="true" debuglevel="lines,source" target="1.8" source="1.8" destdir="${localbuilddir}" srcdir="${localdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
 			<classpath>
 				<pathelement location="${localdir}" />
 				<fileset dir="${localdir}/${libdir}" includes="*.jar" />
@@ -145,7 +145,7 @@
 				<fileset dir="${localdir}/${libdir}" includes="*.jar" />
 			</classpath>
 		</java>
-		<copy todir="${localdir}/docs" overwrite="true">
+		<copy todir="${localdir}/docs" overwrite="true" encoding="UTF-8">
 			<fileset dir="${docdir}" includes="equipment.txt" />
 		</copy>
 
@@ -162,7 +162,7 @@
 
 	<target name="mac-bundle" description="Bundle the project built from local source into an Mac OSX distribution">
 		<mkdir dir="${osxdist}" />
-		<copy todir="${osxdist}">
+		<copy todir="${osxdist}" encoding="UTF-8">
 			<fileset dir="${localdir}" >
 				<include name="${docdir}/" />
 				<include name="readme*.txt" />
@@ -173,19 +173,24 @@
 				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
-		<mkdir dir="${osxdist}/MegaMek.app" />
-		<copy todir="${osxdist}/MegaMek.app">
-			<fileset dir="${util}/MegaMek.app" >
-				<include name="**/*"/>
-			</fileset>
-		</copy>
-		<copy file="${util}/JavaApplicationStub" todir="${osxdist}/MegaMek.app/Contents/MacOS/"/>
-		<copy todir="${osxdist}/MegaMek.app/Contents/Resources/Java/">
-			<fileset dir="${localdir}" >
-				<include name="${libdir}/*.jar" />
-				<include name="${jarfile}" />
-			</fileset>
-		</copy>
+		<jarbundler
+			dir="${osxdist}"
+			name="MegaMek"
+			mainclass="megamek.MegaMek"
+			stubfile="packaging_utils/JavaApplicationStub"
+			icon="data/images/misc/megamek.icns"
+			workingdirectory="$APP_PACKAGE/../"
+			useJavaXKey="true"
+			jvmversion="1.8+"
+			version="${version}"
+			vmoptions="-Xmx1024m">
+            <jarfileset dir="${localdir}">
+                <include name="**/*.jar" />
+                <exclude name="${util}/" />
+            </jarfileset>
+            <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
+            <javaproperty name="apple.awt.brushMetal" value="true" />
+        </jarbundler>
 	</target>
 
 	<!-- I think this will only work on OS X systems -->
@@ -220,7 +225,7 @@
 	<target name="nix-bundle" description="Bundle the project built from local sources into a unix distribution">
 		<mkdir dir="${nixdist}" />
 		<mkdir dir="${nixdist}/${nixdist}" />
-		<copy todir="${nixdist}/${nixdist}">
+		<copy todir="${nixdist}/${nixdist}" encoding="UTF-8">
 			<fileset dir="${localdir}" >
 				<include name="${jarfile}" />
 				<include name="${libdir}/*.jar" />
@@ -254,7 +259,7 @@
 
 	<target name="win-bundle" depends="exe" description="Bundle the project built from local sources into a Windows distribution">
 		<mkdir dir="${windist}" />
-		<copy todir="${windist}">
+		<copy todir="${windist}" encoding="UTF-8">
 			<fileset dir="${localdir}" >
 				<include name="${libdir}/" />
 				<include name="${logdir}/" />
@@ -267,8 +272,8 @@
 				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
-		<copy file="${util}/megamek.l4j.ini" todir="${windist}"/>
-        <copy file="${localdir}/MegaMek.jar" todir="${windist}/lib/" />
+		<copy file="${util}/megamek.l4j.ini" todir="${windist}" encoding="UTF-8"/>
+		<copy file="${localdir}/MegaMek.jar" todir="${windist}/lib/" encoding="UTF-8" />
 	</target>
 
 	<target name="unitfiles-zip" description="Create a zipfile of the Mech datafiles">
@@ -323,7 +328,7 @@
 	<target name="source-package" description="Package a source-only distribution of the project built from local sources">
 		<mkdir dir="${srcdist}" />
 		<mkdir dir="${srcdist}/${srcdist}" />
-		<copy todir="${srcdist}/${srcdist}">
+		<copy todir="${srcdist}/${srcdist}" encoding="UTF-8">
 			<fileset dir="${localdir}" >
 				<exclude name="${builddir}/**"/>
 				<exclude name="MegaMek.jar"/>
@@ -337,7 +342,7 @@
 		<delete dir="${srcdist}" />
 	</target>
 
-	<target name="release" depends="localdev-build, unitfiles-zip, rat-zip, mac-package, nix-package, win-package, source-package, localdev-clean" description="Build the project from local sources and package it as Windows, Mac, Unix, and source-only" />
+    <target name="release" depends="localdev-build, unitfiles-zip, rat-zip, mac-package, nix-package, win-package, source-package, localdev-clean" description="Build the project from local sources and package it as Windows, Mac, Unix, and source-only" />
 
     <target name="mac-release" depends="localdev-build, mac-package, localdev-clean" description="Build the project from local source and package it as Mac" />
 

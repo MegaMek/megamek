@@ -1,9 +1,0 @@
-Neoancient Taurian 2815 Assault Vehicles B
-@Neoancient Davion 2780 Assault Vehicles C,15
-@Neoancient Liao 2780 Assault Vehicles C,7
-Demolisher Heavy Tank (Standard Mk. I),91
-Partisan Heavy Tank (Standard),100
-Puma Assault Tank PAT-005,51
-Rhino Fire Support Tank (MG),42
-Rhino Fire Support Tank (Standard),59
-Schrek PPC Carrier (Standard),95

@@ -1,5 +1,0 @@
-Neoancient Canopus 2830 Warships
-Athena Cruiser (Standard),25
-Concordat Frigate (2506),25
-Dart Light Cruiser (Standard),25
-Pinto Corvette (Standard),100

@@ -1,7 +1,0 @@
-Neoancient Pirate 2765 Jumpships
-Invader Jumpship (PPC),1
-Invader Jumpship (Standard),1
-Merchant Jumpship (Standard),2
-Scout JumpShip (Standard),1
-Star Lord JumpShip (Standard),1
-Tramp JumpShip (Standard),2

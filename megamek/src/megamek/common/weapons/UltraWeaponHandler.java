@@ -42,8 +42,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = 7551194199079004134L;
     int howManyShots;
     private final boolean twoRollsUltra; // Tracks whether or not this is an
-        // ultra AC using the unofficial "two rolls" rule. Can be final because
-        // this isn't really going to change over the course of a game.
+
+    // ultra AC using the unofficial "two rolls" rule. Can be final because
+    // this isn't really going to change over the course of a game.
 
     /**
      * @param t
@@ -51,11 +52,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * @param g
      */
     public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
-                              Server s) {
+            Server s) {
         super(t, w, g, s);
         twoRollsUltra = game.getOptions().booleanOption("uac_tworolls")
-                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB));
+                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
+                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB));
     }
 
     /*
@@ -89,7 +90,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             ammo = weapon.getLinked();
             // that fired one, do we need to fire another?
             ammo.setShotsLeft(ammo.getBaseShotsLeft()
-                              - ((howManyShots == 2) ? 1 : 0));
+                    - ((howManyShots == 2) ? 1 : 0));
         } else {
             ammo.setShotsLeft(ammo.getBaseShotsLeft() - howManyShots);
         }
@@ -161,7 +162,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             weapon.setJammed(true);
             isJammed = true;
             if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                 r.messageId = 3160;
             } else {
                 r.messageId = 3170;
@@ -184,15 +185,16 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             toReturn = 0;
             for (int i = 0; i < howManyShots; i++) {
                 toReturn += Compute.directBlowInfantryDamage(wtype.getDamage(),
-                                                             bDirect ? toHit.getMoS() / 3 : 0,
-                                                             wtype.getInfantryDamageClass(),
-                                                             ((Infantry) target).isMechanized());
+                        bDirect ? toHit.getMoS() / 3 : 0,
+                        wtype.getInfantryDamageClass(),
+                        ((Infantry) target).isMechanized(),
+                        toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             }
             // plus 1 for cluster
             toReturn++;
-            
-        // Cluster bonuses or penalties can't apply to "two rolls" UACs, so
-        // if we have one, modify the damage per hit directly.
+
+            // Cluster bonuses or penalties can't apply to "two rolls" UACs, so
+            // if we have one, modify the damage per hit directly.
         } else if (bDirect && (howManyShots == 1 || twoRollsUltra)) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -202,10 +204,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         }
 
         if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
-            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(
+                OptionsConstants.AC_TAC_OPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
@@ -220,7 +223,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected int calcnClusterAero(Entity entityTarget) {
         if (usesClusterTable() && !ae.isCapitalFighter()
-            && (entityTarget != null) && !entityTarget.isCapitalScale()) {
+                && (entityTarget != null) && !entityTarget.isCapitalScale()) {
             return (int) Math.ceil(attackValue / 2.0);
         } else {
             return 1;

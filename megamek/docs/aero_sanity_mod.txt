@@ -2,6 +2,15 @@ Aero Sanity Mod Information
 11/7/2013
 Jay Lawson (Taharqa)
 
+
+WARNING - August 2016
+=========================================================================
+==This option has been known to cause issues in both MegaMek and MekHQ.==
+==The developer on this Mod is no longer active and future support will==
+==depend on his return.                                                ==
+=========================================================================
+
+
 Individuals not used to including aerospace units in their games are often surprised at some of the odd ways the 
 rules for damage work. SRMs do damage in 5-point clusters, LRM20s mounted in weapon bays on dropships can actually
 headcap mechs, UAC20s do one hit for 20 points of damage and another for 10 points of damage, medium laser lasers
@@ -35,7 +44,7 @@ The aero sanity mod affects how aero units dish out, receive, and take damage. S
    increments to different locations. So, if a weapon bay with 3 PPCs hit a target it would roll three different
    hit locations and apply 10 points of damage each time. If a weapon bay with 2 LRM20s hit, you would roll on the 
    cluster hit table twice and then apply damage in 5-point increments for each LRM. So no more headcapping LRMs.
-4) Weapon squadrons follow rules similar to weapon bays. After rolling to see how many weapons hit afer a successful
+4) Weapon squadrons follow rules similar to weapon bays. After rolling to see how many weapons hit after a successful
    hit, you then roll separate hit locations for each weapon. So a squadron of fighters with 12 medium lasers who 
    hit with 8 of them would roll 8 different hit locations on the unit they hit. For cluster weapons, you roll on the 
    cluster hit table for each weapon that hit and sum up the total number of missiles/shells/whatever and then divvy

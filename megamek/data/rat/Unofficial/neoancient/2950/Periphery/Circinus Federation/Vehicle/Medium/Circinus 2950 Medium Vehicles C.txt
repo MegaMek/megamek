@@ -1,8 +1,0 @@
-Neoancient Circinus 2950 Medium Vehicles C
-@Neoancient Marik 2870 Medium Vehicles D,9
-@Neoancient Steiner 2870 Medium Vehicles D,9
-Condor Heavy Hover Tank (Standard),41
-Goblin Medium Tank (Standard),41
-Hetzer Wheeled Assault Gun (Standard),82
-Maxim Heavy Hover Transport (Standard),42
-Vedette Medium Tank (Standard),100

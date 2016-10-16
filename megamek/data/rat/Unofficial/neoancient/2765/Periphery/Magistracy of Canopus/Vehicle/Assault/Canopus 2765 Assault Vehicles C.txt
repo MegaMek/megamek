@@ -1,7 +1,0 @@
-Neoancient Canopus 2765 Assault Vehicles C
-@Neoancient Liao 2700 Assault Vehicles D,2
-@Neoancient Marik 2700 Assault Vehicles D,9
-@Neoancient Star League 2700 Assault Vehicles C,1
-Puma Assault Tank PAT-005,100
-Rhino Fire Support Tank (MG),58
-Rhino Fire Support Tank (Standard),82

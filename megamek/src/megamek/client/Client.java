@@ -55,6 +55,7 @@ import megamek.client.ui.IClientCommandHandler;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
 import megamek.common.Building;
+import megamek.common.Building.DemolitionCharge;
 import megamek.common.Coords;
 import megamek.common.QuirksHandler;
 import megamek.common.Entity;
@@ -906,8 +907,8 @@ public class Client implements IClientCommandHandler {
      * Sends a "load entity" packet
      */
     public void sendLoadEntity(int id, int loaderId, int bayNumber) {
-        send(new Packet(Packet.COMMAND_ENTITY_LOAD, new Object[]{id,
-                                                                 loaderId, bayNumber}));
+        send(new Packet(Packet.COMMAND_ENTITY_LOAD, new Object[] { id,
+                loaderId, bayNumber }));
     }
 
     /**
@@ -925,6 +926,12 @@ public class Client implements IClientCommandHandler {
             e.printStackTrace();
             System.out.println("Can't find local savegame " + f); //$NON-NLS-1$
         }
+    }
+    
+    public void sendExplodeBuilding(DemolitionCharge charge) {
+        Object data[] = new Object[1];
+        data[0] = charge;
+        send(new Packet(Packet.COMMAND_BLDG_EXPLODE, data));
     }
 
     /**

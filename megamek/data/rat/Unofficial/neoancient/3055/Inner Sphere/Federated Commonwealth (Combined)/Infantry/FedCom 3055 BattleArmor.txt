@@ -1,8 +1,0 @@
-Neoancient FedCom 3055 BattleArmor
-@Neoancient Clan Jade Falcon 3050 BattleArmor,2
-IS Standard Battle Armor [Flamer],88
-IS Standard Battle Armor [Laser],75
-IS Standard Battle Armor [MG],100
-IS Standard Battle Armor [SRM],21
-Infiltrator Mk. I Battle Armor 'Waddle',91
-Sloth Battle Armor (Standard),69

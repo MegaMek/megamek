@@ -155,7 +155,7 @@ public class Quirks extends AbstractOptions {
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
         String qName = quirk.getName();
         
-        if ((en.getEngine() != null) &&
+        if (en.hasEngine() &&
                 ((en.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) ||
                 (en.getEngine().getEngineType() == Engine.FUEL_CELL)) &&
                 qName.equals(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
@@ -215,6 +215,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
+                    || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
@@ -228,6 +229,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)                    
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
@@ -248,7 +250,7 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             
-            if(!en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
+            if(en.hasEngine() && !en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                 return false;
             }
             
@@ -349,6 +351,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_POS_HEAD_EJECT)

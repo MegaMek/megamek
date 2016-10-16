@@ -1,7 +1,0 @@
-Neoancient Clan Star Adder 3000 Heavy Aerospace Fighters Keshik
-Hydaspes (Standard),19
-Kirghiz A,75
-Kirghiz B,75
-Kirghiz C,50
-Kirghiz Prime,100
-Xerxes (Standard),16

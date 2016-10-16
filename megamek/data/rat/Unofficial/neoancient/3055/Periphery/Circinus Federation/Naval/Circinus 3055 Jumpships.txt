@@ -1,8 +1,0 @@
-Neoancient Circinus 3055 Jumpships
-Invader Jumpship (PPC),100
-Invader Jumpship (Standard),100
-Merchant Jumpship (Standard),100
-Monolith Jumpship (Standard),17
-Scout JumpShip (Standard),50
-Star Lord JumpShip (Standard),50
-Tramp JumpShip (Standard),83

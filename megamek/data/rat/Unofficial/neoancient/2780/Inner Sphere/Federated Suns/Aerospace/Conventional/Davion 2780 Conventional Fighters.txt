@@ -1,8 +1,0 @@
-Neoancient Davion 2780 Conventional Fighters
-@Neoancient Kurita 2765 Conventional Fighters,8
-@Neoancient Liao 2765 Conventional Fighters,9
-@Neoancient Taurian 2765 Conventional Fighters,1
-Heavy Strike Fighter Meteor,100
-Light Strike Fighter Comet,55
-Light Strike Fighter Owl,22
-Medium Strike Fighter Defender,60

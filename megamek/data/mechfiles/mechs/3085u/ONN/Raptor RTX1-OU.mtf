@@ -2,18 +2,19 @@ Version:1.0
 Raptor
 RTX1-OU
 
-Config:Biped
+Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3077
-Source:Jihad
+Source:TRO 3085 - Jihad
 Rules Level:4
 
 Mass:25
-Engine:175 XL Engine
-Structure:Endo Steel
+Engine:175 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
 Walk MP:7
 Jump MP:0
 
@@ -33,9 +34,9 @@ RTC Armor:2
 Weapons:5
 ER Medium Laser, Left Arm
 ER Medium Laser, Right Arm
-ER Medium Laser, Center Torso
 SRT 4, Left Torso
 SRT 4, Right Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -58,9 +59,9 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -74,9 +75,9 @@ ISUMU
 ISUMU
 SRT 4
 IS Ammo SRTorpedo-4
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
@@ -87,9 +88,9 @@ ISUMU
 ISUMU
 ISUMU
 SRT 4
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -111,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -126,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

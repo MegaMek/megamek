@@ -1,9 +1,0 @@
-Neoancient Clan Cloud Cobra 3067 Warships
-Aegis Heavy Cruiser (Clan),67
-Cameron Battlecruiser (Clan),33
-Fredasa Corvette Raider (Standard),67
-Lola III Destroyer (Clan),33
-McKenna Battleship (Clan),33
-Potemkin Troop Cruiser (Clan),67
-Vincent Corvette Mk 42,67
-York Destroyer Carrier (Standard),100

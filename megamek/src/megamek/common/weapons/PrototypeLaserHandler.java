@@ -48,6 +48,10 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
      */
     @Override
     protected void addHeat() {
+        // Only add heat for first shot in strafe
+        if (isStrafing && !isStrafingFirstShot()) {
+            return;
+        }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             super.addHeat();
             ae.heatBuildup += Compute.d6();

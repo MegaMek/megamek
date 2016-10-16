@@ -2,46 +2,72 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Riot Police
 </Name>
+
 <Model>
 Word of Blake Protectorate Militia Pacification Unit
 </Model>
-<squad_size>
-6
-</squad_size>
-<squadn>
-3
-</squadn>
-<Primary>
-InfantryTranquilizerGun
-</Primary>
-<Secondary>
-InfantryStunstick
-</Secondary>
-<secondn>
-1
-</secondn>
-<InfantryArmor>
-2
-</InfantryArmor>
+
+<year>
+3055
+</year>
+
 <type>
 IS Level 3
 </type>
-<year>
-2900
-</year>
-<era>
-Succession Wars
-</era>
+
 <motion_type>
 Motorized
 </motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+TRO 3085 - Clan Invasion
+</source>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+3
+</squadn>
+
+<secondn>
+1
+</secondn>
+
+<Primary>
+Tranq Gun
+</Primary>
+
+<Secondary>
+Stunstick
+</Secondary>
+
+<antimek>
+8
+</antimek>
+
+<armordivisor>
+2.0
+</armordivisor>
+
+<history>
+The full Level unit is 36 troopers but for play has to be divided into an 18 man squad. Which this unit represents.
+</history>
+

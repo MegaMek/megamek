@@ -1,5 +1,0 @@
-Neoancient St. Ives 3028 Medium Aerospace Fighters C
-@Neoancient Liao 3000 Medium Aerospace Fighters D,6
-Corsair CSR-V12,25
-Lightning LTN-G15,75
-Transit TR-10,100

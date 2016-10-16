@@ -4599,7 +4599,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                getPosition(), getPosition())) {
                             return false;
                         }
-                        return true;
+                        return true;  
                     }
                     return !checkECM
                            || (game == null)
@@ -4608,13 +4608,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+       
         // check for Manei Domini implants
-        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) || crew
-                .getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
-             && (this instanceof Infantry) && !(this instanceof BattleArmor))
-            || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) && (crew
-                                                                         .getOptions().booleanOption(OptionsConstants.MD_VDNI) || crew
-                                                                         .getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) {
+        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO)
+        	|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)	
+        	|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
+        		&& (this instanceof Infantry) && !(this instanceof BattleArmor))
+            || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
+            		&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
+			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) 
+               
+        {
             return !checkECM
                    || !ComputeECM.isAffectedByECM(this, getPosition(),
                                                   getPosition());
@@ -4645,13 +4649,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         int cyberBonus = 0;
-        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) || crew
-                .getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
-                && (this instanceof Infantry) && !(this instanceof BattleArmor))
-                || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) && (crew
-                        .getOptions().booleanOption(OptionsConstants.MD_VDNI) || crew
-                        .getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) {
-            cyberBonus = 1;
+        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) 
+        		|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
+        		|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)
+                	&& (this instanceof Infantry) && !(this instanceof BattleArmor))        		
+                || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
+                	&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
+    			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) {
+            cyberBonus = 2;
         }
 
         // check for quirks
@@ -11273,13 +11278,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * @return the initiative bonus this Entity grants for MD implants
      */
-    public int getMDIniBonus() {
-        if (crew.getOptions().booleanOption(OptionsConstants.MD_COMM_IMPLANT)
-            || crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
-            return 1;
-        }
-        return 0;
-    }
+	/*
+	 * This has been removed in IO see pg 78
+	 * 
+	 * public int getMDIniBonus() { if
+	 * (crew.getOptions().booleanOption(OptionsConstants.MD_COMM_IMPLANT) ||
+	 * crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT))
+	 * { return 1; } return 0; }
+	 */
 
     /**
      * @return the initiative bonus this Entity grants for quirks

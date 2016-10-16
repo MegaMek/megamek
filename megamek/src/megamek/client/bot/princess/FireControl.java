@@ -1289,7 +1289,7 @@ public class FireControl {
     }
 
     private boolean isSubCommander(Entity entity) {
-        int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus() + entity.getMDIniBonus();
+        int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();  //removed in IO + entity.getMDIniBonus()
         return entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
                entity.isUsingSpotlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
                entity.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS) || entity.hasEiCockpit() ||

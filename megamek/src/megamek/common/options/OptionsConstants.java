@@ -203,21 +203,20 @@ public class OptionsConstants {
      
 
     // Manei Domini
-    public static final String MD_PAIN_SHUNT = "artificial pain shunt"; // $NON-NLS$
+    public static final String MD_PAIN_SHUNT = "artificial_pain_shunt"; // $NON-NLS$
     public static final String MD_VDNI = "vdni"; // $NON-NLS$
     public static final String MD_BVDNI = "bvdni"; // $NON-NLS$
-    public static final String MD_GRAPPLER = "grappler"; // $NON-NLS$
+    public static final String MD_PL_ENHANCED = "pl_enhanced"; // $NON-NLS$
     public static final String MD_PL_MASC = "pl_masc"; // $NON-NLS$
-    
     public static final String MD_CYBER_IMP_AUDIO = "cyber_imp_audio"; // $NON-NLS$
     public static final String MD_CYBER_IMP_VISUAL = "cyber_imp_visual"; // $NON-NLS$
+    public static final String MD_CYBER_IMP_LASER = "cyber_imp_laser"; // $NON-NLS$
     public static final String MD_MM_IMPLANTS = "mm_implants"; // $NON-NLS$
-    
+    public static final String MD_ENH_MM_IMPLANTS = "enh_mm_implants"; // $NON-NLS$    
     public static final String MD_COMM_IMPLANT = "comm_implant"; // $NON-NLS$
     public static final String MD_BOOST_COMM_IMPLANT = "boost_comm_implant"; // $NON-NLS$
     public static final String MD_DERMAL_ARMOR = "dermal_armor"; // $NON-NLS$
     public static final String MD_TSM_IMPLANT = "tsm_implant"; // $NON-NLS$
-    //below not implemented
     public static final String MD_FILTRATION = "filtration_implants"; // $NON-NLS$
     public static final String MD_GAS_EFFUSER_PHERO = "gas_effuser_pheromone"; // $NON-NLS$
     public static final String MD_GAS_EFFUSER_TOXIN = "gas_effuser_toxin"; // $NON-NLS$

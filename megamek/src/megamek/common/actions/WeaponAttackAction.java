@@ -1133,7 +1133,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // check for cyber eye laser sighting on ranged attacks
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)
+            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_LASER)
                     && !(wtype instanceof InfantryAttack)) {
                 toHit.addModifier(-1, "MD laser-sighting");
             }

@@ -827,7 +827,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 // a bunch of stuff should get disabled for all but conventional
                 // infantry
                 if (!((entity instanceof Infantry) && !(entity instanceof BattleArmor))
-                        && (option.getName().equals(OptionsConstants.MD_GRAPPLER)
+                        && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
                                 || option.getName().equals(OptionsConstants.MD_PL_MASC)
                                 || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO) || option
                                 .getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {

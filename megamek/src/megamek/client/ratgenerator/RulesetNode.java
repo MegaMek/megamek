@@ -14,7 +14,6 @@
 package megamek.client.ratgenerator;
 
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 

@@ -95,21 +95,24 @@ public class Ruleset {
 		if (rulesets.containsKey(faction)) {
 			return rulesets.get(faction);
 		}
-		if (faction.contains(".")) {
-			faction = faction.split("\\.")[0];
-			if (rulesets.containsKey(faction)) {
-				return rulesets.get(faction);
-			}
-		}
 		FactionRecord fRec = RATGenerator.getInstance().getFaction(faction);
+		/* First check all parents without recursion. If none is found, do
+		 * a recursive check on all parents.
+		 */
 		if (fRec != null) {
-			if (fRec.isClan()) {
-				return faction.equals("CLAN")?null:findRuleset("CLAN");
-			} else if (fRec.isPeriphery()) {
-				return faction.equals("Periphery")?null:findRuleset("Periphery");
+			for (String parent : fRec.getParentFactions()) {
+				if (rulesets.containsKey(parent)) {
+					return findRuleset(parent);
+				}
+			}
+			for (String parent : fRec.getParentFactions()) {
+				Ruleset rs = findRuleset(parent);
+				if (rs != null) {
+					return rs;
+				}
 			}
 		}
-		return faction == null || faction.equals("IS")? null : findRuleset("IS");
+		return null;
 	}
 	
 	public int getCustomRankBase() {

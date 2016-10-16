@@ -15,6 +15,7 @@ package megamek.client.ratgenerator;
 
 import java.util.Collection;
 import java.util.Properties;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import megamek.common.EntityMovementMode;
@@ -45,81 +46,23 @@ public class RulesetNode {
 		return retVal;
 	}
 	
-	protected void loadFromXml(Node node) {
+	protected void loadFromXml(Node node) throws IllegalArgumentException {
 		name = node.getNodeName();
 		for (int x = 0; x < node.getAttributes().getLength(); x++) {
 			Node wn = node.getAttributes().item(x);
 			if (wn.getNodeName().startsWith("if")) {
-/*				if (wn.getNodeName().equals("ifAugmented")) {
-					predicates.put(wn.getNodeName(),
-							Boolean.parseBoolean(wn.getTextContent()) || wn.getTextContent().equals("1"));
-				} else 
-*/				if (wn.getNodeName().equals("ifEschelon")) {
+				if (wn.getNodeName().equals("ifEschelon")) {
 					String[] eschNames = wn.getTextContent().split("\\|");
-					StringBuilder value = new StringBuilder();
-					for (int i = 0; i < eschNames.length; i++) {
-						String eschelon = eschNames[i].replaceAll("[\\^\\+\\-]", "");
-						switch(eschelon.toLowerCase()) {
-						case "element":
-							value.append("1");
-							break;
-						case "squad":
-						case "point":
-						case "level i":
-							value.append("2");
-							break;
-						case "lance":
-						case "flight":
-						case "platoon":
-						case "star":
-						case "level ii":
-							value.append("3");
-							break;
-						case "company":
-						case "squadron":
-						case "binary":
-						case "choir":
-							value.append("4");
-							break;
-						case "battalion":
-						case "wing":
-						case "trinary":
-						case "level iii":
-							value.append("5");
-							break;
-						case "regiment":
-						case "group":
-						case "cluster":
-						case "level iv":
-							value.append("6");
-							break;
-						case "brigade":
-						case "air regiment":
-						case "galaxy":
-							value.append("7");
-							break;
-						case "division":
-						case "touman":
-							value.append("8");
-							break;
-						case "corps":
-						case "level v":
-							value.append("9");
-							break;
-						case "army":
-						case "level vi":
-							value.append("10");
-							break;
-						}
-						if (!eschelon.equalsIgnoreCase(eschNames[i])) {
-							if (eschNames[i].endsWith("^")) {
-								predicates.put("ifAugmented", "1");
-							} else {
-								value.append(eschNames[i].charAt(eschelon.length()));
+					StringJoiner value = new StringJoiner("|");
+					for (String eschName : eschNames) {
+						String base = eschName.replaceAll("[^0-9A-Za-z_]", "");
+						try {
+							Integer e = Ruleset.getConstantVal(base.toUpperCase());
+							if (e != null) {
+								value.add(eschName.replace(base, e.toString()));
 							}
-						}
-						if (i < eschNames.length - 1) {
-							value.append("|");
+						} catch (NumberFormatException ex) {
+							throw new IllegalArgumentException("Error parsing eschelon name " + eschName);
 						}
 					}
 					predicates.put(wn.getNodeName(), value.toString());

@@ -266,7 +266,7 @@ elementFormDefault="qualified">
 			
 	<xs:simpleType name="eschelonDefinition">
 			<xs:restriction base="xs:string">
-				<xs:pattern value="[0-9A-Z]+[+-]?" />
+				<xs:pattern value="[0-9A-Z_]+[+-]?" />
 			</xs:restriction>
 	</xs:simpleType>
 

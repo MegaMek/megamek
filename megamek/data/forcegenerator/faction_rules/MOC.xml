@@ -9,7 +9,7 @@ made a concerted effort to expand aerospace forces, adding an air guard to Chass
 Cheval regiments as well and averaging just under a squadron by the Jihad, and
 expanding to a full wing per regiment by the Dark Age. -->
 
-<ruleset faction="MOC" parent="Periphery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="MOC" parent="Periphery" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<unitType ifFaction="MOC.RC" ifDateBetween=",3062">Infantry</unitType>

@@ -5,7 +5,7 @@ Meks, armor, and infantry in all units above lance size. Forces are combined int
 of six regiments each. No mention is made of aerospace units, but one or two wings per
 brigada seems reasonable. -->
 
-<ruleset faction="NC" parent="UC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="NC" parent="UC" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>BRIGADE</eschelon>

@@ -5,7 +5,7 @@ but rather than being organized into brigades they are organized into three comb
 each having three combined arms regiments. Infantry tends to be segregated, but Meks and armor
 are often combined down to the company level. -->
 
-<ruleset faction="FS.CH" parent="FS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="FS.CH" parent="FS" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>DIVISION</eschelon>

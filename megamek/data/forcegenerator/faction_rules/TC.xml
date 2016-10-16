@@ -4,7 +4,7 @@
 They also tend toward heavier ASFs, with light fighters quite rare. The size and
 types of support units attached to Mek regiments can vary widely. -->
 
-<ruleset faction="TC" parent="Periphery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="TC" parent="Periphery" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<unitType ifDateBetween=",2550">Tank</unitType>

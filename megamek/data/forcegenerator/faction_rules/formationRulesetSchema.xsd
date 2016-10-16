@@ -56,6 +56,13 @@ elementFormDefault="qualified">
 			</xs:sequence>
 			<xs:attribute name="faction" type="xs:string" />
 			<xs:attribute name="parent" type="xs:string" />
+			<xs:attribute name="ratingSystem">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="IS|CLAN|ROS" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
 		</xs:complexType>
 	</xs:element>
 	

@@ -473,9 +473,15 @@ public class ForceDescriptor {
 						+ "," + roles.stream().collect(Collectors.joining("|"))
 						+ "," + roleStrictness);
 */
-				//TODO: Add cache to UnitTable				
+				//TODO: Add cache to UnitTable
+				String ratGenRating = null;
+				int ratingLevel = getRatingLevel();
+				if (ratingLevel >= 0) {
+					List<String> ratings = getFactionRec().getRatingLevelSystem();
+					ratGenRating = ratings.get(Math.min(ratingLevel, ratings.size()));
+				}
 				UnitTable table = new UnitTable(fd.getFactionRec(), fd.getUnitType(),
-						fd.getYear(), fd.getRating(), wcs, ModelRecord.NETWORK_NONE,
+						fd.getYear(), ratGenRating, wcs, ModelRecord.NETWORK_NONE,
 						fd.getMovementModes(), roles, roleStrictness);
 				MechSummary ms = null;
 				if (fd.getMovementModes().isEmpty() && fd.getChassis().isEmpty() && fd.getModels().isEmpty()) {
@@ -1006,18 +1012,13 @@ public class ForceDescriptor {
 	}
 	
 	public int getRatingLevel() {
-		if (rating == null || rating.length() == 0) {
-			return -1;
+		if (rating != null) {
+			Ruleset rs = Ruleset.findRuleset(this);
+			if (rs != null) {
+				return rs.getRatingIndex(rating);
+			}
 		}
-		FactionRecord fRec = RATGenerator.getInstance().getFaction(faction);
-		if (fRec == null) {
-			return -1;
-		}
-		if (faction.contains(".")) {
-			return RATGenerator.getInstance().getFaction(faction.split("\\.")[0]).getRatingLevels().indexOf(rating);
-		} else {
-			return fRec.getRatingLevels().indexOf(rating);
-		}
+		return -1;
 	}
 
 	public Set<MissionRole> getRoles() {

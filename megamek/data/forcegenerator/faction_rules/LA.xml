@@ -6,7 +6,7 @@ the RCT was retained in the LAAF. The line units that are not part of RCTs sugge
 organization of one regiment each of armor and infantry and a wing of aerospace supporting
 each Mek regiment. -->
 
-<ruleset faction="LA" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="LA" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<unitType ifDateBetween=",2509">Tank</unitType>

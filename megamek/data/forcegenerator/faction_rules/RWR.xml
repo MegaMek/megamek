@@ -8,7 +8,7 @@ reorganization that followed the civil war, the RWA built up Mek forces and chan
 organization. Because RWR was able to develop more industrial capacity than other periphery
 nations this ruleset sets IS as the parent rather than Periphery. -->
 
-<ruleset faction="RWR" parent="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="RWR" parent="IS" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<unitType ifDateBetween="2600,">Mek</unitType>

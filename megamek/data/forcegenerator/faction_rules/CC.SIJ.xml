@@ -4,7 +4,7 @@
 carry the integration down to the lance level. Each brigade has three combined arms regiments
 with a wing of aerospace support and a battalion of BattleArmor. -->
 
-<ruleset faction="CC.SIJ" parent="CC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="CC.SIJ" parent="CC" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>REGIMENT</eschelon>

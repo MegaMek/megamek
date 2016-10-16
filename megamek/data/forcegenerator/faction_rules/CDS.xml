@@ -10,7 +10,7 @@ is commanded by a saKhan (except the ilKhanate, commanded by the khan),
 which makes the post-3100 rank of saKhan equivalent to galaxy commander,
 but with more independence.-->
 
-<ruleset faction="CDS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="CDS" ratingSystem="CLAN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>CLUSTER</eschelon>

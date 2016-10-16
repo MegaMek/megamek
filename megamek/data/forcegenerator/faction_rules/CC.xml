@@ -8,7 +8,7 @@ consisting of the 4 Mek/2 Vee type of lance. Remaining Mek forces were encourage
 ad-hoc augmented lances with 4 Mek/2 BA. We assume that there is a similar increase in
 use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 
-<ruleset faction="CC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="CC" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<unitType ifDateBetween=",2540">Tank</unitType>

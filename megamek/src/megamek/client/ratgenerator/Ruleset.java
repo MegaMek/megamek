@@ -43,6 +43,27 @@ import org.w3c.dom.NodeList;
  */
 public class Ruleset {
 	
+	public enum RatingSystem {
+		IS ("F","D","C","B","A"),
+		CLAN ("PG","Sol","SL","FL","Keshik"),
+		ROS ("TP","PG","HS","SB"),
+		NONE ();
+		
+		String[] vals;
+		private RatingSystem(String... vals) {
+			this.vals = vals;
+		}
+		
+		public int indexOf(String val) {
+			for (int i = 0; i < vals.length; i++) {
+				if (val.equals(vals[i])) {
+					return i;
+				}
+			}
+			return -1;
+		}
+	};
+	
 	private final static String directory = "data/forcegenerator/faction_rules";
 	private final static String CONSTANTS_FILE = "constants.txt";
 	
@@ -52,6 +73,7 @@ public class Ruleset {
 	private static boolean initializing;
 	
 	private String faction;
+	private RatingSystem ratingSystem;
 	private DefaultsNode defaults;
 	private TOCNode toc;
 	private int customRankBase;
@@ -61,18 +83,10 @@ public class Ruleset {
 	
 	private Ruleset() {
 		faction = "IS";
+		ratingSystem = RatingSystem.IS;
 		forceNodes = new ArrayList<>();
 		customRanks = new HashMap<>();
 		parent = null;
-	}
-	
-	public static String subConstants(String val) {
-		if (val == null) {
-			return val;
-		}
-		constants.keySet().stream()
-			.reduce(val, (v, k) -> v.replaceAll(k, constants.get(k).toString()));
-		return val;
 	}
 	
 	public static Integer getConstantVal(String key) {
@@ -185,6 +199,10 @@ public class Ruleset {
 		}
 
 		RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
+	}
+	
+	public int getRatingIndex(String key) {
+		return ratingSystem.indexOf(key);
 	}
 	
 	public Integer getDefaultUnitType(ForceDescriptor fd) {
@@ -377,6 +395,24 @@ public class Ruleset {
 					retVal.parent = null;
 				}
 			}
+		}
+		if (elem.getAttribute("ratingSystem").length() > 0) {
+			switch (elem.getAttribute("ratingSystem")) {
+			case "IS":
+				retVal.ratingSystem = RatingSystem.IS;
+				break;
+			case "CLAN":
+				retVal.ratingSystem = RatingSystem.CLAN;
+				break;
+			case "ROS":
+				retVal.ratingSystem = RatingSystem.ROS;
+				break;
+			default:
+				retVal.ratingSystem = RatingSystem.NONE;
+				break;
+			}
+		} else {
+			retVal.ratingSystem = RatingSystem.IS;			
 		}
 		NodeList nl = elem.getChildNodes();
 		elem.normalize();

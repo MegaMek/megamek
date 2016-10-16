@@ -7,7 +7,7 @@ conventional regiments are combined arms units above the company level. FM:P doe
 aerospace forces outside the Convoy Protection Force, but it's highly unlikely that they
 would have none so I've attached a wing to each RDF. -->
 
-<ruleset faction="HL" parent="Periphery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="HL" parent="Periphery" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>BRIGADE</eschelon>

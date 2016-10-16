@@ -80,6 +80,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	private DefaultListCellRenderer factionRenderer = new CBRenderer<FactionRecord>("General",
 			fRec -> fRec.getName(currentYear));
 	
+	private HashMap<String,String> ratingDisplayNames = new HashMap<>();
 	private HashMap<String,String> formationDisplayNames = new HashMap<>();
 	private HashMap<String,String> flagDisplayNames = new HashMap<>();
 	
@@ -196,9 +197,11 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridy = y;
 		add(new JLabel("Rating:"), gbc);
 		cbRating = new JComboBox<>();
+		cbRating.setRenderer(new CBRenderer<String>("Random", r -> ratingDisplayNames.get(r)));
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbRating, gbc);
+		cbRating.addActionListener(this);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
@@ -673,16 +676,19 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		String currentRating = forceDesc.getRating();
 		boolean hasCurrent = false;
 		cbRating.removeAllItems();
-		cbRating.addItem(null);
+		ratingDisplayNames.clear();
 		if (tocNode != null) {
 			ValueNode n = tocNode.findRatings(forceDesc);
 			if (n != null && n.getContent() != null) {
+				cbRating.addItem(null);
 				for (String rating : n.getContent().split(",")) {
 					if (rating.contains(":")) {
 						String[] fields = rating.split(":");
-						cbRating.addItem(fields[1]);
+						cbRating.addItem(fields[0]);
+						ratingDisplayNames.put(fields[0], fields[1]);
 					} else {
 						cbRating.addItem(rating);
+						ratingDisplayNames.put(rating, rating);
 					}
 				}
 			} else {

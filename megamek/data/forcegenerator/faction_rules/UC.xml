@@ -5,7 +5,7 @@ All units above lance/platoon size contain a mixture of Meks, vehicles, and infa
 with a total Mek component of 1-2 battalions. FM:P does not mention aerospace support,
 but a wing per corps seemed reasonable. -->
 
-<ruleset faction="UC" parent="Periphery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="UC" parent="Periphery" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>BRIGADE</eschelon>

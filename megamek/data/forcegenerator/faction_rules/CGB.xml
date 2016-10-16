@@ -4,7 +4,7 @@
 much like Coyote and Star Adder. They also have an affinity for BA
 but have a smaller aerospace arm than most other Clans. -->
 
-<ruleset faction="CGB" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="CGB" ratingSystem="CLAN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>CLUSTER</eschelon>

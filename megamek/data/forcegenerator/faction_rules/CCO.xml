@@ -11,7 +11,7 @@ structured like the solahma units (but without conventional armor/infantry)
 I have chosen to use the SL rating for reserve units and PG rating for lower-
 ranked SL units.-->
 
-<ruleset faction="CCO" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="CCO" ratingSystem="CLAN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>CLUSTER</eschelon>

@@ -2,7 +2,7 @@
 
 <!-- The Calderon Protectorate follows the same organization as the Taurian Concordat. -->
 
-<ruleset faction="CDP" parent="TC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="CDP" parent="TC" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<unitType>Mek</unitType>

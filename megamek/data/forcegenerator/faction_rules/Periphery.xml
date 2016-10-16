@@ -5,7 +5,7 @@ major periphery states. Per FM:P, the most common size of Mek is medium,
 followed in equal numbers by heavy and light. Assault Meks are quite rare.
 Infantry are poorly trained and equipped. -->
 
-<ruleset faction="Periphery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="Periphery" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<unitType ifDateBetween=",2575">Tank</unitType>
@@ -13,6 +13,7 @@ Infantry are poorly trained and equipped. -->
 		<eschelon>BATTALION</eschelon>
 		<rankSystem>RANK_SL</rankSystem>
 		<rating>D</rating>
+		<ratingSystem>IS</ratingSystem>
 	</defaults>
 
 	<toc>

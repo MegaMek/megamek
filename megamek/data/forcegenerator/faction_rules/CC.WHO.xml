@@ -6,7 +6,7 @@ the CCAF reorganization that made augmented battalions standard, the warrior hou
 into augmented battalions - one Mek heavy, one BA heavy. This implies that all infantry assets
 had been upgraded to BA by that date. -->
 
-<ruleset faction="CC.WHO" parent="CC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="CC.WHO" parent="CC" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<unitType>Mek</unitType>

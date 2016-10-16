@@ -7,7 +7,7 @@ that the smallest level at which unit types are mixed. As these are new units ra
 the Clan invasion and they're intended to represent the best of each province, I have assumed
 that all infantry units are BattleArmor. -->
 
-<ruleset faction="LA.AlJ" parent="LA" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="LA.AlJ" parent="LA" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>REGIMENT</eschelon>

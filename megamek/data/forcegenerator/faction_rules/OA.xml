@@ -16,7 +16,7 @@ into three eras: 2572-2599 (few Meks) follows organization into SL-style divisio
 2600-2839 follows standard IS/Periphery organization, with armor, infantry, and aerospace
 units attached to Mek regiments. 2840+ follows AMC organization. -->
 
-<ruleset faction="OA" parent="Periphery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="OA" parent="Periphery" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>REGIMENT</eschelon>

@@ -3,7 +3,7 @@
 <!-- FS uses a much higher proportion of conventional forces, typically organized into
 a regimental combat team. Average unit weight tends to be lighter than other factions. -->
 
-<ruleset faction="FS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="FS" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<unitType ifDateBetween=",2510">Tank</unitType>

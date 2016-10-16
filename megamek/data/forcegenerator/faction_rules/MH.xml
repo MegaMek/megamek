@@ -6,7 +6,7 @@ Maniple, Century. Each primary legion is 3-5 Mek cohorts (sometimes combined arm
 with 1-2 auxiliary legions attached as support units and sometimes also a
 support wing (cohort). -->
 
-<ruleset faction="MH" parent="Periphery" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="MH" parent="Periphery" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>REGIMENT</eschelon>

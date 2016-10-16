@@ -748,10 +748,10 @@ public class ForceDescriptor {
 		}
 		
 		public int compare(ForceDescriptor arg0, ForceDescriptor arg1) {
-			if (arg0.getRoles().contains("command") && !arg1.getRoles().contains("command")) {
+			if (arg0.getRoles().contains(MissionRole.COMMAND) && !arg1.getRoles().contains(MissionRole.COMMAND)) {
 				return -1;
 			}
-			if (!arg0.getRoles().contains("command") && arg1.getRoles().contains("command")) {
+			if (!arg0.getRoles().contains(MissionRole.COMMAND) && arg1.getRoles().contains(MissionRole.COMMAND)) {
 				return 1;
 			}
 			if (arg0.getRatingLevel() != arg1.getRatingLevel()) {

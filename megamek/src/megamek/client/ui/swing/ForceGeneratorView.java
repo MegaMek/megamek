@@ -125,6 +125,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	
 	private void initUi() {
 		currentYear = game.getOptions().intOption("year");
+		forceDesc.setYear(currentYear);
 		RATGenerator rg = RATGenerator.getInstance();
 		rg.loadYear(currentYear);
 		
@@ -819,6 +820,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		}
 		txtYear.setText(String.valueOf(currentYear));
 		RATGenerator.getInstance().loadYear(currentYear);
+		forceDesc.setYear(currentYear);
 		refreshFactions();
 	}
 

@@ -15,6 +15,7 @@ package megamek.client.ratgenerator;
 
 import megamek.client.RandomNameGenerator;
 import megamek.common.Compute;
+import megamek.common.Crew;
 import megamek.common.UnitType;
 
 /**
@@ -268,5 +269,9 @@ public class CrewDescriptor {
 
 	public void setPiloting(int piloting) {
 		this.piloting = piloting;
+	}
+
+	public Crew createCrew() {
+		return new Crew(name, 1, gunnery, piloting);
 	}
 }

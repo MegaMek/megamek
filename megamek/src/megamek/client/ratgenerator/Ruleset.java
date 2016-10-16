@@ -168,12 +168,14 @@ public class Ruleset {
 		for (ForceDescriptor sub : fd.getAttached()) {
 			sub.assignCommanders();
 			sub.assignPositions();
+			sub.loadEntities();
 //			sub.assignBloodnames();
 		}
 
 		if (fd.isTopLevel()) {
 			fd.assignCommanders();
 			fd.assignPositions();
+			fd.loadEntities();
 //			fd.assignBloodnames();
 		}
 	}

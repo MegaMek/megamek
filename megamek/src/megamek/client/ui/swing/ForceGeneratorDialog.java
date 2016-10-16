@@ -62,10 +62,16 @@ public class ForceGeneratorDialog extends JDialog {
 	private JScrollPane paneForceTree;
 	private JTree forceTree;
 	
+	ClientGUI clientGui;
+	
 	public ForceGeneratorDialog(ClientGUI gui) {
 		super(gui.frame, "Force Generator", true);
-		
-		panControls = new ForceGeneratorView(gui.getClient().getGame(), fd -> setGeneratedForce(fd));
+		clientGui = gui;
+		initUi();
+	}
+
+	private void initUi() {
+		panControls = new ForceGeneratorView(clientGui.getClient().getGame(), fd -> setGeneratedForce(fd));
 		
 		panForce = new JPanel();
 		panForce = new JPanel(new GridBagLayout());
@@ -111,7 +117,7 @@ public class ForceGeneratorDialog extends JDialog {
 		
 		forceTree = new JTree(new ForceTreeModel(null));
 		forceTree.setCellRenderer(new UnitRenderer());
-		forceTree.setRowHeight(60);
+		forceTree.setRowHeight(80);
 		forceTree.setVisibleRowCount(12);
 		forceTree.addTreeExpansionListener(new TreeExpansionListener() {
 			@Override
@@ -254,7 +260,7 @@ public class ForceGeneratorDialog extends JDialog {
 
     }
     
-    static class UnitRenderer extends DefaultTreeCellRenderer {
+    class UnitRenderer extends DefaultTreeCellRenderer {
     	/**
     	 * 
     	 */
@@ -302,15 +308,19 @@ public class ForceGeneratorDialog extends JDialog {
                 	uname += "<br /><i>" + fd.getFluffName() + "</i>";
                 }
                 setText("<html>" + name.toString() + ", " + uname + "</html>");
+                if (fd.getEntity() != null) {
+                	clientGui.loadPreviewImage(this, fd.getEntity(),
+                			clientGui.getClient().getLocalPlayer());
+                }
             } else {
             	StringBuilder desc = new StringBuilder("<html>");
             	desc.append(fd.parseName()).append("<br />").append(fd.getDescription());
             	if (fd.getCo() != null) {
-            		desc.append("<br />").append(fd.getCo().getTitle() == null?"CO":fd.getCo().getTitle());
+            		desc.append("<br />").append(fd.getCo().getTitle() == null?"CO: ":fd.getCo().getTitle());
             		desc.append(fd.getCo().getName());
             	}
             	if (fd.getXo() != null) {
-            		desc.append("<br />").append(fd.getXo().getTitle() == null?"XO":fd.getXo().getTitle());
+            		desc.append("<br />").append(fd.getXo().getTitle() == null?"XO: ":fd.getXo().getTitle());
             		desc.append(fd.getXo().getName());
             	}
            		setText(desc.append("</html>").toString());

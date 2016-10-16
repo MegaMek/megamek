@@ -24,10 +24,14 @@ import java.util.Set;
 
 import megamek.client.ratgenerator.UnitTable;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
+import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
+import megamek.common.loaders.EntityLoadingException;
 
 /**
  * Describes the characteristics of a force. May be changed during generation.
@@ -103,6 +107,7 @@ public class ForceDescriptor {
 	private int positionIndex;
 	private int nameIndex;
 	private String fluffName;
+	private Entity entity;
 	
 	private ForceDescriptor parent;
 	private ArrayList<ForceDescriptor> subforces;
@@ -419,7 +424,6 @@ public class ForceDescriptor {
 		if (unit.getRoles().contains(MissionRole.FIELD_GUN)) {
 			roles.add(MissionRole.FIELD_GUN);
 		}
-//		setIcon();
 	}
 	
 	public void generate(String level, boolean set) {
@@ -501,6 +505,22 @@ public class ForceDescriptor {
 		
 //		System.err.println("Could not find unit for " + unitType);
 		return null;
+	}
+	
+	public void loadEntities() {
+		if (element) {
+			MechSummary ms = MechSummaryCache.getInstance().getMech(getModelName());
+			if (ms != null) {
+				try {
+					entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+					entity.setCrew(getCo().createCrew());
+				} catch (EntityLoadingException ex) {
+					System.err.println("Error loading " + ms.getName() + " from file " + ms.getSourceFile().getPath());
+				}
+			}
+		}
+		subforces.stream().forEach(sf -> sf.loadEntities());
+		attached.stream().forEach(sf -> sf.loadEntities());
 	}
 	
 	public void assignCommanders() {
@@ -858,20 +878,17 @@ public class ForceDescriptor {
 	}
 	
 	public String getDescription() {
-		final String[] weightClassNames = {
-				"Ultra-Light", "Light", "Medium", "Heavy", "Assault", "Super-Heavy"
-		};
 		StringBuilder retVal = new StringBuilder();
 		if (unitType != null) {
 //			if (useWeightClass() && weightClass != null && weightClass >= 0) {
 			if (weightClass != null && weightClass >= 0) {
-				retVal.append(weightClassNames[weightClass]).append(" ");
+				retVal.append(EntityWeightClass.getClassName(weightClass)).append(" ");
 			}
 			
 			if (roles.contains("artillery") || roles.contains("missile_artillery")) {
 				retVal.append(unitType.equals("Infantry")?"Field":"Mobile").append(" ");
 			} else {
-				retVal.append(unitType).append(" ");
+				retVal.append(UnitType.getTypeName(unitType)).append(" ");
 			}
 		}
 		
@@ -1140,6 +1157,10 @@ public class ForceDescriptor {
 	
 	public void setFluffName(String fluffName) {
 		this.fluffName = fluffName;
+	}
+	
+	public Entity getEntity() {
+		return entity;
 	}
 
 	public ForceDescriptor createChild() {

@@ -13,6 +13,8 @@
  */
 package megamek.client.ratgenerator;
 
+import java.util.Iterator;
+
 import megamek.client.RandomNameGenerator;
 import megamek.common.Compute;
 import megamek.common.Crew;
@@ -54,13 +56,32 @@ public class CrewDescriptor {
 	}
 	
 	private String generateName() {
-//		Faction f = Faction.getFaction(assignment.getFaction().split("\\.")[0]);
-
-		RandomNameGenerator rng = RandomNameGenerator.getInstance();
-//		if (null != f) {
-//			rng.setChosenFaction(f.getNameGenerator());
-//		}
-		return rng.generate();
+		if (assignment.getFactionRec().isClan()) {
+			RandomNameGenerator.getInstance().setChosenFaction("Clan");
+			return RandomNameGenerator.getInstance().generate();
+		} else if (!assignment.getFaction().contains(".")) {
+			// Try to match our faction to one of the rng settings.
+			for (Iterator<String> iter = RandomNameGenerator.getInstance().getFactions(); iter.hasNext();) {
+				final String f = iter.next();
+				if (assignment.getFaction().equalsIgnoreCase(f)) {
+					RandomNameGenerator.getInstance().setChosenFaction(f);
+					return RandomNameGenerator.getInstance().generate();
+				}
+			}
+		}
+		// Go up one parent level and try again
+		for (String parent : assignment.getFactionRec().getParentFactions()) {
+			for (Iterator<String> iter = RandomNameGenerator.getInstance().getFactions(); iter.hasNext();) {
+				final String f = iter.next();
+				if (parent.equalsIgnoreCase(f)) {
+					RandomNameGenerator.getInstance().setChosenFaction(f);
+					return RandomNameGenerator.getInstance().generate();
+				}
+			}
+		}
+		//Give up and use general
+		RandomNameGenerator.getInstance().setChosenFaction("General");
+		return RandomNameGenerator.getInstance().generate();
 	}
 	
 	private void setSkills() {

@@ -27,6 +27,8 @@ import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import megamek.client.RandomNameGenerator;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -165,6 +167,9 @@ public class Ruleset {
 			process(sub);
 		}
 
+		// save the setting so it can be restored after assigning names
+		String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
+		
 		for (ForceDescriptor sub : fd.getAttached()) {
 			sub.assignCommanders();
 			sub.assignPositions();
@@ -178,6 +183,8 @@ public class Ruleset {
 			fd.loadEntities();
 //			fd.assignBloodnames();
 		}
+
+		RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
 	}
 	
 	public Integer getDefaultUnitType(ForceDescriptor fd) {

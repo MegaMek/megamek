@@ -623,7 +623,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 					do {
 						fn = rs.findForceNode(forceDesc,
 								Ruleset.getConstantVal(formation.replaceAll("[^0-9A-Z]", "")),
-										formation.endsWith("+"));
+										formation.endsWith("^"));
 						if (fn == null) {
 							if (rs.getParent() != null) {
 								rs = Ruleset.findRuleset(rs.getParent());

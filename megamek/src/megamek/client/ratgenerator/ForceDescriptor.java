@@ -246,10 +246,10 @@ public class ForceDescriptor {
 		ModelRecord baseModel = null;
 		/* Generate base model using weight class of entire formation */
 		if (ut != null) {
-			if (!(ut.equals("Mek") || (ut.equals("Aero") && subs.size() > 3))) {
+			if (!(ut == UnitType.MEK || (ut == UnitType.AERO && subs.size() > 3))) {
 				baseModel = subs.get(0).generate();
 			}
-			if (ut.equals("Aero") || ut.equals("Conventional Fighter")) {
+			if (ut == UnitType.AERO || ut == UnitType.CONV_FIGHTER) {
 				target -= 3;
 			}
 			if (roles.contains(MissionRole.ARTILLERY)) {
@@ -354,7 +354,7 @@ public class ForceDescriptor {
 							}
 							foundUnit = true;
 						}
-					} else if (ut.equals("Tank") && Compute.d6(2) >= target - 6) {
+					} else if (ut == UnitType.TANK && Compute.d6(2) >= target - 6) {
 						if (useWeights) {
 							switch (baseModel.getMechSummary().getUnitSubType()) {
 							case "Hover":
@@ -369,7 +369,7 @@ public class ForceDescriptor {
 								sub.getMovementModes().add(baseModel.getMovementMode());
 							}
 						}
-					} else if (ut.equals("Infantry")) {
+					} else if (ut == UnitType.INFANTRY) {
 						sub.getMovementModes().add(baseModel.getMovementMode());
 					}
 				}
@@ -390,7 +390,7 @@ public class ForceDescriptor {
 					}
 				}
 			}
-			if (ut == null || ut.equals("Mek")) {
+			if (ut == null || ut == UnitType.MEK) {
 				baseModel = null;
 			}
 		}

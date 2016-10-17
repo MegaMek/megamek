@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import megamek.client.ratgenerator.UnitTable;
 import megamek.common.Compute;
@@ -456,6 +457,8 @@ public class ForceDescriptor {
 		ForceDescriptor fd = createChild();
 		fd.setEschelon(eschelon);
 		fd.setCoRank(coRank);
+		fd.getRoles().clear();
+		fd.getRoles().addAll(roles.stream().filter(r -> r.fitsUnitType(unitType)).collect(Collectors.toList()));
 		
 		int wtIndex = (useWeightClass() && weightClass != null && weightClass != -1)?0:4;
 		
@@ -482,7 +485,7 @@ public class ForceDescriptor {
 				}
 				UnitTable table = new UnitTable(fd.getFactionRec(), fd.getUnitType(),
 						fd.getYear(), ratGenRating, wcs, ModelRecord.NETWORK_NONE,
-						fd.getMovementModes(), roles, roleStrictness);
+						fd.getMovementModes(), fd.getRoles(), roleStrictness);
 				MechSummary ms = null;
 				if (fd.getMovementModes().isEmpty() && fd.getChassis().isEmpty() && fd.getModels().isEmpty()) {
 					ms = table.generateUnit();
@@ -509,7 +512,7 @@ public class ForceDescriptor {
 			}
 		};
 		
-//		System.err.println("Could not find unit for " + unitType);
+		System.err.println("Could not find unit for " + unitType);
 		return null;
 	}
 	

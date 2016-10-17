@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -67,7 +69,8 @@ public class Ruleset {
 	private final static String directory = "data/forcegenerator/faction_rules";
 	private final static String CONSTANTS_FILE = "constants.txt";
 	
-	private static HashMap<String,Integer> constants;
+	private static HashMap<String,String> constants;
+	private static Pattern constantPattern = Pattern.compile("%(.*?)%");
 	private static HashMap<String,Ruleset> rulesets;
 	private static boolean initialized;
 	private static boolean initializing;
@@ -89,15 +92,16 @@ public class Ruleset {
 		parent = null;
 	}
 	
-	public static Integer getConstantVal(String key) {
-		if (constants.containsKey(key)) {
-			return constants.get(key);
+	public static String substituteConstants(String str) {
+		Matcher matcher = constantPattern.matcher(str);
+		while (matcher.find()) {
+			String val = constants.get(matcher.group(1));
+			if (val == null) {
+				val = "0";
+			}
+			str = str.replace(matcher.group(0), val);
 		}
-		return Integer.valueOf(key);
-	}
-	
-	public static boolean isConstant(String key) {
-		return constants.containsKey(key);
+		return str;
 	}
 	
 	public static Ruleset findRuleset(ForceDescriptor fd) {
@@ -304,7 +308,7 @@ public class Ruleset {
 	        	if (!line.startsWith("#") && line.contains(":")) {
 	        		String[] fields = line.split(":");
         			try {
-        				constants.put(fields[0], Integer.valueOf(fields[1]));
+        				constants.put(fields[0], fields[1]);
         			} catch (NumberFormatException e) {
 	        			System.err.println("Malformed line in force generator constants file: " + line);
         			}
@@ -337,9 +341,13 @@ public class Ruleset {
 			if (!f.getPath().endsWith(".xml")) {
 				continue;
 			}
-			Ruleset rs = createFromFile(f);
-			if (rs != null) {
-				rulesets.put(rs.getFaction(), rs);
+			try {
+				Ruleset rs = createFromFile(f);
+				if (rs != null) {
+					rulesets.put(rs.getFaction(), rs);
+				}
+			} catch (IllegalArgumentException ex) {
+				System.err.println("While parsing file " + f.toString() + ": " + ex.getMessage());
 			}
 		}
 		initialized = true;
@@ -431,11 +439,11 @@ public class Ruleset {
 					Node wn2 = wn.getChildNodes().item(y);
 					switch (wn2.getNodeName()) {
 					case "base":
-						retVal.customRankBase = getConstantVal(wn2.getTextContent());
+						retVal.customRankBase = Integer.parseInt(substituteConstants(wn2.getTextContent()));
 						break;
 					case "rank":
 						String[] fields = wn2.getTextContent().split(":");
-						int rank = getConstantVal(fields[0]);
+						int rank = Integer.parseInt(substituteConstants(fields[0]));
 						retVal.customRanks.put(rank, fields[1]);
 						break;
 					}

@@ -3,8 +3,8 @@
 <ruleset faction="CSJ" ratingSystem="CLAN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
-		<eschelon>CLUSTER</eschelon>
-		<rankSystem>RANK_CLAN</rankSystem>
+		<eschelon>%CLUSTER%</eschelon>
+		<rankSystem>%RANK_CLAN%</rankSystem>
 		<rating>FL</rating>
 	</defaults>
 	
@@ -19,152 +19,152 @@
 		</unitType>
 		
 		<eschelon>
-			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
-			<option ifUnitType="Warship">CLUSTER</option>
-			<option ifUnitType="Dropship|Jumpship">STAR</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
-			<option>TRINARY,BINARY,STAR</option>
+			<option ifUnitType="">%TOUMAN%,%GALAXY%,%CLUSTER%</option>
+			<option ifUnitType="Warship">%CLUSTER%</option>
+			<option ifUnitType="Dropship|Jumpship">%STAR%</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
+			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
 		
 		<rating>
 			<option ifUnitType="Tank|VTOL">SL:Second Line,PG:Provisional Garrison,Sol:Solahma</option>
 			<option ifUnitType="Infantry" ifDateBetween="2900,">PG:Provisional Garrison,Sol:Solahma</option>
 			<option ifUnitType="Infantry">SL:Second Line,PG:Provisional Garrison,Sol:Solahma</option>
-			<option ifEschelon="Touman"></option>
-			<option ifEschelon="Galaxy">FL:Front Line,SL:Second Line,Sol:Solahma</option>
+			<option ifEschelon="%TOUMAN%"></option>
+			<option ifEschelon="%GALAXY%">FL:Front Line,SL:Second Line,Sol:Solahma</option>
 			<option>Keshik,FL:Front Line,SL:Second Line,PG:Provisional Garrison,Sol:Solahma</option>
 		</rating>
 		
 		<flags>
-			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="Trinary|Binary">mixedMekBA:Combined Mek/BA unit</option>
+			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="%TRINARY%|%BINARY%">mixedMekBA:Combined Mek/BA unit</option>
 		</flags>
 	</toc>
 	
-	<force eschelon="TOUMAN" eschName="Touman">
-		<co>KHAN</co>
-		<xo>SAKHAN</xo>
+	<force eschelon="%TOUMAN%" eschName="Touman">
+		<co>%KHAN%</co>
+		<xo>%SAKHAN%</xo>
 		
 		<subforces>
 			<subforce name="Alpha Galaxy" rating="FL"
-				role="command">GALAXY</subforce>
-			<subforce name="Beta Galaxy" rating="FL">GALAXY</subforce>
-			<subforce name="Delta Galaxy" rating="FL">GALAXY</subforce>
+				role="command">%GALAXY%</subforce>
+			<subforce name="Beta Galaxy" rating="FL">%GALAXY%</subforce>
+			<subforce name="Delta Galaxy" rating="FL">%GALAXY%</subforce>
 			<subforce name="Epsilon Galaxy"
-				rating="FL">GALAXY</subforce>			
+				rating="FL">%GALAXY%</subforce>			
 
-			<subforce name="Zeta Galaxy" rating="SL">GALAXY</subforce>
-			<subforce name="Kappa Galaxy" rating="SL">GALAXY</subforce>
-			<subforce name="Nu Galaxy" rating="SL">GALAXY</subforce>
-			<subforce name="Pi Galaxy" rating="SL">GALAXY</subforce>
+			<subforce name="Zeta Galaxy" rating="SL">%GALAXY%</subforce>
+			<subforce name="Kappa Galaxy" rating="SL">%GALAXY%</subforce>
+			<subforce name="Nu Galaxy" rating="SL">%GALAXY%</subforce>
+			<subforce name="Pi Galaxy" rating="SL">%GALAXY%</subforce>
 			<subforce name="Tau Galaxy" ifDateBetween="3056,3058"
-				rating="SL">GALAXY</subforce>
-			<subforce name="Psi Galaxy" rating="SL">GALAXY</subforce>
-			<subforce name="Omega Galaxy" rating="SL">GALAXY</subforce>
+				rating="SL">%GALAXY%</subforce>
+			<subforce name="Psi Galaxy" rating="SL">%GALAXY%</subforce>
+			<subforce name="Omega Galaxy" rating="SL">%GALAXY%</subforce>
 			
 			<subforce name="Iron Guard Galaxy"
-				rating="Sol">GALAXY</subforce>
+				rating="Sol">%GALAXY%</subforce>
 			<subforce name="Watchmen Galaxy"
-				rating="Sol">GALAXY</subforce>
+				rating="Sol">%GALAXY%</subforce>
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Warship">CLUSTER</subforce>
+			<subforce unitType="Warship">%CLUSTER%</subforce>
 		</attachedForces>
 	</force>
 	
-	<force eschelon="CLUSTER" eschName="Fleet" ifUnitType="Warship">
+	<force eschelon="%CLUSTER%" eschName="Fleet" ifUnitType="Warship">
 		<name>Naval Reserve</name>
-		<co>GALAXY_CMDR</co>
+		<co>%GALAXY_CMDR%</co>
 		
 		<subforces>
 			<subforce role="command" fluffName="CSJ Obsidian"
 			 	ifDateBetween=",2868"
-				chassis="McKenna Battleship">ELEMENT</subforce>
+				chassis="McKenna Battleship">%ELEMENT%</subforce>
 			<subforce
-				chassis="Sovetskii Soyuz Heavy Cruiser">ELEMENT</subforce>
-			<subforce chassis="Vincent Corvette">ELEMENT</subforce>
-			<subforce chassis="Vincent Corvette">ELEMENT</subforce>
+				chassis="Sovetskii Soyuz Heavy Cruiser">%ELEMENT%</subforce>
+			<subforce chassis="Vincent Corvette">%ELEMENT%</subforce>
+			<subforce chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Queen Lynx" ifDateBetween="2950,3059"
-				chassis="York Destroyer Carrier">ELEMENT</subforce>
-			<subforce chassis="Congress Frigate">ELEMENT</subforce>
+				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
+			<subforce chassis="Congress Frigate">%ELEMENT%</subforce>
 			<subforce ifDateBetween="2965,"
-				chassis="Fredasa Corvette Raider">ELEMENT</subforce>
+				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
 			<subforce ifDateBetween="2965,"
-				chassis="Fredasa Corvette Raider">ELEMENT</subforce>
+				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
 
 			<subforce fluffName="CSJ Veiled Huntress" ifDateBetween=",3059"
-				chassis="Texas Battleship">ELEMENT</subforce>
+				chassis="Texas Battleship">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Sabre Cat"
-				chassis="Essex Destroyer">ELEMENT</subforce>
+				chassis="Essex Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Korat"
 				ifDateBetween=",3024"
-				chassis="Avatar Heavy Cruiser">ELEMENT</subforce>
+				chassis="Avatar Heavy Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Korat"
 				ifDateBetween="3025,"
-				chassis="Liberator Cruiser">ELEMENT</subforce>
+				chassis="Liberator Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Griffin" ifDateBetween=",3059"
-				chassis="Lola III Destroyer">ELEMENT</subforce>
+				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Snow Leopard" ifDateBetween=",3059"
-				chassis="Congress Frigate">ELEMENT</subforce>
+				chassis="Congress Frigate">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Storm Cat" ifDateBetween=",3059"
-				chassis="Lola III Destroyer">ELEMENT</subforce>
+				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Dark Claw" ifDateBetween=",3058"
-				chassis="Essex Destroyer">ELEMENT</subforce>
+				chassis="Essex Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Streaking Mist"
-				chassis="Black Lion Battlecruiser">ELEMENT</subforce>
+				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Firecrest" ifDateBetween=",3059"
-				chassis="Congress Frigate">ELEMENT</subforce>
+				chassis="Congress Frigate">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ The Iowa" ifDateBetween=",3059"
-				chassis="Essex Destroyer">ELEMENT</subforce>
+				chassis="Essex Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Ripper" ifDateBetween=",3059"
-				chassis="Vincent Corvette">ELEMENT</subforce>
+				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Azov"
-				chassis="Vincent Corvette">ELEMENT</subforce>
+				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Simas Osis"
-				chassis="Vincent Corvette">ELEMENT</subforce>
+				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Osis&apos; Pride"
-				chassis="Potemkin Troop Cruiser">ELEMENT</subforce>
+				chassis="Potemkin Troop Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Lioness" ifDateBetween=",3059"
-				chassis="York Destroyer Carrier">ELEMENT</subforce>
+				chassis="York Destroyer Carrier">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Hunter&apos;s Pride"
 				ifDateBetween="2950,3055"
-				chassis="Congress Frigate">ELEMENT</subforce>
+				chassis="Congress Frigate">%ELEMENT%</subforce>
 			<subforce fluffName="CSJ Hell Fury" ifDateBetween="2965,3053"
-				chassis="Fredasa Corvette Raider">ELEMENT</subforce>
-			<subforce chassis="Whirlwind Destroyer">ELEMENT</subforce>
+				chassis="Fredasa Corvette Raider">%ELEMENT%</subforce>
+			<subforce chassis="Whirlwind Destroyer">%ELEMENT%</subforce>
 		</subforces>
 	</force>
 
-	<force eschelon="GALAXY" eschName="Galaxy">
+	<force eschelon="%GALAXY%" eschName="Galaxy">
 		<name>{greek} Galaxy</name>
-		<co>GALAXY_CMDR</co>
+		<co>%GALAXY_CMDR%</co>
 		
 		<subforces ifRating="FL">
 			<subforce role="command" unitType="Mek" rating="Keshik"
-				flags="keshik">TRINARY</subforce>
+				flags="keshik">%TRINARY%</subforce>
 		</subforces>
 		<subforces ifRating="SL|Sol">
 			<subforceOption>
 				<option role="command" unitType="Mek"
-					flags="keshik">TRINARY</option>
+					flags="keshik">%TRINARY%</option>
 			</subforceOption>
 		</subforces>
 		<subforces>
 			<subforceOption>
-				<option num="3">CLUSTER</option>
-				<option num="4">CLUSTER</option>
-				<option num="5">CLUSTER</option>
+				<option num="3">%CLUSTER%</option>
+				<option num="4">%CLUSTER%</option>
+				<option num="5">%CLUSTER%</option>
 			</subforceOption>
 		</subforces>
 	</force>
 	
-	<force eschelon="CLUSTER" eschName="Cluster">
+	<force eschelon="%CLUSTER%" eschName="Cluster">
 		<name ifRating="FL" ifWeightClass="A|H">Assault Cluster</name>
 		<name ifRating="FL" ifWeightClass="M">Battle Cluster</name>
 		<name ifRating="FL" ifWeightClass="L">Striker Cluster</name>
 		<name ifRating="SL">Garrison Cluster</name>
 		<name ifRating="Sol">Solahma Cluster</name>
-		<co>STAR_COL</co>
+		<co>%STAR_COL%</co>
 		
 		<weightClass>
 			<option weight="2">H</option>
@@ -181,29 +181,29 @@
 			<subforceOption ifWeightClass="A|H">
 				<option weightClass="A" unitType="Mek" role="command"
 					flags="+testTrinary"
-					weight="2">TRINARY</option>
+					weight="2">%TRINARY%</option>
 				<option weightClass="H" unitType="Mek" role="command"
 					flags="+testTrinary"
-					weight="1">TRINARY</option>
+					weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="H" unitType="Mek" role="command"
 					flags="+testTrinary"
-					weight="2">TRINARY</option>
+					weight="2">%TRINARY%</option>
 				<option weightClass="M" unitType="Mek" role="command"
 					flags="+testTrinary"
-					weight="1">TRINARY</option>
+					weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="H" unitType="Mek" role="command"
 					flags="+testTrinary"
-					weight="1">TRINARY</option>
+					weight="1">%TRINARY%</option>
 				<option weightClass="M" unitType="Mek" role="command"
 					flags="+testTrinary"
-					weight="2">TRINARY</option>
+					weight="2">%TRINARY%</option>
 				<option weightClass="L" unitType="Mek" role="command"
 					flags="+testTrinary"
-					weight="1">TRINARY</option>
+					weight="1">%TRINARY%</option>
 			</subforceOption>
 		</subforces>
 
@@ -212,49 +212,49 @@
 		<subforces ifRating="FL|Keshik">
 			<subforceOption ifWeightClass="H|A">
 				<option weightClass="A,A,A" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="A,A,H" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="A,A,M" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="A,A,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="A,H,H" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="H,H,H" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="A,H,M" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="A,H,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="A,M,M" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="A,M,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="A,L,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="H,H,M" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="H,H,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="H,M,M" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="H,M,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="M,M,M" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="H,L,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="M,M,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="M,L,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 				<option weightClass="L,L,L" unitType="Mek"
-					>TRINARY</option>
+					>%TRINARY%</option>
 			</subforceOption>
 		</subforces>
 			
@@ -267,79 +267,79 @@
 		<subforces ifRating="SL|Sol|PG">
 			<subforceOption ifWeightClass="H|A">
 				<option ifRating="SL|PG" weightClass="A,A" unitType="Mek"
-					flags="+testTrinary" weight="5">TRINARY</option>
+					flags="+testTrinary" weight="5">%TRINARY%</option>
 				<option ifRating="SL|PG" weightClass="A,H" unitType="Mek"
-					flags="+testTrinary" weight="5">TRINARY</option>
+					flags="+testTrinary" weight="5">%TRINARY%</option>
 				<option ifRating="SL|PG" weightClass="H,H" unitType="Mek"
-					flags="+testTrinary" weight="5">TRINARY</option>
+					flags="+testTrinary" weight="5">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="A,A" unitType="Tank"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="A,H" unitType="Tank"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="H,H" unitType="Tank"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option ifRating="SL|PG" weightClass="H,M" unitType="Mek"
-					flags="+testTrinary" weight="5">TRINARY</option>
+					flags="+testTrinary" weight="5">%TRINARY%</option>
 				<option ifRating="SL|PG" weightClass="H,L" unitType="Mek"
-					flags="+testTrinary" weight="5">TRINARY</option>
+					flags="+testTrinary" weight="5">%TRINARY%</option>
 				<option ifRating="SL|PG" weightClass="M,M" unitType="Mek"
-					flags="+testTrinary" weight="5">TRINARY</option>
+					flags="+testTrinary" weight="5">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="H,H" unitType="Tank"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="H,M" unitType="Tank"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="H,L" unitType="Tank"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option ifRating="SL|PG" weightClass="M,M" unitType="Mek"
-					flags="+testTrinary" weight="5">TRINARY</option>
+					flags="+testTrinary" weight="5">%TRINARY%</option>
 				<option ifRating="SL|PG" weightClass="M,L" unitType="Mek"
-					flags="+testTrinary" weight="5">TRINARY</option>
+					flags="+testTrinary" weight="5">%TRINARY%</option>
 				<option ifRating="SL|PG" weightClass="L,L" unitType="Mek"
-					flags="+testTrinary" weight="5">TRINARY</option>
+					flags="+testTrinary" weight="5">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="M,M" unitType="Tank"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="M,L" unitType="Tank"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="L,L" unitType="Tank"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 			</subforceOption>
 			
 			<!--The third, if there is one, can be either Mek or vee-->
 			<subforceOption ifWeightClass="A|H">
 				<option ifRating="SL|PG" weightClass="A" unitType="Mek"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option ifRating="SL|PG" weightClass="H" unitType="Mek"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="A" unitType="Tank"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="H" unitType="Tank"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option weight="1" />
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option ifRating="SL|PG" weightClass="H" unitType="Mek"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option ifRating="SL|PG" weightClass="M" unitType="Mek"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="H" unitType="Tank"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="M" unitType="Tank"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option weight="1" />
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option ifRating="SL|PG" weightClass="M" unitType="Mek"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option ifRating="SL|PG" weightClass="L" unitType="Mek"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="M" unitType="Tank"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option ifRating="PG|Sol" weightClass="L" unitType="Tank"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option weight="1" />
 			</subforceOption>
 		</subforces>
@@ -349,31 +349,31 @@
 		<subforces ifRating="FL|Keshik">
 			<subforceOption ifWeightClass="A|H">
 				<option weightClass="A" unitType="Mek"
-					augmented="1" weight="2">TRINARY</option>
+					augmented="1" weight="2">%TRINARY%</option>
 				<option weightClass="H" unitType="Mek"
-					augmented="1" weight="2">TRINARY</option>
+					augmented="1" weight="2">%TRINARY%</option>
 				<option weightClass="M" unitType="Mek"
-					augmented="1" weight="1">TRINARY</option>
+					augmented="1" weight="1">%TRINARY%</option>
 				<option weight="10" />
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="A" unitType="Mek"
-					augmented="1">TRINARY</option>
+					augmented="1">%TRINARY%</option>
 				<option weightClass="H" unitType="Mek"
-					augmented="1" weight="3">TRINARY</option>
+					augmented="1" weight="3">%TRINARY%</option>
 				<option weightClass="M" unitType="Mek"
-					augmented="1" weight="3">TRINARY</option>
+					augmented="1" weight="3">%TRINARY%</option>
 				<option weightClass="L" unitType="Mek"
-					augmented="1">TRINARY</option>
+					augmented="1">%TRINARY%</option>
 				<option weight="16" />
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="H" unitType="Mek"
-					augmented="1" weight="1">TRINARY</option>
+					augmented="1" weight="1">%TRINARY%</option>
 				<option weightClass="M" unitType="Mek"
-					augmented="1" weight="2">TRINARY</option>
+					augmented="1" weight="2">%TRINARY%</option>
 				<option weightClass="L" unitType="Mek"
-					augmented="1" weight="2">TRINARY</option>
+					augmented="1" weight="2">%TRINARY%</option>
 				<option weight="10" />
 			</subforceOption>
 		</subforces>
@@ -382,9 +382,9 @@
 		<subforces ifRating="!Sol">
 			<subforceOption>
 				<option ifDateBetween="2870," unitType="BattleArmor"  
-					ifRating="FL">BINARY</option>
+					ifRating="FL">%BINARY%</option>
 				<option ifDateBetween="2900," unitType="BattleArmor"  
-					ifRating="FL|SL">BINARY</option>
+					ifRating="FL|SL">%BINARY%</option>
 				<option ifRating="FL" ifDateBetween="2870,2900"
 					weight="2" />
 				<option weight="2" ifRating="SL" />
@@ -395,9 +395,9 @@
 		<subforces ifRating="Sol">
 			<subforceOption>
 				<option unitType="Infantry" flags="+testTrinary"
-					num="2">TRINARY</option>
+					num="2">%TRINARY%</option>
 				<option unitType="Infantry" flags="+testTrinary"
-					num="3">TRINARY</option>
+					num="3">%TRINARY%</option>
 			</subforceOption>
 		</subforces>
 		
@@ -409,29 +409,29 @@
 		<subforces ifRating="!Sol">
 			<subforceOption ifWeightClass="H|A">
 				<option weightClass="H" unitType="Aero"
-					flags="+testTrinary" weight="3">TRINARY</option>
+					flags="+testTrinary" weight="3">%TRINARY%</option>
 				<option weightClass="M" unitType="Aero"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option weightClass="L" unitType="Aero"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option weight="7" />
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option weightClass="H" unitType="Aero"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option weightClass="M" unitType="Aero"
-					flags="+testTrinary" weight="3">TRINARY</option>
+					flags="+testTrinary" weight="3">%TRINARY%</option>
 				<option weightClass="L" unitType="Aero"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option weight="7" />
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option weightClass="H" unitType="Aero"
-					flags="+testTrinary" weight="1">TRINARY</option>
+					flags="+testTrinary" weight="1">%TRINARY%</option>
 				<option weightClass="M" unitType="Aero"
-					flags="+testTrinary" weight="2">TRINARY</option>
+					flags="+testTrinary" weight="2">%TRINARY%</option>
 				<option weightClass="L" unitType="Aero"
-					flags="+testTrinary" weight="3">TRINARY</option>
+					flags="+testTrinary" weight="3">%TRINARY%</option>
 				<option weight="6" />
 			</subforceOption>
 		</subforces>
@@ -440,10 +440,10 @@
 	<!--About 1/3 galaxy and cluster command trinaries include two
 	novas and either a BA or an ASF star.-->
 		
-	<force eschelon="TRINARY" eschName="Trinary" ifRole="command" ifAugmented="1">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifRole="command" ifAugmented="1">
 		<name ifFlags="keshik">Trinary Galaxy [Command]</name>
 		<name>Trinary [Command]</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="2">A</option>
@@ -454,85 +454,85 @@
 
 		<subforces>
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A" unitType="Mek">STAR</option>
+				<option weightClass="A,A" unitType="Mek">%STAR%</option>
 				<option weightClass="A,H" weight="2"
-					unitType="Mek">STAR</option>
-				<option weightClass="A,M" unitType="Mek">STAR</option>
+					unitType="Mek">%STAR%</option>
+				<option weightClass="A,M" unitType="Mek">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A,L" unitType="Mek">STAR</option>
+				<option weightClass="A,L" unitType="Mek">%STAR%</option>
 				<option weightClass="H,H" weight="2"
-					unitType="Mek">STAR</option>
+					unitType="Mek">%STAR%</option>
 				<option weightClass="H,M" weight="3"
-					unitType="Mek">STAR</option>
+					unitType="Mek">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,L" unitType="Mek">STAR</option>
-				<option weightClass="M,M" unitType="Mek">STAR</option>
-				<option weightClass="M,L" unitType="Mek">STAR</option>
+				<option weightClass="H,L" unitType="Mek">%STAR%</option>
+				<option weightClass="M,M" unitType="Mek">%STAR%</option>
+				<option weightClass="M,L" unitType="Mek">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H,L" unitType="Mek">STAR</option>
+				<option weightClass="H,L" unitType="Mek">%STAR%</option>
 				<option weightClass="M,L" weight="2"
-					unitType="Mek">STAR</option>
-				<option weightClass="L,L" unitType="Mek">STAR</option>
+					unitType="Mek">%STAR%</option>
+				<option weightClass="L,L" unitType="Mek">%STAR%</option>
 			</subforceOption>
 
 			<subforceOption ifWeightClass="A">
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="A" weight="1">STAR</option>
+					weightClass="A" weight="1">%STAR%</option>
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="H" weight="3">STAR</option>
+					weightClass="H" weight="3">%STAR%</option>
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="M" weight="2">STAR</option>
+					weightClass="M" weight="2">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="H" weight="3">STAR</option>
+					weightClass="H" weight="3">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="M" weight="2">STAR</option>
+					weightClass="M" weight="2">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="L" weight="1">STAR</option>
+					weightClass="L" weight="1">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="A" weight="1">STAR</option>
+					weightClass="A" weight="1">%STAR%</option>
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="H" weight="2">STAR</option>
+					weightClass="H" weight="2">%STAR%</option>
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="M" weight="2">STAR</option>
+					weightClass="M" weight="2">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="H" weight="2">STAR</option>
+					weightClass="H" weight="2">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="M" weight="2">STAR</option>
+					weightClass="M" weight="2">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="L" weight="1">STAR</option>
+					weightClass="L" weight="1">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="H" weight="1">STAR</option>
+					weightClass="H" weight="1">%STAR%</option>
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="M" weight="2">STAR</option>
+					weightClass="M" weight="2">%STAR%</option>
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="L" weight="1">STAR</option>
+					weightClass="L" weight="1">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="H" weight="1">STAR</option>
+					weightClass="H" weight="1">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="M" weight="2">STAR</option>
+					weightClass="M" weight="2">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="L" weight="1">STAR</option>
+					weightClass="L" weight="1">%STAR%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="H" weight="1">STAR</option>
+					weightClass="H" weight="1">%STAR%</option>
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="M" weight="3">STAR</option>
+					weightClass="M" weight="3">%STAR%</option>
 				<option unitType="BattleArmor" augmented="0"
-					weightClass="L" weight="2">STAR</option>
+					weightClass="L" weight="2">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="H" weight="1">STAR</option>
+					weightClass="H" weight="1">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="M" weight="2">STAR</option>
+					weightClass="M" weight="2">%STAR%</option>
 				<option unitType="Aero" augmented="0"
-					weightClass="L" weight="3">STAR</option>
+					weightClass="L" weight="3">%STAR%</option>
 			</subforceOption>
 		</subforces>
 	</force>
@@ -540,10 +540,10 @@
 	<!--Galaxy command trinaries may have attached ASF or artillery
 	units.-->
 	
-	<force eschelon="TRINARY" eschName="Trinary" ifRole="command">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifRole="command">
 		<name ifFlags="keshik">Trinary Galaxy [Command]</name>
 		<name>Trinary [Command]</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="2">A</option>
@@ -555,9 +555,9 @@
 		<changeEschelon ifFlags="testTrinary"
 				ifRating="FL|Keshik" ifDateBetween="2870,">
 			<option flags="-testTrinary" augmented="1"
-				weight="2">TRINARY</option>
+				weight="2">%TRINARY%</option>
 			<option  flags="-testTrinary" augmented="0"
-				weight="1">TRINARY</option>
+				weight="1">%TRINARY%</option>
 		</changeEschelon>
 		
 		<subforces>
@@ -568,50 +568,50 @@
 			<subforceOption>
 				<option ifRating="!Sol" unitType="Mek"
 					role="artillery" flags="-keshik"
-					name="Binary [Artillery]">BINARY</option>
+					name="Binary [Artillery]">%BINARY%</option>
 				<option ifRating="SL|Sol" unitType="Tank"
 					role="artillery" flags="-keshik"
-					name="Binary Artillery">BINARY</option>
+					name="Binary Artillery">%BINARY%</option>
 				<option weight="2" />
 			</subforceOption>
 
 			<subforceOption ifWeightClass="A|H">
 				<option unitType="Aero"
-					weightClass="H" weight="3">STAR</option>
+					weightClass="H" weight="3">%STAR%</option>
 				<option unitType="Aero"
-					weightClass="M" weight="2">STAR</option>
+					weightClass="M" weight="2">%STAR%</option>
 				<option unitType="Aero"
-					weightClass="L" weight="1">STAR</option>
+					weightClass="L" weight="1">%STAR%</option>
 				<option weight="6" />
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option unitType="Aero"
-					weightClass="H" weight="2">STAR</option>
+					weightClass="H" weight="2">%STAR%</option>
 				<option unitType="Aero"
-					weightClass="M" weight="3">STAR</option>
+					weightClass="M" weight="3">%STAR%</option>
 				<option unitType="Aero"
-					weightClass="L" weight="2">STAR</option>
+					weightClass="L" weight="2">%STAR%</option>
 				<option weight="7" />
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option unitType="Aero"
-					weightClass="H" weight="1">STAR</option>
+					weightClass="H" weight="1">%STAR%</option>
 				<option unitType="Aero"
-					weightClass="M" weight="2">STAR</option>
+					weightClass="M" weight="2">%STAR%</option>
 				<option unitType="Aero"
-					weightClass="L" weight="3">STAR</option>
+					weightClass="L" weight="3">%STAR%</option>
 				<option weight="6" />
 			</subforceOption>
 		</attachedForces>
 	</force>
 
-	<force eschelon="TRINARY" eschName="Trinary" ifAugmented="0" ifUnitType="Mek|ProtoMek">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifAugmented="0" ifUnitType="Mek|ProtoMek">
 		<name ifRole="command">Trinary [Command]</name>
 		<name ifWeightClass="H|A"
 			>{ordinal:distinct} Trinary [Assault]</name>
 		<name ifWeightClass="M">{ordinal:distinct} Trinary [Battle]</name>
 		<name ifWeightClass="L">{ordinal:distinct} Trinary [Striker]</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -633,11 +633,11 @@
 		</subforces>
 		
 		<subforces ifUnitType="ProtoMek">
-			<subforce num="5">POINT</subforce>
+			<subforce num="5">%POINT%</subforce>
 		</subforces>
 	</force>
 
-	<force eschelon="TRINARY" eschName="Supernova Trinary" ifAugmented="1" ifUnitType="Mek">
+	<force eschelon="%TRINARY%" eschName="Supernova Trinary" ifAugmented="1" ifUnitType="Mek">
 		<name ifRole="command">Supernova Command</name>
 		<name ifWeightClass="H|A"
 			>{ordinal:distinct} Supernova Assault</name>
@@ -645,10 +645,10 @@
 			>{ordinal:distinct} Supernova Battle</name>
 		<name ifWeightClass="L"
 			>{ordinal:distinct} Supernova Striker</name>
-		<co>NOVA_CAPTAIN</co>
+		<co>%NOVA_CAPTAIN%</co>
 		
 		<changeEschelon ifDateBetween=",2869">
-			<option augmented="0">TRINARY</option>
+			<option augmented="0">%TRINARY%</option>
 		</changeEschelon>
 		
 		<ruleGroup>
@@ -667,14 +667,14 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="TRINARY" eschName="Trinary" ifUnitType="Tank">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="Tank">
 		<name ifRole="command">Trinary Command</name>
 		<name>Trinary {ordinal}</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<changeEschelon ifFlags="testTrinary">
-			<option flags="-testTrinary">TRINARY</option>
-			<option flags="-testTrinary">BINARY</option>
+			<option flags="-testTrinary">%TRINARY%</option>
+			<option flags="-testTrinary">%BINARY%</option>
 		</changeEschelon>
 		
 		<ruleGroup>
@@ -691,15 +691,15 @@
 		</subforces>
 	</force>
 
-	<force eschelon="TRINARY" eschName="Trinary" ifUnitType="Aero">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="Aero">
 		<name ifRole="command">Trinary Command</name>
 		<name>{ordinal:distinct} Trinary [Fighter]</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<changeEschelon ifFlags="testTrinary">
-			<option flags="-testTrinary" weight="6">TRINARY</option>
-			<option flags="-testTrinary" weight="1">BINARY</option>
-			<option flags="-testTrinary" weight="3">STAR</option>
+			<option flags="-testTrinary" weight="6">%TRINARY%</option>
+			<option flags="-testTrinary" weight="1">%BINARY%</option>
+			<option flags="-testTrinary" weight="3">%STAR%</option>
 		</changeEschelon>
 		
 		<ruleGroup>
@@ -717,17 +717,17 @@
 		</subforces>
 	</force>
 
-	<force eschelon="TRINARY" eschName="Trinary" ifUnitType="BattleArmor|Infantry">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="BattleArmor|Infantry">
 		<name ifRole="command">Trinary [Command]</name>
 		<name ifUnitType="BattleArmor"
 			>{ordinal:distinct} Trinary [Elemental]</name>
 		<name ifUnitType="Infantry"
 			>{ordinal:distinct} Trinary [Infantry]</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<changeEschelon ifFlags="testTrinary">
-			<option flags="-testTrinary" weight="3">TRINARY</option>
-			<option flags="-testTrinary" weight="1">BINARY</option>
+			<option flags="-testTrinary" weight="3">%TRINARY%</option>
+			<option flags="-testTrinary" weight="1">%BINARY%</option>
 		</changeEschelon>
 
 		<ruleGroup>				
@@ -741,12 +741,12 @@
 		</subforces>
 	</force>
 
-	<force eschelon="BINARY" eschName="Binary" ifAugmented="0" ifUnitType="Mek|ProtoMek">
+	<force eschelon="%BINARY%" eschName="Binary" ifAugmented="0" ifUnitType="Mek|ProtoMek">
 		<name ifRole="command">Binary [Command]</name>
 		<name ifWeightClass="H|A">{ordinal:distinct} Binary [Assault]</name>
 		<name ifWeightClass="M">{ordinal:distinct} Binary [Battle]</name>
 		<name ifWeightClass="L">{ordinal:distinct} Binary [Striker]</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -769,21 +769,21 @@
 		
 		<subforces ifUnitType="ProtoMek">
 			<subforce ifUnitType="ProtoMek"
-				num="5">POINT</subforce>
+				num="5">%POINT%</subforce>
 		</subforces>
 	</force>
 
-	<force eschelon="BINARY" eschName="Supernova Binary" ifAugmented="1" ifUnitType="Mek">
+	<force eschelon="%BINARY%" eschName="Supernova Binary" ifAugmented="1" ifUnitType="Mek">
 		<name ifRole="command">Supernova Command</name>
 		<name ifWeightClass="H|A"
 			>{ordinal:distinct} Supernova [Assault]</name>
 		<name ifWeightClass="M">{ordinal:distinct} Supernova [Battle]</name>
 		<name ifWeightClass="L"
 			>{ordinal:distinct} Supernova [Striker]</name>
-		<co>NOVA_CAPTAIN</co>
+		<co>%NOVA_CAPTAIN%</co>
 		
 		<changeEschelon ifDateBetween=",2869">
-			<option augmented="0">BINARY</option>
+			<option augmented="0">%BINARY%</option>
 		</changeEschelon>
 		
 		<ruleGroup>
@@ -802,10 +802,10 @@
 		</subforces>
 	</force>
 
-	<force eschelon="BINARY" eschName="Binary" ifUnitType="Tank">
+	<force eschelon="%BINARY%" eschName="Binary" ifUnitType="Tank">
 		<name ifRole="command">Binary [Command]</name>
 		<name>Binary {ordinal:distinct}</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -819,10 +819,10 @@
 		</subforces>
 	</force>
 
-	<force eschelon="BINARY" eschName="Binary" ifUnitType="Aero">
+	<force eschelon="%BINARY%" eschName="Binary" ifUnitType="Aero">
 		<name ifRole="command">Binary [Command]</name>
 		<name>{ordinal:distinct} Binary [Fighter]</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<weightClass>
 			<option>H</option>
@@ -837,7 +837,7 @@
 		</subforces>
 	</force>
 
-	<force eschelon="BINARY" eschName="Binary" ifUnitType="BattleArmor|Infantry">
+	<force eschelon="%BINARY%" eschName="Binary" ifUnitType="BattleArmor|Infantry">
 		<name ifRole="command">Binary [Command]</name>
 		<name ifUnitType="BattleArmor"
 			>{ordinal:distinct} Binary [Elemental]</name>
@@ -845,7 +845,7 @@
 			>{ordinal:distinct} Binary [Infantry]</name>
 		<name ifUnitType="ProtoMek"
 			>{ordinal:distinct} Binary [ProtoMek]</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -863,9 +863,9 @@
 		</subforces>
 	</force>
 
-	<force eschelon="STAR" eschName="Star" ifAugmented="0" ifUnitType="Mek">
+	<force eschelon="%STAR%" eschName="Star" ifAugmented="0" ifUnitType="Mek">
 		<name>{phonetic} {name:parent} Star</name>
-		<co>STAR_CMDR</co>
+		<co>%STAR_CMDR%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -881,15 +881,15 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="STAR" eschName="Nova" ifAugmented="1" ifUnitType="Mek">
+	<force eschelon="%STAR%" eschName="Nova" ifAugmented="1" ifUnitType="Mek">
 		<name ifFlags="clusterCommand|keshik"
 			>{phonetic} Command  Nova</name>
 		<name>{phonetic} Nova</name>
-		<co>NOVA_CMDR</co>
-		<xo unitType="other">STAR_CMDR</xo>
+		<co>%NOVA_CMDR%</co>
+		<xo unitType="other">%STAR_CMDR%</xo>
 		
 		<changeEschelon ifDateBetween=",2869">
-			<option augmented="0">STAR</option>
+			<option augmented="0">%STAR%</option>
 		</changeEschelon>
 		
 		<weightClass>
@@ -910,9 +910,9 @@
 		</subforces>
 	</force>
 
-	<force eschelon="STAR" eschName="Star" ifUnitType="Tank">
+	<force eschelon="%STAR%" eschName="Star" ifUnitType="Tank">
 		<name>{phonetic} Star</name>
-		<co>STAR_CMDR</co>
+		<co>%STAR_CMDR%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -926,9 +926,9 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="STAR" eschName="Star" ifUnitType="Aero">
+	<force eschelon="%STAR%" eschName="Star" ifUnitType="Aero">
 		<name>{phonetic} Fighter Star</name>
-		<co>STAR_CMDR</co>
+		<co>%STAR_CMDR%</co>
 		
 		<weightClass>
 			<option>H</option>
@@ -943,9 +943,9 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="STAR" eschName="Star" ifUnitType="BattleArmor|Infantry">
+	<force eschelon="%STAR%" eschName="Star" ifUnitType="BattleArmor|Infantry">
 		<name>{phonetic} {name:parent} Star</name>
-		<co>STAR_CMDR</co>
+		<co>%STAR_CMDR%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -959,7 +959,7 @@
 		</unitType>
 
 		<subforces generate="group">
-			<subforce num="5">POINT</subforce>
+			<subforce num="5">%POINT%</subforce>
 		</subforces>
 	</force>
 	

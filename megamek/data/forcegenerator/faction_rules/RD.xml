@@ -3,48 +3,48 @@
 <ruleset faction="RD" parent="CGB" ratingSystem="CLAN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
-		<eschelon>CLUSTER</eschelon>
-		<rankSystem>RANK_CLAN</rankSystem>
+		<eschelon>%CLUSTER%</eschelon>
+		<rankSystem>%RANK_CLAN%</rankSystem>
 		<rating>FL</rating>
 	</defaults>
 	
-	<force eschelon="TOUMAN" eschName="Touman">
-		<co>KHAN</co>
-		<xo>SAKHAN</xo>
+	<force eschelon="%TOUMAN%" eschName="Touman">
+		<co>%KHAN%</co>
+		<xo>%SAKHAN%</xo>
 		
 		<subforces>
 			<subforce rating="Keshik" role="command" unitType="Mek"
-				name="The Ourse Keshik">TRINARY</subforce>
+				name="The Ourse Keshik">%TRINARY%</subforce>
 			<subforce rating="FL"
-				name="Alpha Galaxy">GALAXY</subforce>
+				name="Alpha Galaxy">%GALAXY%</subforce>
 			<subforce rating="FL"
-				name="Beta Galaxy">GALAXY</subforce>
+				name="Beta Galaxy">%GALAXY%</subforce>
 			<subforce rating="FL"
-				name="Rho Galaxy">GALAXY</subforce>
+				name="Rho Galaxy">%GALAXY%</subforce>
 			<subforce rating="FL" ifDateBetween=",3134"
-				name="Omega Galaxy">GALAXY</subforce>
+				name="Omega Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL" ifDateBetween="3135,"
-				name="Omega Galaxy">GALAXY</subforce>
+				name="Omega Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL"
-				name="Theta Galaxy">GALAXY</subforce>
+				name="Theta Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL"
-				name="Kappa Galaxy">GALAXY</subforce>
+				name="Kappa Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL"
-				name="Tau Galaxy">GALAXY</subforce>
+				name="Tau Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL"
-				name="Rasalhague Galaxy">GALAXY</subforce>
+				name="Rasalhague Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL"
 			    unitType="Aero"
-				name="Valkyrie Galaxy">GALAXY</subforce>
+				name="Valkyrie Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL" faction="FRR" weightClass="H"
-				name="Tundra Galaxy">GALAXY</subforce>
+				name="Tundra Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL" faction="FRR" weightClass="M"
-				name="Taiga Galaxy">GALAXY</subforce>
+				name="Taiga Galaxy">%GALAXY%</subforce>
 			<subforce rating="SL" faction="FRR"
 				weightClass="L" role="cavalry"
-				name="Polar Galaxy">GALAXY</subforce>
+				name="Polar Galaxy">%GALAXY%</subforce>
 				
-			<subforce unitType="Warship" name="Dominion Fleet">GALAXY</subforce>
+			<subforce unitType="Warship" name="Dominion Fleet">%GALAXY%</subforce>
 		</subforces>
 	</force>
 </ruleset>

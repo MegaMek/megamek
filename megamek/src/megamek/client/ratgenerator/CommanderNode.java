@@ -72,6 +72,6 @@ public class CommanderNode extends RulesetNode {
 			unitType = assertions.getProperty("unitType");
 			assertions.remove("unitType");
 		}
-		rank = Ruleset.getConstantVal(node.getTextContent().trim());
+		rank = Integer.parseInt(Ruleset.substituteConstants(node.getTextContent().trim()));
 	}
 }

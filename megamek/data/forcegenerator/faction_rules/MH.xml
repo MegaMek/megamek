@@ -9,8 +9,8 @@ support wing (cohort). -->
 <ruleset faction="MH" parent="Periphery" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
-		<eschelon>REGIMENT</eschelon>
-		<rankSystem>RANK_MH</rankSystem>
+		<eschelon>%REGIMENT%</eschelon>
+		<rankSystem>%RANK_MH%</rankSystem>
 		<rating>C</rating>
 	</defaults>
 
@@ -21,11 +21,11 @@ support wing (cohort). -->
 		</unitType>
 		
 		<eschelon>
-			<option ifUnitType="">REGIMENT,BATTALION</option>
-			<option ifUnitType="Mek|Tank|VTOL">REGIMENT,BATTALION,COMPANY,LANCE</option>
-			<option ifUnitType="Infantry">REGIMENT,BATTALION,COMPANY</option>
-			<option ifUnitType="BattleArmor">BATTALION,COMPANY,PLATOON</option>
-			<option ifUnitType="Aero|Conventional Fighter">WING,SQUADRON,FLIGHT</option>
+			<option ifUnitType="">%REGIMENT%,%BATTALION%</option>
+			<option ifUnitType="Mek|Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
+			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
+			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
+			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -33,13 +33,13 @@ support wing (cohort). -->
 		</rating>
 		
 		<flags>
-			<option ifEschelon="Regiment">auxiliary:Auxiliary</option>
+			<option ifEschelon="%REGIMENT%">auxiliary:Auxiliary</option>
 		</flags>
 	</toc>
 	
-	<force eschelon="REGIMENT" eschName="Legion" ifFlags="auxiliary">
+	<force eschelon="%REGIMENT%" eschName="Legion" ifFlags="auxiliary">
 		<name>{latin} Auxilia</name>
-		<co>COLONEL</co>
+		<co>%COLONEL%</co>
 		
 		<unitType>
 			<option weight="3">Tank</option>
@@ -49,40 +49,40 @@ support wing (cohort). -->
 		
 		<subforces>
 			<subforceOption>
-				<option num="3">BATTALION</option>
-				<option num="4">BATTALION</option>
-				<option num="5">BATTALION</option>
+				<option num="3">%BATTALION%</option>
+				<option num="4">%BATTALION%</option>
+				<option num="5">%BATTALION%</option>
 			</subforceOption>
 		</subforces>
 	</force>
 		
-	<force eschelon="REGIMENT" eschName="Legion">
+	<force eschelon="%REGIMENT%" eschName="Legion">
 		<name>{roman} Legio</name>
-		<co position="0">COLONEL</co>
+		<co position="0">%COLONEL%</co>
 		
 		<subforces>
 			<subforceOption>
-				<option num="3">BATTALION</option>
-				<option num="4">BATTALION</option>
-				<option num="5">BATTALION</option>
+				<option num="3">%BATTALION%</option>
+				<option num="4">%BATTALION%</option>
+				<option num="5">%BATTALION%</option>
 			</subforceOption>
 		</subforces>
 		
 		<attachedForces>
 			<subforceOption>
-				<option num="2" weight="2" flags="+auxiliary" unitType="">REGIMENT</option>
-				<option num="1" flags="+auxiliary" unitType="">REGIMENT</option>
+				<option num="2" weight="2" flags="+auxiliary" unitType="">%REGIMENT%</option>
+				<option num="1" flags="+auxiliary" unitType="">%REGIMENT%</option>
 			</subforceOption>
 			<subforceOption>
-				<option weight="2" unitType="Aero">BATTALION</option>
+				<option weight="2" unitType="Aero">%BATTALION%</option>
 				<option/>
 			</subforceOption>
 		</attachedForces>
 	</force>
 	
-	<force eschelon="BATTALION" eschName="Cohort" ifUnitType="Mek">
+	<force eschelon="%BATTALION%" eschName="Cohort" ifUnitType="Mek">
 		<name>{latin} Cohors</name>
-		<co>MAJOR</co>
+		<co>%MAJOR%</co>
 		
 		<weightClass ifUnitType="Mek">
 			<option weight="1">A</option>
@@ -93,31 +93,31 @@ support wing (cohort). -->
 		
 		<subforces>
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A,A">COMPANY</option>
-				<option weightClass="A,A,H" weight="2">COMPANY</option>
-				<option weightClass="A,H,H" weight="3">COMPANY</option>
+				<option weightClass="A,A,A">%COMPANY%</option>
+				<option weightClass="A,A,H" weight="2">%COMPANY%</option>
+				<option weightClass="A,H,H" weight="3">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A,H,H">COMPANY</option>
-				<option weightClass="H,H,H" weight="2">COMPANY</option>
-				<option weightClass="H,H,M" weight="3">COMPANY</option>
+				<option weightClass="A,H,H">%COMPANY%</option>
+				<option weightClass="H,H,H" weight="2">%COMPANY%</option>
+				<option weightClass="H,H,M" weight="3">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,M,M">COMPANY</option>
-				<option weightClass="M,M,M" weight="2">COMPANY</option>
-				<option weightClass="M,M,L">COMPANY</option>
+				<option weightClass="H,M,M">%COMPANY%</option>
+				<option weightClass="M,M,M" weight="2">%COMPANY%</option>
+				<option weightClass="M,M,L">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M,M,L" weight="2">COMPANY</option>
-				<option weightClass="M,L,L" weight="2">COMPANY</option>
-				<option weightClass="L,L,L">COMPANY</option>
+				<option weightClass="M,M,L" weight="2">%COMPANY%</option>
+				<option weightClass="M,L,L" weight="2">%COMPANY%</option>
+				<option weightClass="L,L,L">%COMPANY%</option>
 			</subforceOption>
 		</subforces>
 	</force>
 	
-	<force eschelon="BATTALION" eschName="Cohort" ifUnitType="Tank">
+	<force eschelon="%BATTALION%" eschName="Cohort" ifUnitType="Tank">
 		<name>{latin} Cohors</name>
-		<co>MAJOR</co>
+		<co>%MAJOR%</co>
 		
 		<weightClass>
 			<option weight="4">A</option>
@@ -133,33 +133,33 @@ support wing (cohort). -->
 		<attachedForces ifRole="!artillery|missile_artillery">
 			<subforceOption ifWeightClass="A">
 				<option role="artillery" name="Artillery Support"
-					weight="2">COMPANY</option>
+					weight="2">%COMPANY%</option>
 				<option role="artillery" name="Artillery Support"
-					weight="3" num="2">LANCE</option>
+					weight="3" num="2">%LANCE%</option>
 				<option role="artillery" name="Artillery Support"
-					weight="1" num="1">LANCE</option>
+					weight="1" num="1">%LANCE%</option>
 				<option weight="3" />
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
 				<option role="artillery" name="Artillery Support"
-					weight="3" num="2">LANCE</option>
+					weight="3" num="2">%LANCE%</option>
 				<option role="artillery" name="Artillery Support"
-					weight="1" num="1">LANCE</option>
+					weight="1" num="1">%LANCE%</option>
 				<option weight="2" />
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option role="artillery" name="Artillery Support"
-					weight="3" num="1">LANCE</option>
+					weight="3" num="1">%LANCE%</option>
 				<option role="artillery" name="Artillery Support"
-					weight="1" num="2">LANCE</option>
+					weight="1" num="2">%LANCE%</option>
 				<option weight="6" />
 			</subforceOption>
 		</attachedForces>
 	</force>
 	
-	<force eschelon="WING" eschName="Wing" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%WING%" eschName="Wing" ifUnitType="Aero|Conventional Fighter">
 		<name>{latin:distinct} Ala</name>
-		<co>MAJOR</co>
+		<co>%MAJOR%</co>
 		
 		<weightClass>
 			<option weight="3">L</option>
@@ -169,28 +169,28 @@ support wing (cohort). -->
 		
 		<subforces>
 			<subforceOption ifWeightClass="H" ifUnitType="Aero">
-				<option weightClass="H,H,H">SQUADRON</option>
-				<option weightClass="H,H,M">SQUADRON</option>
-				<option weightClass="H,H,L">SQUADRON</option>
+				<option weightClass="H,H,H">%SQUADRON%</option>
+				<option weightClass="H,H,M">%SQUADRON%</option>
+				<option weightClass="H,H,L">%SQUADRON%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M" ifUnitType="Aero">
-				<option weightClass="H,M,M">SQUADRON</option>
-				<option weightClass="M,M,M">SQUADRON</option>
-				<option weightClass="H,M,L">SQUADRON</option>
-				<option weightClass="M,M,L">SQUADRON</option>
+				<option weightClass="H,M,M">%SQUADRON%</option>
+				<option weightClass="M,M,M">%SQUADRON%</option>
+				<option weightClass="H,M,L">%SQUADRON%</option>
+				<option weightClass="M,M,L">%SQUADRON%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L" ifUnitType="Aero">
-				<option weightClass="H,L,L">SQUADRON</option>
-				<option weightClass="M,L,L">SQUADRON</option>
-				<option weightClass="L,L,L">SQUADRON</option>
+				<option weightClass="H,L,L">%SQUADRON%</option>
+				<option weightClass="M,L,L">%SQUADRON%</option>
+				<option weightClass="L,L,L">%SQUADRON%</option>
 			</subforceOption>
-			<subforce ifUnitType="Conventional Fighter" num="3">SQUADRON</subforce>
+			<subforce ifUnitType="Conventional Fighter" num="3">%SQUADRON%</subforce>
 		</subforces>
 		
 		<attachedForces>
 			<subforceOption>
 				<option weight="2" unitType="Infantry" name="Engineers"
-					role="engineer">COMPANY</option>
+					role="engineer">%COMPANY%</option>
 				<option weight="1" />
 			</subforceOption>
 		</attachedForces>
@@ -201,18 +201,18 @@ support wing (cohort). -->
 	appropriate rule, while combined arms cohorts do not set a unit type for their
 	maniples. -->
 	
-	<force eschelon="BATTALION" eschName="Cohort">
+	<force eschelon="%BATTALION%" eschName="Cohort">
 		<name>{latin} Cohors</name>
-		<co>MAJOR</co>
+		<co>%MAJOR%</co>
 		
 		<changeEschelon ifFlags="!auxiliary">
-			<option weight="3" unitType="Mek">BATTALION</option>
+			<option weight="3" unitType="Mek">%BATTALION%</option>
 			<option/>
 		</changeEschelon>
 		
 		<changeEschelon ifFlags="auxiliary">
-			<option unitType="Tank">BATTALION</option>
-			<option unitType="Infantry">BATTALION</option>
+			<option unitType="Tank">%BATTALION%</option>
+			<option unitType="Infantry">%BATTALION%</option>
 			<option/>
 		</changeEschelon>
 		
@@ -225,31 +225,31 @@ support wing (cohort). -->
 		
 		<subforces>
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A,A">COMPANY</option>
-				<option weightClass="A,A,H" weight="2">COMPANY</option>
-				<option weightClass="A,H,H" weight="3">COMPANY</option>
+				<option weightClass="A,A,A">%COMPANY%</option>
+				<option weightClass="A,A,H" weight="2">%COMPANY%</option>
+				<option weightClass="A,H,H" weight="3">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A,H,H">COMPANY</option>
-				<option weightClass="H,H,H" weight="2">COMPANY</option>
-				<option weightClass="H,H,M" weight="3">COMPANY</option>
+				<option weightClass="A,H,H">%COMPANY%</option>
+				<option weightClass="H,H,H" weight="2">%COMPANY%</option>
+				<option weightClass="H,H,M" weight="3">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,M,M">COMPANY</option>
-				<option weightClass="M,M,M" weight="2">COMPANY</option>
-				<option weightClass="M,M,L">COMPANY</option>
+				<option weightClass="H,M,M">%COMPANY%</option>
+				<option weightClass="M,M,M" weight="2">%COMPANY%</option>
+				<option weightClass="M,M,L">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M,M,L" weight="2">COMPANY</option>
-				<option weightClass="M,L,L" weight="2">COMPANY</option>
-				<option weightClass="L,L,L">COMPANY</option>
+				<option weightClass="M,M,L" weight="2">%COMPANY%</option>
+				<option weightClass="M,L,L" weight="2">%COMPANY%</option>
+				<option weightClass="L,L,L">%COMPANY%</option>
 			</subforceOption>
 		</subforces>
 	</force>
 	
-	<force eschelon="COMPANY" eschName="Maniple" ifUnitType="Mek">
+	<force eschelon="%COMPANY%" eschName="Maniple" ifUnitType="Mek">
 		<name>{latin} Manipulus</name>
-		<co>CAPTAIN</co>
+		<co>%CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -260,28 +260,28 @@ support wing (cohort). -->
 		
 		<subforces>
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A">LANCE</option>
-				<option weightClass="A,H" weight="2">LANCE</option>
+				<option weightClass="A,A">%LANCE%</option>
+				<option weightClass="A,H" weight="2">%LANCE%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="H,H" weight="2">LANCE</option>
-				<option weightClass="H,M" weight="3">LANCE</option>
+				<option weightClass="H,H" weight="2">%LANCE%</option>
+				<option weightClass="H,M" weight="3">%LANCE%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,M" weight="2">LANCE</option>
-				<option weightClass="M,M" weight="3">LANCE</option>
-				<option weightClass="M,L" weight="2">LANCE</option>
+				<option weightClass="H,M" weight="2">%LANCE%</option>
+				<option weightClass="M,M" weight="3">%LANCE%</option>
+				<option weightClass="M,L" weight="2">%LANCE%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M,L">LANCE</option>
-				<option weightClass="L,L">LANCE</option>
+				<option weightClass="M,L">%LANCE%</option>
+				<option weightClass="L,L">%LANCE%</option>
 			</subforceOption>
 		</subforces>		
 	</force>
 	
-	<force eschelon="COMPANY" eschName="Maniple" ifUnitType="Tank">
+	<force eschelon="%COMPANY%" eschName="Maniple" ifUnitType="Tank">
 		<name>{latin} Manipulus</name>
-		<co>CAPTAIN</co>
+		<co>%CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="3">A</option>
@@ -299,39 +299,39 @@ support wing (cohort). -->
 		
 		<subforces>
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A">LANCE</option>
-				<option weightClass="A,H" weight="2">LANCE</option>
+				<option weightClass="A,A">%LANCE%</option>
+				<option weightClass="A,H" weight="2">%LANCE%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A,M">LANCE</option>
-				<option weightClass="H,H" weight="3">LANCE</option>
-				<option weightClass="H,M" weight="2">LANCE</option>
+				<option weightClass="A,M">%LANCE%</option>
+				<option weightClass="H,H" weight="3">%LANCE%</option>
+				<option weightClass="H,M" weight="2">%LANCE%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,M" weight="2">LANCE</option>
-				<option weightClass="H,L">LANCE</option>
-				<option weightClass="M,M" weight="3">LANCE</option>
-				<option weightClass="M,L" weight="2">LANCE</option>
+				<option weightClass="H,M" weight="2">%LANCE%</option>
+				<option weightClass="H,L">%LANCE%</option>
+				<option weightClass="M,M" weight="3">%LANCE%</option>
+				<option weightClass="M,L" weight="2">%LANCE%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M,L">LANCE</option>
-				<option weightClass="L,L" weight="2">LANCE</option>
+				<option weightClass="M,L">%LANCE%</option>
+				<option weightClass="L,L" weight="2">%LANCE%</option>
 			</subforceOption>
 		</subforces>		
 	</force>
 	
-	<force eschelon="COMPANY" eschName="Maniple" ifUnitType="VTOL">
-		<co>CAPTAIN</co>
-		<xo>LT</xo>
+	<force eschelon="%COMPANY%" eschName="Maniple" ifUnitType="VTOL">
+		<co>%CAPTAIN%</co>
+		<xo>%LT%</xo>
 		
 		<subforces>
-			<subforce num="2">LANCE</subforce>
+			<subforce num="2">%LANCE%</subforce>
 		</subforces>		
 	</force>
 	
-	<force eschelon="COMPANY" eschName="Company" ifUnitType="Infantry|BattleArmor">
+	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Infantry|BattleArmor">
 		<name>{latin} Manipulus</name>
-		<co>CAPTAIN</co>
+		<co>%CAPTAIN%</co>
 		
 		<unitType ifUnitType="Infantry" ifDateBetween="3051,"
 				ifRole="">
@@ -374,17 +374,17 @@ support wing (cohort). -->
 		</ruleGroup>
 
 		<subforces ifUnitType="Infantry" generate="group">
-			<subforce num="3">PLATOON</subforce>
+			<subforce num="3">%PLATOON%</subforce>
 		</subforces>
 
 		<subforces ifUnitType="BattleArmor">
-			<subforce num="4">PLATOON</subforce>
+			<subforce num="4">%PLATOON%</subforce>
 		</subforces>
 	</force>
 	
-	<force eschelon="SQUADRON" eschName="Maniple" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%SQUADRON%" eschName="Maniple" ifUnitType="Aero|Conventional Fighter">
 		<name>{latin} Manipulus</name>
-		<co>CAPTAIN</co>
+		<co>%CAPTAIN%</co>
 		
 		<weightClass>
 			<option>H</option>
@@ -394,37 +394,37 @@ support wing (cohort). -->
 
 		<subforces>
 			<subforceOption ifWeightClass="H" ifUnitType="Aero">
-				<option weightClass="H,H" weight="2">FLIGHT
+				<option weightClass="H,H" weight="2">%FLIGHT%
 					</option>
-				<option weightClass="H,M">FLIGHT
+				<option weightClass="H,M">%FLIGHT%
 					</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M" ifUnitType="Aero">
-				<option weightClass="H,M">FLIGHT
+				<option weightClass="H,M">%FLIGHT%
 					</option>
-				<option weightClass="M,M">FLIGHT
+				<option weightClass="M,M">%FLIGHT%
 					</option>
-				<option weightClass="H,L">FLIGHT
+				<option weightClass="H,L">%FLIGHT%
 					</option>
-				<option weightClass="M,L">FLIGHT
+				<option weightClass="M,L">%FLIGHT%
 					</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L" ifUnitType="Aero">
-				<option weightClass="M,L">FLIGHT
+				<option weightClass="M,L">%FLIGHT%
 					</option>
-				<option weightClass="L,L" weight="2">FLIGHT
+				<option weightClass="L,L" weight="2">%FLIGHT%
 					</option>
 			</subforceOption>
 			<subforce ifUnitType="Conventional Fighter"
-					num="3">FLIGHT</subforce>
+					num="3">%FLIGHT%</subforce>
 		</subforces>
 	</force>
 	
 	<!-- In a combined arms cohort all the maniples will be pure formations. -->
 	
-	<force eschelon="COMPANY" eschName="Maniple">
+	<force eschelon="%COMPANY%" eschName="Maniple">
 		<name>{latin} Manipulus</name>
-		<co>CAPTAIN</co>
+		<co>%CAPTAIN%</co>
 		
 		<unitType>
 			<option weight="2" ifFlags="!auxiliary">Mek</option>
@@ -441,28 +441,28 @@ support wing (cohort). -->
 		
 		<subforces>
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A">LANCE</option>
-				<option weightClass="A,H" weight="2">LANCE</option>
+				<option weightClass="A,A">%LANCE%</option>
+				<option weightClass="A,H" weight="2">%LANCE%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="H,H" weight="2">LANCE</option>
-				<option weightClass="H,M" weight="3">LANCE</option>
+				<option weightClass="H,H" weight="2">%LANCE%</option>
+				<option weightClass="H,M" weight="3">%LANCE%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,M" weight="2">LANCE</option>
-				<option weightClass="M,M" weight="3">LANCE</option>
-				<option weightClass="M,L" weight="2">LANCE</option>
+				<option weightClass="H,M" weight="2">%LANCE%</option>
+				<option weightClass="M,M" weight="3">%LANCE%</option>
+				<option weightClass="M,L" weight="2">%LANCE%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M,L">LANCE</option>
-				<option weightClass="L,L">LANCE</option>
+				<option weightClass="M,L">%LANCE%</option>
+				<option weightClass="L,L">%LANCE%</option>
 			</subforceOption>
 		</subforces>		
 	</force>
 
-	<force eschelon="LANCE" eschName="Century" ifUnitType="Mek">
+	<force eschelon="%LANCE%" eschName="Century" ifUnitType="Mek">
 		<name>{latin:parent} Centuria {roman}</name>
-		<co>LT</co>
+		<co>%LT%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -495,36 +495,36 @@ support wing (cohort). -->
 		
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A,A,H,H">ELEMENT</option>
-				<option weightClass="A,A,H,H,M">ELEMENT</option>
+				<option weightClass="A,A,A,H,H">%ELEMENT%</option>
+				<option weightClass="A,A,H,H,M">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A,H,H,H,H">ELEMENT</option>
-				<option weightClass="A,H,H,H,M">ELEMENT</option>
-				<option weightClass="H,H,H,H,H" weight="2">ELEMENT</option>
-				<option weightClass="H,H,H,H,M" weight="3">ELEMENT</option>
-				<option weightClass="H,H,H,M,M" weight="4">ELEMENT</option>
+				<option weightClass="A,H,H,H,H">%ELEMENT%</option>
+				<option weightClass="A,H,H,H,M">%ELEMENT%</option>
+				<option weightClass="H,H,H,H,H" weight="2">%ELEMENT%</option>
+				<option weightClass="H,H,H,H,M" weight="3">%ELEMENT%</option>
+				<option weightClass="H,H,H,M,M" weight="4">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,H,M,M,M">ELEMENT</option>
-				<option weightClass="H,M,M,M,M" weight="2">ELEMENT</option>
-				<option weightClass="M,M,M,M,M" weight="3">ELEMENT</option>
-				<option weightClass="H,M,M,M,L">ELEMENT</option>
-				<option weightClass="M,M,M,M,L" weight="2">ELEMENT</option>
-				<option weightClass="M,M,M,L,L">ELEMENT</option>
+				<option weightClass="H,H,M,M,M">%ELEMENT%</option>
+				<option weightClass="H,M,M,M,M" weight="2">%ELEMENT%</option>
+				<option weightClass="M,M,M,M,M" weight="3">%ELEMENT%</option>
+				<option weightClass="H,M,M,M,L">%ELEMENT%</option>
+				<option weightClass="M,M,M,M,L" weight="2">%ELEMENT%</option>
+				<option weightClass="M,M,M,L,L">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H,M,L,L,L">ELEMENT</option>
-				<option weightClass="M,M,L,L,L" weight="4">ELEMENT</option>
-				<option weightClass="M,L,L,L,L" weight="3">ELEMENT</option>
-				<option weightClass="L,L,L,L,L" weight="2">ELEMENT</option>
+				<option weightClass="H,M,L,L,L">%ELEMENT%</option>
+				<option weightClass="M,M,L,L,L" weight="4">%ELEMENT%</option>
+				<option weightClass="M,L,L,L,L" weight="3">%ELEMENT%</option>
+				<option weightClass="L,L,L,L,L" weight="2">%ELEMENT%</option>
 			</subforceOption>
 		</subforces>
 	</force>
 	
-	<force eschelon="LANCE" eschName="Century" ifUnitType="Tank">
+	<force eschelon="%LANCE%" eschName="Century" ifUnitType="Tank">
 		<name>{latin:parent} Centuria {roman}</name>
-		<co>LT</co>
+		<co>%LT%</co>
 
 		<weightClass>
 			<option weight="3">A</option>
@@ -555,86 +555,86 @@ support wing (cohort). -->
 
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A,A,A,H,H">ELEMENT</option>
-				<option weightClass="A,A,H,H,M">ELEMENT</option>
+				<option weightClass="A,A,A,H,H">%ELEMENT%</option>
+				<option weightClass="A,A,H,H,M">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A,H,H,H,H">ELEMENT</option>
-				<option weightClass="A,H,H,H,M">ELEMENT</option>
-				<option weightClass="H,H,H,H,H" weight="2">ELEMENT</option>
-				<option weightClass="H,H,H,H,M" weight="3">ELEMENT</option>
-				<option weightClass="H,H,H,M,M" weight="4">ELEMENT</option>
+				<option weightClass="A,H,H,H,H">%ELEMENT%</option>
+				<option weightClass="A,H,H,H,M">%ELEMENT%</option>
+				<option weightClass="H,H,H,H,H" weight="2">%ELEMENT%</option>
+				<option weightClass="H,H,H,H,M" weight="3">%ELEMENT%</option>
+				<option weightClass="H,H,H,M,M" weight="4">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,H,M,M,M">ELEMENT</option>
-				<option weightClass="H,M,M,M,M" weight="2">ELEMENT</option>
-				<option weightClass="M,M,M,M,M" weight="3">ELEMENT</option>
-				<option weightClass="H,M,M,M,L">ELEMENT</option>
-				<option weightClass="M,M,M,M,L" weight="2">ELEMENT</option>
-				<option weightClass="M,M,M,L,L">ELEMENT</option>
+				<option weightClass="H,H,M,M,M">%ELEMENT%</option>
+				<option weightClass="H,M,M,M,M" weight="2">%ELEMENT%</option>
+				<option weightClass="M,M,M,M,M" weight="3">%ELEMENT%</option>
+				<option weightClass="H,M,M,M,L">%ELEMENT%</option>
+				<option weightClass="M,M,M,M,L" weight="2">%ELEMENT%</option>
+				<option weightClass="M,M,M,L,L">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H,M,L,L,L">ELEMENT</option>
-				<option weightClass="M,M,L,L,L" weight="4">ELEMENT</option>
-				<option weightClass="M,L,L,L,L" weight="3">ELEMENT</option>
-				<option weightClass="L,L,L,L,L" weight="2">ELEMENT</option>
+				<option weightClass="H,M,L,L,L">%ELEMENT%</option>
+				<option weightClass="M,M,L,L,L" weight="4">%ELEMENT%</option>
+				<option weightClass="M,L,L,L,L" weight="3">%ELEMENT%</option>
+				<option weightClass="L,L,L,L,L" weight="2">%ELEMENT%</option>
 			</subforceOption>
 		</subforces>
 	</force>
 	
-	<force eschelon="LANCE" eschName="Century" ifUnitType="VTOL">
-		<co>LT</co>
+	<force eschelon="%LANCE%" eschName="Century" ifUnitType="VTOL">
+		<co>%LT%</co>
 		
 		<subforces generate="group">
-			<subforce num="5">ELEMENT</subforce>
+			<subforce num="5">%ELEMENT%</subforce>
 		</subforces>
 	</force>
 	
-	<force eschelon="COMPANY" eschName="Century" ifUnitType="Infantry" ifRole="engineer">
+	<force eschelon="%COMPANY%" eschName="Century" ifUnitType="Infantry" ifRole="engineer">
 		<name>{latin} Manipulus Mechanicus</name>
-		<co>CAPTAIN</co>
+		<co>%CAPTAIN%</co>
 
 		<subforces generate="group">
-			<subforce num="5">PLATOON</subforce>
+			<subforce num="5">%PLATOON%</subforce>
 		</subforces>
 		<subforces>
-			<subforce unitType="Tank">LANCE</subforce>
+			<subforce unitType="Tank">%LANCE%</subforce>
 		</subforces>
 	</force>
 	
-	<force eschelon="COMPANY" eschName="Century" ifUnitType="Infantry" ifRole="field_gun">
-		<co>CAPTAIN</co>
+	<force eschelon="%COMPANY%" eschName="Century" ifUnitType="Infantry" ifRole="field_gun">
+		<co>%CAPTAIN%</co>
 
 		<subforces generate="group">
-			<subforce num="5">PLATOON</subforce>
+			<subforce num="5">%PLATOON%</subforce>
 		</subforces>
 	</force>
 	
-	<force eschelon="COMPANY" eschName="Century" ifUnitType="Infantry"
+	<force eschelon="%COMPANY%" eschName="Century" ifUnitType="Infantry"
 			ifRole="artillery|missle_artillery">
-		<co>CAPTAIN</co>
+		<co>%CAPTAIN%</co>
 
 		<subforces generate="group">
-			<subforce num="5">PLATOON</subforce>
+			<subforce num="5">%PLATOON%</subforce>
 		</subforces>
 	</force>
 	
-	<force eschelon="PLATOON" eschName="Century" ifUnitType="Infantry">
+	<force eschelon="%PLATOON%" eschName="Century" ifUnitType="Infantry">
 		<name>{latin:parent} Centuria {roman}</name>
-		<co>LT</co>
+		<co>%LT%</co>
 	</force>
 	
-	<force eschelon="PLATOON" eschName="Century" ifUnitType="BattleArmor">
+	<force eschelon="%PLATOON%" eschName="Century" ifUnitType="BattleArmor">
 		<name>{latin:parent} Centuria {roman}</name>
-		<co>LT</co>
+		<co>%LT%</co>
 		
 		<subforces generate="group">
-			<subforce num="5">SQUAD</subforce>
+			<subforce num="5">%SQUAD%</subforce>
 		</subforces>
 	</force>
 	
-	<force eschelon="SQUAD" eschName="Contubernium" ifUnitType="Infantry|BattleArmor">
-		<co>SGT</co>
+	<force eschelon="%SQUAD%" eschName="Contubernium" ifUnitType="Infantry|BattleArmor">
+		<co>%SGT%</co>
 	</force>
 	
 	<!-- The use of five-fighter units does not fit with conventional deployments
@@ -642,9 +642,9 @@ support wing (cohort). -->
 	still fit the requirements of the capital fighter squadron rule in StratOps,
 	allowing the maniple to be split 5/5. -->
 	
-	<force eschelon="FLIGHT" eschName="Century" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%FLIGHT%" eschName="Century" ifUnitType="Aero|Conventional Fighter">
 		<name>{latin:parent} Centuria {roman}</name>
-		<co>LT</co>
+		<co>%LT%</co>
 		
 		<weightClass>
 			<option>H</option>
@@ -654,47 +654,47 @@ support wing (cohort). -->
 
 		<subforces>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="H" weight="2">ELEMENT</option>
-				<option weightClass="M">ELEMENT</option>
+				<option weightClass="H" weight="2">%ELEMENT%</option>
+				<option weightClass="M">%ELEMENT%</option>
 			</subforceOption>		
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H">ELEMENT</option>
-				<option weightClass="M" weight="2">ELEMENT</option>
-				<option weightClass="L">ELEMENT</option>
+				<option weightClass="H">%ELEMENT%</option>
+				<option weightClass="M" weight="2">%ELEMENT%</option>
+				<option weightClass="L">%ELEMENT%</option>
 			</subforceOption>		
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M">ELEMENT</option>
-				<option weightClass="L" weight="2">ELEMENT</option>
+				<option weightClass="M">%ELEMENT%</option>
+				<option weightClass="L" weight="2">%ELEMENT%</option>
 			</subforceOption>		
 		
 			<subforceOption ifWeightClass="H" generate="group">
-				<option weightClass="H,H" weight="2">ELEMENT</option>
-				<option weightClass="M,M">ELEMENT</option>
+				<option weightClass="H,H" weight="2">%ELEMENT%</option>
+				<option weightClass="M,M">%ELEMENT%</option>
 			</subforceOption>		
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,H">ELEMENT</option>
-				<option weightClass="M,M" weight="2">ELEMENT</option>
-				<option weightClass="L,L">ELEMENT</option>
+				<option weightClass="H,H">%ELEMENT%</option>
+				<option weightClass="M,M" weight="2">%ELEMENT%</option>
+				<option weightClass="L,L">%ELEMENT%</option>
 			</subforceOption>		
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M,M">ELEMENT</option>
-				<option weightClass="L,L" weight="2">ELEMENT</option>
+				<option weightClass="M,M">%ELEMENT%</option>
+				<option weightClass="L,L" weight="2">%ELEMENT%</option>
 			</subforceOption>		
 		
 			<subforceOption ifWeightClass="H" generate="group">
-				<option weightClass="H,H" weight="3">ELEMENT</option>
-				<option weightClass="M,M" weight="2">ELEMENT</option>
-				<option weightClass="L,L" weight="1">ELEMENT</option>
+				<option weightClass="H,H" weight="3">%ELEMENT%</option>
+				<option weightClass="M,M" weight="2">%ELEMENT%</option>
+				<option weightClass="L,L" weight="1">%ELEMENT%</option>
 			</subforceOption>		
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H,H" weight="2">ELEMENT</option>
-				<option weightClass="M,M" weight="3">ELEMENT</option>
-				<option weightClass="L,L" weight="2">ELEMENT</option>
+				<option weightClass="H,H" weight="2">%ELEMENT%</option>
+				<option weightClass="M,M" weight="3">%ELEMENT%</option>
+				<option weightClass="L,L" weight="2">%ELEMENT%</option>
 			</subforceOption>		
 			<subforceOption ifWeightClass="L">
-				<option weightClass="H,H" weight="1">ELEMENT</option>
-				<option weightClass="M,M" weight="2">ELEMENT</option>
-				<option weightClass="L,L" weight="3">ELEMENT</option>
+				<option weightClass="H,H" weight="1">%ELEMENT%</option>
+				<option weightClass="M,M" weight="2">%ELEMENT%</option>
+				<option weightClass="L,L" weight="3">%ELEMENT%</option>
 			</subforceOption>		
 		</subforces>
 	</force>

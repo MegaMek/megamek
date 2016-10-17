@@ -4,8 +4,8 @@
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
-		<eschelon>CLUSTER</eschelon>
-		<rankSystem>RANK_CLAN</rankSystem>
+		<eschelon>%CLUSTER%</eschelon>
+		<rankSystem>%RANK_CLAN%</rankSystem>
 		<rating>FL</rating>
 	</defaults>
 	
@@ -21,76 +21,76 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocat
 		</unitType>
 		
 		<eschelon>
-			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
-			<option ifUnitType="Warship">CLUSTER</option>
-			<option ifUnitType="Jumpship|Dropship">STAR</option>
-			<option ifUnitType="Mek">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
-			<option>TRINARY,BINARY,STAR</option>
+			<option ifUnitType="">%TOUMAN%,%GALAXY%,%CLUSTER%</option>
+			<option ifUnitType="Warship">%CLUSTER%</option>
+			<option ifUnitType="Jumpship|Dropship">%STAR%</option>
+			<option ifUnitType="Mek">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
+			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
 		
 		<rating>
 			<option ifUnitType="Tank|VTOL">SL:Second Line,PG:Garrison,Sol:Solahma</option>
 			<option ifUnitType="Infantry" ifDateBetween="2900,">PG:Garrison,Sol:Solahma</option>
 			<option ifUnitType="Infantry">SL:Second Line,PG:Garrison,Sol:Solahma</option>
-			<option ifEschelon="Touman"></option>
-			<option ifDateBetween="3066," ifEschelon="Galaxy">FL:Front Line,SL:Second Line,Sol:Solahma</option>
-			<option ifEschelon="Galaxy">FL:Front Line,SL:Second Line</option>
-			<option ifEschelon="Cluster" ifDateBetween=",3065">Keshik,FL:Front Line,SL:Second Line,PG:Garrison</option>
+			<option ifEschelon="%TOUMAN%"></option>
+			<option ifDateBetween="3066," ifEschelon="%GALAXY%">FL:Front Line,SL:Second Line,Sol:Solahma</option>
+			<option ifEschelon="%GALAXY%">FL:Front Line,SL:Second Line</option>
+			<option ifEschelon="%CLUSTER%" ifDateBetween=",3065">Keshik,FL:Front Line,SL:Second Line,PG:Garrison</option>
 			<option>Keshik,FL:Front Line,SL:Second Line,PG:Garrison,Sol:Solahma</option>
 		</rating>
 	</toc>
 	
-	<force eschelon="TOUMAN" eschName="Touman">
-		<co>KHAN</co>
-		<xo>SAKHAN</xo>
+	<force eschelon="%TOUMAN%" eschName="Touman">
+		<co>%KHAN%</co>
+		<xo>%SAKHAN%</xo>
 		
 		<subforces>
 			<subforce name="Alpha Galaxy" rating="FL"
-				role="command">GALAXY</subforce>
-			<subforce name="Beta Galaxy" rating="FL">GALAXY</subforce>
-			<subforce name="Omega Galaxy" rating="SL">GALAXY</subforce>
+				role="command">%GALAXY%</subforce>
+			<subforce name="Beta Galaxy" rating="FL">%GALAXY%</subforce>
+			<subforce name="Omega Galaxy" rating="SL">%GALAXY%</subforce>
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Warship">CLUSTER</subforce>
+			<subforce unitType="Warship">%CLUSTER%</subforce>
 		</attachedForces>
 	</force>
 	
-	<force eschelon="CLUSTER" eschName="Fleet" ifUnitType="Warship">
+	<force eschelon="%CLUSTER%" eschName="Fleet" ifUnitType="Warship">
 		<name>Naval Reserve</name>
-		<co>GALAXY_CMDR</co>
+		<co>%GALAXY_CMDR%</co>
 		
 		<subforces>
 			<subforce role="command" fluffName="CWS Werewolf"
 				ifDateBetween=",3077"
-				chassis="McKenna Battleship">ELEMENT</subforce>
+				chassis="McKenna Battleship">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Ulric Kerensky"
 				ifDateBetween=",3074"
-				chassis="Cameron Battlecruiser">ELEMENT</subforce>
+				chassis="Cameron Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Implacable"
 				ifDateBetween=",3075"
-				chassis="Black Lion Battlecruiser">ELEMENT</subforce>
+				chassis="Black Lion Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Full Moon"
 				ifDateBetween=",3120"
-				chassis="Potemkin Troop Cruiser">ELEMENT</subforce>
+				chassis="Potemkin Troop Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Valiant"
 				ifDateBetween=",3072"
-				chassis="Vincent Corvette">ELEMENT</subforce>
+				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Killing Blow"
 				ifDateBetween=",3072"
-				chassis="Vincent Corvette">ELEMENT</subforce>
+				chassis="Vincent Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Jade Wolf" ifDateBetween="3062,3072"
-				chassis="Aegis Heavy Cruiser">ELEMENT</subforce>
+				chassis="Aegis Heavy Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CWS Black Paw" ifDateBetween="3062,3072"
-				chassis="Aegis Heavy Cruiser">ELEMENT</subforce>
+				chassis="Aegis Heavy Cruiser">%ELEMENT%</subforce>
 		</subforces>
 	</force>
 	
 	<!--Override to change PGC name-->
 	
-	<force eschelon="CLUSTER" eschName="Cluster" ifRating="PG">
+	<force eschelon="%CLUSTER%" eschName="Cluster" ifRating="PG">
 		<name>Wolf Guardians Cluster</name>
-		<co>STAR_COL</co>
+		<co>%STAR_COL%</co>
 		
 		<weightClass>
 			<option weight="2">H</option>
@@ -103,9 +103,9 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocat
 		</subforces>
 	</force>
 	
-	<force eschelon="STAR" eschName="Star" ifAugmented="0" ifUnitType="Mek|ProtoMek">
+	<force eschelon="%STAR%" eschName="Star" ifAugmented="0" ifUnitType="Mek|ProtoMek">
 		<name>{phonetic} {name:parent} Star</name>
-		<co>STAR_CMDR</co>
+		<co>%STAR_CMDR%</co>
 		
 		<weightClass>
 			<option weight="2">H</option>
@@ -128,7 +128,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocat
 			<asParent />
 		</subforces>
 		<subforces ifUnitType="ProtoMek">
-			<subforce generate="" num="5">POINT</subforce>
+			<subforce generate="" num="5">%POINT%</subforce>
 		</subforces>
 	</force>			
 </ruleset>

@@ -478,7 +478,7 @@ public class ForceDescriptor {
 				int ratingLevel = getRatingLevel();
 				if (ratingLevel >= 0) {
 					List<String> ratings = getFactionRec().getRatingLevelSystem();
-					ratGenRating = ratings.get(Math.min(ratingLevel, ratings.size()));
+					ratGenRating = ratings.get(Math.min(ratingLevel, ratings.size() - 1));
 				}
 				UnitTable table = new UnitTable(fd.getFactionRec(), fd.getUnitType(),
 						fd.getYear(), ratGenRating, wcs, ModelRecord.NETWORK_NONE,

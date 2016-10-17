@@ -3,8 +3,8 @@
 <ruleset faction="CB" ratingSystem="CLAN" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
-		<eschelon>CLUSTER</eschelon>
-		<rankSystem>RANK_CLAN</rankSystem>
+		<eschelon>%CLUSTER%</eschelon>
+		<rankSystem>%RANK_CLAN%</rankSystem>
 		<rating>FL</rating>
 	</defaults>
 	
@@ -16,24 +16,24 @@
 		</unitType>
 		
 		<eschelon>
-			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
-			<option ifUnitType="Warship">CLUSTER</option>
-			<option ifUnitType="Dropship|Jumpship">STAR</option>
-			<option>TRINARY,BINARY,STAR</option>
+			<option ifUnitType="">%TOUMAN%,%GALAXY%,%CLUSTER%</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">%TRINARY%^,%TRINARY%,%BINARY%^,%BINARY%,%STAR%^,%STAR%</option>
+			<option ifUnitType="Warship">%CLUSTER%</option>
+			<option ifUnitType="Dropship|Jumpship">%STAR%</option>
+			<option>%TRINARY%,%BINARY%,%STAR%</option>
 		</eschelon>
 		
 		<rating>
 			<option ifUnitType="Tank|VTOL">SL:Second Line,Sol:Solahma,PG:Provisional Garrison</option>
 			<option ifUnitType="Infantry" ifDateBetween="2900,">Sol:Solahma,PG:Provisional Garrison</option>
 			<option ifUnitType="Infantry">SL:Second Line,Sol:Solahma,PG:Provisional Garrison</option>
-			<option ifEschelon="Touman"></option>
-			<option ifEschelon="Galaxy">FL:Front Line,SL:Second Line</option>
+			<option ifEschelon="%TOUMAN%"></option>
+			<option ifEschelon="%GALAXY%">FL:Front Line,SL:Second Line</option>
 			<option>Keshik,FL:Front Line,SL:Second Line,Sol:Solahma,PG:Provisional Garrison</option>
 		</rating>
 		
 		<flags>
-			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="Trinary|Binary">mixedMekBA</option>
+			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="%TRINARY%|%BINARY%">mixedMekBA</option>
 		</flags>
 	</toc>
 	
@@ -44,101 +44,101 @@
 	names can be gleaned from the Star Adder section of FM:CC,
 	but otherwise we just follow the generic Clan organization.-->
 	
-	<force eschelon="TOUMAN" eschName="Touman">
-		<co>KHAN</co>
-		<xo>SAKHAN</xo>
+	<force eschelon="%TOUMAN%" eschName="Touman">
+		<co>%KHAN%</co>
+		<xo>%SAKHAN%</xo>
 		
 		<subforces>
 			<subforce rating="Keshik"
-				ifDateBetween="2870,3059">CLUSTER</subforce>
+				ifDateBetween="2870,3059">%CLUSTER%</subforce>
 			<subforce name="Alpha Galaxy" rating="FL"
-				ifDateBetween=",3059">GALAXY</subforce>
+				ifDateBetween=",3059">%GALAXY%</subforce>
 			<subforce name="Beta Galaxy" rating="FL"
-				ifDateBetween=",3059">GALAXY</subforce>
+				ifDateBetween=",3059">%GALAXY%</subforce>
 			<subforce name="Gamma Galaxy" rating="FL"
-				ifDateBetween="2870,3059">GALAXY</subforce>
+				ifDateBetween="2870,3059">%GALAXY%</subforce>
 			<subforce name="Delta Galaxy" rating="FL"
-				ifDateBetween="2950,3059">GALAXY</subforce>
+				ifDateBetween="2950,3059">%GALAXY%</subforce>
 			<subforce name="Kappa Galaxy" rating="SL"
-				ifDateBetween=",3059">GALAXY</subforce>
+				ifDateBetween=",3059">%GALAXY%</subforce>
 			<subforce name="Pi Galaxy" rating="SL"
-				ifDateBetween=",3059">GALAXY</subforce>
+				ifDateBetween=",3059">%GALAXY%</subforce>
 			<subforce name="Zeta Galaxy" rating="FL"
-				ifDateBetween="3072,3074">GALAXY</subforce>
+				ifDateBetween="3072,3074">%GALAXY%</subforce>
 			<subforce name="Omega Defense Galaxy" rating="SL"
-				ifDateBetween="3072,3074">GALAXY</subforce>
+				ifDateBetween="3072,3074">%GALAXY%</subforce>
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Warship">CLUSTER</subforce>
+			<subforce unitType="Warship">%CLUSTER%</subforce>
 		</attachedForces>
 	</force>
 	
-	<force eschelon="GALAXY" eschName="Galaxy">
+	<force eschelon="%GALAXY%" eschName="Galaxy">
 		<name>{greek} Galaxy</name>
-		<co>GALAXY_CMDR</co>
+		<co>%GALAXY_CMDR%</co>
 		
 		<subforces ifRating="FL">
 			<subforceOption>
 				<option role="command" unitType="Mek"
-					weight="2">TRINARY</option>
+					weight="2">%TRINARY%</option>
 				<option role="command" unitType="Mek" ifDateBetween="2870,"
-					augmented="1" weight="1">TRINARY</option>
+					augmented="1" weight="1">%TRINARY%</option>
 			</subforceOption>
 			<subforceOption>
-				<option num="4">CLUSTER</option>
-				<option num="5">CLUSTER</option>
+				<option num="4">%CLUSTER%</option>
+				<option num="5">%CLUSTER%</option>
 			</subforceOption>
 		</subforces>
 		
 		<subforces ifRating="SL">
 			<subforceOption>
-				<option num="3">CLUSTER</option>
-				<option num="4">CLUSTER</option>
+				<option num="3">%CLUSTER%</option>
+				<option num="4">%CLUSTER%</option>
 			</subforceOption>
 			<subforceOption>
-				<option rating="PG" num="1">CLUSTER</option>
-				<option rating="PG" num="2">CLUSTER</option>
+				<option rating="PG" num="1">%CLUSTER%</option>
+				<option rating="PG" num="2">%CLUSTER%</option>
 				<option />
 			</subforceOption>
 		</subforces>
 	</force>
 	
-	<force eschelon="CLUSTER" eschName="Fleet" ifUnitType="Warship">
+	<force eschelon="%CLUSTER%" eschName="Fleet" ifUnitType="Warship">
 		<name>Naval Assets</name>
-		<co>GALAXY_CMDR</co>
+		<co>%GALAXY_CMDR%</co>
 		
 		<subforces ifDateBetween=",3059">
 			<subforce chassis="Avatar Heavy Cruiser" ifDateBetween=",3024"
-				fluffName="CB Constantineau">ELEMENT</subforce>
+				fluffName="CB Constantineau">%ELEMENT%</subforce>
 			<subforce chassis="Liberator Cruiser" ifDateBetween="3025,"
-				fluffName="CB Constantineau">ELEMENT</subforce>
+				fluffName="CB Constantineau">%ELEMENT%</subforce>
 			<subforceOption>
-				<option num="4">ELEMENT</option>
-				<option num="5">ELEMENT</option>
-				<option num="6">ELEMENT</option>
+				<option num="4">%ELEMENT%</option>
+				<option num="5">%ELEMENT%</option>
+				<option num="6">%ELEMENT%</option>
 			</subforceOption>
 		</subforces>
 		
 		<subforces ifDateBetween="3072,3074">
 			<subforce fluffName="CB Tremor"
-				chassis="Cameron Battlecruiser">ELEMENT</subforce>
+				chassis="Cameron Battlecruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CB Admiral Russell Nga"
-				chassis="Kimagure Pursuit Cruiser">ELEMENT</subforce>
+				chassis="Kimagure Pursuit Cruiser">%ELEMENT%</subforce>
 			<subforce fluffName="CB Rebirth"
-				chassis="Lola III Destroyer">ELEMENT</subforce>
+				chassis="Lola III Destroyer">%ELEMENT%</subforce>
 			<subforce fluffName="CB Hetherington"
-				chassis="Riga Frigate">ELEMENT</subforce>
+				chassis="Riga Frigate">%ELEMENT%</subforce>
 			<subforce fluffName="CB Stone Crab"
-				chassis="Mako Corvette">ELEMENT</subforce>
+				chassis="Mako Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CB Ingrid Bucharev"
-				chassis="Mako Corvette">ELEMENT</subforce>
+				chassis="Mako Corvette">%ELEMENT%</subforce>
 			<subforce fluffName="CB Second Coming"
-				chassis="McKenna Battleship">ELEMENT</subforce>
+				chassis="McKenna Battleship">%ELEMENT%</subforce>
 		</subforces>
 	</force>
 	
-	<force eschelon="CLUSTER" eschName="Cluster">
+	<force eschelon="%CLUSTER%" eschName="Cluster">
 		<name ifRating="Keshik">Keshik</name>
 		<name ifRating="FL"
 			ifWeightClass="A|H">Burrock Assault Cluster</name>
@@ -147,7 +147,7 @@
 		<name ifRating="SL" ifDateBetween="3072,">Tanis Defenders</name>
 		<name ifRating="SL">Albion Defenders</name>
 		<name ifRating="PG">Warren Cluster</name>
-		<co>STAR_COL</co>
+		<co>%STAR_COL%</co>
 		
 		<weightClass>
 			<option weight="1">H</option>
@@ -162,20 +162,20 @@
 		</subforces>		
 	</force>
 	
-	<force eschelon="TRINARY" eschName="Trinary" ifAugmented="0" ifUnitType="Mek">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifAugmented="0" ifUnitType="Mek">
 		<name ifRole="command">Command Trinary</name>
 		<name>Trinary {greek}</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<changeEschelon ifFlags="testTrinary">
-			<option flags="-testTrinary" weight="6">TRINARY</option>
-			<option flags="-testTrinary" weight="3">BINARY</option>
+			<option flags="-testTrinary" weight="6">%TRINARY%</option>
+			<option flags="-testTrinary" weight="3">%BINARY%</option>
 			<option flags="-testTrinary"
 				ifRating="FL|Keshik" ifDateBetween="2870,"
-				augmented="1" weight="2">TRINARY</option>
+				augmented="1" weight="2">%TRINARY%</option>
 			<option flags="-testTrinary"
 				ifRating="FL|Keshik" ifDateBetween="2870,"
-				augmented="1">BINARY</option>
+				augmented="1">%BINARY%</option>
 		</changeEschelon>
 		
 		<ruleGroup>
@@ -196,13 +196,13 @@
 		</subforces>
 	</force>
 
-	<force eschelon="TRINARY" eschName="Supernova Trinary" ifAugmented="1" ifUnitType="Mek">
+	<force eschelon="%TRINARY%" eschName="Supernova Trinary" ifAugmented="1" ifUnitType="Mek">
 		<name ifRole="command">Command Supernova Trinary</name>
 		<name>Trinary {greek}</name>
-		<co>NOVA_CAPTAIN</co>
+		<co>%NOVA_CAPTAIN%</co>
 		
 		<changeEschelon ifDateBetween=",2869">
-			<option augmented="0">TRINARY</option>
+			<option augmented="0">%TRINARY%</option>
 		</changeEschelon>
 		
 		<ruleGroup>
@@ -223,14 +223,14 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="TRINARY" eschName="Trinary" ifUnitType="Tank">
+	<force eschelon="%TRINARY%" eschName="Trinary" ifUnitType="Tank">
 		<name ifRole="command">Command Trinary</name>
 		<name>Trinary {greek}</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<changeEschelon ifFlags="testTrinary">
-			<option flags="-testTrinary">TRINARY</option>
-			<option flags="-testTrinary">BINARY</option>
+			<option flags="-testTrinary">%TRINARY%</option>
+			<option flags="-testTrinary">%BINARY%</option>
 		</changeEschelon>
 		
 		<ruleGroup>
@@ -250,10 +250,10 @@
 		</subforces>
 	</force>
 
-	<force eschelon="BINARY" eschName="Binary" ifAugmented="0" ifUnitType="Mek">
+	<force eschelon="%BINARY%" eschName="Binary" ifAugmented="0" ifUnitType="Mek">
 		<name ifRole="command">Command Binary</name>
 		<name>Binary {greek}</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -271,13 +271,13 @@
 		</subforces>
 	</force>
 
-	<force eschelon="BINARY" eschName="Supernova Binary" ifAugmented="1" ifUnitType="Mek">
+	<force eschelon="%BINARY%" eschName="Supernova Binary" ifAugmented="1" ifUnitType="Mek">
 		<name ifRole="command">Command Supernova Binary</name>
 		<name>Supernova Binary {greek}</name>
-		<co>NOVA_CAPTAIN</co>
+		<co>%NOVA_CAPTAIN%</co>
 		
 		<changeEschelon ifDateBetween=",2869">
-			<option augmented="0">BINARY</option>
+			<option augmented="0">%BINARY%</option>
 		</changeEschelon>
 		
 		<ruleGroup>
@@ -298,10 +298,10 @@
 		</subforces>
 	</force>
 
-	<force eschelon="BINARY" eschName="Binary" ifUnitType="Tank">
+	<force eschelon="%BINARY%" eschName="Binary" ifUnitType="Tank">
 		<name ifRole="command">Command Binary</name>
 		<name>Binary {greek}</name>
-		<co>STAR_CAPTAIN</co>
+		<co>%STAR_CAPTAIN%</co>
 		
 		<weightClass>
 			<option weight="2">A</option>
@@ -318,9 +318,9 @@
 		</subforces>
 	</force>
 
-	<force eschelon="STAR" eschName="Star" ifAugmented="0" ifUnitType="Mek">
+	<force eschelon="%STAR%" eschName="Star" ifAugmented="0" ifUnitType="Mek">
 		<name>{phonetic} Star</name>
-		<co>STAR_CMDR</co>
+		<co>%STAR_CMDR%</co>
 		
 		<weightClass>
 			<option weight="1">A</option>
@@ -338,13 +338,13 @@
 		</subforces>
 	</force>
 	
-	<force eschelon="STAR" eschName="Nova" ifAugmented="1" ifUnitType="Mek">
+	<force eschelon="%STAR%" eschName="Nova" ifAugmented="1" ifUnitType="Mek">
 		<name>{phonetic} Nova</name>
-		<co>NOVA_CMDR</co>
-		<xo unitType="other">STAR_CMDR</xo>
+		<co>%NOVA_CMDR%</co>
+		<xo unitType="other">%STAR_CMDR%</xo>
 		
 		<changeEschelon ifDateBetween=",2869">
-			<option augmented="0">STAR</option>
+			<option augmented="0">%STAR%</option>
 		</changeEschelon>
 		
 		<weightClass>
@@ -367,9 +367,9 @@
 		</subforces>
 	</force>
 
-	<force eschelon="STAR" eschName="Star" ifUnitType="Tank">
+	<force eschelon="%STAR%" eschName="Star" ifUnitType="Tank">
 		<name>{phonetic} Star</name>
-		<co>STAR_CMDR</co>
+		<co>%STAR_CMDR%</co>
 		
 		<weightClass>
 			<option weight="2">A</option>

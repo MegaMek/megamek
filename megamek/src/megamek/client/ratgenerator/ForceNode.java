@@ -188,7 +188,7 @@ public class ForceNode extends RulesetNode {
 					} else if (content.endsWith("-")) {
 						fd.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
 					} 
-					fd.setEschelon(Ruleset.getConstantVal(n.getContent().replaceAll("[\\+\\-]", "")));
+					fd.setEschelon(Integer.parseInt(n.getContent().replaceAll("[\\+\\-]", "")));
 					return false;
 				}
 			}
@@ -349,7 +349,7 @@ public class ForceNode extends RulesetNode {
 		super.loadFromXml(node);
 		
 		try {
-			eschelon = Ruleset.getConstantVal(assertions.getProperty("eschelon"));
+			eschelon = Integer.parseInt(assertions.getProperty("eschelon"));
 			assertions.remove("eschelon");
 		} catch (NullPointerException ex) {
 			throw new IllegalArgumentException("Force Generator: force node is missing eschelon attribute.");

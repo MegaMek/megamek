@@ -628,7 +628,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 					ForceNode fn = null;
 					do {
 						fn = rs.findForceNode(forceDesc,
-								Ruleset.getConstantVal(formation.replaceAll("[^0-9A-Z]", "")),
+								Integer.parseInt(formation.replaceAll("[^0-9]", "")),
 										formation.endsWith("^"));
 						if (fn == null) {
 							if (rs.getParent() != null) {
@@ -827,7 +827,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	}
 
 	private void setFormation(String esch) {
-		forceDesc.setEschelon(Ruleset.getConstantVal(esch.replaceAll("[^0-9A-Z]", "")));
+		forceDesc.setEschelon(Integer.parseInt(esch.replaceAll("[^0-9]", "")));
 		forceDesc.setAugmented(esch.contains("^"));
 		if (esch.endsWith("+")) {
 			forceDesc.setSizeMod(1);

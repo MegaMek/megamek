@@ -10,8 +10,8 @@ that all infantry units are BattleArmor. -->
 <ruleset faction="LA.AlJ" parent="LA" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
-		<eschelon>REGIMENT</eschelon>
-		<rankSystem>RANK_LA</rankSystem>
+		<eschelon>%REGIMENT%</eschelon>
+		<rankSystem>%RANK_LA%</rankSystem>
 		<rating>B</rating>
 	</defaults>
 
@@ -21,10 +21,10 @@ that all infantry units are BattleArmor. -->
 		</unitType>
 		
 		<eschelon>
-			<option ifUnitType="">REGIMENT,BATTALION</option>
-			<option ifUnitType="Mek|Tank|VTOL">BATTALION,COMPANY,LANCE</option>
-			<option ifUnitType="BattleArmor">BATTALION,COMPANY,PLATOON</option>
-			<option ifUnitType="Aero|Conventional Fighter">WING,SQUADRON,FLIGHT</option>
+			<option ifUnitType="">%REGIMENT%,%BATTALION%</option>
+			<option ifUnitType="Mek|Tank|VTOL">%BATTALION%,%COMPANY%,%LANCE%</option>
+			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
+			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -36,33 +36,33 @@ that all infantry units are BattleArmor. -->
 	another Mek battalion, or mixed Mek/armor, or Mek/armor/infantry. The third
 	can be Mek/armor/infantry or armor/infantry -->
 	
-	<force eschelon="REGIMENT" eschName="Regiment">
+	<force eschelon="%REGIMENT%" eschName="Regiment">
 		<name>{ordinal} Alliance Jaegers</name>
-		<co>COLONEL</co>
+		<co>%COLONEL%</co>
 		
 		<subforces>
-			<subforce unitType="Mek">BATTALION</subforce>
+			<subforce unitType="Mek">%BATTALION%</subforce>
 			<subforceOption>
-				<option unitType="Mek">BATTALION</option>
-				<option flags="+mma">BATTALION</option>
-				<option flags="+maa">BATTALION</option>
-				<option flags="+mai" weight="2">BATTALION</option>
+				<option unitType="Mek">%BATTALION%</option>
+				<option flags="+mma">%BATTALION%</option>
+				<option flags="+maa">%BATTALION%</option>
+				<option flags="+mai" weight="2">%BATTALION%</option>
 			</subforceOption>
 			<subforceOption>
-				<option flags="+mai">BATTALION</option>
-				<option flags="+mii">BATTALION</option>
-				<option flags="+aai">BATTALION</option>
-				<option flags="+aii">BATTALION</option>
+				<option flags="+mai">%BATTALION%</option>
+				<option flags="+mii">%BATTALION%</option>
+				<option flags="+aai">%BATTALION%</option>
+				<option flags="+aii">%BATTALION%</option>
 			</subforceOption>
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Aero">WING</subforce>
+			<subforce unitType="Aero">%WING%</subforce>
 		</attachedForces>
 	</force>
 	
-	<force eschelon="BATTALION" eschName="Battalion" ifUnitType="">
-		<co>MAJOR</co>
+	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="">
+		<co>%MAJOR%</co>
 		
 		<weightClass>
 			<option weight="6">A</option>
@@ -84,43 +84,43 @@ that all infantry units are BattleArmor. -->
 		
 		<subforces ifFlags="mma|maa|mai|mii">
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A" weight="2" unitType="Mek">COMPANY</option>
-				<option weightClass="H" weight="1" unitType="Mek">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Mek">%COMPANY%</option>
+				<option weightClass="H" weight="1" unitType="Mek">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A" weight="2" unitType="Mek">COMPANY</option>
-				<option weightClass="H" weight="3" unitType="Mek">COMPANY</option>
-				<option weightClass="M" weight="2" unitType="Mek">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Mek">%COMPANY%</option>
+				<option weightClass="H" weight="3" unitType="Mek">%COMPANY%</option>
+				<option weightClass="M" weight="2" unitType="Mek">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" weight="2" unitType="Mek">COMPANY</option>
-				<option weightClass="M" weight="3" unitType="Mek">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Mek">COMPANY</option>
+				<option weightClass="H" weight="2" unitType="Mek">%COMPANY%</option>
+				<option weightClass="M" weight="3" unitType="Mek">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Mek">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M" weight="1" unitType="Mek">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Mek">COMPANY</option>
+				<option weightClass="M" weight="1" unitType="Mek">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Mek">%COMPANY%</option>
 			</subforceOption>
 		</subforces>
 
 		<subforces ifFlags="aai|aii">
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A" weight="2" unitType="Tank">COMPANY</option>
-				<option weightClass="H" weight="1" unitType="Tank">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Tank">%COMPANY%</option>
+				<option weightClass="H" weight="1" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A" weight="2" unitType="Tank">COMPANY</option>
-				<option weightClass="H" weight="3" unitType="Tank">COMPANY</option>
-				<option weightClass="M" weight="2" unitType="Tank">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Tank">%COMPANY%</option>
+				<option weightClass="H" weight="3" unitType="Tank">%COMPANY%</option>
+				<option weightClass="M" weight="2" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" weight="2" unitType="Tank">COMPANY</option>
-				<option weightClass="M" weight="3" unitType="Tank">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Tank">COMPANY</option>
+				<option weightClass="H" weight="2" unitType="Tank">%COMPANY%</option>
+				<option weightClass="M" weight="3" unitType="Tank">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M" weight="1" unitType="Tank">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Tank">COMPANY</option>
+				<option weightClass="M" weight="1" unitType="Tank">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 		</subforces>
 
@@ -128,75 +128,75 @@ that all infantry units are BattleArmor. -->
 		
 		<subforces ifFlags="mma">
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A" weight="2" unitType="Mek">COMPANY</option>
-				<option weightClass="H" weight="1" unitType="Mek">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Mek">%COMPANY%</option>
+				<option weightClass="H" weight="1" unitType="Mek">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A" weight="2" unitType="Mek">COMPANY</option>
-				<option weightClass="H" weight="3" unitType="Mek">COMPANY</option>
-				<option weightClass="M" weight="2" unitType="Mek">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Mek">%COMPANY%</option>
+				<option weightClass="H" weight="3" unitType="Mek">%COMPANY%</option>
+				<option weightClass="M" weight="2" unitType="Mek">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" weight="2" unitType="Mek">COMPANY</option>
-				<option weightClass="M" weight="3" unitType="Mek">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Mek">COMPANY</option>
+				<option weightClass="H" weight="2" unitType="Mek">%COMPANY%</option>
+				<option weightClass="M" weight="3" unitType="Mek">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Mek">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M" weight="1" unitType="Mek">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Mek">COMPANY</option>
+				<option weightClass="M" weight="1" unitType="Mek">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Mek">%COMPANY%</option>
 			</subforceOption>
 		</subforces>
 
 		<subforces ifFlags="maa|mai|aai">
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A" weight="2" unitType="Tank">COMPANY</option>
-				<option weightClass="H" weight="1" unitType="Tank">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Tank">%COMPANY%</option>
+				<option weightClass="H" weight="1" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A" weight="2" unitType="Tank">COMPANY</option>
-				<option weightClass="H" weight="3" unitType="Tank">COMPANY</option>
-				<option weightClass="M" weight="2" unitType="Tank">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Tank">%COMPANY%</option>
+				<option weightClass="H" weight="3" unitType="Tank">%COMPANY%</option>
+				<option weightClass="M" weight="2" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" weight="2" unitType="Tank">COMPANY</option>
-				<option weightClass="M" weight="3" unitType="Tank">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Tank">COMPANY</option>
+				<option weightClass="H" weight="2" unitType="Tank">%COMPANY%</option>
+				<option weightClass="M" weight="3" unitType="Tank">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M" weight="1" unitType="Tank">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Tank">COMPANY</option>
+				<option weightClass="M" weight="1" unitType="Tank">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 		</subforces>
 		
 		<subforces ifFlags="mii|aii">
-			<subforce unitType="BattleArmor">COMPANY</subforce>
+			<subforce unitType="BattleArmor">%COMPANY%</subforce>
 		</subforces>
 		
 		<!-- Third company -->
 
 		<subforces ifFlags="mma|maa">
 			<subforceOption ifWeightClass="A">
-				<option weightClass="A" weight="2" unitType="Tank">COMPANY</option>
-				<option weightClass="H" weight="1" unitType="Tank">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Tank">%COMPANY%</option>
+				<option weightClass="H" weight="1" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="H">
-				<option weightClass="A" weight="2" unitType="Tank">COMPANY</option>
-				<option weightClass="H" weight="3" unitType="Tank">COMPANY</option>
-				<option weightClass="M" weight="2" unitType="Tank">COMPANY</option>
+				<option weightClass="A" weight="2" unitType="Tank">%COMPANY%</option>
+				<option weightClass="H" weight="3" unitType="Tank">%COMPANY%</option>
+				<option weightClass="M" weight="2" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" weight="2" unitType="Tank">COMPANY</option>
-				<option weightClass="M" weight="3" unitType="Tank">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Tank">COMPANY</option>
+				<option weightClass="H" weight="2" unitType="Tank">%COMPANY%</option>
+				<option weightClass="M" weight="3" unitType="Tank">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M" weight="1" unitType="Tank">COMPANY</option>
-				<option weightClass="L" weight="2" unitType="Tank">COMPANY</option>
+				<option weightClass="M" weight="1" unitType="Tank">%COMPANY%</option>
+				<option weightClass="L" weight="2" unitType="Tank">%COMPANY%</option>
 			</subforceOption>
 		</subforces>
 		
 		<subforces ifFlags="mai|mii|aai|aii">
-			<subforce unitType="BattleArmor">COMPANY</subforce>
+			<subforce unitType="BattleArmor">%COMPANY%</subforce>
 		</subforces>
 	</force>
 </ruleset>

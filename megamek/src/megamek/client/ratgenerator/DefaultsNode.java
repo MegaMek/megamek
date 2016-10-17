@@ -76,10 +76,10 @@ public class DefaultsNode extends RulesetNode {
 			fd.setUnitType(ModelRecord.parseUnitType(ut.getContent()));
 		}
 		if (e != null) {
-			fd.setEschelon(Ruleset.getConstantVal(e.getContent()));
+			fd.setEschelon(Integer.parseInt(e.getContent()));
 		}
 		if (rs != null) {
-			fd.setRankSystem(Ruleset.getConstantVal(rs.getContent()));
+			fd.setRankSystem(Integer.parseInt(rs.getContent()));
 		}
 		if (r != null) {
 			fd.setRating(r.getContent());

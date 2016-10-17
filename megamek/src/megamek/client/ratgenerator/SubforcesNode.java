@@ -57,7 +57,7 @@ public class SubforcesNode extends RulesetNode {
 						continue;
 					}
 					ForceDescriptor sub = fd.createChild();
-					sub.setEschelon(Ruleset.getConstantVal(n.getContent().trim()));
+					sub.setEschelon(Integer.parseInt(n.getContent()));
 					apply(sub, i);
 					n.apply(sub, i);
 //					if (sub.getEschelon() == 0) {
@@ -67,7 +67,7 @@ public class SubforcesNode extends RulesetNode {
 				}
 				if (useSizeMod && fd.getSizeMod() == ForceDescriptor.REINFORCED) {
 					ForceDescriptor sub = fd.createChild();
-					sub.setEschelon(Ruleset.getConstantVal(n.getContent().trim()));
+					sub.setEschelon(Integer.parseInt(n.getContent()));
 					apply(sub, n.getNum() / 2);
 					n.apply(sub, n.getNum() / 2);
 					subs.add(sub);
@@ -104,12 +104,13 @@ public class SubforcesNode extends RulesetNode {
 						ForceDescriptor sub = fd.createChild();
 						if (vn.getContent().endsWith("+")) {
 							sub.setSizeMod(ForceDescriptor.REINFORCED);
-							sub.setEschelon(Ruleset.getConstantVal(vn.getContent().replace("+", "")));
+							sub.setEschelon(Integer.parseInt(vn.getContent().replace("+", "")));
 						} else if (vn.getContent().endsWith("-")) {
 							sub.setSizeMod(ForceDescriptor.UNDERSTRENGTH);
-							sub.setEschelon(Ruleset.getConstantVal(vn.getContent().replace("-", "")));
-						} else 
-						sub.setEschelon(Ruleset.getConstantVal(vn.getContent().replace("[^0-9A-Z]", "")));
+							sub.setEschelon(Integer.parseInt(vn.getContent().replace("-", "")));
+						} else  {
+							sub.setEschelon(Integer.parseInt(vn.getContent()));
+						}
 						apply(sub, i);
 						n.apply(sub, i);
 						vn.apply(sub, i);
@@ -120,7 +121,7 @@ public class SubforcesNode extends RulesetNode {
 					}
 					if (fd.getSizeMod() == ForceDescriptor.REINFORCED) {
 						ForceDescriptor sub = fd.createChild();
-						sub.setEschelon(Ruleset.getConstantVal(vn.getContent().trim()));
+						sub.setEschelon(Integer.parseInt(vn.getContent()));
 						apply(sub, vn.getNum() / 2);
 						n.apply(sub, vn.getNum() / 2);
 						subs.add(sub);

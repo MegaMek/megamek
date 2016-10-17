@@ -15,7 +15,6 @@ package megamek.client.ratgenerator;
 
 import java.util.Collection;
 import java.util.Properties;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 import megamek.common.EntityMovementMode;
@@ -46,31 +45,14 @@ public class RulesetNode {
 		return retVal;
 	}
 	
-	protected void loadFromXml(Node node) throws IllegalArgumentException {
+	protected void loadFromXml(Node node) {
 		name = node.getNodeName();
 		for (int x = 0; x < node.getAttributes().getLength(); x++) {
 			Node wn = node.getAttributes().item(x);
 			if (wn.getNodeName().startsWith("if")) {
-				if (wn.getNodeName().equals("ifEschelon")) {
-					String[] eschNames = wn.getTextContent().split("\\|");
-					StringJoiner value = new StringJoiner("|");
-					for (String eschName : eschNames) {
-						String base = eschName.replaceAll("[^0-9A-Za-z_]", "");
-						try {
-							Integer e = Ruleset.getConstantVal(base.toUpperCase());
-							if (e != null) {
-								value.add(eschName.replace(base, e.toString()));
-							}
-						} catch (NumberFormatException ex) {
-							throw new IllegalArgumentException("Error parsing eschelon name " + eschName);
-						}
-					}
-					predicates.put(wn.getNodeName(), value.toString());
-				} else {
-					predicates.put(wn.getNodeName(), wn.getTextContent());
-				}
+				predicates.put(wn.getNodeName(), Ruleset.substituteConstants(wn.getTextContent()));
 			} else {
-				assertions.put(wn.getNodeName(), wn.getTextContent());
+				assertions.put(wn.getNodeName(), Ruleset.substituteConstants(wn.getTextContent()));
 			}
 		}		
 	}
@@ -358,7 +340,7 @@ public class RulesetNode {
 				}
 				break;
 			case "eschelon":
-				fd.setEschelon(Ruleset.getConstantVal(property));
+				fd.setEschelon(Integer.parseInt(property));
 				break;
 			case "faction":
 				fd.setFaction(property);
@@ -366,7 +348,7 @@ public class RulesetNode {
 				fd.setTopLevel(true);
 				break;
 			case "rankSystem":
-				fd.setRankSystem(Ruleset.getConstantVal(property));
+				fd.setRankSystem(Integer.parseInt(property));
 				break;
 			case "name":
 				fd.setName(property);

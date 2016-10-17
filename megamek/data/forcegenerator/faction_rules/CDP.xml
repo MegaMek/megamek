@@ -6,8 +6,8 @@
 
 	<defaults>
 		<unitType>Mek</unitType>
-		<eschelon>BATTALION</eschelon>
-		<rankSystem>RANK_TC</rankSystem>
+		<eschelon>%BATTALION%</eschelon>
+		<rankSystem>%RANK_TC%</rankSystem>
 		<rating>C</rating>
 	</defaults>
 

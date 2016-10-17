@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -62,7 +64,6 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	
 	private int currentYear;
 	private Consumer<ForceDescriptor> onGenerate = null;
-	private boolean ignoreActions;
 
 	private ForceDescriptor forceDesc = new ForceDescriptor();
 	
@@ -402,9 +403,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridy = 2;
 		panAirRole.add(chkRoleAirTransport, gbc);
 		
-		ignoreActions = true;
 		refreshFactions();
-		ignoreActions = false;
 	}
 	
 	private void generateForce() {
@@ -505,60 +504,50 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 	}
 	
 	private void refreshFactions() {
-		String oldFaction = forceDesc.getFaction();
+		FactionRecord oldFaction = (FactionRecord)cbFaction.getSelectedItem();
+		cbFaction.removeActionListener(this);
 		cbFaction.removeAllItems();
-		ArrayList<FactionRecord> sorted = new ArrayList<>();
-		sorted.addAll(RATGenerator.getInstance().getFactionList());
+		List<FactionRecord> sorted = RATGenerator.getInstance().getFactionList()
+				.stream().filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
+				.collect(Collectors.toList());
 		sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
-		for (FactionRecord fRec : sorted) {
-			if (!fRec.getKey().contains(".") && fRec.isActiveInYear(currentYear)) {
-				cbFaction.addItem(fRec);
-			}
+		sorted.forEach(fr -> cbFaction.addItem(fr));
+		cbFaction.setSelectedItem(oldFaction);
+		if (cbFaction.getSelectedItem() == null ||
+				!cbFaction.getSelectedItem().toString().equals(oldFaction.toString())) {
+			cbFaction.setSelectedItem(RATGenerator.getInstance().getFaction("IS"));
 		}
-		
-		if (oldFaction != null) {
-			cbFaction.setSelectedItem(oldFaction.split("\\.")[0]);			
-		} else {
-			forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
-		}
-		if (cbFaction.getSelectedIndex() < 0) {
-			cbFaction.setSelectedIndex(0);
-		}
+		forceDesc.setFaction(cbFaction.getSelectedItem().toString());
 		refreshSubfactions();
+		cbFaction.addActionListener(this);
 	}
 	
 	private void refreshSubfactions() {
-		String oldFaction = forceDesc.getFaction();
+		FactionRecord oldFaction = (FactionRecord)cbSubfaction.getSelectedItem();
+		cbSubfaction.removeActionListener(this);
 		cbSubfaction.removeAllItems();
-		if (forceDesc.getFactionRec() != null) {
+		String currentFaction = ((FactionRecord)cbFaction.getSelectedItem()).getKey();
+		if (currentFaction != null) {
+			List<FactionRecord> sorted = RATGenerator.getInstance().getFactionList().stream()
+					.filter(fr -> fr.getKey().startsWith(currentFaction + ".")
+							&& fr.isActiveInYear(currentYear))
+					.collect(Collectors.toList());
+			sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
 			cbSubfaction.addItem(null);
-			if (cbFaction.getSelectedItem() != null) {
-				String currentFaction = ((FactionRecord)cbFaction.getSelectedItem()).getKey();
-				ArrayList<FactionRecord> sorted = new ArrayList<>();
-				sorted.addAll(RATGenerator.getInstance().getFactionList());
-				sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
-				for (FactionRecord fRec : sorted) {
-					if (fRec.isActiveInYear(currentYear) &&
-							fRec.getKey().startsWith(currentFaction + ".")) {
-						cbSubfaction.addItem(fRec);
-					}
-				}
-			}
-			if (oldFaction != null) {
-				cbSubfaction.setSelectedItem(oldFaction.contains(".")?oldFaction:null);
-			} else {
-				cbSubfaction.setSelectedItem(null);
-			}
-		} else {
-			System.out.println("factionrec is null");
+			sorted.forEach(fr -> cbSubfaction.addItem(fr));
 		}
-		if (cbSubfaction.getSelectedIndex() < 0) {
-			cbSubfaction.setSelectedIndex(0);
-		}
-		refreshUnitTypes();
+    	cbSubfaction.setSelectedItem(oldFaction);
+    	if (cbSubfaction.getSelectedItem() == null) {
+    		forceDesc.setFaction(cbFaction.getSelectedItem().toString());
+    	} else {
+    		forceDesc.setFaction(cbSubfaction.getSelectedItem().toString());
+    	}
+    	refreshUnitTypes();
+    	cbSubfaction.addActionListener(this);
 	}
 	
 	private void refreshUnitTypes() {
+		cbUnitType.removeActionListener(this);
 		TOCNode tocNode = findTOCNode();
 		Integer currentType = forceDesc.getUnitType();
 		boolean hasCurrent = false;
@@ -599,9 +588,11 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 			forceDesc.setUnitType(unitType);
 		}
 		refreshFormations();
+		cbUnitType.addActionListener(this);
 	}
 	
 	private void refreshFormations() {
+		cbFormation.removeActionListener(this);
 		if (cbUnitType.getSelectedItem() != null) {
 			Integer unitType = (Integer)cbUnitType.getSelectedItem();
 			if (unitType != null) {
@@ -672,9 +663,11 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		}
 		
 		refreshRatings();
+		cbFormation.addActionListener(this);
 	}
 	
 	private void refreshRatings() {
+		cbRating.removeActionListener(this);
 		TOCNode tocNode = findTOCNode();
 		String currentRating = forceDesc.getRating();
 		boolean hasCurrent = false;
@@ -713,9 +706,11 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 			}
 		}
 		refreshFlags();
+		cbRating.addActionListener(this);
 	}
 	
 	private void refreshFlags() {
+		cbFlags.removeActionListener(this);
 		TOCNode tocNode = findTOCNode();
 		String currentFlag = (String)cbFlags.getSelectedItem();
 		boolean hasCurrent = false;
@@ -746,6 +741,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		if (cbFlags.getSelectedItem() != null) {
 			forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
 		}
+		cbFlags.addActionListener(this);
 	}
 	
 	private TOCNode findTOCNode() {
@@ -766,10 +762,6 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 
 	@Override
 	public void actionPerformed(ActionEvent ev) {
-		if (ignoreActions) {
-			return;
-		}
-		ignoreActions = true;
 		if (ev.getSource() == cbFaction) {
 			if (cbFaction.getSelectedItem() != null) {
 				forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
@@ -823,7 +815,6 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 			});
 			clientGui.saveListFile(list, clientGui.getClient().getLocalPlayer().getName());
 		}
-		ignoreActions = false;
 	}
 
 	private void setFormation(String esch) {

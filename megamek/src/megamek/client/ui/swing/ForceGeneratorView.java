@@ -170,7 +170,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbSubfaction, gbc);
-		cbFaction.addActionListener(this);
+		cbSubfaction.addActionListener(this);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
@@ -538,7 +538,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 				sorted.addAll(RATGenerator.getInstance().getFactionList());
 				sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
 				for (FactionRecord fRec : sorted) {
-					if (fRec.getPctSalvage(currentYear) != null &&
+					if (fRec.isActiveInYear(currentYear) &&
 							fRec.getKey().startsWith(currentFaction + ".")) {
 						cbSubfaction.addItem(fRec);
 					}

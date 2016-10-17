@@ -59,7 +59,7 @@ elementFormDefault="qualified">
 			<xs:attribute name="ratingSystem">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
-						<xs:pattern value="IS|CLAN|ROS" />
+						<xs:pattern value="IS|SL|CLAN|ROS" />
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
@@ -266,7 +266,7 @@ elementFormDefault="qualified">
 			
 	<xs:simpleType name="eschelonDefinition">
 			<xs:restriction base="xs:string">
-				<xs:pattern value="[0-9A-Z_]+[+-]?" />
+				<xs:pattern value="([0-9]+|%[A-Z_]+%)[+-^]?" />
 			</xs:restriction>
 	</xs:simpleType>
 

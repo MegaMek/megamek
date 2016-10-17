@@ -13,7 +13,6 @@ Infantry are poorly trained and equipped. -->
 		<eschelon>%BATTALION%</eschelon>
 		<rankSystem>%RANK_SL%</rankSystem>
 		<rating>D</rating>
-		<ratingSystem>IS</ratingSystem>
 	</defaults>
 
 	<toc>

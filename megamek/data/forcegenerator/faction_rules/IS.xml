@@ -7,7 +7,6 @@
 		<eschelon>%REGIMENT%</eschelon>
 		<rankSystem>%RANK_SL%</rankSystem>
 		<rating>C</rating>
-		<ratingSystem>IS</ratingSystem>
 	</defaults>
 	
 	<toc>

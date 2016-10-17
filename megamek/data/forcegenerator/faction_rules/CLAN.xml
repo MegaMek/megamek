@@ -6,7 +6,6 @@
 		<eschelon>%CLUSTER%</eschelon>
 		<rankSystem>%RANK_CLAN%</rankSystem>
 		<rating>FL</rating>
-		<ratingSystem>CLAN</ratingSystem>
 	</defaults>
 	
 	<toc>

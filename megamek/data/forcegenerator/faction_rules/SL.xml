@@ -3,7 +3,7 @@
 <!-- The SLDF rarely deployed anything smaller than a regiment, and organized around the
 division where most factions organize around a regiment. -->
 
-<ruleset faction="SL" parent="IS" ratingSystem="IS" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+<ruleset faction="SL" parent="IS" ratingSystem="SL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 
 	<defaults>
 		<eschelon>%DIVISION%</eschelon>

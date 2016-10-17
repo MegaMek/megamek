@@ -47,6 +47,7 @@ public class Ruleset {
 	
 	public enum RatingSystem {
 		IS ("F","D","C","B","A"),
+		SL ("C","B","A"), // used for SLDF and CS/WoB
 		CLAN ("PG","Sol","SL","FL","Keshik"),
 		ROS ("TP","PG","HS","SB"),
 		NONE ();
@@ -404,10 +405,14 @@ public class Ruleset {
 				}
 			}
 		}
+		//Rating system defaults to IS if not present. If present but cannot be parsed, is set to NONE.
 		if (elem.getAttribute("ratingSystem").length() > 0) {
 			switch (elem.getAttribute("ratingSystem")) {
 			case "IS":
 				retVal.ratingSystem = RatingSystem.IS;
+				break;
+			case "SL":
+				retVal.ratingSystem = RatingSystem.SL;
 				break;
 			case "CLAN":
 				retVal.ratingSystem = RatingSystem.CLAN;

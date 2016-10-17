@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ruleset faction="WOB" parent="CS" ratingSystem="IS"
+<ruleset faction="WOB" parent="CS" ratingSystem="SL"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
 

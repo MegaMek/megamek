@@ -548,6 +548,11 @@ public class ForceDescriptor {
 				rules = Ruleset.findRuleset(rules.getParent());
 			}
 		}
+		//If none is found, assign crew without assigning rank or title.
+		if (coNode == null) {
+			setCo(new CrewDescriptor(this));
+			return;
+		}
 		
 		if (subforces.size() > 0) {
 			int coPos = 0;

@@ -483,7 +483,7 @@ public class ForceDescriptor {
 					List<String> ratings = getFactionRec().getRatingLevelSystem();
 					ratGenRating = ratings.get(Math.min(ratingLevel, ratings.size() - 1));
 				}
-				UnitTable table = new UnitTable(fd.getFactionRec(), fd.getUnitType(),
+				UnitTable table = UnitTable.findTable(fd.getFactionRec(), fd.getUnitType(),
 						fd.getYear(), ratGenRating, wcs, ModelRecord.NETWORK_NONE,
 						fd.getMovementModes(), fd.getRoles(), roleStrictness);
 				MechSummary ms = null;

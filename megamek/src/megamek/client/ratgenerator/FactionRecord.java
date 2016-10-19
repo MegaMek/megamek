@@ -118,6 +118,17 @@ public class FactionRecord {
 		parentFactions = new ArrayList<>();
 	}
 	
+	@Override
+	public int hashCode() {
+		return key.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object other) {
+		return other != null && other instanceof FactionRecord
+				&& ((FactionRecord)other).getKey().equals(getKey());
+	}
+	
 	public String getKey() {
 		return key;
 	}

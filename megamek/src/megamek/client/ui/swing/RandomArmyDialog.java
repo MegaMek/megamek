@@ -1138,7 +1138,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     		fRec = (FactionRecord)m_chFaction.getSelectedItem();
     	}
 		UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
-		generatedRAT = new UnitTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
+		generatedRAT = UnitTable.findTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
 				ratGenYear, (String)m_chRating.getSelectedItem(),
 				panOptions.getSelectedWeights(),
 				panOptions.getNetworkMask(), panOptions.getMotiveTypes(),

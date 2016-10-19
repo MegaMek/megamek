@@ -1,5 +1,5 @@
 /*
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2016 The MegaMek Team
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -16,10 +16,10 @@ package megamek.client.ratgenerator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import megamek.common.Compute;
 import megamek.common.EntityMovementMode;
@@ -38,130 +38,124 @@ public class UnitTable {
 		boolean include(MechSummary ms);
 	}
 	
-	private List<TableEntry> table = new ArrayList<TableEntry>();
-	private FactionRecord faction;
-	private int unitType;
-	private int year;
-	private String rating;
-	private Collection<Integer> weightClasses;
-	private int networkMask;
-	private Collection<EntityMovementMode> movementModes;
-	private Collection<MissionRole> roles;
-	private int roleStrictness;
-	private FactionRecord deployingFaction;
-	private HashMap<String,UnitTable> salvageCache =
-			new HashMap<String,UnitTable>();
+	private static final int CACHE_SIZE = 32;
+	
+	private static LinkedHashMap<CacheKey,UnitTable> cache =
+			new LinkedHashMap<CacheKey, UnitTable>(CACHE_SIZE, 0.75f, true) {
 
-	/* Key is cumulative weight. This is usually more efficient than a weighted list
-	 * for large lists. Salvage and units are kept separate so that salvage totals can be
-	 * adjusted to maintain the same proportion when the units have a filter applied.
-	 */
-	private NavigableMap<Integer,FactionRecord> salvageMap;
-	private NavigableMap<Integer,MechSummary> unitMap;
+		private static final long serialVersionUID = -8016095510116134800L;
+
+		protected boolean removeEldestEntry(Map.Entry<CacheKey, UnitTable> entry) {
+			return size() >= CACHE_SIZE;
+		}
+	};
+	
+	public static synchronized UnitTable findTable(FactionRecord faction, int unitType, int year,
+			String rating, Collection<Integer> weightClasses, int networkMask,
+			Collection<EntityMovementMode> movementModes,
+			Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
+		CacheKey key = new CacheKey(faction, unitType, year, rating, weightClasses, networkMask,
+				movementModes, roles, roleStrictness, deployingFaction);
+		UnitTable retVal = cache.get(key);
+		if (retVal == null) {
+			retVal = new UnitTable(key);
+			if (retVal.hasUnits()) {
+				cache.put(key, retVal);
+			}
+		}
+		return retVal;
+	}
+	
+	public static UnitTable findTable(FactionRecord faction, int unitType, int year,
+			String rating, Collection<Integer> weightClasses, int networkMask,
+			Collection<EntityMovementMode> movementModes,
+			Collection<MissionRole> roles, int roleStrictness) {
+		return findTable(faction, unitType, year, rating, weightClasses, networkMask,
+				movementModes, roles, roleStrictness, faction);
+	}
+	
+	private CacheKey key;
+	private List<TableEntry> salvageTable = new ArrayList<TableEntry>();
+	private List<TableEntry> unitTable = new ArrayList<TableEntry>();
+
 	int salvageTotal;
 	int unitTotal;
 	/* Filtering can reduce the total weight of the units. Calculate the salvage pct when
 	 * creating the table to maintain the same proportion. */
 	int salvagePct;
 	
-	public UnitTable(FactionRecord faction, int unitType, int year,
-			String rating, Collection<Integer> weightClasses, int networkMask,
-			Collection<EntityMovementMode> movementModes,
-			Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
-		this.faction = faction;
-		this.unitType = unitType;
-		this.year = year;
-		this.rating = rating;
-		this.weightClasses = weightClasses;
-		this.networkMask = networkMask;
-		this.movementModes = movementModes;
-		this.roles = roles;
-		this.roleStrictness = roleStrictness;
-		this.deployingFaction = deployingFaction;
-		generateTable();
-	}
-	
-	public UnitTable(FactionRecord faction, int unitType, int year,
-			String rating, Collection<Integer> weightClasses, int networkMask,
-			Collection<EntityMovementMode> movementModes,
-			Collection<MissionRole> roles, int roleStrictness) {
-		this(faction, unitType, year, rating, weightClasses, networkMask, movementModes,
-				roles, roleStrictness, faction);
-	}
-	
-	/**
-	 * Generate the RAT, then go through it to build the NavigableMaps that
-	 * will be used for random selection.
-	 */
-	private void generateTable() {
-		if (!faction.isActiveInYear(year)) {
-			return;
-		}
-		table = RATGenerator.getInstance().generateTable(faction,
-				unitType, year, rating, weightClasses, networkMask, movementModes,
-				roles, roleStrictness, deployingFaction);
-		Collections.sort(table);
-		
-		salvageMap = new TreeMap<Integer,FactionRecord>();
-		unitMap = new TreeMap<Integer,MechSummary>();
-		salvageTotal = 0;
-		unitTotal = 0;
-		for (TableEntry entry : table) {
-			if (entry.isUnit()) {
-				unitMap.put(unitTotal, entry.getUnitEntry());
-				unitTotal += entry.weight;
-			} else {
-				salvageMap.put(salvageTotal, entry.getSalvageFaction());
-				salvageTotal += entry.weight;
+	protected UnitTable(CacheKey key) {
+		this.key = key;
+		/**
+		 * Generate the RAT, then go through it to build the NavigableMaps that
+		 * will be used for random selection.
+		 */
+		if (key.getFaction().isActiveInYear(key.getYear())) {
+			List<TableEntry> table = RATGenerator.getInstance().generateTable(key.getFaction(),
+					key.getUnitType(), key.getYear(), key.getRating(), key.getWeightClasses(),
+					key.getNetworkMask(), key.getMovementModes(),
+					key.getRoles(), key.getRoleStrictness(), key.getDeployingFaction());
+			Collections.sort(table);
+			
+			table.forEach(te -> {
+				if (te.isUnit()) {
+					unitTotal += te.weight;
+					unitTable.add(te);
+				} else {
+					salvageTotal += te.weight;
+					salvageTable.add(te);
+				}
+			});
+			if (salvageTotal + unitTotal > 0) {
+				salvagePct = salvageTotal * 100 / (salvageTotal + unitTotal);
 			}
-		}
-		if (salvageTotal + unitTotal > 0) {
-			salvagePct = salvageTotal * 100 / (salvageTotal + unitTotal);
 		}
 	}
 	
 	public int getNumEntries() {
-		return table.size();
+		return salvageTable.size() + unitTable.size();
+	}
+	
+	private TableEntry getEntry(int index) {
+		if (index < salvageTable.size()) {
+			return salvageTable.get(index);
+		}
+		return unitTable.get(index - salvageTable.size());
 	}
 	
 	public int getEntryWeight(int index) {
-		return table.get(index).weight;
+		return getEntry(index).weight;
 	}
 	
 	public String getEntryText(int index) {
-		if (table.get(index).isUnit()) {
-			return table.get(index).getUnitEntry().getName();
+		if (index >= salvageTable.size()) {
+			return unitTable.get(index - salvageTable.size()).getUnitEntry().getName();
 		} else {
-			if (faction.isClan()) {
-				return "Isorla: " + table.get(index).getSalvageFaction().getName(year - 5);
+			if (key.getFaction().isClan()) {
+				return "Isorla: " + salvageTable.get(index).getSalvageFaction().getName(key.getYear() - 5);
 			} else {
-				return "Salvage: " + table.get(index).getSalvageFaction().getName(year - 5);
+				return "Salvage: " + salvageTable.get(index).getSalvageFaction().getName(key.getYear() - 5);
 			}
 		}
 	}
 	
 	public MechSummary getMechSummary(int index) {
-		if (table.get(index).isUnit()) {
-			return table.get(index).getUnitEntry();
+		if (index >= salvageTable.size()) {
+			return unitTable.get(index - salvageTable.size()).getUnitEntry();
 		}
 		return null;
 	}
 	
 	public int getBV(int index) {
-		if (table.get(index).isUnit()) {
-			return table.get(index).getUnitEntry().getBV();
+		if (index >= salvageTable.size()) {
+			return unitTable.get(index - salvageTable.size()).getUnitEntry().getBV();
 		} else {
 			return 0;
 		}
 	}
 	
 	public boolean hasUnits() {
-		for (TableEntry entry : table) {
-			if (entry.isUnit()) {
-				return true;
-			}
-		}
-		return false;
+		return unitTable.size() > 0;
 	}
 	
 	/**
@@ -186,24 +180,25 @@ public class UnitTable {
 				return ms;
 			}
 		}
-		NavigableMap<Integer,MechSummary> useUnitMap = unitMap;
+		List<TableEntry> useUnitList = unitTable;
 		int unitMapSize = unitTotal;
 		if (filter != null) {
-			useUnitMap = new TreeMap<>();
-			unitMapSize = 0;
-			for (TableEntry entry : table) {
-				if (entry.isUnit() && filter.include(entry.getUnitEntry())) {
-					useUnitMap.put(unitMapSize, entry.getUnitEntry());
-					unitMapSize += entry.weight;
-				}
-			}
+			useUnitList = unitTable.stream().filter(te -> filter.include(te.getUnitEntry()))
+					.collect(Collectors.toList());
+			unitMapSize = useUnitList.stream().mapToInt(te -> te.weight).sum();
 		}
 		
-		if (unitMapSize <= 0) {
-			return null;
+		if (unitMapSize > 0) {
+			roll = Compute.randomInt(unitMapSize);
+			for (TableEntry te : useUnitList) {
+				if (roll < te.weight) {
+					return te.getUnitEntry();
+				}
+				roll -= te.weight;
+			}
 		}
-		roll = Compute.randomInt(unitMapSize);
-		return useUnitMap.floorEntry(roll).getValue();
+		assert(unitMapSize == 0);
+		return null;
 	}
 	
 	/**
@@ -246,39 +241,28 @@ public class UnitTable {
 	private MechSummary generateSalvage(UnitFilter filter) {
 		while (salvageTotal > 0) {
 			int roll = Compute.randomInt(salvageTotal);
-			FactionRecord fRec = salvageMap.floorEntry(roll).getValue();
-			UnitTable salvage = salvageCache.get(fRec.getKey());
-			if (salvage == null) {
-				salvage = new UnitTable(fRec,
-						unitType, year - 5, rating, weightClasses, networkMask, movementModes,
-						roles, roleStrictness, faction);
+			TableEntry salvageEntry = null;
+			for (TableEntry te : salvageTable) {
+				if (roll < te.weight) {
+					salvageEntry = te;
+					break;
+				}
+				roll -= te.weight;
 			}
-			if (salvage.hasUnits()) {
-				salvageCache.put(fRec.getKey(), salvage);
-				return salvage.generateUnit(filter);
-			} else {
-				int index = -1;
-				for (int i = 0; i < table.size(); i++) {
-					if (!table.get(i).isUnit() && table.get(i).getSalvageFaction().getKey().equals(fRec.getKey())) {
-						index = i;
-						break;
-					}
-				}
-				if (index >= 0) {
-					table.remove(index);
-				}
-				/* Rebuild the table */
-				salvageMap.clear();
-				salvageTotal = 0;
-				for (TableEntry entry : table) {
-					if (!entry.isUnit()) {
-						salvageMap.put(salvageTotal, entry.getSalvageFaction());
-						salvageTotal += entry.weight;
-					}
+			if (salvageEntry != null) {
+				UnitTable salvage = UnitTable.findTable(salvageEntry.getSalvageFaction(),
+						key.getUnitType(), key.getYear() - 5, key.getRating(),
+						key.getWeightClasses(), key.getNetworkMask(), key.getMovementModes(),
+						key.getRoles(), key.getRoleStrictness(), key.getFaction());
+				if (salvage.hasUnits()) {
+					return salvage.generateUnit(filter);
+				} else {
+					salvageTotal -= salvageEntry.weight;
+					salvageTable.remove(salvageEntry);
 				}
 			}					
 		}
-		assert(salvageMap.isEmpty() && salvageTotal == 0);
+		assert(salvageTable.isEmpty() && salvageTotal == 0);
 		return null;
 	}
 	
@@ -322,6 +306,168 @@ public class UnitTable {
 				return ((MechSummary)entry).getName();
 			}
 			return entry.toString();
+		}
+	}
+	
+	private static class CacheKey {
+		private FactionRecord faction;
+		private int unitType;
+		private int year;
+		private String rating;
+		private Collection<Integer> weightClasses;
+		private int networkMask;
+		private Collection<EntityMovementMode> movementModes;
+		private Collection<MissionRole> roles;
+		private int roleStrictness;
+		private FactionRecord deployingFaction;
+		
+		public CacheKey(FactionRecord faction, int unitType, int year,
+				String rating, Collection<Integer> weightClasses, int networkMask,
+				Collection<EntityMovementMode> movementModes,
+				Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
+			this.faction = faction;
+			this.unitType = unitType;
+			this.year = year;
+			this.rating = rating;
+			this.weightClasses = weightClasses;
+			this.networkMask = networkMask;
+			this.movementModes = movementModes;
+			this.roles = roles;
+			this.roleStrictness = roleStrictness;
+			this.deployingFaction = deployingFaction;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime
+					* result
+					+ ((deployingFaction == null) ? 0 : deployingFaction
+							.hashCode());
+			result = prime * result
+					+ ((faction == null) ? 0 : faction.hashCode());
+			result = prime * result
+					+ ((movementModes == null) ? 0 : movementModes.hashCode());
+			result = prime * result + networkMask;
+			result = prime * result
+					+ ((rating == null) ? 0 : rating.hashCode());
+			result = prime * result + roleStrictness;
+			result = prime * result + ((roles == null) ? 0 : roles.hashCode());
+			result = prime * result + unitType;
+			result = prime * result
+					+ ((weightClasses == null) ? 0 : weightClasses.hashCode());
+			result = prime * result + year;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof CacheKey)) {
+				return false;
+			}
+			CacheKey other = (CacheKey) obj;
+			if (deployingFaction == null) {
+				if (other.deployingFaction != null) {
+					return false;
+				}
+			} else if (!deployingFaction.equals(other.deployingFaction)) {
+				return false;
+			}
+			if (faction == null) {
+				if (other.faction != null) {
+					return false;
+				}
+			} else if (!faction.equals(other.faction)) {
+				return false;
+			}
+			if (movementModes == null) {
+				if (other.movementModes != null) {
+					return false;
+				}
+			} else if (!movementModes.equals(other.movementModes)) {
+				return false;
+			}
+			if (networkMask != other.networkMask) {
+				return false;
+			}
+			if (rating == null) {
+				if (other.rating != null) {
+					return false;
+				}
+			} else if (!rating.equals(other.rating)) {
+				return false;
+			}
+			if (roleStrictness != other.roleStrictness) {
+				return false;
+			}
+			if (roles == null) {
+				if (other.roles != null) {
+					return false;
+				}
+			} else if (!roles.equals(other.roles)) {
+				return false;
+			}
+			if (unitType != other.unitType) {
+				return false;
+			}
+			if (weightClasses == null) {
+				if (other.weightClasses != null) {
+					return false;
+				}
+			} else if (!weightClasses.equals(other.weightClasses)) {
+				return false;
+			}
+			if (year != other.year) {
+				return false;
+			}
+			return true;
+		}
+
+		public FactionRecord getFaction() {
+			return faction;
+		}
+
+		public int getUnitType() {
+			return unitType;
+		}
+
+		public int getYear() {
+			return year;
+		}
+
+		public String getRating() {
+			return rating;
+		}
+
+		public Collection<Integer> getWeightClasses() {
+			return weightClasses;
+		}
+
+		public int getNetworkMask() {
+			return networkMask;
+		}
+
+		public Collection<EntityMovementMode> getMovementModes() {
+			return movementModes;
+		}
+
+		public Collection<MissionRole> getRoles() {
+			return roles;
+		}
+
+		public int getRoleStrictness() {
+			return roleStrictness;
+		}
+
+		public FactionRecord getDeployingFaction() {
+			return deployingFaction;
 		}
 	}
 }

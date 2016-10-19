@@ -62,7 +62,7 @@ public class ForceNode extends RulesetNode {
 				switch (rule.getName()) {
 				case "weightClass":
 					if (fd.getWeightClass() == null
-							|| predicates.containsKey("ifWeightClass")) {
+							|| rule.predicates.containsKey("ifWeightClass")) {
 						ValueNode n = rule.selectOption(fd, true);
 						if (n != null) {
 							fd.setWeightClass(ForceDescriptor.decodeWeightClass(n.getContent()));
@@ -71,7 +71,7 @@ public class ForceNode extends RulesetNode {
 					break;
 				case "unitType":
 					if (fd.getUnitType() == null
-							|| predicates.containsKey("ifUnitType")) {
+							|| rule.predicates.containsKey("ifUnitType")) {
 						ValueNode n = rule.selectOption(fd, true);
 						if (n != null) {
 							fd.setUnitType(ModelRecord.parseUnitType(n.getContent()));
@@ -80,7 +80,7 @@ public class ForceNode extends RulesetNode {
 					break;
 				case "chassis":
 					if (fd.getChassis().size() == 0
-							|| predicates.containsKey("ifChassis")) {
+							|| rule.predicates.containsKey("ifChassis")) {
 						ValueNode n = rule.selectOption(fd, true);
 						if (n != null) {
 							for (String c : n.getContent().split(",")) {
@@ -91,7 +91,7 @@ public class ForceNode extends RulesetNode {
 					break;
 				case "variant":
 					if (fd.getVariants().size() == 0
-							|| predicates.containsKey("ifVariant")) {
+							|| rule.predicates.containsKey("ifVariant")) {
 						ValueNode n = rule.selectOption(fd, true);
 						if (n != null) {
 							for (String c : n.getContent().split(",")) {

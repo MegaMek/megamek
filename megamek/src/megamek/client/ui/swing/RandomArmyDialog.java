@@ -1115,17 +1115,17 @@ WindowListener, TreeSelectionListener, FocusListener {
     };
     
     private void generateRAT() {
-    	FactionRecord fRec = (FactionRecord)m_chSubfaction.getSelectedItem();
-    	if (fRec == null) {
-    		fRec = (FactionRecord)m_chFaction.getSelectedItem();
+    	FactionRecord fRec = (FactionRecord)(m_chSubfaction.getSelectedItem() == null?
+    			m_chFaction.getSelectedItem() : m_chSubfaction.getSelectedItem());
+    	if (fRec != null) {
+			UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
+			generatedRAT = UnitTable.findTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
+					ratGenYear, (String)m_chRating.getSelectedItem(),
+					panOptions.getSelectedWeights(),
+					panOptions.getNetworkMask(), panOptions.getMotiveTypes(),
+					panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
+			ratModel.refreshData();
     	}
-		UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
-		generatedRAT = UnitTable.findTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
-				ratGenYear, (String)m_chRating.getSelectedItem(),
-				panOptions.getSelectedWeights(),
-				panOptions.getNetworkMask(), panOptions.getMotiveTypes(),
-				panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
-		ratModel.refreshData();
     }
 
     @Override

@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.26-git
++ New Sprites.
 
 v0.41.25 (2016-10-15 14:40 UTC)
 + Added movement type filters to RAT Generator for BA.

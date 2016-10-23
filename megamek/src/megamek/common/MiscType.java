@@ -424,10 +424,8 @@ public class MiscType extends EquipmentType {
             .valueOf(1).shiftLeft(193);
     public static final BigInteger F_EMERGENCY_COOLANT_SYSTEM = BigInteger
             .valueOf(1).shiftLeft(194);
-
     public static final BigInteger F_BLOODHOUND = BigInteger.valueOf(1)
             .shiftLeft(195);
-
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR

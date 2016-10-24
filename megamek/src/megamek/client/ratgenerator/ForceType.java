@@ -4,11 +4,29 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 
+import megamek.common.AmmoType;
 import megamek.common.EntityWeightClass;
+import megamek.common.EquipmentMode;
+import megamek.common.EquipmentType;
+import megamek.common.MechSummary;
+import megamek.common.MiscType;
+import megamek.common.UnitType;
+import megamek.common.WeaponType;
+import megamek.common.weapons.ACWeapon;
+import megamek.common.weapons.ArtilleryWeapon;
+import megamek.common.weapons.LBXACWeapon;
+import megamek.common.weapons.LRMWeapon;
+import megamek.common.weapons.SRMWeapon;
+import megamek.common.weapons.TAGWeapon;
+import megamek.common.weapons.UACWeapon;
 
 /**
  * Campaign Operations rules for force generation.
@@ -88,8 +106,11 @@ public class ForceType {
         }        
     };
     
-    private static HashMap<String,ForceType> allForceTypes = new HashMap<>();
+    private static HashMap<String,ForceType> allForceTypes = null;
     public static ForceType getForceType(String key) {
+        if (allForceTypes == null) {
+            createForceTypes();
+        }
         return allForceTypes.get(key);
     }
     
@@ -97,7 +118,7 @@ public class ForceType {
     private UnitRole idealRole = UnitRole.UNDETERMINED;
     private int minWeightClass = 0;
     private int maxWeightClass = EntityWeightClass.SIZE;
-    private List<Predicate<ModelRecord>> mainCriteria = new ArrayList<>();
+    private Predicate<MechSummary> mainCriteria = null;
     private List<Constraint> otherCriteria = new ArrayList<>();
     
     public String getName() {
@@ -116,7 +137,7 @@ public class ForceType {
         return maxWeightClass;
     }
 
-    public List<Predicate<ModelRecord>> getMainCriteria() {
+    public Predicate<MechSummary> getMainCriteria() {
         return mainCriteria;
     }
 
@@ -124,26 +145,482 @@ public class ForceType {
         return otherCriteria;
     }
     
+    private static UnitRole getUnitRole(MechSummary ms) {
+        ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
+        return mRec == null? UnitRole.UNDETERMINED : mRec.getUnitRole();
+    }
+    
+    private static Set<MissionRole> getMissionRoles(MechSummary ms) {
+        ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
+        return mRec == null? EnumSet.noneOf(MissionRole.class) : mRec.getRoles();
+    }
+    
+    private static int getDamageAtRange(MechSummary ms, int range) {
+        int retVal = 0;
+        for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
+            if (EquipmentType.get(ms.getEquipmentNames().get(i)) instanceof WeaponType) {
+                final WeaponType weapon = (WeaponType)EquipmentType.get(ms.getEquipmentNames().get(i));
+                if (weapon.getLongRange() < range) {
+                    continue;
+                }
+                int damage = 0;
+                if (weapon.getAmmoType() != AmmoType.T_NA) {
+                    Optional<EquipmentType> ammo = ms.getEquipmentNames().stream()
+                        .map(name -> EquipmentType.get(name))
+                        .filter(eq -> eq instanceof AmmoType
+                                && ((AmmoType)eq).getAmmoType() == weapon.getAmmoType()
+                                && ((AmmoType)eq).getRackSize() == weapon.getRackSize())
+                        .findFirst();
+                    if (ammo.isPresent()) {
+                        damage = ((AmmoType)ammo.get()).getDamagePerShot()
+                                * ((AmmoType)ammo.get()).getRackSize();
+                    }
+                } else {
+                    damage = weapon.getDamage(range);
+                }
+                if (damage > 0) {
+                    retVal += damage * ms.getEquipmentQuantities().get(i);
+                }
+            }
+        }
+        return retVal;
+    }
+    
     public static void createForceTypes() {
-        allForceTypes.clear();
+        allForceTypes = new HashMap<>();
         createAssaultLance();
+        createAnvilLance();
+        createFastAssaultLance();
+        createHunterLance();
+        createBattleLance();
+        createLightBattleLance();
+        createMediumBattleLance();
+        createHeavyBattleLance();
+        createRifleLance();
+        createBerserkerLance();
+        createFireLance();
+        createAntiAirLance();
+        createArtilleryFireLance();
+        createDirectFireLance();
+        createFireSupportLance();
+        createLightFireLance();
+        createPursuitLance();
+        createProbeLance();
+        createSweepLance();
+        createReconLance();
+        createHeavyReconLance();
+        createLightReconLance();
+        createSecurityLance();
+        createStrikerCavalryLance();
+        createHammerLance();
+        createHeavyStrikerCavalryLance();
+        createHordeLance();
+        createLightStrikerCavalryLance();
+        createRangerLance();
+        createUrbanLance();
+        createAerospaceSuperioritySquadron();
+        createEWSquadron();
+        createFireSupportSquadron();
+        createInterceptorSquadron();
+        createStrikeSquadron();
+        createTransportSquadron();
     }
     
     private static void createAssaultLance() {
         ForceType ft = new ForceType();
-        ft.name = "Assault Lance";
+        ft.name = "Assault";
         ft.idealRole = UnitRole.JUGGERNAUT;
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
-        ft.mainCriteria.add(mr -> mr.getMechSummary().getTotalArmor() >= 135);
+        ft.mainCriteria = ms -> ms.getTotalArmor() >= 135;
         ft.otherCriteria.add(new CountConstraint(3,
-                mr -> mr.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
         ft.otherCriteria.add(new PercentConstraint(0.75,
-                mr -> mr.damageAtRange(7) >= 25));
+                ms -> getDamageAtRange(ms, 7) >= 25));
         //FIXME: The actual requirement is one juggernaut or two snipers; there needs to be
         // a way to combine constraints with ||.
         ft.otherCriteria.add(new CountConstraint(2,
-                mr -> mr.getUnitRole().equals(UnitRole.JUGGERNAUT)
-                    || mr.getUnitRole().equals(UnitRole.SNIPER)));
+                ms -> EnumSet.of(UnitRole.JUGGERNAUT, UnitRole.SNIPER).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createAnvilLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Anvil";
+        ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        ft.mainCriteria = ms -> ms.getTotalArmor() >= 40;
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                    .anyMatch(eq -> eq instanceof ACWeapon
+                            || eq instanceof LBXACWeapon
+                            || eq instanceof UACWeapon
+                            || eq instanceof SRMWeapon
+                            || eq instanceof LRMWeapon)));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createFastAssaultLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Fast Assault";
+        ft.idealRole = UnitRole.JUGGERNAUT;
+        ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        ft.mainCriteria = ms -> ms.getTotalArmor() >= 135
+                && (ms.getWalkMp() >= 5 || ms.getJumpMp() > 0);
+        ft.otherCriteria.add(new CountConstraint(3,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
+        ft.otherCriteria.add(new PercentConstraint(0.75,
+                ms -> getDamageAtRange(ms, 7) >= 25));
+        //FIXME: The actual requirement is one juggernaut or two snipers; there needs to be
+        // a way to combine constraints with ||.
+        ft.otherCriteria.add(new CountConstraint(2,
+                ms -> EnumSet.of(UnitRole.JUGGERNAUT, UnitRole.SNIPER).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createHunterLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Hunter";
+        ft.idealRole = UnitRole.AMBUSHER;
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> EnumSet.of(UnitRole.JUGGERNAUT, UnitRole.AMBUSHER).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);
+    }
+        
+    private static void createBattleLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Battle";
+        ft.idealRole = UnitRole.BRAWLER;
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.SNIPER, UnitRole.SKIRMISHER)
+                    .contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);
+    }
+
+    private static void createLightBattleLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Light Battle";
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
+        ft.otherCriteria.add(new PercentConstraint(0.75,
+                ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createMediumBattleLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Medium Battle";
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createHeavyBattleLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Heavy Battle";
+        ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createRifleLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Rifle";
+        ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 4;
+        ft.otherCriteria.add(new PercentConstraint(0.75,
+                ms -> ms.getWeightClass() <= EntityWeightClass.WEIGHT_HEAVY));
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                    .anyMatch(eq -> eq instanceof ACWeapon
+                            || eq instanceof LBXACWeapon
+                            || eq instanceof UACWeapon))); //UAC includes RAC
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createBerserkerLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Berserker";
+        ft.idealRole = UnitRole.BRAWLER;
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.SNIPER, UnitRole.SKIRMISHER)
+                    .contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createFireLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Fire";
+        ft.idealRole = UnitRole.MISSILE_BOAT;
+        ft.otherCriteria.add(new PercentConstraint(0.75,
+                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createAntiAirLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Anti-Air";
+        ft.otherCriteria.add(new PercentConstraint(0.75,
+                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(getUnitRole(ms))));
+        ft.otherCriteria.add(new CountConstraint(2,
+                // should indicate it has anti-aircraft targeting quirk without having to load all entities
+                ms -> getMissionRoles(ms).contains(MissionRole.ANTI_AIRCRAFT) 
+                || ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                    .anyMatch(eq -> eq instanceof ACWeapon
+                            || eq instanceof LBXACWeapon
+                            || eq instanceof ArtilleryWeapon)));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createArtilleryFireLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Artillery Fire";
+        ft.otherCriteria.add(new CountConstraint(2,
+                ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
+                    .anyMatch(eq -> eq instanceof ArtilleryWeapon)));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createDirectFireLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Direct Fire";
+        ft.mainCriteria = ms -> getDamageAtRange(ms, 18) >= 10;
+        ft.otherCriteria.add(new CountConstraint(2,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createFireSupportLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Fire Support";
+        ft.otherCriteria.add(new CountConstraint(3, ms -> ms.getEquipmentNames().stream()
+                .map(name -> EquipmentType.get(name))
+                .filter(eq -> eq instanceof WeaponType && eq.hasModes())
+                .anyMatch(eq -> {
+                    for (Enumeration<EquipmentMode> e = eq.getModes(); e.hasMoreElements();) {
+                        if (e.nextElement().toString().equals("Indirect")) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createLightFireLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Light Fire";
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createPursuitLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Pursuit";
+        ft.idealRole = UnitRole.SKIRMISHER;
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        ft.otherCriteria.add(new PercentConstraint(0.75,
+                ms -> ms.getWalkMp() >= 6));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> getDamageAtRange(ms, 15) >= 5));
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createProbeLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Probe";
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
+        ft.otherCriteria.add(new PercentConstraint(0.75,
+                ms -> ms.getWalkMp() >= 6));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> getDamageAtRange(ms, 9) >= 10));
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createSweepLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Sweep";
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        ft.otherCriteria.add(new PercentConstraint(0.75,
+                ms -> ms.getWalkMp() >= 5));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> getDamageAtRange(ms, 6) >= 10));
+        allForceTypes.put(ft.name, ft);
+    }
+    
+    private static void createReconLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Recon";
+        ft.idealRole = UnitRole.SCOUT;
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 5;        
+        ft.otherCriteria.add(new CountConstraint(2,
+                ms -> EnumSet.of(UnitRole.SCOUT, UnitRole.STRIKER).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);
+    }
+
+    private static void createHeavyReconLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Heavy Recon";
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 4;        
+        ft.otherCriteria.add(new CountConstraint(2,
+                ms -> ms.getWalkMp() >= 5));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
+        ft.otherCriteria.add(new CountConstraint(2,
+                ms -> getUnitRole(ms).equals(UnitRole.SCOUT)));
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createLightReconLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Light Recon";
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_LIGHT;
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 6
+                && getUnitRole(ms).equals(UnitRole.SCOUT);        
+        allForceTypes.put(ft.name, ft);        
+    }
+    
+    private static void createSecurityLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Security";
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> EnumSet.of(UnitRole.SCOUT, UnitRole.STRIKER).contains(getUnitRole(ms))));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(getUnitRole(ms))));
+        ft.otherCriteria.add(new CountConstraint(0, 1,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_ASSAULT));
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createStrikerCavalryLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Striker/Cavalry";
+        ft.idealRole = UnitRole.STRIKER;
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 5 || ms.getJumpMp() >= 4;
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> EnumSet.of(UnitRole.STRIKER, UnitRole.SKIRMISHER).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createHammerLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Hammer";
+        ft.idealRole = UnitRole.STRIKER;
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 5;
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createHeavyStrikerCavalryLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Heavy Striker/Cavalry";
+        ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 4;
+        ft.otherCriteria.add(new CountConstraint(3,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> getDamageAtRange(ms, 18) >= 5));
+        ft.otherCriteria.add(new CountConstraint(2,
+                ms -> EnumSet.of(UnitRole.STRIKER, UnitRole.SKIRMISHER).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createHordeLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Horde";
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_LIGHT;
+        ft.mainCriteria = ms -> getDamageAtRange(ms, 9) <= 10;
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createLightStrikerCavalryLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Light Striker/Cavalry";
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 5;
+        ft.otherCriteria.add(new CountConstraint(2,
+                ms -> getDamageAtRange(ms, 18) >= 5));
+        ft.otherCriteria.add(new CountConstraint(2,
+                ms -> EnumSet.of(UnitRole.STRIKER, UnitRole.SKIRMISHER).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createRangerLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Ranger";
+        ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
+        allForceTypes.put(ft.name, ft);        
+    }
+
+    private static void createUrbanLance() {
+        ForceType ft = new ForceType();
+        ft.name = "Urban";
+        ft.idealRole = UnitRole.AMBUSHER;
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> ms.getJumpMp() > 0
+                    || ms.getUnitType().equals(UnitType.getTypeName(UnitType.INFANTRY))
+                    || ms.getUnitType().equals(UnitType.getTypeName(UnitType.BATTLE_ARMOR))));
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> ms.getWalkMp() <= 4));
+        allForceTypes.put(ft.name, ft);        
+    }
+    
+    private static void createAerospaceSuperioritySquadron() {
+        ForceType ft = new ForceType();
+        ft.name = "Aerospace Superiority Squadron";
+        ft.otherCriteria.add(new PercentConstraint(0.51,
+                ms -> EnumSet.of(UnitRole.INTERCEPTOR, UnitRole.FAST_DOGFIGHTER).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);                
+    }
+
+    private static void createEWSquadron() {
+        ForceType ft = new ForceType();
+        ft.name = "Electronic Warfare Squadron";
+        ft.otherCriteria.add(new PercentConstraint(0.51,
+                ms -> ms.getEquipmentNames().stream().map(en -> EquipmentType.get(en))
+                .anyMatch(et -> et instanceof TAGWeapon ||  
+                        (et instanceof MiscType &&
+                            (((MiscType)et).hasFlag(MiscType.F_BAP)
+                            || ((MiscType)et).hasFlag(MiscType.F_ECM))))));
+        allForceTypes.put(ft.name, ft);                
+    }
+
+    private static void createFireSupportSquadron() {
+        ForceType ft = new ForceType();
+        ft.name = "Fire Support Squadron";
+        ft.mainCriteria = ms -> EnumSet.of(UnitRole.FIRE_SUPPORT,
+                UnitRole.DOGFIGHTER).contains(getUnitRole(ms));
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> getUnitRole(ms).equals(UnitRole.FIRE_SUPPORT)));
+        allForceTypes.put(ft.name, ft);                
+    }
+
+    private static void createInterceptorSquadron() {
+        ForceType ft = new ForceType();
+        ft.name = "Interceptor Squadron";
+        ft.otherCriteria.add(new PercentConstraint(0.51,
+                ms -> getUnitRole(ms).equals(UnitRole.INTERCEPTOR)));
+        allForceTypes.put(ft.name, ft);                
+    }
+
+    private static void createStrikeSquadron() {
+        ForceType ft = new ForceType();
+        ft.name = "Strike Squadron";
+        ft.otherCriteria.add(new PercentConstraint(0.51,
+                ms -> EnumSet.of(UnitRole.ATTACK_FIGHTER,
+                        UnitRole.DOGFIGHTER).contains(getUnitRole(ms))));
+        allForceTypes.put(ft.name, ft);                
+    }
+
+    private static void createTransportSquadron() {
+        ForceType ft = new ForceType();
+        ft.name = "Transport Squadron";
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> getUnitRole(ms).equals(UnitRole.TRANSPORT)));
+        allForceTypes.put(ft.name, ft);                
     }
 
     /**
@@ -153,16 +630,16 @@ public class ForceType {
         double minFraction = 0.0;
         double maxFraction = 1.0;
         
-        Predicate<ModelRecord> criterion;
+        Predicate<MechSummary> criterion;
         
-        Constraint(Predicate<ModelRecord> criterion) {
+        Constraint(Predicate<MechSummary> criterion) {
             this.criterion = criterion;
         }
         
         public abstract int getMinimum(int unitSize);
         public abstract int getMaximum(int unitSize);
         
-        public boolean fits(ModelRecord mRec) {
+        public boolean fits(MechSummary mRec) {
             return criterion.test(mRec);
         }
     }
@@ -171,13 +648,13 @@ public class ForceType {
         int minCount;
         int maxCount;
         
-        public CountConstraint(int min, int max, Predicate<ModelRecord> criterion) {
+        public CountConstraint(int min, int max, Predicate<MechSummary> criterion) {
             super(criterion);
             minCount = min;
             maxCount = max;
         }
         
-        public CountConstraint(int min, Predicate<ModelRecord> criterion) {
+        public CountConstraint(int min, Predicate<MechSummary> criterion) {
             this(min, Integer.MAX_VALUE, criterion);
         }
         
@@ -196,13 +673,13 @@ public class ForceType {
         double minPct;
         double maxPct;
         
-        public PercentConstraint(double min, double max, Predicate<ModelRecord> criterion) {
+        public PercentConstraint(double min, double max, Predicate<MechSummary> criterion) {
             super(criterion);
             minPct = min;
             maxPct = max;
         }
         
-        public PercentConstraint(double min, Predicate<ModelRecord> criterion) {
+        public PercentConstraint(double min, Predicate<MechSummary> criterion) {
             this(min, 1.0, criterion);
         }
         

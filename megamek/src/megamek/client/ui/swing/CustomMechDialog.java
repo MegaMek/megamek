@@ -346,6 +346,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isProtomech = true;
         boolean isTank = true;
         boolean isVTOL = true;
+        boolean eligibleForOffBoard = true;
+        
         for (Entity e : entities) {
             isAero &= e instanceof Aero;
             isInfantry &= e instanceof Infantry;
@@ -353,6 +355,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isTank &= e instanceof Tank;
             isProtomech &= e instanceof Protomech;
             isVTOL &= e instanceof VTOL;
+            boolean entityEligibleForOffBoard = false;
+            for (Mounted mounted : e.getWeaponList()) {
+                WeaponType wtype = (WeaponType) mounted.getType();
+                if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                    entityEligibleForOffBoard = true;
+                }
+            }
+            eligibleForOffBoard &= entityEligibleForOffBoard;
         }
 
         // set up the panels
@@ -550,14 +560,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         // **DEPLOYMENT TAB**//
-        boolean eligibleForOffBoard = false;
-        for (Mounted mounted : entity.getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-                eligibleForOffBoard = true;
-            }
-        }
-
         if (isAero) {
             panDeploy.add(labStartVelocity, GBC.std());
             panDeploy.add(fldStartVelocity, GBC.eol());

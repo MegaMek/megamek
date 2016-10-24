@@ -397,13 +397,17 @@ public class VTOL extends Tank {
                         }
                     case 11:
                         if (!engineHit) {
-                            return CRIT_ENGINE;
+                            return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit) {
-                            return CRIT_ENGINE;
-                        } else if (!getEngine().isFusion()) {
-                            return CRIT_FUEL_TANK;
+                        if(hasEngine()) {
+                            if (getEngine().isFusion() && !engineHit) {
+                                return CRIT_ENGINE;
+                            } else if (!getEngine().isFusion()) {
+                                return CRIT_FUEL_TANK;
+                            }
+                        } else {
+                            return CRIT_NONE;
                         }
                 }
             } else if (loc == LOC_ROTOR) {
@@ -490,7 +494,7 @@ public class VTOL extends Tank {
                         }
                     case 10:
                         if (!engineHit) {
-                            return CRIT_ENGINE;
+                            return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
@@ -499,10 +503,14 @@ public class VTOL extends Tank {
                             }
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit) {
-                            return CRIT_ENGINE;
-                        } else if (!getEngine().isFusion()) {
-                            return CRIT_FUEL_TANK;
+                        if(hasEngine()) {
+                            if (getEngine().isFusion() && !engineHit) {
+                                return CRIT_ENGINE;
+                            } else if (!getEngine().isFusion()) {
+                                return CRIT_FUEL_TANK;
+                            }
+                        } else {
+                            return CRIT_NONE;
                         }
                 }
             }
@@ -590,6 +598,17 @@ public class VTOL extends Tank {
     @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 8;
     }
 
 }

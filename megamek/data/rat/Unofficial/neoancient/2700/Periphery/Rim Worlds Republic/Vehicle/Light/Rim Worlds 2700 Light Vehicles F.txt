@@ -1,9 +1,0 @@
-Neoancient Rim Worlds 2700 Light Vehicles F
-@Neoancient Star League 2700 Light Vehicles C,2
-@Neoancient Steiner 2700 Light Vehicles F,11
-Chevalier Light Tank (Standard),33
-Cyrano Gunship (Standard),100
-Flatbed Truck (AC),56
-Ignis Infantry Support Tank (Standard),12
-Packrat LRPV PKR-T5,33
-Skulker Wheeled Scout Tank (Standard),33

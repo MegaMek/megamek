@@ -1745,6 +1745,11 @@ public class Infantry extends Entity {
         return false;
     }
 
+    @Override
+    public boolean hasEngine() {
+        return false;
+    }
+
     /**
      * Mounts the specified equipment in the specified location.
      */
@@ -1816,5 +1821,16 @@ public class Infantry extends Entity {
 
     public void setTakingCover(boolean isTakingCover) {
         this.isTakingCover = isTakingCover;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 1;
     }
 } // End class Infantry

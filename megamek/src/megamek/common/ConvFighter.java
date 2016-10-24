@@ -45,12 +45,16 @@ public class ConvFighter extends Aero {
 
     @Override
     public int getFuelUsed(int thrust) {
-        int overThrust = Math.max(thrust - getWalkMP(), 0);
+        if(!hasEngine()) {
+            return 0;
+        }
+        int overThrust =  Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
         int used = safeThrust + (2 * overThrust);
         if (!getEngine().isFusion()) {
             used = (int) Math.floor(safeThrust * 0.5) + overThrust;
-        } else if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
+        } else if (game.getOptions().booleanOption(
+                OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
             used = (int) Math.floor(safeThrust * 0.5) + (2 * overThrust);
         }
         return used;
@@ -86,8 +90,10 @@ public class ConvFighter extends Aero {
         cost += 25000 + (10 * getWeight());
 
         // engine
-        cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
-
+        if(hasEngine()) {
+            cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
+        }
+        
         // fuel tanks
         cost += (200 * getFuel()) / 160.0;
 
@@ -127,6 +133,9 @@ public class ConvFighter extends Aero {
 
     @Override
     protected int calculateWalk() {
+        if(!hasEngine()) {
+            return 0;
+        }
         if (isPrimitive()) {
             double rating = getEngine().getRating();
             rating /= 1.2;

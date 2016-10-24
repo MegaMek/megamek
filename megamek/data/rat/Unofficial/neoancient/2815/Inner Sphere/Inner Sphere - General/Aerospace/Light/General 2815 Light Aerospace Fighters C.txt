@@ -1,7 +1,0 @@
-Neoancient General 2815 Light Aerospace Fighters C
-Centurion CNT-1D,100
-Rogue RGU-133E,44
-Rogue RGU-133F,33
-Rogue RGU-133L,22
-Sabre SB-27,75
-Zero ZRO-114,25

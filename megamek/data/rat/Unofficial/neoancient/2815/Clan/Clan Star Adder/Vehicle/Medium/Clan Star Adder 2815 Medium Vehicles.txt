@@ -1,6 +1,0 @@
-Neoancient Clan Star Adder 2815 Medium Vehicles
-Chaparral Missile Artillery Tank (Standard),75
-Kanga Medium Hovertank (Standard),49
-Thor Artillery Vehicle (Standard),27
-Zephyr Hovertank (Royal),100
-Zephyr Hovertank (SRM2),13

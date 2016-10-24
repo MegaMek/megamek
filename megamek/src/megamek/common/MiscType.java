@@ -424,10 +424,8 @@ public class MiscType extends EquipmentType {
             .valueOf(1).shiftLeft(193);
     public static final BigInteger F_EMERGENCY_COOLANT_SYSTEM = BigInteger
             .valueOf(1).shiftLeft(194);
-
     public static final BigInteger F_BLOODHOUND = BigInteger.valueOf(1)
             .shiftLeft(195);
-
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -606,7 +604,7 @@ public class MiscType extends EquipmentType {
                 return (0.250 / 3);
             } else {
                 if (hasSubType(S_JETBOOSTER)) {
-                    return entity.getEngine().getWeightEngine(entity) / 10.0f;
+                    return entity.hasEngine() ? entity.getEngine().getWeightEngine(entity) / 10.0f : 0.0f;
                 }
                 if (hasSubType(S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
@@ -918,12 +916,12 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
                 costValue = getTonnage(entity, loc) * 100000;
             } else if (hasFlag(F_JET_BOOSTER)) {
-                costValue = entity.getEngine().getRating() * 10000;
+                costValue = (entity.hasEngine() ? entity.getEngine().getRating() * 10000 : 0);
             } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
                 costValue = (getTonnage(entity, loc) * 10000) + 5000;
             } else if (hasFlag(MiscType.F_MASC)) {
                 if (entity instanceof Protomech) {
-                    costValue = Math.round(entity.getEngine().getRating()
+                    costValue = Math.round((entity.hasEngine() ? entity.getEngine().getRating() : 0)
                             * 1000 * entity.getWeight() * 0.025f);
                 } else if (entity instanceof BattleArmor) {
                     costValue = entity.getOriginalWalkMP() * 75000;
@@ -941,7 +939,7 @@ public class MiscType extends EquipmentType {
                     } else if (getInternalName().equals("CLMASC")) {
                         mascTonnage = (int) Math.round(entity.getWeight() / 25.0f);
                     }
-                    costValue = entity.getEngine().getRating() * mascTonnage
+                    costValue = (entity.hasEngine() ? entity.getEngine().getRating() : 0) * mascTonnage
                             * 1000;
                 }
             } else if (hasFlag(MiscType.F_TARGCOMP)) {
@@ -975,11 +973,13 @@ public class MiscType extends EquipmentType {
                 costValue = swordTons * 10000;
             } else if (hasFlag(MiscType.F_CLUB)
                     && hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
-                int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity.getWeight() / 20.0));
+            	//10k per ton for the actual blade, plus 10k for the mechanism
+                int bladeTons = (int)Math.ceil(entity.getWeight() / 20.0);
                 costValue = (1 + bladeTons) * 10000;
             } else if (hasFlag(MiscType.F_TRACKS)) {
-                costValue = (int) Math.ceil((500 * entity.getEngine()
-                        .getRating() * entity.getWeight()) / 75);
+                costValue = (int) Math.ceil((500
+                    * (entity.hasEngine() ? entity.getEngine().getRating() : 0)
+                    * entity.getWeight()) / 75);
             } else if (hasFlag(MiscType.F_TALON)) {
                 costValue = (int) Math.ceil(getTonnage(entity, loc) * 300);
             } else if (hasFlag(MiscType.F_SPIKES)) {
@@ -5398,6 +5398,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.industrial = true;
         misc.introDate = 2820;
+        misc.flags = misc.flags.or(F_INDUSTRIAL_STRUCTURE);
         misc.techLevel.put(2820, misc.techLevel.get(3071));
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_C, EquipmentType.RATING_C };

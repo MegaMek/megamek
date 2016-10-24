@@ -1,7 +1,0 @@
-Neoancient Marik 3060 Warships
-Agamemnon Heavy Cruiser (Standard),25
-Eagle Frigate (Standard),100
-Essex Destroyer (2711),50
-Impavido Destroyer (Standard),100
-Zechetinu Corvette (Standard),100
-Zechetinu II Corvette (Standard),75

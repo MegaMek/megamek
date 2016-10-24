@@ -106,11 +106,6 @@ public class SmallCraft extends Aero {
         return 4;
     }
 
-    @Override
-    public void setEngine(Engine e) {
-        engine = e;
-    }
-
     // what is different - hit table is about it
     @Override
     public HitData rollHitLocation(int table, int side) {
@@ -704,5 +699,13 @@ public class SmallCraft extends Aero {
     
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
+    }
+    
+    /**
+     * Do not recalculate walkMP when adding engine.
+     */
+    @Override
+    protected int calculateWalk() {
+    	return walkMP;
     }
 }

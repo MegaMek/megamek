@@ -1,4 +1,0 @@
-Neoancient General 3055 Light Aerospace Fighters C
-Centurion CNT-1D,100
-Centurion CNT-2D,38
-Sabre SB-27,58

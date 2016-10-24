@@ -1,5 +1,0 @@
-Neoancient Hansa 2870 Medium Vehicles B
-@Neoancient Castillian - Umayyad 2860 Medium Vehicles C,11
-Condor Heavy Hover Tank (Standard),100
-Goblin Medium Tank (Standard),30
-Maxim Heavy Hover Transport (Standard),82

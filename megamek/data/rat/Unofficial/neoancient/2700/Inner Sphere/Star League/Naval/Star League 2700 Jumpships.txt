@@ -1,5 +1,0 @@
-Neoancient Star League 2700 Jumpships
-Invader Jumpship (PPC),3
-Invader Jumpship (Standard),3
-Merchant Jumpship (Standard),2
-Star Lord JumpShip (Standard),2

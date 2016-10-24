@@ -82,7 +82,7 @@
 		<os family="mac" />
 	</condition>
 
-	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar" />
+	<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpath="${util}/jarbundler-core-3.3.0.jar"/>
 
 	<!-- if we're using a Mac then we'll use the launch4j for Mac OS -->
 	<target name="checkOSMac" if="isOsMac">
@@ -123,7 +123,7 @@
 
 		<!-- compile -->
 		<echo message="building MegaMek from git sources" />
-		<javac debug="true" debuglevel="lines,source" target="1.7" source="1.7" destdir="${pkgbuilddir}" srcdir="${pkgdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
+		<javac debug="true" debuglevel="lines,source" target="1.8" source="1.8" destdir="${pkgbuilddir}" srcdir="${pkgdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
 			<classpath>
 				<pathelement location="${pkgdir}" />
 				<fileset dir="${pkgdir}/${libdir}" includes="*.jar" />
@@ -188,31 +188,24 @@
 				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
-		<mkdir dir="${osxdist}/MegaMek.app" />
-		<copy todir="${osxdist}/MegaMek.app" encoding="UTF-8">
-			<fileset dir="${util}/MegaMek.app">
-				<include name="**/*" />
-			</fileset>
-		</copy>
-		<copy file="${util}/JavaApplicationStub" todir="${osxdist}/MegaMek.app/Contents/MacOS/" encoding="UTF-8" />
-		<copy todir="${osxdist}/MegaMek.app/Contents/Resources/Java/" encoding="UTF-8">
-			<fileset dir="${pkgdir}">
-				<include name="${libdir}/*.jar" />
-				<include name="${jarfile}" />
-			</fileset>
-		</copy>
-		<!-- We are no longer going to use jarbundler directly, but rather a static app that
-	         we can copy new jars into. We are also moving the lib outside the app
-	         so that it is consistent with MekHQ
-		<jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" stubfile="packaging_utils/JavaApplicationStub" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/../" vmoptions="-Xmx256m">
-	   		<jarfileset dir="${pkgdir}">
-	     	 	<include name="**/*.jar" />
-	   			<exclude name="${util}/" />
-	      	</jarfileset>
-	      	<javaproperty name="apple.laf.useScreenMenuBar" value="true" />
-	      	<javaproperty name="apple.awt.brushMetal" value="true" />
-	   	</jarbundler>
-		-->
+        <jarbundler
+            dir="${osxdist}"
+            name="MegaMek"
+            mainclass="megamek.MegaMek"
+            stubfile="packaging_utils/JavaApplicationStub"
+            icon="data/images/misc/megamek.icns"
+            workingdirectory="$APP_PACKAGE/../"
+            useJavaXKey="true"
+            jvmversion="1.8+"
+            version="${version}"
+            vmoptions="-Xmx1024m">
+            <jarfileset dir="${pkgdir}">
+                <include name="**/*.jar" />
+                <exclude name="${util}/" />
+            </jarfileset>
+            <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
+            <javaproperty name="apple.awt.brushMetal" value="true" />
+        </jarbundler>
 	</target>
 
 	<!-- I think this will only work on OS X systems -->
@@ -345,7 +338,7 @@
 		<delete dir="${windist}" />
 	</target>
 
-	<target name="win-package" depends="win-bundle, win-zip, win-clean" description="Package a Windows distribution of the project built from git" />
+	<target name="win-package" depends="fixchmod, win-bundle, win-zip, win-clean" description="Package a Windows distribution of the project built from git" />
 
 	<target name="source-package" description="Package a source-only distribution of the project built from git">
 		<mkdir dir="${srcdist}" />
@@ -364,7 +357,12 @@
 		<delete dir="${srcdist}" />
 	</target>
 
-	<target name="release" depends="pkgdir-build, unitfiles-zip, rat-zip, mac-package, nix-package, win-package, source-package, pkgdir-clean" description="Build the project from git and package it as Windows, Mac, Unix, and source-only" />
+    <target name="fixchmod" description="Fix broken chmods on Linux after git checkout">
+        <chmod file="${util}/linux/launch4j/bin/windres" perm="u+x" verbose="true" />
+        <chmod file="${util}/linux/launch4j/bin/ld" perm="u+x" verbose="true" />
+    </target>
+
+    <target name="release" depends="pkgdir-build, unitfiles-zip, rat-zip, mac-package, nix-package, win-package, source-package, pkgdir-clean" description="Build the project from git and package it as Windows, Mac, Unix, and source-only" />
 
     <target name="mac-release" depends="pkgdir-build, mac-package, pkgdir-clean" description="Build the project from local source and package it as Mac" />
 

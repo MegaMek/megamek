@@ -1981,6 +1981,7 @@ public class Aero extends Entity {
 
             // sort the heat-using weapons by modified BV
             Collections.sort(heatBVs, new Comparator<ArrayList<Object>>() {
+                @Override
                 public int compare(ArrayList<Object> obj1, ArrayList<Object> obj2) {
                     // first element in the the ArrayList is BV, second is heat
                     // if same BV, lower heat first
@@ -2640,16 +2641,6 @@ public class Aero extends Entity {
         return true; // deal with this later
     }
 
-    /**
-     * Restores the entity after serialization
-     */
-    @Override
-    public void restore() {
-        super.restore();
-        // not sure what to put here
-
-    }
-
     @Override
     public boolean canCharge() {
         // ramming is resolved differently than chargin
@@ -2695,8 +2686,10 @@ public class Aero extends Entity {
         cost += 25000 + (10 * getWeight());
 
         // engine
-        cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
-
+        if(hasEngine()) {
+            cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
+        }
+        
         // fuel tanks
         cost += (200 * getFuel()) / 80.0;
 
@@ -2761,9 +2754,10 @@ public class Aero extends Entity {
     }
      */
 
+    @Override
     public void setEngine(Engine e) {
-        engine = e;
-        if (e.engineValid) {
+        super.setEngine(e);
+        if(hasEngine() && getEngine().engineValid) {
             setOriginalWalkMP(calculateWalk());
         }
     }
@@ -2777,6 +2771,9 @@ public class Aero extends Entity {
     }
 
     protected int calculateWalk() {
+        if(!hasEngine()) {
+            return 0;
+        }
         if (isPrimitive()) {
             double rating = getEngine().getRating();
             rating /= 1.2;
@@ -4364,5 +4361,17 @@ public class Aero extends Entity {
 
     public boolean isInASquadron(){
         return game.getEntity(getTransportId()) instanceof FighterSquadron;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    @Override
+    public int getSpriteDrawPriority() {
+        return 10;
     }
 }

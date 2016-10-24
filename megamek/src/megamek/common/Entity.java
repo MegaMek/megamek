@@ -29,11 +29,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
@@ -214,7 +216,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the engine and structural tech ratings match.
      */
     protected int engineTechRating = USE_STRUCTURAL_RATING;
-    protected Engine engine;
+    private Engine engine;
     protected boolean mixedTech = false;
     protected boolean designValid = true;
     protected boolean useManualBV = false;
@@ -946,6 +948,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @param game the game.
      */
+    @Override
     public void setGame(IGame game) {
         this.game = game;
         restore();
@@ -1231,14 +1234,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     // Targetable interface
+    @Override
     public int getTargetType() {
         return Targetable.TYPE_ENTITY;
     }
 
+    @Override
     public int getTargetId() {
         return getId();
     }
 
+    @Override
     public int getHeight() {
         return height();
     }
@@ -1357,6 +1363,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Is this entity shut down or is the crew unconscious?
      */
+    @Override
     public boolean isImmobile() {
         return isShutDown() || ((crew != null) && crew.isUnconscious());
     }
@@ -1466,6 +1473,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * named getLocation(), since I want the word location to refer to hit
      * locations on a mech or vehicle.
      */
+    @Override
     public Coords getPosition() {
         return position;
     }
@@ -1678,6 +1686,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns the elevation of this entity, relative to the current Hex's
      * surface
      */
+    @Override
     public int getElevation() {
         if (Entity.NONE != getTransportId()) {
             return game.getEntity(getTransportId()).getElevation();
@@ -1917,6 +1926,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the surface of the hex the entity is in , i.e.
      * relHeight() == getElevation() + getHeight()
      */
+    @Override
     public int relHeight() {
         return getElevation() + height();
     }
@@ -1924,6 +1934,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Returns the display name for this entity.
      */
+    @Override
     public String getDisplayName() {
         if (displayName == null) {
             generateDisplayName();
@@ -5442,6 +5453,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @param roundNumber the <code>int</code> number of the new round
      */
+    @Override
     public void newRound(int roundNumber) {
         fell = false;
         struck = false;
@@ -7010,6 +7022,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    @Override
     public boolean canLoad(Entity unit) {
         return this.canLoad(unit, true);
     }
@@ -7049,6 +7062,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.load(unit, true, bayNumber);
     }
 
+    @Override
     public void load(Entity unit) {
         this.load(unit, true, -1);
     }
@@ -7196,6 +7210,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * returned <code>List</code> is independant from the under- lying
      * data structure; modifying one does not affect the other.
      */
+    @Override
     public List<Entity> getLoadedUnits() {
         List<Entity> result = new ArrayList<Entity>();
 
@@ -7600,6 +7615,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>true</code> if the unit was contained in this space,
      * <code>false</code> otherwise.
      */
+    @Override
     public boolean unload(Entity unit) {
         // Walk through this entity's transport components;
         // try to remove the unit from each in turn.
@@ -7616,6 +7632,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    @Override
     public void resetTransporter() {
         // Walk through this entity's transport components;
         // and resets them
@@ -7631,10 +7648,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @return A <code>String</code> meant for a human.
      */
+    @Override
     public String getUnusedString() {
         return getUnusedString(false);
     }
 
+    @Override
     public double getUnused() {
         double capacity = 0;
         for (Transporter transport : transports) {
@@ -7700,6 +7719,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>true</code> if a transported unit is in the way,
      * <code>false</code> if the weapon can fire.
      */
+    @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         // Walk through this entity's transport components;
         // check each for blockage in turn.
@@ -7729,6 +7749,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * location. This value will be <code>null</code> if no unit is
      * transported on the outside at that location.
      */
+    @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
         // Walk through this entity's transport components;
         // check each for an exterior unit in turn.
@@ -7745,6 +7766,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return null;
     }
 
+    @Override
     public ArrayList<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>();
         for (Transporter t : transports) {
@@ -7753,6 +7775,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return rv;
     }
 
+    @Override
     public int getCargoMpReduction() {
         int rv = 0;
         for (Transporter t : transports) {
@@ -8550,6 +8573,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public Enumeration<Entity> getKills() {
         final int killer = id;
         return game.getSelectedOutOfGameEntities(new EntitySelector() {
+            @Override
             public boolean accept(Entity entity) {
                 if (killer == entity.killerId) {
                     return true;
@@ -8562,6 +8586,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getKillNumber() {
         final int killer = id;
         return game.getSelectedOutOfGameEntityCount(new EntitySelector() {
+            @Override
             public boolean accept(Entity entity) {
                 if (killer == entity.killerId) {
                     return true;
@@ -8931,6 +8956,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @see megamek.common.Targetable#isOffBoard()
      */
+    @Override
     public boolean isOffBoard() {
         return offBoardDistance > 0;
     }
@@ -9685,10 +9711,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    @Override
     public int sideTable(Coords src) {
         return sideTable(src, false);
     }
 
+    @Override
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src, usePrior, facing);
     }
@@ -9914,6 +9942,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public Engine getEngine() {
         return engine;
+    }
+    
+    public boolean hasEngine() {
+        return (null != engine);
+    }
+    
+    public void setEngine(Engine e) {
+        engine = e;
     }
 
     public boolean itemOppositeTech(String s) {
@@ -10184,6 +10220,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return roll;
     }
 
+    @Override
     public boolean isAirborneVTOLorWIGE() {
         // stuff that moves like a VTOL is flying unless at elevation 0 or on
         // top of/in a building,
@@ -11853,6 +11890,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                + maxSensorRange + ")";
     }
 
+    @Override
     public boolean isAirborne() {
         return (getAltitude() > 0)
                || (getMovementMode() == EntityMovementMode.AERODYNE)
@@ -11901,6 +11939,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         startingPos = i;
     }
 
+    @Override
     public int getAltitude() {
         return altitude;
     }
@@ -12509,10 +12548,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // finish the max heat calculations
         if (this.getJumpMP() > 0) {
             totalHeat += getJumpHeat(getJumpMP());
-        } else {
-            if ((this instanceof Mech) && !((Mech) this).isIndustrial()) {
-                totalHeat += getEngine().getRunHeat(this);
-            }
+        } else if ((this instanceof Mech) && !((Mech) this).isIndustrial() && hasEngine()) {
+            totalHeat += getEngine().getRunHeat(this);
         }
 
         for (Mounted mount : getWeaponList()) {
@@ -12584,6 +12621,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return 4;
     }
 
+    @Override
     public Map<Integer, Coords> getSecondaryPositions() {
         return secondaryPositions;
     }
@@ -12642,7 +12680,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public double getPowerAmplifierWeight() {
         // If we're fusion- or fission-powered, we need no amplifiers to begin
         // with.
-        if (engine.isFusion() || (engine.getEngineType() == Engine.FISSION)) {
+        if(hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
             return 0.0;
         }
         // Otherwise we need to iterate over our weapons, find out which of them
@@ -13576,6 +13614,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
     }
 
+    @Override
     public void newPhase(IGame.Phase phase) {
         for (Mounted m : getEquipment()) {
             m.newPhase(phase);
@@ -14023,5 +14062,54 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setEngineTechRating(int engineTechRating) {
         this.engineTechRating = engineTechRating;
+    }
+
+    /**
+     * This method (and getActiveSubEntities()) is meant for groups of entities handled as a
+     * singular one. Examples include fighter squadrons on space maps or lances in BattleForce
+     * game modes.
+     * <p>
+     * To check if a given entity consists of multiple sub-entities, use
+     * <pre>
+     * if(entity.getSubEntities().isPresent()) {
+     *     ...
+     * }
+     * </pre>
+     * To iterate over entities (if present), use:
+     * <pre>
+     * entity.getSubEntities().ifPresent(entities -> entities.forEach(
+     *     subEntity -> {
+     *         ...
+     *     });
+     * </pre>
+     * 
+     * @return an optional collection of sub-entities, if this entity is considered a grouping of them.
+     */
+    public Optional<List<Entity>> getSubEntities() {
+        return Optional.empty();
+    }
+    
+    /**
+     * The default implementation calls getSubEntities(), then filters them. This might not be
+     * the optimal code for many applications, so feel free to override both if needed.
+     * 
+     * @return an optional collection of sub-entities, if this entity is considered a grouping of them,
+     *         pre-filtered to only contain active (non-destroyed and non-doomed) entities.
+     */
+    public Optional<List<Entity>> getActiveSubEntities() {
+        return getSubEntities().map(
+            ents -> ents.stream().filter(
+                ent -> !(ent.isDestroyed() || ent.isDoomed())).collect(Collectors.toList()));
+    }
+    
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 0;
     }
 }

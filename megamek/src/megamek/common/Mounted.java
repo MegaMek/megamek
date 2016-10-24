@@ -264,7 +264,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public EquipmentType getType() {
-        return type;
+        return (null != type) ? type : (type = EquipmentType.get(typeName));
     }
 
     /**

@@ -1,7 +1,0 @@
-Neoancient Mercenary 3055 BattleArmor
-@Neoancient Davion 3050 BattleArmor,1
-@Neoancient Steiner 3050 BattleArmor,1
-IS Standard Battle Armor [Flamer],88
-IS Standard Battle Armor [Laser],75
-IS Standard Battle Armor [MG],100
-IS Standard Battle Armor [SRM],62

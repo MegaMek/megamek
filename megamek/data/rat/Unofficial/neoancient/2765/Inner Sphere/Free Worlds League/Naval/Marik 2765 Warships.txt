@@ -1,7 +1,0 @@
-Neoancient Marik 2765 Warships
-Aegis Heavy Cruiser (2582),2
-Atreus Battleship (Standard),3
-Baron Destroyer (Standard),2
-League Destroyer (Block I),1
-Soyal Heavy Cruiser (Standard),2
-Vincent Corvette Mk 39,2

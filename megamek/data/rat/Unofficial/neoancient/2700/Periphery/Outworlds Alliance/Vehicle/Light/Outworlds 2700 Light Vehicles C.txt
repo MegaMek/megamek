@@ -1,8 +1,0 @@
-Neoancient Outworlds 2700 Light Vehicles C
-@Neoancient Davion 2700 Light Vehicles D,8
-@Neoancient Kurita 2700 Light Vehicles D,3
-@Neoancient Star League 2700 Light Vehicles C,1
-Cyrano Gunship (Standard),100
-Flatbed Truck (AC),56
-Packrat LRPV PKR-T5,33
-Skulker Wheeled Scout Tank (Standard),50

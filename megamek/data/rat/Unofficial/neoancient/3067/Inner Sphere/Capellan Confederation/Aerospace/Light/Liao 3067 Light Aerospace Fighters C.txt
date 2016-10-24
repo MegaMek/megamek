@@ -1,9 +1,0 @@
-Neoancient Liao 3067 Light Aerospace Fighters C
-@Neoancient Clan Smoke Jaguar 3060 Light Aerospace Fighters Sol,7
-@Neoancient Davion 3060 Light Aerospace Fighters D,3
-@Neoancient Marik 3060 Light Aerospace Fighters D,1
-@Neoancient St. Ives 3060 Light Aerospace Fighters D,1
-Centurion CNT-1D,87
-Centurion CNT-2D,33
-Thrush TR-7,100
-Thrush TR-8,87

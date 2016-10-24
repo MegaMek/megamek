@@ -31,6 +31,7 @@ public class MULParser {
      */
     private static final String RECORD = "record";
     private static final String SURVIVORS = "survivors";
+    private static final String ALLIES = "allies";
     private static final String SALVAGE = "salvage";
     private static final String DEVASTATED = "devastated";
     private static final String UNIT = "unit";
@@ -182,6 +183,10 @@ public class MULParser {
      */
     Vector<Entity> survivors;
     
+    /**
+     * Stores all of the allied Entity's read in. 
+     */
+    Vector<Entity> allies;
     
     /**
      * Stores all the salvage entities read in 
@@ -212,6 +217,7 @@ public class MULParser {
         warning = new StringBuffer();
         entities = new Vector<Entity>();
         survivors = new Vector<Entity>();
+        allies = new Vector<Entity>();
         salvage = new Vector<Entity>();
         devastated = new Vector<Entity>();
         kills = new Hashtable<String, String>();
@@ -230,6 +236,7 @@ public class MULParser {
         // Clear the entities.
         entities.removeAllElements();
         survivors.removeAllElements();
+        allies.removeAllElements();
         salvage.removeAllElements();
         devastated.removeAllElements();
         pilots.removeAllElements();
@@ -296,6 +303,8 @@ public class MULParser {
                     parseUnit((Element)currNode, entities);
                 } else if (nodeName.equalsIgnoreCase(SURVIVORS)){
                     parseUnit((Element)currNode, survivors);
+                } else if (nodeName.equalsIgnoreCase(ALLIES)){
+                    parseUnit((Element)currNode, allies);
                 } else if (nodeName.equalsIgnoreCase(SALVAGE)){
                     parseUnit((Element)currNode, salvage);
                 } else if (nodeName.equalsIgnoreCase(DEVASTATED)){
@@ -2006,6 +2015,15 @@ public class MULParser {
      */
     public Vector<Entity> getSurvivors(){
         return survivors;
+    }
+    
+    /**
+     * Returns a list of all of the allied Entity's parsed from the input, should be
+     * called after <code>parse</code>.
+     * @return
+     */
+    public Vector<Entity> getAllies(){
+        return allies;
     }
     
     /**

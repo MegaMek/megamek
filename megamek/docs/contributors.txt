@@ -118,6 +118,7 @@
      Ratach
      Razorback
 	 Mike V
+     Dervishx5 (Jihad MapPack and Derv MapPack)
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -213,6 +214,7 @@
 
   Camo Pack
   	 SeaVea
+     Colonel Sanders Light (Folders noted with CSL)
 
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>

@@ -1,9 +1,0 @@
-Neoancient Davion 3000 Light Aerospace Fighters A
-@Neoancient Kurita 2950 Light Aerospace Fighters B,1
-@Neoancient Liao 2950 Light Aerospace Fighters B,4
-Centurion CNT-1D,39
-Centurion CNT-2D,14
-Seydlitz SYD-21,5
-Seydlitz SYD-Z2,9
-Sparrowhawk SPR-H5,100
-Thrush TR-7,44

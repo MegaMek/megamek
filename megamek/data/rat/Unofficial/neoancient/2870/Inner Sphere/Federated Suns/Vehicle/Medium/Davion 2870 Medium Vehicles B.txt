@@ -1,9 +1,0 @@
-Neoancient Davion 2870 Medium Vehicles B
-@Neoancient Kurita 2860 Medium Vehicles C,6
-@Neoancient Liao 2860 Medium Vehicles C,8
-@Neoancient Taurian 2860 Medium Vehicles C,1
-Condor Heavy Hover Tank (Standard),44
-Goblin Medium Tank (LRM),28
-Goblin Medium Tank (MG),43
-Goblin Medium Tank (Standard),85
-Maxim Heavy Hover Transport (Standard),100

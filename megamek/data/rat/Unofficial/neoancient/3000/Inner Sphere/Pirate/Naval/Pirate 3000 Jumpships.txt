@@ -1,8 +1,0 @@
-Neoancient Pirate 3000 Jumpships
-Invader Jumpship (PPC),75
-Invader Jumpship (Standard),75
-Merchant Jumpship (Standard),100
-Monolith Jumpship (Standard),20
-Scout JumpShip (Standard),100
-Star Lord JumpShip (Standard),40
-Tramp JumpShip (Standard),80

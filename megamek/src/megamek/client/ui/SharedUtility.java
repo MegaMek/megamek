@@ -226,7 +226,7 @@ public class SharedUtility {
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages
                         .getString("MovementDisplay.MagmaCrustMoving"));
-            } else if ((level == 2) && (entity.getElevation() == 0)
+            } else if ((level == 2) && (step.getElevation() == 0)
                     && (moveType != EntityMovementType.MOVE_JUMP)
                     && (entity.getMovementMode() != EntityMovementMode.HOVER)
                     && (entity.getMovementMode() != EntityMovementMode.WIGE)

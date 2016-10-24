@@ -75,11 +75,20 @@ public class PlayerColors {
         }
         return getColor(0);
     }
+
     public static Color getColor(int colorIndex) {
+        return getColor(colorIndex, true);
+    }
+
+    public static Color getColor(int colorIndex, boolean allowTransparency) {
         int colour = colorRGBs[colorIndex];
+        if (allowTransparency) {
         int transparency = GUIPreferences.getInstance().getInt(
                 GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
-        return new Color(colour | (transparency << 24), true);
+            return new Color(colour | (transparency << 24), true);
+        } else {
+            return new Color(colour);
+        }
     }
 
     public static int getColorRGB(int colorIndex) {

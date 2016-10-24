@@ -1,5 +1,0 @@
-Neoancient General 3067 Heavy Aerospace Fighters D
-Eagle EGL-R10,14
-Eagle EGL-R6,29
-Eagle EGL-R9,14
-Thunderbird TRB-D36,100

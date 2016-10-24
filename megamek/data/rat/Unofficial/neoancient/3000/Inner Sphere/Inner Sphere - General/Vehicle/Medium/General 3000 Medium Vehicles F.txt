@@ -1,7 +1,0 @@
-Neoancient General 3000 Medium Vehicles F
-Condor Heavy Hover Tank (Standard),1
-Hetzer Wheeled Assault Gun (SRM),1
-Hetzer Wheeled Assault Gun (Standard),2
-Maxim Heavy Hover Transport (Standard),1
-Vedette Medium Tank (AC2),2
-Vedette Medium Tank (Standard),3

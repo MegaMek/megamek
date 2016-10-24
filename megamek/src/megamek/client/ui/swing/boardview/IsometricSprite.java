@@ -227,4 +227,7 @@ class IsometricSprite extends Sprite {
         }
     }
 
+    protected int getSpritePriority() {
+        return entity.getSpriteDrawPriority();
+    }
 }

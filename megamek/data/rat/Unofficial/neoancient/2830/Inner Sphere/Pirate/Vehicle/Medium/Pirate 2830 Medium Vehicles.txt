@@ -1,9 +1,0 @@
-Neoancient Pirate 2830 Medium Vehicles
-@Neoancient Davion 2815 Medium Vehicles D,7
-@Neoancient Kurita 2815 Medium Vehicles D,7
-@Neoancient Liao 2815 Medium Vehicles D,7
-@Neoancient Marik 2815 Medium Vehicles D,7
-@Neoancient Steiner 2815 Medium Vehicles D,7
-Condor Heavy Hover Tank (Standard),80
-Goblin Medium Tank (Standard),60
-Maxim Heavy Hover Transport (Standard),100

@@ -21,6 +21,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -127,59 +129,58 @@ public class SquadronMapSet implements DisplayMapSet {
     }
 
     public void setEntity(Entity e) {
-        FighterSquadron fs = (FighterSquadron) e;
+        List<Entity> fighters = e.getSubEntities().orElse(Collections.emptyList());
+        for(int i = 0; i < max_size; ++ i) {
+            final Aero fighter = (Aero) fighters.get(i);
+            if(null != fighter) {
+                int armor = fighter.getCapArmor();
+                int armorO = fighter.getCap0Armor();
+                armorVLabel[i].setValue(Integer.toString(armor));
 
-        for (int i = 0; i < fs.getN0Fighters(); i++) {
-            Aero fighter = fs.getFighter(i);
-            int armor = fighter.getCapArmor();
-            int armorO = fighter.getCap0Armor();
-            armorVLabel[i].setValue(Integer.toString(armor));
+                if (fighter.getGame().getOptions().booleanOption(
+                        OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                    armor = (int) Math.ceil(armor / 10.0);
+                    armorO = (int) Math.ceil(armorO / 10.0);
+                }
 
-            if (fighter.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
-                armor = (int) Math.ceil(armor / 10.0);
-                armorO = (int) Math.ceil(armorO / 10.0);
+                drawArmorImage(armorImage[i], armor, armorO);
+                drawCrits(avCritImage[i], fighter.getAvionicsHits());
+                drawCrits(engineCritImage[i], fighter.getEngineHits());
+                drawCrits(fcsCritImage[i], fighter.getFCSHits());
+                drawCrits(sensorCritImage[i], fighter.getSensorHits());
+                drawCrits(pilotCritImage[i], fighter.getCrew().getHits());
+
+                nameLabel[i].setString(fighter.getDisplayName());
+
+                armorArea[i].setVisible(true);
+                armorVLabel[i].setVisible(true);
+                avCritArea[i].setVisible(true);
+                engineCritArea[i].setVisible(true);
+                fcsCritArea[i].setVisible(true);
+                sensorCritArea[i].setVisible(true);
+                pilotCritArea[i].setVisible(true);
+                nameLabel[i].setVisible(true);
+                avCritLabel[i].setVisible(true);
+                engineCritLabel[i].setVisible(true);
+                fcsCritLabel[i].setVisible(true);
+                sensorCritLabel[i].setVisible(true);
+                pilotCritLabel[i].setVisible(true);
+            } else {
+                armorArea[i].setVisible(false);
+                armorVLabel[i].setVisible(false);
+                avCritArea[i].setVisible(false);
+                engineCritArea[i].setVisible(false);
+                fcsCritArea[i].setVisible(false);
+                sensorCritArea[i].setVisible(false);
+                pilotCritArea[i].setVisible(false);
+                nameLabel[i].setVisible(false);
+                avCritLabel[i].setVisible(false);
+                engineCritLabel[i].setVisible(false);
+                fcsCritLabel[i].setVisible(false);
+                sensorCritLabel[i].setVisible(false);
+                pilotCritLabel[i].setVisible(false);
             }
-
-            drawArmorImage(armorImage[i], armor, armorO);
-            drawCrits(avCritImage[i], fighter.getAvionicsHits());
-            drawCrits(engineCritImage[i], fighter.getEngineHits());
-            drawCrits(fcsCritImage[i], fighter.getFCSHits());
-            drawCrits(sensorCritImage[i], fighter.getSensorHits());
-            drawCrits(pilotCritImage[i], fighter.getCrew().getHits());
-
-            nameLabel[i].setString(fighter.getDisplayName());
-
-            armorArea[i].setVisible(true);
-            armorVLabel[i].setVisible(true);
-            avCritArea[i].setVisible(true);
-            engineCritArea[i].setVisible(true);
-            fcsCritArea[i].setVisible(true);
-            sensorCritArea[i].setVisible(true);
-            pilotCritArea[i].setVisible(true);
-            nameLabel[i].setVisible(true);
-            avCritLabel[i].setVisible(true);
-            engineCritLabel[i].setVisible(true);
-            fcsCritLabel[i].setVisible(true);
-            sensorCritLabel[i].setVisible(true);
-            pilotCritLabel[i].setVisible(true);
         }
-
-        for (int j = fs.getN0Fighters(); j < max_size; j++) {
-            armorArea[j].setVisible(false);
-            armorVLabel[j].setVisible(false);
-            avCritArea[j].setVisible(false);
-            engineCritArea[j].setVisible(false);
-            fcsCritArea[j].setVisible(false);
-            sensorCritArea[j].setVisible(false);
-            pilotCritArea[j].setVisible(false);
-            nameLabel[j].setVisible(false);
-            avCritLabel[j].setVisible(false);
-            engineCritLabel[j].setVisible(false);
-            fcsCritLabel[j].setVisible(false);
-            sensorCritLabel[j].setVisible(false);
-            pilotCritLabel[j].setVisible(false);
-        }
-
     }
 
     private void setContent() {

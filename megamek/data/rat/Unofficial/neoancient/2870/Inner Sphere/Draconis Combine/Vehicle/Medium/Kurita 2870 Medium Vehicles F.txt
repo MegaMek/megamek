@@ -1,9 +1,0 @@
-Neoancient Kurita 2870 Medium Vehicles F
-@Neoancient Davion 2860 Medium Vehicles F,6
-@Neoancient Liao 2860 Medium Vehicles F,1
-@Neoancient Steiner 2860 Medium Vehicles F,6
-Condor Heavy Hover Tank (Standard),50
-Goblin Medium Tank (SRM),7
-Goblin Medium Tank (Standard),21
-Maxim Heavy Hover Transport (Standard),68
-Sabaku Kaze Heavy Scout Hover Tank (Standard),100

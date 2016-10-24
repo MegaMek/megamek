@@ -1,7 +1,0 @@
-Neoancient Kurita 2765 Jumpships
-Invader Jumpship (PPC),2
-Invader Jumpship (Standard),2
-Merchant Jumpship (Standard),2
-Scout JumpShip (Standard),1
-Star Lord JumpShip (Standard),2
-Tramp JumpShip (Standard),2

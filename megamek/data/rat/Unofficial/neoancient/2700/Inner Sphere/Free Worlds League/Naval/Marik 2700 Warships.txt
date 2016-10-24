@@ -1,9 +1,0 @@
-Neoancient Marik 2700 Warships
-Aegis Heavy Cruiser (2372),17
-Aegis Heavy Cruiser (2582),33
-Atreus Battleship (Standard),80
-Baron Destroyer (Standard),40
-League Destroyer (Block I),100
-Lola I Destroyer (Standard),10
-Vigilant Corvette (Standard),10
-Vincent Corvette Mk 39,40

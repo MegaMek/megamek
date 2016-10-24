@@ -1,8 +1,0 @@
-Neoancient Clan Goliath Scorpion 2815 Medium Aerospace Fighters
-Corsair CSR-V12b,83
-Gotha GTHA-500b,100
-Hellcat II HCT-213C,61
-Hellcat II HCT-214,15
-Ironsides IRN-SD1b,78
-Lightning LTN-G15,21
-Lightning LTN-G15b,46

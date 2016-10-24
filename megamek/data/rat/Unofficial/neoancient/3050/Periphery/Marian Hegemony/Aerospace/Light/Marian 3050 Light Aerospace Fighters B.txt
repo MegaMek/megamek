@@ -1,9 +1,0 @@
-Neoancient Marian 3050 Light Aerospace Fighters B
-@Neoancient Marik 3039 Light Aerospace Fighters C,10
-Centurion CNT-1D,35
-Centurion CNT-2D,13
-Cheetah F-10,60
-Seydlitz SYD-21,100
-Sholagar SL-21,40
-Sparrowhawk SPR-H5,80
-Thrush TR-7,60

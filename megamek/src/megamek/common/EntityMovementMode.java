@@ -36,9 +36,9 @@ public enum EntityMovementMode {
     BIPED_SWIM,
     QUAD_SWIM,
     WIGE ("wige", "glider"),
-    AERODYNE,
-    SPHEROID,
-    INF_UMU,
+    AERODYNE ("aerodyne"),
+    SPHEROID ("spheroid"),
+    INF_UMU ("umu"),
     AIRMECH,
     AEROSPACE, // this might be a synonym for AERODYNE.
     RAIL ("rail"),

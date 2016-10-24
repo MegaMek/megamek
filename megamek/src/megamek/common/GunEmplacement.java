@@ -44,8 +44,7 @@ public class GunEmplacement extends Tank {
     public GunEmplacement() {
         initializeInternal(IArmorState.ARMOR_NA, LOC_GUNS);
         //give it an engine just to avoid NPE on calls to Tank
-        engine = new Engine(0, Engine.NORMAL_ENGINE, Engine.TANK_ENGINE);
-
+        setEngine(new Engine(0, Engine.NORMAL_ENGINE, Engine.TANK_ENGINE));
     }
 
     public boolean isTurret() {
@@ -523,5 +522,11 @@ public class GunEmplacement extends Tank {
     @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_GUN_EMPLACEMENT;
+    }
+    
+    @Override
+    public boolean hasEngine() {
+        // TODO: Power generators and energy grid setup
+        return false;
     }
 }

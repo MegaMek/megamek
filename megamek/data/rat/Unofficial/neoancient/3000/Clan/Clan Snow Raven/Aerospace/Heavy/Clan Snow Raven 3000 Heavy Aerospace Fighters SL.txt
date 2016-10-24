@@ -1,9 +1,0 @@
-Neoancient Clan Snow Raven 3000 Heavy Aerospace Fighters SL
-@Neoancient Clan Nova Cat 2950 Heavy Aerospace Fighters SL,1
-@Neoancient Clan Sea Fox 2950 Heavy Aerospace Fighters SL,1
-Hydaspes (Standard),27
-Kirghiz A,88
-Kirghiz B,88
-Kirghiz C,50
-Kirghiz Prime,100
-Xerxes (Standard),27

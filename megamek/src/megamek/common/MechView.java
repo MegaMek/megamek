@@ -22,6 +22,7 @@ package megamek.common;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collections;
 import java.util.Iterator;
 
 import megamek.client.ui.Messages;
@@ -190,7 +191,7 @@ public class MechView {
         if (isMech || isVehicle
                 || (isAero && !isSmallCraft && !isJumpship && !isSquadron)) {
             sBasic.append(Messages.getString("MechView.Engine")); //$NON-NLS-1$
-            sBasic.append(entity.getEngine().getShortEngineName());
+            sBasic.append(entity.hasEngine() ? entity.getEngine().getShortEngineName() : "(none)");
             if (entity.getEngineHits() > 0) {
                 sBasic.append("<font color='red'> (" + entity.getEngineHits()
                         + " hits)</font>");
@@ -571,7 +572,7 @@ public class MechView {
         sIntArm.append("<br>"); //$NON-NLS-1$
 
         sIntArm.append(Messages.getString("MechView.ActiveFighters")) //$NON-NLS-1$
-                .append(fs.getNFighters());
+                .append(fs.getActiveSubEntities().orElse(Collections.emptyList()).size());
 
         sIntArm.append("<br>"); //$NON-NLS-1$
 

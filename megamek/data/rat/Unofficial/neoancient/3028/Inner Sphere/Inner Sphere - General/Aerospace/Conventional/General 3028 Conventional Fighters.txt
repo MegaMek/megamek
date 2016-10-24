@@ -1,8 +1,0 @@
-Neoancient General 3028 Conventional Fighters
-Guardian Fighter (Standard),1
-Heavy Strike Fighter Bat Hawk,2
-Heavy Strike Fighter Meteor,3
-Light Strike Fighter Comet,2
-Light Strike Fighter Owl,2
-Light Strike Fighter Owl II,1
-Light Strike Fighter Suzume ('Sparrow'),1

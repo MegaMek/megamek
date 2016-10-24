@@ -2627,6 +2627,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         boolean isHoming = false;
         ToHitData toHit = null;
 
+        if ((target instanceof Entity) && ((Entity)target).isHidden()) {
+            return "Can't fire at hidden units!";
+        }
+
         if (weapon.isSquadSupportWeapon() && (ae instanceof BattleArmor)) {
             if (!((BattleArmor) ae).isTrooperActive(BattleArmor.LOC_TROOPER_1)) {
                 return "Squad support mounted weapons cannot fire if " + "Trooper 1 is dead!";
@@ -3777,8 +3781,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // Must target infantry in buildings from the inside.
-        if (targetInBuilding && (te instanceof Infantry) && (null == los.getThruBldg())) {
-            return "Attack on infantry crosses building exterior wall.";
+        if (targetInBuilding && (te instanceof Infantry)
+                && (null == los.getThruBldg())) {
+            return "Attack on infantry crosses building exterior wall/roof.";
         }
 
         if ((wtype.getAmmoType() == AmmoType.T_NARC) || (wtype.getAmmoType() == AmmoType.T_INARC)) {

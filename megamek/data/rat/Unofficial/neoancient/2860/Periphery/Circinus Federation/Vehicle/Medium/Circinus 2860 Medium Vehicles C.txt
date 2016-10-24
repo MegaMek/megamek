@@ -1,6 +1,0 @@
-Neoancient Circinus 2860 Medium Vehicles C
-@Neoancient Marik 2830 Medium Vehicles D,7
-@Neoancient Steiner 2830 Medium Vehicles D,10
-Condor Heavy Hover Tank (Standard),88
-Goblin Medium Tank (Standard),88
-Maxim Heavy Hover Transport (Standard),100

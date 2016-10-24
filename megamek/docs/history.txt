@@ -1,6 +1,43 @@
 VERSION HISTORY:
 ----------------
-v0.41.22-git
+v0.41.26-git
++ New Sprites.
+
+v0.41.25 (2016-10-15 14:40 UTC)
++ Added movement type filters to RAT Generator for BA.
++ Issue #356: Almost all dropships have 2/3 movement
++ Data: New Sprites
+
+v0.41.24 (2016-10-06 03:15 UTC)
++ Refactored FighterSquadron's specific methods so that we can more easily support all composite entities.
+  WARNING: This is an API change. The following methods are new in Entity:
++Bug: RAT Generator incorrectly adjusting proportion of succession war/upgraded/Clan tech.
++Data: New Sprites
++Data: New Sprites
++Data: Changes to Field Gunners/Artillery intro dates and moving them
+   from Unofficial to Infantry
++ Fixed Mac OSX Packaging (Hopefully for good this time!)
++ Clan Industrial structure was missing proper equipment flags
+
+v0.41.23 (2016-09-20 00:07 UTC)
++ Issue #323: Artifacts when drawing the boardview background
++ Bug: Bot would fire at hidden units
++ Added option to toggle displaying of unit labels, default key is Y
++ Bug: IllegalFormatConversionException in ASFBay.getUnusedString
++ Issue #328: Out of control ASF has the "launch" button available
++ New (faster) scale method for certain zoom levels
++ New rotation operation for Entity icons, yielding smoother rotated units
++ Transparency now properly preserved in Unit icons, allowing shaded icons
++ Unit icon colors now preserved when camo is applied (only gray scale pixels
+    have camo applied to them)
++ Added dynamic random assignment table generator.
++ Unit fixes and New Sprites.
++ New Map Pack - Derv's Map Pack the maker of the Jihad Pack Pack
++ Moving old unshaded sprites to unused folder and adding the GIMP files created 
+  by ColonelSandersLight in the widgets folder with some basic notes.
++ Removed obsolete Neoancient RATs, superceded by RAT Generator.
+
+v0.41.22 (2016-08-26 03:00 UTC)
 + Issue #295: Roads not preventing swamp/rubble PSRs
 + Bug: Clicking Walk from Jump, would still plot jumping movement
 + Issue #258: Added Next/Prev Weapon Mode keybinds
@@ -30,6 +67,20 @@ v0.41.22-git
 + Issue #315: Movement processing doesn't initialize current location, which
     could lead to skid checks not being made for turns on starting hex, or could
     lead to NPEs backing up over bridges
+ +Data: New Sprites (Infantry Project) and some new units. 
+ 	(Big Thanks to Bloodwolf for the often frustrating process.)
++ Feature: Colored pixels in Unit images are now ignored when applying camo
++ Issue #315: Nag for Lava PSR shown when moving on bridge over lava
++ Issue #306: Thread-safety issues in Princess.Precognition
++ Issue #223: ECM hex display not always updating, especially in deployment
++ Issue #180: Unit labels can now have a color border that correspondes to owner
++ Issue #180: Units now have a set draw order based on unit type.  Draw order:
+    Infantry, BA, Tank, Mech, VTOL, Aero
++ Board background image can now be scaled instead of tiled
++ Made 'BW - Default.xml' the default skin
++ Data: Adding Colonel Sanders Light Camos and reorganized Standard Camo folder.
++ New Sprites
+
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

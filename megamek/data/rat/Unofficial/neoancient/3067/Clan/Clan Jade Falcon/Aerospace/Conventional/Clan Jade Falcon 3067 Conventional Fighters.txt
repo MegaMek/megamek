@@ -1,8 +1,0 @@
-Neoancient Clan Jade Falcon 3067 Conventional Fighters
-@Neoancient Clan Wolf 3060 Conventional Fighters,25
-@Neoancient Clan Wolf-in-Exile 3060 Conventional Fighters,3
-@Neoancient Steiner 3060 Conventional Fighters,3
-Heavy Strike Fighter Meteor,100
-Light Strike Fighter Comet,34
-Light Strike Fighter Owl,51
-Light Strike Fighter Owl II,17

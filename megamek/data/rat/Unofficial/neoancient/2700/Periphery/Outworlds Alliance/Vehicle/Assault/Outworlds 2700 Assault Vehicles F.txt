@@ -1,7 +1,0 @@
-Neoancient Outworlds 2700 Assault Vehicles F
-@Neoancient Davion 2700 Assault Vehicles F,9
-@Neoancient Kurita 2700 Assault Vehicles F,4
-@Neoancient Star League 2700 Assault Vehicles C,1
-Puma Assault Tank PAT-005,98
-Rhino Fire Support Tank (MG),71
-Rhino Fire Support Tank (Standard),100

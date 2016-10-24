@@ -809,7 +809,7 @@ public class Princess extends BotClient {
 
             // moves this entity during movement phase
             log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
-            getPrecognition().insureUpToDate();
+            getPrecognition().ensureUpToDate();
 
             if (isFallingBack(entity)) {
                 String msg = entity.getDisplayName();

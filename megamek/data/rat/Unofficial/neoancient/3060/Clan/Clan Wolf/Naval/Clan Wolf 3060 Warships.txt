@@ -1,9 +1,0 @@
-Neoancient Clan Wolf 3060 Warships
-Black Lion Battlecruiser (Clan),100
-Cameron Battlecruiser (Clan),50
-Congress Frigate (Clan),50
-Liberator Cruiser (Standard),50
-Lola III Destroyer (Clan),50
-Sovetskii Soyuz Heavy Cruiser (Clan),50
-Texas Battleship (Clan),50
-Vincent Corvette Mk 42,100

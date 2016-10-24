@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
@@ -802,10 +803,10 @@ public class BattleArmor extends Infantry {
      */
     @Override
     protected int[] getNoOfSlots() {
-        if (!isInitialized || isClan()) {
+        if(!isInitialized) {
             return CLAN_NUM_OF_SLOTS;
         }
-        return IS_NUM_OF_SLOTS;
+        return Arrays.copyOf(isClan() ? CLAN_NUM_OF_SLOTS : IS_NUM_OF_SLOTS, troopers + 1);
     }
 
     /**
@@ -2439,6 +2440,17 @@ public class BattleArmor extends Infantry {
             }
         }
         return toReturn;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 2;
     }
 
 

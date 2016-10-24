@@ -458,31 +458,33 @@ public class BLKFile {
                 blk.writeBlockData("sink_type", ((Aero)t).getHeatType());
                 blk.writeBlockData("fuel", ((Aero)t).getFuel());
             }
-            int engineCode = BLKFile.FUSION;
-            switch (t.getEngine().getEngineType()) {
-                case Engine.COMBUSTION_ENGINE:
-                    engineCode = BLKFile.ICE;
-                    break;
-                case Engine.LIGHT_ENGINE:
-                    engineCode = BLKFile.LIGHT;
-                    break;
-                case Engine.XL_ENGINE:
-                    engineCode = BLKFile.XL;
-                    break;
-                case Engine.XXL_ENGINE:
-                    engineCode = BLKFile.XXL;
-                    break;
-                case Engine.FUEL_CELL:
-                    engineCode = BLKFile.FUELCELL;
-                    break;
-                case Engine.FISSION:
-                    engineCode = BLKFile.FISSION;
-                    break;
-                case Engine.NONE:
-                    engineCode = BLKFile.NONE;
-                    break;
+            if(t.hasEngine()) {
+                int engineCode = BLKFile.FUSION;
+                switch (t.getEngine().getEngineType()) {
+                    case Engine.COMBUSTION_ENGINE:
+                        engineCode = BLKFile.ICE;
+                        break;
+                    case Engine.LIGHT_ENGINE:
+                        engineCode = BLKFile.LIGHT;
+                        break;
+                    case Engine.XL_ENGINE:
+                        engineCode = BLKFile.XL;
+                        break;
+                    case Engine.XXL_ENGINE:
+                        engineCode = BLKFile.XXL;
+                        break;
+                    case Engine.FUEL_CELL:
+                        engineCode = BLKFile.FUELCELL;
+                        break;
+                    case Engine.FISSION:
+                        engineCode = BLKFile.FISSION;
+                        break;
+                    case Engine.NONE:
+                        engineCode = BLKFile.NONE;
+                        break;
+                }
+                blk.writeBlockData("engine_type", engineCode);
             }
-            blk.writeBlockData("engine_type", engineCode);
             if (!t.hasPatchworkArmor() && (t.getArmorType(1) != 0)) {
                 blk.writeBlockData("armor_type", t.getArmorType(1));
                 blk.writeBlockData("armor_tech", t.getArmorTechLevel(1));

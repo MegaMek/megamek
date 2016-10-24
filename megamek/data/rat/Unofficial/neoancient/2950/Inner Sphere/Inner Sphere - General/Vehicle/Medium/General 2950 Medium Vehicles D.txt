@@ -1,5 +1,0 @@
-Neoancient General 2950 Medium Vehicles D
-Condor Heavy Hover Tank (Standard),1
-Hetzer Wheeled Assault Gun (Standard),2
-Maxim Heavy Hover Transport (Standard),1
-Vedette Medium Tank (Standard),3

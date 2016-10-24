@@ -253,4 +253,11 @@
         <isRepeatable>false</isRepeatable>
       </KeyBind>
 
+      <KeyBind>
+        <command>toggleDrawLabels</command>
+        <keyCode>89</keyCode> <!-- Y -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
 </KeyBindings>

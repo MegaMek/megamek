@@ -655,6 +655,10 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         if (clientgui == null) {
             return;
         }
+        // Only act when a new item is selected
+        if (ev.getStateChange() != ItemEvent.SELECTED) {
+            return;
+        }
         if ((ev.getItemSelectable() == chSensors)) {
             int sensorIdx = chSensors.getSelectedIndex();
             Entity en = clientgui.getClient().getGame().getEntity(myMechId);

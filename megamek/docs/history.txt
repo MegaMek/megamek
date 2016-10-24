@@ -4,6 +4,7 @@ v0.41.26-git
 + New Sprites.
 + Issue #357: Mass Configure Allows mechs to be deployed off board
 + Issue #204: Planning jump path means any subsequent walk paths climb buildings
++ Issue #368: Duplicate Messages When Changing Sensors
 
 v0.41.25 (2016-10-15 14:40 UTC)
 + Added movement type filters to RAT Generator for BA.

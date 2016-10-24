@@ -85,6 +85,8 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
@@ -1217,6 +1219,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else if (bvBgImage != null) {
             g.drawImage(bvBgImage, -getX(), -getY(), (int) viewRect.getWidth(),
                     (int) viewRect.getHeight(), this);
+        } else {
+            MetalTheme theme = new DefaultMetalTheme();
+            g.setColor(theme.getControl());
+            g.fillRect(-getX(), -getY(), (int) viewRect.getWidth(),
+                    (int) viewRect.getHeight());
         }
 
         // Used to pad the board edge

@@ -16,14 +16,12 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.Enumeration;
 import java.util.Optional;
 import java.util.Set;
 
 import megamek.common.AmmoType;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
 import megamek.common.MiscType;
@@ -340,51 +338,5 @@ public class ModelRecord extends AbstractUnitRecord {
 	public void setMechanizedBA(boolean mech) {
 		mechanizedBA = mech;
 	}
-
-    public int damageAtRange(int range) {
-        int retVal = 0;
-        MechSummary ms = getMechSummary();
-        for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
-            if (EquipmentType.get(ms.getEquipmentNames().get(i)) instanceof WeaponType) {
-                final WeaponType weapon = (WeaponType)EquipmentType.get(ms.getEquipmentNames().get(i));
-                if (weapon.getLongRange() < range) {
-                    continue;
-                }
-                int damage = 0;
-                if (weapon.getAmmoType() != AmmoType.T_NA) {
-                    Optional<EquipmentType> ammo = ms.getEquipmentNames().stream()
-                        .map(name -> EquipmentType.get(name))
-                        .filter(eq -> eq instanceof AmmoType
-                                && ((AmmoType)eq).getAmmoType() == weapon.getAmmoType()
-                                && ((AmmoType)eq).getRackSize() == weapon.getRackSize())
-                        .findFirst();
-                    if (ammo.isPresent()) {
-                        damage = ((AmmoType)ammo.get()).getDamagePerShot()
-                                * ((AmmoType)ammo.get()).getRackSize();
-                    }
-                } else {
-                    damage = weapon.getDamage(range);
-                }
-                if (damage > 0) {
-                    retVal += damage * ms.getEquipmentQuantities().get(i);
-                }
-            }
-        }
-        return retVal;
-    }
-    
-    public boolean hasIndirectFire() {
-        return getMechSummary().getEquipmentNames().stream().map(name -> EquipmentType.get(name))
-                .filter(eq -> eq instanceof WeaponType && eq.hasModes())
-                .anyMatch(eq -> {
-                    for (Enumeration<EquipmentMode> e = eq.getModes(); e.hasMoreElements();) {
-                        if (e.nextElement().toString().equals("Indirect")) {
-                            return true;
-                        }
-                    }
-                    return false;
-                });
-    }
-    
 }
 

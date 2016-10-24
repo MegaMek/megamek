@@ -1042,6 +1042,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // Remove Careful stand, in case it was set
         ce.setCarefulStand(false);
+        ce.setIsJumpingNow(false);
 
         // switch back from swimming to normal mode.
         if (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM) {

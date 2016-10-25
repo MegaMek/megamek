@@ -126,7 +126,7 @@ public class ForceType {
     private int minWeightClass = 0;
     private int maxWeightClass = EntityWeightClass.SIZE;
     // Used as a filter when generating units
-    private Predicate<MechSummary> mainCriteria = null;
+    private Predicate<MechSummary> mainCriteria = ms -> true;
     // Additional criteria that have to be fulfilled by a portion of the force
     private List<Constraint> otherCriteria = new ArrayList<>();
     
@@ -198,7 +198,8 @@ public class ForceType {
     public List<MechSummary> generateForce(FactionRecord faction, int unitType, int year,
             String rating, int size) {
         List<Integer> wcs = new ArrayList<>();
-        for (int i = minWeightClass; i < Math.min(maxWeightClass, EntityWeightClass.WEIGHT_SUPER_HEAVY); i++) {
+        for (int i = minWeightClass; i <= Math.min(maxWeightClass,
+                unitType == UnitType.AERO?EntityWeightClass.WEIGHT_HEAVY : EntityWeightClass.WEIGHT_SUPER_HEAVY); i++) {
             wcs.add(i);
         }
         UnitTable table = UnitTable.findTable(faction, unitType, year, rating, wcs, ModelRecord.NETWORK_NONE,
@@ -239,13 +240,16 @@ public class ForceType {
                     }
                     for (int j = 0; j < i; j++) {
                         final Constraint other = otherCriteria.get(j);
-                        if (allMatchingUnits.get(j).size() <= other.getMinimum(size)) {
+                        if (other.criterion.test(unitList.get(candidate))
+                                && allMatchingUnits.get(j).size() <= other.getMinimum(size)) {
                             filter.add(other.criterion);
-                        } else if (allMatchingUnits.get(j).size() >= other.getMaximum(size)) {
+                        } else if (!other.criterion.test(unitList.get(candidate))
+                                && allMatchingUnits.get(j).size() >= other.getMaximum(size)
+                                && other.getMaximum(size) < size) {
                             filter.add(ms -> !other.criterion.test(ms));
                         }
                     }
-                    if (matchingUnits.size() > constraint.getMaximum(size)) {
+                    if (matchingUnits.size() > constraint.getMaximum(size) && constraint.getMaximum(size) < size) {
                         filter.add(ms -> !constraint.criterion.test(ms));
                     } else {
                         filter.add(constraint.criterion);
@@ -264,6 +268,8 @@ public class ForceType {
                                 allMatchingUnits.get(j).add(replacement);
                             }
                         }
+                        unitList.remove(candidate);
+                        unitList.add(replacement);
                         matchingUnits.add(replacement);
                     }
                 }
@@ -533,10 +539,9 @@ public class ForceType {
         ForceType ft = new ForceType();
         ft.name = "Probe";
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
+        ft.mainCriteria = ms -> getDamageAtRange(ms, 9) >= 10;
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> ms.getWalkMp() >= 6));
-        ft.otherCriteria.add(new CountConstraint(1,
-                ms -> getDamageAtRange(ms, 9) >= 10));
         allForceTypes.put(ft.name, ft);        
     }
 
@@ -544,10 +549,8 @@ public class ForceType {
         ForceType ft = new ForceType();
         ft.name = "Sweep";
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
-        ft.otherCriteria.add(new PercentConstraint(0.75,
-                ms -> ms.getWalkMp() >= 5));
-        ft.otherCriteria.add(new CountConstraint(1,
-                ms -> getDamageAtRange(ms, 6) >= 10));
+        ft.mainCriteria = ms -> ms.getWalkMp() >= 5
+                && getDamageAtRange(ms, 6) >= 10;
         allForceTypes.put(ft.name, ft);
     }
     

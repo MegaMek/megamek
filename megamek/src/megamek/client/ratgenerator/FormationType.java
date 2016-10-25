@@ -4,6 +4,7 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Enumeration;
@@ -16,6 +17,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import megamek.common.AmmoType;
+import megamek.common.Compute;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentMode;
@@ -151,7 +153,7 @@ public class FormationType {
     public int getMaxWeightClass() {
         return maxWeightClass;
     }
-
+    
     private static UnitRole getUnitRole(MechSummary ms) {
         ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
         return mRec == null? UnitRole.UNDETERMINED : mRec.getUnitRole();
@@ -194,17 +196,55 @@ public class FormationType {
     }
     
     public List<MechSummary> generateFormation(FactionRecord faction, int unitType, int year,
-            String rating, int size) {
+            String rating, int networkMask, Collection<EntityMovementMode> motiveTypes,
+            Collection<MissionRole> missionRoles, int size) {
         List<Integer> wcs = new ArrayList<>();
         for (int i = minWeightClass; i <= Math.min(maxWeightClass,
                 unitType == UnitType.AERO?EntityWeightClass.WEIGHT_HEAVY : EntityWeightClass.WEIGHT_SUPER_HEAVY); i++) {
             wcs.add(i);
         }
         UnitTable table = UnitTable.findTable(faction, unitType, year, rating, wcs, ModelRecord.NETWORK_NONE,
-                EnumSet.noneOf(EntityMovementMode.class), missionRoles, 0);
+                motiveTypes, missionRoles, 0);
         if (table == null) {
             return new ArrayList<MechSummary>();
         }
+        /* Ground vehicle formation should generally be of the same motive type. If none is provided,
+         * we try all those represented in the generated table, chosen in proportion to their distribution.
+         * If we cannot meet all criteria with a single motive type, we proceed with a mixed force.
+         */
+        
+        if (unitType == UnitType.TANK && motiveTypes.isEmpty()) {
+            HashMap<String,Integer> mmMap = new HashMap<>();
+            for (int i = 0; i < table.getNumEntries(); i++) {
+                if (table.getMechSummary(i) != null) {
+                    mmMap.merge(table.getMechSummary(i).getUnitSubType(),
+                            table.getEntryWeight(i), Integer::sum);
+                }
+            }
+            while (!mmMap.isEmpty()) {
+                int total = mmMap.values().stream().mapToInt(Integer::intValue).sum();
+                int roll = Compute.randomInt(total);
+                String mode = "Tracked";
+                for (String m : mmMap.keySet()) {
+                    if (roll < mmMap.get(m)) {
+                        mode = m;
+                        break;
+                    } else {
+                        roll -= mmMap.get(m);
+                    }
+                }
+                mmMap.remove(mode);
+            
+                List<MechSummary> list = generateFormation(faction, unitType, year,
+                        rating, networkMask, EnumSet.of(EntityMovementMode.getMode(mode)),
+                        missionRoles, size);
+                // Main criteria are used in all unit generation, so we know they match the unit.
+                if (otherCriteria.stream().allMatch(c -> c.fits(list, size))) {
+                    return list;
+                }
+            }
+        }
+        
         List<MechSummary> unitList = table.generateUnits(size, ms -> mainCriteria.test(ms));
         if (unitList.isEmpty()) {
             // If we cannot meet the criteria, we may be able to construct a force using just the ideal role.
@@ -368,7 +408,6 @@ public class FormationType {
     private static void createFastAssaultLance() {
         FormationType ft = new FormationType();
         ft.name = "Fast Assault";
-        ft.idealRole = UnitRole.JUGGERNAUT;
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 135
                 && (ms.getWalkMp() >= 5 || ms.getJumpMp() > 0);
@@ -495,6 +534,7 @@ public class FormationType {
     private static void createArtilleryFireLance() {
         FormationType ft = new FormationType();
         ft.name = "Artillery Fire";
+        ft.missionRoles.add(MissionRole.MIXED_ARTILLERY);
         ft.otherCriteria.add(new CountConstraint(2,
                 ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
                     .anyMatch(eq -> eq instanceof ArtilleryWeapon)));
@@ -539,7 +579,6 @@ public class FormationType {
         ft.name = "Pursuit";
         ft.subtypes.add("Probe");
         ft.subtypes.add("Sweep");
-        ft.idealRole = UnitRole.SKIRMISHER;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> ms.getWalkMp() >= 6));
@@ -758,6 +797,12 @@ public class FormationType {
         
         public abstract int getMinimum(int unitSize);
         public abstract int getMaximum(int unitSize);
+        
+        public boolean fits(List<MechSummary> list, int unitSize) {
+            long count = list.stream().filter(ms -> criterion.test(ms)).count();
+            return (count >= getMinimum(unitSize)
+                    && count <= getMaximum(unitSize));
+        }
     }
     
     private static class CountConstraint extends Constraint {

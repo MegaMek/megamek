@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -118,6 +119,7 @@ public class FormationType {
     }
     
     private String name = "Support";
+    private List<String> subtypes = new ArrayList<>();
     // Some formation types allow units not normally generated for general combat roles (e.g. artillery, cargo)  
     private EnumSet<MissionRole> missionRoles = EnumSet.noneOf(MissionRole.class);
     // If all units in the force have this role, other constraints can be ignored.
@@ -134,6 +136,10 @@ public class FormationType {
         return name;
     }
     
+    public Iterator<String> getSubtypes() {
+        return subtypes.iterator();
+    }
+    
     public UnitRole getIdealRole() {
         return idealRole;
     }
@@ -146,14 +152,6 @@ public class FormationType {
         return maxWeightClass;
     }
 
-    public Predicate<MechSummary> getMainCriteria() {
-        return mainCriteria;
-    }
-
-    public List<Constraint> getOtherCriteria() {
-        return otherCriteria;
-    }
-    
     private static UnitRole getUnitRole(MechSummary ms) {
         ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
         return mRec == null? UnitRole.UNDETERMINED : mRec.getUnitRole();
@@ -335,6 +333,9 @@ public class FormationType {
     private static void createAssaultLance() {
         FormationType ft = new FormationType();
         ft.name = "Assault";
+        ft.subtypes.add("Anvil");
+        ft.subtypes.add("Fast Assault");
+        ft.subtypes.add("Hunter");
         ft.idealRole = UnitRole.JUGGERNAUT;
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 135;
@@ -394,6 +395,11 @@ public class FormationType {
     private static void createBattleLance() {
         FormationType ft = new FormationType();
         ft.name = "Battle";
+        ft.subtypes.add("Light Battle");
+        ft.subtypes.add("Medium Battle");
+        ft.subtypes.add("Heavy Battle");
+        ft.subtypes.add("Rifle");
+        ft.subtypes.add("Berserker");
         ft.idealRole = UnitRole.BRAWLER;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
@@ -460,6 +466,11 @@ public class FormationType {
     private static void createFireLance() {
         FormationType ft = new FormationType();
         ft.name = "Fire";
+        ft.subtypes.add("Anti-Air");
+        ft.subtypes.add("Artillery Fire");
+        ft.subtypes.add("Direct Fire");
+        ft.subtypes.add("Fire Support");
+        ft.subtypes.add("Light Fire");
         ft.idealRole = UnitRole.MISSILE_BOAT;
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(getUnitRole(ms))));
@@ -526,6 +537,8 @@ public class FormationType {
     private static void createPursuitLance() {
         FormationType ft = new FormationType();
         ft.name = "Pursuit";
+        ft.subtypes.add("Probe");
+        ft.subtypes.add("Sweep");
         ft.idealRole = UnitRole.SKIRMISHER;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.otherCriteria.add(new PercentConstraint(0.75,
@@ -557,6 +570,8 @@ public class FormationType {
     private static void createReconLance() {
         FormationType ft = new FormationType();
         ft.name = "Recon";
+        ft.subtypes.add("Heavy Recon");
+        ft.subtypes.add("Light Recon");
         ft.idealRole = UnitRole.SCOUT;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5;        
         ft.otherCriteria.add(new CountConstraint(2,
@@ -601,6 +616,11 @@ public class FormationType {
     private static void createStrikerCavalryLance() {
         FormationType ft = new FormationType();
         ft.name = "Striker/Cavalry";
+        ft.subtypes.add("Hammer");
+        ft.subtypes.add("Heavy Striker/Cavalry");
+        ft.subtypes.add("Horde");
+        ft.subtypes.add("Light Striker/Cavalry");
+        ft.subtypes.add("Ranger");
         ft.idealRole = UnitRole.STRIKER;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5 || ms.getJumpMp() >= 4;
@@ -729,25 +749,18 @@ public class FormationType {
     /**
      * base class for limitations on formation type 
      */
-    public static abstract class Constraint {
-        double minFraction = 0.0;
-        double maxFraction = 1.0;
-        
+    private static abstract class Constraint {
         Predicate<MechSummary> criterion;
         
-        Constraint(Predicate<MechSummary> criterion) {
+        protected Constraint(Predicate<MechSummary> criterion) {
             this.criterion = criterion;
         }
         
         public abstract int getMinimum(int unitSize);
         public abstract int getMaximum(int unitSize);
-        
-        public boolean fits(MechSummary mRec) {
-            return criterion.test(mRec);
-        }
     }
     
-    public static class CountConstraint extends Constraint {
+    private static class CountConstraint extends Constraint {
         int minCount;
         int maxCount;
         
@@ -772,7 +785,7 @@ public class FormationType {
         }
     }
     
-    public static class PercentConstraint extends Constraint {
+    private static class PercentConstraint extends Constraint {
         double minPct;
         double maxPct;
         

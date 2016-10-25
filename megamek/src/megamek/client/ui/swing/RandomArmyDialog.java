@@ -791,18 +791,18 @@ WindowListener, TreeSelectionListener, FocusListener {
                 	if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
                 		unitsModel.setData(generatedRAT.generateUnits(units));
                 	}
-                	/**
+                	/**/
                     FactionRecord fRec = (FactionRecord)m_chSubfaction.getSelectedItem();
                     if (fRec == null) {
                         fRec = (FactionRecord)m_chFaction.getSelectedItem();
                     }
                 	ArrayList<MechSummary> unitList = new ArrayList<>(megamek.client.ratgenerator.FormationType
-                	        .getFormationType("Fast Assault").generateFormation(fRec, UnitType.TANK, ratGenYear,
+                	        .getFormationType("Fire").generateFormation(fRec, UnitType.TANK, ratGenYear,
                 	                (String)m_chRating.getSelectedItem(),
                 	                ModelRecord.NETWORK_NONE, java.util.EnumSet.noneOf(EntityMovementMode.class),
                 	                java.util.EnumSet.noneOf(MissionRole.class), 4));
                 	unitsModel.setData(unitList);
-                	**/
+                	/**/
                 	//generateUnits removes salvage entries that have no units meeting criteria
                 	ratModel.refreshData();
                 } else {

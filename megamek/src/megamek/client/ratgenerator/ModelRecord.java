@@ -105,7 +105,7 @@ public class ModelRecord extends AbstractUnitRecord {
     			//FIXME: needs to filter out primitive
     			losTech = true;
     		}
-    		if (eq instanceof megamek.common.weapons.Weapon) {
+    		if (eq instanceof WeaponType) {
     			totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
     			switch (((megamek.common.weapons.Weapon)eq).getAmmoType()) {
     				case AmmoType.T_AC_LBX:
@@ -115,6 +115,8 @@ public class ModelRecord extends AbstractUnitRecord {
     			}
     			if (eq.hasFlag(WeaponType.F_ARTILLERY)) {
     				flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i) / 2.0;
+    				roles.add(((WeaponType)eq).getAmmoType() == AmmoType.T_ARROW_IV?
+    				        MissionRole.MISSILE_ARTILLERY : MissionRole.ARTILLERY);
     			}
         		if (eq.hasFlag(WeaponType.F_FLAMER) || eq.hasFlag(WeaponType.F_INFERNO)) {
         			incendiary = true;
@@ -280,8 +282,7 @@ public class ModelRecord extends AbstractUnitRecord {
 		return mechSummary;
 	}
 	
-	public void setRoles(String str) {
-		roles.clear();
+	public void addRoles(String str) {
 		String[] fields = str.split(",");
 		for (String role : fields) {
 			MissionRole mr = MissionRole.parseRole(role);

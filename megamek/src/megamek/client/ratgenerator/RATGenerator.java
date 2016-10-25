@@ -918,7 +918,7 @@ public class RATGenerator {
 		for (int k = 0; k < wn.getChildNodes().getLength(); k++) {
 			Node wn2 = wn.getChildNodes().item(k);
 			if (wn2.getNodeName().equalsIgnoreCase("roles") && newEntry) {
-				mr.setRoles(wn2.getTextContent().trim());
+				mr.addRoles(wn2.getTextContent().trim());
 			} else if (wn2.getNodeName().equalsIgnoreCase("deployedWith") && newEntry) {
 				mr.setRequiredUnits(wn2.getTextContent().trim());            							
 			} else if (wn2.getNodeName().equalsIgnoreCase("availability")) {

@@ -332,10 +332,10 @@ public class ForceType {
         ft.idealRole = UnitRole.JUGGERNAUT;
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 135;
-        ft.otherCriteria.add(new CountConstraint(3,
-                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> getDamageAtRange(ms, 7) >= 25));
+        ft.otherCriteria.add(new CountConstraint(3,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
         //FIXME: The actual requirement is one juggernaut or two snipers; there needs to be
         // a way to combine constraints with ||.
         ft.otherCriteria.add(new CountConstraint(2,
@@ -365,10 +365,10 @@ public class ForceType {
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 135
                 && (ms.getWalkMp() >= 5 || ms.getJumpMp() > 0);
-        ft.otherCriteria.add(new CountConstraint(3,
-                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> getDamageAtRange(ms, 7) >= 25));
+        ft.otherCriteria.add(new CountConstraint(3,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
         //FIXME: The actual requirement is one juggernaut or two snipers; there needs to be
         // a way to combine constraints with ||.
         ft.otherCriteria.add(new CountConstraint(2,
@@ -567,10 +567,10 @@ public class ForceType {
         ft.mainCriteria = ms -> ms.getWalkMp() >= 4;        
         ft.otherCriteria.add(new CountConstraint(2,
                 ms -> ms.getWalkMp() >= 5));
-        ft.otherCriteria.add(new CountConstraint(1,
-                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
         ft.otherCriteria.add(new CountConstraint(2,
                 ms -> getUnitRole(ms).equals(UnitRole.SCOUT)));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
         allForceTypes.put(ft.name, ft);        
     }
 
@@ -621,10 +621,10 @@ public class ForceType {
         ft.mainCriteria = ms -> ms.getWalkMp() >= 4;
         ft.otherCriteria.add(new CountConstraint(3,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
-        ft.otherCriteria.add(new CountConstraint(1,
-                ms -> getDamageAtRange(ms, 18) >= 5));
         ft.otherCriteria.add(new CountConstraint(2,
                 ms -> EnumSet.of(UnitRole.STRIKER, UnitRole.SKIRMISHER).contains(getUnitRole(ms))));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> getDamageAtRange(ms, 18) >= 5));
         allForceTypes.put(ft.name, ft);        
     }
 

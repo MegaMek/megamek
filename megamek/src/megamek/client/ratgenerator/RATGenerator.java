@@ -909,7 +909,7 @@ public class RATGenerator {
 		}
 		cr.addModel(mr);
         if (wn.getAttributes().getNamedItem("unitRole") != null) {
-            mr.setUnitRole(ForceType.UnitRole.parseRole(wn.getAttributes().getNamedItem("unitRole").getTextContent()));
+            mr.setUnitRole(FormationType.UnitRole.parseRole(wn.getAttributes().getNamedItem("unitRole").getTextContent()));
         }
         if (wn.getAttributes().getNamedItem("mechanized") != null) {
             mr.setMechanizedBA(Boolean.parseBoolean(wn.getAttributes().getNamedItem("mechanized").getTextContent()));

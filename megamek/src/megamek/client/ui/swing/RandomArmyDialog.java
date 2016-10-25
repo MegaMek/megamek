@@ -815,7 +815,7 @@ WindowListener, TreeSelectionListener, FocusListener {
                         fRec = (FactionRecord)m_chFaction.getSelectedItem();
                     }
                 	ArrayList<MechSummary> unitList = new ArrayList<>(megamek.client.ratgenerator.ForceType
-                	        .getForceType("Assault").generateForce(fRec, UnitType.MEK, ratGenYear,
+                	        .getForceType("Assault").generateFormation(fRec, UnitType.MEK, ratGenYear,
                 	                (String)m_chRating.getSelectedItem(), 4));
                 	unitsModel.setData(unitList);
                 	**/

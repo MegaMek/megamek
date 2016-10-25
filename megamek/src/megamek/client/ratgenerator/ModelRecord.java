@@ -53,7 +53,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private boolean starLeague;
 	private int weightClass;
 	private EntityMovementMode movementMode;
-	private ForceType.UnitRole unitRole = ForceType.UnitRole.UNDETERMINED;
+	private FormationType.UnitRole unitRole = FormationType.UnitRole.UNDETERMINED;
 	private EnumSet<MissionRole> roles;
 	private ArrayList<String> deployedWith;
 	private ArrayList<String> requiredUnits;
@@ -219,13 +219,13 @@ public class ModelRecord extends AbstractUnitRecord {
 		return starLeague;
 	}
 	
-	public ForceType.UnitRole getUnitRole() {
+	public FormationType.UnitRole getUnitRole() {
 	    return unitRole;
 	}
 	
-	public void setUnitRole (ForceType.UnitRole role) {
+	public void setUnitRole (FormationType.UnitRole role) {
 	    if (role == null) {
-	        unitRole = ForceType.UnitRole.UNDETERMINED;
+	        unitRole = FormationType.UnitRole.UNDETERMINED;
 	    } else {
 	        unitRole = role;
 	    }

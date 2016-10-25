@@ -43,7 +43,9 @@ public enum MissionRole {
 	/* Battle armor */
 	MECHANIZED_BA,
 	/* Infantry roles */
-	MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN; 
+	MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN,
+	/* allows artillery but does not filter out all other roles */
+	MIXED_ARTILLERY; 
 	
 	public boolean fitsUnitType(int unitType) {
 		switch (this) {
@@ -127,6 +129,9 @@ public enum MissionRole {
 		case ANTI_MEK:
 		case FIELD_GUN:
 			return unitType == UnitType.INFANTRY;
+			
+		case MIXED_ARTILLERY:
+		    /* TODO: allow inclusion of artillery without binary either/or */ 
 		default:
 			return false;
 		}
@@ -415,13 +420,14 @@ public enum MissionRole {
 					(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains(CIVILIAN)) ||
 					(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains(TRAINING)) ||
 					(mRec.getRoles().contains(FIELD_GUN) && !desiredRoles.contains(FIELD_GUN)) ||
-					(mRec.getRoles().contains(ARTILLERY))) {
+					(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(MIXED_ARTILLERY))) {
 				return null;
 			}
 			if (mRec.getRoles().contains(MISSILE_ARTILLERY) &&
 					!desiredRoles.contains(ARTILLERY)
 					&& !desiredRoles.contains(MISSILE_ARTILLERY)
-					&& !desiredRoles.contains(FIRE_SUPPORT)) {
+					&& !desiredRoles.contains(FIRE_SUPPORT)
+					&& !desiredRoles.contains(MIXED_ARTILLERY)) {
 				return null;
 			}
 			if (mRec.getRoles().contains(RECON) ||
@@ -455,7 +461,8 @@ public enum MissionRole {
 				(mRec.getRoles().contains(TUG) && !desiredRoles.contains(TUG)) ||
 				(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains(CIVILIAN)) ||
 				(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains(TRAINING)) ||
-				(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(ARTILLERY));
+				(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(ARTILLERY)
+				        && !desiredRoles.contains(MIXED_ARTILLERY));
 	}
 	
 	public static MissionRole parseRole(String role) {

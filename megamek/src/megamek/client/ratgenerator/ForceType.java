@@ -4,6 +4,7 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -11,8 +12,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import megamek.common.AmmoType;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
@@ -115,10 +118,16 @@ public class ForceType {
     }
     
     private String name = "Support";
+    // Some force types allow units not normally generated for general combat roles (e.g. artillery, cargo)  
+    private EnumSet<MissionRole> missionRoles = EnumSet.noneOf(MissionRole.class);
+    // If all units in the force have this role, other constraints can be ignored.
     private UnitRole idealRole = UnitRole.UNDETERMINED;
+    
     private int minWeightClass = 0;
     private int maxWeightClass = EntityWeightClass.SIZE;
+    // Used as a filter when generating units
     private Predicate<MechSummary> mainCriteria = null;
+    // Additional criteria that have to be fulfilled by a portion of the force
     private List<Constraint> otherCriteria = new ArrayList<>();
     
     public String getName() {
@@ -184,6 +193,97 @@ public class ForceType {
             }
         }
         return retVal;
+    }
+    
+    public List<MechSummary> generateForce(FactionRecord faction, int unitType, int year,
+            String rating, int size) {
+        List<Integer> wcs = new ArrayList<>();
+        for (int i = minWeightClass; i < Math.min(maxWeightClass, EntityWeightClass.WEIGHT_SUPER_HEAVY); i++) {
+            wcs.add(i);
+        }
+        UnitTable table = UnitTable.findTable(faction, unitType, year, rating, wcs, ModelRecord.NETWORK_NONE,
+                EnumSet.noneOf(EntityMovementMode.class), missionRoles, 0);
+        if (table == null) {
+            return new ArrayList<MechSummary>();
+        }
+        List<MechSummary> unitList = table.generateUnits(size, ms -> mainCriteria.test(ms));
+        if (unitList.isEmpty()) {
+            // If we cannot meet the criteria, we may be able to construct a force using just the ideal role.
+            if (!idealRole.equals(UnitRole.UNDETERMINED)) {
+                unitList = table.generateUnits(size, ms -> getUnitRole(ms).equals(idealRole));
+            }
+            return unitList;
+        }
+        
+        List<List<MechSummary>> allMatchingUnits = new ArrayList<>();
+        
+        for (int i = 0; i < otherCriteria.size(); i++) {
+            final Constraint constraint = otherCriteria.get(i);
+            List<MechSummary> matchingUnits = unitList.stream().filter(ms -> constraint.criterion.test(ms))
+                    .collect(Collectors.toList());
+            if (matchingUnits.size() < constraint.getMinimum(size)
+                    || matchingUnits.size() > constraint.getMaximum(size)) {
+                //Sort unitList to put best replacement candidates first
+                Collections.sort(unitList, (o1, o2) -> needRating(o1, size) -
+                        needRating(o2, size));
+                int candidate = 0;
+                //Try to replace units until we meet the criterion or we run out of units to replace
+                while (candidate < unitList.size()
+                        && (matchingUnits.size() < constraint.getMinimum(size)
+                                || matchingUnits.size() > constraint.getMaximum(size))) {
+                    // Build a unit table filter that includes criteria we've already met but have no extras
+                    // For constraints with a max value, use the logical complement of the constraint to keep from going over.
+                    List<Predicate<MechSummary>> filter = new ArrayList<>();
+                    if (mainCriteria != null) {
+                        filter.add(mainCriteria);
+                    }
+                    for (int j = 0; j < i; j++) {
+                        final Constraint other = otherCriteria.get(j);
+                        if (allMatchingUnits.get(j).size() <= other.getMinimum(size)) {
+                            filter.add(other.criterion);
+                        } else if (allMatchingUnits.get(j).size() >= other.getMaximum(size)) {
+                            filter.add(ms -> !other.criterion.test(ms));
+                        }
+                    }
+                    if (matchingUnits.size() > constraint.getMaximum(size)) {
+                        filter.add(ms -> !constraint.criterion.test(ms));
+                    } else {
+                        filter.add(constraint.criterion);
+                    }
+                    filter.add(constraint.criterion);
+                    //Look for another units that meets all criteria
+                    MechSummary replacement = table.generateUnit(ms -> filter.stream()
+                            .allMatch(f -> f.test(ms)));
+                    //If none is found, go to the next candidate. Otherwise, revise records of earlier matches and add to current list of matches
+                    if (replacement == null) {
+                        candidate++;
+                    } else {
+                        for (int j = 0; j < i; j++) {
+                            allMatchingUnits.get(j).remove(unitList.get(candidate));
+                            if (otherCriteria.get(j).criterion.test(replacement)) {
+                                allMatchingUnits.get(j).add(replacement);
+                            }
+                        }
+                        matchingUnits.add(replacement);
+                    }
+                }
+            }
+            allMatchingUnits.add(matchingUnits);
+        }
+        
+        return unitList;
+    }
+    
+    /*
+     * Rates how well the unit fulfills otherCriteria; used to judge which units
+     * should be rerolled to meet requirements. Each constraint it matches gives a
+     * +1 to the rating, unless the constraint is a maximum, in which case it gives
+     * a -1 (since removing the unit may actually help, and won't hurt). 
+     */
+    private int needRating(MechSummary ms, int unitSize) {
+        return otherCriteria.stream().filter(c -> c.criterion.test(ms))
+                .mapToInt(c -> c.getMaximum(unitSize) < unitSize? -1 : 1)
+                .sum();
     }
     
     public static void createForceTypes() {

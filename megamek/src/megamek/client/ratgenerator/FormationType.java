@@ -369,6 +369,7 @@ public class FormationType {
         createHeavyBattleLance();
         createRifleLance();
         createBerserkerLance();
+        createCommandLance();
         createFireLance();
         createAntiAirLance();
         createArtilleryFireLance();
@@ -507,6 +508,18 @@ public class FormationType {
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.SNIPER, UnitRole.SKIRMISHER)
+                    .contains(getUnitRole(ms))));
+        allFormationTypes.put(ft.name, ft);
+    }
+    
+    private static void createCommandLance() {
+        FormationType ft = new FormationType("Command", "Command");
+        ft.otherCriteria.add(new PercentConstraint(0.5,
+                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT, UnitRole.SKIRMISHER,
+                        UnitRole.JUGGERNAUT)
+                    .contains(getUnitRole(ms))));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.STRIKER, UnitRole.SCOUT)
                     .contains(getUnitRole(ms))));
         allFormationTypes.put(ft.name, ft);
     }

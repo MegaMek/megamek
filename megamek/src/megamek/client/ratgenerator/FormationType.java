@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -120,8 +119,22 @@ public class FormationType {
         return allFormationTypes.get(key);
     }
     
+    public static Collection<FormationType> getAllFormations() {
+        return allFormationTypes.values();
+    }
+    
+    protected FormationType(String name) {
+        this(name, name);
+    }
+    
+    protected FormationType(String name, String category) {
+        this.name = name;
+        this.category = category;
+    }
+    
     private String name = "Support";
-    private List<String> subtypes = new ArrayList<>();
+    private boolean ground = true;
+    private String category = null;
     // Some formation types allow units not normally generated for general combat roles (e.g. artillery, cargo)  
     private EnumSet<MissionRole> missionRoles = EnumSet.noneOf(MissionRole.class);
     // If all units in the force have this role, other constraints can be ignored.
@@ -138,8 +151,12 @@ public class FormationType {
         return name;
     }
     
-    public Iterator<String> getSubtypes() {
-        return subtypes.iterator();
+    public boolean isGround() {
+        return ground;
+    }
+    
+    public String getCategory() {
+        return category;
     }
     
     public UnitRole getIdealRole() {
@@ -371,11 +388,7 @@ public class FormationType {
     }
     
     private static void createAssaultLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Assault";
-        ft.subtypes.add("Anvil");
-        ft.subtypes.add("Fast Assault");
-        ft.subtypes.add("Hunter");
+        FormationType ft = new FormationType("Assault");
         ft.idealRole = UnitRole.JUGGERNAUT;
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 135;
@@ -391,8 +404,7 @@ public class FormationType {
     }
     
     private static void createAnvilLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Anvil";
+        FormationType ft = new FormationType("Anvil", "Assault");
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 40;
         ft.otherCriteria.add(new PercentConstraint(0.5,
@@ -406,8 +418,7 @@ public class FormationType {
     }
     
     private static void createFastAssaultLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Fast Assault";
+        FormationType ft = new FormationType("Fast Assault", "Assault");
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 135
                 && (ms.getWalkMp() >= 5 || ms.getJumpMp() > 0);
@@ -423,8 +434,7 @@ public class FormationType {
     }
     
     private static void createHunterLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Hunter";
+        FormationType ft = new FormationType("Hunter", "Assault");
         ft.idealRole = UnitRole.AMBUSHER;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> EnumSet.of(UnitRole.JUGGERNAUT, UnitRole.AMBUSHER).contains(getUnitRole(ms))));
@@ -432,13 +442,7 @@ public class FormationType {
     }
         
     private static void createBattleLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Battle";
-        ft.subtypes.add("Light Battle");
-        ft.subtypes.add("Medium Battle");
-        ft.subtypes.add("Heavy Battle");
-        ft.subtypes.add("Rifle");
-        ft.subtypes.add("Berserker");
+        FormationType ft = new FormationType("Battle");
         ft.idealRole = UnitRole.BRAWLER;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
@@ -449,8 +453,7 @@ public class FormationType {
     }
 
     private static void createLightBattleLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Light Battle";
+        FormationType ft = new FormationType("Light Battle", "Battle");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT));
@@ -458,8 +461,7 @@ public class FormationType {
     }
     
     private static void createMediumBattleLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Medium Battle";
+        FormationType ft = new FormationType("Medium Battle", "Battle");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM));
@@ -467,8 +469,7 @@ public class FormationType {
     }
     
     private static void createHeavyBattleLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Heavy Battle";
+        FormationType ft = new FormationType("Heavy Battle", "Battle");
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
@@ -476,8 +477,7 @@ public class FormationType {
     }
     
     private static void createRifleLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Rifle";
+        FormationType ft = new FormationType("Rifle", "Battle");
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 4;
         ft.otherCriteria.add(new PercentConstraint(0.75,
@@ -491,8 +491,7 @@ public class FormationType {
     }
     
     private static void createBerserkerLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Berserker";
+        FormationType ft = new FormationType("Berserker/Close", "Battle");
         ft.idealRole = UnitRole.BRAWLER;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
@@ -503,13 +502,7 @@ public class FormationType {
     }
     
     private static void createFireLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Fire";
-        ft.subtypes.add("Anti-Air");
-        ft.subtypes.add("Artillery Fire");
-        ft.subtypes.add("Direct Fire");
-        ft.subtypes.add("Fire Support");
-        ft.subtypes.add("Light Fire");
+        FormationType ft = new FormationType("Fire");
         ft.idealRole = UnitRole.MISSILE_BOAT;
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(getUnitRole(ms))));
@@ -517,8 +510,7 @@ public class FormationType {
     }
     
     private static void createAntiAirLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Anti-Air";
+        FormationType ft = new FormationType("Anti-Air", "Fire");
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(getUnitRole(ms))));
         ft.otherCriteria.add(new CountConstraint(2,
@@ -532,8 +524,7 @@ public class FormationType {
     }
     
     private static void createArtilleryFireLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Artillery Fire";
+        FormationType ft = new FormationType("Artillery Fire", "Fire");
         ft.missionRoles.add(MissionRole.MIXED_ARTILLERY);
         ft.otherCriteria.add(new CountConstraint(2,
                 ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
@@ -542,8 +533,7 @@ public class FormationType {
     }
     
     private static void createDirectFireLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Direct Fire";
+        FormationType ft = new FormationType("Direct Fire", "Fire");
         ft.mainCriteria = ms -> getDamageAtRange(ms, 18) >= 10;
         ft.otherCriteria.add(new CountConstraint(2,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
@@ -551,8 +541,7 @@ public class FormationType {
     }
     
     private static void createFireSupportLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Fire Support";
+        FormationType ft = new FormationType("Fire Support", "Fire");
         ft.otherCriteria.add(new CountConstraint(3, ms -> ms.getEquipmentNames().stream()
                 .map(name -> EquipmentType.get(name))
                 .filter(eq -> eq instanceof WeaponType && eq.hasModes())
@@ -568,17 +557,13 @@ public class FormationType {
     }
     
     private static void createLightFireLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Light Fire";
+        FormationType ft = new FormationType("Light Fire", "Fire");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         allFormationTypes.put(ft.name, ft);
     }
     
     private static void createPursuitLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Pursuit";
-        ft.subtypes.add("Probe");
-        ft.subtypes.add("Sweep");
+        FormationType ft = new FormationType("Pursuit");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> ms.getWalkMp() >= 6));
@@ -588,8 +573,7 @@ public class FormationType {
     }
 
     private static void createProbeLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Probe";
+        FormationType ft = new FormationType("Probe", "Pursuit");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         ft.mainCriteria = ms -> getDamageAtRange(ms, 9) >= 10;
         ft.otherCriteria.add(new PercentConstraint(0.75,
@@ -598,8 +582,7 @@ public class FormationType {
     }
 
     private static void createSweepLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Sweep";
+        FormationType ft = new FormationType("Sweep", "Pursuit");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5
                 && getDamageAtRange(ms, 6) >= 10;
@@ -607,10 +590,7 @@ public class FormationType {
     }
     
     private static void createReconLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Recon";
-        ft.subtypes.add("Heavy Recon");
-        ft.subtypes.add("Light Recon");
+        FormationType ft = new FormationType("Recon");
         ft.idealRole = UnitRole.SCOUT;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5;        
         ft.otherCriteria.add(new CountConstraint(2,
@@ -619,8 +599,7 @@ public class FormationType {
     }
 
     private static void createHeavyReconLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Heavy Recon";
+        FormationType ft = new FormationType("Heavy Recon", "Recon");
         ft.mainCriteria = ms -> ms.getWalkMp() >= 4;        
         ft.otherCriteria.add(new CountConstraint(2,
                 ms -> ms.getWalkMp() >= 5));
@@ -632,8 +611,7 @@ public class FormationType {
     }
 
     private static void createLightReconLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Light Recon";
+        FormationType ft = new FormationType("Light Recon", "Recon");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_LIGHT;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 6
                 && getUnitRole(ms).equals(UnitRole.SCOUT);        
@@ -641,8 +619,7 @@ public class FormationType {
     }
     
     private static void createSecurityLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Security";
+        FormationType ft = new FormationType("Security");
         ft.otherCriteria.add(new CountConstraint(1,
                 ms -> EnumSet.of(UnitRole.SCOUT, UnitRole.STRIKER).contains(getUnitRole(ms))));
         ft.otherCriteria.add(new CountConstraint(1,
@@ -653,13 +630,7 @@ public class FormationType {
     }
 
     private static void createStrikerCavalryLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Striker/Cavalry";
-        ft.subtypes.add("Hammer");
-        ft.subtypes.add("Heavy Striker/Cavalry");
-        ft.subtypes.add("Horde");
-        ft.subtypes.add("Light Striker/Cavalry");
-        ft.subtypes.add("Ranger");
+        FormationType ft = new FormationType("Striker/Cavalry");
         ft.idealRole = UnitRole.STRIKER;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5 || ms.getJumpMp() >= 4;
@@ -669,16 +640,14 @@ public class FormationType {
     }
 
     private static void createHammerLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Hammer";
+        FormationType ft = new FormationType("Hammer", "Striker/Cavalry");
         ft.idealRole = UnitRole.STRIKER;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5;
         allFormationTypes.put(ft.name, ft);        
     }
 
     private static void createHeavyStrikerCavalryLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Heavy Striker/Cavalry";
+        FormationType ft = new FormationType("Heavy Striker/Cavalry", "Striker/Cavalry");
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 4;
         ft.otherCriteria.add(new CountConstraint(3,
@@ -691,16 +660,14 @@ public class FormationType {
     }
 
     private static void createHordeLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Horde";
+        FormationType ft = new FormationType("Horde", "Striker/Cavalry");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_LIGHT;
         ft.mainCriteria = ms -> getDamageAtRange(ms, 9) <= 10;
         allFormationTypes.put(ft.name, ft);        
     }
 
     private static void createLightStrikerCavalryLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Light Striker/Cavalry";
+        FormationType ft = new FormationType("Light Striker/Cavalry", "Striker/Cavalry");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5;
         ft.otherCriteria.add(new CountConstraint(2,
@@ -711,15 +678,13 @@ public class FormationType {
     }
 
     private static void createRangerLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Ranger";
+        FormationType ft = new FormationType("Ranger", "Striker/Cavalry");
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         allFormationTypes.put(ft.name, ft);        
     }
 
     private static void createUrbanLance() {
-        FormationType ft = new FormationType();
-        ft.name = "Urban";
+        FormationType ft = new FormationType("Urban");
         ft.idealRole = UnitRole.AMBUSHER;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getJumpMp() > 0
@@ -731,16 +696,16 @@ public class FormationType {
     }
     
     private static void createAerospaceSuperioritySquadron() {
-        FormationType ft = new FormationType();
-        ft.name = "Aerospace Superiority Squadron";
+        FormationType ft = new FormationType("Aerospace Superiority Squadron");
+        ft.ground = false;
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> EnumSet.of(UnitRole.INTERCEPTOR, UnitRole.FAST_DOGFIGHTER).contains(getUnitRole(ms))));
         allFormationTypes.put(ft.name, ft);                
     }
 
     private static void createEWSquadron() {
-        FormationType ft = new FormationType();
-        ft.name = "Electronic Warfare Squadron";
+        FormationType ft = new FormationType("Electronic Warfare Squadron");
+        ft.ground = false;
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> ms.getEquipmentNames().stream().map(en -> EquipmentType.get(en))
                 .anyMatch(et -> et instanceof TAGWeapon ||  
@@ -751,8 +716,8 @@ public class FormationType {
     }
 
     private static void createFireSupportSquadron() {
-        FormationType ft = new FormationType();
-        ft.name = "Fire Support Squadron";
+        FormationType ft = new FormationType("Fire Support Squadron");
+        ft.ground = false;
         ft.mainCriteria = ms -> EnumSet.of(UnitRole.FIRE_SUPPORT,
                 UnitRole.DOGFIGHTER).contains(getUnitRole(ms));
         ft.otherCriteria.add(new PercentConstraint(0.5,
@@ -761,16 +726,16 @@ public class FormationType {
     }
 
     private static void createInterceptorSquadron() {
-        FormationType ft = new FormationType();
-        ft.name = "Interceptor Squadron";
+        FormationType ft = new FormationType("Interceptor Squadron");
+        ft.ground = false;
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> getUnitRole(ms).equals(UnitRole.INTERCEPTOR)));
         allFormationTypes.put(ft.name, ft);                
     }
 
     private static void createStrikeSquadron() {
-        FormationType ft = new FormationType();
-        ft.name = "Strike Squadron";
+        FormationType ft = new FormationType("Strike Squadron");
+        ft.ground = false;
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> EnumSet.of(UnitRole.ATTACK_FIGHTER,
                         UnitRole.DOGFIGHTER).contains(getUnitRole(ms))));
@@ -778,8 +743,8 @@ public class FormationType {
     }
 
     private static void createTransportSquadron() {
-        FormationType ft = new FormationType();
-        ft.name = "Transport Squadron";
+        FormationType ft = new FormationType("Transport Squadron");
+        ft.ground = false;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> getUnitRole(ms).equals(UnitRole.TRANSPORT)));
         allFormationTypes.put(ft.name, ft);                

@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -90,7 +91,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
 
 public class RandomArmyDialog extends JDialog implements ActionListener,
-WindowListener, TreeSelectionListener, FocusListener {
+WindowListener, TreeSelectionListener {
 
     /**
      *
@@ -113,7 +114,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JTabbedPane m_pMain = new JTabbedPane();
     private JPanel m_pRAT = new JPanel();
     private JPanel m_pRATGen = new JPanel();
-    private JPanel m_pRATGenOptions = new JPanel();
+    private RATGenOptionsPanel m_pRATGenOptions = new RATGenOptionsPanel();
     private JPanel m_pUnitTypeOptions = new JPanel(new CardLayout());
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
@@ -157,14 +158,6 @@ WindowListener, TreeSelectionListener, FocusListener {
             .getString("RandomArmyDialog.Tech"));
     private JLabel m_labUnits = new JLabel(Messages
             .getString("RandomArmyDialog.Unit"));
-    private JLabel m_labFaction = new JLabel(Messages
-            .getString("RandomArmyDialog.Faction"));
-    private JLabel m_labCommand = new JLabel(Messages
-            .getString("RandomArmyDialog.Command"));
-    private JLabel m_labUnitType = new JLabel(Messages
-            .getString("RandomArmyDialog.UnitType"));
-    private JLabel m_labRating = new JLabel(Messages
-            .getString("RandomArmyDialog.Rating"));
     private JLabel m_ratStatus;
 
     private JTextField m_tBVmin = new JTextField(6);
@@ -181,14 +174,6 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JCheckBox m_chkCanon = new JCheckBox(Messages
             .getString("RandomArmyDialog.Canon"));
 
-    private JTextField m_tRGUnits = new JTextField(3);
-    private JTextField m_tYear = new JTextField(4);
-    private JComboBox<FactionRecord> m_chFaction = new JComboBox<FactionRecord>();
-    private JComboBox<FactionRecord> m_chSubfaction = new JComboBox<FactionRecord>();
-    private JCheckBox m_chkShowMinor = new JCheckBox(Messages
-    		.getString("RandomArmyDialog.ShowMinorFactions"));
-    private JComboBox<String> m_chUnitType = new JComboBox<String>();
-    private JComboBox<String> m_chRating = new JComboBox<String>();
     private HashMap<String,UnitTypeOptionsPanel> unitTypeCards = 
     		new HashMap<String,UnitTypeOptionsPanel>();
     
@@ -387,6 +372,8 @@ WindowListener, TreeSelectionListener, FocusListener {
 
         //construct the RAT Generator panel
         m_pRATGen.setLayout(new GridBagLayout());
+        //put the general options and the unit-specific options into a single panel so they scroll together.
+        JPanel pRATGenTop = new JPanel(new GridBagLayout());
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -396,7 +383,41 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 1.0;
         c.weighty = 0.5;
-        m_pRATGen.add(new JScrollPane(m_pRATGenOptions), c);
+        m_pRATGen.add(new JScrollPane(pRATGenTop), c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.EAST;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        pRATGenTop.add(m_pRATGenOptions, c);
+        m_pRATGenOptions.setYear(ratGenYear);
+        
+        List<Integer> ratGenUnitTypes = IntStream.range(0, UnitType.SIZE)
+                .filter(ut -> ut != UnitType.GUN_EMPLACEMENT && ut != UnitType.SPACE_STATION)
+                .mapToObj(Integer::valueOf)
+                .collect(Collectors.toList());
+        m_pRATGenOptions.setUnitTypes(ratGenUnitTypes);
+                
+        ratGenUnitTypes.forEach(ut -> {
+            String unitType = UnitType.getTypeName(ut);
+            UnitTypeOptionsPanel card = new UnitTypeOptionsPanel(ut);
+            unitTypeCards.put(UnitType.getTypeName(ut), card);
+            m_pUnitTypeOptions.add(unitTypeCards.get(unitType), unitType);
+        });
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.EAST;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        pRATGenTop.add(m_pUnitTypeOptions, c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -443,172 +464,8 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.weighty = 0.5;
         m_pRATGen.add(new JScrollPane(m_lRAT), c);
 
-        
-        m_pRATGenOptions.setLayout(new GridBagLayout());
-        
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_labYear, c);
-
-        m_tYear.setText(String.valueOf(ratGenYear));
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_tYear, c);
-        m_tYear.addFocusListener(this);
-        
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(new JLabel(Messages.getString("RandomArmyDialog.Unit")), c);
-
-        m_tRGUnits.setText("4");
-
-        c = new GridBagConstraints();
-        c.gridx = 3;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_tRGUnits, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_labFaction, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_chFaction, c);
-        m_chFaction.setRenderer(factionCbRenderer);
-        m_chFaction.addActionListener(this);
-        
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 2;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_labCommand, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 2;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_chSubfaction, c);
-        m_chSubfaction.setRenderer(factionCbRenderer);
-        m_chSubfaction.addActionListener(this);        
-        
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 1;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_chkShowMinor, c);
-        m_chkShowMinor.addActionListener(this);
-        
-		for (int i = 0; i < UnitType.SIZE; i++) {
-			if (i != UnitType.GUN_EMPLACEMENT
-					&& i != UnitType.SPACE_STATION) {
-				m_chUnitType.addItem(UnitType.getTypeName(i));
-				UnitTypeOptionsPanel card = new UnitTypeOptionsPanel(i);
-				unitTypeCards.put(UnitType.getTypeName(i), card);
-			}
-		}
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 3;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_labUnitType, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 3;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_chUnitType, c);
-        m_chUnitType.addActionListener(this);
-        
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 3;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_labRating, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 3;
-        c.gridy = 3;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_chRating, c);
-        
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 4;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 1.0;
-        m_pRATGenOptions.add(m_pUnitTypeOptions, c);
-        
-        for (String unitType : unitTypeCards.keySet()) {
-        	m_pUnitTypeOptions.add(unitTypeCards.get(unitType), unitType);
-        }
-
-        m_chUnitType.setSelectedIndex(0);
+        CardLayout cards = (CardLayout)m_pUnitTypeOptions.getLayout();
+        cards.show(m_pUnitTypeOptions, m_pRATGenOptions.getUnitType());
 
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());
@@ -787,22 +644,19 @@ WindowListener, TreeSelectionListener, FocusListener {
                         unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                     }
                 } else if (m_pMain.getSelectedIndex() == 2) {
-                	int units = Integer.parseInt(m_tRGUnits.getText());
+                	int units = m_pRATGenOptions.getNumUnits();
                 	if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
                 		unitsModel.setData(generatedRAT.generateUnits(units));
                 	}
-                	/**/
-                    FactionRecord fRec = (FactionRecord)m_chSubfaction.getSelectedItem();
-                    if (fRec == null) {
-                        fRec = (FactionRecord)m_chFaction.getSelectedItem();
-                    }
+                	/*
+                    FactionRecord fRec = m_pRATGenOptions.getFaction();
                 	ArrayList<MechSummary> unitList = new ArrayList<>(megamek.client.ratgenerator.FormationType
                 	        .getFormationType("Fire").generateFormation(fRec, UnitType.TANK, ratGenYear,
                 	                (String)m_chRating.getSelectedItem(),
                 	                ModelRecord.NETWORK_NONE, java.util.EnumSet.noneOf(EntityMovementMode.class),
                 	                java.util.EnumSet.noneOf(MissionRole.class), 4));
                 	unitsModel.setData(unitList);
-                	/**/
+                	*/
                 	//generateUnits removes salvage entries that have no units meeting criteria
                 	ratModel.refreshData();
                 } else {
@@ -826,15 +680,6 @@ WindowListener, TreeSelectionListener, FocusListener {
             }finally{
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
-        } else if (ev.getSource().equals(m_chFaction)) {
-        	updateSubfactionChoice();
-        } else if (ev.getSource().equals(m_chSubfaction)) {
-        	updateRatingChoice();
-        } else if (ev.getSource().equals(m_chkShowMinor)) {
-        	updateFactionChoice();
-        } else if (ev.getSource().equals(m_chUnitType)) {
-        	CardLayout layout = (CardLayout)m_pUnitTypeOptions.getLayout();
-        	layout.show(m_pUnitTypeOptions, (String)m_chUnitType.getSelectedItem());
         } else if (ev.getSource().equals(m_bGenerate)) {
         	generateRAT();
         } else if (ev.getSource().equals(m_bAddToForce)) {
@@ -852,7 +697,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         	if (ev.getActionCommand().equals("ratGenInitialized")) {
         		rg.loadYear(ratGenYear);
         	} else if (ev.getActionCommand().equals("ratGenEraLoaded")) {
-        		updateFactionChoice();
+        		m_pRATGenOptions.updateFactionChoice();
         	}
         }
     }
@@ -884,30 +729,6 @@ WindowListener, TreeSelectionListener, FocusListener {
     public void windowOpened(WindowEvent arg0) {
         //ignored
     }
-
-
-	@Override
-	public void focusGained(FocusEvent e) {
-		//ignored
-	}
-
-	@Override
-	public void focusLost(FocusEvent e) {
-		if (e.getSource().equals(m_tYear)) {
-			try {
-				ratGenYear = Integer.parseInt(m_tYear.getText());
-				if (ratGenYear < rg.getEraSet().first()) {
-					ratGenYear = rg.getEraSet().first();
-				} else if (ratGenYear > rg.getEraSet().last()) {
-					ratGenYear = rg.getEraSet().last();
-				}
-			} catch (NumberFormatException ex) {
-				//ignore and restore to previous value
-			}
-			m_tYear.setText(String.valueOf(ratGenYear));
-			rg.loadYear(ratGenYear);
-		}
-	}
 
 	private void updatePlayerChoice() {
         String lastChoice = (String) m_chPlayer.getSelectedItem();
@@ -1025,114 +846,12 @@ WindowListener, TreeSelectionListener, FocusListener {
         return null;
     }
     
-    private void updateFactionChoice() {
-    	FactionRecord old = (FactionRecord)m_chFaction.getSelectedItem();
-    	m_chFaction.removeActionListener(this);
-    	m_chFaction.removeAllItems();
-    	ArrayList<FactionRecord> recs = new ArrayList<>();
-    	for (FactionRecord fRec : rg.getFactionList()) {
-    		if ((!fRec.isMinor() || m_chkShowMinor.isSelected())
-    				&& !fRec.getKey().contains(".") && fRec.isActiveInYear(ratGenYear)) {
-    			recs.add(fRec);
-    		}
-    	}
-    	Collections.sort(recs, factionSorter);
-    	for (FactionRecord fRec : recs) {
-    		m_chFaction.addItem(fRec);
-    	}
-    	m_chFaction.setSelectedItem(old);
-    	if (m_chFaction.getSelectedItem() == null) {
-    		m_chFaction.setSelectedItem(rg.getFaction("IS"));
-    	}
-    	updateSubfactionChoice();
-    	m_chFaction.addActionListener(this);
-    }
-    
-    private void updateSubfactionChoice() {
-    	FactionRecord old = (FactionRecord)m_chSubfaction.getSelectedItem();
-    	m_chSubfaction.removeActionListener(this);
-    	m_chSubfaction.removeAllItems();
-    	FactionRecord selectedFaction = (FactionRecord)m_chFaction.getSelectedItem();
-    	if (selectedFaction != null) {
-	    	ArrayList<FactionRecord> recs = new ArrayList<>();
-	    	for (FactionRecord fRec : rg.getFactionList()) {
-	    		if (fRec.getKey().startsWith(selectedFaction.getKey() + ".")
-	    				&& fRec.isActiveInYear(ratGenYear)) {
-	    			recs.add(fRec);
-	    		}
-	    	}
-	    	Collections.sort(recs, factionSorter);
-	    	m_chSubfaction.addItem(null); //No specific subcommand.
-	    	for (FactionRecord fRec : recs) {
-	    		m_chSubfaction.addItem(fRec);
-	    	}
-    	}
-    	m_chSubfaction.setSelectedItem(old);
-    	updateRatingChoice();
-    	m_chSubfaction.addActionListener(this);
-    }
-    
-    /**
-     * When faction or subfaction is changed, refresh ratings combo box with appropriate
-     * values for selected faction.
-     * 
-     */
-    
-    private void updateRatingChoice() {
-    	int current = m_chRating.getSelectedIndex();
-    	m_chRating.removeAllItems();
-    	FactionRecord fRec = (FactionRecord)m_chSubfaction.getSelectedItem();
-    	if (fRec == null) {
-    		// Subfaction is "general"
-    		fRec = (FactionRecord)m_chFaction.getSelectedItem();
-    	}
-    	ArrayList<String> ratingLevels = fRec.getRatingLevels();
-    	if (ratingLevels.isEmpty()) {
-    		// Get rating levels from parent faction(s)
-    		ratingLevels = fRec.getRatingLevelSystem();
-    	}
-    	if (ratingLevels.size() > 1) {
-			for (int i = ratingLevels.size() - 1; i >= 0; i--) {
-				m_chRating.addItem(ratingLevels.get(i));
-			}
-    	}
-		if (current < 0 && m_chRating.getItemCount() > 0) {
-			m_chRating.setSelectedIndex(0);
-		} else {
-			m_chRating.setSelectedIndex(Math.min(current, m_chRating.getItemCount() - 1));
-		}
-    }
-    
-    private DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {
-		private static final long serialVersionUID = -333065979253244440L;
-
-		@Override
-		public Component getListCellRendererComponent(JList<?> list,
-				Object value, int index, boolean isSelected,
-				boolean cellHasFocus) {
-			if (value == null) {
-				setText("General");
-			} else {
-				setText(((FactionRecord)value).getName(ratGenYear));
-			}
-			return this;
-		}    	
-    };
-    
-    private Comparator<FactionRecord> factionSorter = new Comparator<FactionRecord>() {
-		@Override
-		public int compare(FactionRecord o1, FactionRecord o2) {
-			return o1.getName(ratGenYear).compareTo(o2.getName(ratGenYear));
-		}    	
-    };
-    
     private void generateRAT() {
-    	FactionRecord fRec = (FactionRecord)(m_chSubfaction.getSelectedItem() == null?
-    			m_chFaction.getSelectedItem() : m_chSubfaction.getSelectedItem());
+    	FactionRecord fRec = m_pRATGenOptions.getFaction();
     	if (fRec != null) {
-			UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
-			generatedRAT = UnitTable.findTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
-					ratGenYear, (String)m_chRating.getSelectedItem(),
+			UnitTypeOptionsPanel panOptions = unitTypeCards.get(m_pRATGenOptions.getUnitType());
+			generatedRAT = UnitTable.findTable(fRec, ModelRecord.parseUnitType(m_pRATGenOptions.getUnitType()),
+					ratGenYear, m_pRATGenOptions.getRating(),
 					panOptions.getSelectedWeights(),
 					panOptions.getNetworkMask(), panOptions.getMotiveTypes(),
 					panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
@@ -1251,6 +970,344 @@ WindowListener, TreeSelectionListener, FocusListener {
             return data;
         }
     }
+    
+    /**
+     *
+     * Panel that allows choice of year, faction, rating, unit type
+     *
+     */
+    class RATGenOptionsPanel extends JPanel implements ActionListener, FocusListener {
+        
+        private static final long serialVersionUID = -3462304612643343012L;
+        
+        private JTextField m_tRGUnits = new JTextField(3);
+        private JTextField m_tYear = new JTextField(4);
+        private JComboBox<FactionRecord> m_chFaction = new JComboBox<FactionRecord>();
+        private JComboBox<FactionRecord> m_chSubfaction = new JComboBox<FactionRecord>();
+        private JCheckBox m_chkShowMinor = new JCheckBox(Messages
+                .getString("RandomArmyDialog.ShowMinorFactions"));
+        private JComboBox<String> m_chUnitType = new JComboBox<String>();
+        private JComboBox<String> m_chRating = new JComboBox<String>();
+
+        public RATGenOptionsPanel() {
+            setLayout(new GridBagLayout());
+            
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(new JLabel(Messages.getString("RandomArmyDialog.Year")), c);
+
+            m_tYear.setText(String.valueOf(ratGenYear));
+            c = new GridBagConstraints();
+            c.gridx = 1;
+            c.gridy = 0;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(m_tYear, c);
+            m_tYear.setText(String.valueOf(ratGenYear));
+            m_tYear.addFocusListener(this);
+            
+            c = new GridBagConstraints();
+            c.gridx = 2;
+            c.gridy = 0;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(new JLabel(Messages.getString("RandomArmyDialog.Unit")), c);
+
+            m_tRGUnits.setText("4");
+
+            c = new GridBagConstraints();
+            c.gridx = 3;
+            c.gridy = 0;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(m_tRGUnits, c);
+
+            c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 1;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(new JLabel(Messages.getString("RandomArmyDialog.Faction")), c);
+
+            c = new GridBagConstraints();
+            c.gridx = 1;
+            c.gridy = 1;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(m_chFaction, c);
+            m_chFaction.setRenderer(factionCbRenderer);
+            m_chFaction.addActionListener(this);
+            
+            c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 2;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(new JLabel(Messages.getString("RandomArmyDialog.Command")), c);
+
+            c = new GridBagConstraints();
+            c.gridx = 1;
+            c.gridy = 2;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(m_chSubfaction, c);
+            m_chSubfaction.setRenderer(factionCbRenderer);
+            m_chSubfaction.addActionListener(this);
+            
+            c = new GridBagConstraints();
+            c.gridx = 2;
+            c.gridy = 1;
+            c.gridwidth = 2;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(m_chkShowMinor, c);
+            m_chkShowMinor.addActionListener(this);
+            
+            c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 3;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(new JLabel(Messages.getString("RandomArmyDialog.UnitType")), c);
+
+            c = new GridBagConstraints();
+            c.gridx = 1;
+            c.gridy = 3;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(m_chUnitType, c);
+            m_chUnitType.addActionListener(this);
+
+            c = new GridBagConstraints();
+            c.gridx = 2;
+            c.gridy = 3;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(new JLabel(Messages.getString("RandomArmyDialog.Rating")), c);
+
+            c = new GridBagConstraints();
+            c.gridx = 3;
+            c.gridy = 3;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.HORIZONTAL;
+            c.anchor = GridBagConstraints.WEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            add(m_chRating, c);
+        }
+        
+        public int getNumUnits() {
+            return Integer.parseInt(m_tRGUnits.getText());
+        }
+        
+        public int getYear() {
+            return Integer.parseInt(m_tYear.getText());
+        }
+        
+        public FactionRecord getFaction() {
+            if (m_chSubfaction.getSelectedItem() == null) {
+                return (FactionRecord)m_chFaction.getSelectedItem();
+            } else {
+                return (FactionRecord)m_chSubfaction.getSelectedItem();
+            }
+        }
+        
+        public String getUnitType() {
+            return (String)m_chUnitType.getSelectedItem();
+        }
+        
+        public String getRating() {
+            return (String)m_chRating.getSelectedItem();
+        }
+        
+        public void setUnitTypes(List<Integer> list) {
+            m_chUnitType.removeActionListener(this);
+            m_chUnitType.removeAllItems();
+            list.forEach(ut -> m_chUnitType.addItem(UnitType.getTypeName(ut)));
+            m_chUnitType.addActionListener(this);
+            m_chUnitType.setSelectedIndex(0);
+        }
+        
+        public void setYear(int year) {
+            m_tYear.setText(String.valueOf(year));
+            updateFactionChoice();
+        }
+        
+        public void updateFactionChoice() {
+            FactionRecord old = (FactionRecord)m_chFaction.getSelectedItem();
+            m_chFaction.removeActionListener(this);
+            m_chFaction.removeAllItems();
+            ArrayList<FactionRecord> recs = new ArrayList<>();
+            for (FactionRecord fRec : rg.getFactionList()) {
+                if ((!fRec.isMinor() || m_chkShowMinor.isSelected())
+                        && !fRec.getKey().contains(".") && fRec.isActiveInYear(ratGenYear)) {
+                    recs.add(fRec);
+                }
+            }
+            Collections.sort(recs, factionSorter);
+            for (FactionRecord fRec : recs) {
+                m_chFaction.addItem(fRec);
+            }
+            m_chFaction.setSelectedItem(old);
+            if (m_chFaction.getSelectedItem() == null) {
+                m_chFaction.setSelectedItem(rg.getFaction("IS"));
+            }
+            updateSubfactionChoice();
+            m_chFaction.addActionListener(this);
+        }
+        
+        public void updateSubfactionChoice() {
+            FactionRecord old = (FactionRecord)m_chSubfaction.getSelectedItem();
+            m_chSubfaction.removeActionListener(this);
+            m_chSubfaction.removeAllItems();
+            FactionRecord selectedFaction = (FactionRecord)m_chFaction.getSelectedItem();
+            if (selectedFaction != null) {
+                ArrayList<FactionRecord> recs = new ArrayList<>();
+                for (FactionRecord fRec : rg.getFactionList()) {
+                    if (fRec.getKey().startsWith(selectedFaction.getKey() + ".")
+                            && fRec.isActiveInYear(ratGenYear)) {
+                        recs.add(fRec);
+                    }
+                }
+                Collections.sort(recs, factionSorter);
+                m_chSubfaction.addItem(null); //No specific subcommand.
+                for (FactionRecord fRec : recs) {
+                    m_chSubfaction.addItem(fRec);
+                }
+            }
+            m_chSubfaction.setSelectedItem(old);
+            updateRatingChoice();
+            m_chSubfaction.addActionListener(this);
+        }
+        
+        /**
+         * When faction or subfaction is changed, refresh ratings combo box with appropriate
+         * values for selected faction.
+         * 
+         */
+        
+        public void updateRatingChoice() {
+            int current = m_chRating.getSelectedIndex();
+            m_chRating.removeAllItems();
+            FactionRecord fRec = (FactionRecord)m_chSubfaction.getSelectedItem();
+            if (fRec == null) {
+                // Subfaction is "general"
+                fRec = (FactionRecord)m_chFaction.getSelectedItem();
+            }
+            ArrayList<String> ratingLevels = fRec.getRatingLevels();
+            if (ratingLevels.isEmpty()) {
+                // Get rating levels from parent faction(s)
+                ratingLevels = fRec.getRatingLevelSystem();
+            }
+            if (ratingLevels.size() > 1) {
+                for (int i = ratingLevels.size() - 1; i >= 0; i--) {
+                    m_chRating.addItem(ratingLevels.get(i));
+                }
+            }
+            if (current < 0 && m_chRating.getItemCount() > 0) {
+                m_chRating.setSelectedIndex(0);
+            } else {
+                m_chRating.setSelectedIndex(Math.min(current, m_chRating.getItemCount() - 1));
+            }
+        }
+        
+        public void actionPerformed(ActionEvent ev) {
+            if (ev.getSource().equals(m_chFaction)) {
+                updateSubfactionChoice();
+            } else if (ev.getSource().equals(m_chSubfaction)) {
+                updateRatingChoice();
+            } else if (ev.getSource().equals(m_chkShowMinor)) {
+                updateFactionChoice();
+            } else if (ev.getSource().equals(m_chUnitType)) {
+                CardLayout layout = (CardLayout)m_pUnitTypeOptions.getLayout();
+                layout.show(m_pUnitTypeOptions, (String)m_chUnitType.getSelectedItem());
+            }
+        }
+
+        @Override
+        public void focusGained(FocusEvent e) {
+            //ignored
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            if (e.getSource().equals(m_tYear)) {
+                try {
+                    ratGenYear = Integer.parseInt(m_tYear.getText());
+                    if (ratGenYear < rg.getEraSet().first()) {
+                        ratGenYear = rg.getEraSet().first();
+                    } else if (ratGenYear > rg.getEraSet().last()) {
+                        ratGenYear = rg.getEraSet().last();
+                    }
+                } catch (NumberFormatException ex) {
+                    //ignore and restore to previous value
+                }
+                setYear(ratGenYear);
+                rg.loadYear(ratGenYear);
+            }
+        }
+        
+        private DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {
+            private static final long serialVersionUID = -333065979253244440L;
+
+            @Override
+            public Component getListCellRendererComponent(JList<?> list,
+                    Object value, int index, boolean isSelected,
+                    boolean cellHasFocus) {
+                if (value == null) {
+                    setText("General");
+                } else {
+                    setText(((FactionRecord)value).getName(ratGenYear));
+                }
+                return this;
+            }       
+        };
+        
+        private Comparator<FactionRecord> factionSorter = new Comparator<FactionRecord>() {
+            @Override
+            public int compare(FactionRecord o1, FactionRecord o2) {
+                return o1.getName(ratGenYear).compareTo(o2.getName(ratGenYear));
+            }       
+        };        
+    }
 
     /**
      * A table model for displaying a generated RAT
@@ -1361,6 +1418,69 @@ WindowListener, TreeSelectionListener, FocusListener {
             		.getString("RandomArmyDialog.WeightClass")));
     		add(panWeightClass, BorderLayout.WEST);
     		
+    		/* Select which formation types are applicable to the unit type 
+    		Predicate<FormationType> formationFilter = null;
+    		switch (unitType) {
+    		case UnitType.MEK:
+    		case UnitType.TANK:
+    		    formationFilter = FormationType::isGround;
+    		    break;
+    		case UnitType.VTOL:
+    		    formationFilter = ft -> ft.isGround()
+    		        && ft.getMinWeightClass() <= EntityWeightClass.WEIGHT_LIGHT;
+                    break;
+    		case UnitType.AERO:
+                formationFilter = ft -> !ft.isGround();
+                break;
+    		case UnitType.CONV_FIGHTER:
+                formationFilter = ft -> !ft.isGround()
+                    && ft.getMinWeightClass() <= EntityWeightClass.WEIGHT_LIGHT;
+                break;
+    		}
+
+    		if (formationFilter != null) {
+    		    // Sort main types alphabetically, and subtypes alphabetically within the main.
+                Map<String,Set<String>> formations = FormationType.getAllFormations().stream()
+                        .filter(formationFilter)
+                        .collect(Collectors.groupingBy(FormationType::getCategory, TreeMap::new,
+                                Collectors.mapping(FormationType::getName, Collectors.toCollection(TreeSet::new))));
+
+                JPanel panFormations = new JPanel(new GridBagLayout());
+                GridBagConstraints c = new GridBagConstraints();
+                c.gridx = 0;
+                c.gridy = 0;
+                c.gridwidth = GridBagConstraints.REMAINDER;
+                c.fill = GridBagConstraints.NONE;
+                c.weightx = 0.0;
+                c.weighty = 0.0;
+                
+                ButtonGroup btnGroup = new ButtonGroup();
+                for (String group : formations.keySet()) {
+                    c.anchor = GridBagConstraints.NORTHWEST;
+                    if (formations.get(group).contains(group)) {
+                        JRadioButton btn = new JRadioButton(group);
+                        btn.setName(group);
+                        panFormations.add(btn, c);
+                        btnGroup.add(btn);
+                        formations.get(group).remove(group);
+                    } else {
+                        JLabel lbl = new JLabel(group);
+                        panFormations.add(lbl);
+                    }
+                    c.gridy++;
+                    c.anchor = GridBagConstraints.NORTHEAST;
+                    for (String form : formations.get(group)) {
+                        JRadioButton btn = new JRadioButton(group);
+                        btn.setName(group);
+                        panFormations.add(btn, c);
+                        btnGroup.add(btn);
+                        formations.get(group).remove(group);                        
+                    }
+                }
+                JPanel panel = new JPanel();
+                
+    		}
+    		*/
     		JPanel panRoles = new JPanel(new GridBagLayout());
     		panRoles.setBorder(BorderFactory.createTitledBorder(Messages
             		.getString("RandomArmyDialog.MissionRole")));

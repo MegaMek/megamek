@@ -120,6 +120,9 @@ public class FormationType {
     }
     
     public static Collection<FormationType> getAllFormations() {
+        if (allFormationTypes == null) {
+            createFormationTypes();
+        }
         return allFormationTypes.values();
     }
     
@@ -214,12 +217,16 @@ public class FormationType {
     
     public List<MechSummary> generateFormation(FactionRecord faction, int unitType, int year,
             String rating, int networkMask, Collection<EntityMovementMode> motiveTypes,
-            Collection<MissionRole> missionRoles, int size) {
+            Collection<MissionRole> roles, int size) {
+        //TODO: allow user to accept incomplete match
+        boolean bestEffort = false;
+        
         List<Integer> wcs = new ArrayList<>();
         for (int i = minWeightClass; i <= Math.min(maxWeightClass,
                 unitType == UnitType.AERO?EntityWeightClass.WEIGHT_HEAVY : EntityWeightClass.WEIGHT_SUPER_HEAVY); i++) {
             wcs.add(i);
         }
+        roles.addAll(missionRoles);
         UnitTable table = UnitTable.findTable(faction, unitType, year, rating, wcs, ModelRecord.NETWORK_NONE,
                 motiveTypes, missionRoles, 0);
         if (table == null) {
@@ -256,17 +263,18 @@ public class FormationType {
                         rating, networkMask, EnumSet.of(EntityMovementMode.getMode(mode)),
                         missionRoles, size);
                 // Main criteria are used in all unit generation, so we know they match the unit.
-                if (otherCriteria.stream().allMatch(c -> c.fits(list, size))) {
+                if (otherCriteria.stream().allMatch(c -> c.fits(list))) {
                     return list;
                 }
             }
         }
         
-        List<MechSummary> unitList = table.generateUnits(size, ms -> mainCriteria.test(ms));
+        final List<MechSummary> unitList = table.generateUnits(size, ms -> mainCriteria.test(ms));
         if (unitList.isEmpty()) {
             // If we cannot meet the criteria, we may be able to construct a force using just the ideal role.
             if (!idealRole.equals(UnitRole.UNDETERMINED)) {
-                unitList = table.generateUnits(size, ms -> getUnitRole(ms).equals(idealRole));
+                unitList.clear();
+                unitList.addAll(table.generateUnits(size, ms -> getUnitRole(ms).equals(idealRole)));
             }
             return unitList;
         }
@@ -275,7 +283,7 @@ public class FormationType {
         
         for (int i = 0; i < otherCriteria.size(); i++) {
             final Constraint constraint = otherCriteria.get(i);
-            List<MechSummary> matchingUnits = unitList.stream().filter(ms -> constraint.criterion.test(ms))
+            List<MechSummary> matchingUnits = unitList.stream().filter(constraint.criterion)
                     .collect(Collectors.toList());
             if (matchingUnits.size() < constraint.getMinimum(size)
                     || matchingUnits.size() > constraint.getMaximum(size)) {
@@ -331,7 +339,9 @@ public class FormationType {
             }
             allMatchingUnits.add(matchingUnits);
         }
-        
+        if (!bestEffort && !otherCriteria.stream().allMatch(c -> c.fits(unitList))) {
+            unitList.clear();
+        }
         return unitList;
     }
     
@@ -763,10 +773,10 @@ public class FormationType {
         public abstract int getMinimum(int unitSize);
         public abstract int getMaximum(int unitSize);
         
-        public boolean fits(List<MechSummary> list, int unitSize) {
+        public boolean fits(List<MechSummary> list) {
             long count = list.stream().filter(ms -> criterion.test(ms)).count();
-            return (count >= getMinimum(unitSize)
-                    && count <= getMaximum(unitSize));
+            return (count >= getMinimum(list.size())
+                    && count <= getMaximum(list.size()));
         }
     }
     

@@ -30,12 +30,18 @@ import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -71,6 +77,7 @@ import javax.swing.tree.TreeSelectionModel;
 import megamek.client.Client;
 import megamek.client.RandomUnitGenerator;
 import megamek.client.ratgenerator.FactionRecord;
+import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
@@ -114,8 +121,11 @@ WindowListener, TreeSelectionListener {
     private JTabbedPane m_pMain = new JTabbedPane();
     private JPanel m_pRAT = new JPanel();
     private JPanel m_pRATGen = new JPanel();
+    private JPanel m_pFormations = new JPanel();
     private RATGenOptionsPanel m_pRATGenOptions = new RATGenOptionsPanel();
     private JPanel m_pUnitTypeOptions = new JPanel(new CardLayout());
+    private RATGenOptionsPanel m_pFormationOptions = new RATGenOptionsPanel();
+    private JPanel m_pFormationTypes = new JPanel();
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
     private JPanel m_pButtons = new JPanel();
@@ -173,9 +183,6 @@ WindowListener, TreeSelectionListener {
             .getString("RandomArmyDialog.Pad"));
     private JCheckBox m_chkCanon = new JCheckBox(Messages
             .getString("RandomArmyDialog.Canon"));
-
-    private HashMap<String,UnitTypeOptionsPanel> unitTypeCards = 
-    		new HashMap<String,UnitTypeOptionsPanel>();
     
     private RandomUnitGenerator rug;
     private RATGenerator rg;
@@ -401,13 +408,15 @@ WindowListener, TreeSelectionListener {
                 .mapToObj(Integer::valueOf)
                 .collect(Collectors.toList());
         m_pRATGenOptions.setUnitTypes(ratGenUnitTypes);
-                
+
+        Map<String,JPanel> cardMap = new HashMap<>();
         ratGenUnitTypes.forEach(ut -> {
             String unitType = UnitType.getTypeName(ut);
             UnitTypeOptionsPanel card = new UnitTypeOptionsPanel(ut);
-            unitTypeCards.put(UnitType.getTypeName(ut), card);
-            m_pUnitTypeOptions.add(unitTypeCards.get(unitType), unitType);
+            cardMap.put(UnitType.getTypeName(ut), card);
+            m_pUnitTypeOptions.add(card, unitType);
         });
+        m_pRATGenOptions.setUnitTypePanelContainer(m_pUnitTypeOptions, cardMap);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -466,6 +475,44 @@ WindowListener, TreeSelectionListener {
 
         CardLayout cards = (CardLayout)m_pUnitTypeOptions.getLayout();
         cards.show(m_pUnitTypeOptions, m_pRATGenOptions.getUnitType());
+        
+        // formation builder tab
+        m_pFormations.setLayout(new GridBagLayout());
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 1.0;
+        c.weighty = 0.5;
+        m_pFormations.add(new JScrollPane(m_pFormationOptions), c);
+        m_pFormationOptions.setYear(ratGenYear);
+        
+        final Integer[] formationUnitTypes = {UnitType.MEK, UnitType.TANK,
+                UnitType.VTOL, UnitType.AERO, UnitType.CONV_FIGHTER};
+        m_pFormationOptions.setUnitTypes(Arrays.asList(formationUnitTypes));
+
+        m_pFormationTypes.setLayout(new CardLayout());
+        cardMap.clear();
+        for (int ut : formationUnitTypes) {
+            String unitType = UnitType.getTypeName(ut);
+            FormationTypesPanel card = new FormationTypesPanel(ut);
+            cardMap.put(unitType, card);
+            m_pFormationTypes.add(card, unitType);
+        }
+        m_pFormationOptions.setUnitTypePanelContainer(m_pFormationTypes, cardMap);
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 1.0;
+        c.weighty = 0.5;
+        m_pFormations.add(new JScrollPane(m_pFormationTypes), c);
 
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());
@@ -524,6 +571,7 @@ WindowListener, TreeSelectionListener {
         m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_pParameters);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATGentab"), m_pRATGen);
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.Formationtab"), m_pFormations);
 
         m_pSplit = new javax.swing.JSplitPane(javax.swing.JSplitPane.HORIZONTAL_SPLIT,m_pMain, m_pPreview);
         m_pSplit.setOneTouchExpandable(false);
@@ -648,17 +696,25 @@ WindowListener, TreeSelectionListener {
                 	if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
                 		unitsModel.setData(generatedRAT.generateUnits(units));
                 	}
-                	/*
-                    FactionRecord fRec = m_pRATGenOptions.getFaction();
-                	ArrayList<MechSummary> unitList = new ArrayList<>(megamek.client.ratgenerator.FormationType
-                	        .getFormationType("Fire").generateFormation(fRec, UnitType.TANK, ratGenYear,
-                	                (String)m_chRating.getSelectedItem(),
-                	                ModelRecord.NETWORK_NONE, java.util.EnumSet.noneOf(EntityMovementMode.class),
-                	                java.util.EnumSet.noneOf(MissionRole.class), 4));
-                	unitsModel.setData(unitList);
-                	*/
                 	//generateUnits removes salvage entries that have no units meeting criteria
                 	ratModel.refreshData();
+                } else if (m_pMain.getSelectedIndex() == 3) {
+                    FactionRecord fRec = m_pFormationOptions.getFaction();
+                    FormationTypesPanel panFt = (FormationTypesPanel)m_pFormationOptions
+                            .getUnitTypePanel(m_pFormationOptions.getUnitType());
+                    FormationType ft = FormationType.getFormationType(panFt.getFormation());
+                    ArrayList<MechSummary> unitList = new ArrayList<>();
+                    if (ft != null) {
+                        unitList.addAll(ft.generateFormation(fRec,
+                                ModelRecord.parseUnitType(m_pFormationOptions.getUnitType()), ratGenYear,
+                                m_pFormationOptions.getRating(), ModelRecord.NETWORK_NONE,
+                                java.util.EnumSet.noneOf(EntityMovementMode.class),
+                                java.util.EnumSet.noneOf(MissionRole.class),
+                                m_pFormationOptions.getNumUnits()));
+                    } else {
+                        System.err.println("Could not find formation type " + panFt.getFormation());
+                    }                      
+                    unitsModel.setData(unitList);
                 } else {
                     RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
                     p.advancedSearchFilter=searchFilter;
@@ -849,7 +905,7 @@ WindowListener, TreeSelectionListener {
     private void generateRAT() {
     	FactionRecord fRec = m_pRATGenOptions.getFaction();
     	if (fRec != null) {
-			UnitTypeOptionsPanel panOptions = unitTypeCards.get(m_pRATGenOptions.getUnitType());
+			UnitTypeOptionsPanel panOptions = (UnitTypeOptionsPanel)m_pRATGenOptions.getUnitTypePanel(m_pRATGenOptions.getUnitType());
 			generatedRAT = UnitTable.findTable(fRec, ModelRecord.parseUnitType(m_pRATGenOptions.getUnitType()),
 					ratGenYear, m_pRATGenOptions.getRating(),
 					panOptions.getSelectedWeights(),
@@ -988,6 +1044,9 @@ WindowListener, TreeSelectionListener {
                 .getString("RandomArmyDialog.ShowMinorFactions"));
         private JComboBox<String> m_chUnitType = new JComboBox<String>();
         private JComboBox<String> m_chRating = new JComboBox<String>();
+        
+        private JPanel unitTypePanelContainer;
+        private Map<String,JPanel> unitTypeCardMap;
 
         public RATGenOptionsPanel() {
             setLayout(new GridBagLayout());
@@ -1134,6 +1193,15 @@ WindowListener, TreeSelectionListener {
             add(m_chRating, c);
         }
         
+        public void setUnitTypePanelContainer(JPanel panel, Map<String, JPanel> cardMap) {
+            unitTypePanelContainer = panel;
+            unitTypeCardMap = cardMap;            
+        }
+        
+        public JPanel getUnitTypePanel(String unitType) {
+            return unitTypeCardMap.get(unitType);
+        }
+
         public int getNumUnits() {
             return Integer.parseInt(m_tRGUnits.getText());
         }
@@ -1257,8 +1325,10 @@ WindowListener, TreeSelectionListener {
             } else if (ev.getSource().equals(m_chkShowMinor)) {
                 updateFactionChoice();
             } else if (ev.getSource().equals(m_chUnitType)) {
-                CardLayout layout = (CardLayout)m_pUnitTypeOptions.getLayout();
-                layout.show(m_pUnitTypeOptions, (String)m_chUnitType.getSelectedItem());
+                if (unitTypePanelContainer != null) {
+                    CardLayout layout = (CardLayout)unitTypePanelContainer.getLayout();
+                    layout.show(unitTypePanelContainer, (String)m_chUnitType.getSelectedItem());
+                }
             }
         }
 
@@ -1397,7 +1467,7 @@ WindowListener, TreeSelectionListener {
      *
      */
     
-    public class UnitTypeOptionsPanel extends JPanel {
+    class UnitTypeOptionsPanel extends JPanel {
     	/**
 		 * 
 		 */
@@ -1412,75 +1482,12 @@ WindowListener, TreeSelectionListener {
     	
     	public UnitTypeOptionsPanel(int unitType) {
     		super(new BorderLayout());
-    		
+
     		JPanel panWeightClass = new JPanel(new GridBagLayout());
             panWeightClass.setBorder(BorderFactory.createTitledBorder(Messages
-            		.getString("RandomArmyDialog.WeightClass")));
-    		add(panWeightClass, BorderLayout.WEST);
-    		
-    		/* Select which formation types are applicable to the unit type 
-    		Predicate<FormationType> formationFilter = null;
-    		switch (unitType) {
-    		case UnitType.MEK:
-    		case UnitType.TANK:
-    		    formationFilter = FormationType::isGround;
-    		    break;
-    		case UnitType.VTOL:
-    		    formationFilter = ft -> ft.isGround()
-    		        && ft.getMinWeightClass() <= EntityWeightClass.WEIGHT_LIGHT;
-                    break;
-    		case UnitType.AERO:
-                formationFilter = ft -> !ft.isGround();
-                break;
-    		case UnitType.CONV_FIGHTER:
-                formationFilter = ft -> !ft.isGround()
-                    && ft.getMinWeightClass() <= EntityWeightClass.WEIGHT_LIGHT;
-                break;
-    		}
-
-    		if (formationFilter != null) {
-    		    // Sort main types alphabetically, and subtypes alphabetically within the main.
-                Map<String,Set<String>> formations = FormationType.getAllFormations().stream()
-                        .filter(formationFilter)
-                        .collect(Collectors.groupingBy(FormationType::getCategory, TreeMap::new,
-                                Collectors.mapping(FormationType::getName, Collectors.toCollection(TreeSet::new))));
-
-                JPanel panFormations = new JPanel(new GridBagLayout());
-                GridBagConstraints c = new GridBagConstraints();
-                c.gridx = 0;
-                c.gridy = 0;
-                c.gridwidth = GridBagConstraints.REMAINDER;
-                c.fill = GridBagConstraints.NONE;
-                c.weightx = 0.0;
-                c.weighty = 0.0;
-                
-                ButtonGroup btnGroup = new ButtonGroup();
-                for (String group : formations.keySet()) {
-                    c.anchor = GridBagConstraints.NORTHWEST;
-                    if (formations.get(group).contains(group)) {
-                        JRadioButton btn = new JRadioButton(group);
-                        btn.setName(group);
-                        panFormations.add(btn, c);
-                        btnGroup.add(btn);
-                        formations.get(group).remove(group);
-                    } else {
-                        JLabel lbl = new JLabel(group);
-                        panFormations.add(lbl);
-                    }
-                    c.gridy++;
-                    c.anchor = GridBagConstraints.NORTHEAST;
-                    for (String form : formations.get(group)) {
-                        JRadioButton btn = new JRadioButton(group);
-                        btn.setName(group);
-                        panFormations.add(btn, c);
-                        btnGroup.add(btn);
-                        formations.get(group).remove(group);                        
-                    }
-                }
-                JPanel panel = new JPanel();
-                
-    		}
-    		*/
+                    .getString("RandomArmyDialog.WeightClass")));
+            add(panWeightClass, BorderLayout.WEST);
+            
     		JPanel panRoles = new JPanel(new GridBagLayout());
     		panRoles.setBorder(BorderFactory.createTitledBorder(Messages
             		.getString("RandomArmyDialog.MissionRole")));
@@ -1771,5 +1778,99 @@ WindowListener, TreeSelectionListener {
     		return subtypeChecks.stream().filter(chk -> chk.isSelected())
     				.map(chk -> EntityMovementMode.getMode(chk.getName())).collect(Collectors.toList());
     	}
+    }
+    
+    class FormationTypesPanel extends JPanel {
+
+        private static final long serialVersionUID = 1439149790457737700L;
+
+        private ButtonGroup btnGroup = new ButtonGroup();
+        
+        public FormationTypesPanel(int unitType) {
+            super(new GridBagLayout());
+            
+        /* Select which formation types are applicable to the unit type */ 
+            Predicate<FormationType> formationFilter = null;
+            switch (unitType) {
+            case UnitType.MEK:
+            case UnitType.TANK:
+                formationFilter = FormationType::isGround;
+                break;
+            case UnitType.VTOL:
+                formationFilter = ft -> ft.isGround()
+                    && ft.getMinWeightClass() <= EntityWeightClass.WEIGHT_LIGHT;
+                    break;
+            case UnitType.AERO:
+                formationFilter = ft -> !ft.isGround();
+                break;
+            case UnitType.CONV_FIGHTER:
+                formationFilter = ft -> !ft.isGround()
+                    && ft.getMinWeightClass() <= EntityWeightClass.WEIGHT_LIGHT;
+                break;
+            }
+
+            if (formationFilter != null) {
+                // Sort main types alphabetically, and subtypes alphabetically within the main.
+                List<FormationType> formations = FormationType.getAllFormations().stream()
+                        .filter(formationFilter).collect(Collectors.toList());
+                Map<String,Set<String>> formationGroups = formations.stream()
+                        .collect(Collectors.groupingBy(FormationType::getCategory, TreeMap::new,
+                                Collectors.mapping(FormationType::getName,
+                                        Collectors.toCollection(TreeSet::new))));
+                
+                int rows = (formations.size() + 2) / 3;
+    
+                GridBagConstraints c = new GridBagConstraints();
+                c.gridx = 0;
+                c.gridy = 0;
+                c.gridwidth = 1;
+                c.anchor = GridBagConstraints.WEST;
+                c.fill = GridBagConstraints.NONE;
+                c.weightx = 0.0;
+                c.weighty = 0.0;
+                
+                Insets mainInsets = new Insets(0, 10, 0, 10);
+                Insets subInsets = new Insets(0, 30, 0, 10);
+                for (String group : formationGroups.keySet()) {
+                    c.insets = mainInsets;
+                    if (formationGroups.get(group).contains(group)) {
+                        JRadioButton btn = new JRadioButton(group);
+                        if (btnGroup.getButtonCount() == 0) {
+                            btn.setSelected(true);
+                        }
+                        btn.setActionCommand(group);
+                        add(btn, c);
+                        btnGroup.add(btn);
+                        formationGroups.get(group).remove(group);
+                    } else {
+                        JLabel lbl = new JLabel(group, SwingConstants.LEFT);
+                        add(lbl);
+                    }
+                    c.gridy++;
+                    c.insets = subInsets;
+                    for (String form : formationGroups.get(group)) {
+                        JRadioButton btn = new JRadioButton(form);
+                        if (btnGroup.getButtonCount() == 0) {
+                            btn.setSelected(true);
+                        }
+                        btn.setActionCommand(form);
+                        add(btn, c);
+                        btnGroup.add(btn);
+                        c.gridy++;
+                    }
+                    if (c.gridy >= rows) {
+                        c.gridx++;
+                        c.gridy = 0;
+                    }
+                }
+            }
+        }
+        
+        public String getFormation() {
+            if (btnGroup.getSelection() != null) {
+                return btnGroup.getSelection().getActionCommand();
+            }
+            return null;
+        }
     }
 }

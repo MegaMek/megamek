@@ -410,12 +410,12 @@ WindowListener, TreeSelectionListener {
         m_pRATGenOptions.setUnitTypes(ratGenUnitTypes);
 
         Map<String,JPanel> cardMap = new HashMap<>();
-        ratGenUnitTypes.forEach(ut -> {
+        for (int ut : ratGenUnitTypes) {
             String unitType = UnitType.getTypeName(ut);
             UnitTypeOptionsPanel card = new UnitTypeOptionsPanel(ut);
             cardMap.put(UnitType.getTypeName(ut), card);
             m_pUnitTypeOptions.add(card, unitType);
-        });
+        };
         m_pRATGenOptions.setUnitTypePanelContainer(m_pUnitTypeOptions, cardMap);
 
         c = new GridBagConstraints();
@@ -495,7 +495,7 @@ WindowListener, TreeSelectionListener {
         m_pFormationOptions.setUnitTypes(Arrays.asList(formationUnitTypes));
 
         m_pFormationTypes.setLayout(new CardLayout());
-        cardMap.clear();
+        cardMap = new HashMap<>();
         for (int ut : formationUnitTypes) {
             String unitType = UnitType.getTypeName(ut);
             FormationTypesPanel card = new FormationTypesPanel(ut);

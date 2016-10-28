@@ -704,12 +704,13 @@ WindowListener, TreeSelectionListener {
                             .getUnitTypePanel(m_pFormationOptions.getUnitType());
                     FormationType ft = FormationType.getFormationType(panFt.getFormation());
                     ArrayList<MechSummary> unitList = new ArrayList<>();
+                    UnitTable.Parameters params = new UnitTable.Parameters(fRec,
+                            ModelRecord.parseUnitType(m_pFormationOptions.getUnitType()), ratGenYear,
+                            m_pFormationOptions.getRating(), null, ModelRecord.NETWORK_NONE,
+                            java.util.EnumSet.noneOf(EntityMovementMode.class),
+                            java.util.EnumSet.noneOf(MissionRole.class), 0, fRec);
                     if (ft != null) {
-                        unitList.addAll(ft.generateFormation(fRec,
-                                ModelRecord.parseUnitType(m_pFormationOptions.getUnitType()), ratGenYear,
-                                m_pFormationOptions.getRating(), ModelRecord.NETWORK_NONE,
-                                java.util.EnumSet.noneOf(EntityMovementMode.class),
-                                java.util.EnumSet.noneOf(MissionRole.class),
+                        unitList.addAll(ft.generateFormation(params,
                                 m_pFormationOptions.getNumUnits()));
                     } else {
                         System.err.println("Could not find formation type " + panFt.getFormation());

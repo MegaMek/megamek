@@ -215,20 +215,17 @@ public class FormationType {
         return retVal;
     }
     
-    public List<MechSummary> generateFormation(FactionRecord faction, int unitType, int year,
-            String rating, int networkMask, Collection<EntityMovementMode> motiveTypes,
-            Collection<MissionRole> roles, int size) {
+    public List<MechSummary> generateFormation(UnitTable.Parameters params, int size) {
         //TODO: allow user to accept incomplete match
         boolean bestEffort = false;
         
         List<Integer> wcs = new ArrayList<>();
         for (int i = minWeightClass; i <= Math.min(maxWeightClass,
-                unitType == UnitType.AERO?EntityWeightClass.WEIGHT_HEAVY : EntityWeightClass.WEIGHT_SUPER_HEAVY); i++) {
+                params.getUnitType() == UnitType.AERO?EntityWeightClass.WEIGHT_HEAVY : EntityWeightClass.WEIGHT_SUPER_HEAVY); i++) {
             wcs.add(i);
         }
-        roles.addAll(missionRoles);
-        UnitTable table = UnitTable.findTable(faction, unitType, year, rating, wcs, ModelRecord.NETWORK_NONE,
-                motiveTypes, missionRoles, 0);
+        params.getRoles().addAll(missionRoles);
+        UnitTable table = UnitTable.findTable(params);
         if (table == null) {
             return new ArrayList<MechSummary>();
         }
@@ -237,7 +234,7 @@ public class FormationType {
          * If we cannot meet all criteria with a single motive type, we proceed with a mixed force.
          */
         
-        if (unitType == UnitType.TANK && motiveTypes.isEmpty()) {
+        if (params.getUnitType() == UnitType.TANK && params.getMovementModes().isEmpty()) {
             HashMap<String,Integer> mmMap = new HashMap<>();
             for (int i = 0; i < table.getNumEntries(); i++) {
                 if (table.getMechSummary(i) != null) {
@@ -259,9 +256,9 @@ public class FormationType {
                 }
                 mmMap.remove(mode);
             
-                List<MechSummary> list = generateFormation(faction, unitType, year,
-                        rating, networkMask, EnumSet.of(EntityMovementMode.getMode(mode)),
-                        missionRoles, size);
+                UnitTable.Parameters p = params.copy();
+                p.setMovementModes(EnumSet.of(EntityMovementMode.getMode(mode)));
+                List<MechSummary> list = generateFormation(p, size);
                 // Main criteria are used in all unit generation, so we know they match the unit.
                 if (otherCriteria.stream().allMatch(c -> c.fits(list))) {
                     return list;

@@ -22402,28 +22402,30 @@ public class Server implements Runnable {
                             r.add(te.getLocationName(blownOffLocation));
                             vDesc.addElement(r);
                             IHex h = game.getBoard().getHex(te.getPosition());
-                            if (te instanceof BipedMech) {
-                                if (!h.containsTerrain(Terrains.ARMS)) {
+                            if(null != h) {
+                                if (te instanceof BipedMech) {
+                                    if (!h.containsTerrain(Terrains.ARMS)) {
+                                        h.addTerrain(Terrains.getTerrainFactory()
+                                                             .createTerrain(Terrains.ARMS, 1));
+                                    } else {
+                                        h.addTerrain(Terrains
+                                                             .getTerrainFactory()
+                                                             .createTerrain(
+                                                                     Terrains.ARMS,
+                                                                     h.terrainLevel(Terrains.ARMS) + 1));
+                                    }
+                                } else if (!h.containsTerrain(Terrains.LEGS)) {
                                     h.addTerrain(Terrains.getTerrainFactory()
-                                                         .createTerrain(Terrains.ARMS, 1));
+                                                         .createTerrain(Terrains.LEGS, 1));
                                 } else {
                                     h.addTerrain(Terrains
                                                          .getTerrainFactory()
                                                          .createTerrain(
-                                                                 Terrains.ARMS,
-                                                                 h.terrainLevel(Terrains.ARMS) + 1));
+                                                                 Terrains.LEGS,
+                                                                 h.terrainLevel(Terrains.LEGS) + 1));
                                 }
-                            } else if (!h.containsTerrain(Terrains.LEGS)) {
-                                h.addTerrain(Terrains.getTerrainFactory()
-                                                     .createTerrain(Terrains.LEGS, 1));
-                            } else {
-                                h.addTerrain(Terrains
-                                                     .getTerrainFactory()
-                                                     .createTerrain(
-                                                             Terrains.LEGS,
-                                                             h.terrainLevel(Terrains.LEGS) + 1));
+                                sendChangedHex(te.getPosition());
                             }
-                            sendChangedHex(te.getPosition());
                         }
 
                         // Troopers riding on a location
@@ -32222,8 +32224,8 @@ public class Server implements Runnable {
             PilotingRollData rollTarget = getEjectModifiers(game, entity,
                     autoEject);
             int facing = entity.getFacing();
-            Coords targetCoords = entity.getPosition().translated(
-                    (facing + 3) % 6);
+            Coords targetCoords = (null != entity.getPosition())
+                ? entity.getPosition().translated((facing + 3) % 6) : null;
 
             if (autoEject) {
                 r = new Report(6395);
@@ -32419,6 +32421,10 @@ public class Server implements Runnable {
     public static PilotingRollData getEjectModifiers(IGame game,
             Entity entity, boolean autoEject) {
         int facing = entity.getFacing();
+        if(null == entity.getPosition()) {
+            // Off-board unit?
+            return new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
+        }
         Coords targetCoords = entity.getPosition().translated((facing + 3) % 6);
         return getEjectModifiers(game, entity, autoEject, targetCoords,
                 "ejecting");

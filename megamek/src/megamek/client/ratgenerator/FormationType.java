@@ -18,6 +18,7 @@ import java.util.stream.IntStream;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
@@ -221,10 +222,64 @@ public class FormationType {
             throw new IllegalArgumentException("Formation parameter list and numUnit list must have the same number of elements.");
         }
         
+        params.forEach(p -> p.getRoles().addAll(missionRoles));
         List<UnitTable> tables = params.stream().map(UnitTable::findTable).collect(Collectors.toList());
         //If there are any parameter sets that cannot generate a table, return an empty list. 
         if (!tables.stream().allMatch(UnitTable::hasUnits) && !bestEffort) {
             return new ArrayList<>();
+        }
+        
+        /* Check whether we have vees that do not have the movement mode(s) set. If so,
+         * we will attempt to conform them to a single type. Any that are set are ignored;
+         * there is no attempt to conform to mode already in the force. If they are intended
+         * to conform, they ought to be set.
+         */
+        List<Integer> undeterminedVees = new ArrayList<>();
+        for (int i = 0; i < params.size(); i++) {
+            if (params.get(i).getUnitType() == UnitType.TANK
+                    && params.get(i).getMovementModes().isEmpty()) {
+                undeterminedVees.add(i);
+            }
+        }
+        if (undeterminedVees.size() > 0) {
+            /* Look at the table for each group of parameters and determine the motive type
+             * ratio, then weight those values according to the number of units using those
+             * parameters.
+             */
+            Map<String,Integer> mmMap = new HashMap<>();
+            for (int i = 0; i < undeterminedVees.size(); i++) {
+                for (int j = 0; j < tables.get(i).getNumEntries(); j++) {
+                    if (tables.get(i).getMechSummary(j) != null) {
+                        mmMap.merge(tables.get(i).getMechSummary(j).getUnitSubType(),
+                                tables.get(i).getEntryWeight(j) * numUnits.get(i), Integer::sum);
+                    }
+                }
+            }
+            while (!mmMap.isEmpty()) {
+                int total = mmMap.values().stream().mapToInt(Integer::intValue).sum();
+                int r = Compute.randomInt(total);
+                String mode = "Tracked";
+                for (String m : mmMap.keySet()) {
+                    if (r < mmMap.get(m)) {
+                        mode = m;
+                        break;
+                    } else {
+                        r -= mmMap.get(m);
+                    }
+                }
+                mmMap.remove(mode);
+                
+                List<UnitTable.Parameters> tempParams = params.stream().map(UnitTable.Parameters::copy)
+                        .collect(Collectors.toList());
+                for (int index : undeterminedVees) {
+                    tempParams.get(index).getMovementModes().add(EntityMovementMode.getMode(mode));
+                }
+                List<MechSummary> list = generateFormation(tempParams, numUnits, false);
+                if (!list.isEmpty()) {
+                    return list;
+                }
+            }
+            /* If we cannot meet all criteria with a specific motive type, try without respect to motive type */
         }
 
         /* Simple case: all units have the same requirements. */
@@ -247,8 +302,10 @@ public class FormationType {
             List<MechSummary> retVal = new ArrayList<>();
             retVal.addAll(tables.get(0).generateUnits(otherCriteria.get(0).getMinimum(numUnits.get(0)),
                     ms -> mainCriteria.test(ms) && otherCriteria.get(0).criterion.test(ms)));
-            retVal.addAll(tables.get(0).generateUnits(numUnits.get(0) - retVal.size(),
-                    ms -> mainCriteria.test(ms)));
+            if (retVal.size() >= otherCriteria.get(0).getMinimum(numUnits.get(0)) || bestEffort) {
+                retVal.addAll(tables.get(0).generateUnits(numUnits.get(0) - retVal.size(),
+                        ms -> mainCriteria.test(ms)));
+            }
             return retVal;
         }
         

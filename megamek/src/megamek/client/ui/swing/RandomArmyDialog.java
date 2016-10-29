@@ -714,7 +714,7 @@ WindowListener, TreeSelectionListener {
                     numUnits.add(m_pFormationOptions.getNumUnits());
                     if (ft != null) {
                         unitList.addAll(ft.generateFormation(params,
-                                numUnits, true));
+                                numUnits, false));
                     } else {
                         System.err.println("Could not find formation type " + panFt.getFormation());
                     }                      

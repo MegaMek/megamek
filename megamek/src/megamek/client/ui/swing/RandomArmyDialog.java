@@ -41,7 +41,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -416,7 +415,7 @@ WindowListener, TreeSelectionListener {
             cardMap.put(UnitType.getTypeName(ut), card);
             m_pUnitTypeOptions.add(card, unitType);
         };
-        m_pRATGenOptions.setUnitTypePanelContainer(m_pUnitTypeOptions, cardMap);
+        m_pRATGenOptions.setUnitTypePanelContainer(m_pUnitTypeOptions, cardMap, false);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -496,13 +495,14 @@ WindowListener, TreeSelectionListener {
 
         m_pFormationTypes.setLayout(new CardLayout());
         cardMap = new HashMap<>();
+        FormationTypesPanel groundCard = new FormationTypesPanel(true);
+        FormationTypesPanel airCard = new FormationTypesPanel(false);
+        m_pFormationTypes.add(groundCard, "ground");
+        m_pFormationTypes.add(airCard, "air");
         for (int ut : formationUnitTypes) {
-            String unitType = UnitType.getTypeName(ut);
-            FormationTypesPanel card = new FormationTypesPanel(ut);
-            cardMap.put(unitType, card);
-            m_pFormationTypes.add(card, unitType);
+            cardMap.put(UnitType.getTypeName(ut), ut < UnitType.CONV_FIGHTER ? groundCard : airCard);
         }
-        m_pFormationOptions.setUnitTypePanelContainer(m_pFormationTypes, cardMap);
+        m_pFormationOptions.setUnitTypePanelContainer(m_pFormationTypes, cardMap, true);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -699,11 +699,11 @@ WindowListener, TreeSelectionListener {
                 	//generateUnits removes salvage entries that have no units meeting criteria
                 	ratModel.refreshData();
                 } else if (m_pMain.getSelectedIndex() == 3) {
+                    ArrayList<MechSummary> unitList = new ArrayList<>();
                     FactionRecord fRec = m_pFormationOptions.getFaction();
                     FormationTypesPanel panFt = (FormationTypesPanel)m_pFormationOptions
                             .getUnitTypePanel(m_pFormationOptions.getUnitType());
                     FormationType ft = FormationType.getFormationType(panFt.getFormation());
-                    ArrayList<MechSummary> unitList = new ArrayList<>();
                     List<UnitTable.Parameters> params = new ArrayList<>();
                     params.add(new UnitTable.Parameters(fRec,
                             ModelRecord.parseUnitType(m_pFormationOptions.getUnitType()), ratGenYear,
@@ -712,9 +712,64 @@ WindowListener, TreeSelectionListener {
                             java.util.EnumSet.noneOf(MissionRole.class), 0, fRec));
                     List<Integer> numUnits = new ArrayList<>();
                     numUnits.add(m_pFormationOptions.getNumUnits());
+                    
+                    if (panFt.numOtherUnits() > 0) {
+                        if (panFt.getOtherUnitType() >= 0) {
+                            params.add(new UnitTable.Parameters(fRec, panFt.getOtherUnitType(),
+                                    ratGenYear, m_pFormationOptions.getRating(), null,
+                                    ModelRecord.NETWORK_NONE,
+                                    java.util.EnumSet.noneOf(EntityMovementMode.class),
+                                    java.util.EnumSet.noneOf(MissionRole.class), 0, fRec));
+                            numUnits.add(panFt.numOtherUnits());
+                        } else if (panFt.mechBA()) {
+                            // Make sure at least a number units equals to the number of BA points/squads are omni
+                            numUnits.set(0, Math.min(panFt.numOtherUnits(), m_pFormationOptions.getNumUnits()));
+                            if (m_pFormationOptions.getNumUnits() > panFt.numOtherUnits()) {
+                                params.add(params.get(0).copy());
+                                numUnits.add(m_pFormationOptions.getNumUnits() - panFt.numOtherUnits());
+                            }
+                            params.get(0).getRoles().add(MissionRole.MECHANIZED_BA);
+                            //BA do not count for formation rules; add as a separate formation
+                        }
+                    }
+                    
                     if (ft != null) {
                         unitList.addAll(ft.generateFormation(params,
                                 numUnits, false));
+                        if (unitList.size() > 0 && panFt.numOtherUnits() > 0) {
+                            if (panFt.mechBA()) {
+                                /* Try to generate the BA portion using the same formation type as the
+                                 * parent, otherwise generate randomly.
+                                 */
+                                UnitTable.Parameters p = new UnitTable.Parameters(fRec, UnitType.BATTLE_ARMOR,
+                                        ratGenYear, m_pFormationOptions.getRating(), null,
+                                        ModelRecord.NETWORK_NONE,
+                                        java.util.EnumSet.noneOf(EntityMovementMode.class),
+                                        java.util.EnumSet.of(MissionRole.MECHANIZED_BA), 0, fRec);
+                                List<MechSummary> ba = ft.generateFormation(p,
+                                        panFt.numOtherUnits(), true);
+                                if (ba.isEmpty()) {
+                                    ba = UnitTable.findTable(p).generateUnits(panFt.numOtherUnits());
+                                }
+                                unitList.addAll(ba);
+                            } else if (panFt.airLance()) {
+                                UnitTable t = UnitTable.findTable(fRec, UnitType.AERO,
+                                        ratGenYear, m_pFormationOptions.getRating(), null,
+                                        ModelRecord.NETWORK_NONE,
+                                        java.util.EnumSet.noneOf(EntityMovementMode.class),
+                                        java.util.EnumSet.noneOf(MissionRole.class), 0, fRec);
+                                MechSummary unit = t.generateUnit();
+                                if (unit != null) {
+                                    unitList.add(unit);
+                                    MechSummary unit2 = t.generateUnit(ms -> ms.getChassis().equals(unit.getChassis()));
+                                    if (unit2 != null) {
+                                        unitList.add(unit2);
+                                    } else {
+                                        unitList.add(unit);
+                                    }
+                                }
+                            }
+                        }
                     } else {
                         System.err.println("Could not find formation type " + panFt.getFormation());
                     }                      
@@ -1051,6 +1106,7 @@ WindowListener, TreeSelectionListener {
         
         private JPanel unitTypePanelContainer;
         private Map<String,JPanel> unitTypeCardMap;
+        private boolean onlyAirGround = false;
 
         public RATGenOptionsPanel() {
             setLayout(new GridBagLayout());
@@ -1197,9 +1253,11 @@ WindowListener, TreeSelectionListener {
             add(m_chRating, c);
         }
         
-        public void setUnitTypePanelContainer(JPanel panel, Map<String, JPanel> cardMap) {
+        public void setUnitTypePanelContainer(JPanel panel, Map<String, JPanel> cardMap,
+                boolean onlyAirGround) {
             unitTypePanelContainer = panel;
-            unitTypeCardMap = cardMap;            
+            unitTypeCardMap = cardMap;
+            this.onlyAirGround = onlyAirGround;
         }
         
         public JPanel getUnitTypePanel(String unitType) {
@@ -1331,7 +1389,13 @@ WindowListener, TreeSelectionListener {
             } else if (ev.getSource().equals(m_chUnitType)) {
                 if (unitTypePanelContainer != null) {
                     CardLayout layout = (CardLayout)unitTypePanelContainer.getLayout();
-                    layout.show(unitTypePanelContainer, (String)m_chUnitType.getSelectedItem());
+                    //FIXME: this is a rough hack
+                    if (onlyAirGround) {
+                        layout.show(unitTypePanelContainer,
+                                ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()) < UnitType.CONV_FIGHTER? "ground" : "air");
+                    } else {
+                        layout.show(unitTypePanelContainer, (String)m_chUnitType.getSelectedItem());
+                    }
                 }
             }
         }
@@ -1788,93 +1852,179 @@ WindowListener, TreeSelectionListener {
 
         private static final long serialVersionUID = 1439149790457737700L;
 
-        private ButtonGroup btnGroup = new ButtonGroup();
+        private JRadioButton bSimpleFormation = new JRadioButton(Messages.getString("RandomArmyDialog.simpleFormation"));
+        private JRadioButton bMechBA = new JRadioButton(Messages.getString("RandomArmyDialog.mechBA"));
+        private JRadioButton bAirLance = new JRadioButton(Messages.getString("RandomArmyDialog.airLance"));
+        private JRadioButton bOtherUnitType = new JRadioButton(Messages.getString("RandomArmyDialog.otherUnitType"));
+        private JComboBox<String> chOtherUnitType = new JComboBox<>();
+        private JTextField tNumUnits = new JTextField("0");
+        private ButtonGroup formationBtnGroup = new ButtonGroup();
         
-        public FormationTypesPanel(int unitType) {
-            super(new GridBagLayout());
+        public FormationTypesPanel(boolean groundUnit) {
+            setLayout(new GridBagLayout());
             
-        /* Select which formation types are applicable to the unit type */ 
-            Predicate<FormationType> formationFilter = null;
-            switch (unitType) {
-            case UnitType.MEK:
-            case UnitType.TANK:
-                formationFilter = FormationType::isGround;
-                break;
-            case UnitType.VTOL:
-                formationFilter = ft -> ft.isGround()
-                    && ft.getMinWeightClass() <= EntityWeightClass.WEIGHT_LIGHT;
-                    break;
-            case UnitType.AERO:
-                formationFilter = ft -> !ft.isGround();
-                break;
-            case UnitType.CONV_FIGHTER:
-                formationFilter = ft -> !ft.isGround()
-                    && ft.getMinWeightClass() <= EntityWeightClass.WEIGHT_LIGHT;
-                break;
-            }
+            JPanel panFormations = new JPanel(new GridBagLayout());
+            JPanel panOtherOptions = new JPanel(new GridBagLayout());
+            
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.weightx = 0.5;
+            c.weighty = 1.0;
+            add(panFormations, c);
+            
+            c.gridx = 1;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.weightx = 0.5;
+            c.weighty = 0.0;
+            add(panOtherOptions, c);
+            
+            // Sort main types alphabetically, and subtypes alphabetically within the main.
+            List<FormationType> formations = FormationType.getAllFormations().stream()
+                    .filter(ft -> ft.isGround() == groundUnit).collect(Collectors.toList());
+            Map<String,Set<String>> formationGroups = formations.stream()
+                    .collect(Collectors.groupingBy(FormationType::getCategory, TreeMap::new,
+                            Collectors.mapping(FormationType::getName,
+                                    Collectors.toCollection(TreeSet::new))));
+                
+            int rows = (formations.size() + 1) / 2;
 
-            if (formationFilter != null) {
-                // Sort main types alphabetically, and subtypes alphabetically within the main.
-                List<FormationType> formations = FormationType.getAllFormations().stream()
-                        .filter(formationFilter).collect(Collectors.toList());
-                Map<String,Set<String>> formationGroups = formations.stream()
-                        .collect(Collectors.groupingBy(FormationType::getCategory, TreeMap::new,
-                                Collectors.mapping(FormationType::getName,
-                                        Collectors.toCollection(TreeSet::new))));
-                
-                int rows = (formations.size() + 2) / 3;
-    
-                GridBagConstraints c = new GridBagConstraints();
-                c.gridx = 0;
-                c.gridy = 0;
-                c.gridwidth = 1;
-                c.anchor = GridBagConstraints.WEST;
-                c.fill = GridBagConstraints.NONE;
-                c.weightx = 0.0;
-                c.weighty = 0.0;
-                
-                Insets mainInsets = new Insets(0, 10, 0, 10);
-                Insets subInsets = new Insets(0, 30, 0, 10);
-                for (String group : formationGroups.keySet()) {
-                    c.insets = mainInsets;
-                    if (formationGroups.get(group).contains(group)) {
-                        JRadioButton btn = new JRadioButton(group);
-                        if (btnGroup.getButtonCount() == 0) {
-                            btn.setSelected(true);
-                        }
-                        btn.setActionCommand(group);
-                        add(btn, c);
-                        btnGroup.add(btn);
-                        formationGroups.get(group).remove(group);
-                    } else {
-                        JLabel lbl = new JLabel(group, SwingConstants.LEFT);
-                        add(lbl);
+            c = new GridBagConstraints();
+            c.gridx = 2;
+            c.gridy = 0;
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.WEST;
+            c.fill = GridBagConstraints.NONE;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            
+            Insets mainInsets = new Insets(0, 10, 0, 10);
+            Insets subInsets = new Insets(0, 30, 0, 10);
+            for (String group : formationGroups.keySet()) {
+                c.insets = mainInsets;
+                if (formationGroups.get(group).contains(group)) {
+                    JRadioButton btn = new JRadioButton(group);
+                    if (formationBtnGroup.getButtonCount() == 0) {
+                        btn.setSelected(true);
                     }
+                    btn.setActionCommand(group);
+                    panFormations.add(btn, c);
+                    formationBtnGroup.add(btn);
+                    formationGroups.get(group).remove(group);
+                } else {
+                    JLabel lbl = new JLabel(group, SwingConstants.LEFT);
+                    panFormations.add(lbl, c);
+                }
+                c.gridy++;
+                c.insets = subInsets;
+                for (String form : formationGroups.get(group)) {
+                    JRadioButton btn = new JRadioButton(form);
+                    if (formationBtnGroup.getButtonCount() == 0) {
+                        btn.setSelected(true);
+                    }
+                    btn.setActionCommand(form);
+                    panFormations.add(btn, c);
+                    formationBtnGroup.add(btn);
                     c.gridy++;
-                    c.insets = subInsets;
-                    for (String form : formationGroups.get(group)) {
-                        JRadioButton btn = new JRadioButton(form);
-                        if (btnGroup.getButtonCount() == 0) {
-                            btn.setSelected(true);
-                        }
-                        btn.setActionCommand(form);
-                        add(btn, c);
-                        btnGroup.add(btn);
-                        c.gridy++;
-                    }
-                    if (c.gridy >= rows) {
-                        c.gridx++;
-                        c.gridy = 0;
-                    }
+                }
+                if (c.gridy >= rows) {
+                    c.gridx++;
+                    c.gridy = 0;
                 }
             }
+            
+            ButtonGroup btnGroup = new ButtonGroup();            
+            c.gridx = 0;
+            c.gridy = 0;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.gridwidth = 2;
+            c.fill = GridBagConstraints.NONE;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            panOtherOptions.add(bSimpleFormation, c);
+            bSimpleFormation.addItemListener(ev -> tNumUnits.setEnabled(!bSimpleFormation.isSelected()));
+            btnGroup.add(bSimpleFormation);
+            
+            c.gridx = 0;
+            c.gridy = 1;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.gridwidth = 2;
+            c.fill = GridBagConstraints.NONE;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            panOtherOptions.add(bMechBA, c);
+            btnGroup.add(bMechBA);
+            
+            c.gridy = 2;
+            c.gridwidth = 2;
+            panOtherOptions.add(bAirLance, c);
+            btnGroup.add(bAirLance);
+            
+            c.gridy = 3;
+            c.gridwidth = 2;
+            panOtherOptions.add(bOtherUnitType, c);
+            btnGroup.add(bOtherUnitType);
+            bOtherUnitType.addItemListener(ev -> chOtherUnitType.setEnabled(bOtherUnitType.isSelected()));
+            
+            c.gridx = 0;
+            c.gridy = 4;
+            c.gridwidth = 2;
+            panOtherOptions.add(chOtherUnitType, c);
+            chOtherUnitType.setEnabled(false);
+            for (int i = 0; i < UnitType.JUMPSHIP; i++) {
+                if (i != UnitType.GUN_EMPLACEMENT) {
+                    chOtherUnitType.addItem(UnitType.getTypeName(i));
+                }
+            }
+            
+            c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 5;
+            c.gridwidth = 1;
+            panOtherOptions.add(new JLabel(Messages.getString("RandomArmyDialog.additionalUnits")), c);
+            c.gridx = 1;
+            c.gridy = 5;
+            c.gridwidth = 1;
+            panOtherOptions.add(tNumUnits, c);
+
+            bSimpleFormation.setSelected(true);
         }
         
         public String getFormation() {
-            if (btnGroup.getSelection() != null) {
-                return btnGroup.getSelection().getActionCommand();
+            if (formationBtnGroup.getSelection() != null) {
+                return formationBtnGroup.getSelection().getActionCommand();
             }
             return null;
+        }
+        
+        public boolean simpleFormation() {
+            return bSimpleFormation.isSelected();
+        }
+        
+        public boolean mechBA() {
+            return bMechBA.isSelected();
+        }
+        
+        public boolean airLance() {
+            return bAirLance.isSelected();
+        }
+        
+        public int numOtherUnits() {
+            try {
+                return Integer.parseInt(tNumUnits.getText());
+            } catch (NumberFormatException ex) {
+                tNumUnits.setText("0");
+                return 0;
+            }
+        }
+        
+        public int getOtherUnitType() {
+            if (bOtherUnitType.isSelected() && chOtherUnitType.getSelectedIndex() > 0) {
+                return ModelRecord.parseUnitType((String)chOtherUnitType.getSelectedItem());
+            }
+            return -1;
         }
     }
 }

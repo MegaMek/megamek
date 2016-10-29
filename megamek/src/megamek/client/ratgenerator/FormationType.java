@@ -5,19 +5,19 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import megamek.common.AmmoType;
 import megamek.common.Compute;
-import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
@@ -215,143 +215,129 @@ public class FormationType {
         return retVal;
     }
     
-    public List<MechSummary> generateFormation(UnitTable.Parameters params, int size) {
-        //TODO: allow user to accept incomplete match
-        boolean bestEffort = false;
+    public List<MechSummary> generateFormation(List<UnitTable.Parameters> params, List<Integer> numUnits,
+            boolean bestEffort) {
+        if (params.size() != numUnits.size()) {
+            throw new IllegalArgumentException("Formation parameter list and numUnit list must have the same number of elements.");
+        }
         
-        List<Integer> wcs = new ArrayList<>();
-        for (int i = minWeightClass; i <= Math.min(maxWeightClass,
-                params.getUnitType() == UnitType.AERO?EntityWeightClass.WEIGHT_HEAVY : EntityWeightClass.WEIGHT_SUPER_HEAVY); i++) {
-            wcs.add(i);
+        List<UnitTable> tables = params.stream().map(UnitTable::findTable).collect(Collectors.toList());
+        //If there are any parameter sets that cannot generate a table, return an empty list. 
+        if (!tables.stream().allMatch(UnitTable::hasUnits) && !bestEffort) {
+            return new ArrayList<>();
         }
-        params.getRoles().addAll(missionRoles);
-        UnitTable table = UnitTable.findTable(params);
-        if (table == null) {
-            return new ArrayList<MechSummary>();
+
+        /* Simple case: all units have the same requirements. */
+        if (otherCriteria.isEmpty()) {
+            List<MechSummary> retVal = new ArrayList<>();
+            for (int i = 0; i < params.size(); i++) {
+                List<MechSummary> units = tables.get(i).generateUnits(numUnits.get(i),
+                        ms -> mainCriteria.test(ms));
+                if (units.isEmpty() && !bestEffort) {
+                    return new ArrayList<>();
+                } else {
+                    retVal.addAll(units);
+                }
+            }
+            return retVal;
         }
-        /* Ground vehicle formation should generally be of the same motive type. If none is provided,
-         * we try all those represented in the generated table, chosen in proportion to their distribution.
-         * If we cannot meet all criteria with a single motive type, we proceed with a mixed force.
+        
+        /* Simple case: single set of parameters and single additional criterion. */
+        if (params.size() == 1 && otherCriteria.size() == 1) {
+            List<MechSummary> retVal = new ArrayList<>();
+            retVal.addAll(tables.get(0).generateUnits(otherCriteria.get(0).getMinimum(numUnits.get(0)),
+                    ms -> mainCriteria.test(ms) && otherCriteria.get(0).criterion.test(ms)));
+            retVal.addAll(tables.get(0).generateUnits(numUnits.get(0) - retVal.size(),
+                    ms -> mainCriteria.test(ms)));
+            return retVal;
+        }
+        
+        /* General case:
+         * For each constraint, find all permutations of the multiset [0,1] with cardinality
+         * k = total formation size and multiplicity(1) = minimum number
+         * of units to fulfill the constraint. This is stored as a k-bit number in which 1 indicates
+         * the unit at that index must fit the criterion and a 0 indicates no requirement.
+         * 
+         * The total number of ways to meet all requirements is equal to the product of the number
+         * of permutations of all constraints. We can randomly select a number then decode it to
+         * get the actual bitmaps for each constraint. 
          */
         
-        if (params.getUnitType() == UnitType.TANK && params.getMovementModes().isEmpty()) {
-            HashMap<String,Integer> mmMap = new HashMap<>();
-            for (int i = 0; i < table.getNumEntries(); i++) {
-                if (table.getMechSummary(i) != null) {
-                    mmMap.merge(table.getMechSummary(i).getUnitSubType(),
-                            table.getEntryWeight(i), Integer::sum);
-                }
+        int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
+        /* First group all possible values of k bits into lists keyed to the number of
+         * bits that are set. Algorithm for counting number of bits in a 32-bit integer
+         * from https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel.
+         */
+        Map<Integer,List<Integer>> bitCountMap = IntStream.range(0, 1 << cUnits)
+                .mapToObj(Integer::valueOf)
+                .collect(Collectors.groupingBy(v -> {
+                    v = v - ((v >> 1) & 0x55555555);
+                    v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
+                    return ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
+                }));
+        
+        /* Calculate how many different possible combinations we can make and construct a list
+         * of all values from 0 to total - 1. If a conforming unit cannot be constructed from
+         * a chosen value, it can be removed from the list.
+         */
+        int totalCombos = otherCriteria.stream().map(c -> bitCountMap.get(c.getMinimum(cUnits)).size())
+            .reduce(1, (a, b) -> a * b);
+        List<Integer> possibilities = IntStream.range(0, totalCombos).mapToObj(Integer::valueOf)
+                .collect(Collectors.toList());
+        
+        /* Prepare array that determines which UnitTable to use for each position in the formation */
+        int[] unitTableIndex = new int[cUnits];
+        int pos = 0;
+        for (int i = 0; i < numUnits.size(); i++) {
+            for (int j = 0; j < numUnits.get(i); j++) {
+                unitTableIndex[pos] = i;
+                pos++;
             }
-            while (!mmMap.isEmpty()) {
-                int total = mmMap.values().stream().mapToInt(Integer::intValue).sum();
-                int roll = Compute.randomInt(total);
-                String mode = "Tracked";
-                for (String m : mmMap.keySet()) {
-                    if (roll < mmMap.get(m)) {
-                        mode = m;
-                        break;
-                    } else {
-                        roll -= mmMap.get(m);
-                    }
-                }
-                mmMap.remove(mode);
+        }
+        List<MechSummary> retVal = new ArrayList<>();
+        List<Predicate<MechSummary>> filter = new ArrayList<>();
+        while (!possibilities.isEmpty()) {
+            retVal.clear();
+            int index = Compute.randomInt(possibilities.size());
+            int value = possibilities.get(index);
             
-                UnitTable.Parameters p = params.copy();
-                p.setMovementModes(EnumSet.of(EntityMovementMode.getMode(mode)));
-                List<MechSummary> list = generateFormation(p, size);
-                // Main criteria are used in all unit generation, so we know they match the unit.
-                if (otherCriteria.stream().allMatch(c -> c.fits(list))) {
-                    return list;
+            /* Decode the value and get the bitmap for each constraint */
+            int[] bitmaps = new int[otherCriteria.size()];
+            for (int i = 0; i < otherCriteria.size(); i++) {
+                int min = otherCriteria.get(i).getMinimum(cUnits);
+                int cBitmaps = bitCountMap.get(min).size();
+                bitmaps[i] = bitCountMap.get(min).get(value % cBitmaps);
+                value /= cBitmaps;
+            }
+
+            boolean completed = true;
+            for (int i = 0; i < cUnits; i++) {
+                filter.clear();
+                filter.add(mainCriteria);
+                for (int j = 0; j < otherCriteria.size(); j++) {
+                    if ((bitmaps[j] & 1) != 0) {
+                        filter.add(otherCriteria.get(j).criterion);
+                    }
                 }
-            }
-        }
-        
-        final List<MechSummary> unitList = table.generateUnits(size, ms -> mainCriteria.test(ms));
-        if (unitList.isEmpty()) {
-            // If we cannot meet the criteria, we may be able to construct a force using just the ideal role.
-            if (!idealRole.equals(UnitRole.UNDETERMINED)) {
-                unitList.clear();
-                unitList.addAll(table.generateUnits(size, ms -> getUnitRole(ms).equals(idealRole)));
-            }
-            return unitList;
-        }
-        
-        List<List<MechSummary>> allMatchingUnits = new ArrayList<>();
-        
-        for (int i = 0; i < otherCriteria.size(); i++) {
-            final Constraint constraint = otherCriteria.get(i);
-            List<MechSummary> matchingUnits = unitList.stream().filter(constraint.criterion)
-                    .collect(Collectors.toList());
-            if (matchingUnits.size() < constraint.getMinimum(size)
-                    || matchingUnits.size() > constraint.getMaximum(size)) {
-                //Sort unitList to put best replacement candidates first
-                Collections.sort(unitList, (o1, o2) -> needRating(o1, size) -
-                        needRating(o2, size));
-                int candidate = 0;
-                //Try to replace units until we meet the criterion or we run out of units to replace
-                while (candidate < unitList.size()
-                        && (matchingUnits.size() < constraint.getMinimum(size)
-                                || matchingUnits.size() > constraint.getMaximum(size))) {
-                    // Build a unit table filter that includes criteria we've already met but have no extras
-                    // For constraints with a max value, use the logical complement of the constraint to keep from going over.
-                    List<Predicate<MechSummary>> filter = new ArrayList<>();
-                    if (mainCriteria != null) {
-                        filter.add(mainCriteria);
-                    }
-                    for (int j = 0; j < i; j++) {
-                        final Constraint other = otherCriteria.get(j);
-                        if (other.criterion.test(unitList.get(candidate))
-                                && allMatchingUnits.get(j).size() <= other.getMinimum(size)) {
-                            filter.add(other.criterion);
-                        } else if (!other.criterion.test(unitList.get(candidate))
-                                && allMatchingUnits.get(j).size() >= other.getMaximum(size)
-                                && other.getMaximum(size) < size) {
-                            filter.add(ms -> !other.criterion.test(ms));
-                        }
-                    }
-                    if (matchingUnits.size() > constraint.getMaximum(size) && constraint.getMaximum(size) < size) {
-                        filter.add(ms -> !constraint.criterion.test(ms));
-                    } else {
-                        filter.add(constraint.criterion);
-                    }
-                    filter.add(constraint.criterion);
-                    //Look for another units that meets all criteria
-                    MechSummary replacement = table.generateUnit(ms -> filter.stream()
-                            .allMatch(f -> f.test(ms)));
-                    //If none is found, go to the next candidate. Otherwise, revise records of earlier matches and add to current list of matches
-                    if (replacement == null) {
-                        candidate++;
-                    } else {
-                        for (int j = 0; j < i; j++) {
-                            allMatchingUnits.get(j).remove(unitList.get(candidate));
-                            if (otherCriteria.get(j).criterion.test(replacement)) {
-                                allMatchingUnits.get(j).add(replacement);
-                            }
-                        }
-                        unitList.remove(candidate);
-                        unitList.add(replacement);
-                        matchingUnits.add(replacement);
+                MechSummary unit = tables.get(unitTableIndex[i])
+                        .generateUnit(ms -> filter.stream().allMatch(f -> f.test(ms)));
+                if (unit == null) {
+                    completed = false;
+                    break;
+                } else {
+                    retVal.add(unit);
+                    for (int j = 0; j < bitmaps.length; j++) {
+                        bitmaps[j] >>= 1;
                     }
                 }
             }
-            allMatchingUnits.add(matchingUnits);
+            if (completed) {
+                return retVal;
+            } else {
+                possibilities.remove(index);
+            }
         }
-        if (!bestEffort && !otherCriteria.stream().allMatch(c -> c.fits(unitList))) {
-            unitList.clear();
-        }
-        return unitList;
-    }
-    
-    /*
-     * Rates how well the unit fulfills otherCriteria; used to judge which units
-     * should be rerolled to meet requirements. Each constraint it matches gives a
-     * +1 to the rating, unless the constraint is a maximum, in which case it gives
-     * a -1 (since removing the unit may actually help, and won't hurt). 
-     */
-    private int needRating(MechSummary ms, int unitSize) {
-        return otherCriteria.stream().filter(c -> c.criterion.test(ms))
-                .mapToInt(c -> c.getMaximum(unitSize) < unitSize? -1 : 1)
-                .sum();
+        return new ArrayList<>();
     }
     
     public static void createFormationTypes() {
@@ -644,7 +630,7 @@ public class FormationType {
                 ms -> EnumSet.of(UnitRole.SCOUT, UnitRole.STRIKER).contains(getUnitRole(ms))));
         ft.otherCriteria.add(new CountConstraint(1,
                 ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(getUnitRole(ms))));
-        ft.otherCriteria.add(new CountConstraint(0, 1,
+        ft.otherCriteria.add(new MaxCountConstraint(1,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_ASSAULT));
         allFormationTypes.put(ft.name, ft);        
     }
@@ -781,62 +767,58 @@ public class FormationType {
         }
         
         public abstract int getMinimum(int unitSize);
-        public abstract int getMaximum(int unitSize);
-        
-        public boolean fits(List<MechSummary> list) {
-            long count = list.stream().filter(ms -> criterion.test(ms)).count();
-            return (count >= getMinimum(list.size())
-                    && count <= getMaximum(list.size()));
-        }
     }
     
     private static class CountConstraint extends Constraint {
-        int minCount;
-        int maxCount;
-        
-        public CountConstraint(int min, int max, Predicate<MechSummary> criterion) {
-            super(criterion);
-            minCount = min;
-            maxCount = max;
-        }
+        int count;
         
         public CountConstraint(int min, Predicate<MechSummary> criterion) {
-            this(min, Integer.MAX_VALUE, criterion);
+            super(criterion);
+            count = min;
         }
         
         @Override
         public int getMinimum(int unitSize) {
-            return minCount;
+            return count;
+        }
+    }
+    
+    private static class MaxCountConstraint extends CountConstraint {
+        
+        public MaxCountConstraint(int max, Predicate<MechSummary> criterion) {
+            super(max, ms -> !criterion.test(ms));
         }
         
         @Override
-        public int getMaximum(int unitSize) {
-            return maxCount;
+        public int getMinimum(int unitSize) {
+            return unitSize - count;
         }
     }
     
     private static class PercentConstraint extends Constraint {
-        double minPct;
-        double maxPct;
-        
-        public PercentConstraint(double min, double max, Predicate<MechSummary> criterion) {
-            super(criterion);
-            minPct = min;
-            maxPct = max;
-        }
+        double pct;
         
         public PercentConstraint(double min, Predicate<MechSummary> criterion) {
-            this(min, 1.0, criterion);
+            super(criterion);
+            pct = min;
         }
         
         @Override
         public int getMinimum(int unitSize) {
-            return (int)(minPct * unitSize + 0.5);
+            return (int)(pct * unitSize + 0.5);
+        }
+    }
+    
+    @SuppressWarnings("unused")
+    private static class MaxPercentConstraint extends PercentConstraint {
+        
+        public MaxPercentConstraint(double max, Predicate<MechSummary> criterion) {
+            super(max, ms -> !criterion.test(ms));
         }
         
         @Override
-        public int getMaximum(int unitSize) {
-            return (int)(maxPct * unitSize + 0.5);
+        public int getMinimum(int unitSize) {
+            return unitSize - (int)(pct * unitSize + 0.5);
         }
     }
 }

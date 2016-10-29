@@ -216,13 +216,31 @@ public class FormationType {
         return retVal;
     }
     
+    public List<MechSummary> generateFormation(UnitTable.Parameters params, int numUnits,
+            boolean bestEffort) {
+        List<UnitTable.Parameters> p = new ArrayList<>();
+        p.add(params);
+        List<Integer> n = new ArrayList<>();
+        n.add(numUnits);
+        return generateFormation(p, n, bestEffort);
+    }
+    
     public List<MechSummary> generateFormation(List<UnitTable.Parameters> params, List<Integer> numUnits,
             boolean bestEffort) {
         if (params.size() != numUnits.size()) {
             throw new IllegalArgumentException("Formation parameter list and numUnit list must have the same number of elements.");
         }
         
-        params.forEach(p -> p.getRoles().addAll(missionRoles));
+        List<Integer> wcs = IntStream.range(minWeightClass,
+                Math.min(maxWeightClass, EntityWeightClass.WEIGHT_SUPER_HEAVY))
+                .mapToObj(Integer::valueOf)
+                .collect(Collectors.toList());
+        List<Integer> airWcs = wcs.stream().filter(wc -> wc < EntityWeightClass.WEIGHT_ASSAULT)
+                .collect(Collectors.toList()); 
+        params.forEach(p -> {
+            p.getRoles().addAll(missionRoles);
+            p.setWeightClasses(p.getUnitType() < UnitType.CONV_FIGHTER ? wcs : airWcs);
+        });
         List<UnitTable> tables = params.stream().map(UnitTable::findTable).collect(Collectors.toList());
         //If there are any parameter sets that cannot generate a table, return an empty list. 
         if (!tables.stream().allMatch(UnitTable::hasUnits) && !bestEffort) {
@@ -282,16 +300,19 @@ public class FormationType {
             /* If we cannot meet all criteria with a specific motive type, try without respect to motive type */
         }
 
+        int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
+
         /* Simple case: all units have the same requirements. */
         if (otherCriteria.isEmpty()) {
             List<MechSummary> retVal = new ArrayList<>();
             for (int i = 0; i < params.size(); i++) {
-                List<MechSummary> units = tables.get(i).generateUnits(numUnits.get(i),
-                        ms -> mainCriteria.test(ms));
-                if (units.isEmpty() && !bestEffort) {
-                    return new ArrayList<>();
-                } else {
-                    retVal.addAll(units);
+                retVal.addAll(tables.get(i).generateUnits(numUnits.get(i),
+                        ms -> mainCriteria.test(ms)));
+            }
+            if (retVal.size() < cUnits) {
+                List<MechSummary> matchRole = tryIdealRole(params, numUnits);
+                if (matchRole != null) {
+                    return matchRole;
                 }
             }
             return retVal;
@@ -302,6 +323,14 @@ public class FormationType {
             List<MechSummary> retVal = new ArrayList<>();
             retVal.addAll(tables.get(0).generateUnits(otherCriteria.get(0).getMinimum(numUnits.get(0)),
                     ms -> mainCriteria.test(ms) && otherCriteria.get(0).criterion.test(ms)));
+            if (retVal.size() < otherCriteria.get(0).getMinimum(numUnits.get(0))) {
+                List<MechSummary> onRole = tryIdealRole(params, numUnits);
+                if (onRole != null) {
+                    return onRole;
+                } else if (!bestEffort) {
+                    return new ArrayList<>();
+                }
+            }
             if (retVal.size() >= otherCriteria.get(0).getMinimum(numUnits.get(0)) || bestEffort) {
                 retVal.addAll(tables.get(0).generateUnits(numUnits.get(0) - retVal.size(),
                         ms -> mainCriteria.test(ms)));
@@ -320,7 +349,6 @@ public class FormationType {
          * get the actual bitmaps for each constraint. 
          */
         
-        int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
         /* First group all possible values of k bits into lists keyed to the number of
          * bits that are set. Algorithm for counting number of bits in a 32-bit integer
          * from https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel.
@@ -394,7 +422,33 @@ public class FormationType {
                 possibilities.remove(index);
             }
         }
+        List<MechSummary> onRole = tryIdealRole(params, numUnits);
+        if (onRole != null) {
+            return onRole;
+        }
         return new ArrayList<>();
+    }
+    
+    /**
+     * Attempts to build unit entirely on ideal role. Returns null if unsuccessful.
+     */
+    private List<MechSummary> tryIdealRole(List<UnitTable.Parameters> params, List<Integer> numUnits) {
+        if (idealRole.equals(UnitRole.UNDETERMINED)) {
+            return null;
+        }
+        List<UnitTable.Parameters> tmpParams = params.stream()
+                .map(p -> p.copy()).collect(Collectors.toList());
+        tmpParams.forEach(p -> p.getWeightClasses().clear());
+        List<MechSummary> retVal = new ArrayList<>();
+        for (int i = 0; i < tmpParams.size(); i++) {
+            UnitTable t = UnitTable.findTable(tmpParams.get(i));
+            List<MechSummary> units = t.generateUnits(numUnits.get(i),
+                    ms -> getUnitRole(ms).equals(idealRole));
+            if (units.size() < numUnits.get(i)) {
+                return null;
+            }
+        }
+        return retVal;
     }
     
     public static void createFormationTypes() {

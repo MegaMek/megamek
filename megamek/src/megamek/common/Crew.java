@@ -84,6 +84,12 @@ public class Crew implements Serializable {
     private String portraitCategory = ROOT_PORTRAIT;
     private String portraitFileName = PORTRAIT_NONE;
 
+    //SPA RangeMaster range bands
+    public static final String RANGEMASTER_NONE = "None";
+    public static final String RANGEMASTER_MEDIUM = "Medium";
+    public static final String RANGEMASTER_LONG = "Long";
+    public static final String RANGEMASTER_EXTREME = "Extreme";
+
     public static final String SPECIAL_NONE = "None";
     public static final String SPECIAL_LASER = "Laser";
     public static final String SPECIAL_BALLISTIC = "Ballistic";

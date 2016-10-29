@@ -1,0 +1,153 @@
+Version:1.1
+Trooper
+TR-1R
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2475
+Source:XTRO Primitives V - Age of War
+Rules Level:5
+
+Mass:20
+Engine:145 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Primitive Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Single
+Walk MP:6
+Jump MP:0
+
+Armor:Primitive(Inner Sphere)
+LA Armor:3
+RA Armor:3
+LT Armor:3
+RT Armor:3
+CT Armor:5
+HD Armor:5
+LL Armor:3
+RL Armor:3
+RTL Armor:1
+RTR Armor:1
+RTC Armor:2
+
+Weapons:4
+Small Laser, Left Arm
+Small Laser, Left Arm
+Flamer, Center Torso
+Machine Gun, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Small Laser
+Small Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Machine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+IS Machine Gun Ammo - Half
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Flamer
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

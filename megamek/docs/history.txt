@@ -13,6 +13,7 @@ v0.41.26-git
 + Updating Turret Introdates.
 + adding XTRO V Primitives units (note the Ymir and Command Van has changed)
 + PR #252: HQ Support Vehicle fuel tracking
++ Added PR for Range Master support
 
 v0.41.25 (2016-10-15 14:40 UTC)
 + Added movement type filters to RAT Generator for BA.

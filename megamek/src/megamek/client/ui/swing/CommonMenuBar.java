@@ -824,7 +824,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             fileGameConnect.setEnabled(false);
             replacePlayer.setEnabled(false);
             // We can only save in certain phases of the game.
-            if ((phase != IGame.Phase.PHASE_UNKNOWN) && (phase != IGame.Phase.PHASE_LOUNGE)
+            if ((phase != IGame.Phase.PHASE_UNKNOWN)
                     && (phase != IGame.Phase.PHASE_SELECTION)
                     && (phase != IGame.Phase.PHASE_EXCHANGE)
                     && (phase != IGame.Phase.PHASE_VICTORY)

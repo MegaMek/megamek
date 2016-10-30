@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+4
+</fuel>
+
 <barrating>
 6
 </barrating>
@@ -66,6 +70,7 @@ ISOffRoadChassis
 </Body Equipment>
 
 <Front Equipment>
+Backhoe
 </Front Equipment>
 
 <Front Right Equipment>
@@ -89,10 +94,9 @@ Dumper (Rear)
 </tonnage>
 
 <source>
-TRO Vehicle Annex
+TRO VAr - Star League
 </source>
 
 <history>
 Armor is based on fluff.  No Record Sheet available.
 </history>
-

@@ -33,7 +33,9 @@ VTOL
 </motion_type>
 
 <transporters>
+cargobay:.5:1
 troopspace:1.5
+standardseats:1.5:20
 </transporters>
 
 <cruiseMP>
@@ -43,6 +45,10 @@ troopspace:1.5
 <engine_type>
 1
 </engine_type>
+
+<fuel>
+1
+</fuel>
 
 <armor>
 8
@@ -63,7 +69,6 @@ troopspace:1.5
 <armor_tech_rating>
 3
 </armor_tech_rating>
-
 
 <Body Equipment>
 Armored Chassis
@@ -91,10 +96,9 @@ Paramedic Equipment
 </Rotor Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Clan Invasion
 </source>
 
 <tonnage>
 25.0
 </tonnage>
-

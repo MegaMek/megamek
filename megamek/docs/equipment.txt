@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
 Type,Tech Base,Rules,Name,Aliases
 W,2300-Inner Sphere3071-Inner Sphere,2300-IS_Box_Set3071-IS_Box_Set,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,2290-Inner Sphere3071-Inner Sphere,2290-IS_Experimental3071-IS_Experimental,Medium Laser Prototype,IS Medium Laser Prototype,ISMediumLaserPrototype,
@@ -968,6 +968,7 @@ W,3120-Inner Sphere3130-Inner Sphere,3120-IS_Experimental3130-IS_Advanced,Medium
 W,3120-Inner Sphere3130-Inner Sphere,3120-IS_Experimental3130-IS_Advanced,Large Re-engineered Laser,ISLargeReengineeredLaser,ISLargeRELaser,
 W,3109-Inner Sphere3085-Inner Sphere,3109-IS_Advanced3085-IS_Experimental,TSEMP Cannon,ISTSEMP,
 W,3095-Inner Sphere3100-Inner Sphere,3095-IS_Experimental3100-IS_Advanced,TSEMP One-Shot,ISTSEMPOS,
+W,3133-Inner Sphere,3133-IS_Experimental,TSEMP Repeating Cannon,ISTSEMPREPEATING,
 W,3137-Inner Sphere3134-Inner Sphere,3137-IS_Advanced3134-IS_Experimental,ISAPDS,
 W,3132-Inner Sphere3134-Inner Sphere,3132-IS_Experimental3134-IS_Advanced,ISBAAPDS,
 W,3134-Inner Sphere,3134-IS_Experimental,ISRISCHyperLaser,

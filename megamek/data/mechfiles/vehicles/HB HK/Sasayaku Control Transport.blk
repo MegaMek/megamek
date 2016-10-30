@@ -21,7 +21,7 @@ Sasayaku Control Transport
 </Model>
 
 <year>
-3050
+2970
 </year>
 
 <type>
@@ -33,7 +33,7 @@ Wheeled
 </motion_type>
 
 <transporters>
-troopspace:1.0
+troopspace:2.0
 cargobay:5:1
 </transporters>
 
@@ -44,6 +44,10 @@ cargobay:5:1
 <engine_type>
 6
 </engine_type>
+
+<fuel>
+1
+</fuel>
 
 <armor>
 12
@@ -80,10 +84,9 @@ ISDroneExtra
 </Rear Equipment>
 
 <source>
-HB HK
+HB:House Kurita - Succession Wars
 </source>
 
 <tonnage>
 25.0
 </tonnage>
-

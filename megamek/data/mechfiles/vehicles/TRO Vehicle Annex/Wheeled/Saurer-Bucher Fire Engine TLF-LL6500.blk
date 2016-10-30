@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+1
+</fuel>
+
 <armor>
 5
 5
@@ -81,7 +85,7 @@ troopspace:.6
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <tonnage>

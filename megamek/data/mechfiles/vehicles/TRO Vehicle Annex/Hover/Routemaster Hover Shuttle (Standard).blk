@@ -40,6 +40,10 @@ Hover
 1
 </engine_type>
 
+<fuel>
+.08
+</fuel>
+
 <armor>
 1
 1
@@ -71,19 +75,15 @@ Hover
 </Rear Equipment>
 
 <transporters>
-troopspace:.975
 cargobay:.085:1
-standardseats:.075:1
+troopspace:1.050
+standardseats:1.050:14
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Star League
 </source>
 
 <tonnage>
 3.8
 </tonnage>
-
-<range>
-1000
-</range>

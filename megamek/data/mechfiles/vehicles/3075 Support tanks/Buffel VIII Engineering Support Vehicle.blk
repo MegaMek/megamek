@@ -40,6 +40,10 @@ Tracked
 1
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
 20
 20
@@ -87,10 +91,9 @@ troopspace:4
 </transporters>
 
 <source>
-RS 3075
+TRO 3075 - Jihad
 </source>
 
 <tonnage>
 70.0
 </tonnage>
-

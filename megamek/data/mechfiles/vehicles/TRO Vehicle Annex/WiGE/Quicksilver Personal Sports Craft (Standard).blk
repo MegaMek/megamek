@@ -40,6 +40,10 @@ WiGE
 1
 </engine_type>
 
+<fuel>
+.36
+</fuel>
+
 <armor>
 1
 1
@@ -77,10 +81,9 @@ standardseats:.075:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Clan Invasion
 </source>
 
 <tonnage>
 4.5
 </tonnage>
-

@@ -9,6 +9,9 @@ v0.41.26-git
 + Issue #354: Better reporting for attacks against infantry using direct hits
 + Issue #354: Ultra/Rapid fire ACs against infantry handled incorrectly
 + Issue #381: HE ammo type missing in battle round report
++ New Sprites
++ Updating Turret Introdates.
++ adding XTRO V Primitives units (note the Ymir and Command Van has changed)
 
 v0.41.25 (2016-10-15 14:40 UTC)
 + Added movement type filters to RAT Generator for BA.

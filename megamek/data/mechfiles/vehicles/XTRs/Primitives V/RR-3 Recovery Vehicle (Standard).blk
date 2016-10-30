@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+RR-3 Recovery Vehicle
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2439
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+30
+30
+30
+15
+</armor>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<barrating>
+6
+</barrating>
+
+<Body Equipment>
+Tractor
+ISOffRoadChassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Lift Hoist
+Lift Hoist
+</Rear Equipment>
+
+<transporters>
+cargospace:20:1
+</transporters>
+
+<source>
+XTRO Primitives V - Age of War
+</source>
+
+<tonnage>
+55.0
+</tonnage>
+

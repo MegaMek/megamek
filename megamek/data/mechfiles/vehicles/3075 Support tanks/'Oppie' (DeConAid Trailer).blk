@@ -2,10 +2,12 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SupportTank
 </UnitType>
@@ -63,7 +65,7 @@ Searchlight
 
 <Body Equipment>
 Trailer
-Enviromental Sealed Chassis
+Environmental Sealed Chassis
 MASH core component
 MASH Operation Theater
 MASH Operation Theater
@@ -87,7 +89,7 @@ IS Level 3
 </type>
 
 <year>
-3069
+2822
 </year>
 
 <internal_type>
@@ -105,3 +107,7 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+<source>
+TRO 3075 - Succession Wars
+</source>

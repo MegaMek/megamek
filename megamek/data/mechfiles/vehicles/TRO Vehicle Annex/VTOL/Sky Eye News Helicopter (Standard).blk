@@ -80,13 +80,13 @@ ISHighResImager
 <transporters>
 cargobay:1.2:1
 troopspace:.3
+standardseats:.3:4
 </transporters>
 
 <source>
-TRo VAr
+TRO VAr - Clan Invasion
 </source>
 
 <tonnage>
 20.0
 </tonnage>
-

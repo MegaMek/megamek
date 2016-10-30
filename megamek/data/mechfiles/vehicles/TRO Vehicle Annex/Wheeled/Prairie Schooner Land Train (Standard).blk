@@ -40,6 +40,10 @@ Wheeled
 0
 </engine_type>
 
+<fuel>
+0
+</fuel>
+
 <armor>
 34
 30
@@ -87,7 +91,7 @@ cargobay:17:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Clan Invasion
 </source>
 
 <tonnage>

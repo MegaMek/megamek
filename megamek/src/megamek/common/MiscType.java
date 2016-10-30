@@ -10327,7 +10327,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.1f;
+        misc.tonnage = 0.1;
         misc.techRating = RATING_A;
         misc.cost = 100;
         misc.introDate = 1950;
@@ -10344,7 +10344,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.2f;
+        misc.tonnage = 0.2;
         misc.techRating = RATING_A;
         misc.cost = 200;
         misc.introDate = 1950;
@@ -10361,7 +10361,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.3f;
+        misc.tonnage = 0.3;
         misc.techRating = RATING_A;
         misc.cost = 300;
         misc.introDate = 1950;
@@ -10378,7 +10378,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.4f;
+        misc.tonnage = 0.4;
         misc.techRating = RATING_A;
         misc.cost = 400;
         misc.introDate = 1950;
@@ -10395,7 +10395,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.5f;
+        misc.tonnage = 0.5;
         misc.techRating = RATING_A;
         misc.cost = 500;
         misc.introDate = 1950;

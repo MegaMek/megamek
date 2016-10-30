@@ -7,6 +7,7 @@ v0.41.26-git
 + Issue #368: Duplicate Messages When Changing Sensors
 + Issue #380: Graphical artefacting behind the board when using plain skin
 + Issue #354: Better reporting for attacks against infantry using direct hits
++ Issue #354: Ultra/Rapid fire ACs against infantry handled incorrectly
 + Issue #381: HE ammo type missing in battle round report
 
 v0.41.25 (2016-10-15 14:40 UTC)

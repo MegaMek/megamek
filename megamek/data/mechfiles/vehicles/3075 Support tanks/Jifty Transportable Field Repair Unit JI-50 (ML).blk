@@ -17,7 +17,7 @@ Jifty Transportable Field Repair Unit
 </Name>
 
 <Model>
-JI-50
+JI-50 (ML)
 </Model>
 
 <Tonnage>
@@ -40,8 +40,8 @@ JI-50
 </structural_tech_rating>
 
 <Front Equipment>
-Light Machine Gun
-Light Machine Gun
+ISMediumLaser
+ISMediumLaser
 </Front Equipment>
 
 <Rear Equipment>
@@ -50,7 +50,6 @@ Lift Hoist
 </Rear Equipment>
 
 <Body Equipment>
-IS Light Machine Gun Ammo - Half
 Armored Chassis
 </Body Equipment>
 
@@ -59,11 +58,11 @@ IS Level 2
 </type>
 
 <year>
-3069
+3074
 </year>
 
 <source>
-TRO 3075
+TRO 3075 - Jihad
 </source>
 
 <internal_type>
@@ -87,5 +86,5 @@ Tracked
 </motion_type>
 
 <transporters>
-cargobay:19.5:1
+cargobay:13:1
 </transporters>

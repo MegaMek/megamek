@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+.222
+</fuel>
+
 <armor>
 0
 0
@@ -77,7 +81,7 @@ standardseats:.15:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Civil War
 </source>
 
 <tonnage>

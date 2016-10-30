@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Jifty Transportable Field Repair Unit
+</Name>
+
+<Model>
+JI-50
+</Model>
+
+<Tonnage>
+60
+</Tonnage>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<Armor>
+27
+20
+20
+25
+</Armor>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Front Equipment>
+Light Machine Gun
+Light Machine Gun
+</Front Equipment>
+
+<Rear Equipment>
+Lift Hoist
+Lift Hoist
+</Rear Equipment>
+
+<Body Equipment>
+IS Light Machine Gun Ammo - Half
+Armored Chassis
+</Body Equipment>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3069
+</year>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+14
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<barrating>
+6
+</barrating>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+cargobay:19.5:1
+</transporters>

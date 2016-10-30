@@ -37,8 +37,12 @@ VTOL
 </cruiseMP>
 
 <engine_type>
-0
+1
 </engine_type>
+
+<fuel>
+.5
+</fuel>
 
 <armor>
 4
@@ -46,7 +50,6 @@ VTOL
 3
 3
 2
-
 </armor>
 
 <barrating>
@@ -63,7 +66,7 @@ Remote Sensor Dispenser
 </Body Equipment>
 
 <Front Equipment>
-ISReconCamera
+ISHighResImager
 ISInfraredImager
 </Front Equipment>
 
@@ -83,11 +86,14 @@ ISInfraredImager
 
 </Turret Equipment>
 
+<transporters>
+cargobay:.5:1
+</transporters>
+
 <source>
-Handbook: Liao
+HB:House Liao - Succession Wars
 </source>
 
 <tonnage>
 20
 </tonnage>
-

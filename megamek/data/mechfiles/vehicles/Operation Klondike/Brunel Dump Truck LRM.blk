@@ -17,7 +17,7 @@ Brunel Dump Truck
 </Name>
 
 <Model>
-(AC)
+(LRM)
 </Model>
 
 <year>
@@ -39,6 +39,10 @@ Wheeled
 <engine_type>
 1
 </engine_type>
+
+<fuel>
+4
+</fuel>
 
 <armor_type>
 0
@@ -89,12 +93,15 @@ IS Ammo MG - Full
 
 <Rear Equipment>
 Basic Fire Control
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20 Ammo
-Autocannon/20 Ammo
-Autocannon/20 Ammo
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
 </Rear Equipment>
 
 <tonnage>
@@ -102,10 +109,9 @@ Autocannon/20 Ammo
 </tonnage>
 
 <source>
-Op Klondike
+H:Operation Klondike - Succession Wars
 </source>
 
 <history>
 Armor is based on fluff.  No Record Sheet available.
 </history>
-

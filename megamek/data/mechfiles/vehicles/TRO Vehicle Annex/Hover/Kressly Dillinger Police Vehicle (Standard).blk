@@ -33,7 +33,8 @@ Hover
 </motion_type>
 
 <transporters>
-troopspace:3.975
+troopspace:3
+standardseats:.975:13
 cargobay:5.275:1
 </transporters>
 
@@ -89,14 +90,9 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Clan Invasion
 </source>
 
 <tonnage>
 40.0
 </tonnage>
-
-<range>
-1000
-</range>
-

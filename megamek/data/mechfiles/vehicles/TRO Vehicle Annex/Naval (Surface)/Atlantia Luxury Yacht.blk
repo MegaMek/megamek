@@ -1,5 +1,4 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
@@ -7,10 +6,6 @@
 <UnitType>
 SupportTank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Atlantia Luxury Yacht
@@ -25,7 +20,7 @@ Atlantia Luxury Yacht
 </year>
 
 <source>
-TRO VAr
+TRO VAr - Succession Wars
 </source>
 
 <type>
@@ -50,6 +45,10 @@ steeragequarters:35:7
 <engine_type>
 1
 </engine_type>
+
+<fuel>
+3
+</fuel>
 
 <cruiseMP>
 3
@@ -87,6 +86,3 @@ Lifeboat (Maritime)
 
 <Rear Equipment>
 </Rear Equipment>
-
-
-

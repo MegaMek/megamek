@@ -13,7 +13,7 @@ LargeSupportTank
 </UnitType>
 
 <Name>
-Buffalo BFFL Hovertruck
+BFFL 'Buffalo'
 </Name>
 
 <Model>
@@ -21,7 +21,7 @@ Buffalo BFFL Hovertruck
 </Model>
 
 <year>
-2500
+2670
 </year>
 
 <type>
@@ -83,14 +83,9 @@ Cargo Container (10 tons)
 </Rear Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Star League
 </source>
 
 <tonnage>
 100.0
 </tonnage>
-
-<range>
-1000
-</range>
-

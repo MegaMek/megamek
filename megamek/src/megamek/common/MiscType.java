@@ -9891,7 +9891,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createExternalStoresHardpoint() {
         MiscType misc = new MiscType();
-        misc.tonnage = 0.2f;
+        misc.tonnage = 0.2;
         misc.cost = 5000;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "External Stores Hardpoint";

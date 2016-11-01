@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -130,7 +131,10 @@ public class FormationType {
     public final static int FLAG_GROUND_NO_LIGHT = FLAG_MEK | FLAG_TANK | FLAG_BATTLE_ARMOR
             | FLAG_PROTOMEK | FLAG_NAVAL;
     public final static int FLAG_FIGHTER = FLAG_CONV_FIGHTER | FLAG_AERO;
+    public final static int FLAG_AIR = FLAG_CONV_FIGHTER | FLAG_AERO | FLAG_SMALL_CRAFT
+            | FLAG_DROPSHIP;
     public final static int FLAG_VEHICLE = FLAG_TANK | FLAG_NAVAL | FLAG_VTOL;
+    public final static int FLAG_ALL = FLAG_GROUND | FLAG_AIR;
     
     private static HashMap<String,FormationType> allFormationTypes = null;
     public static FormationType getFormationType(String key) {
@@ -170,6 +174,7 @@ public class FormationType {
     private Predicate<MechSummary> mainCriteria = ms -> true;
     // Additional criteria that have to be fulfilled by a portion of the force
     private List<Constraint> otherCriteria = new ArrayList<>();
+    private GroupingConstraint groupingCriteria = null;
     
     public String getName() {
         return name;
@@ -327,7 +332,7 @@ public class FormationType {
         int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
 
         /* Simple case: all units have the same requirements. */
-        if (otherCriteria.isEmpty()) {
+        if (otherCriteria.isEmpty() && groupingCriteria == null) {
             List<MechSummary> retVal = new ArrayList<>();
             for (int i = 0; i < params.size(); i++) {
                 retVal.addAll(tables.get(i).generateUnits(numUnits.get(i),
@@ -343,7 +348,7 @@ public class FormationType {
         }
         
         /* Simple case: single set of parameters and single additional criterion. */
-        if (params.size() == 1 && otherCriteria.size() == 1) {
+        if (params.size() == 1 && otherCriteria.size() == 1 && groupingCriteria == null) {
             List<MechSummary> retVal = new ArrayList<>();
             retVal.addAll(tables.get(0).generateUnits(otherCriteria.get(0).getMinimum(numUnits.get(0)),
                     ms -> mainCriteria.test(ms) && otherCriteria.get(0).criterion.test(ms)));
@@ -398,6 +403,25 @@ public class FormationType {
                 pos++;
             }
         }
+        
+        /* Prepare an array for use with grouping constraints; a null at the unit's index indicates
+         * it is not part of a group. Any other value gives its position within the group, which
+         * can be used to find the first member of the group for comparison.
+         */
+        Integer[] gcIndex = new Integer[cUnits];
+        if (groupingCriteria != null && groupingCriteria.appliesTo(params.get(0).getUnitType())) {
+            int groupSize = Math.min(groupingCriteria.groupSize, numUnits.get(0));
+            int numGroups = 0;
+            if (groupSize > 0) {
+                numGroups = Math.min(groupingCriteria.numGroups, numUnits.get(0) / groupSize);
+            }
+            for (int g = 0; g < numGroups; g++) {
+                for (int i = 0; i < groupSize; i++) {
+                    gcIndex[g * groupSize + i] = i;
+                }
+            }
+        }
+        
         List<MechSummary> retVal = new ArrayList<>();
         List<Predicate<MechSummary>> filter = new ArrayList<>();
         while (!possibilities.isEmpty()) {
@@ -421,6 +445,13 @@ public class FormationType {
                 for (int j = 0; j < otherCriteria.size(); j++) {
                     if ((bitmasks[j] & 1) != 0) {
                         filter.add(otherCriteria.get(j).criterion);
+                    }
+                }
+                if (gcIndex[i] != null) {
+                    filter.add(groupingCriteria.generalConstraint);
+                    if (gcIndex[i] > 0) {
+                        final MechSummary base = retVal.get(i - gcIndex[i]);
+                        filter.add(ms -> groupingCriteria.groupConstraint.apply(base, ms));
                     }
                 }
                 MechSummary unit = tables.get(unitTableIndex[i])
@@ -483,6 +514,7 @@ public class FormationType {
         createRifleLance();
         createBerserkerLance();
         createCommandLance();
+        createOrderLance();
         createVehicleCommandLance();
         createFireLance();
         createAntiAirLance();
@@ -579,6 +611,9 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.SNIPER, UnitRole.SKIRMISHER)
                     .contains(getUnitRole(ms))));
+        ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
+                ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY,
+                (ms0, ms1) -> ms0.getName().equals(ms1.getName()));
         allFormationTypes.put(ft.name, ft);
     }
 
@@ -588,6 +623,9 @@ public class FormationType {
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT));
+        ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
+                ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT,
+                (ms0, ms1) -> ms0.getName().equals(ms1.getName()));
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -597,6 +635,9 @@ public class FormationType {
         ft.maxWeightClass = EntityWeightClass.WEIGHT_HEAVY;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM));
+        ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
+                ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM,
+                (ms0, ms1) -> ms0.getName().equals(ms1.getName()));
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -606,6 +647,9 @@ public class FormationType {
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY));
+        ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
+                ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
+                (ms0, ms1) -> ms0.getName().equals(ms1.getName()));
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -649,16 +693,30 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);
     }
     
+    private static void createOrderLance() {
+        FormationType ft = new FormationType("Order", "Command");
+        ft.allowedUnitTypes = FLAG_GROUND;
+        ft.groupingCriteria = new GroupingConstraint(FLAG_GROUND, Integer.MAX_VALUE, 1,
+                ms -> true,
+                (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis())
+                    && ms0.getWeightClass() == ms1.getWeightClass());
+        allFormationTypes.put(ft.name, ft);
+    }
+    
     private static void createVehicleCommandLance() {
         FormationType ft = new FormationType("Vehicle Command", "Command");
         ft.allowedUnitTypes = FLAG_TANK | FLAG_VTOL | FLAG_NAVAL;
-        ft.otherCriteria.add(new PercentConstraint(2,
-                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT, UnitRole.SKIRMISHER,
-                        UnitRole.JUGGERNAUT)
-                    .contains(getUnitRole(ms))));
         ft.otherCriteria.add(new CountConstraint(1,
                 ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.STRIKER, UnitRole.SCOUT)
                     .contains(getUnitRole(ms))));
+        /* The description does not state how many pairs there need to be, but the reference to
+         * "one of the pairs" implies there need to be at least two.
+         */
+        ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
+                ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT, UnitRole.SKIRMISHER,
+                        UnitRole.JUGGERNAUT)
+                    .contains(getUnitRole(ms)),
+                    (ms0, ms1) -> ms0.getName().equals(ms1.getName()));
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -881,7 +939,10 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_FIGHTER;
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> EnumSet.of(UnitRole.INTERCEPTOR, UnitRole.FAST_DOGFIGHTER).contains(getUnitRole(ms))));
-        allFormationTypes.put(ft.name, ft);                
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+                ms -> true,
+                (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()));
+        allFormationTypes.put(ft.name, ft);
     }
 
     private static void createEWSquadron() {
@@ -893,6 +954,9 @@ public class FormationType {
                         (et instanceof MiscType &&
                             (((MiscType)et).hasFlag(MiscType.F_BAP)
                             || ((MiscType)et).hasFlag(MiscType.F_ECM))))));
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+                ms -> true,
+                (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()));
         allFormationTypes.put(ft.name, ft);                
     }
 
@@ -903,6 +967,9 @@ public class FormationType {
                 UnitRole.DOGFIGHTER).contains(getUnitRole(ms));
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> getUnitRole(ms).equals(UnitRole.FIRE_SUPPORT)));
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+                ms -> true,
+                (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()));
         allFormationTypes.put(ft.name, ft);                
     }
 
@@ -911,6 +978,9 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_FIGHTER;
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> getUnitRole(ms).equals(UnitRole.INTERCEPTOR)));
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+                ms -> true,
+                (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()));
         allFormationTypes.put(ft.name, ft);                
     }
 
@@ -920,6 +990,9 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> EnumSet.of(UnitRole.ATTACK_FIGHTER,
                         UnitRole.DOGFIGHTER).contains(getUnitRole(ms))));
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+                ms -> true,
+                (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()));
         allFormationTypes.put(ft.name, ft);                
     }
 
@@ -928,6 +1001,9 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_FIGHTER | FLAG_SMALL_CRAFT | FLAG_DROPSHIP;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> getUnitRole(ms).equals(UnitRole.TRANSPORT)));
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+                ms -> true,
+                (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()));
         allFormationTypes.put(ft.name, ft);                
     }
 
@@ -994,6 +1070,45 @@ public class FormationType {
         @Override
         public int getMinimum(int unitSize) {
             return unitSize - (int)(pct * unitSize + 0.5);
+        }
+    }
+    
+    /*
+     * Permits additional constraints applied to a specific subset of the units.
+     * Used to force pairs (or larger groups) of units that are identical or have the same base
+     * chassis.
+     */
+    public static class GroupingConstraint {
+        int unitTypes = FLAG_ALL;
+        int groupSize = 2;
+        int numGroups = 1;
+        Predicate<MechSummary> generalConstraint;
+        BiFunction<MechSummary,MechSummary,Boolean> groupConstraint;
+        
+        public GroupingConstraint(Predicate<MechSummary> generalConstraint,
+                BiFunction<MechSummary,MechSummary,Boolean> groupConstraint) {
+            this.generalConstraint = generalConstraint;
+            this.groupConstraint = groupConstraint;            
+        }
+        
+        public GroupingConstraint(int unitTypes,
+                Predicate<MechSummary> generalConstraint,
+                BiFunction<MechSummary,MechSummary,Boolean> groupConstraint) {
+            this(generalConstraint, groupConstraint);
+            this.unitTypes = unitTypes;
+        }
+        
+        public GroupingConstraint(int unitTypes, int groupSize, int numGroups,
+                Predicate<MechSummary> generalConstraint,
+                BiFunction<MechSummary,MechSummary,Boolean> groupConstraint) {
+            this(generalConstraint, groupConstraint);
+            this.unitTypes = unitTypes;
+            this.groupSize = groupSize;
+            this.numGroups = numGroups;
+        }
+        
+        public boolean appliesTo(int unitType) {
+            return ((1 << unitType) & unitTypes) != 0;
         }
     }
 }

@@ -1056,7 +1056,7 @@ public class FormationType {
         
         @Override
         public int getMinimum(int unitSize) {
-            return (int)(pct * unitSize + 0.5);
+            return (int)Math.ceil(pct * unitSize);
         }
     }
     
@@ -1069,7 +1069,7 @@ public class FormationType {
         
         @Override
         public int getMinimum(int unitSize) {
-            return unitSize - (int)(pct * unitSize + 0.5);
+            return unitSize - (int)Math.ceil(pct * unitSize);
         }
     }
     

@@ -350,22 +350,17 @@ public class FormationType {
          */
         
         /* First group all possible values of k bits into lists keyed to the number of
-         * bits that are set. Algorithm for counting number of bits in a 32-bit integer
-         * from https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel.
+         * bits that are set.
          */
-        Map<Integer,List<Integer>> bitCountMap = IntStream.range(0, 1 << cUnits)
+        Map<Integer,List<Integer>> bitCountMask = IntStream.rangeClosed(0, 1 << cUnits)
                 .mapToObj(Integer::valueOf)
-                .collect(Collectors.groupingBy(v -> {
-                    v = v - ((v >> 1) & 0x55555555);
-                    v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
-                    return ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
-                }));
+                .collect(Collectors.groupingBy(Integer::bitCount));
         
         /* Calculate how many different possible combinations we can make and construct a list
          * of all values from 0 to total - 1. If a conforming unit cannot be constructed from
          * a chosen value, it can be removed from the list.
          */
-        int totalCombos = otherCriteria.stream().map(c -> bitCountMap.get(c.getMinimum(cUnits)).size())
+        int totalCombos = otherCriteria.stream().map(c -> bitCountMask.get(c.getMinimum(cUnits)).size())
             .reduce(1, (a, b) -> a * b);
         List<Integer> possibilities = IntStream.range(0, totalCombos).mapToObj(Integer::valueOf)
                 .collect(Collectors.toList());
@@ -386,12 +381,12 @@ public class FormationType {
             int index = Compute.randomInt(possibilities.size());
             int value = possibilities.get(index);
             
-            /* Decode the value and get the bitmap for each constraint */
-            int[] bitmaps = new int[otherCriteria.size()];
+            /* Decode the value and get the bitmask for each constraint */
+            int[] bitmasks = new int[otherCriteria.size()];
             for (int i = 0; i < otherCriteria.size(); i++) {
                 int min = otherCriteria.get(i).getMinimum(cUnits);
-                int cBitmaps = bitCountMap.get(min).size();
-                bitmaps[i] = bitCountMap.get(min).get(value % cBitmaps);
+                int cBitmaps = bitCountMask.get(min).size();
+                bitmasks[i] = bitCountMask.get(min).get(value % cBitmaps);
                 value /= cBitmaps;
             }
 
@@ -400,7 +395,7 @@ public class FormationType {
                 filter.clear();
                 filter.add(mainCriteria);
                 for (int j = 0; j < otherCriteria.size(); j++) {
-                    if ((bitmaps[j] & 1) != 0) {
+                    if ((bitmasks[j] & 1) != 0) {
                         filter.add(otherCriteria.get(j).criterion);
                     }
                 }
@@ -411,8 +406,8 @@ public class FormationType {
                     break;
                 } else {
                     retVal.add(unit);
-                    for (int j = 0; j < bitmaps.length; j++) {
-                        bitmaps[j] >>= 1;
+                    for (int j = 0; j < bitmasks.length; j++) {
+                        bitmasks[j] >>= 1;
                     }
                 }
             }

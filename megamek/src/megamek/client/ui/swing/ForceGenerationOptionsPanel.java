@@ -89,6 +89,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         UnitType.VTOL, UnitType.NAVAL, UnitType.CONV_FIGHTER, UnitType.AERO, UnitType.SMALL_CRAFT,
         UnitType.DROPSHIP, UnitType.JUMPSHIP, UnitType.WARSHIP
     };
+    private static final int EARLIEST_YEAR = 2398;
+    private static final int LATEST_YEAR = 3150;
 
     public ForceGenerationOptionsPanel() {
         this(null);
@@ -433,10 +435,10 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         if (e.getSource().equals(txtYear)) {
             try {
                 ratGenYear = Integer.parseInt(txtYear.getText());
-                if (ratGenYear < RATGenerator.getInstance().getEraSet().first()) {
-                    ratGenYear = RATGenerator.getInstance().getEraSet().first();
-                } else if (ratGenYear > RATGenerator.getInstance().getEraSet().last()) {
-                    ratGenYear = RATGenerator.getInstance().getEraSet().last();
+                if (ratGenYear < EARLIEST_YEAR) {
+                    ratGenYear = EARLIEST_YEAR;
+                } else if (ratGenYear > LATEST_YEAR) {
+                    ratGenYear = LATEST_YEAR;
                 }
             } catch (NumberFormatException ex) {
                 //ignore and restore to previous value

@@ -62,7 +62,6 @@ import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
-import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
@@ -181,7 +180,6 @@ WindowListener, TreeSelectionListener {
             m_ratStatus = new JLabel(Messages
                     .getString("RandomArmyDialog.ratStatusLoading"));
         }
-        RATGenerator.getInstance().registerListener(this);
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
                 m_client.getGame().getOptions().intOption("year"));

@@ -946,7 +946,8 @@ public class RATGenerator {
      */
     public void notifyListenersOfInitialization(){
         if (initialized){
-            for (ActionListener l : listeners){
+            // Possibility of adding a new listener during notification.
+            for (ActionListener l : new ArrayList<>(listeners)){
                 l.actionPerformed(new ActionEvent(
                         this,ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
             }

@@ -266,6 +266,12 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             add(panUnitTypeOptions, c);            
         }
         cbUnitType.setSelectedItem(0);
+        if (!RATGenerator.getInstance().isInitialized()) {
+            RATGenerator.getInstance().registerListener(this);
+        }
+        if (RATGenerator.getInstance().isInitialized()) {
+            updateFactionChoice();
+        }
     }
     
     public int getNumUnits() {
@@ -297,8 +303,11 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
     }
 
     public void setYear(int year) {
+        ratGenYear = year;
         txtYear.setText(String.valueOf(year));
-        updateFactionChoice();
+        if (RATGenerator.getInstance().isInitialized()) {
+            updateFactionChoice();
+        }
     }
     
     public Integer getIntegerOption(String key) {
@@ -407,6 +416,10 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             if (panUnitTypeOptions != null) {
                 panUnitTypeOptions.optionsChanged();
             }
+        } else if (ev.getActionCommand().equals("ratGenInitialized")) {
+            updateFactionChoice();
+            RATGenerator.getInstance().removeListener(this);
+            RATGenerator.getInstance().loadYear(ratGenYear);
         }
     }
 

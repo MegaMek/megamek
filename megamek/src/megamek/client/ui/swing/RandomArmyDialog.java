@@ -27,28 +27,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -78,7 +67,6 @@ import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
-import megamek.common.EntityWeightClass;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -115,9 +103,9 @@ WindowListener, TreeSelectionListener {
     private JPanel m_pRAT = new JPanel();
     private JPanel m_pRATGen = new JPanel();
     private JPanel m_pFormations = new JPanel();
-    private ForceGenerationOptionsPanel m_pRATGenOptions = new ForceGenerationOptionsPanel();
+    private ForceGenerationOptionsPanel m_pRATGenOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR);
     private JPanel m_pUnitTypeOptions = new JPanel(new CardLayout());
-    private ForceGenerationOptionsPanel m_pFormationOptions = new ForceGenerationOptionsPanel();
+    private ForceGenerationOptionsPanel m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER);
     private JPanel m_pFormationTypes = new JPanel();
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
@@ -392,21 +380,6 @@ WindowListener, TreeSelectionListener {
         m_pRATGenOptions.setYear(m_clientgui.getClient().getGame().getOptions()
                 .intOption("year"));
         
-        List<Integer> ratGenUnitTypes = IntStream.range(0, UnitType.SIZE)
-                .filter(ut -> ut != UnitType.GUN_EMPLACEMENT && ut != UnitType.SPACE_STATION)
-                .mapToObj(Integer::valueOf)
-                .collect(Collectors.toList());
-        m_pRATGenOptions.setUnitTypes(ratGenUnitTypes);
-
-        Map<String,JPanel> cardMap = new HashMap<>();
-        for (int ut : ratGenUnitTypes) {
-            String unitType = UnitType.getTypeName(ut);
-            UnitTypeOptionsPanel card = new UnitTypeOptionsPanel(ut);
-            cardMap.put(UnitType.getTypeName(ut), card);
-            m_pUnitTypeOptions.add(card, unitType);
-        };
-        m_pRATGenOptions.setUnitTypePanelContainer(m_pUnitTypeOptions, cardMap, false);
-
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -462,9 +435,6 @@ WindowListener, TreeSelectionListener {
         c.weighty = 0.5;
         m_pRATGen.add(new JScrollPane(m_lRAT), c);
 
-        CardLayout cards = (CardLayout)m_pUnitTypeOptions.getLayout();
-        cards.show(m_pUnitTypeOptions, m_pRATGenOptions.getUnitType());
-        
         // formation builder tab
         m_pFormations.setLayout(new GridBagLayout());
 
@@ -480,21 +450,6 @@ WindowListener, TreeSelectionListener {
         m_pFormationOptions.setYear(m_clientgui.getClient().getGame().getOptions()
                 .intOption("year"));
         
-        final Integer[] formationUnitTypes = {UnitType.MEK, UnitType.TANK,
-                UnitType.VTOL, UnitType.AERO, UnitType.CONV_FIGHTER};
-        m_pFormationOptions.setUnitTypes(Arrays.asList(formationUnitTypes));
-
-        m_pFormationTypes.setLayout(new CardLayout());
-        cardMap = new HashMap<>();
-        FormationTypesPanel groundCard = new FormationTypesPanel(true);
-        FormationTypesPanel airCard = new FormationTypesPanel(false);
-        m_pFormationTypes.add(groundCard, "ground");
-        m_pFormationTypes.add(airCard, "air");
-        for (int ut : formationUnitTypes) {
-            cardMap.put(UnitType.getTypeName(ut), ut < UnitType.CONV_FIGHTER ? groundCard : airCard);
-        }
-        m_pFormationOptions.setUnitTypePanelContainer(m_pFormationTypes, cardMap, true);
-
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -692,12 +647,10 @@ WindowListener, TreeSelectionListener {
                 } else if (m_pMain.getSelectedIndex() == 3) {
                     ArrayList<MechSummary> unitList = new ArrayList<>();
                     FactionRecord fRec = m_pFormationOptions.getFaction();
-                    FormationTypesPanel panFt = (FormationTypesPanel)m_pFormationOptions
-                            .getUnitTypePanel(m_pFormationOptions.getUnitType());
-                    FormationType ft = FormationType.getFormationType(panFt.getFormation());
+                    FormationType ft = FormationType.getFormationType(m_pFormationOptions.getStringOption("formationType"));
                     List<UnitTable.Parameters> params = new ArrayList<>();
                     params.add(new UnitTable.Parameters(fRec,
-                            ModelRecord.parseUnitType(m_pFormationOptions.getUnitType()),
+                            m_pFormationOptions.getUnitType(),
                             m_pFormationOptions.getYear(),
                             m_pFormationOptions.getRating(), null, ModelRecord.NETWORK_NONE,
                             java.util.EnumSet.noneOf(EntityMovementMode.class),
@@ -705,20 +658,22 @@ WindowListener, TreeSelectionListener {
                     List<Integer> numUnits = new ArrayList<>();
                     numUnits.add(m_pFormationOptions.getNumUnits());
                     
-                    if (panFt.numOtherUnits() > 0) {
-                        if (panFt.getOtherUnitType() >= 0) {
-                            params.add(new UnitTable.Parameters(fRec, panFt.getOtherUnitType(),
+                    if (m_pFormationOptions.getIntegerOption("numOtherUnits") > 0) {
+                        if (m_pFormationOptions.getIntegerOption("otherUnitType") >= 0) {
+                            params.add(new UnitTable.Parameters(fRec,
+                                    m_pFormationOptions.getIntegerOption("otherUnitType"),
                                     m_pFormationOptions.getYear(), m_pFormationOptions.getRating(), null,
                                     ModelRecord.NETWORK_NONE,
                                     java.util.EnumSet.noneOf(EntityMovementMode.class),
                                     java.util.EnumSet.noneOf(MissionRole.class), 0, fRec));
-                            numUnits.add(panFt.numOtherUnits());
-                        } else if (panFt.mechBA()) {
+                            numUnits.add(m_pFormationOptions.getIntegerOption("numOtherUnits"));
+                        } else if (m_pFormationOptions.getBooleanOption("mechBA")) {
                             // Make sure at least a number units equals to the number of BA points/squads are omni
-                            numUnits.set(0, Math.min(panFt.numOtherUnits(), m_pFormationOptions.getNumUnits()));
-                            if (m_pFormationOptions.getNumUnits() > panFt.numOtherUnits()) {
+                            numUnits.set(0, Math.min(m_pFormationOptions.getIntegerOption("numOtherUnits"),
+                                    m_pFormationOptions.getNumUnits()));
+                            if (m_pFormationOptions.getNumUnits() > m_pFormationOptions.getIntegerOption("numOtherUnits")) {
                                 params.add(params.get(0).copy());
-                                numUnits.add(m_pFormationOptions.getNumUnits() - panFt.numOtherUnits());
+                                numUnits.add(m_pFormationOptions.getNumUnits() - m_pFormationOptions.getIntegerOption("numOtherUnits"));
                             }
                             params.get(0).getRoles().add(MissionRole.MECHANIZED_BA);
                             //BA do not count for formation rules; add as a separate formation
@@ -728,8 +683,8 @@ WindowListener, TreeSelectionListener {
                     if (ft != null) {
                         unitList.addAll(ft.generateFormation(params,
                                 numUnits, false));
-                        if (unitList.size() > 0 && panFt.numOtherUnits() > 0) {
-                            if (panFt.mechBA()) {
+                        if (unitList.size() > 0 && m_pFormationOptions.getIntegerOption("numOtherUnits") > 0) {
+                            if (m_pFormationOptions.getBooleanOption("mechBA")) {
                                 /* Try to generate the BA portion using the same formation type as the
                                  * parent, otherwise generate randomly.
                                  */
@@ -739,12 +694,12 @@ WindowListener, TreeSelectionListener {
                                         java.util.EnumSet.noneOf(EntityMovementMode.class),
                                         java.util.EnumSet.of(MissionRole.MECHANIZED_BA), 0, fRec);
                                 List<MechSummary> ba = ft.generateFormation(p,
-                                        panFt.numOtherUnits(), true);
+                                        m_pFormationOptions.getIntegerOption("numOtherUnits"), true);
                                 if (ba.isEmpty()) {
-                                    ba = UnitTable.findTable(p).generateUnits(panFt.numOtherUnits());
+                                    ba = UnitTable.findTable(p).generateUnits(m_pFormationOptions.getIntegerOption("numOtherUnits"));
                                 }
                                 unitList.addAll(ba);
-                            } else if (panFt.airLance()) {
+                            } else if (m_pFormationOptions.getBooleanOption("airLance")) {
                                 UnitTable t = UnitTable.findTable(fRec, UnitType.AERO,
                                         m_pFormationOptions.getYear(), m_pFormationOptions.getRating(), null,
                                         ModelRecord.NETWORK_NONE,
@@ -763,7 +718,7 @@ WindowListener, TreeSelectionListener {
                             }
                         }
                     } else {
-                        System.err.println("Could not find formation type " + panFt.getFormation());
+                        System.err.println("Could not find formation type " + m_pFormationOptions.getStringOption("formationType"));
                     }                      
                     unitsModel.setData(unitList);
                 } else {
@@ -947,15 +902,17 @@ WindowListener, TreeSelectionListener {
         return null;
     }
     
+    @SuppressWarnings("unchecked")
     private void generateRAT() {
     	FactionRecord fRec = m_pRATGenOptions.getFaction();
     	if (fRec != null) {
-			UnitTypeOptionsPanel panOptions = (UnitTypeOptionsPanel)m_pRATGenOptions.getUnitTypePanel(m_pRATGenOptions.getUnitType());
-			generatedRAT = UnitTable.findTable(fRec, ModelRecord.parseUnitType(m_pRATGenOptions.getUnitType()),
+			generatedRAT = UnitTable.findTable(fRec, m_pRATGenOptions.getUnitType(),
 			        m_pRATGenOptions.getYear(), m_pRATGenOptions.getRating(),
-					panOptions.getSelectedWeights(),
-					panOptions.getNetworkMask(), panOptions.getMotiveTypes(),
-					panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
+			        (List<Integer>)m_pRATGenOptions.getListOption("weightClasses"),
+					m_pRATGenOptions.getIntegerOption("networkMask"),
+					(List<EntityMovementMode>)m_pRATGenOptions.getListOption("motiveTypes"),
+					(List<MissionRole>)m_pRATGenOptions.getListOption("roles"),
+					m_pRATGenOptions.getIntegerOption("roleStrictness"));
 			ratModel.refreshData();
     	}
     }
@@ -1152,504 +1109,6 @@ WindowListener, TreeSelectionListener {
 		    	}
         	}
 		   	return "";
-        }
-    }
-    
-    /**
-     * Options that vary according to unit type
-     *
-     */
-    
-    class UnitTypeOptionsPanel extends JPanel {
-    	/**
-		 * 
-		 */
-		private static final long serialVersionUID = -3961143911841133921L;
-
-		private JComboBox<String> cbWeightClass = new JComboBox<String>();
-		private ArrayList<JCheckBox> weightChecks = new ArrayList<JCheckBox>();
-		private JComboBox<String> cbRoleStrictness = new JComboBox<String>();
-		private ArrayList<JCheckBox> roleChecks = new ArrayList<JCheckBox>();
-		private ButtonGroup networkButtons = new ButtonGroup();
-		private ArrayList<JCheckBox> subtypeChecks = new ArrayList<JCheckBox>();
-    	
-    	public UnitTypeOptionsPanel(int unitType) {
-    		super(new BorderLayout());
-
-    		JPanel panWeightClass = new JPanel(new GridBagLayout());
-            panWeightClass.setBorder(BorderFactory.createTitledBorder(Messages
-                    .getString("RandomArmyDialog.WeightClass")));
-            add(panWeightClass, BorderLayout.WEST);
-            
-    		JPanel panRoles = new JPanel(new GridBagLayout());
-    		panRoles.setBorder(BorderFactory.createTitledBorder(Messages
-            		.getString("RandomArmyDialog.MissionRole")));
-            
-            JPanel panStrictness = new JPanel();
-            panStrictness.add(new JLabel(Messages.getString("RandomArmyDialog.Strictness")));
-            cbRoleStrictness.setToolTipText(Messages.getString("RandomArmyDialog.Strictness.tooltip"));
-    		cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.Low"));
-    		cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.Medium"));
-    		cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.High"));
-    		cbRoleStrictness.setSelectedIndex(1);
-    		panStrictness.add(cbRoleStrictness);
-    		
-            GridBagConstraints c = new GridBagConstraints();
-            c.gridx = 0;
-            c.gridy = 0;
-            c.gridwidth = GridBagConstraints.REMAINDER;
-            c.fill = GridBagConstraints.NONE;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.weightx = 0.0;
-            c.weighty = 0.0;
-            panRoles.add(panStrictness, c);
-            
-            add(panRoles, BorderLayout.CENTER);
-
-            JPanel panNetwork = new JPanel(new GridBagLayout());
-            panNetwork.setBorder(BorderFactory.createTitledBorder(Messages
-            		.getString("RandomArmyDialog.Network")));
-    		add(panNetwork, BorderLayout.EAST);
-    		
-    		JPanel panMotive = new JPanel();
-    		add(panMotive, BorderLayout.NORTH);
-    		
-    		switch(unitType) {
-    		case UnitType.MEK:
-    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
-    					EntityWeightClass.WEIGHT_COLOSSAL, false);
-    			break;
-    		case UnitType.TANK:
-    		case UnitType.NAVAL:
-    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
-    					EntityWeightClass.WEIGHT_ASSAULT, false);
-    			break;
-    		case UnitType.PROTOMEK:    			
-    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
-    					EntityWeightClass.WEIGHT_ASSAULT, true);
-    			break;
-    		case UnitType.BATTLE_ARMOR:
-    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
-    					EntityWeightClass.WEIGHT_ASSAULT, true);
-    			break;
-    		case UnitType.AERO:
-    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
-    					EntityWeightClass.WEIGHT_HEAVY, false);
-    			break;
-    		case UnitType.DROPSHIP:
-    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_SMALL_DROP,
-    					EntityWeightClass.WEIGHT_LARGE_DROP, true);
-    			break;
-    		case UnitType.WARSHIP:
-    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_SMALL_WAR,
-    					EntityWeightClass.WEIGHT_LARGE_WAR, true);
-    			break;
-    		default:
-    			panWeightClass.setVisible(false);
-    		}
-    		
-    		for (MissionRole role : MissionRole.values()) {
-    			if (role.fitsUnitType(unitType)) {
-    				JCheckBox chk = new JCheckBox(Messages.getString("MissionRole."
-    						+ role.toString()));
-    				chk.setToolTipText(Messages.getString("MissionRole."
-    						+ role.toString() + ".tooltip"));
-    				chk.setName(role.toString());
-    				roleChecks.add(chk);
-    			}
-    		}
-    		Collections.sort(roleChecks, (c1, c2) -> c1.getText().compareTo(c2.getText()));
-            c = new GridBagConstraints();
-            c.gridwidth = 1;
-            c.fill = GridBagConstraints.NONE;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.weightx = 0.0;
-            c.weighty = 0.0;
-			for (int i = 0; i < roleChecks.size(); i++) {
-				c.gridx = i % 3;
-				c.gridy = i / 3 + 1;
-				if (c.gridx == 2) {
-    				c.weightx = 1.0;
-				} else {
-					c.weightx = 0.0;
-				}
-    			if (i == roleChecks.size() - 1) {
-    				c.weighty = 1.0;
-    			}
-				panRoles.add(roleChecks.get(i), c);
-			}
-			
-            c = new GridBagConstraints();
-            c.gridx = 0;
-            c.gridy = 0;
-            c.gridwidth = 1;
-            c.fill = GridBagConstraints.NONE;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.weightx = 0.0;
-            c.weighty = 0.0;
-
-			switch (unitType) {
-			case UnitType.MEK:
-			case UnitType.TANK:
-			case UnitType.VTOL:
-			case UnitType.NAVAL:
-			case UnitType.CONV_FIGHTER:
-			case UnitType.AERO:
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.NoNetwork"),
-						ModelRecord.NETWORK_NONE);
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3S"),
-						ModelRecord.NETWORK_C3_SLAVE);
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3M"),
-						ModelRecord.NETWORK_C3_MASTER);
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3I"),
-						ModelRecord.NETWORK_C3I);
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3SB"),
-						ModelRecord.NETWORK_BOOSTED_SLAVE);
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3MB"),
-						ModelRecord.NETWORK_BOOSTED_MASTER);
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3CC"),
-						ModelRecord.NETWORK_COMPANY_COMMAND);
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3CCB"),
-						ModelRecord.NETWORK_COMPANY_COMMAND|ModelRecord.NETWORK_BOOSTED);
-				c.weighty = 1.0;
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.Nova"),
-						ModelRecord.NETWORK_NOVA);
-				break;
-			case UnitType.BATTLE_ARMOR:
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.NoNetwork"),
-						ModelRecord.NETWORK_NONE);
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3BA"),
-						ModelRecord.NETWORK_BA_C3);
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3BAB"),
-						ModelRecord.NETWORK_BOOSTED_SLAVE);
-				c.weighty = 1.0;
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3I"),
-						ModelRecord.NETWORK_C3I);
-				break;
-			case UnitType.DROPSHIP:
-			case UnitType.JUMPSHIP:
-			case UnitType.WARSHIP:
-			case UnitType.SPACE_STATION:
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.NoNetwork"),
-						ModelRecord.NETWORK_NONE);
-				c.weighty = 1.0;
-				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3N"),
-						ModelRecord.NETWORK_NAVAL_C3);
-				break;
-			}
-			
-			switch(unitType) {
-			case UnitType.TANK:
-				panMotive.add(createSubtypeCheck("hover", true));
-				panMotive.add(createSubtypeCheck("tracked", true));
-				panMotive.add(createSubtypeCheck("wheeled", true));
-				panMotive.add(createSubtypeCheck("wige", true));
-				panMotive.add(createSubtypeCheck("vtol", false));
-				break;
-			case UnitType.INFANTRY:
-				panMotive.add(createSubtypeCheck("leg", true));
-				panMotive.add(createSubtypeCheck("jump", true));
-				panMotive.add(createSubtypeCheck("motorized", true));
-				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.hover"),
-						"hover", true));
-				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.tracked"),
-						"tracked", true));
-				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.wheeled"),
-						"wheeled", true));
-				break;
-			case UnitType.BATTLE_ARMOR:
-				panMotive.add(createSubtypeCheck("leg", true));
-				panMotive.add(createSubtypeCheck("jump", true));
-				panMotive.add(createSubtypeCheck("umu", true));
-				break;
-			case UnitType.NAVAL:
-				panMotive.add(createSubtypeCheck("naval", true));
-				panMotive.add(createSubtypeCheck("hydrofoil", true));
-				panMotive.add(createSubtypeCheck("submarine", true));
-				break;
-			case UnitType.DROPSHIP:
-				panMotive.add(createSubtypeCheck("aerodyne", true));
-				panMotive.add(createSubtypeCheck("spheroid", true));
-				break;
-			}
-    	}
-    	
-    	private void addWeightClasses(JPanel panel, int start, int end, boolean all) {
-            cbWeightClass.addItem(Messages.getString("RandomArmyDialog.Mixed"));
-            GridBagConstraints c = new GridBagConstraints();
-            c.gridx = 1;
-            c.gridy = 0;
-            c.gridwidth = 1;
-            c.fill = GridBagConstraints.NONE;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.weightx = 0.0;
-            c.weighty = 0.0;
-    		panel.add(cbWeightClass);
-    		
-    		c.gridx = 0;
-    		c.gridwidth = 2;
-    		for(int i = start; i <= end; i++) {
-    			String name = Messages.getString("RandomArmyDialog.weight_class_" + i);
-    			cbWeightClass.addItem(name);
-    			JCheckBox chk = new JCheckBox(name);
-    			chk.setName(String.valueOf(i));
-    			chk.setSelected(all);
-    			weightChecks.add(chk);
-    			c.gridy++;
-    			if (i == end) {
-    				c.weightx = 1.0;
-    				c.weighty = 1.0;
-    			}
-    			panel.add(chk, c);
-    		}
-    		cbWeightClass.addActionListener(e -> {
-    			for (JCheckBox chk : weightChecks) {
-    				chk.setEnabled(cbWeightClass.getSelectedIndex() == 0);
-    			}
-    		});
-    		if (all) {
-    			cbWeightClass.setSelectedIndex(0);
-    		} else if (start > EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
-    			cbWeightClass.setSelectedIndex(1);
-    		} else {
-    			cbWeightClass.setSelectedIndex(2);
-    		}
-    	}
-    	
-    	private void addNetworkButton(JPanel panel, GridBagConstraints constraints,
-    			ButtonGroup group, String text, int mask) {
-    		JRadioButton btn = new JRadioButton(text);
-    		btn.setActionCommand(String.valueOf(mask));
-    		btn.setSelected(mask == ModelRecord.NETWORK_NONE);
-    		panel.add(btn, constraints);
-    		group.add(btn);
-    		constraints.gridy++;
-    	}
-    	
-    	private JCheckBox createSubtypeCheck(String name, boolean select) {
-    		return createSubtypeCheck(Messages.getString("RandomArmyDialog.Motive." + name),
-    				name, select);
-    	}
-    	
-    	private JCheckBox createSubtypeCheck(String text, String name, boolean select) {
-    		JCheckBox chk = new JCheckBox(text);
-    		chk.setName(name);
-    		chk.setSelected(select);
-    		subtypeChecks.add(chk);
-    		return chk;
-    	}
-    	
-    	public List<Integer> getSelectedWeights() {
-    		if (cbWeightClass.getSelectedIndex() > 0) {
-    			ArrayList<Integer> retVal = new ArrayList<Integer>();
-    			retVal.add(Integer.parseInt(weightChecks
-    					.get(cbWeightClass.getSelectedIndex() - 1).getName()));
-    			return retVal;
-    		}
-    		return weightChecks.stream().filter(chk -> chk.isSelected())
-    				.map(chk -> Integer.parseInt(chk.getName())).collect(Collectors.toList());
-    	}
-
-    	public List<MissionRole> getSelectedRoles() {
-    		return roleChecks.stream().filter(chk -> chk.isSelected())
-    				.map(chk -> MissionRole.parseRole(chk.getName()))
-    					.filter(role -> role != null).collect(Collectors.toList());
-    	}
-    	
-    	public int getRoleStrictness() {
-    		return cbRoleStrictness.getSelectedIndex() + 1;
-    	}
-    	
-    	public int getNetworkMask() {
-    		if (networkButtons.getSelection() != null) {
-    			return Integer.valueOf(networkButtons.getSelection().getActionCommand());
-    		}
-    		return ModelRecord.NETWORK_NONE;
-    	}
-    	
-    	public List<EntityMovementMode> getMotiveTypes() {
-    		return subtypeChecks.stream().filter(chk -> chk.isSelected())
-    				.map(chk -> EntityMovementMode.getMode(chk.getName())).collect(Collectors.toList());
-    	}
-    }
-    
-    class FormationTypesPanel extends JPanel {
-
-        private static final long serialVersionUID = 1439149790457737700L;
-
-        private JRadioButton bSimpleFormation = new JRadioButton(Messages.getString("RandomArmyDialog.simpleFormation"));
-        private JRadioButton bMechBA = new JRadioButton(Messages.getString("RandomArmyDialog.mechBA"));
-        private JRadioButton bAirLance = new JRadioButton(Messages.getString("RandomArmyDialog.airLance"));
-        private JRadioButton bOtherUnitType = new JRadioButton(Messages.getString("RandomArmyDialog.otherUnitType"));
-        private JComboBox<String> chOtherUnitType = new JComboBox<>();
-        private JTextField tNumUnits = new JTextField("0");
-        private ButtonGroup formationBtnGroup = new ButtonGroup();
-        
-        public FormationTypesPanel(boolean groundUnit) {
-            setLayout(new GridBagLayout());
-            
-            JPanel panFormations = new JPanel(new GridBagLayout());
-            JPanel panOtherOptions = new JPanel(new GridBagLayout());
-            
-            GridBagConstraints c = new GridBagConstraints();
-            c.gridx = 0;
-            c.gridy = 0;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.weightx = 0.5;
-            c.weighty = 1.0;
-            add(panFormations, c);
-            
-            c.gridx = 1;
-            c.gridy = 0;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.weightx = 0.5;
-            c.weighty = 0.0;
-            add(panOtherOptions, c);
-            
-            // Sort main types alphabetically, and subtypes alphabetically within the main.
-            List<FormationType> formations = FormationType.getAllFormations().stream()
-                    .filter(ft -> ft.isGround() == groundUnit).collect(Collectors.toList());
-            Map<String,Set<String>> formationGroups = formations.stream()
-                    .collect(Collectors.groupingBy(FormationType::getCategory, TreeMap::new,
-                            Collectors.mapping(FormationType::getName,
-                                    Collectors.toCollection(TreeSet::new))));
-                
-            int rows = (formations.size() + 1) / 2;
-
-            c = new GridBagConstraints();
-            c.gridx = 2;
-            c.gridy = 0;
-            c.gridwidth = 1;
-            c.anchor = GridBagConstraints.WEST;
-            c.fill = GridBagConstraints.NONE;
-            c.weightx = 0.0;
-            c.weighty = 0.0;
-            
-            Insets mainInsets = new Insets(0, 10, 0, 10);
-            Insets subInsets = new Insets(0, 30, 0, 10);
-            for (String group : formationGroups.keySet()) {
-                c.insets = mainInsets;
-                if (formationGroups.get(group).contains(group)) {
-                    JRadioButton btn = new JRadioButton(group);
-                    if (formationBtnGroup.getButtonCount() == 0) {
-                        btn.setSelected(true);
-                    }
-                    btn.setActionCommand(group);
-                    panFormations.add(btn, c);
-                    formationBtnGroup.add(btn);
-                    formationGroups.get(group).remove(group);
-                } else {
-                    JLabel lbl = new JLabel(group, SwingConstants.LEFT);
-                    panFormations.add(lbl, c);
-                }
-                c.gridy++;
-                c.insets = subInsets;
-                for (String form : formationGroups.get(group)) {
-                    JRadioButton btn = new JRadioButton(form);
-                    if (formationBtnGroup.getButtonCount() == 0) {
-                        btn.setSelected(true);
-                    }
-                    btn.setActionCommand(form);
-                    panFormations.add(btn, c);
-                    formationBtnGroup.add(btn);
-                    c.gridy++;
-                }
-                if (c.gridy >= rows) {
-                    c.gridx++;
-                    c.gridy = 0;
-                }
-            }
-            
-            ButtonGroup btnGroup = new ButtonGroup();            
-            c.gridx = 0;
-            c.gridy = 0;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.gridwidth = 2;
-            c.fill = GridBagConstraints.NONE;
-            c.weightx = 0.0;
-            c.weighty = 0.0;
-            panOtherOptions.add(bSimpleFormation, c);
-            bSimpleFormation.addItemListener(ev -> tNumUnits.setEnabled(!bSimpleFormation.isSelected()));
-            btnGroup.add(bSimpleFormation);
-            
-            c.gridx = 0;
-            c.gridy = 1;
-            c.anchor = GridBagConstraints.NORTHWEST;
-            c.gridwidth = 2;
-            c.fill = GridBagConstraints.NONE;
-            c.weightx = 0.0;
-            c.weighty = 0.0;
-            panOtherOptions.add(bMechBA, c);
-            btnGroup.add(bMechBA);
-            
-            c.gridy = 2;
-            c.gridwidth = 2;
-            panOtherOptions.add(bAirLance, c);
-            btnGroup.add(bAirLance);
-            
-            c.gridy = 3;
-            c.gridwidth = 2;
-            panOtherOptions.add(bOtherUnitType, c);
-            btnGroup.add(bOtherUnitType);
-            bOtherUnitType.addItemListener(ev -> chOtherUnitType.setEnabled(bOtherUnitType.isSelected()));
-            
-            c.gridx = 0;
-            c.gridy = 4;
-            c.gridwidth = 2;
-            panOtherOptions.add(chOtherUnitType, c);
-            chOtherUnitType.setEnabled(false);
-            for (int i = 0; i < UnitType.JUMPSHIP; i++) {
-                if (i != UnitType.GUN_EMPLACEMENT) {
-                    chOtherUnitType.addItem(UnitType.getTypeName(i));
-                }
-            }
-            
-            c = new GridBagConstraints();
-            c.gridx = 0;
-            c.gridy = 5;
-            c.gridwidth = 1;
-            panOtherOptions.add(new JLabel(Messages.getString("RandomArmyDialog.additionalUnits")), c);
-            c.gridx = 1;
-            c.gridy = 5;
-            c.gridwidth = 1;
-            panOtherOptions.add(tNumUnits, c);
-
-            bSimpleFormation.setSelected(true);
-        }
-        
-        public String getFormation() {
-            if (formationBtnGroup.getSelection() != null) {
-                return formationBtnGroup.getSelection().getActionCommand();
-            }
-            return null;
-        }
-        
-        public boolean simpleFormation() {
-            return bSimpleFormation.isSelected();
-        }
-        
-        public boolean mechBA() {
-            return bMechBA.isSelected();
-        }
-        
-        public boolean airLance() {
-            return bAirLance.isSelected();
-        }
-        
-        public int numOtherUnits() {
-            try {
-                return Integer.parseInt(tNumUnits.getText());
-            } catch (NumberFormatException ex) {
-                tNumUnits.setText("0");
-                return 0;
-            }
-        }
-        
-        public int getOtherUnitType() {
-            if (bOtherUnitType.isSelected() && chOtherUnitType.getSelectedIndex() > 0) {
-                return ModelRecord.parseUnitType((String)chOtherUnitType.getSelectedItem());
-            }
-            return -1;
         }
     }
 }

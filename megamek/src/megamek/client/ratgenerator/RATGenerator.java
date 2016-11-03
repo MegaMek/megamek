@@ -422,7 +422,8 @@ public class RATGenerator {
 				//Find the totals of the weight for the generated table 
 				double totalMRWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 				//Find the sum of the weight distribution values for all weight classes in use.
-				int totalWCDWeights = weightClasses.stream().mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
+				int totalWCDWeights = weightClasses.stream().filter(wc -> wc < wcdIndex.length)
+				        .mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
 				
 				if (totalWCDWeights > 0) {
 					//Group all the models of the generated table by weight class.

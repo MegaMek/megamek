@@ -171,7 +171,7 @@ public class FormationType {
     private UnitRole idealRole = UnitRole.UNDETERMINED;
     
     private int minWeightClass = 0;
-    private int maxWeightClass = EntityWeightClass.SIZE;
+    private int maxWeightClass = EntityWeightClass.WEIGHT_COLOSSAL;
     // Used as a filter when generating units
     private Predicate<MechSummary> mainCriteria = ms -> true;
     // Additional criteria that have to be fulfilled by a portion of the force
@@ -214,6 +214,10 @@ public class FormationType {
         return maxWeightClass;
     }
     
+    public Set<MissionRole> getMissionRoles() {
+        return missionRoles;
+    }
+    
     public Predicate<MechSummary> getMainCriteria() {
         return mainCriteria;
     }
@@ -228,6 +232,10 @@ public class FormationType {
     
     public GroupingConstraint getGroupingCriteria() {
         return groupingCriteria;
+    }
+    
+    public int getReportMetricsSize() {
+        return reportMetrics.size();
     }
     
     public Iterator<String> getReportMetricKeys() {
@@ -266,7 +274,7 @@ public class FormationType {
                         .findFirst();
                     if (ammo.isPresent()) {
                         damage = ((AmmoType)ammo.get()).getDamagePerShot()
-                                * ((AmmoType)ammo.get()).getRackSize();
+                                * Math.max(1, ((AmmoType)ammo.get()).getRackSize());
                     }
                 } else {
                     damage = weapon.getDamage(range);
@@ -596,7 +604,7 @@ public class FormationType {
         ft.otherCriteria.add(new CountConstraint(2,
                 ms -> EnumSet.of(UnitRole.JUGGERNAUT, UnitRole.SNIPER).contains(getUnitRole(ms)),
                 "Juggernaut or Sniper"));
-        ft.reportMetrics.put("Armor", ms -> ms.getTons());
+        ft.reportMetrics.put("Armor", ms -> ms.getTotalArmor());
         ft.reportMetrics.put("Damage @ 7", ms -> getDamageAtRange(ms, 7));
         allFormationTypes.put(ft.name, ft);
     }
@@ -1147,6 +1155,9 @@ public class FormationType {
         public abstract int getMinimum(int unitSize);
         public String getDescription() {
             return description;
+        }
+        public boolean matches(MechSummary ms) {
+            return criterion.test(ms);
         }
     }
     

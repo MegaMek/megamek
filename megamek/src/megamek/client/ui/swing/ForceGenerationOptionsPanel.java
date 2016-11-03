@@ -27,6 +27,7 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -35,11 +36,13 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -54,6 +57,8 @@ import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
+import megamek.client.ratgenerator.UnitTable;
+import megamek.client.ratgenerator.UnitTable.Parameters;
 import megamek.client.ui.Messages;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
@@ -1069,6 +1074,14 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             panOtherOptions.add(tNumUnits, c);
 
             bSimpleFormation.setSelected(true);
+            
+            c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 6;
+            c.gridwidth = 1;            
+            JButton btn = new JButton(Messages.getString("ForceGenerationOptions.formationAnalysis"));
+            panOtherOptions.add(btn, c);
+            btn.addActionListener(ev -> showAnalysis());
         }
         
         public String getFormation() {
@@ -1114,6 +1127,29 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     btn.setEnabled(ft.isAllowedUnitType(ut));
                 }
             }
+        }
+        
+        private void showAnalysis() {
+            List<UnitTable.Parameters> params = new ArrayList<>();
+            FormationType ft = FormationType.getFormationType(getFormation());
+            Parameters p = new UnitTable.Parameters(getFaction(),
+                    getUnitType(), ratGenYear, (String)cbRating.getSelectedItem(),
+                    IntStream.rangeClosed(ft.getMinWeightClass(), ft.getMaxWeightClass())
+                    .mapToObj(Integer::valueOf).collect(Collectors.toList()),
+                    ModelRecord.NETWORK_NONE, EnumSet.noneOf(EntityMovementMode.class),
+                    ft.getMissionRoles(),
+                    2, getFaction());
+            params.add(p);
+            int numUnits = getNumUnits();
+            if (getOtherUnitType() >= 0) {
+                p = p.copy();
+                p.setUnitType(getOtherUnitType());
+                params.add(p);
+                numUnits += numOtherUnits();
+            }
+            AnalyzeFormationDialog afd = new AnalyzeFormationDialog(null,
+                    FormationType.getFormationType(getFormation()), params, numUnits);
+            afd.setVisible(true);
         }
     }
 }

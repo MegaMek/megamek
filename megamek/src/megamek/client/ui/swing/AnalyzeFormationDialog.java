@@ -22,6 +22,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -175,6 +177,12 @@ public class AnalyzeFormationDialog extends JDialog {
         UnitTableModel model = new UnitTableModel();
         tblUnits = new JTable(model);
         tableSorter = new TableRowSorter<>(model);
+        tableSorter.setComparator(UnitTableModel.COL_MOVEMENT,
+                (m1, m2) ->  Integer.valueOf(m1.toString().replaceAll("\\D.*", "")).compareTo(
+                        Integer.valueOf(m2.toString().replaceAll("\\D.*", ""))));
+        List<RowSorter.SortKey> sortKeys = new ArrayList<>();
+        sortKeys.add(new RowSorter.SortKey(UnitTableModel.COL_NAME, SortOrder.ASCENDING));
+        tableSorter.setSortKeys(sortKeys);
         tblUnits.setRowSorter(tableSorter);
         
         gbc.gridx = 3;
@@ -253,6 +261,14 @@ public class AnalyzeFormationDialog extends JDialog {
         @Override
         public String getColumnName(int columnIndex) {
             return colNames.get(columnIndex);
+        }
+        
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            if (units.isEmpty()) {
+                return Object.class;
+            }
+            return getValueAt(0, columnIndex).getClass();
         }
 
         @Override

@@ -150,13 +150,15 @@ public class AnalyzeFormationDialog extends JDialog {
             gbc.anchor = GridBagConstraints.WEST;
             if (ft.getGroupingCriteria().hasGeneralCriteria()) {
                 JCheckBox chk = new JCheckBox(String.format(Messages.getString("AnalyzeFormationDialog.groups.format"),
-                        ft.getGroupingCriteria().getDescription(), ft.getGroupingCriteria().getGroupSize()));
+                        ft.getGroupingCriteria().getDescription(),
+                        Math.min(numUnits, ft.getGroupingCriteria().getGroupSize())));
                 otherCriteriaChecks.add(chk);
                 chk.addChangeListener(ev -> filter());
                 mainPanel.add(chk, gbc);
             } else {
                 mainPanel.add(new JLabel(String.format(Messages.getString("AnalyzeFormationDialog.groups.format"),
-                        ft.getGroupingCriteria().getDescription(), ft.getGroupingCriteria().getGroupSize())),
+                        ft.getGroupingCriteria().getDescription(),
+                        Math.min(numUnits, ft.getGroupingCriteria().getGroupSize()))),
                         gbc);
             }
             gbc.gridx = 2;

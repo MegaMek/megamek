@@ -981,7 +981,7 @@ public class FormationType {
                 "Sniper, Missile Boat"));
         ft.otherCriteria.add(new MaxCountConstraint(1,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_ASSAULT,
-                "Max Assault+"));
+                "< Assault"));
         allFormationTypes.put(ft.name, ft);        
     }
 
@@ -1031,7 +1031,7 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.maxWeightClass = EntityWeightClass.WEIGHT_LIGHT;
         ft.mainCriteria = ms -> getDamageAtRange(ms, 9) <= 10;
-        ft.mainDescription = "Damage 10+ at range 9";
+        ft.mainDescription = "Damage <= 10 at range 9";
         ft.reportMetrics.put("Damage @ 9", ms -> getDamageAtRange(ms, 9));
         allFormationTypes.put(ft.name, ft);        
     }
@@ -1070,7 +1070,7 @@ public class FormationType {
                 "Jump 1+ or Infantry/BA"));
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWalkMp() <= 4,
-                "Walk/Cruise 4+"));
+                "Walk/Cruise <= 4"));
         allFormationTypes.put(ft.name, ft);        
     }
     
@@ -1139,7 +1139,7 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_FIGHTER;
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> EnumSet.of(UnitRole.ATTACK_FIGHTER,
-                        UnitRole.DOGFIGHTER).contains(getUnitRole(ms)), "Dogfighter"));
+                        UnitRole.DOGFIGHTER).contains(getUnitRole(ms)), "Attack, Dogfighter"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),

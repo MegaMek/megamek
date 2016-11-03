@@ -262,7 +262,13 @@ public class AnalyzeFormationDialog extends JDialog {
             case COL_WEIGHT_CLASS:
                 return EntityWeightClass.getClassName(EntityWeightClass.getWeightClass(ms.getTons(), ms.getUnitType()));
             case COL_MOVEMENT:
-                return ms.getWalkMp() + "/" + ms.getRunMp() + "/" + ms.getJumpMp();
+                StringBuilder sb = new StringBuilder();
+                sb.append(String.valueOf(ms.getWalkMp())).append("/")
+                        .append(String.valueOf(ms.getRunMp()));
+                if (formationType.isGround()) {
+                    sb.append("/").append(String.valueOf(ms.getJumpMp()));
+                }
+                return sb.toString();
             case COL_ROLE:
                 ModelRecord mr = RATGenerator.getInstance().getModelRecord(ms.getName());
                 UnitRole r = mr == null? UnitRole.UNDETERMINED : mr.getUnitRole();

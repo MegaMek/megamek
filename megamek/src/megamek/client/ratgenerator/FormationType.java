@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -180,6 +181,7 @@ public class FormationType {
     private EnumSet<MissionRole> missionRoles = EnumSet.noneOf(MissionRole.class);
     // If all units in the force have this role, other constraints can be ignored.
     private UnitRole idealRole = UnitRole.UNDETERMINED;
+    private String exclusiveFaction = null;
     
     private int minWeightClass = 0;
     private int maxWeightClass = EntityWeightClass.WEIGHT_COLOSSAL;
@@ -215,6 +217,10 @@ public class FormationType {
     
     public UnitRole getIdealRole() {
         return idealRole;
+    }
+    
+    public String getExclusiveFaction() {
+        return exclusiveFaction;
     }
 
     public int getMinWeightClass() {
@@ -275,8 +281,8 @@ public class FormationType {
         return mRec == null? EnumSet.noneOf(MissionRole.class) : mRec.getRoles();
     }
     
-    private static int getDamageAtRange(MechSummary ms, int range) {
-        int retVal = 0;
+    private static IntSummaryStatistics damageAtRangeStats(MechSummary ms, int range) {
+        List<Integer> retVal = new ArrayList<>();
         for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
             if (EquipmentType.get(ms.getEquipmentNames().get(i)) instanceof WeaponType) {
                 final WeaponType weapon = (WeaponType)EquipmentType.get(ms.getEquipmentNames().get(i));
@@ -299,11 +305,21 @@ public class FormationType {
                     damage = weapon.getDamage(range);
                 }
                 if (damage > 0) {
-                    retVal += damage * ms.getEquipmentQuantities().get(i);
+                    for (int j = 0; j < ms.getEquipmentQuantities().get(i); j++) {
+                        retVal.add(damage);
+                    }
                 }
             }
         }
-        return retVal;
+        return retVal.stream().mapToInt(Integer::intValue).summaryStatistics();
+    }
+    
+    private static long getDamageAtRange(MechSummary ms, int range) {
+        return Math.max(0, damageAtRangeStats(ms, range).getSum());
+    }
+    
+    private static long getSingleWeaponDamageAtRange(MechSummary ms, int range) {
+        return Math.max(0, damageAtRangeStats(ms, range).getMax());
     }
     
     public List<MechSummary> generateFormation(UnitTable.Parameters params, int numUnits,
@@ -631,6 +647,7 @@ public class FormationType {
     private static void createAnvilLance() {
         FormationType ft = new FormationType("Anvil", "Assault");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
+        ft.exclusiveFaction = "FWL";
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getTotalArmor() >= 40;
         ft.mainDescription = "Armor 40+";
@@ -685,7 +702,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
                 "Heavy+"));
-        ft.otherCriteria.add(new PercentConstraint(0.5,
+        ft.otherCriteria.add(new CountConstraint(3,
                 ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.SNIPER, UnitRole.SKIRMISHER)
                     .contains(getUnitRole(ms)),
                     "Brawler, Sniper, Skirmisher"));
@@ -703,6 +720,9 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT,
                 "Light"));
+        ft.otherCriteria.add(new CountConstraint(1,
+                ms -> getUnitRole(ms).equals(UnitRole.SCOUT),
+                "Scout"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT,
                 (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
@@ -741,11 +761,13 @@ public class FormationType {
     private static void createRifleLance() {
         FormationType ft = new FormationType("Rifle", "Battle");
         ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
+        ft.exclusiveFaction = "FS";
         ft.minWeightClass = EntityWeightClass.WEIGHT_MEDIUM;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 4;
+        ft.mainDescription = "Walk/Cruise 4+";
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> ms.getWeightClass() <= EntityWeightClass.WEIGHT_HEAVY,
-                "Not Assault+"));
+                "Medium, Heavy"));
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getEquipmentNames().stream().map(name -> EquipmentType.get(name))
                     .anyMatch(eq -> eq instanceof ACWeapon
@@ -763,7 +785,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
                 "Heavy+"));
-        ft.otherCriteria.add(new PercentConstraint(0.5,
+        ft.otherCriteria.add(new CountConstraint(3,
                 ms -> EnumSet.of(UnitRole.BRAWLER, UnitRole.SNIPER, UnitRole.SKIRMISHER)
                     .contains(getUnitRole(ms)),
                 "Brawler, Sniper, Skirmisher"));
@@ -788,6 +810,7 @@ public class FormationType {
     private static void createOrderLance() {
         FormationType ft = new FormationType("Order", "Command");
         ft.allowedUnitTypes = FLAG_GROUND;
+        ft.exclusiveFaction = "DC";
         ft.groupingCriteria = new GroupingConstraint(FLAG_GROUND, Integer.MAX_VALUE, 1,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis())
@@ -828,6 +851,7 @@ public class FormationType {
     private static void createAntiAirLance() {
         FormationType ft = new FormationType("Anti-Air", "Fire");
         ft.allowedUnitTypes = FLAG_GROUND;
+        ft.missionRoles.add(MissionRole.MIXED_ARTILLERY);
         ft.otherCriteria.add(new PercentConstraint(0.75,
                 ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT).contains(getUnitRole(ms)),
                 "Sniper, Missile Boat"));
@@ -838,8 +862,8 @@ public class FormationType {
                     .anyMatch(eq -> eq instanceof ACWeapon
                             || eq instanceof LBXACWeapon
                             || eq instanceof ArtilleryWeapon),
-                "Standard AC, LBX, Artillery weapon"));
-        ft.reportMetrics.put("AC/LBX/Artillery", ms -> ft.otherCriteria.get(1).criterion.test(ms));
+                "Standard AC, LBX, Artillery weapon, Anti-Air targeting quirk"));
+        ft.reportMetrics.put("AC/LBX/Artillery/AA Quirk", ms -> ft.otherCriteria.get(1).criterion.test(ms));
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -901,9 +925,9 @@ public class FormationType {
                 ms -> ms.getWalkMp() >= 6,
                 "Walk/Cruise 6+"));
         ft.otherCriteria.add(new CountConstraint(1,
-                ms -> getDamageAtRange(ms, 15) >= 5,
-                "Damage 5+ at range 15"));
-        ft.reportMetrics.put("Damage @ 15", ms -> getDamageAtRange(ms, 15));
+                ms -> getSingleWeaponDamageAtRange(ms, 15) >= 5,
+                "Weapon with damage 5+ at range 15"));
+        ft.reportMetrics.put("Damage @ 15", ms -> getSingleWeaponDamageAtRange(ms, 15));
         allFormationTypes.put(ft.name, ft);        
     }
 
@@ -1001,6 +1025,7 @@ public class FormationType {
     private static void createHammerLance() {
         FormationType ft = new FormationType("Hammer", "Striker/Cavalry");
         ft.allowedUnitTypes = FLAG_GROUND;
+        ft.exclusiveFaction = "FWL";
         ft.idealRole = UnitRole.STRIKER;
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5;
         ft.mainDescription = "Walk/Cruise 5+";
@@ -1020,9 +1045,9 @@ public class FormationType {
                 ms -> EnumSet.of(UnitRole.STRIKER, UnitRole.SKIRMISHER).contains(getUnitRole(ms)),
                 "Striker, Skirmisher"));
         ft.otherCriteria.add(new CountConstraint(1,
-                ms -> getDamageAtRange(ms, 18) >= 5,
-                "Damage 5+ at range 18"));
-        ft.reportMetrics.put("Damage @ 18", ms -> getDamageAtRange(ms, 18));
+                ms -> getSingleWeaponDamageAtRange(ms, 18) >= 5,
+                "Weapon with damage 5+ at range 18"));
+        ft.reportMetrics.put("Damage @ 18", ms -> getSingleWeaponDamageAtRange(ms, 18));
         allFormationTypes.put(ft.name, ft);        
     }
 
@@ -1043,12 +1068,12 @@ public class FormationType {
         ft.mainCriteria = ms -> ms.getWalkMp() >= 5;
         ft.mainDescription = "Walk/Cruise 5+";
         ft.otherCriteria.add(new CountConstraint(2,
-                ms -> getDamageAtRange(ms, 18) >= 5,
-                "Damage 5+ at range 18"));
+                ms -> getSingleWeaponDamageAtRange(ms, 18) >= 5,
+                "Weapon with damage 5+ at range 18"));
         ft.otherCriteria.add(new CountConstraint(2,
                 ms -> EnumSet.of(UnitRole.STRIKER, UnitRole.SKIRMISHER).contains(getUnitRole(ms)),
                 "Striker, Skirmisher"));
-        ft.reportMetrics.put("Damage @ 18", ms -> getDamageAtRange(ms, 18));
+        ft.reportMetrics.put("Damage @ 18", ms -> getSingleWeaponDamageAtRange(ms, 18));
         allFormationTypes.put(ft.name, ft);        
     }
 

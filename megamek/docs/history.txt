@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.27-git
++ Feature: Can save board image with units (renders the same as seen on screen)
 
 v0.41.26 (2016-11-02 02:00 UTC)
 + New Sprites.

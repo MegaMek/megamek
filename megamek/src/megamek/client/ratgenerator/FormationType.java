@@ -241,6 +241,14 @@ public class FormationType {
         return otherCriteria.iterator();
     }
     
+    public int getOtherCriteriaCount() {
+        return otherCriteria.size();
+    }
+    
+    public Constraint getConstraint(int index) {
+        return otherCriteria.get(index);
+    }
+    
     public GroupingConstraint getGroupingCriteria() {
         return groupingCriteria;
     }
@@ -501,7 +509,7 @@ public class FormationType {
                     }
                 }
                 if (gcIndex[i] != null) {
-                    filter.add(groupingCriteria.generalConstraint);
+                    filter.add(groupingCriteria.criterion);
                     if (gcIndex[i] > 0) {
                         final MechSummary base = retVal.get(i - gcIndex[i]);
                         filter.add(ms -> groupingCriteria.groupConstraint.apply(base, ms));
@@ -1231,20 +1239,18 @@ public class FormationType {
      * Used to force pairs (or larger groups) of units that are identical or have the same base
      * chassis.
      */
-    public static class GroupingConstraint {
+    public static class GroupingConstraint extends Constraint {
         int unitTypes = FLAG_ALL;
         int groupSize = 2;
         int numGroups = 1;
-        Predicate<MechSummary> generalConstraint;
         BiFunction<MechSummary,MechSummary,Boolean> groupConstraint;
         String description;
         
         public GroupingConstraint(Predicate<MechSummary> generalConstraint,
                 BiFunction<MechSummary,MechSummary,Boolean> groupConstraint,
                 String description) {
-            this.generalConstraint = generalConstraint;
+            super(generalConstraint, description);
             this.groupConstraint = groupConstraint;
-            this.description = description;
         }
         
         public GroupingConstraint(int unitTypes,
@@ -1269,8 +1275,34 @@ public class FormationType {
             return ((1 << unitType) & unitTypes) != 0;
         }
 
-        public String getDescription() {
-            return description;
+        public int getNumGroups() {
+            return numGroups;
+        }
+        
+        public int getGroupSize() {
+            return groupSize;
+        }
+        
+        public boolean matches(MechSummary ms) {
+            return criterion == null || criterion.test(ms);
+        }
+        
+        public boolean matches(MechSummary ms1, MechSummary ms2) {
+            return groupConstraint.apply(ms1,  ms2);
+        }
+
+        @Override
+        public int getMinimum(int unitSize) {
+            int gs = Math.min(groupSize, unitSize);
+            int ng = numGroups;
+            if (gs > 0) {
+                ng = Math.min(ng, unitSize / gs);
+            }
+            return gs * ng;
+        }
+        
+        public boolean hasGeneralCriteria() {
+            return criterion != null;
         }
     }
 }

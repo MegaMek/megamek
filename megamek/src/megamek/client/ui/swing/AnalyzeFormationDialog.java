@@ -9,7 +9,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -109,18 +108,20 @@ public class AnalyzeFormationDialog extends JDialog {
         gbc.anchor = GridBagConstraints.CENTER;
         mainPanel.add(new JLabel(Messages.getString("AnalyzeFormationDialog.available")), gbc);
 
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(new JLabel(Messages.getString("AnalyzeFormationDialog.all")), gbc);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
         if (ft.getMainDescription() != null) {
-            gbc.gridy++;
-            gbc.gridx = 0;
-            gbc.anchor = GridBagConstraints.CENTER;
-            mainPanel.add(new JLabel(String.valueOf(numUnits)), gbc);
-            gbc.gridx = 1;
-            gbc.anchor = GridBagConstraints.WEST;
             mainPanel.add(new JLabel(ft.getMainDescription()), gbc);
-            gbc.gridx = 2;
-            gbc.anchor = GridBagConstraints.CENTER;
-            mainPanel.add(new JLabel(String.valueOf(units.size())), gbc);
+        } else {
+            mainPanel.add(new JLabel("-"), gbc);
         }
+        gbc.gridx = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        mainPanel.add(new JLabel(String.valueOf(units.size())), gbc);
         
         ft.getOtherCriteria().forEachRemaining(c -> {
             JCheckBox chk = new JCheckBox(c.getDescription());
@@ -135,9 +136,34 @@ public class AnalyzeFormationDialog extends JDialog {
             mainPanel.add(chk, gbc);
             gbc.gridx = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            mainPanel.add(new JLabel(String.valueOf(units.stream().filter(ms -> c.matches(ms)).count())), gbc);
-            //TODO: Add listener
+            mainPanel.add(new JLabel(String.valueOf(units.stream()
+                    .filter(ms -> c.matches(ms)).count())), gbc);
         });
+        
+        if (ft.getGroupingCriteria() != null
+                && ft.getGroupingCriteria().appliesTo(params.get(0).getUnitType())) {
+            gbc.gridy++;
+            gbc.gridx = 0;
+            gbc.anchor = GridBagConstraints.CENTER;
+            mainPanel.add(new JLabel(String.valueOf(ft.getGroupingCriteria().getMinimum(numUnits))), gbc);
+            gbc.gridx = 1;
+            gbc.anchor = GridBagConstraints.WEST;
+            if (ft.getGroupingCriteria().hasGeneralCriteria()) {
+                JCheckBox chk = new JCheckBox(String.format(Messages.getString("AnalyzeFormationDialog.groups.format"),
+                        ft.getGroupingCriteria().getDescription(), ft.getGroupingCriteria().getGroupSize()));
+                otherCriteriaChecks.add(chk);
+                chk.addChangeListener(ev -> filter());
+                mainPanel.add(chk, gbc);
+            } else {
+                mainPanel.add(new JLabel(String.format(Messages.getString("AnalyzeFormationDialog.groups.format"),
+                        ft.getGroupingCriteria().getDescription(), ft.getGroupingCriteria().getGroupSize())),
+                        gbc);
+            }
+            gbc.gridx = 2;
+            gbc.anchor = GridBagConstraints.CENTER;
+            mainPanel.add(new JLabel(String.valueOf(units.stream()
+                    .filter(ms -> ft.getGroupingCriteria().matches(ms)).count())), gbc);
+        }
         
         gbc.gridx = 0;
         gbc.gridy++;
@@ -169,21 +195,29 @@ public class AnalyzeFormationDialog extends JDialog {
     
     private void filter() {
         List<RowFilter<UnitTableModel,Integer>> filters = new ArrayList<>();
-        int i = 0;
-        for (Iterator<FormationType.Constraint> iter = formationType.getOtherCriteria();
-                iter.hasNext();) {
-            final FormationType.Constraint constraint = iter.next();
+        for (int i = 0; i < formationType.getOtherCriteriaCount(); i++) {
             if (otherCriteriaChecks.get(i).isSelected()) {
-                filters.add(new RowFilter<UnitTableModel,Integer>() {
-                    @Override
-                    public boolean include(Entry<? extends UnitTableModel,? extends Integer> entry) {
-                        return constraint.matches(units.get(entry.getIdentifier()));
-                    }                    
-                });
-            }
-            i++;
+                filters.add(new UnitTableRowFilter(formationType.getConstraint(i)));
+            }            
+        }
+        if (otherCriteriaChecks.size() > formationType.getOtherCriteriaCount()
+                && otherCriteriaChecks.get(otherCriteriaChecks.size() - 1).isSelected()) {
+            filters.add(new UnitTableRowFilter(formationType.getGroupingCriteria()));
         }
         tableSorter.setRowFilter(RowFilter.andFilter(filters));
+    }
+    
+    class UnitTableRowFilter extends RowFilter<UnitTableModel,Integer> {
+        FormationType.Constraint constraint;
+
+        public UnitTableRowFilter(FormationType.Constraint constraint) {
+            this.constraint = constraint;
+        }
+        
+        @Override
+        public boolean include(Entry<? extends UnitTableModel,? extends Integer> entry) {
+            return constraint.matches(units.get(entry.getIdentifier()));
+        }                    
     }
     
     class UnitTableModel extends AbstractTableModel {

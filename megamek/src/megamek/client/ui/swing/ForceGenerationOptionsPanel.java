@@ -27,6 +27,7 @@ import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
@@ -273,6 +275,10 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
         if (RATGenerator.getInstance().isInitialized()) {
             updateFactionChoice();
+        }
+
+        if (panUnitTypeOptions != null) {
+            panUnitTypeOptions.optionsChanged();
         }
     }
     
@@ -879,6 +885,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 ((CardLayout)getLayout()).show(this, getUnitType() < UnitType.CONV_FIGHTER?
                         "Ground" : "Air");
             }
+            currentCard().updateUnitType(getUnitType());
         }
         
         private FormationTypesCard currentCard() {
@@ -1097,6 +1104,16 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 return ModelRecord.parseUnitType((String)chOtherUnitType.getSelectedItem());
             }
             return -1;
+        }
+        
+        public void updateUnitType(int ut) {
+            for (Enumeration<AbstractButton> e = formationBtnGroup.getElements(); e.hasMoreElements();) {
+                final AbstractButton btn = e.nextElement();
+                FormationType ft = FormationType.getFormationType(btn.getActionCommand());
+                if (ft != null) {
+                    btn.setEnabled(ft.isAllowedUnitType(ut));
+                }
+            }
         }
     }
 }

@@ -194,6 +194,10 @@ public class FormationType {
         return allowedUnitTypes;
     }
     
+    public boolean isAllowedUnitType(int ut) {
+        return (allowedUnitTypes & (1 << ut)) != 0;
+    }
+    
     public boolean isGround() {
         return (allowedUnitTypes & FLAG_AERO) == 0;
     }

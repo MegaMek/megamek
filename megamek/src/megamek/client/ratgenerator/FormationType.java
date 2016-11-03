@@ -112,7 +112,18 @@ public class FormationType {
                 System.err.println("Could not parse AS Role " + role);
                 return UNDETERMINED;
             }
-        }        
+        }
+        
+        /* Convert all but initial letter(s) to lower case */
+        @Override
+        public String toString() {
+            StringBuffer sb = new StringBuffer();
+            for (String word : name().split("_")) {
+                sb.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1).toLowerCase()).append(" ");
+            }
+            return sb.toString().trim();
+        }
     };
     
     public final static int FLAG_MEK = 1 << UnitType.MEK; 

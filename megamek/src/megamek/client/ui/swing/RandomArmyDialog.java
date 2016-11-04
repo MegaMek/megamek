@@ -650,7 +650,8 @@ WindowListener, TreeSelectionListener {
                     params.add(new UnitTable.Parameters(fRec,
                             m_pFormationOptions.getUnitType(),
                             m_pFormationOptions.getYear(),
-                            m_pFormationOptions.getRating(), null, ModelRecord.NETWORK_NONE,
+                            m_pFormationOptions.getRating(), null,
+                            ModelRecord.NETWORK_NONE,
                             java.util.EnumSet.noneOf(EntityMovementMode.class),
                             java.util.EnumSet.noneOf(MissionRole.class), 0, fRec));
                     List<Integer> numUnits = new ArrayList<>();
@@ -680,7 +681,7 @@ WindowListener, TreeSelectionListener {
                     
                     if (ft != null) {
                         unitList.addAll(ft.generateFormation(params,
-                                numUnits, false));
+                                numUnits, m_pFormationOptions.getIntegerOption("network"), false));
                         if (unitList.size() > 0 && m_pFormationOptions.getIntegerOption("numOtherUnits") > 0) {
                             if (m_pFormationOptions.getBooleanOption("mechBA")) {
                                 /* Try to generate the BA portion using the same formation type as the
@@ -692,7 +693,8 @@ WindowListener, TreeSelectionListener {
                                         java.util.EnumSet.noneOf(EntityMovementMode.class),
                                         java.util.EnumSet.of(MissionRole.MECHANIZED_BA), 0, fRec);
                                 List<MechSummary> ba = ft.generateFormation(p,
-                                        m_pFormationOptions.getIntegerOption("numOtherUnits"), true);
+                                        m_pFormationOptions.getIntegerOption("numOtherUnits"),
+                                        ModelRecord.NETWORK_NONE, true);
                                 if (ba.isEmpty()) {
                                     ba = UnitTable.findTable(p).generateUnits(m_pFormationOptions.getIntegerOption("numOtherUnits"));
                                 }

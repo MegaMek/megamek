@@ -30,6 +30,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -907,6 +908,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 return currentCard().numOtherUnits();
             case "otherUnitType":
                 return currentCard().getOtherUnitType();
+            case "network":
+                return currentCard().getNetwork();
             }
             return null;
         }
@@ -940,9 +943,11 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         private JRadioButton bMechBA = new JRadioButton(Messages.getString("RandomArmyDialog.mechBA"));
         private JRadioButton bAirLance = new JRadioButton(Messages.getString("RandomArmyDialog.airLance"));
         private JRadioButton bOtherUnitType = new JRadioButton(Messages.getString("RandomArmyDialog.otherUnitType"));
-        private JComboBox<String> chOtherUnitType = new JComboBox<>();
+        private JComboBox<String> cbOtherUnitType = new JComboBox<>();
         private JTextField tNumUnits = new JTextField("0");
         private ButtonGroup formationBtnGroup = new ButtonGroup();
+        private JComboBox<String> cbNetwork = new JComboBox<>();
+        private Map<String,Integer> networkOptions = new LinkedHashMap<>();
         
         public FormationTypesCard(boolean groundUnit) {
             setLayout(new GridBagLayout());
@@ -1032,7 +1037,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             btnGroup.add(bSimpleFormation);
             
             c.gridx = 0;
-            c.gridy = 1;
+            c.gridy++;
             c.anchor = GridBagConstraints.NORTHWEST;
             c.gridwidth = 2;
             c.fill = GridBagConstraints.NONE;
@@ -1041,44 +1046,66 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             panOtherOptions.add(bMechBA, c);
             btnGroup.add(bMechBA);
             
-            c.gridy = 2;
+            c.gridy++;
             c.gridwidth = 2;
             panOtherOptions.add(bAirLance, c);
             btnGroup.add(bAirLance);
             
-            c.gridy = 3;
+            c.gridy++;
             c.gridwidth = 2;
             panOtherOptions.add(bOtherUnitType, c);
             btnGroup.add(bOtherUnitType);
-            bOtherUnitType.addItemListener(ev -> chOtherUnitType.setEnabled(bOtherUnitType.isSelected()));
+            bOtherUnitType.addItemListener(ev -> cbOtherUnitType.setEnabled(bOtherUnitType.isSelected()));
             
             c.gridx = 0;
-            c.gridy = 4;
+            c.gridy++;
             c.gridwidth = 2;
-            panOtherOptions.add(chOtherUnitType, c);
-            chOtherUnitType.setEnabled(false);
+            panOtherOptions.add(cbOtherUnitType, c);
+            cbOtherUnitType.setEnabled(false);
             for (int i = 0; i < UnitType.JUMPSHIP; i++) {
                 if (i != UnitType.GUN_EMPLACEMENT) {
-                    chOtherUnitType.addItem(UnitType.getTypeName(i));
+                    cbOtherUnitType.addItem(UnitType.getTypeName(i));
                 }
             }
             
-            c = new GridBagConstraints();
             c.gridx = 0;
-            c.gridy = 5;
+            c.gridy++;
             c.gridwidth = 1;
             panOtherOptions.add(new JLabel(Messages.getString("RandomArmyDialog.additionalUnits")), c);
             c.gridx = 1;
-            c.gridy = 5;
             c.gridwidth = 1;
             panOtherOptions.add(tNumUnits, c);
 
             bSimpleFormation.setSelected(true);
+                        
+            if (groundUnit) {
+                c.gridx = 0;
+                c.gridy++;
+                c.gridwidth = 1;
+                panOtherOptions.add(new JLabel(Messages.getString("ForceGenerationOptions.Network")), c);
+
+                networkOptions.put(Messages.getString("ForceGenerationOptions.Optional"),
+                        ModelRecord.NETWORK_NONE);
+                networkOptions.put(Messages.getString("ForceGenerationOptions.C3Lance"),
+                        ModelRecord.NETWORK_C3_MASTER);
+                networkOptions.put(Messages.getString("ForceGenerationOptions.C3Command"),
+                        ModelRecord.NETWORK_COMPANY_COMMAND);
+                networkOptions.put(Messages.getString("ForceGenerationOptions.C3i"),
+                        ModelRecord.NETWORK_C3I);
+                networkOptions.put(Messages.getString("ForceGenerationOptions.C3BLance"),
+                        ModelRecord.NETWORK_BOOSTED_MASTER);
+                networkOptions.put(Messages.getString("ForceGenerationOptions.Nova"),
+                        ModelRecord.NETWORK_NOVA);
+                networkOptions.keySet().forEach(cbNetwork::addItem);
+                c.gridx = 0;
+                c.gridy++;
+                c.gridwidth = 2;
+                panOtherOptions.add(cbNetwork, c);
+            }
             
-            c = new GridBagConstraints();
             c.gridx = 0;
-            c.gridy = 6;
-            c.gridwidth = 1;            
+            c.gridy++;
+            c.gridwidth = 2;            
             JButton btn = new JButton(Messages.getString("ForceGenerationOptions.formationAnalysis"));
             panOtherOptions.add(btn, c);
             btn.addActionListener(ev -> showAnalysis());
@@ -1113,8 +1140,8 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
         
         public int getOtherUnitType() {
-            if (bOtherUnitType.isSelected() && chOtherUnitType.getSelectedIndex() > 0) {
-                return ModelRecord.parseUnitType((String)chOtherUnitType.getSelectedItem());
+            if (bOtherUnitType.isSelected() && cbOtherUnitType.getSelectedIndex() > 0) {
+                return ModelRecord.parseUnitType((String)cbOtherUnitType.getSelectedItem());
             }
             return -1;
         }
@@ -1127,6 +1154,13 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     btn.setEnabled(ft.isAllowedUnitType(ut));
                 }
             }
+        }
+        
+        public int getNetwork() {
+            if (cbNetwork.getSelectedItem() != null) {
+                return networkOptions.get(cbNetwork.getSelectedItem());
+            }
+            return ModelRecord.NETWORK_NONE;
         }
         
         private void showAnalysis() {
@@ -1148,7 +1182,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 numUnits += numOtherUnits();
             }
             AnalyzeFormationDialog afd = new AnalyzeFormationDialog(null,
-                    FormationType.getFormationType(getFormation()), params, numUnits);
+                    FormationType.getFormationType(getFormation()), params, numUnits, getNetwork());
             afd.setVisible(true);
         }
     }

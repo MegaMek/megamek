@@ -322,18 +322,23 @@ public class FormationType {
         return Math.max(0, damageAtRangeStats(ms, range).getMax());
     }
     
+    private static int getNetworkMask(MechSummary ms) {
+        ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
+        return mRec == null? ModelRecord.NETWORK_NONE : mRec.getNetworkMask();
+    }
+    
     public List<MechSummary> generateFormation(UnitTable.Parameters params, int numUnits,
-            boolean bestEffort) {
+            int networkMask, boolean bestEffort) {
         List<UnitTable.Parameters> p = new ArrayList<>();
         p.add(params);
         List<Integer> n = new ArrayList<>();
         n.add(numUnits);
-        return generateFormation(p, n, bestEffort);
+        return generateFormation(p, n, networkMask, bestEffort);
     }
     
     public List<MechSummary> generateFormation(List<UnitTable.Parameters> params, List<Integer> numUnits,
-            boolean bestEffort) {
-        if (params.size() != numUnits.size()) {
+            int networkMask, boolean bestEffort) {
+        if (params.size() != numUnits.size() || params.isEmpty()) {
             throw new IllegalArgumentException("Formation parameter list and numUnit list must have the same number of elements.");
         }
         
@@ -351,6 +356,36 @@ public class FormationType {
         //If there are any parameter sets that cannot generate a table, return an empty list. 
         if (!tables.stream().allMatch(UnitTable::hasUnits) && !bestEffort) {
             return new ArrayList<>();
+        }
+        
+        int numNetworked = 0;
+        int numMasters = 0;
+        int masterType = ModelRecord.NETWORK_NONE;
+        int slaveType = ModelRecord.NETWORK_NONE;
+        switch (networkMask) {
+        case ModelRecord.NETWORK_C3_MASTER:
+        case ModelRecord.NETWORK_COMPANY_COMMAND:
+            numNetworked = 4;
+            numMasters = 1;
+            masterType = networkMask;
+            slaveType = ModelRecord.NETWORK_C3_SLAVE;
+            break;
+        case ModelRecord.NETWORK_BOOSTED_MASTER:
+            numNetworked = 4;
+            numMasters = 1;
+            masterType = networkMask;
+            slaveType = ModelRecord.NETWORK_BOOSTED_SLAVE;
+            break;
+        case ModelRecord.NETWORK_C3I:
+            numNetworked = 6;
+            numMasters = 0;
+            slaveType = networkMask;
+            break;
+        case ModelRecord.NETWORK_NOVA:
+            numNetworked = 3;
+            numMasters = 0;
+            slaveType = networkMask;
+            break;
         }
         
         /* Check whether we have vees that do not have the movement mode(s) set. If so,
@@ -398,18 +433,22 @@ public class FormationType {
                 for (int index : undeterminedVees) {
                     tempParams.get(index).getMovementModes().add(EntityMovementMode.getMode(mode));
                 }
-                List<MechSummary> list = generateFormation(tempParams, numUnits, false);
+                List<MechSummary> list = generateFormation(tempParams, numUnits, networkMask, false);
                 if (!list.isEmpty()) {
                     return list;
                 }
             }
             /* If we cannot meet all criteria with a specific motive type, try without respect to motive type */
         }
-
+        
         int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
+        if (cUnits < numNetworked) {
+            numNetworked = cUnits;
+        }
 
         /* Simple case: all units have the same requirements. */
-        if (otherCriteria.isEmpty() && groupingCriteria == null) {
+        if (otherCriteria.isEmpty() && groupingCriteria == null
+                && networkMask == ModelRecord.NETWORK_NONE) {
             List<MechSummary> retVal = new ArrayList<>();
             for (int i = 0; i < params.size(); i++) {
                 retVal.addAll(tables.get(i).generateUnits(numUnits.get(i),
@@ -425,7 +464,8 @@ public class FormationType {
         }
         
         /* Simple case: single set of parameters and single additional criterion. */
-        if (params.size() == 1 && otherCriteria.size() == 1 && groupingCriteria == null) {
+        if (params.size() == 1 && otherCriteria.size() == 1 && groupingCriteria == null
+                && networkMask == ModelRecord.NETWORK_NONE) {
             List<MechSummary> retVal = new ArrayList<>();
             retVal.addAll(tables.get(0).generateUnits(otherCriteria.get(0).getMinimum(numUnits.get(0)),
                     ms -> mainCriteria.test(ms) && otherCriteria.get(0).criterion.test(ms)));
@@ -458,7 +498,7 @@ public class FormationType {
         /* First group all possible values of k bits into lists keyed to the number of
          * bits that are set.
          */
-        Map<Integer,List<Integer>> bitCountMask = IntStream.rangeClosed(0, 1 << cUnits)
+        Map<Integer,List<Integer>> bitCountMask = IntStream.range(0, 1 << cUnits)
                 .mapToObj(Integer::valueOf)
                 .collect(Collectors.groupingBy(Integer::bitCount));
         
@@ -466,8 +506,10 @@ public class FormationType {
          * of all values from 0 to total - 1. If a conforming unit cannot be constructed from
          * a chosen value, it can be removed from the list.
          */
-        int totalCombos = otherCriteria.stream().map(c -> bitCountMask.get(c.getMinimum(cUnits)).size())
+        int totalCombos = otherCriteria.stream()
+            .map(c -> bitCountMask.get(c.getMinimum(cUnits)).size())
             .reduce(1, (a, b) -> a * b);
+        totalCombos *= bitCountMask.get(numNetworked).size() * bitCountMask.get(numMasters).size();
         List<Integer> possibilities = IntStream.range(0, totalCombos).mapToObj(Integer::valueOf)
                 .collect(Collectors.toList());
         
@@ -514,6 +556,15 @@ public class FormationType {
                 bitmasks[i] = bitCountMask.get(min).get(value % cBitmaps);
                 value /= cBitmaps;
             }
+            int networkBitMask = 0;
+            int networkMasterBitMask = 0;
+            if (numNetworked > 0) {
+                int count = bitCountMask.get(numNetworked).size();
+                networkBitMask = bitCountMask.get(numNetworked).get(value % count);
+                value /= count;
+                count = bitCountMask.get(numMasters).size();
+                networkMasterBitMask = bitCountMask.get(numMasters).get(value % count);
+            }
 
             boolean completed = true;
             for (int i = 0; i < cUnits; i++) {
@@ -531,6 +582,10 @@ public class FormationType {
                         filter.add(ms -> groupingCriteria.groupConstraint.apply(base, ms));
                     }
                 }
+                if ((networkBitMask & 1) != 0) {
+                    int mask = (networkMasterBitMask & 1) == 0? slaveType : masterType;
+                    filter.add(ms -> (getNetworkMask(ms) & mask) == mask);
+                }
                 MechSummary unit = tables.get(unitTableIndex[i])
                         .generateUnit(ms -> filter.stream().allMatch(f -> f.test(ms)));
                 if (unit == null) {
@@ -541,6 +596,8 @@ public class FormationType {
                     for (int j = 0; j < bitmasks.length; j++) {
                         bitmasks[j] >>= 1;
                     }
+                    networkBitMask >>= 1;
+                    networkMasterBitMask >>= 1;
                 }
             }
             if (completed) {
@@ -1205,7 +1262,7 @@ public class FormationType {
         }
     }
     
-    private static class CountConstraint extends Constraint {
+    public static class CountConstraint extends Constraint {
         int count;
         
         public CountConstraint(int min, Predicate<MechSummary> criterion, String description) {

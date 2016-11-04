@@ -31,7 +31,6 @@ import megamek.client.ratgenerator.FormationType;
 import megamek.client.ratgenerator.ModelRecord;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
-import megamek.client.ratgenerator.FormationType.UnitRole;
 import megamek.client.ui.Messages;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechSummary;
@@ -55,11 +54,14 @@ public class AnalyzeFormationDialog extends JDialog {
     private FormationType formationType;
     private List<MechSummary> units = new ArrayList<>();
     private List<JCheckBox> otherCriteriaChecks = new ArrayList<>();
+    private List<FormationType.Constraint> allConstraints = new ArrayList<>();
     
     public AnalyzeFormationDialog(JFrame frame, FormationType ft, List<UnitTable.Parameters> params,
-            int numUnits) {
+            int numUnits, int networkMask) {
         super(frame, Messages.getString("AnalyzeFormationDialog.title"), true);
         formationType = ft;
+        ft.getOtherCriteria().forEachRemaining(c -> allConstraints.add(c));
+        allConstraints.addAll(networkConstraints(networkMask));
         
         getContentPane().setLayout(new BorderLayout());
         
@@ -125,7 +127,7 @@ public class AnalyzeFormationDialog extends JDialog {
         gbc.anchor = GridBagConstraints.CENTER;
         mainPanel.add(new JLabel(String.valueOf(units.size())), gbc);
         
-        ft.getOtherCriteria().forEachRemaining(c -> {
+        allConstraints.forEach(c -> {
             JCheckBox chk = new JCheckBox(c.getDescription());
             otherCriteriaChecks.add(chk);
             chk.addChangeListener(ev -> filter());
@@ -205,16 +207,54 @@ public class AnalyzeFormationDialog extends JDialog {
     
     private void filter() {
         List<RowFilter<UnitTableModel,Integer>> filters = new ArrayList<>();
-        for (int i = 0; i < formationType.getOtherCriteriaCount(); i++) {
+        for (int i = 0; i < allConstraints.size(); i++) {
             if (otherCriteriaChecks.get(i).isSelected()) {
-                filters.add(new UnitTableRowFilter(formationType.getConstraint(i)));
+                filters.add(new UnitTableRowFilter(allConstraints.get(i)));
             }            
         }
-        if (otherCriteriaChecks.size() > formationType.getOtherCriteriaCount()
+        if (otherCriteriaChecks.size() > allConstraints.size()
                 && otherCriteriaChecks.get(otherCriteriaChecks.size() - 1).isSelected()) {
             filters.add(new UnitTableRowFilter(formationType.getGroupingCriteria()));
         }
         tableSorter.setRowFilter(RowFilter.andFilter(filters));
+    }
+    
+    private List<FormationType.Constraint> networkConstraints(int networkMask) {
+        List<FormationType.Constraint> retVal = new ArrayList<>();
+        switch(networkMask) {
+        case ModelRecord.NETWORK_C3_MASTER:
+            retVal.add(new FormationType.CountConstraint(1,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_MASTER) != 0, "C3 Master"));
+            retVal.add(new FormationType.CountConstraint(3,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_SLAVE) != 0, "C3 Slave"));
+            break;
+        case ModelRecord.NETWORK_COMPANY_COMMAND:
+            retVal.add(new FormationType.CountConstraint(1,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_COMPANY_COMMAND) != 0, "C3 Master x 2"));
+            retVal.add(new FormationType.CountConstraint(3,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_SLAVE) != 0, "C3 Slave"));
+            break;
+        case ModelRecord.NETWORK_C3I:
+            retVal.add(new FormationType.CountConstraint(1,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3I) != 0, "C3i"));
+            break;
+        case ModelRecord.NETWORK_BOOSTED_MASTER:
+            retVal.add(new FormationType.CountConstraint(1,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_BOOSTED_MASTER) != 0, "C3 Boosted Master"));
+            retVal.add(new FormationType.CountConstraint(3,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_BOOSTED_SLAVE) != 0, "C3 Boosted Slave"));
+            break;
+        case ModelRecord.NETWORK_NOVA:
+            retVal.add(new FormationType.CountConstraint(3,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_NOVA) != 0, "Nova CEWS"));
+            break;
+        }
+        return retVal;
+    }
+    
+    private int getNetworkMask(MechSummary ms) {
+        ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms.getName());
+        return mRec == null? ModelRecord.NETWORK_NONE : mRec.getNetworkMask();
     }
     
     class UnitTableRowFilter extends RowFilter<UnitTableModel,Integer> {
@@ -289,7 +329,7 @@ public class AnalyzeFormationDialog extends JDialog {
                 return sb.toString();
             case COL_ROLE:
                 ModelRecord mr = RATGenerator.getInstance().getModelRecord(ms.getName());
-                UnitRole r = mr == null? UnitRole.UNDETERMINED : mr.getUnitRole();
+                FormationType.UnitRole r = mr == null? FormationType.UnitRole.UNDETERMINED : mr.getUnitRole();
                 return r.toString();
             default:
                 Function<MechSummary,?> metric = formationType.getReportMetric(colNames.get(columnIndex));

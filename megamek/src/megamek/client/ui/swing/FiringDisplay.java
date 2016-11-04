@@ -471,6 +471,137 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     }
                 });
 
+        // Register the action for NEXT_TARGET
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(true, true, false);
+                    }
+                });
+
+        // Register the action for PREV_TARGET
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(false, true, false);
+                    }
+                });
+
+        // Register the action for NEXT_TARGET
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NOALLIES.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(true, false, true);
+                    }
+                });
+
+        // Register the action for PREV_TARGET
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NOALLIES.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(false, false, true);
+                    }
+                });
+
+        // Register the action for NEXT_TARGET
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(true, true, true);
+                    }
+                });
+
+        // Register the action for PREV_TARGET
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(false, true, true);
+                    }
+                });
         // Register the action for NEXT_MODE
         controller.registerCommandAction(KeyCommandBind.NEXT_MODE.cmd,
                 new CommandAction() {

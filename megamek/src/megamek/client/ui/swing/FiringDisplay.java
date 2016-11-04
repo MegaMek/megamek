@@ -2192,8 +2192,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SPOT.getCmd())) {
             doSpot();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_NEXT_TARG.getCmd())) {
-            boolean onlyValidTargets = (ev.getModifiers() & ActionEvent.CTRL_MASK) > 0;
-            boolean ignoreAllies = (ev.getModifiers() & ActionEvent.SHIFT_MASK) > 0;
+            boolean onlyValidTargets = (ev.getModifiers() & ActionEvent.SHIFT_MASK) > 0;
+            boolean ignoreAllies = (ev.getModifiers() & ActionEvent.CTRL_MASK) > 0;
             jumpToTarget(true, onlyValidTargets, ignoreAllies);
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_FLIP_ARMS.getCmd())) {
             updateFlipArms(!ce().getArmsFlipped());

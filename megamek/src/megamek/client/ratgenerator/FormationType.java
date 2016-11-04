@@ -651,6 +651,7 @@ public class FormationType {
     
     public static void createFormationTypes() {
         allFormationTypes = new HashMap<>();
+        createAntiMekLance();
         createAssaultLance();
         createAnvilLance();
         createFastAssaultLance();
@@ -690,6 +691,12 @@ public class FormationType {
         createInterceptorSquadron();
         createStrikeSquadron();
         createTransportSquadron();
+    }
+    
+    private static void createAntiMekLance() {
+        FormationType ft = new FormationType("Anti-Mek");
+        ft.allowedUnitTypes = FLAG_INFANTRY | FLAG_BATTLE_ARMOR;
+        allFormationTypes.put(ft.name, ft);
     }
     
     private static void createAssaultLance() {

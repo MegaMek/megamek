@@ -1149,12 +1149,26 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
         }
         
         public void updateUnitType(int ut) {
+            boolean selectionDisabled = false;
             for (Enumeration<AbstractButton> e = formationBtnGroup.getElements(); e.hasMoreElements();) {
                 final AbstractButton btn = e.nextElement();
                 FormationType ft = FormationType.getFormationType(btn.getActionCommand());
                 if (ft != null) {
                     btn.setEnabled(ft.isAllowedUnitType(ut));
+                    if (btn.isSelected() && !btn.isEnabled()) {
+                        selectionDisabled = true;
+                    }
                 }
+            }
+            if (selectionDisabled) {
+                for (Enumeration<AbstractButton> e = formationBtnGroup.getElements(); e.hasMoreElements();) {
+                    final AbstractButton btn = e.nextElement();
+                    if (btn.isEnabled()) {
+                        btn.setSelected(true);
+                        return;
+                    }
+                }
+                //We shouldn't reach this point, but if we do the previous selection doesn't change.
             }
         }
         

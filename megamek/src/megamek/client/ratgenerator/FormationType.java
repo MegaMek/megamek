@@ -392,58 +392,106 @@ public class FormationType {
             slaveType = ModelRecord.NETWORK_NOVA;
         }
         
-        /* Check whether we have vees that do not have the movement mode(s) set. If so,
+        /* Check whether we have vees or infantry that do not have the movement mode(s) set. If so,
          * we will attempt to conform them to a single type. Any that are set are ignored;
          * there is no attempt to conform to mode already in the force. If they are intended
          * to conform, they ought to be set.
          */
         List<Integer> undeterminedVees = new ArrayList<>();
+        List<Integer> undeterminedInfantry = new ArrayList<>();
         for (int i = 0; i < params.size(); i++) {
-            if (params.get(i).getUnitType() == UnitType.TANK
-                    && params.get(i).getMovementModes().isEmpty()) {
-                undeterminedVees.add(i);
+            if (params.get(i).getMovementModes().isEmpty()) {
+                if (params.get(i).getUnitType() == UnitType.TANK) {
+                    undeterminedVees.add(i);
+                }
+                if (params.get(i).getUnitType() == UnitType.INFANTRY) {
+                    undeterminedInfantry.add(i);
+                }
             }
         }
-        if (undeterminedVees.size() > 0) {
-            /* Look at the table for each group of parameters and determine the motive type
-             * ratio, then weight those values according to the number of units using those
-             * parameters.
-             */
-            Map<String,Integer> mmMap = new HashMap<>();
-            for (int i = 0; i < undeterminedVees.size(); i++) {
-                for (int j = 0; j < tables.get(i).getNumEntries(); j++) {
-                    if (tables.get(i).getMechSummary(j) != null) {
-                        mmMap.merge(tables.get(i).getMechSummary(j).getUnitSubType(),
-                                tables.get(i).getEntryWeight(j) * numUnits.get(i), Integer::sum);
-                    }
+        /* Look at the table for each group of parameters and determine the motive type
+         * ratio, then weight those values according to the number of units using those
+         * parameters.
+         */
+        Map<String,Integer> veeMap = new HashMap<>();
+        Map<String,Integer> infMap = new HashMap<>();
+        for (int i = 0; i < undeterminedVees.size(); i++) {
+            for (int j = 0; j < tables.get(i).getNumEntries(); j++) {
+                if (tables.get(i).getMechSummary(j) != null) {
+                    veeMap.merge(tables.get(i).getMechSummary(j).getUnitSubType(),
+                            tables.get(i).getEntryWeight(j) * numUnits.get(i), Integer::sum);
                 }
             }
-            while (!mmMap.isEmpty()) {
-                int total = mmMap.values().stream().mapToInt(Integer::intValue).sum();
-                int r = Compute.randomInt(total);
-                String mode = "Tracked";
-                for (String m : mmMap.keySet()) {
-                    if (r < mmMap.get(m)) {
-                        mode = m;
-                        break;
-                    } else {
-                        r -= mmMap.get(m);
-                    }
+        }
+        for (int i = 0; i < undeterminedInfantry.size(); i++) {
+            for (int j = 0; j < tables.get(i).getNumEntries(); j++) {
+                if (tables.get(i).getMechSummary(j) != null) {
+                    infMap.merge(tables.get(i).getMechSummary(j).getUnitSubType(),
+                            tables.get(i).getEntryWeight(j) * numUnits.get(i), Integer::sum);
                 }
-                mmMap.remove(mode);
-                
+            }
+        }
+        
+        /* Order modes in a way that those modes that are better represented are more likely to
+         * be attempted first.
+         */
+        List<String> veeModeAttemptOrder = new ArrayList<>();
+        List<String> infModeAttemptOrder = new ArrayList<>();
+        while (!veeMap.isEmpty()) {
+            int total = veeMap.values().stream().mapToInt(Integer::intValue).sum();
+            int r = Compute.randomInt(total);
+            String mode = "Tracked";
+            for (String m : veeMap.keySet()) {
+                if (r < veeMap.get(m)) {
+                    mode = m;
+                    break;
+                } else {
+                    r -= veeMap.get(m);
+                }
+            }
+            veeModeAttemptOrder.add(mode);
+            veeMap.remove(mode);
+        }
+        while (!infMap.isEmpty()) {
+            int total = infMap.values().stream().mapToInt(Integer::intValue).sum();
+            int r = Compute.randomInt(total);
+            String mode = "Leg";
+            for (String m : infMap.keySet()) {
+                if (r < infMap.get(m)) {
+                    mode = m;
+                    break;
+                } else {
+                    r -= infMap.get(m);
+                }
+            }
+            infModeAttemptOrder.add(mode);
+            infMap.remove(mode);
+        }
+
+        /* if there are no units of a given type, we want to make sure we have at least one iteration */
+        if (veeModeAttemptOrder.isEmpty() && !infModeAttemptOrder.isEmpty()) {
+            veeModeAttemptOrder.add("Tracked");
+        }
+        if (infModeAttemptOrder.isEmpty() && !veeModeAttemptOrder.isEmpty()) {
+            infModeAttemptOrder.add("Leg");
+        }
+        for (String veeMode : veeModeAttemptOrder) {
+            for (String infMode : infModeAttemptOrder) {
                 List<UnitTable.Parameters> tempParams = params.stream().map(UnitTable.Parameters::copy)
                         .collect(Collectors.toList());
                 for (int index : undeterminedVees) {
-                    tempParams.get(index).getMovementModes().add(EntityMovementMode.getMode(mode));
+                    tempParams.get(index).getMovementModes().add(EntityMovementMode.getMode(veeMode));
+                }
+                for (int index : undeterminedInfantry) {
+                    tempParams.get(index).getMovementModes().add(EntityMovementMode.getMode(infMode));
                 }
                 List<MechSummary> list = generateFormation(tempParams, numUnits, networkMask, false);
                 if (!list.isEmpty()) {
                     return list;
                 }
             }
-            /* If we cannot meet all criteria with a specific motive type, try without respect to motive type */
         }
+        /* If we cannot meet all criteria with a specific motive type, try without respect to motive type */
         
         int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
         if (cUnits < numNetworked) {

@@ -445,7 +445,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public void performAction() {
-                        jumpToNextTarget();
+                        jumpToTarget(true, false, false);
                     }
                 });
 
@@ -467,7 +467,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public void performAction() {
-                        jumpToPrevTarget();
+                        jumpToTarget(false, false, false);
                     }
                 });
 
@@ -933,64 +933,55 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Get the next target. Return null if we don't have any targets.
      */
-    private Entity getNextTarget() {
+    private Entity getNextTarget(boolean nextOrPrev, boolean onlyValid,
+            boolean ignoreAllies) {
         if (visibleTargets == null) {
             return null;
         }
 
-        lastTargetID++;
-
-        if (lastTargetID >= visibleTargets.length) {
-            lastTargetID = 0;
+        Entity result = null;
+        boolean done = false;
+        // Loop until we hit an exit criteria
+        //  Default is one iteration, but may need to skip invalid or allies
+        while (!done) {
+            // Increment or decrement target index
+            if (nextOrPrev) {
+                lastTargetID++;
+            } else {
+                lastTargetID--;
+            }
+            // Check bounds
+            if (lastTargetID < 0) {
+                lastTargetID = visibleTargets.length - 1;
+            } else if (lastTargetID >= visibleTargets.length) {
+                lastTargetID = 0;
+            }
+            // Store target
+            result = visibleTargets[lastTargetID];
+            done = true;
+            // Check done
+            if (onlyValid) {
+                ToHitData toHit = WeaponAttackAction.toHit(
+                        clientgui.getClient().getGame(), ce().getId(), result,
+                        clientgui.mechD.wPan.getSelectedWeaponNum(),
+                        isStrafing);
+                done = toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
+                        && toHit.getValue() != TargetRoll.IMPOSSIBLE
+                        && toHit.getValue() <= 12;
+            }
+            if (ignoreAllies) {
+                done = result.isEnemyOf(ce());
+            }
         }
-
-        return visibleTargets[lastTargetID];
+        return result;
     }
 
     /**
      * Jump to our next target. If there isn't one, well, don't do anything.
      */
-    private void jumpToNextTarget() {
-        Entity targ = getNextTarget();
-
-        if (targ == null) {
-            return;
-        }
-
-        // HACK : don't show the choice dialog.
-        showTargetChoice = false;
-
-        clientgui.bv.centerOnHex(targ.getPosition());
-        clientgui.getBoardView().select(targ.getPosition());
-
-        // HACK : show the choice dialog again.
-        showTargetChoice = true;
-        target(targ);
-    }
-
-
-    /**
-     * Get the next target. Return null if we don't have any targets.
-     */
-    private Entity getPrevTarget() {
-        if (visibleTargets == null) {
-            return null;
-        }
-
-        lastTargetID--;
-
-        if (lastTargetID < 0) {
-            lastTargetID = visibleTargets.length - 1;
-        }
-
-        return visibleTargets[lastTargetID];
-    }
-
-    /**
-     * Jump to our next target. If there isn't one, well, don't do anything.
-     */
-    private void jumpToPrevTarget() {
-        Entity targ = getPrevTarget();
+    private void jumpToTarget(boolean nextTarg, boolean onlyValid,
+            boolean ignoreAllies) {
+        Entity targ = getNextTarget(nextTarg, onlyValid, ignoreAllies);
 
         if (targ == null) {
             return;
@@ -2068,7 +2059,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SPOT.getCmd())) {
             doSpot();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_NEXT_TARG.getCmd())) {
-            jumpToNextTarget();
+            boolean onlyValidTargets = (ev.getModifiers() & ActionEvent.CTRL_MASK) > 0;
+            boolean ignoreAllies = (ev.getModifiers() & ActionEvent.SHIFT_MASK) > 0;
+            jumpToTarget(true, onlyValidTargets, ignoreAllies);
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_FLIP_ARMS.getCmd())) {
             updateFlipArms(!ce().getArmsFlipped());
             // Fire Mode - More Fire Mode button handling - Rasia

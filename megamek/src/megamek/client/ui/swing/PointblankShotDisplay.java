@@ -133,6 +133,10 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     "PhaseDisplayButton"); //$NON-NLS-1$
+            String ttKey = "FiringDisplay." + cmd.getCmd() + ".tooltip";
+            if (Messages.keyExists(ttKey)) {
+                newButton.setToolTipText(Messages.getString(ttKey));
+            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

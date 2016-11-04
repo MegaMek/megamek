@@ -1686,11 +1686,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             target = hexTarget;
         } else {
             target = t;
-            // Set last target ID, so next/prev target behaves correctly
-            for (int i = 0; i < visibleTargets.length; i++) {
-                if (visibleTargets[i].getId() == target.getTargetId()) {
-                    lastTargetID = i;
-                    break;
+            if (visibleTargets != null) {
+                // Set last target ID, so next/prev target behaves correctly
+                for (int i = 0; i < visibleTargets.length; i++) {
+                    if (visibleTargets[i].getId() == target.getTargetId()) {
+                        lastTargetID = i;
+                        break;
+                    }
                 }
             }
         }

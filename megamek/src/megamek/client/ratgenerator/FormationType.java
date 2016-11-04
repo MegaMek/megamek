@@ -222,6 +222,10 @@ public class FormationType {
     public String getExclusiveFaction() {
         return exclusiveFaction;
     }
+    
+    public String getNameWithFaction() {
+        return exclusiveFaction == null? name : name + " (" + exclusiveFaction + ")";
+    }
 
     public int getMinWeightClass() {
         return minWeightClass;

@@ -994,7 +994,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             for (String group : formationGroups.keySet()) {
                 c.insets = mainInsets;
                 if (formationGroups.get(group).contains(group)) {
-                    JRadioButton btn = new JRadioButton(group);
+                    JRadioButton btn = new JRadioButton(FormationType.getFormationType(group).getNameWithFaction());
                     if (formationBtnGroup.getButtonCount() == 0) {
                         btn.setSelected(true);
                     }
@@ -1003,13 +1003,14 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                     formationBtnGroup.add(btn);
                     formationGroups.get(group).remove(group);
                 } else {
-                    JLabel lbl = new JLabel(group, SwingConstants.LEFT);
+                    JLabel lbl = new JLabel(FormationType.getFormationType(group).getNameWithFaction(),
+                            SwingConstants.LEFT);
                     panFormations.add(lbl, c);
                 }
                 c.gridy++;
                 c.insets = subInsets;
                 for (String form : formationGroups.get(group)) {
-                    JRadioButton btn = new JRadioButton(form);
+                    JRadioButton btn = new JRadioButton(FormationType.getFormationType(form).getNameWithFaction());
                     if (formationBtnGroup.getButtonCount() == 0) {
                         btn.setSelected(true);
                     }

@@ -113,6 +113,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            String ttKey = "SelectArtyAutoHitHexDisplay." + cmd.getCmd() + ".tooltip";
+            if (Messages.keyExists(ttKey)) {
+                newButton.setToolTipText(Messages.getString(ttKey));
+            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

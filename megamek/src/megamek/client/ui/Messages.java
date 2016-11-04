@@ -32,6 +32,21 @@ public class Messages {
         // All static class, should never be instantiated
     }
 
+    /**
+     * Check to see if a given key has valid internationalized text.
+     * @param key
+     * @return
+     */
+    public static boolean keyExists(String key) {
+        return RESOURCE_BUNDLE.containsKey(key);
+    }
+
+    /**
+     * Retrieve the internationalized text for a given key.
+     *
+     * @param key
+     * @return
+     */
     public static String getString(String key) {
         try {
             return RESOURCE_BUNDLE.getString(key);

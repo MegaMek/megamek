@@ -965,12 +965,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         clientgui.getClient().getGame(), ce().getId(), result,
                         clientgui.mechD.wPan.getSelectedWeaponNum(),
                         isStrafing);
-                done = toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
+                done &= toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
                         && toHit.getValue() != TargetRoll.IMPOSSIBLE
                         && toHit.getValue() <= 12;
             }
             if (ignoreAllies) {
-                done = result.isEnemyOf(ce());
+                done &= result.isEnemyOf(ce());
             }
         }
         return result;

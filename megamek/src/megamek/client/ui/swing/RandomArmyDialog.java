@@ -105,7 +105,6 @@ WindowListener, TreeSelectionListener {
     private ForceGenerationOptionsPanel m_pRATGenOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.RAT_GENERATOR);
     private JPanel m_pUnitTypeOptions = new JPanel(new CardLayout());
     private ForceGenerationOptionsPanel m_pFormationOptions = new ForceGenerationOptionsPanel(ForceGenerationOptionsPanel.Use.FORMATION_BUILDER);
-    private JPanel m_pFormationTypes = new JPanel();
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
     private JPanel m_pButtons = new JPanel();
@@ -434,29 +433,11 @@ WindowListener, TreeSelectionListener {
         m_pRATGen.add(new JScrollPane(m_lRAT), c);
 
         // formation builder tab
-        m_pFormations.setLayout(new GridBagLayout());
+        m_pFormations.setLayout(new BorderLayout());
 
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 1.0;
-        c.weighty = 0.5;
-        m_pFormations.add(new JScrollPane(m_pFormationOptions), c);
+        m_pFormations.add(new JScrollPane(m_pFormationOptions), BorderLayout.CENTER);
         m_pFormationOptions.setYear(m_clientgui.getClient().getGame().getOptions()
                 .intOption("year"));
-        
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.BOTH;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 1.0;
-        c.weighty = 0.5;
-        m_pFormations.add(new JScrollPane(m_pFormationTypes), c);
 
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());

@@ -987,7 +987,7 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
             c.anchor = GridBagConstraints.WEST;
             c.fill = GridBagConstraints.NONE;
             c.weightx = 0.0;
-            c.weighty = 0.0;
+            c.weighty = 1.0;
             
             Insets mainInsets = new Insets(0, 10, 0, 10);
             Insets subInsets = new Insets(0, 30, 0, 10);
@@ -1101,13 +1101,13 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 networkOptions.keySet().forEach(cbNetwork::addItem);
                 c.gridx = 0;
                 c.gridy++;
-                c.gridwidth = 2;
+                c.gridwidth = GridBagConstraints.REMAINDER;
                 panOtherOptions.add(cbNetwork, c);
             }
             
             c.gridx = 0;
             c.gridy++;
-            c.gridwidth = 2;            
+            c.gridwidth = GridBagConstraints.REMAINDER;
             JButton btn = new JButton(Messages.getString("ForceGenerationOptions.formationAnalysis"));
             panOtherOptions.add(btn, c);
             btn.addActionListener(ev -> showAnalysis());

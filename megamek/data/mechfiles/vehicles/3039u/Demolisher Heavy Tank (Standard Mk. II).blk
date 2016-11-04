@@ -1,52 +1,44 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
 
 <UnitType>
 Tank
 </UnitType>
 
-<blockversion>
-1
-</blockversion>
-
 <Name>
 Demolisher Heavy Tank
 </Name>
 
-<model>
-(Standard Mk. II)	
-</model>
+<Model>
+(Standard Mk. II)
+</Model>
 
 <year>
 2823
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-80.0
-</tonnage>
 
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-1
-</engine_type>
-
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 40
@@ -80,8 +72,11 @@ Autocannon/20
 Autocannon/20
 </Turret Equipment>
 
-<History>
-Though not strictly a variant, the Demolisher Mk II was released soon after the original. This version was shorter, had a better suspension system, and only two tread units.
-There are no differences affecting gameplay.  Unit included for completeness only.
-</history>
+<source>
+TRO 3039 - Succession Wars
+</source>
+
+<tonnage>
+80.0
+</tonnage>
 

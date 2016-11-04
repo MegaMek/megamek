@@ -94,9 +94,11 @@ public class AnalyzeFormationDialog extends JDialog {
         
         gbc.gridy++;
         StringBuilder sb = new StringBuilder(Messages.getString("AnalyzeFormationDialog.weightClassRange"));
-        sb.append(": ").append(EntityWeightClass.getClassName(ft.getMinWeightClass()));
+        sb.append(": ").append(EntityWeightClass.getClassName(Math.max(ft.getMinWeightClass(),
+                EntityWeightClass.WEIGHT_LIGHT)));
         if (ft.getMinWeightClass() != ft.getMaxWeightClass()) {
-            sb.append("-").append(EntityWeightClass.getClassName(ft.getMaxWeightClass()));
+            sb.append("-").append(EntityWeightClass.getClassName(Math.min(ft.getMaxWeightClass(),
+                    EntityWeightClass.WEIGHT_ASSAULT)));
         }
         mainPanel.add(new JLabel(sb.toString()), gbc);
         

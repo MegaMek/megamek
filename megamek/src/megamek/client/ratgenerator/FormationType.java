@@ -358,34 +358,34 @@ public class FormationType {
             return new ArrayList<>();
         }
         
+        /* If a network is indicated, we decide which units are part of the network (usually
+         * all, but not necessarily) and which combination to use, then assign one of them
+         * to the master role if any. A company command lance has two configuration options:
+         * a unit with two masters, or two master and two slaves.
+         */
         int numNetworked = 0;
         int numMasters = 0;
+        int altNumMasters = 0;
         int masterType = ModelRecord.NETWORK_NONE;
         int slaveType = ModelRecord.NETWORK_NONE;
-        switch (networkMask) {
-        case ModelRecord.NETWORK_C3_MASTER:
-        case ModelRecord.NETWORK_COMPANY_COMMAND:
+        
+        if ((networkMask & ModelRecord.NETWORK_C3_MASTER) != 0) {
             numNetworked = 4;
             numMasters = 1;
-            masterType = networkMask;
-            slaveType = ModelRecord.NETWORK_C3_SLAVE;
-            break;
-        case ModelRecord.NETWORK_BOOSTED_MASTER:
-            numNetworked = 4;
-            numMasters = 1;
-            masterType = networkMask;
-            slaveType = ModelRecord.NETWORK_BOOSTED_SLAVE;
-            break;
-        case ModelRecord.NETWORK_C3I:
+            masterType = networkMask | (networkMask & ModelRecord.NETWORK_BOOSTED)
+                    | (networkMask & ModelRecord.NETWORK_COMPANY_COMMAND);
+            slaveType = ModelRecord.NETWORK_C3_SLAVE | (networkMask & ModelRecord.NETWORK_BOOSTED);
+            if ((networkMask & ModelRecord.NETWORK_COMPANY_COMMAND) != 0) {
+                altNumMasters = 2;
+            }
+        } else if ((networkMask & ModelRecord.NETWORK_C3I) != 0) {
             numNetworked = 6;
             numMasters = 0;
-            slaveType = networkMask;
-            break;
-        case ModelRecord.NETWORK_NOVA:
+            slaveType = ModelRecord.NETWORK_C3I;
+        } else if ((networkMask & ModelRecord.NETWORK_NOVA) != 0) {
             numNetworked = 3;
             numMasters = 0;
-            slaveType = networkMask;
-            break;
+            slaveType = ModelRecord.NETWORK_NOVA;
         }
         
         /* Check whether we have vees that do not have the movement mode(s) set. If so,
@@ -509,7 +509,14 @@ public class FormationType {
         int totalCombos = otherCriteria.stream()
             .map(c -> bitCountMask.get(c.getMinimum(cUnits)).size())
             .reduce(1, (a, b) -> a * b);
-        totalCombos *= bitCountMask.get(numNetworked).size() * bitCountMask.get(numMasters).size();
+        totalCombos *= bitCountMask.get(numNetworked).size();
+        /* If this is a company command unit, the number of master configurations is equal
+         * to the number combos with one double-master unit plus the number of combos with two
+         * units that each have a single master.
+         */
+        if (numMasters > 0) {
+            totalCombos *= bitCountMask.get(numMasters).size() + bitCountMask.get(altNumMasters).size();
+        }
         List<Integer> possibilities = IntStream.range(0, totalCombos).mapToObj(Integer::valueOf)
                 .collect(Collectors.toList());
         
@@ -558,12 +565,19 @@ public class FormationType {
             }
             int networkBitMask = 0;
             int networkMasterBitMask = 0;
+            int useMasterType = masterType;
             if (numNetworked > 0) {
                 int count = bitCountMask.get(numNetworked).size();
                 networkBitMask = bitCountMask.get(numNetworked).get(value % count);
                 value /= count;
-                count = bitCountMask.get(numMasters).size();
-                networkMasterBitMask = bitCountMask.get(numMasters).get(value % count);
+                count = bitCountMask.get(numMasters).size() + bitCountMask.get(altNumMasters).size();
+                int i = value % count;
+                if (i < bitCountMask.get(numMasters).size()) {
+                    networkMasterBitMask = bitCountMask.get(numMasters).get(i);
+                } else {
+                    networkMasterBitMask = bitCountMask.get(altNumMasters).get(i - bitCountMask.get(numMasters).size());
+                    useMasterType &= ~ModelRecord.NETWORK_COMPANY_COMMAND;
+                }
             }
 
             boolean completed = true;
@@ -583,7 +597,7 @@ public class FormationType {
                     }
                 }
                 if ((networkBitMask & 1) != 0) {
-                    int mask = (networkMasterBitMask & 1) == 0? slaveType : masterType;
+                    int mask = (networkMasterBitMask & 1) == 0? slaveType : useMasterType;
                     filter.add(ms -> (getNetworkMask(ms) & mask) == mask);
                 }
                 MechSummary unit = tables.get(unitTableIndex[i])

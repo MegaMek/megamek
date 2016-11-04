@@ -221,33 +221,22 @@ public class AnalyzeFormationDialog extends JDialog {
     
     private List<FormationType.Constraint> networkConstraints(int networkMask) {
         List<FormationType.Constraint> retVal = new ArrayList<>();
-        switch(networkMask) {
-        case ModelRecord.NETWORK_C3_MASTER:
-            retVal.add(new FormationType.CountConstraint(1,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_MASTER) != 0, "C3 Master"));
-            retVal.add(new FormationType.CountConstraint(3,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_SLAVE) != 0, "C3 Slave"));
-            break;
-        case ModelRecord.NETWORK_COMPANY_COMMAND:
-            retVal.add(new FormationType.CountConstraint(1,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_COMPANY_COMMAND) != 0, "C3 Master x 2"));
-            retVal.add(new FormationType.CountConstraint(3,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_SLAVE) != 0, "C3 Slave"));
-            break;
-        case ModelRecord.NETWORK_C3I:
-            retVal.add(new FormationType.CountConstraint(1,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3I) != 0, "C3i"));
-            break;
-        case ModelRecord.NETWORK_BOOSTED_MASTER:
+        if ((networkMask & ModelRecord.NETWORK_BOOSTED) != 0) {
             retVal.add(new FormationType.CountConstraint(1,
                     ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_BOOSTED_MASTER) != 0, "C3 Boosted Master"));
             retVal.add(new FormationType.CountConstraint(3,
-                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_BOOSTED_SLAVE) != 0, "C3 Boosted Slave"));
-            break;
-        case ModelRecord.NETWORK_NOVA:
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_BOOSTED_SLAVE) != 0, "C3 Boosted Slave"));            
+        } else if ((networkMask & ModelRecord.NETWORK_C3_MASTER) != 0) {
+            retVal.add(new FormationType.CountConstraint(1,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_MASTER) != 0, "C3 Master"));
             retVal.add(new FormationType.CountConstraint(3,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3_SLAVE) != 0, "C3 Slave"));            
+        } else if ((networkMask & ModelRecord.NETWORK_C3I) != 0) {
+            retVal.add(new FormationType.CountConstraint(1,
+                    ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_C3I) != 0, "C3i"));
+        } else if ((networkMask & ModelRecord.NETWORK_NOVA) != 0) {
+            retVal.add(new FormationType.CountConstraint(1,
                     ms -> (getNetworkMask(ms) & ModelRecord.NETWORK_NOVA) != 0, "Nova CEWS"));
-            break;
         }
         return retVal;
     }

@@ -1089,11 +1089,13 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 networkOptions.put(Messages.getString("ForceGenerationOptions.C3Lance"),
                         ModelRecord.NETWORK_C3_MASTER);
                 networkOptions.put(Messages.getString("ForceGenerationOptions.C3Command"),
-                        ModelRecord.NETWORK_COMPANY_COMMAND);
+                        ModelRecord.NETWORK_C3_MASTER | ModelRecord.NETWORK_COMPANY_COMMAND);
                 networkOptions.put(Messages.getString("ForceGenerationOptions.C3i"),
                         ModelRecord.NETWORK_C3I);
                 networkOptions.put(Messages.getString("ForceGenerationOptions.C3BLance"),
                         ModelRecord.NETWORK_BOOSTED_MASTER);
+                networkOptions.put(Messages.getString("ForceGenerationOptions.C3BCommand"),
+                        ModelRecord.NETWORK_BOOSTED_MASTER | ModelRecord.NETWORK_COMPANY_COMMAND);
                 networkOptions.put(Messages.getString("ForceGenerationOptions.Nova"),
                         ModelRecord.NETWORK_NOVA);
                 networkOptions.keySet().forEach(cbNetwork::addItem);

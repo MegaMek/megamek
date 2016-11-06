@@ -33,7 +33,7 @@ Wheeled
 </motion_type>
 
 <transporters>
-cargobay:3.0:1
+cargobay:2.0:1
 </transporters>
 
 <cruiseMP>
@@ -67,7 +67,7 @@ cargobay:3.0:1
 </Rear Equipment>
 
 <source>
-RS 3039 Unabridged
+TRO 3039 - Succession Wars
 </source>
 
 <tonnage>

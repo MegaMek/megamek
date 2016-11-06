@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Skulker Wheeled Scout Tank
@@ -24,29 +24,21 @@ Skulker Wheeled Scout Tank
 2659
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-20.0
-</tonnage>
 
 <motion_type>
 Wheeled
 </motion_type>
 
-<engine_type>
-1
-</engine_type>
-
 <cruiseMP>
 7
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 18
@@ -70,4 +62,12 @@ Medium Laser
 
 <Rear Equipment>
 </Rear Equipment>
+
+<source>
+TRO 3039 - Star League
+</source>
+
+<tonnage>
+20.0
+</tonnage>
 

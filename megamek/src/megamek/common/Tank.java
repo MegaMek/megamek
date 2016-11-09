@@ -3447,6 +3447,21 @@ public class Tank extends Entity {
         // Return the result.
         return result;
     } // End public TargetRoll getStealthModifier( char )
+    
+    @Override
+    public long getBattleForceJumpPoints() {
+        int baseBFMove = getWalkMP();
+        int baseBFJump = getJumpMP();
+        long finalBFJump = 0;
+
+        if (baseBFJump >= baseBFMove) {
+            finalBFJump = baseBFJump;
+        } else {
+            finalBFJump = Math.round(baseBFJump * .66);
+        }
+
+        return finalBFJump;
+    }
 
     @Override
     /**
@@ -3459,6 +3474,31 @@ public class Tank extends Entity {
             struct += this.getInternal(i);
         }
         return (int) Math.ceil(struct / 10.0);
+    }
+    
+    /**
+     * Separate turret weapons from body-mounted
+     */
+    public int getNumBattleForceWeaponsLocations() {
+        return locations() - 4;
+    }
+
+    /**
+     * index 0 (Front, Left, Right)
+     * index 1 (Turret(s))
+     */
+    public double getBattleforceLocationMultiplier(int index, int location) {
+        if (location == LOC_REAR || location == LOC_BODY
+                || (index == 0 && location >= LOC_TURRET)
+                || (index == 1 && location < LOC_TURRET)) {
+            return 0.0;
+        }
+        return 1.0; 
+    }
+    
+    @Override
+    public boolean isTurretLocation(int index) {
+        return index > 0;
     }
 
     @Override

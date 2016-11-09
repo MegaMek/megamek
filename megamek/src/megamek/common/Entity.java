@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
@@ -11995,9 +11996,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int baseBFMove = getWalkMP();
         return baseBFMove;
     }
+    
+    public long getAlphaStrikeMovementPoints() {
+        return getBattleForceMovementPoints() * 2;
+    }
 
     public long getBattleForceJumpPoints() {
         return 0;
+    }
+    
+    public long getAlphaStrikeJumpPoints() {
+        return getJumpMP() * 2;
     }
 
     /**
@@ -12128,13 +12137,34 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getBattleForceStructurePoints() {
         return 0;
     }
+    
+    /**
+     * Some units have separate damage values for various locations (turrets, large craft firing arcs)
+     * @return
+     */
+    public int getNumBattleForceWeaponsLocations() {
+        return 0;
+    }
+
+    /**
+     * @param index - indicates which set of damage values is being calculated
+     * @param location - one of the entity's LOC_* constants
+     * @return - the damage multiplier for this location; 0 for exclusion
+     */
+    public double getBattleforceLocationMultiplier(int index, int location) {
+        return 1.0; 
+    }
+    
+    public boolean isTurretLocation(int index) {
+        return false;
+    }
 
     /**
      * @param range
      * @return
      */
-    public int getBattleForceStandardWeaponsDamage(int range) {
-        return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA, false,
+    public int getBattleForceStandardWeaponsDamage(int range, int location) {
+        return getBattleForceStandardWeaponsDamage(range, location, AmmoType.T_NA, false,
                                                    false);
     }
 
@@ -12143,8 +12173,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param ammoType
      * @return
      */
-    public int getBattleForceStandardWeaponsDamage(int range, int ammoType) {
-        return getBattleForceStandardWeaponsDamage(range, ammoType, false,
+    public int getBattleForceStandardWeaponsDamage(int range, int location, int ammoType) {
+        return getBattleForceStandardWeaponsDamage(range, location, ammoType, false,
                                                    false);
     }
 
@@ -12154,9 +12184,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param ignoreSpecialAbilities
      * @return
      */
-    public int getBattleForceStandardWeaponsDamage(int range,
+    public int getBattleForceStandardWeaponsDamage(int range, int location,
                                                    boolean ignoreHeat, boolean ignoreSpecialAbilities) {
-        return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA,
+        return getBattleForceStandardWeaponsDamage(range, location, AmmoType.T_NA,
                                                    ignoreHeat, ignoreSpecialAbilities);
     }
 
@@ -12167,7 +12197,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param ignoreSpecialAbility calculate special attacks into total damage if set to true
      * @return
      */
-    public int getBattleForceStandardWeaponsDamage(int range, int ammoType,
+    public int getBattleForceStandardWeaponsDamage(int range, int location, int ammoType,
                                                    boolean ignoreHeat, boolean ignoreSpecialAbility) {
         double totalDamage = 0;
         double frontArcWeaponsTotalDamage = 0;
@@ -12582,16 +12612,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         standardDamageValue = getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, false, true);
+                Entity.BATTLEFORCEMEDIUMRANGE, -1, false, true);
 
         if (standardDamageValue <= 0) {
             standardDamageValue = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, false, true);
+                    Entity.BATTLEFORCESHORTRANGE, -1, false, true);
             damageValueNoHeat = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, true, true);
+                    Entity.BATTLEFORCESHORTRANGE, -1, true, true);
         } else {
             damageValueNoHeat = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCEMEDIUMRANGE, true, true);
+                    Entity.BATTLEFORCEMEDIUMRANGE, -1, true, true);
         }
 
         if (damageValueNoHeat > standardDamageValue) {
@@ -12601,8 +12631,273 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return "None";
     }
 
-    public String getBattleForceSpecialAbilites() {
-        return "None";
+    public String getBattleForceSpecialAbilities() {
+
+        StringJoiner results = new StringJoiner(", ");
+
+        if (hasWorkingMisc(Sensor.LIGHT_AP)) {
+            results.add("PRB, ");
+        }
+
+        int acDamage = getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC, false, true);
+        acDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LAC, false, true);
+        if (acDamage >= 1) {
+
+            int shortACDamage = 0;
+            int longACDamage = 0;
+
+            shortACDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_AC, false, true);
+            shortACDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LAC, false, true);
+
+            longACDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_AC, false, true);
+            longACDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_LAC, false, true);
+
+            results.add(String.format("AC: %1$s/%2$s/%3$s", shortACDamage,
+                    acDamage, longACDamage));
+        }
+
+        if (hasWorkingMisc(MiscType.F_ANGEL_ECM, -1)) {
+            results.add("AECM");
+        }
+
+        if (hasWorkingWeapon(WeaponType.F_AMS)) {
+            results.add("AMS");
+        }
+
+        if (hasArmoredChassis() || hasArmoredEngine()) {
+            results.add("ARM");
+        } else {
+            topLoop: for (int location = 0; location <= locations(); location++) {
+                for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+                    CriticalSlot crit = getCritical(location, slot);
+                    if ((null != crit)
+                            && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                        Mounted mount = crit.getMount();
+                        if (mount.isArmored()) {
+                            results.add("ARM");
+                            break topLoop;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (hasBARArmor(0)) {
+            results.add("BAR");
+        }
+
+        if (hasWorkingMisc(MiscType.F_HARJEL, -1)) {
+            results.add("BHJ");
+        }
+
+        if (hasShield()) {
+            results.add("SHLD");
+        }
+
+        if (hasWorkingMisc(Sensor.BLOODHOUND)) {
+            results.add("BH");
+        }
+
+        if (hasC3S()) {
+            results.add("C3s");
+        }
+
+        if (hasC3M()) {
+            results.add("C3m");
+        }
+
+        if (hasC3i()) {
+            results.add("C3i");
+        }
+
+        if (hasWorkingMisc(MiscType.F_CASE, -1)) {
+            results.add("CASE");
+        }
+
+        if (hasCASEII()) {
+            results.add("CASEII");
+        }
+
+        if (hasWorkingMisc(MiscType.F_EJECTION_SEAT, -1)) {
+            results.add("ES");
+        }
+
+        if (hasWorkingMisc(MiscType.F_ECM, -1)) {
+            results.add("ECM");
+        }
+
+        boolean allEnergy = true;
+        for (Mounted mount : weaponList) {
+            if (!mount.getType().hasFlag(WeaponType.F_ENERGY)) {
+                allEnergy = false;
+                break;
+            }
+        }
+
+        if (allEnergy) {
+            results.add("ENE");
+        }
+
+        if (hasEnvironmentalSealing()) {
+            results.add("SEAL");
+        }
+
+        int narcBeacons = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+
+            if (weapon.getAmmoType() == AmmoType.T_INARC) {
+                narcBeacons++;
+            }
+        }
+
+        int flakDamage = getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC_LBX);
+        flakDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_HAG);
+
+        if ((flakDamage > 0)) {
+
+            int flakShortRangeDamage = 0;
+            int flakMediumRangeDamage = 0;
+            int flakLongRangeDamage = 0;
+
+            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_AC_LBX);
+            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_HAG);
+
+            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC_LBX);
+            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_HAG);
+
+            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_AC_LBX);
+            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_HAG);
+
+            results.add(String.format("FLK%d/%d/%d", flakShortRangeDamage,
+                    flakMediumRangeDamage, flakLongRangeDamage));
+        }
+
+        if (narcBeacons > 0) {
+            results.add(String.format("INARC%d", narcBeacons));
+        }
+
+        int ifDamage = 0;
+
+        ifDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM);
+        ifDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCELONGRANGE, AmmoType.T_EXLRM);
+        ifDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML);
+        ifDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_10);
+        ifDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_15);
+        ifDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_20);
+        ifDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_5);
+        ifDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCELONGRANGE, AmmoType.T_MEK_MORTAR);
+
+        if (ifDamage > 0) {
+
+            results.add(String.format("IF %d", ifDamage));
+        }
+
+        if (hasWorkingWeapon("ISLightTAG") || hasWorkingWeapon("CLLightTAG")) {
+            results.add("LTAG");
+        }
+
+        int lrmDamage = getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
+        lrmDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
+
+        if (lrmDamage >= 1) {
+
+            int lrmShortDamage = getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LRM, false, true);
+
+            int lrmLongDamage = getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM, false, true);
+            lrmLongDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML, false, true);
+
+            results.add(String.format("LRM: %1$s/%2$s/%3$s, ",
+                    lrmShortDamage, lrmDamage, lrmLongDamage));
+        }
+
+        if (hasWorkingMisc(MiscType.F_CLUB, -1)
+                || hasWorkingMisc(MiscType.F_HAND_WEAPON, -1)) {
+            results.add("MEL, ");
+        }
+
+        narcBeacons = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+
+            if (weapon.getAmmoType() == AmmoType.T_NARC) {
+                narcBeacons++;
+            }
+        }
+
+        if (narcBeacons > 0) {
+            results.add(String.format("SNARC%d", narcBeacons));
+        }
+
+        if (isOmni()) {
+            results.add("OMNI");
+        }
+
+//        if (hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT)) {
+//            results.add("SRCH");
+//        }
+
+        if (hasStealth()) {
+            results.add("STL");
+        }
+
+        int srmDamage = getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true);
+        srmDamage += getBattleForceStandardWeaponsDamage(0,
+                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
+
+        if (srmDamage >= 1) {
+            int srmShortDamage = getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_SRM, false, true);
+            srmShortDamage += getBattleForceStandardWeaponsDamage(0,
+                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_MML, false, true);
+
+            results.add(String.format("SRM: %1$s/%2$s/0", srmShortDamage,
+                    srmDamage));
+        }
+
+        if (hasWorkingWeapon("ISTAG") || hasWorkingWeapon("CLTAG")) {
+            results.add("TAG");
+        }
+
+        if (hasUMU()) {
+            results.add("UMU");
+        }
+
+        if (results.length() < 1) {
+            return "None";
+        }
+
+        return results.toString();
     }
 
     public int getBattleForceSize() {

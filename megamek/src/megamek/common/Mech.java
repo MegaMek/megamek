@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
@@ -7572,299 +7573,32 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    public String getBattleForceSpecialAbilites() {
-
-        StringBuffer results = new StringBuffer("");
-
-        if (hasWorkingMisc(Sensor.LIGHT_AP)) {
-            results.append("PRB, ");
+    public String getBattleForceSpecialAbilities() {
+        StringJoiner results = new StringJoiner(", ");
+        String general = super.getBattleForceSpecialAbilities();
+        if (!general.equals("None")) {
+            results.add(general);
         }
-
         if (isIndustrial() && (getCockpitType() == Mech.COCKPIT_STANDARD)) {
-            results.append("AFC, ");
+            results.add("AFC");
         }
 
-        int acDamage = getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC, false, true);
-        acDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LAC, false, true);
-        if (acDamage >= 1) {
-
-            int shortACDamage = 0;
-            int longACDamage = 0;
-
-            shortACDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_AC, false, true);
-            shortACDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LAC, false, true);
-
-            longACDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_AC, false, true);
-            longACDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_LAC, false, true);
-
-            results.append(String.format("AC: %1$s/%2$s/%3$s, ", shortACDamage,
-                    acDamage, longACDamage));
-        }
-
-        if (hasWorkingMisc(MiscType.F_ANGEL_ECM, -1)) {
-            results.append("AECM, ");
-        }
-
-        if (hasWorkingWeapon(WeaponType.F_AMS)) {
-            results.append("AMS, ");
-        }
-
-        if (hasArmoredChassis() || hasArmoredCockpit() || hasArmoredEngine()
-                || hasArmoredGyro()) {
-            results.append("ARM, ");
-        } else {
-            topLoop: for (int location = 0; location <= locations(); location++) {
-                for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
-                    CriticalSlot crit = getCritical(location, slot);
-                    if ((null != crit)
-                            && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
-                        Mounted mount = crit.getMount();
-                        if (mount.isArmored()) {
-                            results.append("ARM, ");
-                            break topLoop;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (hasBARArmor(0)) {
-            results.append("BAR, ");
+        if (hasArmoredCockpit() || hasArmoredGyro() && !general.contains("ARM, ")) {
+            results.add("ARM");
         }
 
         if (isIndustrial()) {
-            results.append("BFC, ");
-        }
-
-        if (hasWorkingMisc(MiscType.F_HARJEL, -1)) {
-            results.append("BHJ, ");
-        }
-
-        if (hasShield()) {
-            results.append("SHLD, ");
-        }
-
-        if (hasWorkingMisc(Sensor.BLOODHOUND)) {
-            results.append("BH, ");
-        }
-
-        if (hasC3S()) {
-            results.append("C3s, ");
-        }
-
-        if (hasC3M()) {
-            results.append("C3m, ");
-        }
-
-        if (hasC3i()) {
-            results.append("C3i, ");
-        }
-
-        if (hasWorkingMisc(MiscType.F_CASE, -1)) {
-            results.append("CASE, ");
-        }
-
-        if (hasCASEII()) {
-            results.append("CASEII, ");
-        }
-
-        if (hasWorkingMisc(MiscType.F_EJECTION_SEAT, -1)) {
-            results.append("ES, ");
-        }
-
-        if (hasWorkingMisc(MiscType.F_ECM, -1)) {
-            results.append("ECM, ");
-        }
-
-        boolean allEnergy = true;
-        for (Mounted mount : weaponList) {
-            if (!mount.getType().hasFlag(WeaponType.F_ENERGY)) {
-                allEnergy = false;
-                break;
-            }
-        }
-
-        if (allEnergy) {
-            results.append("ENE, ");
-        }
-
-        if (hasEnvironmentalSealing()) {
-            results.append("SEAL, ");
-        }
-
-        int narcBeacons = 0;
-
-        for (Mounted mount : getWeaponList()) {
-            WeaponType weapon = (WeaponType) mount.getType();
-
-            if (weapon.getAmmoType() == AmmoType.T_INARC) {
-                narcBeacons++;
-            }
-        }
-
-        int flakDamage = getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC_LBX);
-        flakDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_HAG);
-
-        if ((flakDamage > 0)) {
-
-            int flakShortRangeDamage = 0;
-            int flakMediumRangeDamage = 0;
-            int flakLongRangeDamage = 0;
-
-            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_AC_LBX);
-            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_HAG);
-
-            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC_LBX);
-            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_HAG);
-
-            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_AC_LBX);
-            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_HAG);
-
-            results.append("FLK ");
-            results.append(flakShortRangeDamage);
-            results.append("/");
-            results.append(flakMediumRangeDamage);
-            results.append("/");
-            results.append(flakLongRangeDamage);
-            results.append(", ");
-        }
-
-        if (narcBeacons > 0) {
-            results.append("INARC");
-            results.append(narcBeacons);
-            results.append(", ");
-        }
-
-        int ifDamage = 0;
-
-        ifDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM);
-        ifDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_EXLRM);
-        ifDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML);
-        ifDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_10);
-        ifDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_15);
-        ifDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_20);
-        ifDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_5);
-        ifDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_MEK_MORTAR);
-
-        if (ifDamage > 0) {
-
-            results.append("IF ");
-            results.append(ifDamage);
-            results.append(", ");
+            results.add("BFC");
         }
 
         if (hasIndustrialTSM()) {
-            results.append("ITSM, ");
-        }
-
-        if (hasWorkingWeapon("ISLightTAG") || hasWorkingWeapon("CLLightTAG")) {
-            results.append("LTAG, ");
-        }
-
-        int lrmDamage = getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
-        lrmDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
-
-        if (lrmDamage >= 1) {
-
-            int lrmShortDamage = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LRM, false, true);
-
-            int lrmLongDamage = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM, false, true);
-            lrmLongDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML, false, true);
-
-            results.append(String.format("LRM: %1$s/%2$s/%3$s, ",
-                    lrmShortDamage, lrmDamage, lrmLongDamage));
-        }
-
-        if (hasWorkingMisc(MiscType.F_CLUB, -1)
-                || hasWorkingMisc(MiscType.F_HAND_WEAPON, -1)) {
-            results.append("MEL, ");
-        }
-
-        narcBeacons = 0;
-
-        for (Mounted mount : getWeaponList()) {
-            WeaponType weapon = (WeaponType) mount.getType();
-
-            if (weapon.getAmmoType() == AmmoType.T_NARC) {
-                narcBeacons++;
-            }
-        }
-
-        if (narcBeacons > 0) {
-            results.append("SNARC");
-            results.append(narcBeacons);
-            results.append(", ");
-        }
-
-        if (isOmni()) {
-            results.append("OMNI, ");
-        }
-
-        results.append("SRCH, ");
-
-        if (hasStealth()) {
-            results.append("STL, ");
-        }
-
-        int srmDamage = getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true);
-        srmDamage += getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
-
-        if (srmDamage >= 1) {
-            int srmShortDamage = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_SRM, false, true);
-            srmShortDamage += getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_MML, false, true);
-
-            results.append(String.format("SRM: %1$s/%2$s/0, ", srmShortDamage,
-                    srmDamage));
+            results.add("ITSM");
         }
 
         if (hasTSM()) {
-            results.append("TSM, ");
+            results.add("TSM");
         }
-
-        if (hasWorkingWeapon("ISTAG") || hasWorkingWeapon("CLTAG")) {
-            results.append("TAG, ");
-        }
-
-        if (hasUMU()) {
-            results.append("UMU, ");
-        }
-
-        if (results.length() < 1) {
-            return "None";
-        }
-
-        results.setLength(results.length() - 2);
+        
         return results.toString();
     }
 

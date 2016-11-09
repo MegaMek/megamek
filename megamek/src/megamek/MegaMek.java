@@ -690,7 +690,7 @@ public class MegaMek {
                     MechSummary[] units = MechSummaryCache.getInstance()
                             .getAllMechs();
                     for (MechSummary unit : units) {
-                        if (!unit.getUnitType().equalsIgnoreCase("mek")) {
+                        if (!unit.getUnitType().equalsIgnoreCase("mek") && !unit.getUnitType().equalsIgnoreCase("tank")) {
                             continue;
                         }
                         Entity entity = new MechFileParser(
@@ -714,19 +714,19 @@ public class MegaMek {
                         // Also, each facing potentially has Capital, Capital
                         // Missile, and Sub Capital brackets as well.
                         w.write(Integer.toString(entity
-                                .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE)));
+                                .getBattleForceStandardWeaponsDamage(0, Entity.BATTLEFORCESHORTRANGE, -1)));
                         w.write("\t");
                         w.write(Integer.toString(entity
-                                .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE)));
+                                .getBattleForceStandardWeaponsDamage(0, Entity.BATTLEFORCEMEDIUMRANGE, -1)));
                         w.write("\t");
                         w.write(Integer.toString(entity
-                                .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE)));
+                                .getBattleForceStandardWeaponsDamage(0, Entity.BATTLEFORCELONGRANGE, -1)));
                         w.write("\t");
                         w.write(entity.getBattleForceOverHeatValue());
                         w.write("\t");
                         w.write(Integer.toString(entity.getBattleForcePoints()));
                         w.write("\t");
-                        w.write(entity.getBattleForceSpecialAbilites());
+                        w.write(entity.getBattleForceSpecialAbilities());
                         w.newLine();
                     }
                     w.close();

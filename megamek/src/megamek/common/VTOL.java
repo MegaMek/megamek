@@ -594,6 +594,16 @@ public class VTOL extends Tank {
     }
 
     @Override
+    public double getBattleForceLocationMultiplier(int index, int location) {
+        if (location == LOC_REAR || location == LOC_BODY || location == LOC_ROTOR
+                || (index == 0 && location >= LOC_TURRET)
+                || (index == 1 && location < LOC_TURRET)) {
+            return 0.0;
+        }
+        return 1.0; 
+    }
+
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;
     }

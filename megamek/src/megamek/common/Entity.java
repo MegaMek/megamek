@@ -11989,7 +11989,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
 
     public int getBattleForcePoints() {
-        return 0;
+        double bv = calculateBattleValue(true, true);
+        int points = (int) Math.round(bv / 100);
+        return Math.max(1, points);
     }
 
     public long getBattleForceMovementPoints() {
@@ -12143,7 +12145,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public int getNumBattleForceWeaponsLocations() {
-        return 0;
+        return 1;
     }
 
     /**
@@ -12151,12 +12153,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param location - one of the entity's LOC_* constants
      * @return - the damage multiplier for this location; 0 for exclusion
      */
-    public double getBattleforceLocationMultiplier(int index, int location) {
+    public double getBattleForceLocationMultiplier(int index, int location) {
         return 1.0; 
     }
     
     public boolean isTurretLocation(int index) {
         return false;
+    }
+    
+    /**
+     * Units with separate weapon locations (turrets or firing arcs) return the name of the location
+     * @param index
+     * @return
+     */
+    public String getBattleForceLocationName(int index) {
+        return "";
     }
 
     /**
@@ -12213,11 +12224,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         for (int pos = 0; pos < weaponList.size(); pos++) {
             double damageModifier = 1;
-            double weaponCount = 1;
             double minRangeDamageModifier = 1;
             hasArtemis = false;
             Mounted mount = weaponsList.get(pos);
+            double weaponCount = location < 0?
+                    1.0 : getBattleForceLocationMultiplier(location, mount.getLocation());
             if ((mount == null) || mount.isRearMounted()
+                || weaponCount == 0
                 || weaponsUsed.contains(mount.getName())) {
                 continue;
             }
@@ -12249,6 +12262,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((weapon.getAmmoType() != AmmoType.T_NA)
                 && !weapon.hasFlag(WeaponType.F_ONESHOT)) {
                 weaponsUsed.add(weapon.getName());
+                int weaponsForAmmo = 1;
                 for (int nextPos = pos + 1; nextPos < weaponList.size(); nextPos++) {
                     Mounted nextWeapon = weaponList.get(nextPos);
 
@@ -12257,7 +12271,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     }
 
                     if (nextWeapon.getType().equals(weapon)) {
-                        weaponCount++;
+                        weaponsForAmmo++;
+                        weaponCount += location < 0?
+                                1.0 : getBattleForceLocationMultiplier(location, nextWeapon.getLocation());
                     }
 
                 }
@@ -12280,7 +12296,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     }
                 }
 
-                if ((ammoCount / weaponCount) < 10) {
+                if ((ammoCount / weaponsForAmmo) < 10) {
                     damageModifier *= .75;
                 }
             }
@@ -12639,24 +12655,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             results.add("PRB, ");
         }
 
-        int acDamage = getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC, false, true);
-        acDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LAC, false, true);
+        int acDamage = getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_AC, false, true);
+        acDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_LAC, false, true);
         if (acDamage >= 1) {
 
             int shortACDamage = 0;
             int longACDamage = 0;
 
-            shortACDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_AC, false, true);
-            shortACDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LAC, false, true);
+            shortACDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCESHORTRANGE, -1, AmmoType.T_AC, false, true);
+            shortACDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCESHORTRANGE, -1, AmmoType.T_LAC, false, true);
 
-            longACDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_AC, false, true);
-            longACDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_LAC, false, true);
+            longACDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_AC, false, true);
+            longACDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_LAC, false, true);
 
             results.add(String.format("AC: %1$s/%2$s/%3$s", shortACDamage,
                     acDamage, longACDamage));
@@ -12758,10 +12774,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
 
-        int flakDamage = getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC_LBX);
-        flakDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_HAG);
+        int flakDamage = getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_AC_LBX);
+        flakDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_HAG);
 
         if ((flakDamage > 0)) {
 
@@ -12769,20 +12785,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             int flakMediumRangeDamage = 0;
             int flakLongRangeDamage = 0;
 
-            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_AC_LBX);
-            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_HAG);
+            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCESHORTRANGE, -1, AmmoType.T_AC_LBX);
+            flakShortRangeDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCESHORTRANGE, -1, AmmoType.T_HAG);
 
-            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_AC_LBX);
-            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_HAG);
+            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_AC_LBX);
+            flakMediumRangeDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_HAG);
 
-            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_AC_LBX);
-            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_HAG);
+            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_AC_LBX);
+            flakLongRangeDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_HAG);
 
             results.add(String.format("FLK%d/%d/%d", flakShortRangeDamage,
                     flakMediumRangeDamage, flakLongRangeDamage));
@@ -12794,22 +12810,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         int ifDamage = 0;
 
-        ifDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM);
-        ifDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_EXLRM);
-        ifDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML);
-        ifDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_10);
-        ifDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_15);
-        ifDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_20);
-        ifDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_TBOLT_5);
-        ifDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCELONGRANGE, AmmoType.T_MEK_MORTAR);
+        ifDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_LRM);
+        ifDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_EXLRM);
+        ifDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_MML);
+        ifDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_TBOLT_10);
+        ifDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_TBOLT_15);
+        ifDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_TBOLT_20);
+        ifDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_TBOLT_5);
+        ifDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_MEK_MORTAR);
 
         if (ifDamage > 0) {
 
@@ -12820,20 +12836,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             results.add("LTAG");
         }
 
-        int lrmDamage = getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_LRM, false, true);
-        lrmDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
+        int lrmDamage = getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_LRM, false, true);
+        lrmDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_MML, false, true) / 2;
 
         if (lrmDamage >= 1) {
 
-            int lrmShortDamage = getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_LRM, false, true);
+            int lrmShortDamage = getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCESHORTRANGE, -1, AmmoType.T_LRM, false, true);
 
-            int lrmLongDamage = getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_LRM, false, true);
-            lrmLongDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCELONGRANGE, AmmoType.T_MML, false, true);
+            int lrmLongDamage = getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_LRM, false, true);
+            lrmLongDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCELONGRANGE, -1, AmmoType.T_MML, false, true);
 
             results.add(String.format("LRM: %1$s/%2$s/%3$s, ",
                     lrmShortDamage, lrmDamage, lrmLongDamage));
@@ -12870,16 +12886,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             results.add("STL");
         }
 
-        int srmDamage = getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_SRM, false, true);
-        srmDamage += getBattleForceStandardWeaponsDamage(0,
-                Entity.BATTLEFORCEMEDIUMRANGE, AmmoType.T_MML, false, true) / 2;
+        int srmDamage = getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_SRM, false, true);
+        srmDamage += getBattleForceStandardWeaponsDamage(
+                Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_MML, false, true) / 2;
 
         if (srmDamage >= 1) {
-            int srmShortDamage = getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_SRM, false, true);
-            srmShortDamage += getBattleForceStandardWeaponsDamage(0,
-                    Entity.BATTLEFORCESHORTRANGE, AmmoType.T_MML, false, true);
+            int srmShortDamage = getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCESHORTRANGE, -1, AmmoType.T_SRM, false, true);
+            srmShortDamage += getBattleForceStandardWeaponsDamage(
+                    Entity.BATTLEFORCESHORTRANGE, -1, AmmoType.T_MML, false, true);
 
             results.add(String.format("SRM: %1$s/%2$s/0", srmShortDamage,
                     srmDamage));

@@ -7432,13 +7432,6 @@ public abstract class Mech extends Entity {
      */
 
     @Override
-    public int getBattleForcePoints() {
-        double bv = this.calculateBattleValue(true, true);
-        int points = (int) Math.round(bv / 100);
-        return Math.max(1, points);
-    }
-
-    @Override
     public long getBattleForceMovementPoints() {
         int baseBFMove = getWalkMP();
         long modBFMove = getWalkMP();

@@ -513,4 +513,15 @@ public class SuperHeavyTank extends Tank {
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPER_HEAVY_TANK;
     }
 
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location) {
+        if (location == LOC_REAR || location == LOC_BODY
+                || location == LOC_REARLEFT || location == LOC_REARRIGHT
+                || (index == 0 && location >= LOC_TURRET)
+                || (index == 1 && location < LOC_TURRET)) {
+            return 0.0;
+        }
+        return 1.0; 
+    }
+    
 }

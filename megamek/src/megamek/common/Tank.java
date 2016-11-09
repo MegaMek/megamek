@@ -3479,15 +3479,36 @@ public class Tank extends Entity {
     /**
      * Separate turret weapons from body-mounted
      */
+    @Override
     public int getNumBattleForceWeaponsLocations() {
-        return locations() - 4;
+        if (m_bHasNoTurret) {
+            return 1;
+        } else if  (m_bHasNoDualTurret) {
+            return 2;
+        } else {
+            return 3;
+        }
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        if (index > 0) {
+            if (m_bHasNoDualTurret) {
+                return "Turret";
+            } else {
+                return "Turret" + index;
+            }
+        } else {
+            return "";
+        }
     }
 
     /**
      * index 0 (Front, Left, Right)
-     * index 1 (Turret(s))
+     * index 1+ (Turret(s))
      */
-    public double getBattleforceLocationMultiplier(int index, int location) {
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location) {
         if (location == LOC_REAR || location == LOC_BODY
                 || (index == 0 && location >= LOC_TURRET)
                 || (index == 1 && location < LOC_TURRET)) {

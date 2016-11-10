@@ -7566,6 +7566,41 @@ public abstract class Mech extends Entity {
     }
 
     @Override
+    public int getBattleForceTotalHeatGeneration(boolean allowRear) {
+        int totalHeat = 0;
+
+        // finish the max heat calculations
+        if (this.getJumpMP() > 0) {
+            totalHeat += getJumpHeat(getJumpMP());
+        } else if (!((Mech) this).isIndustrial() && hasEngine()) {
+            totalHeat += getEngine().getRunHeat(this);
+        }
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+            if (weapon.hasFlag(WeaponType.F_ONESHOT)
+                || (allowRear && !mount.isRearMounted())
+                || (!allowRear && mount.isRearMounted())) {
+                continue;
+            }
+            if (weapon.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                totalHeat += weapon.getHeat() * 6;
+            } else if (weapon.getAmmoType() == AmmoType.T_AC_ULTRA
+                    || weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {                
+                totalHeat += weapon.getHeat() * 2;
+            } else {
+                totalHeat += weapon.getHeat();
+            }
+        }
+
+        if (hasWorkingMisc(MiscType.F_STEALTH, -1)) {
+            totalHeat += 10;
+        }
+
+        return totalHeat;        
+    }
+    
+    @Override
     public String getBattleForceSpecialAbilities() {
         StringJoiner results = new StringJoiner(", ");
         String general = super.getBattleForceSpecialAbilities();
@@ -7576,8 +7611,22 @@ public abstract class Mech extends Entity {
             results.add("AFC");
         }
 
-        if (hasArmoredCockpit() || hasArmoredGyro() && !general.contains("ARM, ")) {
+        if (hasArmoredCockpit() || hasArmoredGyro() || hasArmoredEngine()) {
             results.add("ARM");
+        } else {
+            topLoop: for (int location = 0; location <= locations(); location++) {
+                for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+                    CriticalSlot crit = getCritical(location, slot);
+                    if ((null != crit)
+                            && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
+                        Mounted mount = crit.getMount();
+                        if (mount.isArmored()) {
+                            results.add("ARM");
+                            break topLoop;
+                        }
+                    }
+                }
+            }
         }
 
         if (isIndustrial()) {

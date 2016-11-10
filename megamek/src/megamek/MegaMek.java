@@ -692,7 +692,9 @@ public class MegaMek {
                     for (MechSummary unit : units) {
                         if (!unit.getUnitType().equalsIgnoreCase("mek")
                                 && !unit.getUnitType().equalsIgnoreCase("tank")
-                                && !unit.getUnitType().equalsIgnoreCase("vtol")) {
+                                && !unit.getUnitType().equalsIgnoreCase("vtol")
+                                && !unit.getUnitType().equalsIgnoreCase("aero")
+                                && !unit.getUnitType().equalsIgnoreCase("conventional fighter")) {
                             continue;
                         }
                         Entity entity = new MechFileParser(

@@ -4081,11 +4081,54 @@ public class Aero extends Entity {
     }
 
     @Override
+    public long getAlphaStrikeMovementPoints() {
+        return getBattleForceMovementPoints();
+    }
+
+    @Override
     public int getBattleForceArmorPoints() {
         if (isCapitalScale()) {
             return (int) Math.round(getCapArmor() / 3.0);
         }
         return super.getBattleForceArmorPoints();
+    }
+    
+    @Override
+    public String getBattleForceDamageThresholdString() {
+        return Integer.toString((int)Math.ceil(getBattleForceArmorPoints() / 10.0));
+    }
+    
+    @Override
+    public int getBattleForceStructurePoints() {
+        return (int) Math.ceil(getSI() * 0.50);
+    }
+
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location) {
+        if (location == LOC_AFT) {
+            return 0.0;
+        }
+        return 1.0; 
+    }
+    
+    /**
+     * We need to check whether the weapon is mounted in LOC_AFT in addition to isRearMounted()
+     */
+    @Override
+    public int getBattleForceTotalHeatGeneration(boolean allowRear) {
+        int totalHeat = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+            if (weapon.hasFlag(WeaponType.F_ONESHOT)
+                || (allowRear && !mount.isRearMounted() && mount.getLocation() != LOC_AFT)
+                || (!allowRear && (mount.isRearMounted() || mount.getLocation() == LOC_AFT))) {
+                continue;
+            }
+            totalHeat += weapon.getHeat();
+        }
+
+        return totalHeat;
     }
 
     /**
@@ -4095,11 +4138,6 @@ public class Aero extends Entity {
      */
     public boolean isPrimitive() {
         return (getCockpitType() == Aero.COCKPIT_PRIMITIVE);
-    }
-
-    @Override
-    public int getBattleForceStructurePoints() {
-        return (int) Math.ceil(getSI() * 0.50);
     }
 
     @Override

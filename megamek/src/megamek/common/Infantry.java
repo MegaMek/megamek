@@ -1680,7 +1680,7 @@ public class Infantry extends Entity {
     @Override
     public int getBattleForceArmorPoints() {
         // Infantry armor points is # of men / 15
-        return (int) Math.ceil(getArmor(0)/15.0);
+        return (int) Math.ceil(getInternal(0)/15.0);
     }
 
     @Override
@@ -1691,6 +1691,29 @@ public class Infantry extends Entity {
         return 1;
     }
 
+    /**
+     * Damage is based on the average damage at the given range.
+     */
+    @Override
+    public int getBattleForceStandardWeaponsDamage(int range, int location, int ammoType,
+            boolean ignoreHeat, boolean ignoreSpecialAbility) {
+        if (getPrimaryWeapon() == null) {
+            return 0;
+        }
+        
+        int baseRange = 0;
+        if (getSecondaryWeapon() != null && getSecondaryN() >= 2) {
+            baseRange = getSecondaryWeapon().getInfantryRange();
+        } else if (getPrimaryWeapon() != null){
+            baseRange = getPrimaryWeapon().getInfantryRange();
+        }
+        int baseDamage = (int)Math.ceil(getDamagePerTrooper() * this.getShootingStrength());
+        if (baseRange * 3 >= range) {
+            return Compute.calculateClusterHitTableAmount(7, baseDamage);
+        }
+        return 0;
+    }
+    
     @Override
     public int getEngineHits() {
         return 0;

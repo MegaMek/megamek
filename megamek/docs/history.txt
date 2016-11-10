@@ -8,6 +8,7 @@ v0.41.27-git
 + Feature: Added keybinds for "only valid" & "no allies" next target  -- This
 	means that some of the default keybinds have changed, check client settings
 + Bug: Heat-seeking LRM modifiers being applied before side table is set
++ Issue #401: Princess deploys multiple units in/on top of one building
 
 v0.41.26 (2016-11-02 02:00 UTC)
 + New Sprites.

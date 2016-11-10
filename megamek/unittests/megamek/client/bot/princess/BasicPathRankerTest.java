@@ -1132,7 +1132,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockBoard.contains(Mockito.eq(friendPosition4))).thenReturn(true);
 
         // Test having no friends.
-        actual = testRanker.calcAllyCenter(myId, new ArrayList<Entity>(0), mockGame);
+        actual = testRanker.calcAllyCenter(myId, new ArrayList<>(0), mockGame);
         Assert.assertNull(actual);
         actual = testRanker.calcAllyCenter(myId, null, mockGame);
         Assert.assertNull(actual);

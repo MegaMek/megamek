@@ -16,6 +16,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.List;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * This class will hold all the information about a particular active sensor,
  * including its rolls
@@ -143,9 +145,9 @@ public class Sensor implements Serializable {
                 && (type != TYPE_MEK_SEISMIC)
                 && (type != TYPE_VEE_SEISMIC)
                 && ((type != TYPE_MEK_MAGSCAN) || game.getOptions()
-                        .booleanOption("magscan_nohills"))
+                        .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS))
                 && ((type != TYPE_VEE_MAGSCAN) || game.getOptions()
-                        .booleanOption("magscan_nohills")) && !isBAP()) {
+                        .booleanOption(OptionsConstants.ADVANCED_MAGSCAN_NOHILLS)) && !isBAP()) {
             return 0;
         }
 

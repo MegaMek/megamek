@@ -1369,39 +1369,39 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
 
             if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("pilot_advantages")) { //$NON-NLS-1$
+                    .booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.LVL3_ADVANTAGES);
             }
 
             if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("edge")) { //$NON-NLS-1$
+                    .booleanOption(OptionsConstants.EDGE)) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.EDGE_ADVANTAGES);
             }
 
             if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("manei_domini")) { //$NON-NLS-1$
+                    .booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
             }
 
             if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("stratops_partialrepairs")) { //$NON-NLS-1$
+                    .booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) { //$NON-NLS-1$
                 entity.clearPartialRepairs();
             }
             // Handle the "Blind Drop" option.
             if (!entity.getOwner().equals(
                     clientgui.getClient().getLocalPlayer())
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("blind_drop") //$NON-NLS-1$
+                            .booleanOption(OptionsConstants.BASE_BLIND_DROP) //$NON-NLS-1$
                     && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("real_blind_drop")) { //$NON-NLS-1$
+                            .booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) { //$NON-NLS-1$
 
                 mekModel.addUnit(entity);
             } else if (entity.getOwner().equals(
                     clientgui.getClient().getLocalPlayer())
                     || (!clientgui.getClient().getGame().getOptions()
-                            .booleanOption("blind_drop") //$NON-NLS-1$
+                            .booleanOption(OptionsConstants.BASE_BLIND_DROP) //$NON-NLS-1$
                     && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("real_blind_drop"))) { //$NON-NLS-1$
+                            .booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP))) { //$NON-NLS-1$
                 mekModel.addUnit(entity);
             }
         }
@@ -1632,7 +1632,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 int maxRange = RangeType.RANGE_LONG;
                 
                 if ((entity.getGame() != null) && entity.getGame().getOptions().booleanOption(
-                        OptionsConstants.AC_TAC_OPS_RANGE)) {
+                        OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
                     maxRange = RangeType.RANGE_EXTREME;
                 }
                 for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
@@ -1710,7 +1710,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         // Add StratOps quirks, if activated
         if ((entity.getGame() != null)
                 && entity.getGame().getOptions()
-                        .booleanOption("stratops_quirks")) {
+                        .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             for (Enumeration<IOptionGroup> advGroups = entity.getQuirks()
                     .getGroups(); advGroups.hasMoreElements();) {
                 IOptionGroup advGroup = advGroups.nextElement();
@@ -3018,7 +3018,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         txt = txt
                 + " " //$NON-NLS-1$
                 + clientgui.getClient().getGame().getOptions()
-                        .intOption("year"); //$NON-NLS-1$
+                        .intOption(OptionsConstants.ALLOWED_YEAR); //$NON-NLS-1$
         lblGameYear.setText(txt);
     }
 
@@ -3044,8 +3044,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         final IGame game = client.getGame();
         final GameOptions gOpts = game.getOptions();
         // enforce exclusive deployment zones in double blind
-        if (gOpts.booleanOption("double_blind") //$NON-NLS-1$
-                && gOpts.booleanOption("exclusive_db_deployment")) { //$NON-NLS-1$
+        if (gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
+                && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT)) { //$NON-NLS-1$
             int i = client.getLocalPlayer().getStartingPos();
             if (i == 0) {
                 clientgui.doAlertDialog(
@@ -3079,7 +3079,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
         
         // Make sure player has a commander if Commander killed victory is on
-        if (gOpts.booleanOption("commander_killed")) {
+        if (gOpts.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
             ArrayList<String> players = new ArrayList<String>();
             if ((game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1)
                     && (game.getEntitiesOwnedBy(client.getLocalPlayer()) > 0)) {
@@ -3300,7 +3300,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean blindDrop = !player.equals(clientgui.getClient()
                     .getLocalPlayer())
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("real_blind_drop");
+                            .booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
             if (col == COL_BV) {
                 int bv = Math.round(bvs.get(row));
                 if (blindDrop) {
@@ -3461,7 +3461,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean blindDrop = !entity.getOwner().equals(
                     clientgui.getClient().getLocalPlayer())
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("blind_drop");
+                            .booleanOption(OptionsConstants.BASE_BLIND_DROP);
             String value = "";
             if (col == COL_BV) {
                 value += entity.calculateBattleValue();
@@ -3517,7 +3517,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 boolean isOwner = entity.getOwner().equals(
                         clientgui.getClient().getLocalPlayer());
                 boolean blindDrop = clientgui.getClient().getGame()
-                        .getOptions().booleanOption("blind_drop");
+                        .getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
                 boolean compact = butCompact.isSelected();
                 if (!isOwner && blindDrop) {
                     if (column == COL_UNIT) {
@@ -3562,11 +3562,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         setToolTipText(formatPilotTooltip(
                                 entity.getCrew(),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("command_init"),
+                                        .booleanOption(OptionsConstants.RPG_COMMAND_INIT),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("individual_initiative"),
+                                        .booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("toughness")));
+                                        .booleanOption(OptionsConstants.RPG_TOUGHNESS)));
                     }
                 }
                 if (isSelected) {
@@ -3886,10 +3886,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     fighters.add(e.getId());
                 }
                 if ((!clientgui.getClient().getGame().getOptions()
-                        .booleanOption("allow_large_squadrons") && (fighters
+                        .booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS) && (fighters
                         .size() > FighterSquadron.MAX_SIZE))
                         || (clientgui.getClient().getGame().getOptions()
-                                .booleanOption("allow_large_squadrons") && (fighters
+                                .booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS) && (fighters
                                 .size() > FighterSquadron.ALTERNATE_MAX_SIZE))) {
                     JOptionPane.showMessageDialog(clientgui.frame,
                             Messages.getString("FighterSquadron.toomany"),
@@ -4020,13 +4020,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean isBot = clientgui.getBots()
                     .get(entity.getOwner().getName()) != null;
             boolean blindDrop = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("blind_drop");
+                    .booleanOption(OptionsConstants.BASE_BLIND_DROP);
             boolean isQuirksEnabled = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("stratops_quirks");
+                    .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
             boolean isRapidFireMG = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("tacops_burst");
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
             boolean isHotLoad = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("tacops_hotload");
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
             boolean isSearchlight = clientgui.getClient().getGame()
                     .getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
             boolean allLoaded = true;

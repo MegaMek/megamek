@@ -43,6 +43,7 @@ import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -186,14 +187,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 Entity ent = spottersAfter.next();
                 if (bestSpotter == null) {
                     bestSpotter = ent;
-                } else if (ent.getCrew().getOptions().booleanOption("forward_observer")
-                        && !bestSpotter.getCrew().getOptions().booleanOption("forward_observer")){
+                } else if (ent.getCrew().getOptions().booleanOption(OptionsConstants.MISC_FORWARD_OBSERVER)
+                        && !bestSpotter.getCrew().getOptions().booleanOption(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                     bestSpotter = ent;
                 } else if (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()
-                        && !bestSpotter.getCrew().getOptions().booleanOption("forward_observer")) {
+                        && !bestSpotter.getCrew().getOptions().booleanOption(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                     bestSpotter = ent;
-                } else if (bestSpotter.getCrew().getOptions().booleanOption("forward_observer")
-                        && ent.getCrew().getOptions().booleanOption("forward_observer")) {
+                } else if (bestSpotter.getCrew().getOptions().booleanOption(OptionsConstants.MISC_FORWARD_OBSERVER)
+                        && ent.getCrew().getOptions().booleanOption(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                     if (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()) {
                         bestSpotter = ent;
                     }
@@ -205,7 +206,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // If at least one valid spotter, then get the benefits thereof.
         if (null != bestSpotter) {
             int foMod = 0;
-            if (bestSpotter.getCrew().getOptions().booleanOption("forward_observer")) {
+            if (bestSpotter.getCrew().getOptions().booleanOption(OptionsConstants.MISC_FORWARD_OBSERVER
+)) {
                 foMod = bestSpotter.getCrew().getGunnery() - 4;
             }
             int mod = (bestSpotter.getCrew().getGunnery() - 4) / 2;
@@ -237,17 +239,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // shot (not salvo!) previously fired at the target hex, this would
             // in fact appear to be correct.
             // Only apply these modifiers to indirect artillery
-            else if ((null != bestSpotter) 
-                     && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
+            else if ((null != bestSpotter) && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
                 // only add mods if it's not an automatic success
-                if (ae.aTracker.getModifier(weapon, targetPos) 
-                        != TargetRoll.AUTOMATIC_SUCCESS) {
-                    if (bestSpotter.getCrew().getOptions().booleanOption("forward_observer")) {
+                if (ae.aTracker.getModifier(weapon, targetPos) != TargetRoll.AUTOMATIC_SUCCESS) {
+                    if (bestSpotter.getCrew().getOptions().booleanOption(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                         ae.aTracker.setSpotterHasForwardObs(true);
                     }
-                    ae.aTracker.setModifier(
-                            ae.aTracker.getModifier(weapon, targetPos) - 1,
-                            targetPos);
+                    ae.aTracker.setModifier(ae.aTracker.getModifier(weapon, targetPos) - 1, targetPos);
                 }
             }
 

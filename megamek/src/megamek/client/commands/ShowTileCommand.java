@@ -9,6 +9,7 @@ import megamek.client.Client;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IHex;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author dirk
@@ -47,7 +48,7 @@ public class ShowTileCommand extends ClientCommand {
 
                     // if we are not playing in double blind mode also list the
                     // units in this tile.
-                    if (!getClient().getGame().getOptions().booleanOption("double_blind")) {
+                    if (!getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
                         Iterator<Entity> entList = getClient().getGame()
                                                               .getEntities(coord);
                         if (entList.hasNext()) {

@@ -17,6 +17,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Objects;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * Represents a single type of terrain or condition in a hex. The type of a
  * terrain is immutable, once created, but the level and exits are changeable.
@@ -377,20 +379,23 @@ public class Terrain implements ITerrain, Serializable {
         case Terrains.RUBBLE:
             if (level == 6) {
                 if (((e instanceof Mech) && ((Mech)e).isSuperHeavy())
-                        || (e.getCrew().getOptions().booleanOption("foot_cav")
+                        || (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV
+)
                                 && (moveMode == EntityMovementMode.INF_LEG))) {
                     return 1;
                 }
                 return 2;
             }
             if (((e instanceof Mech) && ((Mech)e).isSuperHeavy())
-                    || (e.getCrew().getOptions().booleanOption("foot_cav")
+                    || (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV
+)
                             && (moveMode == EntityMovementMode.INF_LEG))) {
                 return 0;
             }
             return 1;
         case Terrains.WOODS:
-            if (e.getCrew().getOptions().booleanOption("foot_cav") 
+            if (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV
+) 
                     && (moveMode == EntityMovementMode.INF_LEG)
                     && (level > 1)) {
                 return level - 1;
@@ -400,7 +405,8 @@ public class Terrain implements ITerrain, Serializable {
             }
             return level;
         case Terrains.JUNGLE:
-            if (e.getCrew().getOptions().booleanOption("foot_cav")
+            if (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV
+)
                     && (moveMode == EntityMovementMode.INF_LEG)) {
                 return level;
             }
@@ -459,7 +465,8 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.ROUGH:
-            if (e.getCrew().getOptions().booleanOption("foot_cav") && (moveMode == EntityMovementMode.INF_LEG)) {
+            if (e.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
+                    && (moveMode == EntityMovementMode.INF_LEG)) {
                 return level - 1;
             }
             if (level == 2) {

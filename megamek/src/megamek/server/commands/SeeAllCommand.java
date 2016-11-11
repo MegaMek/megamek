@@ -20,6 +20,7 @@
 
 package megamek.server.commands;
 
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -47,7 +48,7 @@ public class SeeAllCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         boolean doBlind = server.getGame().getOptions().booleanOption(
-                "double_blind");
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
 
         int playerArg = server.isPassworded() ? 2 : 1;
 

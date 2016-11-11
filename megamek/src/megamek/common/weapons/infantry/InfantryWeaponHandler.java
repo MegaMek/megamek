@@ -29,6 +29,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
@@ -103,7 +104,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         }
         if((ae instanceof Infantry)
                 && nRange == 0
-                && ae.getCrew().getOptions().booleanOption("tsm_implant")) {
+                && ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
             damage += 0.14;
         }
         int damageDealt = (int) Math.round(damage * troopersHit);
@@ -112,7 +113,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         }
         if((ae instanceof Infantry)
                 && nRange == 0
-                && ae.getCrew().getOptions().booleanOption("tsm_implant")) {
+                && ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
 
         }
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {

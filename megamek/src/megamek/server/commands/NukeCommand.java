@@ -14,6 +14,7 @@
 
 package megamek.server.commands;
 
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -42,7 +43,7 @@ public class NukeCommand extends ServerCommand {
     public void run(int connId, String[] args) {
 
         // Check to make sure nuking is allowed by game options!
-        if (!(server.getGame().getOptions().booleanOption("really_allow_nukes") && server.getGame().getOptions().booleanOption("allow_nukes"))) {
+        if (!(server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES) && server.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_NUKES))) {
             server.sendServerChat(connId, "Command-line nukes are not enabled in this game.");
             return;
         }

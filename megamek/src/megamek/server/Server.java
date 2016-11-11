@@ -1284,7 +1284,7 @@ public class Server implements Runnable {
         if (PreferenceManager.getClientPreferences().stampFilenames()) {
             fileName = StringUtil.addDateTimeStamp(fileName);
         }
-        saveGame(fileName, game.getOptions().booleanOption("autosave_msg"));
+        saveGame(fileName, game.getOptions().booleanOption(OptionsConstants.BASE_AUTOSAVE_MSG));
     }
 
     /**
@@ -2141,20 +2141,20 @@ public class Server implements Runnable {
         final int playerId = null == entityUsed ? IPlayer.PLAYER_NONE
                                                 : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
-        boolean infMoveMulti = gameOpts.booleanOption("inf_move_multi")
+        boolean infMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
                && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
                    || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
                    || (currPhase == IGame.Phase.PHASE_INITIATIVE));
         boolean protosMoved = entityUsed instanceof Protomech;
-        boolean protosMoveMulti = gameOpts.booleanOption("protos_move_multi");
+        boolean protosMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         boolean tanksMoved = entityUsed instanceof Tank;
         boolean tanksMoveMulti = gameOpts.booleanOption(
-                "vehicle_lance_movement")
+                OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
                 && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
                     || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
                     || (currPhase == IGame.Phase.PHASE_INITIATIVE));
         boolean meksMoved = entityUsed instanceof Mech;
-        boolean meksMoveMulti = gameOpts.booleanOption("mek_lance_movement")
+        boolean meksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
                 && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
                     || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
                     || (currPhase == IGame.Phase.PHASE_INITIATIVE));
@@ -2250,7 +2250,7 @@ public class Server implements Runnable {
                 remaining--;
             }
             int moreInfAndProtoTurns = Math.min(
-                    gameOpts.intOption("inf_proto_move_multi") - 1, remaining);
+                    gameOpts.intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI) - 1, remaining);
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
@@ -2268,7 +2268,7 @@ public class Server implements Runnable {
                 remaining--;
             }
             int moreVeeTurns = Math.min(
-                    gameOpts.intOption("vehicle_lance_movement_number") - 1,
+                    gameOpts.intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER) - 1,
                     remaining);
 
             // Add the correct number of turns for the right unit classes.
@@ -2287,7 +2287,7 @@ public class Server implements Runnable {
                 remaining--;
             }
             int moreMekTurns = Math.min(
-                    gameOpts.intOption("mek_lance_movement_number") - 1,
+                    gameOpts.intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER) - 1,
                     remaining);
 
             // Add the correct number of turns for the right unit classes.
@@ -2467,7 +2467,7 @@ public class Server implements Runnable {
             case PHASE_TARGETING:
             case PHASE_OFFBOARD:
                 // Check for activating hidden units
-                if (game.getOptions().booleanOption("hidden_units")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
                     for (Entity ent : game.getEntitiesVector()) {
                         if (ent.getHiddenActivationPhase() == phase) {
                             ent.setHidden(false);
@@ -2556,7 +2556,7 @@ public class Server implements Runnable {
             case PHASE_END_REPORT:
                 resetActivePlayersDone();
                 sendReport();
-                if (game.getOptions().booleanOption("paranoid_autosave")) {
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
                 break;
@@ -2576,32 +2576,34 @@ public class Server implements Runnable {
                             a.doDisbandDamage();
                         }
                     }
-                    //fix the armor and SI of aeros if using aero sanity rules for the MUL
-                    if (game.getOptions().booleanOption("aero_sanity") && (entity instanceof Aero)) {
-                        //need to rescale SI and armor
-                        int scale = 1;
-                        if (entity.isCapitalScale()) {
-                            scale = 10;
-                        }
-                        Aero a = (Aero) entity;
-                        int currentSI = a.getSI() / (2 * scale);
-                        a.set0SI(a.get0SI() / (2 * scale));
-                        if (currentSI > 0) {
-                            a.setSI(currentSI);
-                        }
-                        if (scale > 1) {
-                            for (int loc = 0; loc < entity.locations(); loc++) {
-                                int currentArmor = entity.getArmor(loc) / scale;
-                                if (entity.getOArmor(loc) > 0) {
-                                    entity.initializeArmor(entity.getOArmor(loc) / scale, loc);
-                                }
-                                if (entity.getArmor(loc) > 0) {
-                                    entity.setArmor(currentArmor, loc);
-                                }
+                // fix the armor and SI of aeros if using aero sanity rules for
+                // the MUL
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                        && (entity instanceof Aero)) {
+                    // need to rescale SI and armor
+                    int scale = 1;
+                    if (entity.isCapitalScale()) {
+                        scale = 10;
+                    }
+                    Aero a = (Aero) entity;
+                    int currentSI = a.getSI() / (2 * scale);
+                    a.set0SI(a.get0SI() / (2 * scale));
+                    if (currentSI > 0) {
+                        a.setSI(currentSI);
+                    }
+                    if (scale > 1) {
+                        for (int loc = 0; loc < entity.locations(); loc++) {
+                            int currentArmor = entity.getArmor(loc) / scale;
+                            if (entity.getOArmor(loc) > 0) {
+                                entity.initializeArmor(entity.getOArmor(loc) / scale, loc);
+                            }
+                            if (entity.getArmor(loc) > 0) {
+                                entity.setArmor(currentArmor, loc);
                             }
                         }
                     }
                 }
+            }
                 send(createFullEntitiesPacket());
                 send(createReportPacket(null));
                 send(createEndOfGamePacket());
@@ -2718,7 +2720,7 @@ public class Server implements Runnable {
             case PHASE_TARGETING:
             case PHASE_OFFBOARD:
                 changeToNextTurn();
-                if (game.getOptions().booleanOption("paranoid_autosave")) {
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
                 break;
@@ -2756,7 +2758,7 @@ public class Server implements Runnable {
                     }
                 }
                 // apply bombs and santa annas
-                if (game.getOptions().booleanOption("at2_nukes")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)
                     && ((entity instanceof Dropship) || (entity instanceof Jumpship))) {
                     entity.applySantaAnna();
                 }
@@ -2775,7 +2777,7 @@ public class Server implements Runnable {
                 entity.setLoadedKeepers(v);
             }
 
-            if (game.getOptions().booleanOption("aero_sanity")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && (entity instanceof Aero)) {
                 Aero a = (Aero) entity;
                 if (entity.isCapitalScale()) {
@@ -2810,7 +2812,7 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
 
             // Remove hot-loading some from LRMs for meks
-            if (!game.getOptions().booleanOption("hotload_in_game")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
                 for (Entity e : game.getEntitiesVector()) {
                     // Vehicles are allowed to hotload, just meks cannot
                     if (!(e instanceof Mech)) {
@@ -3173,7 +3175,7 @@ public class Server implements Runnable {
         }
         // if individual initiative is active we cannot forward our initiative
         // ever!
-        if (game.getOptions().booleanOption("individual_initiative")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             return;
         }
         // get the next player from the team this player is on.
@@ -3415,7 +3417,7 @@ public class Server implements Runnable {
 
     private boolean isPlayerForcedVictory() {
         // check game options
-        if (!game.getOptions().booleanOption("skip_forced_victory")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.VICTORY_SKIP_FORCED_VICTORY)) {
             return false;
         }
 
@@ -3475,11 +3477,11 @@ public class Server implements Runnable {
                 mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
                 mapSettings.getMapHeight(), sheetBoards, rotateBoard,
                 mapSettings.getMedium());
-        if (game.getOptions().getOption("bridgeCF").intValue() > 0) {
-            newBoard.setBridgeCF(game.getOptions().getOption("bridgeCF")
+        if (game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue() > 0) {
+            newBoard.setBridgeCF(game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF)
                     .intValue());
         }
-        if (!game.getOptions().booleanOption("random_basements")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_RANDOM_BASEMENTS)) {
             newBoard.setRandomBasementsOff();
         }
         if (game.getPlanetaryConditions().isTerrainAffected()) {
@@ -3494,14 +3496,14 @@ public class Server implements Runnable {
      * Rolls initiative for all the players.
      */
     private void rollInitiative() {
-        if (game.getOptions().booleanOption("individual_initiative")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             TurnOrdered.rollInitiative(game.getEntitiesVector(), false);
         } else {
             // Roll for initative on the teams.
             TurnOrdered.rollInitiative(
                     game.getTeamsVector(),
                     game.getOptions().booleanOption(
-                            "initiative_streak_compensation")
+                            OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION)
                     && !game.shouldDeployThisRound());
         }
 
@@ -3528,7 +3530,7 @@ public class Server implements Runnable {
         // when first proto in a unit moves, new turns get added so rest of the
         // unit will move
         boolean protosMoveMulti = game.getOptions().booleanOption(
-                "protos_move_multi");
+                OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         if (!protosMoveMulti) {
             entities = new ArrayList<>(game.getEntitiesVector().size());
             Set<Short> movedUnits = new HashSet<>();
@@ -3611,36 +3613,36 @@ public class Server implements Runnable {
      */
     private void determineTurnOrder(IGame.Phase phase) {
 
-        if (game.getOptions().booleanOption("individual_initiative")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             determineTurnOrderIUI(phase);
             return;
         }
         // and/or deploy even according to game options.
-        boolean infMoveEven = (game.getOptions().booleanOption("inf_move_even") && ((game
+        boolean infMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_EVEN) && ((game
                 .getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
                 .getPhase() == IGame.Phase.PHASE_MOVEMENT)))
-                || (game.getOptions().booleanOption("inf_deploy_even") && (game
+                || (game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN) && (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
         boolean infMoveMulti = game.getOptions()
-                .booleanOption("inf_move_multi")
+                .booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
                         .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT)));
         boolean protosMoveEven = (game.getOptions().booleanOption(
-                "protos_move_even") && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
+                OptionsConstants.INIT_PROTOS_MOVE_EVEN) && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
                 .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))))
-                || (game.getOptions().booleanOption("protos_deploy_even") && (game
+                || (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN) && (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
         boolean protosMoveMulti = game.getOptions().booleanOption(
-                "protos_move_multi");
+                OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         boolean protosMoveByPoint = !protosMoveMulti;
         boolean tankMoveByLance = game.getOptions().booleanOption(
-                "vehicle_lance_movement")
+                OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
                         .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT)));
         boolean mekMoveByLance = game.getOptions().booleanOption(
-                "mek_lance_movement")
+                OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
                         .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT)));
@@ -4018,7 +4020,7 @@ public class Server implements Runnable {
             addReport(new Report(1210, Report.PUBLIC));
         }
 
-        if (game.getOptions().booleanOption("individual_initiative")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             r = new Report(1040, Report.PUBLIC);
             addReport(r);
             for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements(); ) {
@@ -4093,8 +4095,8 @@ public class Server implements Runnable {
                 addReport(r);
                 if (hasEven) {
                     r = new Report(1021, Report.PUBLIC);
-                    if ((game.getOptions().booleanOption("inf_deploy_even") || game
-                            .getOptions().booleanOption("protos_deploy_even"))
+                    if ((game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN) || game
+                            .getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN))
                         && !(game.getLastPhase() == IGame.Phase.PHASE_END_REPORT)) {
                         r.choose(true);
                     } else {
@@ -4495,7 +4497,7 @@ public class Server implements Runnable {
 
         // Check for zip lines PSR -- MOVE_WALK implies ziplines
         if (unit.moved == EntityMovementType.MOVE_WALK) {
-            if (game.getOptions().booleanOption("tacops_ziplines")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
                     && (unit instanceof Infantry)
                     && !((Infantry) unit).isMechanized()) {
 
@@ -5106,7 +5108,7 @@ public class Server implements Runnable {
             if (!game.getBoard().contains(nextPos)) {
 
                 // Can the entity skid off the map?
-                if (game.getOptions().booleanOption("push_off_board")) {
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_PUSH_OFF_BOARD)) {
                     // Yup. One dead entity.
                     game.removeEntity(entity.getId(),
                                       IEntityRemovalConditions.REMOVE_PUSHED);
@@ -5666,7 +5668,7 @@ public class Server implements Runnable {
                 // ASSUMPTION: you don't charge the building
                 // if Tanks or Mechs were charged.
                 int chargeDamage = ChargeAttackAction.getDamageFor(entity, game
-                        .getOptions().booleanOption("tacops_charge_damage"),
+                        .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
                         entity.delta_distance);
                 if (!bldgSuffered) {
                     Vector<Report> reports = damageBuilding(bldg, chargeDamage,
@@ -6715,7 +6717,7 @@ public class Server implements Runnable {
         MoveStep prevStep = null;
 
         ArrayList<Entity> hiddenEnemies = new ArrayList<>();
-        if (game.getOptions().booleanOption("hidden_units")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             for (Entity e : game.getEntitiesVector()) {
                 if (e.isHidden() && e.isEnemyOf(entity)
                         && (e.getPosition() != null)) {
@@ -6740,7 +6742,7 @@ public class Server implements Runnable {
             isOnGround &= step.getElevation() < 1;
 
             // Check for hidden units point blank shots
-            if (game.getOptions().booleanOption("hidden_units")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
                 for (Entity e : hiddenEnemies) {
                     int dist = e.getPosition().distance(step.getPosition());
                     // Checking for same hex and stacking violation
@@ -6838,7 +6840,7 @@ public class Server implements Runnable {
                     // Check to see if the pilot can reroll due to Edge
                     if (entity.getCrew().hasEdgeRemaining()
                             && entity.getCrew().getOptions()
-                                    .booleanOption("edge_when_masc_fails")) {
+                                    .booleanOption(OptionsConstants.EDGE_WHEN_MASC_FAILS)) {
                         entity.getCrew().decreaseEdge();
                         // Need to reset the MASCUsed flag
                         entity.setMASCUsed(false);
@@ -6854,7 +6856,7 @@ public class Server implements Runnable {
                         masc_report.indent(2);
                         masc_report.addDesc(entity);
                         masc_report.add(entity.getCrew().getOptions()
-                                .intOption("edge"));
+                                .intOption(OptionsConstants.EDGE));
                         vReport.addElement(masc_report);
                         // Recheck MASC failure
                         if (!entity.checkForMASCFailure(md, vReport, crits)) { // The
@@ -7628,7 +7630,7 @@ public class Server implements Runnable {
             if (!lastPos.equals(curPos)
                     && (stepMoveType != EntityMovementType.MOVE_JUMP)
                     && (entity instanceof Mech)
-                    && game.getOptions().booleanOption("tacops_leaping")) {
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation
                         + game.getBoard().getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());
@@ -8623,7 +8625,7 @@ public class Server implements Runnable {
 
             // consume fuel
             if (((entity instanceof Aero)
-                    && game.getOptions().booleanOption("fuel_consumption"))
+                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
                     || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((Aero) entity).getFuelUsed(thrust);
                 a.useFuel(fuelUsed);
@@ -8831,7 +8833,7 @@ public class Server implements Runnable {
                 doSkillCheckInPlace(entity, rollTarget);
             }
             // check for jumping into heavy woods
-            if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
                         curHex);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -9077,7 +9079,7 @@ public class Server implements Runnable {
         // here because 'fellDuringMovement' is sometimes abused just to force
         // another turn and so doesn't reliably tell us.
         boolean continueTurnFromFall = !(game.getOptions()
-                .booleanOption("falls_end_movement") && (entity instanceof Mech)
+                .booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT) && (entity instanceof Mech)
                 && !wasProne && entity.isProne())
                 && (fellDuringMovement && !entity.isCarefulStand()) // Careful
                                                                     // standing
@@ -10485,11 +10487,11 @@ public class Server implements Runnable {
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
-                if (entity.getCrew().getOptions().booleanOption("eagle_eyes")) {
+                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
                     target += 2;
                 }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER)
-                    || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
+                        || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
                     target = 12;
                 }
             }
@@ -11079,11 +11081,11 @@ public class Server implements Runnable {
                 continue;
             }
 
-            // check for the "no_premove_vibra" option
+            // check for the OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA option
             // If it's set, and the target has not yet moved,
             // it doesn't get damaged.
             if (!entity.isDone()
-                && game.getOptions().booleanOption("no_premove_vibra")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA)) {
                 r = new Report(2157);
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
@@ -11561,7 +11563,7 @@ public class Server implements Runnable {
             addReport(r);
             if ((entity instanceof Mech)
                 && game.getOptions().booleanOption(
-                    "tacops_falling_expanded")
+                    OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
                 && (entity.getCrew().getPiloting() < 6)
                 && !entity.isHullDown() && entity.canGoHullDown()) {
                 if ((entity.getCrew().getPiloting() > 1)
@@ -12401,7 +12403,7 @@ public class Server implements Runnable {
                 || !turn.isValid(connId, entity, game)
                 || !(game.getBoard().isLegalDeployment(coords,
                         entity.getStartingPos()) || (assaultDrop
-                        && game.getOptions().booleanOption("assault_drop") && entity
+                        && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP) && entity
                             .canAssaultDrop()))) {
             String msg = "error: server got invalid deployment packet from "
                          + "connection " + connId;
@@ -13085,7 +13087,7 @@ public class Server implements Runnable {
         for (Entity e : htAttacks.keySet()) {
             Vector<WeaponHandler> vAttacks = htAttacks.get(e);
             // Allow MM to automatically assign AMS targets
-            if (game.getOptions().booleanOption("auto_ams")) {
+            if (game.getOptions().booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 e.assignAMS(vAttacks);
             } else { // Allow user to manually assign targets
                 manuallyAssignAMSTarget(e, vAttacks);
@@ -13106,7 +13108,7 @@ public class Server implements Runnable {
             potentialTargets.removeAll(targetsToRemove);
             WeaponAttackAction targetedWAA;
             // Assign APDS to an attack
-            if (game.getOptions().booleanOption("auto_ams")) {
+            if (game.getOptions().booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 targetedWAA = apds.assignAPDS(potentialTargets);
             } else { // Allow user to manually assign targets
                 targetedWAA = manuallyAssignAPDSTarget(apds, potentialTargets);
@@ -13347,7 +13349,7 @@ public class Server implements Runnable {
      */
     private void detectHiddenUnits() {
         // If hidden units aren't on, nothing to do
-        if (!game.getOptions().booleanOption("hidden_units")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return;
         }
         // Get all hidden units
@@ -13451,7 +13453,7 @@ public class Server implements Runnable {
      */
     private void resolveWhatPlayersCanSeeWhatUnits() {
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption("tacops_sensors")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }
@@ -13595,9 +13597,9 @@ public class Server implements Runnable {
                         Mech mech = (Mech) e;
                         if (mech.isAutoEject()
                                 && (!game.getOptions().booleanOption(
-                                        "conditional_ejection") || (game
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
                                         .getOptions().booleanOption(
-                                                "conditional_ejection") && mech
+                                                OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                         .isCondEjectEngine()))) {
                             vDesc.addAll(ejectEntity(e, true));
                         }
@@ -13649,7 +13651,7 @@ public class Server implements Runnable {
         // large craft in space, then check the roll
         // and report it
         if (!game.getBoard().inSpace()
-            || !game.getOptions().booleanOption("stratops_ecm")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return;
         }
         Report r;
@@ -13936,7 +13938,7 @@ public class Server implements Runnable {
     private void resolveUnjam(Entity entity) {
         Report r;
         final int TN = entity.getCrew().getGunnery() + 3;
-        if (game.getOptions().booleanOption("unjam_uac")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
             r = new Report(3026);
         } else {
             r = new Report(3025);
@@ -13969,7 +13971,7 @@ public class Server implements Runnable {
                      || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                      || (wtype.getAmmoType() == AmmoType.T_AC) || (wtype
                                                                            .getAmmoType() == AmmoType.T_LAC))
-                    && game.getOptions().booleanOption("unjam_uac")) {
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
                     int roll = Compute.d6(2);
                     r = new Report(3030);
                     r.indent();
@@ -14138,7 +14140,7 @@ public class Server implements Runnable {
         }
 
         // Ignore if fire is not enabled as a game option
-        if (!game.getOptions().booleanOption("tacops_start_fire")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
             return false;
         }
 
@@ -14212,7 +14214,7 @@ public class Server implements Runnable {
 
         // inferno always ignites
         // ERRATA not if targeting clear hexes for ignition is disabled.
-        if (bInferno && !game.getOptions().booleanOption("no_ignite_clear")) {
+        if (bInferno && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_NO_IGNITE_CLEAR)) {
             nTargetRoll = new TargetRoll(0, "inferno");
         }
 
@@ -14541,14 +14543,14 @@ public class Server implements Runnable {
                                                           : pr.rollRight;
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         Report r;
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
@@ -14815,13 +14817,13 @@ public class Server implements Runnable {
         int roll = pr.roll;
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
@@ -15081,13 +15083,13 @@ public class Server implements Runnable {
         int roll = pr.roll;
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
@@ -15286,12 +15288,12 @@ public class Server implements Runnable {
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -15667,13 +15669,13 @@ public class Server implements Runnable {
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // PLEASE NOTE: buildings are *never* the target of a "thrash".
@@ -15811,13 +15813,13 @@ public class Server implements Runnable {
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // PLEASE NOTE: buildings are *never* the target of a BA vibroclaw
@@ -15948,7 +15950,7 @@ public class Server implements Runnable {
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
@@ -15957,7 +15959,7 @@ public class Server implements Runnable {
         toHit.setMoS((roll == Integer.MAX_VALUE) ? 0 : roll
                                                        - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -16891,13 +16893,13 @@ public class Server implements Runnable {
                     .isThroughFrontHex(game, ae.getPosition(), te);
         }
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -17327,11 +17329,11 @@ public class Server implements Runnable {
 
         // are they capital scale?
         if (te.isCapitalScale()
-            && !game.getOptions().booleanOption("aero_sanity")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage = (int) Math.floor(damage / 10.0);
         }
         if (ae.isCapitalScale()
-            && !game.getOptions().booleanOption("aero_sanity")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damageTaken = (int) Math.floor(damageTaken / 10.0);
         }
 
@@ -17399,11 +17401,11 @@ public class Server implements Runnable {
 
         // Damage To Target
         int damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions()
-                .booleanOption("tacops_charge_damage"), toHit.getMoS());
+                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), toHit.getMoS());
 
         // Damage to Attacker
         int damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game
-                .getOptions().booleanOption("tacops_charge_damage"));
+                .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE));
         if (glancing) {
             // Glancing Blow rule doesn't state whether damage to attacker on
             // charge
@@ -17417,7 +17419,7 @@ public class Server implements Runnable {
         }
         boolean bDirect = false;
         int directBlowCritMod = toHit.getMoS() / 3;
-        if (game.getOptions().booleanOption("tacops_direct_blow")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
             && ((toHit.getMoS() / 3) >= 1)) {
             damage += toHit.getMoS() / 3;
             bDirect = false;
@@ -17721,12 +17723,12 @@ public class Server implements Runnable {
                     .isThroughFrontHex(game, ae.getPosition(), te);
         }
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -18092,7 +18094,7 @@ public class Server implements Runnable {
         if (psrEntity.hasQuirk(OptionsConstants.QUIRK_POS_STABLE)) {
             psr.addModifier(-1, "stable", false);
         }
-        if (game.getOptions().booleanOption("tacops_physical_psr")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
 
             switch (target.getWeightClass()) {
                 case EntityWeightClass.WEIGHT_LIGHT:
@@ -18135,7 +18137,7 @@ public class Server implements Runnable {
             IHex entityHex = game.getBoard().getHex(entity.getPosition());
 
             int hotDogMod = 0;
-            if (entity.getCrew().getOptions().booleanOption("hot_dog")) {
+            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_HOT_DOG)) {
                 hotDogMod = 1;
             }
             if (entity.getTaserInterferenceHeat()) {
@@ -18266,7 +18268,7 @@ public class Server implements Runnable {
 
                 // Add heat from external sources to the heat buildup
                 int max_ext_heat = game.getOptions().intOption(
-                        "max_external_heat"); // Check Game Options
+                        OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT); // Check Game Options
                 if (max_ext_heat < 0) {
                     max_ext_heat = 15; // standard value specified in TW p.159
                 }
@@ -18363,7 +18365,7 @@ public class Server implements Runnable {
                 }
 
                 int autoShutDownHeat = 30;
-                boolean mtHeat = game.getOptions().booleanOption("tacops_heat");
+                boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
                 if (mtHeat) {
                     autoShutDownHeat = 50;
                 }
@@ -18432,7 +18434,7 @@ public class Server implements Runnable {
                             if (roll >= 8) {
                                 entity.setTaserShutdownRounds(0);
                                 if (!(game.getOptions().booleanOption(
-                                        "manual_shutdown") && entity
+                                        OptionsConstants.RPG_MANUAL_SHUTDOWN) && entity
                                               .isManualShutdown())) {
                                     entity.setShutDown(false);
                                 }
@@ -18815,7 +18817,7 @@ public class Server implements Runnable {
             }
 
             // Add heat from external sources to the heat buildup
-            int max_ext_heat = game.getOptions().intOption("max_external_heat"); // Check
+            int max_ext_heat = game.getOptions().intOption(OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT); // Check
             // Game
             // Options
             if (max_ext_heat < 0) {
@@ -18941,7 +18943,7 @@ public class Server implements Runnable {
             int autoShutDownHeat;
             boolean mtHeat;
 
-            if (game.getOptions().booleanOption("tacops_heat")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 autoShutDownHeat = 50;
                 mtHeat = true;
             } else {
@@ -19174,7 +19176,7 @@ public class Server implements Runnable {
                     && (entity instanceof Mech)
                     && (((Mech) entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
                     && !entity.getCrew().getOptions()
-                              .booleanOption("pain_shunt")) {
+                              .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
                     damageToCrew += 1;
                 }
                 r = new Report(5070);
@@ -19189,7 +19191,7 @@ public class Server implements Runnable {
                        && !entity.getCrew().isDead()
                        && !entity.getCrew().isDoomed()
                        && !entity.getCrew().getOptions()
-                                 .booleanOption("pain_shunt")) {
+                                 .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
                 // Crew may take damage from heat if MaxTech option is set
                 int heatroll = Compute.d6(2);
                 int avoidNumber = -1;
@@ -19259,7 +19261,7 @@ public class Server implements Runnable {
                 }
             }
 
-            if (game.getOptions().booleanOption("tacops_coolant_failure")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)
                 && (entity.getHeatCapacity() > entity
                     .getCoolantFailureAmount()) && (entity.heat >= 5)) {
                 int roll = Compute.d6(2);
@@ -19560,7 +19562,7 @@ public class Server implements Runnable {
 
     private void clearFlawedCoolingFlags(Entity entity) {
         // If we're not using quirks, no need to do this check.
-        if (!game.getOptions().booleanOption("stratops_quirks")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return;
         }
         // Only applies to units that track heat.
@@ -19580,7 +19582,7 @@ public class Server implements Runnable {
     private void checkForFlawedCooling() {
 
         // If we're not using quirks, no need to do this check.
-        if (!game.getOptions().booleanOption("stratops_quirks")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return;
         }
 
@@ -19715,14 +19717,14 @@ public class Server implements Runnable {
                 // if this mech has 20+ damage, add another roll to the list.
                 // Hulldown 'mechs ignore this rule, TO Errata
                 if ((entity.damageThisPhase >= 20) && !entity.isHullDown()) {
-                    if (game.getOptions().booleanOption("tacops_taking_damage")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE)) {
                         PilotingRollData damPRD = new PilotingRollData(
                                 entity.getId());
                         int damMod = entity.damageThisPhase / 20;
                         damPRD.addModifier(damMod, (damMod * 20) + "+ damage");
                         int weightMod = 0;
                         if (game.getOptions().booleanOption(
-                                "tacops_physical_psr")) {
+                                OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
                             switch (entity.getWeightClass()) {
                                 case EntityWeightClass.WEIGHT_LIGHT:
                                     weightMod = 1;
@@ -19761,30 +19763,26 @@ public class Server implements Runnable {
                     }
                 }
             }
-            if ((entity instanceof Aero) && entity.isAirborne()
-                && !game.getBoard().inSpace()) {
+            if ((entity instanceof Aero) && entity.isAirborne() && !game.getBoard().inSpace()) {
                 // if this aero has any damage, add another roll to the list.
                 if (entity.damageThisPhase > 0) {
-                    if (!game.getOptions().booleanOption("atmospheric_control")) {
+                    if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
                         int damMod = entity.damageThisPhase / 20;
                         StringBuffer reportStr = new StringBuffer();
-                        reportStr.append(entity.damageThisPhase)
-                                 .append(" damage +").append(damMod);
-                        PilotingRollData damPRD = new PilotingRollData(
-                                entity.getId(), damMod, reportStr.toString());
+                        reportStr.append(entity.damageThisPhase).append(" damage +").append(damMod);
+                        PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod, reportStr.toString());
                         if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
-                            && (entity.getCrew().getPiloting() > 3)) {
+                                && (entity.getCrew().getPiloting() > 3)) {
                             damPRD.addModifier(-1, "easy to pilot");
                         }
                         game.addControlRoll(damPRD);
                     } else {
                         // was the damage threshold exceeded this round?
                         if (((Aero) entity).wasCritThresh()) {
-                            PilotingRollData damThresh = new PilotingRollData(
-                                    entity.getId(), 0,
+                            PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
                                     "damage threshold exceeded");
                             if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
-                                && (entity.getCrew().getPiloting() > 3)) {
+                                    && (entity.getCrew().getPiloting() > 3)) {
                                 damThresh.addModifier(-1, "easy to pilot");
                             }
                             game.addControlRoll(damThresh);
@@ -20126,10 +20124,10 @@ public class Server implements Runnable {
             r.add(rollTarget.getDesc());
             r.add(diceRoll);
             if ((diceRoll < rollTarget.getValue())
-                || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
+                || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES) && (diceRoll == 2))) {
                 r.choose(false);
                 // Report the fumble
-                if (game.getOptions().booleanOption("tacops_fumbles")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES)
                     && (diceRoll == 2)) {
                     r.messageId = 2306;
                 }
@@ -20275,7 +20273,7 @@ public class Server implements Runnable {
                                                       entity.getElevation(), src, dest, base, true));
             } else if ((entity instanceof Mech)
                        && game.getOptions().booleanOption(
-                    "tacops_falling_expanded")
+                    OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
                        && (entity.getCrew().getPiloting() < 6)
                        && !entity.isHullDown() && entity.canGoHullDown()) {
                 if (entity.isHullDown() && entity.canGoHullDown()) {
@@ -20325,7 +20323,7 @@ public class Server implements Runnable {
                 } else {
                     if ((entity instanceof Mech)
                         && game.getOptions().booleanOption(
-                            "tacops_falling_expanded")
+                            OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
                         && (entity.getCrew().getPiloting() < 6)
                         && !entity.isHullDown() && entity.canGoHullDown()) {
                         if (entity.isHullDown() && entity.canGoHullDown()) {
@@ -20350,10 +20348,10 @@ public class Server implements Runnable {
             r.add(diceRoll);
             r.subject = entity.getId();
             if ((diceRoll < roll.getValue())
-                || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
+                || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES) && (diceRoll == 2))) {
                 r.choose(false);
                 // Report the fumble
-                if (game.getOptions().booleanOption("tacops_fumbles")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES)
                     && (diceRoll == 2)) {
                     r.messageId = 2306;
                 }
@@ -20364,7 +20362,7 @@ public class Server implements Runnable {
                 } else {
                     if ((entity instanceof Mech)
                         && game.getOptions().booleanOption(
-                            "tacops_falling_expanded")
+                            OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
                         && (entity.getCrew().getPiloting() < 6)
                         && !entity.isHullDown() && entity.canGoHullDown()) {
                         if ((entity.getCrew().getPiloting() > 1)
@@ -20695,7 +20693,7 @@ public class Server implements Runnable {
         }
 
         // no consciousness roll for pain-shunted warriors
-        if (e.getCrew().getOptions().booleanOption("pain_shunt")) {
+        if (e.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             return vDesc;
         }
 
@@ -20706,7 +20704,7 @@ public class Server implements Runnable {
 
         for (int hit = (totalHits - damage) + 1; hit <= totalHits; hit++) {
             int rollTarget = Compute.getConsciousnessNumber(hit);
-            if (game.getOptions().booleanOption("toughness")) {
+            if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
                 rollTarget -= e.getCrew().getToughness();
             }
             boolean edgeUsed = false;
@@ -20715,7 +20713,8 @@ public class Server implements Runnable {
                     e.getCrew().decreaseEdge();
                 }
                 int roll = Compute.d6(2);
-                if (e.getCrew().getOptions().booleanOption("pain_resistance")) {
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
+)) {
                     roll = Math.min(12, roll + 1);
                 }
                 Report r = new Report(6030);
@@ -20733,21 +20732,21 @@ public class Server implements Runnable {
                     r.choose(false);
                     if (e.getCrew().hasEdgeRemaining()
                         && e.getCrew().getOptions()
-                            .booleanOption("edge_when_ko")) {
+                            .booleanOption(OptionsConstants.EDGE_WHEN_KO)) {
                         edgeUsed = true;
                         vDesc.add(r);
                         r = new Report(6520);
                         r.subject = e.getId();
                         r.addDesc(e);
                         r.add(e.getCrew().getName());
-                        r.add(e.getCrew().getOptions().intOption("edge"));
+                        r.add(e.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                     } // if
                     // return true;
                 } // else
                 vDesc.add(r);
             } while (e.getCrew().hasEdgeRemaining()
                      && e.getCrew().isKoThisRound()
-                     && e.getCrew().getOptions().booleanOption("edge_when_ko"));
+                     && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO));
             // end of do-while
             if (e.getCrew().isKoThisRound()) {
                 e.getCrew().setUnconscious(true);
@@ -20775,7 +20774,8 @@ public class Server implements Runnable {
             }
             int roll = Compute.d6(2);
 
-            if (e.getCrew().getOptions().booleanOption("pain_resistance")) {
+            if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
+)) {
                 roll = Math.min(12, roll + 1);
             }
 
@@ -20842,7 +20842,7 @@ public class Server implements Runnable {
             Aero ship = (Aero) en;
             int damage = ship.getCurrentDamage();
             double divisor = 2.0;
-            if (game.getOptions().booleanOption("aero_sanity")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                 divisor = 20.0;
             }
             if (damage >= ship.getFatalThresh()) {
@@ -21048,7 +21048,7 @@ public class Server implements Runnable {
         int threshDamage = damage;
         // weapon groups only get the damage of one weapon
         if ((hit.getSingleAV() > -1)
-            && !game.getOptions().booleanOption("aero_sanity")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             threshDamage = hit.getSingleAV();
         }
 
@@ -21058,12 +21058,12 @@ public class Server implements Runnable {
         // check capital/standard damage
         if (isCapital
             && (!te.isCapitalScale() || game.getOptions().booleanOption(
-                "aero_sanity"))) {
+                OptionsConstants.ADVAERORULES_AERO_SANITY))) {
             damage = 10 * damage;
             threshDamage = 10 * threshDamage;
         }
         if (!isCapital && te.isCapitalScale()
-            && !game.getOptions().booleanOption("aero_sanity")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage = (int) Math.round(damage / 10.0);
             threshDamage = (int) Math.round(threshDamage / 10.0);
         }
@@ -21087,7 +21087,7 @@ public class Server implements Runnable {
             r.subject = te_n;
             r.indent(2);
             r.addDesc(te);
-            r.add(te.getCrew().getOptions().intOption("edge"));
+            r.add(te.getCrew().getOptions().intOption(OptionsConstants.EDGE));
             vDesc.addElement(r);
         } // if
 
@@ -21097,8 +21097,8 @@ public class Server implements Runnable {
                 Mech mech = (Mech) te;
                 if (mech.isAutoEject()
                     && (!game.getOptions().booleanOption(
-                        "conditional_ejection") || (game.getOptions()
-                                                        .booleanOption("conditional_ejection") && mech
+                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game.getOptions()
+                                                        .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                                             .isCondEjectAmmo()))) {
                     autoEject = true;
                     vDesc.addAll(ejectEntity(te, true));
@@ -21168,7 +21168,7 @@ public class Server implements Runnable {
         // the bonus to the crit roll if using the
         // "advanced determining critical hits rule"
         int critBonus = 0;
-        if (game.getOptions().booleanOption("tacops_crit_roll")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL)
             && (damage_orig > 0)
             && ((te instanceof Mech) || (te instanceof Protomech))) {
             critBonus = Math.min((damage_orig - 1) / 5, 4);
@@ -21229,23 +21229,17 @@ public class Server implements Runnable {
         }
 
         // Is the infantry in the open?
-        if (isPlatoon && !te.isDestroyed() && !te.isDoomed()
-                && !hit.isIgnoreInfantryDoubleDamage()
+        if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !hit.isIgnoreInfantryDoubleDamage()
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
-                && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
+                && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
             te_hex = game.getBoard().getHex(te.getPosition());
-            if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS)
-                && !te_hex.containsTerrain(Terrains.JUNGLE)
-                && !te_hex.containsTerrain(Terrains.ROUGH)
-                && !te_hex.containsTerrain(Terrains.RUBBLE)
-                && !te_hex.containsTerrain(Terrains.SWAMP)
-                && !te_hex.containsTerrain(Terrains.BUILDING)
-                && !te_hex.containsTerrain(Terrains.FUEL_TANK)
-                && !te_hex.containsTerrain(Terrains.FORTIFIED)
-                && (!te.getCrew().getOptions().booleanOption("urban_guerrilla"))
-                    && (!te_hex.containsTerrain(Terrains.PAVEMENT)
-                        || !te_hex.containsTerrain(Terrains.ROAD))
-                && !ammoExplosion) {
+            if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE)
+                    && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE)
+                    && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING)
+                    && !te_hex.containsTerrain(Terrains.FUEL_TANK) && !te_hex.containsTerrain(Terrains.FORTIFIED)
+                    && (!te.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_URBAN_GUERRILLA))
+                    && (!te_hex.containsTerrain(Terrains.PAVEMENT) || !te_hex.containsTerrain(Terrains.ROAD))
+                    && !ammoExplosion) {
                 // PBI. Damage is doubled.
                 damage *= 2;
                 r = new Report(6040);
@@ -21271,7 +21265,7 @@ public class Server implements Runnable {
         switch (bFrag) {
             case ANTI_INFANTRY:
                 if (isPlatoon
-                    && te.getCrew().getOptions().booleanOption("dermal_armor")) {
+                    && te.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                     int reduce = Math.min(damage - 1, Compute.d6());
                     damage -= reduce;
                     r = new Report(6042);
@@ -21377,7 +21371,7 @@ public class Server implements Runnable {
         // adjust VTOL rotor damage
         if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)
             && (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL)
-            && !game.getOptions().booleanOption("full_rotor_hits")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS)) {
             damage = (damage + 9) / 10;
         }
 
@@ -21897,13 +21891,13 @@ public class Server implements Runnable {
                 // effects now...
                 if ((te instanceof Tank)
                         && game.getOptions()
-                                .booleanOption("vehicles_threshold")
+                                .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                         && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
                     int thresh = (int) Math.ceil((game.getOptions()
-                            .booleanOption("vehicles_threshold_variable") ? te
+                            .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE) ? te
                             .getArmor(hit) : te.getOArmor(hit))
                             / game.getOptions().intOption(
-                                    "vehicles_threshold_divisor"));
+                                    OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
 
                     // adjust for hardened armor
                     if (hardenedArmor
@@ -22083,7 +22077,7 @@ public class Server implements Runnable {
             // be set if IS is damaged, so set it here.
             if ((te instanceof Tank)
                     && ((te.getArmor(hit) < 1) || damageIS)
-                    && game.getOptions().booleanOption("vehicles_threshold")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                     && !((te instanceof VTOL)
                             || (te instanceof GunEmplacement))) {
                 ((Tank) te).setOverThresh(true);
@@ -22100,7 +22094,7 @@ public class Server implements Runnable {
 
                     // check for overpenetration
                     if (game.getOptions().booleanOption(
-                            "stratops_over_penetrate")) {
+                            OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
                         int opRoll = Compute.d6(1);
                         if ((((te instanceof Jumpship) || (te instanceof SpaceStation))
                              && !(te instanceof Warship) && (opRoll > 3))
@@ -22138,7 +22132,7 @@ public class Server implements Runnable {
                     // divide damage in half
                     // do not divide by half if it is an ammo exposion
                     if (!ammoExplosion && !nukeS2S
-                        && !game.getOptions().booleanOption("aero_sanity")) {
+                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                         damage /= 2;
                     }
 
@@ -22569,13 +22563,13 @@ public class Server implements Runnable {
                                 && !te.getCrew().isDoomed()
                                 && game.getOptions()
                                        .booleanOption(
-                                               "tacops_skin_of_the_teeth_ejection")) {
+                                               OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
                                 Mech mech = (Mech) te;
                                 if (mech.isAutoEject()
                                     && (!game.getOptions().booleanOption(
-                                        "conditional_ejection") || (game
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
                                                                             .getOptions().booleanOption(
-                                                "conditional_ejection") && mech
+                                                OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                                                             .isCondEjectHeadshot()))) {
                                     autoEject = true;
                                     vDesc.addAll(ejectEntity(te, true, true));
@@ -22589,7 +22583,7 @@ public class Server implements Runnable {
                                 Mech mech = (Mech) te;
                                 if (mech.isAutoEject()
                                     && game.getOptions().booleanOption(
-                                        "conditional_ejection")
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                     && mech.isCondEjectCTDest()) {
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
@@ -22609,7 +22603,7 @@ public class Server implements Runnable {
                                 te.getCrew().setDoomed(true);
                             }
                             if (game.getOptions().booleanOption(
-                                    "auto_abandon_unit")) {
+                                    OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                                 vDesc.addAll(abandonEntity(te));
                             }
                         }
@@ -22722,7 +22716,7 @@ public class Server implements Runnable {
             }
 
             if (isHeadHit
-                && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
+                && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                 Report.addNewline(vDesc);
                 vDesc.addAll(damageCrew(te, 1));
             }
@@ -22756,7 +22750,7 @@ public class Server implements Runnable {
                         // third engine hit
                         vDesc.addAll(destroyEntity(te, "engine destruction"));
                         if (game.getOptions()
-                                .booleanOption("auto_abandon_unit")) {
+                                .booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                             vDesc.addAll(abandonEntity(te));
                         }
                         te.setSelfDestructing(false);
@@ -22799,9 +22793,9 @@ public class Server implements Runnable {
 
         // if using VDNI (but not buffered), check for damage on an internal hit
         if (tookInternalDamage
-            && te.getCrew().getOptions().booleanOption("vdni")
-            && !te.getCrew().getOptions().booleanOption("bvdni")
-            && !te.getCrew().getOptions().booleanOption("pain_shunt")) {
+            && te.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+            && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
+            && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
             r = new Report(3580);
@@ -22822,7 +22816,7 @@ public class Server implements Runnable {
         // ammo explosion
         // destroyed the unit
         if (ammoExplosion
-            && game.getOptions().booleanOption("tacops_ammunition")
+            && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION)
             // For 'Mechs we care whether there was CASE specifically in the
             // location that went boom...
             && !(te.locationHasCase(hit.getLocation()) || te.hasCASEII(hit
@@ -22906,7 +22900,7 @@ public class Server implements Runnable {
         }
         // ICE can always explode and roll every time hit
         if (engine.isFusion()
-                && (!game.getOptions().booleanOption("tacops_engine_explosions")
+                && (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS)
                         || (en.engineHitsThisPhase < hitsPerRound))) {
             return false;
         }
@@ -22981,9 +22975,9 @@ public class Server implements Runnable {
                     Mech mech = (Mech) en;
                     if (mech.isAutoEject()
                             && (!game.getOptions().booleanOption(
-                                    "conditional_ejection") || (game
+                                    OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
                                     .getOptions().booleanOption(
-                                            "conditional_ejection") && mech
+                                            OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                     .isCondEjectEngine()))) {
                         vDesc.addAll(ejectEntity(en, true));
                     }
@@ -23909,14 +23903,14 @@ public class Server implements Runnable {
                     }
                     break;
                 case Tank.CRIT_COMMANDER:
-                    if (en.getCrew().getOptions().booleanOption("vdni")
-                        || en.getCrew().getOptions().booleanOption("bvdni")) {
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
                         r = new Report(6191);
                         r.subject = t.getId();
                         vDesc.add(r);
                         vDesc.addAll(damageCrew(en, 1));
                     } else {
-                        if (en.getCrew().getOptions().booleanOption("pain_shunt")
+                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
                             && !t.isCommanderHitPS()) {
                             r = new Report(6606);
                             r.subject = t.getId();
@@ -23932,16 +23926,16 @@ public class Server implements Runnable {
                     // fall through here, because effects of crew stunned also
                     // apply
                 case Tank.CRIT_CREW_STUNNED:
-                    if (en.getCrew().getOptions().booleanOption("vdni")
-                        || en.getCrew().getOptions().booleanOption("bvdni")) {
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
                         r = new Report(6191);
                         r.subject = t.getId();
                         vDesc.add(r);
                         vDesc.addAll(damageCrew(en, 1));
                     } else {
-                        if (en.getCrew().getOptions().booleanOption("pain_shunt")
+                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
                             || en.getCrew().getOptions()
-                                 .booleanOption("dermal_armor")) {
+                                 .booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                             r = new Report(6186);
                             r.subject = t.getId();
                             vDesc.add(r);
@@ -23955,14 +23949,14 @@ public class Server implements Runnable {
                     }
                     break;
                 case Tank.CRIT_DRIVER:
-                    if (en.getCrew().getOptions().booleanOption("vdni")
-                        || en.getCrew().getOptions().booleanOption("bvdni")) {
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
                         r = new Report(6191);
                         r.subject = t.getId();
                         vDesc.add(r);
                         vDesc.addAll(damageCrew(en, 1));
                     } else {
-                        if (en.getCrew().getOptions().booleanOption("pain_shunt")
+                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
                             && !t.isDriverHitPS()) {
                             r = new Report(6601);
                             r.subject = t.getId();
@@ -23977,14 +23971,14 @@ public class Server implements Runnable {
                     }
                     break;
                 case Tank.CRIT_CREW_KILLED:
-                    if (en.getCrew().getOptions().booleanOption("vdni")
-                        || en.getCrew().getOptions().booleanOption("bvdni")) {
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
                         r = new Report(6191);
                         r.subject = t.getId();
                         vDesc.add(r);
                         vDesc.addAll(damageCrew(en, 1));
                     } else {
-                        if (en.getCrew().getOptions().booleanOption("pain_shunt")
+                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
                             && !t.isCrewHitPS()) {
                             r = new Report(6191);
                             r.subject = t.getId();
@@ -24280,7 +24274,7 @@ public class Server implements Runnable {
                         boomTarget = 7;
                     }
                     if (a.isLargeCraft() && a.isClan()
-                        && game.getOptions().booleanOption("stratops_harjel")) {
+                        && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
                         boomTarget = 11;
                     }
                     // check for possible explosion
@@ -24298,13 +24292,13 @@ public class Server implements Runnable {
                 case Aero.CRIT_CREW:
                     // pilot hit
                     r = new Report(6650);
-                    if (en.getCrew().getOptions().booleanOption("dermal_armor")) {
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                         r = new Report(6651);
                         r.subject = a.getId();
                         vDesc.add(r);
                         break;
                     } else if (en.getCrew().getOptions()
-                                 .booleanOption("tsm_implant")) {
+                                 .booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
                         r = new Report(6652);
                         r.subject = a.getId();
                         vDesc.add(r);
@@ -24314,7 +24308,7 @@ public class Server implements Runnable {
                         r = new Report(9197);
                     }
                     if (a.isLargeCraft() && a.isClan()
-                        && game.getOptions().booleanOption("stratops_harjel")
+                        && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)
                         && (a.getIgnoredCrewHits() < 2)) {
                         a.setIgnoredCrewHits(a.getIgnoredCrewHits() + 1);
                         r = new Report(9198);
@@ -24450,7 +24444,7 @@ public class Server implements Runnable {
                                                                                .size()));
                         // possibly check for an ammo explosion
                         // don't allow ammo explosions on fighter squadrons
-                        if (game.getOptions().booleanOption("ammo_explosions")
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
                             && !(a instanceof FighterSquadron)
                             && (weapon.getType() instanceof WeaponType)) {
                             // does it use Ammo?
@@ -24557,7 +24551,7 @@ public class Server implements Runnable {
                     double percentDestroyed = 0.0;
                     double mult = 2.0;
                     if (a.isLargeCraft() && a.isClan()
-                        && game.getOptions().booleanOption("stratops_harjel")) {
+                        && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
                         mult = 4.0;
                     }
                     if (damageCaused > 0) {
@@ -24935,12 +24929,12 @@ public class Server implements Runnable {
                         if (en instanceof Mech) {
                             Mech mech = (Mech) en;
                             if (game.getOptions().booleanOption(
-                                    "tacops_skin_of_the_teeth_ejection")) {
+                                    OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
                                 if (mech.isAutoEject()
                                     && (!game.getOptions().booleanOption(
-                                        "conditional_ejection") || (game
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
                                                                             .getOptions().booleanOption(
-                                                "conditional_ejection") && mech
+                                                OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                                                             .isCondEjectHeadshot()))) {
                                     vDesc.addAll(ejectEntity(en, true, true));
                                 }
@@ -24975,7 +24969,7 @@ public class Server implements Runnable {
                             // third engine hit
                             vDesc.addAll(destroyEntity(en, "engine destruction"));
                             if (game.getOptions()
-                                    .booleanOption("auto_abandon_unit")) {
+                                    .booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                                 vDesc.addAll(abandonEntity(en));
                             }
                             en.setSelfDestructing(false);
@@ -25122,8 +25116,8 @@ public class Server implements Runnable {
         }
 
         // if using buffered VDNI then a possible pilot hit
-        if (en.getCrew().getOptions().booleanOption("bvdni")
-            && !en.getCrew().getOptions().booleanOption("pain_shunt")) {
+        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
+            && !en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
             r = new Report(3580);
@@ -25563,7 +25557,7 @@ public class Server implements Runnable {
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE)
-                && game.getOptions().booleanOption("vehicles_threshold")
+                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                 && !t.getOverThresh()) {
             r = new Report(6006);
             r.subject = t.getId();
@@ -25793,7 +25787,7 @@ public class Server implements Runnable {
             r.newlines = 0;
             vDesc.addElement(r);
             boolean advancedCrit = game.getOptions().booleanOption(
-                    "tacops_crit_roll");
+                    OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL);
             if ((!advancedCrit && (roll <= 7)) || (advancedCrit && (roll <= 8))) {
                 // no effect
                 r = new Report(6005);
@@ -26009,7 +26003,7 @@ public class Server implements Runnable {
                 if ((en instanceof Mech)
                         && (en.getCrew().hasEdgeRemaining() && en.getCrew()
                                 .getOptions()
-                                .booleanOption("edge_when_explosion"))
+                                .booleanOption(OptionsConstants.EDGE_WHEN_EXPLOSION))
                         && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
                         && slot.getMount().getType()
                                 .isExplosive(slot.getMount())) {
@@ -26017,7 +26011,7 @@ public class Server implements Runnable {
                     r = new Report(6530);
                     r.subject = en.getId();
                     r.indent(3);
-                    r.add(en.getCrew().getOptions().intOption("edge"));
+                    r.add(en.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                     vDesc.addElement(r);
                     continue;
                 }
@@ -26308,7 +26302,7 @@ public class Server implements Runnable {
             // Check location for engine/cockpit breach and report accordingly
             if (loc == Mech.LOC_CT) {
                 vDesc.addAll(destroyEntity(entity, "hull breach"));
-                if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                     vDesc.addAll(abandonEntity(entity));
                 }
             }
@@ -26347,7 +26341,7 @@ public class Server implements Runnable {
                          .getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                                           Mech.SYSTEM_ENGINE, Mech.LOC_RT)) >= hitsToDestroy) {
                 vDesc.addAll(destroyEntity(entity, "engine destruction"));
-                if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                     vDesc.addAll(abandonEntity(entity));
                 }
             }
@@ -26626,7 +26620,7 @@ public class Server implements Runnable {
         // might convert the hex to rough
         Coords curPos = entity.getPosition();
         IHex entityHex = game.getBoard().getHex(curPos);
-        if (game.getOptions().booleanOption("tacops_battle_wreck")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK)
             && (entityHex != null)
             && game.getBoard().onGround()
             && !((entity instanceof Infantry) || (entity instanceof Protomech))) {
@@ -26876,22 +26870,21 @@ public class Server implements Runnable {
         if (en instanceof Aero) {
             pilotDamage = 1;
         }
-        if (game.getOptions().booleanOption("case_pilot_damage")
-            && (en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit
-                                                                              .getLocation()))) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_CASE_PILOT_DAMAGE)
+                && (en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit.getLocation()))) {
             pilotDamage = 1;
         }
-        if (en.getCrew().getOptions().booleanOption("pain_resistance")
-            || en.getCrew().getOptions().booleanOption("iron_man")) {
+        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE)
+                || en.getCrew().getOptions().booleanOption(OptionsConstants.MISC_IRON_MAN)) {
             pilotDamage -= 1;
         }
         // tanks only take pilot damage when using BVDNI or VDNI
         if ((en instanceof Tank)
-            && !(en.getCrew().getOptions().booleanOption("vdni") || en
-                .getCrew().getOptions().booleanOption("bvdni"))) {
+            && !(en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI) || en
+                .getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI))) {
             pilotDamage = 0;
         }
-        if (!en.getCrew().getOptions().booleanOption("pain_shunt")) {
+        if (!en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             vDesc.addAll(damageCrew(en, pilotDamage));
         }
         if (en.getCrew().isDoomed() || en.getCrew().isDead()) {
@@ -27310,8 +27303,8 @@ public class Server implements Runnable {
         // only mechs should roll to avoid pilot damage
         // vehicles may fall due to sideslips
         if ((entity instanceof Mech)
-            && !entity.getCrew().getOptions().booleanOption("dermal_armor")
-            && !entity.getCrew().getOptions().booleanOption("tsm_implant")) {
+            && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)
+            && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
             // we want to be able to avoid pilot damage even when it was
             // an automatic fall, only unconsciousness should cause auto-damage
             roll.removeAutos();
@@ -27624,7 +27617,7 @@ public class Server implements Runnable {
             return;
         }
 
-        if (!game.getOptions().booleanOption("tacops_start_fire")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
             if (null != vReport) {
                 Report r = new Report(3008);
                 r.indent(2);
@@ -27899,13 +27892,13 @@ public class Server implements Runnable {
      * the current phase
      */
     private boolean doBlind() {
-        return game.getOptions().booleanOption("double_blind")
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                && game.getPhase()
                       .isDuringOrAfter(IGame.Phase.PHASE_DEPLOYMENT);
     }
 
     private boolean suppressBlindBV() {
-        return game.getOptions().booleanOption("suppress_double_blind_bv");
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV);
     }
 
     /**
@@ -28053,12 +28046,12 @@ public class Server implements Runnable {
         }
 
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption("tacops_sensors") && useSensors) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) && useSensors) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }
 
-        boolean bTeamVision = game.getOptions().booleanOption("team_vision");
+        boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
         List<Entity> vEntities = game.getEntitiesVector();
 
         Vector<IPlayer> vCanSee = new Vector<IPlayer>();
@@ -28125,7 +28118,7 @@ public class Server implements Runnable {
             losCache = new HashMap<>();
         }
 
-        boolean bTeamVision = game.getOptions().booleanOption("team_vision");
+        boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
         List<Entity> vEntities = game.getEntitiesVector();
 
         Vector<IPlayer> vCanDetect = new Vector<IPlayer>();
@@ -28218,7 +28211,7 @@ public class Server implements Runnable {
         }
         Vector<Entity> vCanSee = new Vector<Entity>();
         Vector<Entity> vMyEntities = new Vector<Entity>();
-        boolean bTeamVision = game.getOptions().booleanOption("team_vision");
+        boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
 
         // If they can see all, return the input list
         if (pViewer.canSeeAll()) {
@@ -28226,7 +28219,7 @@ public class Server implements Runnable {
         }
 
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption("tacops_sensors")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }
@@ -28406,7 +28399,7 @@ public class Server implements Runnable {
                                 || ((r.type == Report.PLAYER) && (p.getId() != r.player));
         // If supressing double blind messages, don't send this report at all.
         if (game.getOptions()
-                .booleanOption("supress_all_double_blind_messages")
+                .booleanOption(OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES)
             && shouldObscure) {
             // Mark the original report to indicate it was filtered
             if (p != null) {
@@ -28479,7 +28472,7 @@ public class Server implements Runnable {
             losCache = new HashMap<>();
         }
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption("tacops_sensors")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }
@@ -28593,7 +28586,7 @@ public class Server implements Runnable {
                     entity.setDesignValid(true);
                 } else {
                     System.err.println(sb);
-                    if (game.getOptions().booleanOption("allow_illegal_units")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS)) {
                         entity.setDesignValid(false);
                     } else {
                         IPlayer cheater = game.getPlayer(connIndex);
@@ -28751,10 +28744,10 @@ public class Server implements Runnable {
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
                 StringBuffer message = new StringBuffer();
-                if (game.getOptions().booleanOption("real_blind_drop")) {
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
                     message.append("A Unit ");
                     message.append('(').append(entity.getOwner().getName()).append(')');
-                } else if (game.getOptions().booleanOption("blind_drop")) {
+                } else if (game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)) {
                     message.append("Unit ");
                     if (!entity.getExternalIdAsString().equals("-1")) {
                         message.append('[')
@@ -28792,8 +28785,8 @@ public class Server implements Runnable {
                 /*
                  * StringBuffer message = new StringBuffer();
                  * message.append("Unit "); if
-                 * (game.getOptions().booleanOption("blind_drop") ||
-                 * game.getOptions().booleanOption("real_blind_drop")) { if
+                 * (game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP) ||
+                 * game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) { if
                  * (!entity.getExternalIdAsString().equals("-1")) {
                  * message.append('[') .append(entity.getExternalIdAsString())
                  * .append("] "); } message.append(entity.getId()).append('(')
@@ -29279,7 +29272,7 @@ public class Server implements Runnable {
         }
 
         // Set proper RNG
-        Compute.setRNG(game.getOptions().intOption("rng_type"));
+        Compute.setRNG(game.getOptions().intOption(OptionsConstants.BASE_RNG_TYPE));
 
         if (changed > 0) {
             for (Entity en : game.getEntitiesVector()) {
@@ -31828,7 +31821,7 @@ public class Server implements Runnable {
             if (caa.getTarget(game) instanceof Entity) {
                 Entity target = (Entity) caa.getTarget(game);
                 damage = ChargeAttackAction.getDamageFor(ae, target, game
-                                                                 .getOptions().booleanOption("tacops_charge_damage"),
+                                                                 .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
                                                          toHit.getMoS());
             } else {
                 damage = ChargeAttackAction.getDamageFor(ae);
@@ -32337,7 +32330,7 @@ public class Server implements Runnable {
                                                   IEntityRemovalConditions.REMOVE_IN_RETREAT));
                     // }
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                     game.removeEntity(pilot.getId(),
                                       IEntityRemovalConditions.REMOVE_IN_RETREAT);
                     send(createRemoveEntityPacket(pilot.getId(),
@@ -32395,7 +32388,7 @@ public class Server implements Runnable {
             vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                     entity.getPosition(), entity.getPosition(),
                     entity.getElevation()));
-            if (game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
@@ -32622,14 +32615,14 @@ public class Server implements Runnable {
             // check if the pilot lands in a minefield
             vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
                                                             entity.getPosition(), targetCoords, entity.getElevation()));
-            if (game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(pilot.getId(),
                                   IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(pilot.getId(),
                                               IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
         } // End entity-is-Mek
-        else if (game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT)
+        else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT)
                  && (entity instanceof Tank)) {
             EjectedCrew crew = new EjectedCrew(entity);
             crew.setDeployed(true);
@@ -32648,7 +32641,7 @@ public class Server implements Runnable {
             vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                                                             entity.getPosition(), entity.getPosition(),
                                                             entity.getElevation()));
-            if(game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+            if(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
@@ -33196,7 +33189,7 @@ public class Server implements Runnable {
                 break;
         }
         // Apply vehicle effectiveness...except for jumps.
-        if (game.getOptions().booleanOption("tacops_vehicle_effective")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)
             && !jumpDamage) {
             modifier = Math.max(modifier - 1, 0);
         }

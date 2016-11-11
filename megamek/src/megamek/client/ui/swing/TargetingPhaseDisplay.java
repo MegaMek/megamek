@@ -617,7 +617,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
-                    "friendly_fire"); //$NON-NLS-1$
+                    OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
@@ -1308,7 +1308,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private Targetable chooseTarget(Coords pos) {
 
         boolean friendlyFire = clientgui.getClient().getGame().getOptions()
-                .booleanOption("friendly_fire"); //$NON-NLS-1$
+                .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
         Iterator<Entity> choices;

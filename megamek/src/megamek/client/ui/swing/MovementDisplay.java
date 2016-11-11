@@ -249,8 +249,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 boolean forwardIni) {
             boolean manualShutdown = false, selfDestruct = false;
             if (opts != null) {
-                manualShutdown = opts.booleanOption("manual_shutdown");
-                selfDestruct = opts.booleanOption("tacops_self_destruct");
+                manualShutdown = opts.booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN);
+                selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
             }
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
             for (MoveCommand cmd : MoveCommand.values()) {
@@ -860,7 +860,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(false);
         }
         // Infantry - Digging in
-        if (isInfantry && gOpts.booleanOption("tacops_dig_in")) {
+        if (isInfantry && gOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_DIG_IN)) {
             // Allow infantry to dig in if they aren't currently dug in
             int dugInState = ((Infantry) ce).getDugIn();
             getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(
@@ -872,7 +872,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateTakeCoverButton();
 
         // Infantry - Urban Guerrilla calling for support
-        if (isInfantry && ce.getCrew().getOptions().booleanOption("urban_guerrilla")
+        if (isInfantry && ce.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
                 && ((Infantry) ce).getCanCallSupport()) {
             getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(true);
         } else {
@@ -885,7 +885,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setLayMineEnabled(ce.canLayMine());
         setFleeEnabled(ce.canFlee());
-        if (gOpts.booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
+        if (gOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
             // Vehicle don't have ejection systems so crews abandon, and must 
             // enter a valid hex, if they cannot they can't abandon TO pg 197
             Coords pos = ce().getPosition();
@@ -1699,7 +1699,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         toAttacker = ChargeAttackAction.getDamageTakenBy(ce,
                                 te,
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("tacops_charge_damage"), //$NON-NLS-1$
+                                        .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), //$NON-NLS-1$
                                 cmd.getHexesMoved());
                     } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK)
                                || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
@@ -1733,7 +1733,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                                                                     .getGame()
                                                                                     .getOptions()
                                                                                     .booleanOption(
-                                                                                            "tacops_charge_damage"),
+                                                                                            OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
                                                                             cmd.getHexesMoved())),
                                                     toHit.getTableDesc(),
                                                     new Integer(toAttacker) }))) {
@@ -1845,7 +1845,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         boolean isInfantry = (ce() instanceof Infantry);
         
         // Infantry - Taking Cover
-        if (isInfantry && gOpts.booleanOption("tacops_take_cover")) {
+        if (isInfantry && gOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_TAKE_COVER)) {
             // Determine the current position of the infantry
             Coords pos;
             int elevation;
@@ -1893,7 +1893,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     if (cmd.getLastStep() != null) {
                         boolean hullDownEnabled = clientgui.getClient()
                                                            .getGame().getOptions()
-                                                           .booleanOption("tacops_hull_down");
+                                                           .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
                         IHex occupiedHex = clientgui.getClient().getGame()
                                                     .getBoard()
                                                     .getHex(cmd.getLastStep().getPosition());
@@ -2321,7 +2321,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption("tacops_evade")) {
+                      .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
             return;
         }
 
@@ -2342,7 +2342,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption("manual_shutdown")) {
+                      .booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
             return;
         }
 
@@ -2362,7 +2362,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption("manual_shutdown")) {
+                      .booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
             return;
         }
 
@@ -2382,7 +2382,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption("tacops_self_destruct")) {
+                      .booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT)) {
             return;
         }
 
@@ -2501,7 +2501,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 break;
             }
             // Zip lines, TO pg 219
-            if (game.getOptions().booleanOption("tacops_ziplines")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
                     && (ce() instanceof VTOL) && (en instanceof Infantry) 
                     && !((Infantry)en).isMechanized()) {
                 canUnloadHere = true;
@@ -2873,7 +2873,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     private synchronized void updateJoinButton() {
         final IGame game = clientgui.getClient().getGame();
-        if (!game.getOptions().booleanOption("stratops_capital_fighter")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
             return;
         }
 
@@ -3763,7 +3763,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             maxMP = en.getWalkMP();
         } else {
             if (clientgui.getClient().getGame().getOptions()
-                         .booleanOption("tacops_sprint")) {
+                         .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
                 maxMP = en.getSprintMP();
             } else {
                 maxMP = en.getRunMP();
@@ -4036,7 +4036,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
             }
 
-            if (opts.booleanOption("tacops_careful_stand")
+            if (opts.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)
                     && (ce.getWalkMP() > 2)) {
                 ConfirmDialog response = clientgui
                         .doYesNoBotherDialog(
@@ -4092,7 +4092,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             //$NON-NLS-1$
             // $NON-NLS-2$
             // clear();
-            if (opts.booleanOption("return_flyover")
+            if (opts.booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)
                     && clientgui
                             .doYesNoDialog(
                                     Messages.getString("MovementDisplay.ReturnFly.title"),
@@ -4657,7 +4657,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void setForwardIniEnabled(boolean enabled) {
         // forward initiative can only be done if Teams have an initiative!
         if (clientgui.getClient().getGame().getOptions()
-                     .booleanOption("team_initiative")) {
+                     .booleanOption(OptionsConstants.BASE_TEAM_INITIATIVE)) {
             getBtn(MoveCommand.MOVE_FORWARD_INI).setEnabled(enabled);
             clientgui.getMenuBar().setMoveForwardIniEnabled(enabled);
         } else { // turn them off regardless what is said!

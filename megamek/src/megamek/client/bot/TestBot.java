@@ -205,7 +205,7 @@ public class TestBot extends BotClient {
             for (CalculateEntityMove task : tasks) {
                 MoveOption[] result = task.getResult();
                 CEntity cen = centities.get(task.getEntity());
-                if (game.getOptions().booleanOption("skip_ineligable_movement")
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT)
                     && cen.getEntity().isImmobile()) {
                     cen.moved = true;
                 } else if (result == null) {
@@ -286,7 +286,7 @@ public class TestBot extends BotClient {
 
                         test_weapon = (WeaponType) equip.getType();
                         if (((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY)
-                             || (game.getOptions().booleanOption("uac_tworolls")
+                             || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
                                  && ((test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA)
                                      || (test_weapon.getAmmoType() == AmmoType.T_AC_ULTRA_THB))))
                             && (equip.isJammed() == true)) {

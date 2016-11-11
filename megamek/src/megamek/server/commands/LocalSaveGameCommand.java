@@ -22,6 +22,7 @@ package megamek.server.commands;
 
 import java.io.File;
 
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -42,8 +43,8 @@ public class LocalSaveGameCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-        if (server.getGame().getOptions().booleanOption("double_blind") &&
-                server.getGame().getOptions().booleanOption("disable_local_save")) {
+        if (server.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
+                server.getGame().getOptions().booleanOption(OptionsConstants.BASE_DISABLE_LOCAL_SAVE)) {
             server
                     .sendServerChat("Local Save only outside double blind games.");
         } else {

@@ -18,6 +18,7 @@ import java.util.Enumeration;
 
 import megamek.common.IPlayer;
 import megamek.common.Team;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 public class CheckBVTeamCommand extends ServerCommand {
@@ -30,8 +31,8 @@ public class CheckBVTeamCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         boolean suppressEnemyBV = server.getGame().getOptions()
-                .booleanOption("suppress_double_blind_bv")
-                && server.getGame().getOptions().booleanOption("double_blind");
+                .booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV)
+                && server.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
         // Connection Ids match player Ids
         IPlayer requestingPlayer = server.getGame().getPlayer(connId);
         

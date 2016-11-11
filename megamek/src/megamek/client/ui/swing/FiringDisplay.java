@@ -834,7 +834,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
-                    "friendly_fire"); //$NON-NLS-1$
+                    OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
@@ -893,7 +893,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             if (numButtonGroups > 1)
                 buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
             setFireCalledEnabled(clientgui.getClient().getGame().getOptions()
-                    .booleanOption("tacops_called_shots"));
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
     }
@@ -1468,7 +1468,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // check if we now shoot at a target in the front arc and previously
         // shot a target in side/rear arc that then was primary target
         // if so, ask and tell the user that to-hits will change
-        if (!game.getOptions().booleanOption("no_forced_primary_targets")
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS)
                 && (ce() instanceof Mech) || (ce() instanceof Tank)
                 || (ce() instanceof Protomech)) {
             EntityAction lastAction = null;
@@ -1845,11 +1845,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         IGame game = clientgui.getClient().getGame();
         // allow spotting
         if ((ce() != null) && ce().canSpot() && (target != null)
-                && game.getOptions().booleanOption("indirect_fire")) { //$NON-NLS-1$)
+                && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) { //$NON-NLS-1$)
             boolean hasLos = LosEffects.calculateLos(game, cen, target)
                     .canSee();
             // In double blind, we need to "spot" the target as well as LoS
-            if (game.getOptions().booleanOption("double_blind")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && !Compute.inVisualRange(game, ce(), target)
                     && !Compute.inSensorRange(game, ce(), target, null)) {
                 hasLos = false;
@@ -2440,7 +2440,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      */
     private Targetable chooseTarget(Coords pos) {
         final IGame game = clientgui.getClient().getGame();
-        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
         Iterator<Entity> choices;

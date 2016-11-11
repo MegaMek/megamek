@@ -3451,13 +3451,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Create the new sprites
         Coords position = entity.getPosition();
         boolean canSee = (localPlayer == null)
-                || !game.getOptions().booleanOption("double_blind")
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 || !entity.getOwner().isEnemyOf(localPlayer)
                 || entity.hasSeenEntity(localPlayer)
                 || entity.hasDetectedEntity(localPlayer);
 
         canSee &= (localPlayer == null)
-                || !game.getOptions().booleanOption("hidden_units")
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
                 || !entity.getOwner().isEnemyOf(localPlayer)
                 || !entity.isHidden();
 
@@ -3587,14 +3587,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 continue;
             }
             if ((localPlayer != null)
-                && game.getOptions().booleanOption("double_blind")
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && entity.getOwner().isEnemyOf(localPlayer)
                 && !entity.hasSeenEntity(localPlayer)
                 && !entity.hasDetectedEntity(localPlayer)) {
                 continue;
             }
             if ((localPlayer != null)
-                    && game.getOptions().booleanOption("hidden_units")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
                     && entity.getOwner().isEnemyOf(localPlayer)
                     && entity.isHidden()) {
                 continue;
@@ -5027,9 +5027,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 refreshMoveVectors();
             }
             if ((mp != null) && (mp.size() > 0) && guip.getShowMoveStep()
-                    && !gopts.booleanOption("simultaneous_movement")) {
+                    && !gopts.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
                 if ((localPlayer == null)
-                        || !game.getOptions().booleanOption("double_blind")
+                        || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                         || !en.getOwner().isEnemyOf(localPlayer)
                         || en.hasSeenEntity(localPlayer)) {
                     addMovingUnit(en, mp);
@@ -5225,7 +5225,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             // If this unit isn't spotted somehow, it's ECM doesn't show up
             if ((localPlayer != null)
-                    && game.getOptions().booleanOption("double_blind")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && e.getOwner().isEnemyOf(localPlayer)
                     && !e.hasSeenEntity(localPlayer)
                     && !e.hasDetectedEntity(localPlayer)) {
@@ -5264,7 +5264,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (ECMInfo ecmInfo : allEcmInfo) {
             // Can't see ECM field of unspotted unit
             if ((ecmInfo.getEntity() != null) && (localPlayer != null)
-                    && game.getOptions().booleanOption("double_blind")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer)
                     && !ecmInfo.getEntity().hasSeenEntity(localPlayer)
                     && !ecmInfo.getEntity().hasDetectedEntity(localPlayer)) {
@@ -6349,7 +6349,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check if extreme range is used
         int maxrange = 4;
         if (game.getOptions().
-                booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)) maxrange = 5;
+                booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) maxrange = 5;
         
         // create the lists of hexes
         List<Set<Coords>> fieldFire = new ArrayList<Set<Coords>>(5);

@@ -35,6 +35,7 @@ import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.DirectoryItems;
 
 /**
@@ -48,16 +49,14 @@ public class PilotMapSet implements DisplayMapSet {
     private JComponent comp;
     private PMAreasGroup content = new PMAreasGroup();
     private PMPicArea portraitArea;
-    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML,
-            gunneryBL, toughBL, initBL, commandBL;
-    private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR,
-            toughBR, initBR, commandBR, hitsR;
+    private PMSimpleLabel nameL, nickL, pilotL, gunneryL, gunneryLL, gunneryML, gunneryBL, toughBL, initBL, commandBL;
+    private PMSimpleLabel pilotR, gunneryR, gunneryLR, gunneryMR, gunneryBR, toughBR, initBR, commandBR, hitsR;
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
-    private static final Font FONT_VALUE = new Font(
-            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
-    private static final Font FONT_TITLE = new Font(
-            "SansSerif", Font.ITALIC, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, //$NON-NLS-1$
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
+    private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, //$NON-NLS-1$
+            GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize"));
     private int yCoord = 1;
 
     // keep track of portrait images
@@ -69,8 +68,7 @@ public class PilotMapSet implements DisplayMapSet {
     public PilotMapSet(JComponent c) {
         comp = c;
         try {
-            portraits = new DirectoryItems(Configuration.portraitImagesDir(),
-                    "", //$NON-NLS-1$
+            portraits = new DirectoryItems(Configuration.portraitImagesDir(), "", //$NON-NLS-1$
                     ImageFileFactory.getInstance());
         } catch (Exception e) {
             portraits = null;
@@ -91,19 +89,16 @@ public class PilotMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        portraitArea = new PMPicArea(new BufferedImage(72, 72,
-                BufferedImage.TYPE_BYTE_INDEXED));
+        portraitArea = new PMPicArea(new BufferedImage(72, 72, BufferedImage.TYPE_BYTE_INDEXED));
         content.addArea(portraitArea);
         yCoord = 6;
         FontMetrics fm = comp.getFontMetrics(FONT_TITLE);
-        nameL = createLabel(
-                Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
+        nameL = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getYCoord()); //$NON-NLS-1$
         nameL.setColor(Color.yellow);
         content.addArea(nameL);
 
         fm = comp.getFontMetrics(FONT_VALUE);
-        nickL = createLabel(
-                Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        nickL = createLabel(Messages.getString("GeneralInfoMapSet.LocOstLCT"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(nickL);
 
         hitsR = createLabel(STAR3, fm, 0, getNewYCoord());
@@ -111,69 +106,51 @@ public class PilotMapSet implements DisplayMapSet {
         content.addArea(hitsR);
         getNewYCoord();
 
-        pilotL = createLabel(
-                Messages.getString("PilotMapSet.pilotLAntiMech"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        pilotL = createLabel(Messages.getString("PilotMapSet.pilotLAntiMech"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(pilotL);
         pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 5, getYCoord());
         content.addArea(pilotR);
 
-        initBL = createLabel(
-                Messages.getString("PilotMapSet.initBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
+        initBL = createLabel(Messages.getString("PilotMapSet.initBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
         content.addArea(initBL);
-        initBR = createLabel(STAR3, fm,
-                pilotL.getSize().width + 50 + initBL.getSize().width + 15,
-                getYCoord());
+        initBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 15, getYCoord());
         content.addArea(initBR);
 
-        gunneryL = createLabel(
-                Messages.getString("PilotMapSet.gunneryL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        gunneryL = createLabel(Messages.getString("PilotMapSet.gunneryL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(gunneryL);
-        gunneryR = createLabel(STAR3, fm, pilotL.getSize().width + 5,
-                getYCoord());
+        gunneryR = createLabel(STAR3, fm, pilotL.getSize().width + 5, getYCoord());
         content.addArea(gunneryR);
 
-        commandBL = createLabel(
-                Messages.getString("PilotMapSet.commandBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
-        content.addArea(commandBL);
-        commandBR = createLabel(STAR3, fm,
-                pilotL.getSize().width + 50 + initBL.getSize().width + 15,
+        commandBL = createLabel(Messages.getString("PilotMapSet.commandBL"), fm, pilotL.getSize().width + 50, //$NON-NLS-1$
                 getYCoord());
+        content.addArea(commandBL);
+        commandBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 15, getYCoord());
         content.addArea(commandBR);
 
-        gunneryLL = createLabel(
-                Messages.getString("PilotMapSet.gunneryLL"), fm, 0, getYCoord()); //$NON-NLS-1$
+        gunneryLL = createLabel(Messages.getString("PilotMapSet.gunneryLL"), fm, 0, getYCoord()); //$NON-NLS-1$
         content.addArea(gunneryLL);
-        gunneryLR = createLabel(STAR3, fm, pilotL.getSize().width + 25,
-                getYCoord());
+        gunneryLR = createLabel(STAR3, fm, pilotL.getSize().width + 25, getYCoord());
         content.addArea(gunneryLR);
 
-        gunneryML = createLabel(
-                Messages.getString("PilotMapSet.gunneryML"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        gunneryML = createLabel(Messages.getString("PilotMapSet.gunneryML"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(gunneryML);
-        gunneryMR = createLabel(STAR3, fm, pilotL.getSize().width + 25,
-                getYCoord());
+        gunneryMR = createLabel(STAR3, fm, pilotL.getSize().width + 25, getYCoord());
         content.addArea(gunneryMR);
 
-        toughBL = createLabel(
-                Messages.getString("PilotMapSet.toughBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
+        toughBL = createLabel(Messages.getString("PilotMapSet.toughBL"), fm, pilotL.getSize().width + 50, getYCoord()); //$NON-NLS-1$
         content.addArea(toughBL);
-        toughBR = createLabel(STAR3, fm,
-                pilotL.getSize().width + 50 + initBL.getSize().width + 15,
-                getYCoord());
+        toughBR = createLabel(STAR3, fm, pilotL.getSize().width + 50 + initBL.getSize().width + 15, getYCoord());
         content.addArea(toughBR);
 
-        gunneryBL = createLabel(
-                Messages.getString("PilotMapSet.gunneryBL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        gunneryBL = createLabel(Messages.getString("PilotMapSet.gunneryBL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(gunneryBL);
-        gunneryBR = createLabel(STAR3, fm, pilotL.getSize().width + 25,
-                getYCoord());
+        gunneryBR = createLabel(STAR3, fm, pilotL.getSize().width + 25, getYCoord());
         content.addArea(gunneryBR);
 
         getNewYCoord();
         advantagesR = new PMSimpleLabel[N_ADV];
         for (int i = 0; i < advantagesR.length; i++) {
-            advantagesR[i] = createLabel(new Integer(i).toString(), fm, 10,
-                    getNewYCoord());
+            advantagesR[i] = createLabel(new Integer(i).toString(), fm, 10, getNewYCoord());
             content.addArea(advantagesR[i]);
         }
         // DO NOT PLACE ANY MORE LABELS BELOW HERE. They will get
@@ -202,8 +179,7 @@ public class PilotMapSet implements DisplayMapSet {
             portraitArea.setIdleImage(getPortrait(en.getCrew()));
         }
 
-        if ((en.getGame() != null)
-                && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
+        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL()));
             gunneryMR.setString(Integer.toString(en.getCrew().getGunneryM()));
             gunneryBR.setString(Integer.toString(en.getCrew().getGunneryB()));
@@ -225,25 +201,21 @@ public class PilotMapSet implements DisplayMapSet {
             gunneryL.setVisible(true);
             gunneryR.setVisible(true);
         }
-        if ((en.getGame() != null)
-                && en.getGame().getOptions().booleanOption("toughness")) {
+        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
             toughBR.setString(Integer.toString(en.getCrew().getToughness()));
         } else {
             toughBL.setVisible(false);
             toughBR.setVisible(false);
         }
         if ((en.getGame() != null)
-                && en.getGame().getOptions()
-                        .booleanOption("individual_initiative")) {
+                && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             initBR.setString(Integer.toString(en.getCrew().getInitBonus()));
         } else {
             initBL.setVisible(false);
             initBR.setVisible(false);
         }
-        if ((en.getGame() != null)
-                && en.getGame().getOptions().booleanOption("command_init")) {
-            commandBR.setString(Integer
-                    .toString(en.getCrew().getCommandBonus()));
+        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+            commandBR.setString(Integer.toString(en.getCrew().getCommandBonus()));
         } else {
             commandBL.setVisible(false);
             commandBR.setVisible(false);
@@ -253,27 +225,23 @@ public class PilotMapSet implements DisplayMapSet {
             advantagesR[i].setString(""); //$NON-NLS-1$
         }
         int i = 0;
-        for (Enumeration<IOptionGroup> advGroups = en.getCrew().getOptions()
-                .getGroups(); advGroups.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> advGroups = en.getCrew().getOptions().getGroups(); advGroups
+                .hasMoreElements();) {
             if (i >= (N_ADV - 1)) {
-                advantagesR[i++].setString(Messages
-                        .getString("PilotMapSet.more"));
+                advantagesR[i++].setString(Messages.getString("PilotMapSet.more"));
                 break;
             }
             IOptionGroup advGroup = advGroups.nextElement();
             if (en.getCrew().countOptions(advGroup.getKey()) > 0) {
                 advantagesR[i++].setString(advGroup.getDisplayableName());
-                for (Enumeration<IOption> advs = advGroup.getOptions(); advs
-                        .hasMoreElements();) {
+                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     if (i >= (N_ADV - 1)) {
-                        advantagesR[i++].setString("  "
-                                + Messages.getString("PilotMapSet.more"));
+                        advantagesR[i++].setString("  " + Messages.getString("PilotMapSet.more"));
                         break;
                     }
                     IOption adv = advs.nextElement();
                     if ((adv != null) && adv.booleanValue()) {
-                        advantagesR[i++].setString("  "
-                                + adv.getDisplayableNameWithValue());
+                        advantagesR[i++].setString("  " + adv.getDisplayableNameWithValue());
                     }
                 }
             }
@@ -289,75 +257,53 @@ public class PilotMapSet implements DisplayMapSet {
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
         Image tile = comp.getToolkit()
-                .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+                .getImage(new File(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_LEFT;
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
-        PMUtil.setImage(tile, comp);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit()
-                .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+                .getImage(new File(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit()
+                .getImage(new File(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
@@ -381,7 +327,7 @@ public class PilotMapSet implements DisplayMapSet {
         String file = pilot.getPortraitFileName();
 
         // Return a null if the player has selected no portrait file.
-        if ((null == category) || (null == file) || (null == portraits) ) {
+        if ((null == category) || (null == file) || (null == portraits)) {
             return null;
         }
 
@@ -405,8 +351,7 @@ public class PilotMapSet implements DisplayMapSet {
             }
             // make sure no images are longer than 72 pixels
             if (null != portrait) {
-                portrait = portrait.getScaledInstance(-1, 72,
-                        Image.SCALE_DEFAULT);
+                portrait = portrait.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);
             }
         } catch (Exception err) {
             err.printStackTrace();

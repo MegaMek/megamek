@@ -16,12 +16,12 @@
  */
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author Jay Lawson
  */
 public class SpaceStation extends Jumpship {
-    
 
     /**
      *
@@ -33,78 +33,78 @@ public class SpaceStation extends Jumpship {
 
         double cost = 0.0f;
 
-
-        //Double.MAX
-        //add in controls
-        //bridge
+        // Double.MAX
+        // add in controls
+        // bridge
         cost += 200000 + 10 * weight;
-        //computer
+        // computer
         cost += 200000;
-        //life support
+        // life support
         cost += 5000 * (getNCrew() + getNPassenger());
-        //sensors
+        // sensors
         cost += 80000;
-        //fcs
+        // fcs
         cost += 100000;
-        //gunnery/control systems
+        // gunnery/control systems
         cost += 10000 * getArcswGuns();
 
-        //structural integrity
+        // structural integrity
         cost += 100000 * getSI();
 
-        //additional flight systems (attitude thruster and landing gear)
+        // additional flight systems (attitude thruster and landing gear)
         cost += 25000;
 
-        //docking hard point
+        // docking hard point
         cost += 100000 * getDocks();
 
         double engineWeight = getOriginalWalkMP() * weight * 0.06;
         cost += engineWeight * 1000;
-        //drive unit
+        // drive unit
         cost += 500 * getOriginalWalkMP() * weight / 100.0;
-        //control equipment
+        // control equipment
         cost += 1000;
 
-        //HPG
-        if(hasHPG()) {
+        // HPG
+        if (hasHPG()) {
             cost += 1000000000;
         }
 
-        //fuel tanks
+        // fuel tanks
         cost += 200 * getFuel() / getFuelPerTon();
 
-        //armor
-        cost += getArmorWeight(locations()-2)*EquipmentType.getArmorCost(armorType[0]);
+        // armor
+        cost += getArmorWeight(locations() - 2) * EquipmentType.getArmorCost(armorType[0]);
 
-        //heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000: 2000;
-        cost += sinkCost*getHeatSinks();
+        // heat sinks
+        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
+                                                   // 2000;
+        cost += sinkCost * getHeatSinks();
 
-        //grav deck
+        // grav deck
         cost += 5000000 * getGravDeck();
         cost += 10000000 * getGravDeckLarge();
         cost += 40000000 * getGravDeckHuge();
 
-        //weapons
+        // weapons
         cost += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        //get bays
-        //Bay doors are not counted in the AT2r example
+        // get bays
+        // Bay doors are not counted in the AT2r example
         int baydoors = 0;
         int bayCost = 0;
-        for(Bay next:getTransportBays()) {
+        for (Bay next : getTransportBays()) {
             baydoors += next.getDoors();
-            if((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
+            if ((next instanceof MechBay) || (next instanceof ASFBay) || (next instanceof SmallCraftBay)) {
                 bayCost += 20000 * next.totalSpace;
             }
-            if((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
+            if ((next instanceof LightVehicleBay) || (next instanceof HeavyVehicleBay)) {
                 bayCost += 20000 * next.totalSpace;
             }
         }
 
         cost += bayCost + baydoors * 1000;
 
-        //life boats and escape pods
+        // life boats and escape pods
         cost += 5000 * (getLifeBoats() + getEscapePods());
 
         double weightMultiplier = 5.00f;
@@ -118,7 +118,8 @@ public class SpaceStation extends Jumpship {
      */
     @Override
     public boolean hasActiveECM() {
-        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
+                || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
         return getECMRange() >= 0;
@@ -127,19 +128,20 @@ public class SpaceStation extends Jumpship {
     /**
      * What's the range of the ECM equipment?
      *
-     * @return the <code>int</code> range of this unit's ECM. This value will
-     *         be <code>Entity.NONE</code> if no ECM is active.
+     * @return the <code>int</code> range of this unit's ECM. This value will be
+     *         <code>Entity.NONE</code> if no ECM is active.
      */
     @Override
     public int getECMRange() {
-        if(!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
+                || !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
-        if(!isMilitary()) {
+        if (!isMilitary()) {
             return Entity.NONE;
         }
         int range = 2;
-        //the range might be affected by sensor/FCS damage
+        // the range might be affected by sensor/FCS damage
         range = range - getSensorHits() - getCICHits();
         return range;
     }
@@ -148,11 +150,9 @@ public class SpaceStation extends Jumpship {
     public double getBVTypeModifier() {
         return 0.7;
     }
-    
-    public long getEntityType(){
+
+    public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_SPACE_STATION;
     }
-
-
 
 }

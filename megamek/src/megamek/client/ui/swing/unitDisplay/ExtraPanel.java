@@ -45,6 +45,7 @@ import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Sensor;
 import megamek.common.Tank;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.TSEMPWeapon;
 
 /**
@@ -592,7 +593,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
             if ((clientgui != null)
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("tacops_heat")) { //$NON-NLS-1$
+                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) { //$NON-NLS-1$
                 mtHeat = true;
             }
             heatR.append(HeatEffects.getHeatEffects(en.heat, mtHeat, hasTSM));

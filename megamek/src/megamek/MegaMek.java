@@ -694,6 +694,7 @@ public class MegaMek {
                                 && !unit.getUnitType().equalsIgnoreCase("tank")
                                 && !unit.getUnitType().equalsIgnoreCase("vtol")
                                 && !unit.getUnitType().equalsIgnoreCase("infantry")
+                                && !unit.getUnitType().equalsIgnoreCase("battlearmor")
                                 && !unit.getUnitType().equalsIgnoreCase("aero")
                                 && !unit.getUnitType().equalsIgnoreCase("conventional fighter")) {
                             continue;

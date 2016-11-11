@@ -3969,6 +3969,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return "PPCs with charging capacitors cannot fire!";
         }
 
+        toHit = Compute.getProneMods(game, ae, weaponId);
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            return toHit.getDesc();
+        }
+
         return null;
     }
 

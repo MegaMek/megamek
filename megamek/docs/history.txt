@@ -9,6 +9,7 @@ v0.41.27-git
 	means that some of the default keybinds have changed, check client settings
 + Bug: Heat-seeking LRM modifiers being applied before side table is set
 + Issue #401: Princess deploys multiple units in/on top of one building
++ Issue #404: Adjacent building auto-success could trump some automatic failures
 
 v0.41.26 (2016-11-02 02:00 UTC)
 + New Sprites.

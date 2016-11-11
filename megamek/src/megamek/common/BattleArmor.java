@@ -22,6 +22,7 @@ import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -2098,7 +2099,7 @@ public class BattleArmor extends Infantry {
                 baseDamage *= weaponCount;
             } else {
                 baseDamage = Compute.calculateClusterHitTableAmount(7, getShootingStrength())
-                        * weapon.getDamage() * weaponCount;
+                        * weapon.getDamage(range) * weaponCount;
             }
 
             if (range == Entity.BATTLEFORCESHORTRANGE) {
@@ -2131,6 +2132,20 @@ public class BattleArmor extends Infantry {
                     totalDamage += damage;
                 }
             } else {
+                if (weapon instanceof VariableSpeedPulseLaserWeapon) {
+                    switch (range) {
+                        case Entity.BATTLEFORCESHORTRANGE:
+                            damageModifier *= battleForceToHitModifier[1];
+                            break;
+                        case Entity.BATTLEFORCEMEDIUMRANGE:
+                            damageModifier *= battleForceToHitModifier[2];
+                            break;
+                        case Entity.BATTLEFORCELONGRANGE:
+                            damageModifier *= battleForceToHitModifier[3];
+                            break;
+                    }
+                }
+
                 if (range == Entity.BATTLEFORCESHORTRANGE) {
                     baseDamage *= minRangeDamageModifier;
                 }

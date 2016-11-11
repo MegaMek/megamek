@@ -40,6 +40,10 @@ Tracked
 1
 </engine_type>
 
+<fuel>
+1.5
+</fuel>
+
 <armor>
 7
 6
@@ -83,7 +87,7 @@ cargobay:7:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <tonnage>

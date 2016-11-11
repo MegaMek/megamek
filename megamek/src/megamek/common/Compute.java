@@ -5320,6 +5320,39 @@ public class Compute {
         return (int) damage;
     }
 
+    /**
+     * Used to get a human-readable string that represents the passed damage
+     * type.
+     *
+     * @param damageType
+     * @return
+     */
+    public static String getDamageTypeString(int damageType) {
+        switch (damageType) {
+            case WeaponType.WEAPON_DIRECT_FIRE:
+                return Messages.getString("WeaponType.DirectFire");
+            case WeaponType.WEAPON_CLUSTER_BALLISTIC:
+                return Messages.getString("WeaponType.BallisticCluster");
+            case WeaponType.WEAPON_PULSE:
+                return Messages.getString("WeaponType.Pulse");
+            case WeaponType.WEAPON_CLUSTER_MISSILE:
+            case WeaponType.WEAPON_CLUSTER_MISSILE_1D6:
+            case WeaponType.WEAPON_CLUSTER_MISSILE_2D6:
+            case WeaponType.WEAPON_CLUSTER_MISSILE_3D6:
+                return Messages.getString("WeaponType.Missile");
+            case WeaponType.WEAPON_BURST_HALFD6:
+            case WeaponType.WEAPON_BURST_1D6:
+            case WeaponType.WEAPON_BURST_2D6:
+            case WeaponType.WEAPON_BURST_3D6:
+            case WeaponType.WEAPON_BURST_4D6:
+            case WeaponType.WEAPON_BURST_5D6:
+            case WeaponType.WEAPON_BURST_6D6:
+            case WeaponType.WEAPON_BURST_7D6:
+            default:
+                return Messages.getString("WeaponType.Burst");
+        }
+    }
+
     public static int directBlowInfantryDamage(double damage, int mos,
             int damageType, boolean isNonInfantryAgainstMechanized,
             boolean isAttackThruBuilding) {
@@ -5342,106 +5375,82 @@ public class Compute {
             int damageType, boolean isNonInfantryAgainstMechanized,
             boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport) {
 
+        int origDamageType = damageType;
         damageType += mos;
-
         double origDamage = damage;
-        int repNum = 9970;
         switch (damageType) {
             case WeaponType.WEAPON_DIRECT_FIRE:
                 damage /= 10;
-                repNum = 9970;
                 break;
             case WeaponType.WEAPON_CLUSTER_BALLISTIC:
                 damage /= 10;
                 damage++;
-                repNum = 9971;
                 break;
             case WeaponType.WEAPON_PULSE:
                 damage /= 10;
                 damage += 2;
-                repNum = 9972;
                 break;
             case WeaponType.WEAPON_CLUSTER_MISSILE:
                 damage /= 5;
-                repNum = 9973;
                 break;
             case WeaponType.WEAPON_CLUSTER_MISSILE_1D6:
                 damage /= 5;
                 damage += Compute.d6();
-                repNum = 9973;
                 break;
             case WeaponType.WEAPON_CLUSTER_MISSILE_2D6:
                 damage /= 5;
                 damage += Compute.d6(2);
-                repNum = 9973;
                 break;
             case WeaponType.WEAPON_CLUSTER_MISSILE_3D6:
                 damage /= 5;
                 damage += Compute.d6(3);
-                repNum = 9973;
                 break;
             case WeaponType.WEAPON_BURST_HALFD6:
                 damage = Compute.d6() / 2.0;
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_1D6:
                 damage = Compute.d6();
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_2D6:
                 damage = Compute.d6(2);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_3D6:
                 damage = Compute.d6(3);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_4D6:
                 damage = Compute.d6(4);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_5D6:
                 damage = Compute.d6(5);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_6D6:
                 damage = Compute.d6(6);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_7D6:
                 damage = Compute.d6(7);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
         }
@@ -5460,9 +5469,24 @@ public class Compute {
         }
         
         if (vReport != null) {
-            Report r = new Report(repNum);
+            Report r = new Report();
             r.subject = attackerId;
             r.indent(2);
+
+            r.add(getDamageTypeString(origDamageType));
+            if (origDamageType != damageType) {
+                if (isAttackThruBuilding) {
+                    r.messageId = 9973;
+                } else {
+                    r.messageId = 9972;
+                }
+                r.add(getDamageTypeString(damageType));
+            } else if (isAttackThruBuilding) {
+                r.messageId = 9971;
+            } else {
+                r.messageId = 9970;
+            }
+
             r.add((int)origDamage);
             r.add((int)damage);
             vReport.addElement(r);

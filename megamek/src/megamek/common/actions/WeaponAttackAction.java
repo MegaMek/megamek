@@ -1281,7 +1281,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // ammo to-hit modifier
             if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
-                toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
+                toHit.addModifier(atype.getToHitModifier(),
+                        atype.getSubMunitionName()
+                                + " ammunition to-hit modifier");
             }
             if (isHoming) {
                 return new ToHitData(4, "Homing shot");
@@ -1674,7 +1676,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         // Apply ammo type modifier, if any.
         if (usesAmmo && (atype != null) && (atype.getToHitModifier() != 0)) {
-            toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");
+            toHit.addModifier(atype.getToHitModifier(),
+                    atype.getSubMunitionName() + " ammunition to-hit modifier");
         }
 
         if ((atype != null)
@@ -1706,34 +1709,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Screen launchers always hit");
         }
 
-        // Heat Seeking Missles
-        if (bHeatSeeking) {
-            if (te == null) {
-                if ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                        || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
-                        || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                        || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
-                        || (target instanceof GunEmplacement)) {
-                    IHex hexTarget = game.getBoard().getHex(target.getPosition());
-                    if (hexTarget.containsTerrain(Terrains.FIRE)) {
-                        toHit.addModifier(-2, "ammunition to-hit modifier");
-                    }
-                }
-            } else if ((te.isAirborne()) && (toHit.getSideTable() == ToHitData.SIDE_REAR)) {
-                toHit.addModifier(-2, "ammunition to-hit modifier");
-            } else if (te.heat == 0) {
-                toHit.addModifier(1, "ammunition to-hit modifier");
-            } else {
-                toHit.addModifier(-te.getHeatMPReduction(), "ammunition to-hit modifier");
-            }
-
-            if (LosEffects.hasFireBetween(ae.getPosition(), target.getPosition(), game)) {
-                toHit.addModifier(2, "fire between target and attacker");
-            }
-        }
-
         if (bFTL) {
-            toHit.addModifier(2, "ammunition to-hit modifier");
+            toHit.addModifier(2,atype.getSubMunitionName()
+                    + " ammunition to-hit modifier");
         }
 
         if (bApollo) {
@@ -1870,6 +1848,39 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.setSideTable(ToHitData.SIDE_FRONT);
         } else {
             toHit.setSideTable(Compute.targetSideTable(ae, target, weapon.getCalledShot().getCall()));
+        }
+
+        // Heat Seeking Missles
+        if (bHeatSeeking) {
+            if (te == null) {
+                if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                        || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)
+                        || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+                        || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
+                        || (target instanceof GunEmplacement)) {
+                    IHex hexTarget = game.getBoard().getHex(
+                            target.getPosition());
+                    if (hexTarget.containsTerrain(Terrains.FIRE)) {
+                        toHit.addModifier(-2, "ammunition to-hit modifier");
+                    }
+                }
+            } else if ((te.isAirborne())
+                    && (toHit.getSideTable() == ToHitData.SIDE_REAR)) {
+                toHit.addModifier(-2, atype.getSubMunitionName()
+                        + " ammunition to-hit modifier");
+            } else if (te.heat == 0) {
+                toHit.addModifier(1, atype.getSubMunitionName()
+                        + " ammunition to-hit modifier");
+            } else {
+                toHit.addModifier(-te.getHeatMPReduction(),
+                        atype.getSubMunitionName()
+                                + " ammunition to-hit modifier");
+            }
+
+            if (LosEffects.hasFireBetween(ae.getPosition(),
+                    target.getPosition(), game)) {
+                toHit.addModifier(2, "fire between target and attacker");
+            }
         }
 
         // Aeros in atmosphere can hit above and below

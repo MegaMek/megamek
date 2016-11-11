@@ -1,5 +1,4 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
@@ -7,10 +6,6 @@
 <UnitType>
 SupportTank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Baleena Passenger Submarine
@@ -25,7 +20,7 @@ Baleena Passenger Submarine
 </year>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <type>
@@ -42,6 +37,7 @@ Submarine
 
 <transporters>
 troopspace:1.5
+standardseats:1.5:20
 steeragequarters:10:2
 lightvehiclebay:1:1
 cargobay:3:1
@@ -94,6 +90,3 @@ Cargo Container (10 tons)
 
 <Rear Equipment>
 </Rear Equipment>
-
-
-

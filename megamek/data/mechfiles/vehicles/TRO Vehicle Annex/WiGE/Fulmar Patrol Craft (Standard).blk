@@ -21,7 +21,7 @@ Fulmar Patrol Craft
 </Model>
 
 <year>
-3068
+3065
 </year>
 
 <type>
@@ -44,6 +44,10 @@ cargobay:8.0:1
 <engine_type>
 1
 </engine_type>
+
+<fuel>
+7
+</fuel>
 
 <armor>
 10
@@ -85,10 +89,9 @@ ISVehicularMineDispenser
 </Rear Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Civil War
 </source>
 
 <tonnage>
 70.0
 </tonnage>
-

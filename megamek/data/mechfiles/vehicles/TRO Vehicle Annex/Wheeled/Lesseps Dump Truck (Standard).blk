@@ -40,6 +40,10 @@ Wheeled
 11
 </engine_type>
 
+<fuel>
+4
+</fuel>
+
 <armor>
 28
 19
@@ -78,7 +82,7 @@ cargobay:20:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <tonnage>

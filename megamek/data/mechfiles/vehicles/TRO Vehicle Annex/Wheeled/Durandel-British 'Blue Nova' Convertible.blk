@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+.029
+</fuel>
+
 <armor>
 1
 1
@@ -72,7 +76,7 @@ ConvertibleChassisMod
 </Rear Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Civil War
 </source>
 
 <transporters>

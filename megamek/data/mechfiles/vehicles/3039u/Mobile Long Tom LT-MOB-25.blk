@@ -75,17 +75,10 @@ Hitch
 </Rear Equipment>
 
 <source>
-RS 3039 Unabriged
+TRO 3039 - Star League
 </source>
 
 <tonnage>
 75.0
 </tonnage>
-
-<History>
-This unit is not a playable as trailers are not coded for MM. Use Mobile Long Tom Artillery (Unofficial) (+ Carriage) to be playable.
-Included for completeness and future when trailers are supported.
-</History>
-
-##Errata here - http://bg.battletech.com/forums/index.php/topic,3797.msg799558.html#msg799558
 

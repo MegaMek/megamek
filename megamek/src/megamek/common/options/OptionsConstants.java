@@ -153,7 +153,7 @@ public class OptionsConstants {
     public static final String GUNNERY_MULTI_TASKER = "multi_tasker"; // $NON-NLS$
     public static final String GUNNERY_OBLIQUE_ARTILLERY = "oblique_artillery"; // $NON-NLS$
     public static final String GUNNERY_OBLIQUE_ATTACKER = "oblique_attacker"; // $NON-NLS$
-    // public static final String GUNNERY_RANGE_MASTER= "range_master";
+    public static final String GUNNERY_RANGE_MASTER= "range_master";
     // //$NON-NLS$
     public static final String GUNNERY_SANDBLASTER = "sandblaster"; // $NON-NLS$
     // public static final String GUNNERY_SHARPSHOOTER= "sharpshooter";

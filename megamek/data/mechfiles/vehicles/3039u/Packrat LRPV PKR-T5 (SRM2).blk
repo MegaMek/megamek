@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Packrat LRPV
@@ -24,33 +24,25 @@ PKR-T5 (SRM2)
 2824
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-20.0
-</tonnage>
 
 <motion_type>
 Wheeled
 </motion_type>
 
 <transporters>
-TroopSpace: 3
+troopspace:3.0
 </transporters>
-
-<engine_type>
-0
-</engine_type>
 
 <cruiseMP>
 7
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
 
 <armor>
 16
@@ -77,4 +69,12 @@ SRM 2
 <Rear Equipment>
 Flamer
 </Rear Equipment>
+
+<source>
+TRO 3039 - Succession Wars
+</source>
+
+<tonnage>
+20.0
+</tonnage>
 

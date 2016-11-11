@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Behemoth Heavy Tank
@@ -24,29 +24,21 @@ Behemoth Heavy Tank
 2952
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-100.0
-</tonnage>
 
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-1
-</engine_type>
-
 <cruiseMP>
 2
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 46
@@ -98,17 +90,27 @@ Autocannon/10
 Autocannon/10
 </Turret Equipment>
 
-<Overview>
-Introduced in 2952, the Behemoth was designed for increased firepower and heavy armor rather than speed or maneuverability. The design allowed the Behemoth to engage both distant and short-range targets, while allowing it to stand up to almost any type of unit possible
-</Overview>
-
-<Capabilities>
+<capabilities>
 The two turret-mounted SarLon MaxiCannon AC-10s enable the Behemoth to deal out a great deal of damage at a long distance. The four front-mounted LongFire Light Missile Racks increase this damage potential, particularly in the forward arc of fire. For closer targets, two Harvester 20K SRM-6 packs are mounted on the turret and the Behemoth boasts two ball turrets, each mounting one Harvester 2K SRM-2 and two MainFire MiniGuns. The final two Harvester 2K SRM-2 packs are mounted in a half-turret on the front of tank.
-</Capabilities>
+</capabilities>
 
-<Deployment>
+<overview>
+Introduced in 2952, the Behemoth was designed for increased firepower and heavy armor rather than speed or maneuverability. The design allowed the Behemoth to engage both distant and short-range targets, while allowing it to stand up to almost any type of unit possible
+</overview>
+
+<deployment>
 All over the place
-</Deployment>
+</deployment>
 
+<history>
 
+</history>
+
+<source>
+TRO 3039 - Succession Wars
+</source>
+
+<tonnage>
+100.0
+</tonnage>
 

@@ -40,6 +40,10 @@ VTOL
 6
 </engine_type>
 
+<fuel>
+1
+</fuel>
+
 <armor>
 11
 10
@@ -58,7 +62,7 @@ VTOL
 
 <Body Equipment>
 Cargo Container (10 tons)
-Enviromental Sealed Chassis
+Environmental Sealed Chassis
 </Body Equipment>
 
 <Front Equipment>

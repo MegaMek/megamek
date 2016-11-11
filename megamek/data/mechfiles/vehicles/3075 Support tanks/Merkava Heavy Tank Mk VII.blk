@@ -13,23 +13,23 @@ SupportTank
 </UnitType>
 
 <Name>
-Iveco Burro II Super Heavy Cargo Truck
+Merkava Heavy Tank
 </Name>
 
 <Model>
-(Standard)
+Mk VII
 </Model>
 
 <year>
-3064
+2435
 </year>
 
 <type>
-IS Level 3
+IS Level 1
 </type>
 
 <motion_type>
-Wheeled
+Tracked
 </motion_type>
 
 <cruiseMP>
@@ -41,10 +41,11 @@ Wheeled
 </engine_type>
 
 <armor>
-25
-20
-20
-13
+32
+32
+32
+24
+32
 </armor>
 
 <barrating>
@@ -52,21 +53,19 @@ Wheeled
 </barrating>
 
 <structural_tech_rating>
-4
+3
 </structural_tech_rating>
 
 <Body Equipment>
-Enviromental Sealed Chassis
+Advanced Fire Control
 Armored Chassis
-ISOffRoadChassis
+IS Ammo AC/5
+IS Ammo SRM-4
+IS Ammo LRM-10
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
-<transporters>
-cargobay:12.5:1
-</transporters>
-
 <Front Equipment>
-Searchlight
 </Front Equipment>
 
 <Right Equipment>
@@ -78,15 +77,17 @@ Searchlight
 <Rear Equipment>
 </Rear Equipment>
 
+<Turret Equipment>
+Autocannon/5
+LRM 10
+SRM 4
+Machine Gun
+</Turret Equipment>
+
 <source>
-DTP Dark Age
+TRO 3075 - Age of War
 </source>
 
 <tonnage>
-50.0
+75.0
 </tonnage>
-
-<barrating>
-9
-</barrating>
-

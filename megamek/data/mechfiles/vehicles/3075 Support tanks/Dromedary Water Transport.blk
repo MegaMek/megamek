@@ -41,6 +41,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+7.5
+</fuel>
+
 <armor>
 15
 15
@@ -92,7 +96,7 @@ liquidcargobay:45.5:1
 </Transporters>
 
 <source>
-RS 3075U
+TRO 3075 - Age of War
 </source>
 
 <tonnage>

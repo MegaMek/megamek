@@ -1,0 +1,153 @@
+Version:1.1
+Archer
+ARC-1A
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2458
+Source:XTRO Primitives V - Age of War
+Rules Level:5
+
+Mass:70
+Engine:255 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Primitive Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Primitive(Inner Sphere)
+LA Armor:15
+RA Armor:15
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:6
+RTR Armor:6
+RTC Armor:10
+
+Weapons:4
+Medium Laser, Right Arm
+Medium Laser, Left Arm
+LRM 20, Left Torso
+LRM 20, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

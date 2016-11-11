@@ -67,7 +67,7 @@ Tracked
 
 <Body Equipment>
 Tractor
-Enviromental Sealed Chassis
+Environmental Sealed Chassis
 </Body Equipment>
 
 <Front Equipment>
@@ -90,10 +90,9 @@ Searchlight
 </Rear Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <tonnage>
 200.0
 </tonnage>
-

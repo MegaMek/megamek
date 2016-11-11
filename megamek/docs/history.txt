@@ -1,7 +1,29 @@
 VERSION HISTORY:
 ----------------
-v0.41.26-git
+v0.41.27-git
++ Feature: Can save board image with units (renders the same as seen on screen)
++ Feature: PhaseDisplay buttons can now use tooltip text defined in i18n files
++ Bug: Manually targeting doesn't update next target id
++ Feature: Added "only valid" & "no allies" options to firing phase next target
++ Feature: Added keybinds for "only valid" & "no allies" next target  -- This
+	means that some of the default keybinds have changed, check client settings
++ Bug: Heat-seeking LRM modifiers being applied before side table is set
+
+v0.41.26 (2016-11-02 02:00 UTC)
 + New Sprites.
++ Issue #357: Mass Configure Allows mechs to be deployed off board
++ Issue #204: Planning jump path means any subsequent walk paths climb buildings
++ Issue #368: Duplicate Messages When Changing Sensors
++ Issue #380: Graphical artefacting behind the board when using plain skin
++ Issue #354: Better reporting for attacks against infantry using direct hits
++ Issue #354: Ultra/Rapid fire ACs against infantry handled incorrectly
++ Issue #381: HE ammo type missing in battle round report
++ New Sprites
++ Updating Turret Introdates.
++ adding XTRO V Primitives units (note the Ymir and Command Van has changed)
++ PR #252: HQ Support Vehicle fuel tracking
++ Added PR for Range Master support
++ Issue #375: Replace Player Inop After Loading From A Save In Lobby
 
 v0.41.25 (2016-10-15 14:40 UTC)
 + Added movement type filters to RAT Generator for BA.

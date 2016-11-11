@@ -152,7 +152,14 @@ public interface IBoardView extends MechDisplayListener {
      */
     public abstract void processBoardViewEvent(BoardViewEvent event);
 
-    public abstract BufferedImage getEntireBoardImage();
+    /**
+     * This method creates an image the size of the entire board (all
+     * mapsheets), draws the hexes onto it, and returns that image.
+     *
+     * @param drawOnlyBoard If true, no units are drawn, only the board
+     * @return
+     */
+    public abstract BufferedImage getEntireBoardImage(boolean ignoreUnits);
 
     /**
      * Sets the BoardView's currently selected entity.

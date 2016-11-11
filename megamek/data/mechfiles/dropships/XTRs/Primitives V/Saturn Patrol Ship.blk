@@ -1,0 +1,166 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Saturn Patrol Ship
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<Tonnage>
+1200
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+110
+95
+95
+81
+</Armor>
+
+<armor_type>
+17
+</armor_type>
+
+<Nose Equipment>
+Autocannon/5 Primitive
+ISAC5p Ammo
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG Ammo
+</Nose Equipment>
+
+<Left Side Equipment>
+Autocannon/5 Primitive
+ISAC5p Ammo
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG Ammo
+(R) Autocannon/5 Primitive
+(R) ISAC5p Ammo
+(R) ISMG
+(R) ISMG
+(R) ISMG
+(R) ISMG
+(R) ISMG Ammo
+</Left Side Equipment>
+
+<Right Side Equipment>
+Autocannon/5 Primitive
+ISAC5p Ammo
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG Ammo
+(R) Autocannon/5 Primitive
+(R) ISAC5p Ammo
+(R) ISMG
+(R) ISMG
+(R) ISMG
+(R) ISMG
+(R) ISMG Ammo
+</Right Side Equipment>
+
+<Aft Equipment>
+Autocannon/5 Primitive
+ISAC5p Ammo
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG Ammo
+</Aft Equipment>
+
+<structural_integrity>
+15
+</structural_integrity>
+
+<heatsinks>
+28
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+4687
+</fuel>
+
+<type>
+IS Level 5
+</type>
+
+<year>
+2243
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<designtype>
+1
+</designtype>
+
+<armor_type>
+17
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Spheroid
+</motion_type>
+
+<transporters>
+CargoBay:43.5:2
+</transporters>
+
+<escape_pod>
+1
+</escape_pod>
+
+<life_boat>
+2
+</life_boat>
+
+<crew>
+13
+</crew>
+
+<passengers>
+2
+</passengers>
+
+<marines>
+15
+</marines>
+
+<source>
+XTRO Primitives IV - Age of War
+</source>

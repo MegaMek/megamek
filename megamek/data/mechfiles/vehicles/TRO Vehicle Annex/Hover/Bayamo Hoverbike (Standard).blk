@@ -40,6 +40,10 @@ Hover
 11
 </engine_type>
 
+<fuel>
+.068
+</fuel>
+
 <armor>
 1
 1
@@ -74,18 +78,13 @@ BASearchlight
 
 <transporters>
 cargobay:.068:1
-pillionseats:.025:1
-standardseats:.025:1
+pillionseats:.05:2
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Succession Wars
 </source>
 
 <tonnage>
 .6
 </tonnage>
-
-<range>
-1000
-</range>

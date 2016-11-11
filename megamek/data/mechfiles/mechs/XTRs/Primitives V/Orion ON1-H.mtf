@@ -1,0 +1,155 @@
+Version:1.1
+Orion
+ON1-H
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2456
+Source:XTRO Primitives V - Age of War
+Rules Level:5
+
+Mass:75
+Engine:270 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Primitive Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Primitive(Inner Sphere)
+LA Armor:21
+RA Armor:21
+LT Armor:22
+RT Armor:22
+CT Armor:36
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:6
+Medium Laser, Right Arm
+Medium Laser, Left Arm
+AC/10p, Right Torso
+LRM 5, Left Torso
+LRM 5, Left Torso
+SRM 4, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+SRM 4
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+LRM 5
+LRM 5
+IS Ammo LRM-5
+IS Ammo SRM-4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Autocannon/10 Primitive
+Autocannon/10 Primitive
+Autocannon/10 Primitive
+Autocannon/10 Primitive
+Autocannon/10 Primitive
+Autocannon/10 Primitive
+Autocannon/10 Primitive
+IS Ammo AC/10 Primitive
+IS Ammo AC/10 Primitive
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

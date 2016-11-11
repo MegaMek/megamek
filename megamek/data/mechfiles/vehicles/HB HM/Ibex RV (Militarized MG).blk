@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+.011
+</fuel>
+
 <armor>
 2
 2
@@ -76,13 +80,13 @@ PintleTurret
 <transporters>
 cargobay:.387:1
 troopspace:.6
+standardseats:.6:8
 </transporters>
 
 <source>
-HB HD
+HB:House Marik - Clan Invasion
 </source>
 
 <tonnage>
 2.0
 </tonnage>
-

@@ -331,6 +331,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     .getString("MovementDisplay." + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            String ttKey = "MovementDisplay." + cmd.getCmd() + ".tooltip";
+            if (Messages.keyExists(ttKey)) {
+                newButton.setToolTipText(Messages.getString(ttKey));
+            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             if (clientgui != null) {
@@ -1042,6 +1046,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // Remove Careful stand, in case it was set
         ce.setCarefulStand(false);
+        ce.setIsJumpingNow(false);
 
         // switch back from swimming to normal mode.
         if (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM) {

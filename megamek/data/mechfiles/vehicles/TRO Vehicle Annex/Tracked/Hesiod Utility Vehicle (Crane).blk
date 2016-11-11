@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
 5
 5
@@ -70,7 +74,7 @@ Lift Hoist
 </Rear Equipment>
 
 <source>
-TRO Var
+TRO VAr - Clan Invasion
 </source>
 
 <tonnage>
@@ -83,4 +87,3 @@ TRO Var
 
 <omni>
 </omni>
-

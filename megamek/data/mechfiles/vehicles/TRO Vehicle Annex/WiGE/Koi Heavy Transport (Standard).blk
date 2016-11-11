@@ -61,7 +61,6 @@ cargobay:123.5:2
 3
 </structural_tech_rating>
 
-
 <Body Equipment>
 AmphibiousChassis
 </Body Equipment>
@@ -85,10 +84,9 @@ AmphibiousChassis
 </Rear Equipment>
 
 <source>
-TRO VAR
+TRO VAr - Clan Invasion
 </source>
 
 <tonnage>
 240.0
 </tonnage>
-

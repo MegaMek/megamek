@@ -44,6 +44,10 @@ cargobay:29:1
 1
 </engine_type>
 
+<fuel>
+4
+</fuel>
+
 <armor>
 10
 10
@@ -79,10 +83,9 @@ Machine Gun
 </Rear Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Star League
 </source>
 
 <tonnage>
 70.0
 </tonnage>
-

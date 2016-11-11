@@ -85,6 +85,8 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
@@ -1217,6 +1219,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else if (bvBgImage != null) {
             g.drawImage(bvBgImage, -getX(), -getY(), (int) viewRect.getWidth(),
                     (int) viewRect.getHeight(), this);
+        } else {
+            MetalTheme theme = new DefaultMetalTheme();
+            g.setColor(theme.getControl());
+            g.fillRect(-getX(), -getY(), (int) viewRect.getWidth(),
+                    (int) viewRect.getHeight());
         }
 
         // Used to pad the board edge
@@ -2200,14 +2207,107 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * This method creates an image the size of the entire board (all
      * mapsheets), draws the hexes onto it, and returns that image.
      */
-    public BufferedImage getEntireBoardImage() {
+    public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
+        boardGraph.setClip(0, 0, boardSize.width, boardSize.height);
         if (GUIPreferences.getInstance().getAntiAliasing()) {
             boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                         RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        drawHexes(boardGraph, new Rectangle(boardSize), true);
+        // Draw hexes
+        drawHexes(boardGraph, new Rectangle(boardSize), ignoreUnits);
+
+        // If we aren't ignoring units, draw everything else
+        if (!ignoreUnits) {
+            // draw wrecks
+            if (GUIPreferences.getInstance().getShowWrecks()
+                    && !useIsometric()) {
+                drawSprites(boardGraph, wreckSprites);
+            }
+
+            // Field of Fire
+            if (!useIsometric()
+                    && GUIPreferences.getInstance().getShowFieldOfFire()) {
+                drawSprites(boardGraph, fieldofFireSprites);
+            }
+
+            if ((game.getPhase() == Phase.PHASE_MOVEMENT) && !useIsometric()) {
+                drawSprites(boardGraph, moveEnvSprites);
+                drawSprites(boardGraph, moveModEnvSprites);
+            }
+
+            // Minefield signs all over the place!
+            drawMinefields(boardGraph);
+
+            // Artillery targets
+            drawArtilleryHexes(boardGraph);
+
+            // draw highlight border
+            drawSprite(boardGraph, highlightSprite);
+
+            // draw cursors
+            drawSprite(boardGraph, cursorSprite);
+            drawSprite(boardGraph, selectedSprite);
+            drawSprite(boardGraph, firstLOSSprite);
+            drawSprite(boardGraph, secondLOSSprite);
+
+            // draw deployment indicators.
+            // For Isometric rendering, this is done during drawHexes
+            if ((en_Deployer != null) && !useIsometric()) {
+                drawDeployment(boardGraph);
+            }
+
+            if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
+                    && (showAllDeployment)) {
+                drawAllDeployment(boardGraph);
+            }
+
+            // draw Flare Sprites
+            drawSprites(boardGraph, flareSprites);
+
+            // draw C3 links
+            drawSprites(boardGraph, c3Sprites);
+
+            // draw flyover routes
+            if (game.getBoard().onGround()) {
+                drawSprites(boardGraph, flyOverSprites);
+            }
+
+            // draw onscreen entities
+            drawSprites(boardGraph, entitySprites);
+
+            // draw moving onscreen entities
+            drawSprites(boardGraph, movingEntitySprites);
+
+            // draw ghost onscreen entities
+            drawSprites(boardGraph, ghostEntitySprites);
+
+            // draw onscreen attacks
+            drawSprites(boardGraph, attackSprites);
+
+            // draw movement vectors.
+            if (game.useVectorMove()
+                && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                drawSprites(boardGraph, movementSprites);
+            }
+
+            // draw movement, if valid
+            drawSprites(boardGraph, pathSprites);
+
+            // draw firing solution sprites, but only during the firing phase
+            if ((game.getPhase() == Phase.PHASE_FIRING) ||
+                (game.getPhase() == Phase.PHASE_OFFBOARD)) {
+                drawSprites(boardGraph, firingSprites);
+            }
+
+            if (game.getPhase() == Phase.PHASE_FIRING) {
+                for (Coords c : strafingCoords) {
+                    drawHexBorder(boardGraph, getHexLocation(c), Color.yellow, 0, 3);
+                }
+            }
+        }
+
         boardGraph.dispose();
         return (BufferedImage) entireBoard;
     }

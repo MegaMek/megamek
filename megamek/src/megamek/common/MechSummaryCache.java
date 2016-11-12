@@ -38,6 +38,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
@@ -324,7 +325,7 @@ public class MechSummaryCache {
 
     private void saveCache() throws Exception {
         loadReport.append("Saving unit cache.\n");
-        File unit_cache_path = new File(getUnitCacheDir(), FILENAME_UNITS_CACHE);
+        File unit_cache_path = new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile();
         ObjectOutputStream wr = new ObjectOutputStream(
                 new BufferedOutputStream(new FileOutputStream(unit_cache_path)));
         Integer length = new Integer(m_data.length);
@@ -498,8 +499,8 @@ public class MechSummaryCache {
                     done();
                     return false;
                 }
-                File f = new File(fDir, element);
-                if (f.equals(new File(getUnitCacheDir(), FILENAME_UNITS_CACHE))) {
+                File f = new MegaMekFile(fDir, element).getFile();
+                if (f.equals(new MegaMekFile(getUnitCacheDir(), FILENAME_UNITS_CACHE).getFile())) {
                     continue;
                 }
                 if (f.isDirectory()) {

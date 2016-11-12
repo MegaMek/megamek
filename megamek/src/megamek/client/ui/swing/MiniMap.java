@@ -97,6 +97,7 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.MegaMekFile;
 
 /**
  * Displays all the mapsheets in a scaled-down size. TBD refactorings: -make a
@@ -438,9 +439,9 @@ public class MiniMap extends JPanel {
         int green;
         int blue;
 
-        File coloursFile = new File(
+        File coloursFile = new MegaMekFile(
                 Configuration.hexesDir(), GUIPreferences.getInstance().getMinimapColours()
-        );
+        ).getFile();
 
         // only while the defaults are hard-coded!
         if (!coloursFile.exists()) {

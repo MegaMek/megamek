@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
 import megamek.common.Configuration;
+import megamek.common.util.MegaMekFile;
 
 public class PreferenceManager {
 
@@ -82,7 +83,7 @@ public class PreferenceManager {
         clientPreferenceStore = new PreferenceStore();
         String cfgName = System.getProperty(
                 CFG_FILE_OPTION_NAME,
-                new File(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString()
+                new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).toString()
         );
         load(cfgName);
         clientPreferences = new ClientPreferences(clientPreferenceStore);
@@ -122,7 +123,7 @@ public class PreferenceManager {
     }
 
     public void save() {
-        save(new File(Configuration.configDir(), DEFAULT_CFG_FILE_NAME));
+        save(new MegaMekFile(Configuration.configDir(), DEFAULT_CFG_FILE_NAME).getFile());
     }
     
     public void save(final File file) {

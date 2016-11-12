@@ -81,6 +81,7 @@ import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
+import megamek.common.util.MegaMekFile;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener,
         BoardViewListener, ActionListener, ComponentListener {
@@ -221,16 +222,16 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<Image>();
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
                         .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32)
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32)
                         .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48)
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48)
                         .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
                         .toString()));
         frame.setIconImages(iconList);
 

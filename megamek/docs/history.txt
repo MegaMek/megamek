@@ -10,9 +10,12 @@ v0.41.27-git
 + Bug: Heat-seeking LRM modifiers being applied before side table is set
 + Issue #401: Princess deploys multiple units in/on top of one building
 + Issue #404: Adjacent building auto-success could trump some automatic failures
-
++ Data: New Sprites.
++ Data: Updated Key Binds.txt in Docs folder to take into account above valid
+	target feature.
+	
 v0.41.26 (2016-11-02 02:00 UTC)
-+ New Sprites.
++ Data: New Sprites.
 + Issue #357: Mass Configure Allows mechs to be deployed off board
 + Issue #204: Planning jump path means any subsequent walk paths climb buildings
 + Issue #368: Duplicate Messages When Changing Sensors
@@ -20,7 +23,7 @@ v0.41.26 (2016-11-02 02:00 UTC)
 + Issue #354: Better reporting for attacks against infantry using direct hits
 + Issue #354: Ultra/Rapid fire ACs against infantry handled incorrectly
 + Issue #381: HE ammo type missing in battle round report
-+ New Sprites
++ Data: New Sprites
 + Updating Turret Introdates.
 + adding XTRO V Primitives units (note the Ymir and Command Van has changed)
 + PR #252: HQ Support Vehicle fuel tracking

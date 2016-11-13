@@ -419,8 +419,8 @@ public class RandomUnitGenerator implements Serializable {
             			filtered.getWeights().add(re.getWeights().get(i));
             			totalWeight += re.getWeights().get(i);
                 	}
-                	for (int i = 0; i < re.getWeights().size(); i++) {
-                		re.getWeights().set(i, re.getWeights().get(i) / totalWeight);
+                	for (int i = 0; i < filtered.getWeights().size(); i++) {
+                		filtered.getWeights().set(i, filtered.getWeights().get(i) / totalWeight);
                 	}
                 	re = filtered;
                 }

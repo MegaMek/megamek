@@ -3970,7 +3970,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         toHit = Compute.getProneMods(game, ae, weaponId);
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if ((toHit != null) && toHit.getValue() == ToHitData.IMPOSSIBLE) {
             return toHit.getDesc();
         }
 

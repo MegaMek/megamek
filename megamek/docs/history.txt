@@ -11,7 +11,9 @@ v0.41.27-git
 + Issue #401: Princess deploys multiple units in/on top of one building
 + Issue #404: Adjacent building auto-success could trump some automatic failures
 + Data: New Sprites.
-
++ Data: Updated Key Binds.txt in Docs folder to take into account above valid
+	target feature.
+	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.
 + Issue #357: Mass Configure Allows mechs to be deployed off board

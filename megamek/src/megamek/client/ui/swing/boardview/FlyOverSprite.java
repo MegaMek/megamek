@@ -1,10 +1,13 @@
 package megamek.client.ui.swing.boardview;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.swing.util.PlayerColors;
@@ -181,8 +184,17 @@ class FlyOverSprite extends Sprite {
 
         g.setColor(spriteColor);
         g.fillPolygon(drawPoly);
-        g.setColor(Color.black);
-        g.drawPolygon(drawPoly);
+        if (en.equals(bv.selectedEntity) && (g instanceof Graphics2D)) {
+            Graphics2D g2 = (Graphics2D) g;
+            Stroke oldStroke = g2.getStroke();
+            g2.setStroke(new BasicStroke(1));
+            g2.setColor(Color.blue);
+            g2.drawPolygon(drawPoly);
+            g2.setStroke(oldStroke);
+        } else {
+            g.setColor(Color.black);
+            g.drawPolygon(drawPoly);
+        }
     }
 
     /**

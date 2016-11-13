@@ -13,6 +13,7 @@ v0.41.27-git
 + Data: New Sprites.
 + Data: Updated Key Binds.txt in Docs folder to take into account above valid
 	target feature.
++ Issue #393: Highlighting currently selected ASF flight path
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.

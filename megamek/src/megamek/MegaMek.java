@@ -696,7 +696,10 @@ public class MegaMek {
                                 && !unit.getUnitType().equalsIgnoreCase("infantry")
                                 && !unit.getUnitType().equalsIgnoreCase("battlearmor")
                                 && !unit.getUnitType().equalsIgnoreCase("aero")
-                                && !unit.getUnitType().equalsIgnoreCase("conventional fighter")) {
+                                && !unit.getUnitType().equalsIgnoreCase("conventional fighter")
+                                && !unit.getUnitType().equalsIgnoreCase("small craft")
+                                && !unit.getUnitType().equalsIgnoreCase("dropship")
+                                ) {
                             continue;
                         }
                         Entity entity = new MechFileParser(
@@ -709,8 +712,8 @@ public class MegaMek {
                         w.write("\t");
                         w.write(entity.getBattleForceMovement());
                         w.write("\t");
-                        w.write(Integer.toString(entity
-                                .getBattleForceArmorPoints()));
+                        w.write(entity
+                                .getBattleForceArmorPoints() + entity.getBattleForceDamageThresholdString());
                         w.write("\t");
                         w.write(Integer.toString(entity
                                 .getBattleForceStructurePoints()));

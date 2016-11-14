@@ -694,6 +694,46 @@ public class SmallCraft extends Aero {
         return 3;
     }
     
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 4;
+    }
+
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        switch (index) {
+        case LOC_NOSE:
+            if (location == LOC_NOSE) {
+                return 1.0;
+            }
+            if (isSpheroid() && (location == LOC_LWING || location == LOC_RWING)
+                    && !rearMounted) {
+                return 0.5;
+            }
+            break;
+        case LOC_LWING:
+        case LOC_RWING:
+            if (index == location) {
+                if (isSpheroid()) {
+                    return 0.5;
+                }
+                if (!rearMounted) {
+                    return 1.0;
+                }
+            }
+            break;
+        case LOC_AFT:
+            if (location == LOC_AFT) {
+                return 1.0;
+            }
+            if (rearMounted && (location == LOC_LWING || location == LOC_RWING)) {
+                return isSpheroid()? 0.5 : 1.0;
+            }
+            break;
+        }
+        return 0;
+    }
+    
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }

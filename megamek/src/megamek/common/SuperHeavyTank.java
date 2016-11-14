@@ -514,7 +514,7 @@ public class SuperHeavyTank extends Tank {
     }
 
     @Override
-    public double getBattleForceLocationMultiplier(int index, int location) {
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         if (location == LOC_REAR || location == LOC_BODY
                 || location == LOC_REARLEFT || location == LOC_REARRIGHT
                 || (index == 0 && location >= LOC_TURRET)

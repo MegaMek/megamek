@@ -4095,7 +4095,7 @@ public class Aero extends Entity {
     
     @Override
     public String getBattleForceDamageThresholdString() {
-        return Integer.toString((int)Math.ceil(getBattleForceArmorPoints() / 10.0));
+        return "-" + (int)Math.ceil(getBattleForceArmorPoints() / 10.0);
     }
     
     @Override
@@ -4104,7 +4104,7 @@ public class Aero extends Entity {
     }
 
     @Override
-    public double getBattleForceLocationMultiplier(int index, int location) {
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         if (location == LOC_AFT) {
             return 0.0;
         }
@@ -4129,6 +4129,23 @@ public class Aero extends Entity {
         }
 
         return totalHeat;
+    }
+    
+    @Override
+    public int getBattleForceTotalHeatGeneration(int location) {
+        int totalHeat = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+            if (weapon.hasFlag(WeaponType.F_ONESHOT)
+                || getBattleForceLocationMultiplier(location, mount.getLocation(),
+                        mount.isRearMounted()) == 0) {
+                continue;
+            }
+            totalHeat += weapon.getHeat();
+        }
+
+        return totalHeat;        
     }
 
     /**

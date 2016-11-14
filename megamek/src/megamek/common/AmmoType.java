@@ -11911,6 +11911,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Light Rifle";
         ammo.setInternalName("IS Ammo Light Rifle");
         ammo.addLookupName("ISLight Rifle Ammo");
+        ammo.addLookupName("ISLightRifle Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_RIFLE;
@@ -11935,6 +11936,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Medium Rifle";
         ammo.setInternalName("IS Ammo Medium Rifle");
         ammo.addLookupName("ISMedium Rifle Ammo");
+        ammo.addLookupName("ISMediumRifle Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_RIFLE;
@@ -11959,6 +11961,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Heavy Rifle";
         ammo.setInternalName("IS Ammo Heavy Rifle");
         ammo.addLookupName("ISHeavy Rifle Ammo");
+        ammo.addLookupName("ISHeavyRifle Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_RIFLE;

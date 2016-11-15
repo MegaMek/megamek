@@ -1211,7 +1211,46 @@ public class Jumpship extends Aero {
     public int getBattleForceStructurePoints() {
         return 1;
     }
+    
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 4;
+    }
 
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        switch (index) {
+        case LOC_NOSE:
+            if (location == LOC_NOSE) {
+                return 1.0;
+            }
+            if (isSpheroid() && (location == LOC_FLS || location == LOC_FRS)
+                    && !rearMounted) {
+                return 0.5;
+            }
+            break;
+        case LOC_FRS:
+            if (location == LOC_FRS || location == LOC_ARS) {
+                return 0.5;
+            }
+            break;
+        case LOC_FLS:
+            if (location == LOC_FLS || location == LOC_ALS) {
+                return 0.5;
+            }
+            break;
+        case LOC_AFT:
+            if (location == LOC_AFT) {
+                return 1.0;
+            }
+            if (location == LOC_ALS || location == LOC_ARS) {
+                return 0.5;
+            }
+            break;
+        }
+        return 0;
+    }
+    
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;

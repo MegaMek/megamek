@@ -690,18 +690,9 @@ public class MegaMek {
                     MechSummary[] units = MechSummaryCache.getInstance()
                             .getAllMechs();
                     for (MechSummary unit : units) {
-                        if (!unit.getUnitType().equalsIgnoreCase("mek")
-                                && !unit.getUnitType().equalsIgnoreCase("tank")
-                                && !unit.getUnitType().equalsIgnoreCase("vtol")
-                                && !unit.getUnitType().equalsIgnoreCase("infantry")
-                                && !unit.getUnitType().equalsIgnoreCase("battlearmor")
-                                && !unit.getUnitType().equalsIgnoreCase("aero")
-                                && !unit.getUnitType().equalsIgnoreCase("conventional fighter")
-                                && !unit.getUnitType().equalsIgnoreCase("small craft")
-                                && !unit.getUnitType().equalsIgnoreCase("dropship")
-                                ) {
-                            continue;
-                        }
+//                        if (!unit.getUnitType().equalsIgnoreCase("mek")) {
+//                            continue;
+//                        }
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();

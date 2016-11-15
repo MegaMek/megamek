@@ -4087,7 +4087,7 @@ public class Aero extends Entity {
 
     @Override
     public int getBattleForceArmorPoints() {
-        if (isCapitalScale()) {
+        if (isCapitalFighter()) {
             return (int) Math.round(getCapArmor() / 3.0);
         }
         return super.getBattleForceArmorPoints();

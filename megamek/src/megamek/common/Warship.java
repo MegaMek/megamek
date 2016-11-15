@@ -348,6 +348,19 @@ public class Warship extends Jumpship {
         return (int)Math.ceil(this.getSI() *0.66);
     }
 
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 8;
+    }
+
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        if (index == location) {
+            return 1.0;
+        }
+        return 0;
+    }
+    
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
     }

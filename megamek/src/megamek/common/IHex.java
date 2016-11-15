@@ -302,4 +302,6 @@ public interface IHex extends Cloneable {
     public abstract Coords getCoords();
 
     public abstract void setCoords(Coords c);
+    
+    public abstract boolean isValid();
 }

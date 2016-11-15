@@ -897,15 +897,31 @@ public class Board implements Serializable, IBoard {
         }
 
         // check data integrity
-        if ((nw > 1) || (nh > 1) || (di == (nw * nh))) {
+        if (isValid(nd) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
             newData(nw, nh, nd);
-        } else {
+        }else{
             System.err.println("board data invalid");
         }
 
     }
 
-    private int indexFor(String hexNum, int width, int row) {
+    public boolean isValid() {
+		//Search for black-listed hexes
+    	for(IHex hex: data) {
+    		if(!hex.isValid()) return false;	
+    	}
+		return true;
+	}
+    
+    private boolean isValid(IHex[] data) {
+		//Search for black-listed hexes
+    	for(IHex hex: data) {
+    		if(!hex.isValid()) return false;	
+    	}
+		return true;
+	}
+
+	private int indexFor(String hexNum, int width, int row) {
         int substringDiff = 2;
         if (row > 99) {
             substringDiff = Integer.toString(width).length();

@@ -584,4 +584,21 @@ public class Terrain implements ITerrain, Serializable {
             break;
         }
     }
+    
+    public boolean isValid(){
+    	if(type == Terrains.WOODS && ( level < 1 || level > 3)) return false;
+    	if(type == Terrains.SWAMP && ( level < 1 || level > 3)) return false;
+    	if(type == Terrains.ROUGH && ( level < 1 || level > 2)) return false;
+    	if(type == Terrains.JUNGLE && ( level < 1 || level > 3)) return false;
+    	if(type == Terrains.WATER && ( level < 0 )) return false;
+    	if(type == Terrains.RAPIDS && ( level < 1 || level > 2)) return false;
+    	if(type == Terrains.ICE && level != 1) return false;
+    	if(type == Terrains.GEYSER && ( level < 1 || level > 3)) return false;
+    	if(type == Terrains.FORTIFIED && level != 1 ) return false;
+    	if(type == Terrains.RUBBLE && ( level < 1 || level > 6)) return false;
+    	if(type == Terrains.FIRE && ( level < 1 || level > 4)) return false;
+    	if(type == Terrains.SMOKE && ( level < 1 || level > 5)) return false;
+    	
+    	return true;
+    }
 }

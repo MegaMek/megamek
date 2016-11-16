@@ -908,6 +908,7 @@ public class Board implements Serializable, IBoard {
     public boolean isValid() {
 		//Search for black-listed hexes
     	for(IHex hex: data) {
+    		if(hex == null)return false;
     		if(!hex.isValid()) return false;	
     	}
 		return true;

@@ -523,4 +523,6 @@ public interface IBoard {
             boolean flipHorz);
 
     public abstract boolean hasBoardBackground();
+
+	public abstract boolean isValid();
 }

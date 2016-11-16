@@ -2657,6 +2657,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     && chkRotateBoard.isSelected()) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
+            IBoard b = new Board(16, 17);
+            
+            if(!MapSettings.BOARD_GENERATED.equals(board) && !MapSettings.BOARD_RANDOM.equals(board) && !MapSettings.BOARD_SURPRISE.equals(board)){
+            	b.load(new File(Configuration.boardsDir(), board + ".board"));
+            	if(!b.isValid()){
+            		JOptionPane.showMessageDialog(this,"The Selected board is invalid, please select another.");
+            		return;
+            	}
+            }
             ((DefaultListModel<String>) lisBoardsSelected.getModel())
                     .setElementAt(newVar + ": " + name, newVar); //$NON-NLS-1$
             mapSettings.getBoardsSelectedVector().set(newVar, name);

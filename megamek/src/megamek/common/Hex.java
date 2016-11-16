@@ -15,9 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import megamek.common.Building.BasementType;
@@ -453,7 +451,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#duplicate
      */
     public IHex duplicate() {
-        ITerrain[] tcopy = new ITerrain[terrains.size()];
+        ITerrain[] tcopy = new ITerrain[Terrains.SIZE];
         ITerrainFactory f = Terrains.getTerrainFactory();
         for (Integer i : terrains.keySet()){
             tcopy[i] = f.createTerrain(terrains.get(i));

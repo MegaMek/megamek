@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -613,14 +614,30 @@ public class MapSettings implements Serializable {
         }
         for (int i = 0; i < boardsSelected.size(); i++) {
             if (board.equals(boardsSelected.get(i))) {
-                int rindex;
-                // if we have no boards, set rindex to 0, so the generated board
-                // gets selected
-                if (boardsAvailable.size() == 1) {
-                    rindex = 0;
-                } else {
-                    rindex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
-                }
+                int rindex = 0;
+                boolean nonFound = true;
+            	while(nonFound){
+	                // if we have no boards, set rindex to 0, so the generated board
+	                // gets selected
+            		// Default boards are GENERATED, RANDOM and SUPPRISE
+	                if (boardsAvailable.size() < 4) {
+	                    rindex = 0;
+	                    nonFound = false;
+	                } else {
+	                    rindex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
+	                    //validate that the selected map is legal
+	                    IBoard b = new Board(16, 17);
+	                    String boardSelected = boardsAvailable.get(rindex);
+	                    if(!MapSettings.BOARD_GENERATED.equals(boardSelected) && !MapSettings.BOARD_RANDOM.equals(boardSelected) && !MapSettings.BOARD_SURPRISE.equals(boardSelected)){
+	                    	b.load(new File(Configuration.boardsDir(), boardSelected + ".board"));
+	                    	if(b.isValid()){
+	                    		nonFound = false;
+	                    	}else{
+	                    		boardsAvailable.remove(rindex);
+	                    	}
+	                    }
+	                }
+            	}
                 // Do a one pi rotation half of the time.
                 if (0 == Compute.randomInt(2)) {
                     boardsSelected.set(i, Board.BOARD_REQUEST_ROTATION

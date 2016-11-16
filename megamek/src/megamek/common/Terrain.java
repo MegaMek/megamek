@@ -38,7 +38,7 @@ public class Terrain implements ITerrain, Serializable {
      * types (ie, Light Woods vs Heavy woods). Not to be confused with Hex
      * levels.
      */
-    private final int level;
+    private int level;
     private boolean exitsSpecified = false;
     private int exits;
     private int terrainFactor;
@@ -586,7 +586,8 @@ public class Terrain implements ITerrain, Serializable {
     }
     
     public boolean isValid(){
-    	if(type == Terrains.WOODS && ( level < 1 || level > 3)) return false;
+    	if(type == Terrains.WOODS && level < 1) level = 1;
+    	if(type == Terrains.WOODS && level > 3) level = 3;
     	if(type == Terrains.SWAMP && ( level < 1 || level > 3)) return false;
     	if(type == Terrains.ROUGH && ( level < 1 || level > 2)) return false;
     	if(type == Terrains.JUNGLE && ( level < 1 || level > 3)) return false;

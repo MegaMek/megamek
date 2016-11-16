@@ -1231,7 +1231,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (chkRotateBoard.isSelected()) {
                 BoardUtilities.flip(board, true, true);
             }
-            miniMap.setBoard(board);
+            if(board.isValid())
+            	miniMap.setBoard(board);
         }
     }
 
@@ -2657,8 +2658,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     && chkRotateBoard.isSelected()) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
-            IBoard b = new Board(16, 17);
             
+            //Validate the map
+            IBoard b = new Board(16, 17);
             if(!MapSettings.BOARD_GENERATED.equals(board) && !MapSettings.BOARD_RANDOM.equals(board) && !MapSettings.BOARD_SURPRISE.equals(board)){
             	b.load(new File(Configuration.boardsDir(), board + ".board"));
             	if(!b.isValid()){

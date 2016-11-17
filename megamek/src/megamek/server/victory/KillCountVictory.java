@@ -97,7 +97,7 @@ public class KillCountVictory implements Victory, Serializable {
         while (victims.hasMoreElements())
         {
             Entity wreck = victims.nextElement();
-            Entity killer = game.getEntity(wreck.getKillerId());
+            Entity killer = game.getEntityFromAllSources(wreck.getKillerId());
             
             if (killer == null){
                 continue;

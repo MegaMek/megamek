@@ -116,8 +116,9 @@ class FlyOverSprite extends Sprite {
         final double lw = bv.scale * BoardView1.FLY_OVER_LINE_WIDTH;
         int numPassedThrough = en.getPassedThrough().size();
         double angle;
+        double xDiff, yDiff;
         Coords prev, curr, next;
-        Point currPoint;
+        Point currPoint, nextPoint;
 
         // Handle First Coords
         curr = en.getPassedThrough().get(0);
@@ -135,19 +136,45 @@ class FlyOverSprite extends Sprite {
             addPolyPoint(curr, next, prev, true);
         }
 
-        // Handle Last Coords
+        // Handle Last Coords - only draw to the hex edge
         curr = en.getPassedThrough().get(numPassedThrough - 1);
         next = en.getPassedThrough().get(numPassedThrough - 2);
         currPoint = bv.getCentreHexLocation(curr, true);
+        nextPoint = bv.getCentreHexLocation(next, true);
+        if (bv.useIsometric()) {
+            xDiff = Math.sqrt(Math.pow(currPoint.x - nextPoint.x, 2));
+            yDiff = Math.sqrt(Math.pow(currPoint.y - nextPoint.y, 2));
+            if (nextPoint.x > currPoint.x) {
+                xDiff *= -1;
+            }
+            if (nextPoint.y >= currPoint.y) {
+                yDiff *= -1;
+            }
+            currPoint.x = (int) (currPoint.x - xDiff / 2 + 0.5);
+            currPoint.y = (int) (currPoint.y - yDiff / 2 + 0.5);
+        }
         angle = (curr.radian(next) + Math.PI) % (2 * Math.PI);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
                 currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
 
         // Now go in reverse order - to add second half of points
-        // Handle Last Coords
+        // Handle Last Coords - only draw to the hex edge
         curr = en.getPassedThrough().get(numPassedThrough - 1);
         next = en.getPassedThrough().get(numPassedThrough - 2);
         currPoint = bv.getCentreHexLocation(curr, true);
+        nextPoint = bv.getCentreHexLocation(next, true);
+        if (bv.useIsometric()) {
+            xDiff = Math.sqrt(Math.pow(currPoint.x - nextPoint.x, 2));
+            yDiff = Math.sqrt(Math.pow(currPoint.y - nextPoint.y, 2));
+            if (nextPoint.x > currPoint.x) {
+                xDiff *= -1;
+            }
+            if (nextPoint.y >= currPoint.y) {
+                yDiff *= -1;
+            }
+            currPoint.x = (int) (currPoint.x - xDiff / 2 + 0.5);
+            currPoint.y = (int) (currPoint.y - yDiff / 2 + 0.5);
+        }
         angle = curr.radian(next);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
                 currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
@@ -171,7 +198,7 @@ class FlyOverSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        if (flyOverPoly == null) {
+        if (true) {
             makePoly();
         }
         // set bounds

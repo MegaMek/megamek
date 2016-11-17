@@ -514,14 +514,46 @@ public class SuperHeavyTank extends Tank {
     }
 
     @Override
-    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if (location == LOC_REAR || location == LOC_BODY
-                || location == LOC_REARLEFT || location == LOC_REARRIGHT
-                || (index == 0 && location >= LOC_TURRET)
-                || (index == 1 && location < LOC_TURRET)) {
-            return 0.0;
+    public int getNumBattleForceWeaponsLocations() {
+        if (m_bHasNoTurret) {
+            return 4;
+        } else if  (m_bHasNoDualTurret) {
+            return 5;
+        } else {
+            return 6;
         }
-        return 1.0; 
+    }
+    
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        if ((index == 0 && location == LOC_FRONT)
+                || (index == 1 && (location == LOC_FRONTLEFT || location == LOC_REARLEFT))
+                || (index == 2 && (location == LOC_FRONTRIGHT || location == LOC_REARRIGHT))
+                || (index == 3 && location == LOC_REAR)
+                || (index == 4 && location == LOC_TURRET)
+                || (index == 5 && location == LOC_TURRET_2)) {
+            return 1.0;
+        }
+        return 0;
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        switch (index) {
+        case 0:
+            return LOCATION_ABBRS[LOC_FRONT];
+        case 1:
+            return "LS";
+        case 2:
+            return "RS";
+        case 3:
+            return LOCATION_ABBRS[LOC_REAR];
+        case 4:
+            return LOCATION_ABBRS[LOC_TURRET];
+        case 5:
+            return LOCATION_ABBRS[LOC_TURRET_2];
+        }
+        return "?";
     }
     
 }

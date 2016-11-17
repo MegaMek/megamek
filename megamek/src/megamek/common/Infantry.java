@@ -1690,6 +1690,30 @@ public class Infantry extends Entity {
     public int getBattleForceStructurePoints() {
         return 1;
     }
+    
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        if (hasFieldGun()) {
+            return 2;
+        }
+        return 1;
+    }
+    
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        if (index == location) {
+            return 1.0;
+        }
+        return 0;
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        if (index == 0) {
+            return "";
+        }
+        return LOCATION_ABBRS[index];
+    }
 
     /**
      * Damage is based on the average damage at the given range.

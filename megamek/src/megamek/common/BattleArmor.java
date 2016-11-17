@@ -2030,7 +2030,6 @@ public class BattleArmor extends Infantry {
         
         for (int pos = 0; pos < weaponList.size(); pos++) {
             double damageModifier = 1;
-            double minRangeDamageModifier = 1;
             int weaponCount = 1;
             Mounted mount = weaponsList.get(pos);
             if ((mount == null)
@@ -2085,72 +2084,15 @@ public class BattleArmor extends Infantry {
                 if ((ammoCount / weaponCount) < 10) {
                     damageModifier *= .75;
                 }
-
-                if (weapon.getAmmoType() == AmmoType.T_SRM) {
-                    baseDamage = Compute.calculateClusterHitTableAmount(7,
-                            weapon.getRackSize() * getShootingStrength()) * 2;
-                } else if (weapon.getAmmoType() == AmmoType.T_SRM_ADVANCED) {
-                    baseDamage = Compute.calculateClusterHitTableAmount(8,
-                            weapon.getRackSize() * getShootingStrength()) * 2;                    
-                } else {
-                    baseDamage = Compute.calculateClusterHitTableAmount(7,
-                            weapon.getRackSize() * getShootingStrength());
-                }
-                baseDamage *= weaponCount;
-            } else {
-                baseDamage = Compute.calculateClusterHitTableAmount(7, getShootingStrength())
-                        * weapon.getDamage(range) * weaponCount;
             }
-
-            if (range == Entity.BATTLEFORCESHORTRANGE) {
-                int minRange = Math.min(6,
-                        Math.max(0, weapon.getMinimumRange()));
-                minRangeDamageModifier *= battleForceMinRangeModifier[minRange];
-            }
-            int toHitMod = weapon.getToHitModifier() + 4;
-
-            damageModifier *= battleForceToHitModifier[toHitMod];
-
+            
             if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
                 damageModifier *= .1;
             }
 
-            if ((weapon.getAmmoType() == AmmoType.T_LRM)
-                    || (weapon.getAmmoType() == AmmoType.T_AC)
-                    || (weapon.getAmmoType() == AmmoType.T_LAC)
-                    || (weapon.getAmmoType() == AmmoType.T_SRM)) {
-                double damage = baseDamage * damageModifier;
+            baseDamage = getBattleForceWeaponDamage(mount, range) * damageModifier;
 
-                // TODO if damage is greater than 10 then we do not add it to
-                // the
-                // standard damage it will be used in special weapons
-                if ((damage < 10) && !ignoreSpecialAbility) {
-
-                    if (range == Entity.BATTLEFORCESHORTRANGE) {
-                        damage *= minRangeDamageModifier;
-                    }
-                    totalDamage += damage;
-                }
-            } else {
-                if (weapon instanceof VariableSpeedPulseLaserWeapon) {
-                    switch (range) {
-                        case Entity.BATTLEFORCESHORTRANGE:
-                            damageModifier *= battleForceToHitModifier[1];
-                            break;
-                        case Entity.BATTLEFORCEMEDIUMRANGE:
-                            damageModifier *= battleForceToHitModifier[2];
-                            break;
-                        case Entity.BATTLEFORCELONGRANGE:
-                            damageModifier *= battleForceToHitModifier[3];
-                            break;
-                    }
-                }
-
-                if (range == Entity.BATTLEFORCESHORTRANGE) {
-                    baseDamage *= minRangeDamageModifier;
-                }
-                totalDamage += baseDamage * damageModifier;
-            }
+            totalDamage += baseDamage * damageModifier;
         }
 
         //Add squad support weapons, if any
@@ -2168,6 +2110,50 @@ public class BattleArmor extends Infantry {
         }
         
         return (int) totalDamage;
+    }
+
+    public double getBattleForceWeaponDamage(Mounted mount, int range) {
+        final WeaponType weapon = (WeaponType)mount.getType();
+        double baseDamage = 0;
+        double damageModifier = 1;
+        if (weapon.getLongRange() < range) {
+            return 0;
+        }
+        if (weapon.getAmmoType() == AmmoType.T_SRM) {
+            baseDamage = Compute.calculateClusterHitTableAmount(7,
+                    weapon.getRackSize() * getShootingStrength()) * 2;
+        } else if (weapon.getAmmoType() == AmmoType.T_SRM_ADVANCED) {
+            baseDamage = Compute.calculateClusterHitTableAmount(8,
+                    weapon.getRackSize() * getShootingStrength()) * 2;                    
+        } else if (weapon.hasFlag(WeaponType.F_MISSILE)) {
+            baseDamage = Compute.calculateClusterHitTableAmount(7,
+                    weapon.getRackSize() * getShootingStrength());
+        } else {
+            baseDamage = Compute.calculateClusterHitTableAmount(7,
+                    weapon.getDamage(range) * getShootingStrength());
+        }
+
+        if (weapon instanceof VariableSpeedPulseLaserWeapon) {
+            switch (range) {
+                case Entity.BATTLEFORCESHORTRANGE:
+                    damageModifier *= battleForceToHitModifier[1];
+                    break;
+                case Entity.BATTLEFORCEMEDIUMRANGE:
+                    damageModifier *= battleForceToHitModifier[2];
+                    break;
+                case Entity.BATTLEFORCELONGRANGE:
+                    damageModifier *= battleForceToHitModifier[3];
+                    break;
+            }
+        }
+
+        if (range == Entity.BATTLEFORCESHORTRANGE) {
+            int minRange = Math.min(6,
+                    Math.max(0, weapon.getMinimumRange()));
+            damageModifier *= battleForceMinRangeModifier[minRange];
+        }
+
+        return baseDamage * damageModifier;
     }
 
     public void setIsExoskeleton(boolean exoskeleton) {

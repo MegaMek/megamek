@@ -1216,6 +1216,16 @@ public class Jumpship extends Aero {
     public int getNumBattleForceWeaponsLocations() {
         return 4;
     }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        // Remove leading F from FLS and FRS
+        String retVal = getLocationAbbrs()[index];
+        if (retVal.substring(0, 1).equals("F")) {
+            return retVal.substring(1);
+        }
+        return retVal;
+    }
 
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {

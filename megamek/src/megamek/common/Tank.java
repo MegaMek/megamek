@@ -3510,12 +3510,24 @@ public class Tank extends Entity {
      */
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if (location == LOC_REAR || location == LOC_BODY
-                || (index == 0 && location >= LOC_TURRET)
-                || (index == 1 && location < LOC_TURRET)) {
-            return 0.0;
+        switch (index) {
+        case 0:
+            if (location > LOC_BODY && location < LOC_TURRET) {
+                return 1.0;
+            }
+            break;
+        case 1:
+            if (location == LOC_TURRET) {
+                return 1.0;
+            }
+            break;
+        case 2:
+            if (location == LOC_TURRET_2) {
+                return 1.0;
+            }
+            break;
         }
-        return 1.0; 
+        return 0; 
     }
     
     @Override

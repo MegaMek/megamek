@@ -12191,6 +12191,9 @@ Targetable, RoundUpdated, PhaseUpdated {
          * @return
          */
         public String getBattleForceLocationName(int index) {
+            if (isTurretLocation(index)) {
+                return "Turret";
+            }
             return "";
         }
 

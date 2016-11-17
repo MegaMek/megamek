@@ -698,7 +698,12 @@ public class SmallCraft extends Aero {
     public int getNumBattleForceWeaponsLocations() {
         return 4;
     }
-
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        return getLocationAbbrs()[index];
+    }
+    
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         switch (index) {

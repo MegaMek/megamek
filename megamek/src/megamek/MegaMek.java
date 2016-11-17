@@ -38,6 +38,7 @@ import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.BattleForceElement;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -696,7 +697,10 @@ public class MegaMek {
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
-
+                        
+                        BattleForceElement bfe = new BattleForceElement(entity);
+                        bfe.writeCsv(w);
+/*
                         w.write(unit.getName());
                         w.write("\t");
                         w.write(Integer.toString(entity.getBattleForceSize()));
@@ -734,7 +738,7 @@ public class MegaMek {
                         w.write("\t");
                         w.write(entity.getBattleForceSpecialAbilities());
                         w.newLine();
-                    }
+ */                   }
                     w.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();

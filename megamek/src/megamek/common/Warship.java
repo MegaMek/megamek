@@ -361,6 +361,11 @@ public class Warship extends Jumpship {
         return 0;
     }
     
+    @Override
+    public String getBattleForceLocationName(int index) {
+        return getLocationAbbrs()[index];
+    }
+    
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP | Entity.ETYPE_WARSHIP;
     }

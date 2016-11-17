@@ -41,24 +41,24 @@ import megamek.common.util.BuildingTemplate;
 @XmlAccessorType(XmlAccessType.NONE)
 public class MapSettings implements Serializable {
     private static final long serialVersionUID = -6163977970758303066L;
-    
+
     public static final String BOARD_RANDOM = "[RANDOM]";
     public static final String BOARD_SURPRISE = "[SURPRISE]";
     public static final String BOARD_GENERATED = "[GENERATED]";
-    
+
     public static final int MOUNTAIN_PLAIN = 0;
     public static final int MOUNTAIN_VOLCANO_EXTINCT = 1;
     public static final int MOUNTAIN_VOLCANO_DORMANT = 2;
     public static final int MOUNTAIN_VOLCANO_ACTIVE = 3;
     public static final int MOUNTAIN_SNOWCAPPED = 4;
     public static final int MOUNTAIN_LAKE = 5;
-    
+
     public static final int MEDIUM_GROUND = 0;
     public static final int MEDIUM_ATMOSPHERE = 1;
     public static final int MEDIUM_SPACE = 2;
-    
+
     private static final String[] mediumNames = { "Ground", "Atmosphere", "Space" };
-    
+
     @XmlElement(name = "WIDTH")
     private int boardWidth = 16;
     @XmlElement(name = "HEIGHT")
@@ -66,17 +66,17 @@ public class MapSettings implements Serializable {
     private int mapWidth = 1;
     private int mapHeight = 1;
     private int medium = MEDIUM_GROUND;
-    
+
     private ArrayList<String> boardsSelected = new ArrayList<String>();
     private ArrayList<String> boardsAvailable = new ArrayList<String>();
     private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<BuildingTemplate>();
-    
+
     /**
      * Parameters for the Map Generator Parameters refer to a default map siz 16
      * x 17, with other size some of the parameters get linear transformed to
      * give good result for new size
      */
-    
+
     /** how much hills there should be, Range 0..99 */
     @XmlElement(name = "HILLYNESS")
     private int hilliness = 40;
@@ -92,7 +92,7 @@ public class MapSettings implements Serializable {
     /** Probabiltity for invertion of the map, Range 0..100 */
     @XmlElement(name = "HILLINVERTPROB")
     private int probInvert = 5;
-    
+
     /** how much Lakes at least */
     @XmlElement(name = "WATERMINSPOTS")
     private int minWaterSpots = 1;
@@ -108,7 +108,7 @@ public class MapSettings implements Serializable {
     /** probability for water deeper than lvl1, Range 0..100 */
     @XmlElement(name = "WATERDEEPPROB")
     private int probDeep = 33;
-    
+
     /** how much forests at least */
     @XmlElement(name = "FORESTMINSPOTS")
     private int minForestSpots = 3;
@@ -124,7 +124,7 @@ public class MapSettings implements Serializable {
     /** probability for heavy woods, Range 0..100 */
     @XmlElement(name = "FORESTHEAVYPROB")
     private int probHeavy = 30;
-    
+
     /** how much rough spots at least */
     @XmlElement(name = "ROUGHMINSPOTS")
     private int minRoughSpots = 2;
@@ -137,7 +137,7 @@ public class MapSettings implements Serializable {
     /** maximum Size of a rough spot */
     @XmlElement(name = "ROUGHMAXHEXES")
     private int maxRoughSize = 2;
-    
+
     /** how much sand spots at least */
     @XmlElement(name = "SANDMINSPOTS")
     private int minSandSpots = 2;
@@ -150,7 +150,7 @@ public class MapSettings implements Serializable {
     /** maximum Size of a rough spot */
     @XmlElement(name = "SANDMAXHEXES")
     private int maxSandSize = 2;
-    
+
     /** how much planted field spots at least */
     @XmlElement(name = "PLANTEDFIELDMINSPOTS")
     private int minPlantedFieldSpots = 2;
@@ -163,7 +163,7 @@ public class MapSettings implements Serializable {
     /** maximum size of a planted field spot */
     @XmlElement(name = "PLANTEDFIELDMAXHEXES")
     private int maxPlantedFieldSize = 2;
-    
+
     /** how much swamp spots at least */
     @XmlElement(name = "SWAMPMINSPOTS")
     private int minSwampSpots = 2;
@@ -176,7 +176,7 @@ public class MapSettings implements Serializable {
     /** maximum Size of a swamp spot */
     @XmlElement(name = "SWAMPMAXHEXES")
     private int maxSwampSize = 2;
-    
+
     /** how much pavement spots at least */
     @XmlElement(name = "PAVEMENTMINSPOTS")
     private int minPavementSpots = 0;
@@ -189,7 +189,7 @@ public class MapSettings implements Serializable {
     /** maximum Size of a pavement spot */
     @XmlElement(name = "PAVEMENTMAXHEXES")
     private int maxPavementSize = 6;
-    
+
     /** how much rubble spots at least */
     @XmlElement(name = "RUBBLEMINSPOTS")
     private int minRubbleSpots = 0;
@@ -202,7 +202,7 @@ public class MapSettings implements Serializable {
     /** maximum Size of a rubble spot */
     @XmlElement(name = "RUBBLEMAXHEXES")
     private int maxRubbleSize = 6;
-    
+
     /** how much fortified spots at least */
     @XmlElement(name = "FORTIFIEDMINSPOTS")
     private int minFortifiedSpots = 0;
@@ -215,7 +215,7 @@ public class MapSettings implements Serializable {
     /** maximum Size of a fortified spot */
     @XmlElement(name = "FORTIFIEDMAXHEXES")
     private int maxFortifiedSize = 2;
-    
+
     /** how much ice spots at least */
     @XmlElement(name = "ICEMINSPOTS")
     private int minIceSpots = 0;
@@ -228,44 +228,44 @@ public class MapSettings implements Serializable {
     /** maximum Size of a ice spot */
     @XmlElement(name = "ICEMAXHEXES")
     private int maxIceSize = 6;
-    
+
     /** probability for a road, range 0..100 */
     @XmlElement(name = "ROADPROB")
     private int probRoad = 0;
-    
+
     /** probability for a river, range 0..100 */
     @XmlElement(name = "RIVERPROB")
     private int probRiver = 0;
-    
+
     /** probabilitay for Crater 0..100 */
     @XmlElement(name = "CRATEPROB")
     private int probCrater = 0;
-    
+
     /** minimum Radius of the Craters */
     @XmlElement(name = "CRATERMINRADIUS")
     private int minRadius = 2;
-    
+
     /** maximum Radius of the Craters */
     @XmlElement(name = "CRATERMAXRADIUS")
     private int maxRadius = 7;
-    
+
     /** maximum Number of Craters on one map */
     @XmlElement(name = "CRATERMAXNUM")
     private int maxCraters = 2;
-    
+
     /** minimum Number of Craters on one map */
     @XmlElement(name = "CRATERMINNUM")
     private int minCraters = 1;
-    
+
     /** which landscape generation Algortihm to use */
     /* atm there are 2 different: 0= first, 1=second */
     @XmlElement(name = "ALGORITHM")
     private int algorithmToUse = 0;
-    
+
     /** a tileset theme to apply */
     @XmlElement(name = "THEME")
     private String theme = "";
-    
+
     /** probability of flooded map */
     @XmlElement(name = "PROBFLOOD")
     private int probFlood = 0;
@@ -281,7 +281,7 @@ public class MapSettings implements Serializable {
     /** special FX modifier */
     @XmlElement(name = "FXMOD")
     private int fxMod = 0;
-    
+
     /** Parameters for the city generator */
     @XmlElement(name = "CITYBLOCKS")
     private int cityBlocks = 16;
@@ -299,10 +299,10 @@ public class MapSettings implements Serializable {
     private int cityDensity = 75;
     @XmlElement(name = "TOWNSIZE")
     private int townSize = 60;
-    
+
     @XmlElement(name = "INVERTNEGATIVETERRAIN")
     private int invertNegativeTerrain = 0;
-    
+
     @XmlElement(name = "MOUNTPEAKS")
     private int mountainPeaks = 0;
     @XmlElement(name = "MOUNTWIDTHMIN")
@@ -315,9 +315,9 @@ public class MapSettings implements Serializable {
     private int mountainHeightMax = 8;
     @XmlElement(name = "MOUNTSTYLE")
     private int mountainStyle = MOUNTAIN_PLAIN;
-    
+
     /** end Map Generator Parameters */
-    
+
     /**
      * Creates and returns a new default instance of MapSettings.
      * 
@@ -326,7 +326,7 @@ public class MapSettings implements Serializable {
     public static MapSettings getInstance() {
         return new MapSettings();
     }
-    
+
     /**
      * Creates and returns a clone of the given MapSettings.
      *
@@ -337,7 +337,7 @@ public class MapSettings implements Serializable {
     public static MapSettings getInstance(final MapSettings other) {
         return new MapSettings(other);
     }
-    
+
     /**
      * Creates and returns a new instance of MapSettings with default values
      * loaded from the given input stream.
@@ -349,20 +349,20 @@ public class MapSettings implements Serializable {
      */
     public static MapSettings getInstance(final InputStream is) {
         MapSettings ms = null;
-        
+
         try {
             JAXBContext jc = JAXBContext.newInstance(MapSettings.class);
-            
+
             Unmarshaller um = jc.createUnmarshaller();
             ms = (MapSettings) um.unmarshal(is);
         } catch (JAXBException ex) {
             System.err.println("Error loading XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
         }
-        
+
         return ms;
     }
-    
+
     /** Creates new MapSettings */
     private MapSettings() {
         this(megamek.common.preference.PreferenceManager.getClientPreferences().getBoardWidth(),
@@ -370,13 +370,13 @@ public class MapSettings implements Serializable {
                 megamek.common.preference.PreferenceManager.getClientPreferences().getMapWidth(),
                 megamek.common.preference.PreferenceManager.getClientPreferences().getMapHeight());
     }
-    
+
     /** Create new MapSettings with all size settings specified */
     private MapSettings(int boardWidth, int boardHeight, int mapWidth, int mapHeight) {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
     }
-    
+
     /** Creates new MapSettings that is a duplicate of another */
     @SuppressWarnings("unchecked")
     private MapSettings(MapSettings other) {
@@ -384,12 +384,12 @@ public class MapSettings implements Serializable {
         boardHeight = other.getBoardHeight();
         mapWidth = other.getMapWidth();
         mapHeight = other.getMapHeight();
-        
+
         medium = other.getMedium();
-        
+
         boardsSelected = (ArrayList<String>) other.getBoardsSelectedVector().clone();
         boardsAvailable = (ArrayList<String>) other.getBoardsAvailableVector().clone();
-        
+
         invertNegativeTerrain = other.getInvertNegativeTerrain();
         mountainHeightMin = other.getMountainHeightMin();
         mountainHeightMax = other.getMountainHeightMax();
@@ -467,7 +467,7 @@ public class MapSettings implements Serializable {
         boardBuildings = other.getBoardBuildings();
         townSize = other.getTownSize();
     }
-    
+
     /**
      * Odious hack to fix cross-platform issues. The Server generates the list
      * of available boards and then sends them to the client. Instead of storing
@@ -492,7 +492,7 @@ public class MapSettings implements Serializable {
                 break;
             }
         }
-        
+
         if (!isWindows && containsWindowsPathSeparator) {
             for (int i = 0; i < boardsAvailable.size(); i++) {
                 if (boardsAvailable.get(i) == null) {
@@ -508,50 +508,50 @@ public class MapSettings implements Serializable {
             }
         }
     }
-    
+
     public int getBoardWidth() {
         return boardWidth;
     }
-    
+
     public int getBoardHeight() {
         return boardHeight;
     }
-    
+
     public void setBoardSize(int boardWidth, int boardHeight) {
         if ((boardWidth <= 0) || (boardHeight <= 0)) {
             throw new IllegalArgumentException("Total board area must be positive");
         }
-        
+
         // change only if actually different
         if ((this.boardWidth != boardWidth) || (this.boardHeight != boardHeight)) {
             this.boardWidth = boardWidth;
             this.boardHeight = boardHeight;
-            
+
             boardsAvailable.clear();
         }
     }
-    
+
     public String getTheme() {
         return theme;
     }
-    
+
     public void setTheme(String th) {
         theme = th;
     }
-    
+
     public int getMapWidth() {
         return mapWidth;
     }
-    
+
     public int getMapHeight() {
         return mapHeight;
     }
-    
+
     public void setMapSize(int mapWidth, int mapHeight) {
         if ((mapWidth <= 0) || (mapHeight <= 0)) {
             throw new IllegalArgumentException("Total map area must be positive");
         }
-        
+
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
         // Create null entries for everything that isn't surprise or generated
@@ -565,19 +565,19 @@ public class MapSettings implements Serializable {
             boardsSelected.add(null);
         }
     }
-    
+
     public Iterator<String> getBoardsSelected() {
         return boardsSelected.iterator();
     }
-    
+
     public ArrayList<String> getBoardsSelectedVector() {
         return boardsSelected;
     }
-    
+
     public void setBoardsSelectedVector(ArrayList<String> boardsSelected) {
         this.boardsSelected = boardsSelected;
     }
-    
+
     /**
      * Fills in all nulls in the boards selected list with the specified board
      */
@@ -588,15 +588,15 @@ public class MapSettings implements Serializable {
             }
         }
     }
-    
+
     public ArrayList<BuildingTemplate> getBoardBuildings() {
         return boardBuildings;
     }
-    
+
     public void setBoardBuildings(ArrayList<BuildingTemplate> buildings) {
         boardBuildings = buildings;
     }
-    
+
     /**
      * Replaces the specified type of board with random boards
      */
@@ -642,7 +642,7 @@ public class MapSettings implements Serializable {
             }
         }
     }
-    
+
     /**
      * Removes selected boards that aren't listed in the available boards
      */
@@ -662,19 +662,19 @@ public class MapSettings implements Serializable {
             }
         }
     }
-    
+
     public Iterator<String> getBoardsAvailable() {
         return boardsAvailable.iterator();
     }
-    
+
     public ArrayList<String> getBoardsAvailableVector() {
         return boardsAvailable;
     }
-    
+
     public void setBoardsAvailableVector(ArrayList<String> boardsAvailable) {
         this.boardsAvailable = boardsAvailable;
     }
-    
+
     /**
      * Checks, if the Mapgenerator parameters are all valid. If not they are
      * changed to valid values.
@@ -870,7 +870,7 @@ public class MapSettings implements Serializable {
             algorithmToUse = 2;
         }
     } /* validateMapGenParameters */
-      
+
     /**
      * Returns true if the this Mapsetting has the same mapgenerator settings
      * and size as the parameter.
@@ -927,335 +927,335 @@ public class MapSettings implements Serializable {
         }
         return true;
     } /* equalMapGenParameters */
-      
+
     public int getInvertNegativeTerrain() {
         return invertNegativeTerrain;
     }
-    
+
     public int getHilliness() {
         return hilliness;
     }
-    
+
     public int getCliffs() {
         return cliffs;
     }
-    
+
     public int getRange() {
         return range;
     }
-    
+
     public int getProbInvert() {
         return probInvert;
     }
-    
+
     public int getMinWaterSpots() {
         return minWaterSpots;
     }
-    
+
     public int getMaxWaterSpots() {
         return maxWaterSpots;
     }
-    
+
     public int getMinWaterSize() {
         return minWaterSize;
     }
-    
+
     public int getMaxWaterSize() {
         return maxWaterSize;
     }
-    
+
     public int getProbDeep() {
         return probDeep;
     }
-    
+
     public int getMinForestSpots() {
         return minForestSpots;
     }
-    
+
     public int getMaxForestSpots() {
         return maxForestSpots;
     }
-    
+
     public int getMinForestSize() {
         return minForestSize;
     }
-    
+
     public int getMaxForestSize() {
         return maxForestSize;
     }
-    
+
     public int getProbHeavy() {
         return probHeavy;
     }
-    
+
     public int getMinRoughSpots() {
         return minRoughSpots;
     }
-    
+
     public int getMaxRoughSpots() {
         return maxRoughSpots;
     }
-    
+
     public int getMinRoughSize() {
         return minRoughSize;
     }
-    
+
     public int getMaxRoughSize() {
         return maxRoughSize;
     }
-    
+
     public int getMinSandSpots() {
         return minSandSpots;
     }
-    
+
     public void setMinSandSpots(int minSandSpots) {
         this.minSandSpots = minSandSpots;
     }
-    
+
     public int getMaxSandSpots() {
         return maxSandSpots;
     }
-    
+
     public void setMaxSandSpots(int maxSandSpots) {
         this.maxSandSpots = maxSandSpots;
     }
-    
+
     public int getMinSandSize() {
         return minSandSize;
     }
-    
+
     public void setMinSandSize(int minSandSize) {
         this.minSandSize = minSandSize;
     }
-    
+
     public int getMaxSandSize() {
         return maxSandSize;
     }
-    
+
     public void setMaxSandSize(int maxSandSize) {
         this.maxSandSize = maxSandSize;
     }
-    
+
     public int getMinPlantedFieldSpots() {
         return minPlantedFieldSpots;
     }
-    
+
     public void setMinPlantedFieldSpots(int minPlantedFieldSpots) {
         this.minPlantedFieldSpots = minPlantedFieldSpots;
     }
-    
+
     public int getMaxPlantedFieldSpots() {
         return maxPlantedFieldSpots;
     }
-    
+
     public void setMaxPlantedFieldSpots(int maxPlantedFieldSpots) {
         this.maxPlantedFieldSpots = maxPlantedFieldSpots;
     }
-    
+
     public int getMinPlantedFieldSize() {
         return minPlantedFieldSize;
     }
-    
+
     public void setMinPlantedFieldSize(int minPlantedFieldSize) {
         this.minPlantedFieldSize = minPlantedFieldSize;
     }
-    
+
     public int getMaxPlantedFieldSize() {
         return maxPlantedFieldSize;
     }
-    
+
     public void setMaxPlantedFieldSize(int maxPlantedFieldSize) {
         this.maxPlantedFieldSize = maxPlantedFieldSize;
     }
-    
+
     public int getMinSwampSpots() {
         return minSwampSpots;
     }
-    
+
     public int getMaxSwampSpots() {
         return maxSwampSpots;
     }
-    
+
     public int getMinSwampSize() {
         return minSwampSize;
     }
-    
+
     public int getMaxSwampSize() {
         return maxSwampSize;
     }
-    
+
     public int getMinPavementSpots() {
         return minPavementSpots;
     }
-    
+
     public int getMaxPavementSpots() {
         return maxPavementSpots;
     }
-    
+
     public int getMinPavementSize() {
         return minPavementSize;
     }
-    
+
     public int getMaxPavementSize() {
         return maxPavementSize;
     }
-    
+
     public int getMinRubbleSpots() {
         return minRubbleSpots;
     }
-    
+
     public int getMaxRubbleSpots() {
         return maxRubbleSpots;
     }
-    
+
     public int getMinRubbleSize() {
         return minRubbleSize;
     }
-    
+
     public int getMaxRubbleSize() {
         return maxRubbleSize;
     }
-    
+
     public int getMinFortifiedSpots() {
         return minFortifiedSpots;
     }
-    
+
     public int getMaxFortifiedSpots() {
         return maxFortifiedSpots;
     }
-    
+
     public int getMinFortifiedSize() {
         return minFortifiedSize;
     }
-    
+
     public int getMaxFortifiedSize() {
         return maxFortifiedSize;
     }
-    
+
     public int getMinIceSpots() {
         return minIceSpots;
     }
-    
+
     public int getMaxIceSpots() {
         return maxIceSpots;
     }
-    
+
     public int getMinIceSize() {
         return minIceSize;
     }
-    
+
     public int getMaxIceSize() {
         return maxIceSize;
     }
-    
+
     public int getProbRoad() {
         return probRoad;
     }
-    
+
     public int getProbRiver() {
         return probRiver;
     }
-    
+
     public int getProbCrater() {
         return probCrater;
     }
-    
+
     public int getMinRadius() {
         return minRadius;
     }
-    
+
     public int getMaxRadius() {
         return maxRadius;
     }
-    
+
     public int getMinCraters() {
         return minCraters;
     }
-    
+
     public int getMaxCraters() {
         return maxCraters;
     }
-    
+
     public int getAlgorithmToUse() {
         return algorithmToUse;
     }
-    
+
     public int getProbFlood() {
         return probFlood;
     }
-    
+
     public int getProbForestFire() {
         return probForestFire;
     }
-    
+
     public int getProbFreeze() {
         return probFreeze;
     }
-    
+
     public int getProbDrought() {
         return probDrought;
     }
-    
+
     public int getFxMod() {
         return fxMod;
     }
-    
+
     public int getCityBlocks() {
         return cityBlocks;
     }
-    
+
     public String getCityType() {
         return cityType;
     }
-    
+
     public int getCityMinCF() {
         return cityMinCF;
     }
-    
+
     public int getCityMaxCF() {
         return cityMaxCF;
     }
-    
+
     public int getCityMinFloors() {
         return cityMinFloors;
     }
-    
+
     public int getCityMaxFloors() {
         return cityMaxFloors;
     }
-    
+
     public int getCityDensity() {
         return cityDensity;
     }
-    
+
     public int getTownSize() {
         return townSize;
     }
-    
+
     public int getMountainHeightMin() {
         return mountainHeightMin;
     }
-    
+
     public int getMountainHeightMax() {
         return mountainHeightMax;
     }
-    
+
     public int getMountainPeaks() {
         return mountainPeaks;
     }
-    
+
     public int getMountainStyle() {
         return mountainStyle;
     }
-    
+
     public int getMountainWidthMin() {
         return mountainWidthMin;
     }
-    
+
     public int getMountainWidthMax() {
         return mountainWidthMax;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1264,7 +1264,7 @@ public class MapSettings implements Serializable {
         range = newRange;
         probInvert = prob;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1275,7 +1275,7 @@ public class MapSettings implements Serializable {
         maxWaterSize = maxSize;
         probDeep = prob;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1286,7 +1286,7 @@ public class MapSettings implements Serializable {
         maxForestSize = maxSize;
         probHeavy = prob;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1296,7 +1296,7 @@ public class MapSettings implements Serializable {
         minRoughSize = minSize;
         maxRoughSize = maxSize;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1306,7 +1306,7 @@ public class MapSettings implements Serializable {
         minSandSize = minSize;
         maxSandSize = maxSize;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1316,7 +1316,7 @@ public class MapSettings implements Serializable {
         minPlantedFieldSize = minSize;
         maxPlantedFieldSize = maxSize;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1326,7 +1326,7 @@ public class MapSettings implements Serializable {
         minSwampSize = minSize;
         maxSwampSize = maxSize;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1336,7 +1336,7 @@ public class MapSettings implements Serializable {
         minPavementSize = minSize;
         maxPavementSize = maxSize;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1346,7 +1346,7 @@ public class MapSettings implements Serializable {
         minRubbleSize = minSize;
         maxRubbleSize = maxSize;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1356,7 +1356,7 @@ public class MapSettings implements Serializable {
         minFortifiedSize = minSize;
         maxFortifiedSize = maxSize;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
@@ -1366,47 +1366,47 @@ public class MapSettings implements Serializable {
         minIceSize = minSize;
         maxIceSize = maxSize;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
     public void setRiverParam(int prob) {
         probRiver = prob;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
     public void setRoadParam(int prob) {
         probRoad = prob;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
     public void setCliffParam(int prob) {
         cliffs = prob;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
     public void setCraterParam(int prob, int minCrat, int maxCrat, int minRad, int maxRad) {
-        
+
         probCrater = prob;
         maxCraters = maxCrat;
         minCraters = minCrat;
         minRadius = minRad;
         maxRadius = maxRad;
     }
-    
+
     /**
      * set the Parameters for the Map Generator
      */
     public void setInvertNegativeTerrain(int invert) {
         invertNegativeTerrain = invert;
     }
-    
+
     /**
      * set Map generator parameters
      */
@@ -1417,11 +1417,11 @@ public class MapSettings implements Serializable {
         probFlood = flood;
         probDrought = drought;
     }
-    
+
     public void setAlgorithmToUse(int alg) {
         algorithmToUse = alg;
     }
-    
+
     public void setCityParams(int cityBlocks, String cityType, int cityMinCF, int cityMaxCF, int cityMinFloors,
             int cityMaxFloors, int cityDensity, int townSize) {
         this.cityBlocks = cityBlocks;
@@ -1433,7 +1433,7 @@ public class MapSettings implements Serializable {
         this.cityDensity = cityDensity;
         this.townSize = townSize;
     }
-    
+
     public void setMountainParams(int mountainPeaks, int mountainWidthMin, int mountainWidthMax, int mountainHeightMin,
             int mountainHeightMax, int mountainStyle) {
         this.mountainHeightMax = mountainHeightMax;
@@ -1443,34 +1443,34 @@ public class MapSettings implements Serializable {
         this.mountainPeaks = mountainPeaks;
         this.mountainStyle = mountainStyle;
     }
-    
+
     public void setMedium(int m) {
         medium = m;
     }
-    
+
     public int getMedium() {
         return medium;
     }
-    
+
     public static String getMediumName(int m) {
         return mediumNames[m];
     }
-    
+
     // note the format is intended to be interoperable with mekwars' existing
     // terrain.xml format
     public void save(final OutputStream os) {
         try {
             JAXBContext jc = JAXBContext.newInstance(MapSettings.class);
-            
+
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            
+
             // The default header has the encoding and standalone properties
             marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
             marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
-            
+
             JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"), MapSettings.class, this);
-            
+
             marshaller.marshal(element, os);
         } catch (JAXBException ex) {
             System.err.println("Error writing XML for map settings: " + ex.getMessage()); //$NON-NLS-1$

@@ -3192,7 +3192,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return p;
     }
 
-    private Point getCentreHexLocation(Coords c) {
+    public Point getCentreHexLocation(Coords c) {
         return getCentreHexLocation(c.getX(), c.getY());
     }
 

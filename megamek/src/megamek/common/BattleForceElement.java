@@ -7,6 +7,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.StringJoiner;
 import java.util.TreeSet;
 
@@ -54,6 +55,9 @@ public class BattleForceElement {
         for (int loc = 0; loc < locationNames.length; loc++) {
             damage[loc] = new WeaponLocation();
             locationNames[loc] = en.getBattleForceLocationName(loc);
+            if (locationNames[loc].length() > 0) {
+                locationNames[loc] += ":";
+            }
         }
         computeDamage(en);
         points = en.getBattleForcePoints();
@@ -117,8 +121,8 @@ public class BattleForceElement {
         double totalHeat = 0;
         boolean hasTC = en.hasTargComp();
         int[] ranges;
-
-        TreeSet<String> weaponsUsed = new TreeSet<String>();
+        //Track weapons we've already calculated ammunition for
+        HashMap<String,Boolean> ammoForWeapon = new HashMap<>();
 
         ArrayList<Mounted> weaponsList = en.getWeaponList();
 
@@ -127,7 +131,6 @@ public class BattleForceElement {
             double damageModifier = 1;
             Mounted mount = weaponsList.get(pos);
             if ((mount == null)
-                    || weaponsUsed.contains(mount.getName())
                     || (en.getEntityType() == Entity.ETYPE_INFANTRY
                         && mount.getLocation() == Infantry.LOC_INFANTRY)) {
                 continue;
@@ -158,45 +161,50 @@ public class BattleForceElement {
             // Check ammo weapons first since they had a hidden modifier
             if ((weapon.getAmmoType() != AmmoType.T_NA)
                     && !weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                weaponsUsed.add(weapon.getName());
-                int weaponsForAmmo = 1;
-                for (int nextPos = 0; nextPos < weaponsList.size(); nextPos++) {
-                    if (nextPos == pos) {
-                        continue;
+                if (!ammoForWeapon.containsKey(weapon.getName())) {
+                    int weaponsForAmmo = 1;
+                    for (int nextPos = 0; nextPos < weaponsList.size(); nextPos++) {
+                        if (nextPos == pos) {
+                            continue;
+                        }
+                        
+                        Mounted nextWeapon = weaponsList.get(nextPos);
+    
+                        if (nextWeapon == null) {
+                            continue;
+                        }
+    
+                        if (nextWeapon.getType().equals(weapon)) {
+                            weaponsForAmmo++;
+                        }
+    
                     }
-                    
-                    Mounted nextWeapon = weaponsList.get(nextPos);
-
-                    if (nextWeapon == null) {
-                        continue;
-                    }
-
-                    if (nextWeapon.getType().equals(weapon)) {
-                        weaponsForAmmo++;
-                    }
-
-                }
-                int ammoCount = 0;
-                // Check if they have enough ammo for all the guns to last at
-                // least 10 rounds
-                for (Mounted ammo : en.getAmmo()) {
-
-                    AmmoType at = (AmmoType) ammo.getType();
-                    if ((at.getAmmoType() == weapon.getAmmoType())
-                            && (at.getRackSize() == weapon.getRackSize())) {
-                        // RACs are always fired on 6 shot so that means you
-                        // need 6 times the ammo to avoid the ammo damage
-                        // modifier
-                        if (at.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                            ammoCount += at.getShots() / 6;
-                        } else {
-                            ammoCount += at.getShots();
+                    int ammoCount = 0;
+                    // Check if they have enough ammo for all the guns to last at
+                    // least 10 rounds
+                    for (Mounted ammo : en.getAmmo()) {
+    
+                        AmmoType at = (AmmoType) ammo.getType();
+                        if ((at.getAmmoType() == weapon.getAmmoType())
+                                && (at.getRackSize() == weapon.getRackSize())) {
+                            // RACs are always fired on 6 shot so that means you
+                            // need 6 times the ammo to avoid the ammo damage
+                            // modifier
+                            if (at.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                                ammoCount += at.getShots() / 6;
+                            } else if (at.getAmmoType() == AmmoType.T_AC_ULTRA
+                                    || at.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {
+                                ammoCount += at.getShots() / 2;
+                            } else {
+                                ammoCount += at.getShots();
+                            }
                         }
                     }
+    
+                    ammoForWeapon.put(weapon.getName(), (ammoCount / weaponsForAmmo) >= 10);
                 }
-
-                if ((ammoCount / weaponsForAmmo) < 10) {
-                    damageModifier *= .75;
+                if (!ammoForWeapon.get(weapon.getName())) {
+                    damageModifier *= 0.75;
                 }
             }
 
@@ -236,6 +244,20 @@ public class BattleForceElement {
                                 break;
                             case AmmoType.T_AC:
                                 damage[loc].acDamage[r] += dam;
+                                break;
+                            case AmmoType.T_MML:
+                                switch (r) {
+                                case 0:
+                                    damage[loc].srmDamage[r] += dam;
+                                    break;
+                                case 1:
+                                    damage[loc].srmDamage[r] += dam / 2.0;
+                                    damage[loc].lrmDamage[r] += dam / 2.0;
+                                    break;
+                                case 2:
+                                    damage[loc].lrmDamage[r] += dam;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -250,7 +272,8 @@ public class BattleForceElement {
                         || weapon.getAmmoType() == AmmoType.T_TBOLT_20
                         || weapon.getAmmoType() == AmmoType.T_MML
                         || weapon.getAmmoType() == AmmoType.T_MEK_MORTAR)) {
-                    damage[loc].indirect += baseDamage[1];
+                    damage[loc].indirect += baseDamage[2] * damageModifier
+                            * en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
                 }
             }
         }
@@ -282,11 +305,43 @@ public class BattleForceElement {
     }
     
     public String getBFDamageString(int loc) {
-        return String.format("%d/%d/%d/%d",
+        StringBuilder str = new StringBuilder(locationNames[loc]);
+        if (locationNames[loc].length() > 0) {
+            str.append("(");
+        }
+        str.append(String.format("%d/%d/%d/%d",
                 (int)Math.ceil(damage[loc].getBFStandardDamage(0) / 10.0),
                 (int)Math.ceil(damage[loc].getBFStandardDamage(1) / 10.0),
                 (int)Math.ceil(damage[loc].getBFStandardDamage(2) / 10.0),
-                (int)Math.ceil(damage[loc].getBFStandardDamage(3) / 10.0));
+                (int)Math.ceil(damage[loc].getBFStandardDamage(3) / 10.0)));
+        if (damage[loc].hasACDamage()) {
+            str.append(";AC").append(String.format("%d/%d/%d/%d",
+                    (int)Math.round(damage[loc].getACDamage(0) / 10.0),
+                    (int)Math.round(damage[loc].getACDamage(1) / 10.0),
+                    (int)Math.round(damage[loc].getACDamage(2) / 10.0),
+                    (int)Math.round(damage[loc].getACDamage(3) / 10.0)));
+        }
+        if (damage[loc].hasSRMDamage()) {
+            str.append(";SRM").append(String.format("%d/%d/%d/%d",
+                    (int)Math.round(damage[loc].getSRMDamage(0) / 10.0),
+                    (int)Math.round(damage[loc].getSRMDamage(1) / 10.0),
+                    (int)Math.round(damage[loc].getSRMDamage(2) / 10.0),
+                    (int)Math.round(damage[loc].getSRMDamage(3) / 10.0)));
+        }
+        if (damage[loc].hasLRMDamage()) {
+            str.append(";LRM").append(String.format("%d/%d/%d/%d",
+                    (int)Math.round(damage[loc].getLRMDamage(0) / 10.0),
+                    (int)Math.round(damage[loc].getLRMDamage(1) / 10.0),
+                    (int)Math.round(damage[loc].getLRMDamage(2) / 10.0),
+                    (int)Math.round(damage[loc].getLRMDamage(3) / 10.0)));
+        }
+        if (damage[loc].indirect >= 0.5) {
+            str.append(";IF").append((int)Math.round(damage[loc].indirect / 10.0));
+        }
+        if (locationNames[loc].length() > 0) {
+            str.append(")");
+        }
+        return str.toString();
     }
     
     public void writeCsv(BufferedWriter w) throws IOException {
@@ -306,9 +361,6 @@ public class BattleForceElement {
         StringJoiner sj = new StringJoiner(", ");
         for (int loc = 0; loc < damage.length; loc++) {
             StringBuilder str = new StringBuilder();
-            if (locationNames[loc].length() > 0) {
-                str.append(locationNames[loc]).append(":");
-            }
             String damStr = getBFDamageString(loc);
             if (!damStr.equals("0/0/0/0")) {
                 str.append(damStr);
@@ -351,7 +403,7 @@ public class BattleForceElement {
         
         public boolean hasLRMDamage() {
             for (int i = 0; i < lrmDamage.length; i++) {
-                if (lrmDamage[i] >= 1) {
+                if (lrmDamage[i] >= 10) {
                     return true;
                 }
             }
@@ -359,7 +411,7 @@ public class BattleForceElement {
         }
         
         public double getLRMDamage(int index) {
-            if (lrmDamage[index] >= 1) {
+            if (lrmDamage[index] >= 10) {
                 return lrmDamage[index];
             }
             return 0;
@@ -367,7 +419,7 @@ public class BattleForceElement {
         
         public boolean hasSRMDamage() {
             for (int i = 0; i < srmDamage.length; i++) {
-                if (srmDamage[i] >= 1) {
+                if (srmDamage[i] >= 10) {
                     return true;
                 }
             }
@@ -375,7 +427,7 @@ public class BattleForceElement {
         }
         
         public double getSRMDamage(int index) {
-            if (srmDamage[index] >= 1) {
+            if (srmDamage[index] >= 10) {
                 return srmDamage[index];
             }
             return 0;
@@ -383,7 +435,7 @@ public class BattleForceElement {
         
         public boolean hasACDamage() {
             for (int i = 0; i < acDamage.length; i++) {
-                if (acDamage[i] >= 1) {
+                if (acDamage[i] >= 10) {
                     return true;
                 }
             }
@@ -391,7 +443,7 @@ public class BattleForceElement {
         }
         
         public double getACDamage(int index) {
-            if (acDamage[index] >= 1) {
+            if (acDamage[index] >= 10) {
                 return acDamage[index];
             }
             return 0;

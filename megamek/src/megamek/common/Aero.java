@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.PPCWeapon;
 
@@ -4120,6 +4121,11 @@ public class Aero extends Entity {
 
         for (Mounted mount : getWeaponList()) {
             WeaponType weapon = (WeaponType) mount.getType();
+            if (weapon instanceof BayWeapon) {
+                for (int index : mount.getBayWeapons()) {
+                    totalHeat += ((WeaponType)(getEquipment(index).getType())).getHeat();
+                }
+            }
             if (weapon.hasFlag(WeaponType.F_ONESHOT)
                 || (allowRear && !mount.isRearMounted() && mount.getLocation() != LOC_AFT)
                 || (!allowRear && (mount.isRearMounted() || mount.getLocation() == LOC_AFT))) {

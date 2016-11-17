@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.StringJoiner;
-import java.util.TreeSet;
 
 /**
  * @author Neoancient
@@ -35,7 +34,6 @@ public class BattleForceElement {
     private WeaponLocation[] damage;
     private String[] locationNames;
     private int points;
-    private double overheat;
     private String specialAbilities;
     
     public BattleForceElement(Entity en) {
@@ -106,10 +104,6 @@ public class BattleForceElement {
 
     public int getPoints() {
         return points;
-    }
-    
-    public double getOverheat() {
-        return overheat;
     }
     
     public String getSpecialAbilities() {
@@ -258,6 +252,10 @@ public class BattleForceElement {
                                     damage[loc].lrmDamage[r] += dam;
                                     break;
                                 }
+                            case AmmoType.T_SRM_TORPEDO:
+                            case AmmoType.T_LRM_TORPEDO:
+                                damage[loc].torpDamage[r] += dam;
+                                break;
                             }
                         }
                     }
@@ -284,21 +282,22 @@ public class BattleForceElement {
             }
         }
 
-        if (en instanceof SmallCraft || en instanceof Jumpship) {
-            int capacity = en.getHeatCapacity();
+        totalHeat = en.getBattleForceTotalHeatGeneration(false) - 4;
+        if (totalHeat > en.getHeatCapacity()) {
+            double adjustment = en.getHeatCapacity() / totalHeat;
             for (int loc = 0; loc < en.getNumBattleForceWeaponsLocations(); loc++) {
-                totalHeat = en.getBattleForceTotalHeatGeneration(loc);
-                if (totalHeat > capacity) {
-                    for (int r = 0; r < 4; r++) {
-                        baseDamage[r] = baseDamage[r] * capacity / totalHeat;
-                    }
+                if (en instanceof Mech || en.getEntityType() == Entity.ETYPE_AERO) {
+                    damage[loc].overheat = damage[loc].allDamage[1] - damage[loc].allDamage[1] * adjustment;
                 }
-            }
-        } else {
-            totalHeat = en.getBattleForceTotalHeatGeneration(false) - 4;
-            if (totalHeat > en.getHeatCapacity()) {
                 for (int r = 0; r < 4; r++) {
-                    baseDamage[r] = baseDamage[r] * en.getHeatCapacity();
+                    damage[loc].allDamage[r] *= adjustment;
+                    damage[loc].acDamage[r] *= adjustment;
+                    damage[loc].srmDamage[r] *= adjustment;
+                    damage[loc].lrmDamage[r] *= adjustment;
+                    damage[loc].torpDamage[r] *= adjustment;
+                    damage[loc].capital[r] *= adjustment;
+                    damage[loc].subCapital[r] *= adjustment;
+                    damage[loc].missiles[r] *= adjustment;
                 }
             }
         }
@@ -314,6 +313,27 @@ public class BattleForceElement {
                 (int)Math.ceil(damage[loc].getBFStandardDamage(1) / 10.0),
                 (int)Math.ceil(damage[loc].getBFStandardDamage(2) / 10.0),
                 (int)Math.ceil(damage[loc].getBFStandardDamage(3) / 10.0)));
+        if (damage[loc].hasCapitalDamage()) {
+            str.append(";CAP").append(String.format("%d/%d/%d/%d",
+                    (int)Math.round(damage[loc].getCapital(0) / 10.0),
+                    (int)Math.round(damage[loc].getCapital(1) / 10.0),
+                    (int)Math.round(damage[loc].getCapital(2) / 10.0),
+                    (int)Math.round(damage[loc].getCapital(3) / 10.0)));
+        }
+        if (damage[loc].hasSubcapitalDamage()) {
+            str.append(";SCAP").append(String.format("%d/%d/%d/%d",
+                    (int)Math.round(damage[loc].getSubcapital(0) / 10.0),
+                    (int)Math.round(damage[loc].getSubcapital(1) / 10.0),
+                    (int)Math.round(damage[loc].getSubcapital(2) / 10.0),
+                    (int)Math.round(damage[loc].getSubcapital(3) / 10.0)));
+        }
+        if (damage[loc].hasCapitalMissileDamage()) {
+            str.append(";CMIS").append(String.format("%d/%d/%d/%d",
+                    (int)Math.round(damage[loc].getCapitalMissile(0) / 10.0),
+                    (int)Math.round(damage[loc].getCapitalMissile(1) / 10.0),
+                    (int)Math.round(damage[loc].getCapitalMissile(2) / 10.0),
+                    (int)Math.round(damage[loc].getCapitalMissile(3) / 10.0)));
+        }
         if (damage[loc].hasACDamage()) {
             str.append(";AC").append(String.format("%d/%d/%d/%d",
                     (int)Math.round(damage[loc].getACDamage(0) / 10.0),
@@ -335,8 +355,15 @@ public class BattleForceElement {
                     (int)Math.round(damage[loc].getLRMDamage(2) / 10.0),
                     (int)Math.round(damage[loc].getLRMDamage(3) / 10.0)));
         }
+        if (damage[loc].hasTorpDamage()) {
+            str.append(";LRM").append(String.format("%d/%d/%d/%d",
+                    (int)Math.round(damage[loc].getTorpDamage(0) / 10.0),
+                    (int)Math.round(damage[loc].getTorpDamage(1) / 10.0),
+                    (int)Math.round(damage[loc].getTorpDamage(2) / 10.0),
+                    (int)Math.round(damage[loc].getTorpDamage(3) / 10.0)));
+        }
         if (damage[loc].indirect >= 0.5) {
-            str.append(";IF").append((int)Math.round(damage[loc].indirect / 10.0));
+            str.append(";IF").append((int)Math.round(damage[loc].getIndirect() / 10.0));
         }
         if (locationNames[loc].length() > 0) {
             str.append(")");
@@ -373,7 +400,17 @@ public class BattleForceElement {
             w.write("0/0/0/0");
         }
         w.write("\t");
-        w.write(Integer.toString((int)Math.ceil(overheat)));
+        sj = new StringJoiner(", ");
+        for (int loc = 0; loc < damage.length; loc++) {
+            if (damage[loc].getOverheat() >= 10) {
+                sj.add(locationNames[loc] + damage[loc].getOverheat());
+            }
+        }
+        if (sj.length() > 0) {
+            w.write(sj.toString());
+        } else {
+            w.write("-");
+        }
         w.write("\t");
         w.write(Integer.toString(points));
         w.write("\t");
@@ -386,6 +423,7 @@ public class BattleForceElement {
         double[] lrmDamage = new double[4];
         double[] srmDamage = new double[4];
         double[] acDamage = new double[4];
+        double[] torpDamage = new double[4];
         double[] capital = new double[4];
         double[] subCapital = new double[4];
         double[] missiles = new double[4];
@@ -449,19 +487,62 @@ public class BattleForceElement {
             return 0;
         }
         
-        public double getCapitalDamage(int index) {
+        public boolean hasTorpDamage() {
+            for (int i = 0; i < torpDamage.length; i++) {
+                if (torpDamage[i] >= 10) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public double getTorpDamage(int index) {
+            if (torpDamage[index] >= 10) {
+                return torpDamage[index];
+            }
+            return 0;
+        }
+        
+        public boolean hasCapitalDamage() {
+            for (int i = 0; i < capital.length; i++) {
+                if (capital[i] > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public double getCapital(int index) {
             return capital[index];
         }
         
-        public double getSubCapital(int index) {
+        public boolean hasSubcapitalDamage() {
+            for (int i = 0; i < subCapital.length; i++) {
+                if (subCapital[i] > 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public double getSubcapital(int index) {
             return subCapital[index];
+        }
+        
+        public boolean hasCapitalMissileDamage() {
+            for (int i = 0; i < missiles.length; i++) {
+                if (missiles[i] > 0) {
+                    return true;
+                }
+            }
+            return false;
         }
         
         public double getCapitalMissile(int index) {
             return missiles[index];
         }
         
-        public double getOverheat(int index) {
+        public double getOverheat() {
             return overheat;
         }
         

@@ -47,7 +47,7 @@ class FlyOverSprite extends Sprite {
         double nextAngle = curr.radian(next);
         double prevAngle = prev.radian(curr);
 
-        Point currPoint = this.bv.getCentreHexLocation(curr);
+        Point currPoint = this.bv.getCentreHexLocation(curr, true);
         final double lw = bv.scale * BoardView1.FLY_OVER_LINE_WIDTH;
 
         // This is a bend
@@ -122,7 +122,7 @@ class FlyOverSprite extends Sprite {
         // Handle First Coords
         curr = en.getPassedThrough().get(0);
         next = en.getPassedThrough().get(1);
-        currPoint = bv.getCentreHexLocation(curr);
+        currPoint = bv.getCentreHexLocation(curr, true);
         angle = curr.radian(next);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
                 currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
@@ -138,7 +138,7 @@ class FlyOverSprite extends Sprite {
         // Handle Last Coords
         curr = en.getPassedThrough().get(numPassedThrough - 1);
         next = en.getPassedThrough().get(numPassedThrough - 2);
-        currPoint = bv.getCentreHexLocation(curr);
+        currPoint = bv.getCentreHexLocation(curr, true);
         angle = (curr.radian(next) + Math.PI) % (2 * Math.PI);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
                 currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
@@ -147,7 +147,7 @@ class FlyOverSprite extends Sprite {
         // Handle Last Coords
         curr = en.getPassedThrough().get(numPassedThrough - 1);
         next = en.getPassedThrough().get(numPassedThrough - 2);
-        currPoint = bv.getCentreHexLocation(curr);
+        currPoint = bv.getCentreHexLocation(curr, true);
         angle = curr.radian(next);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
                 currPoint.y + (int) (Math.sin(angle) * lw + 0.5));
@@ -163,7 +163,7 @@ class FlyOverSprite extends Sprite {
         // Handle First Coords
         curr = en.getPassedThrough().get(0);
         prev = en.getPassedThrough().get(1);
-        currPoint = bv.getCentreHexLocation(curr);
+        currPoint = bv.getCentreHexLocation(curr, true);
         angle = prev.radian(curr);
         flyOverPoly.addPoint(currPoint.x + (int) (Math.cos(angle) * lw + 0.5),
                 currPoint.y + (int) (Math.sin(angle) * lw + 0.5));

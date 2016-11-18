@@ -215,7 +215,6 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
-                    || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)

@@ -7737,6 +7737,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Proto AC/2";
         ammo.setInternalName("Clan ProtoMech AC/2 Ammo");
         ammo.addLookupName("CLProtoAC2Ammo");
+        ammo.addLookupName("CLProtoAC2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_PAC;
@@ -7761,6 +7762,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Proto AC/4";
         ammo.setInternalName("Clan ProtoMech AC/4 Ammo");
         ammo.addLookupName("CLProtoAC4Ammo");
+        ammo.addLookupName("CLProtoAC4 Ammo");
         ammo.damagePerShot = 4;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_PAC;
@@ -7785,6 +7787,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Proto AC/8";
         ammo.setInternalName("Clan ProtoMech AC/8 Ammo");
         ammo.addLookupName("CLProtoAC8Ammo");
+        ammo.addLookupName("CLProtoAC8 Ammo");
         ammo.damagePerShot = 8;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_PAC;

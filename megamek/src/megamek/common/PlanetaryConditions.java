@@ -907,4 +907,52 @@ public class PlanetaryConditions implements Serializable {
     public void setBlowingSand(boolean b) {
         blowingSand = b;
     }
+
+    public void alterConditions(PlanetaryConditions conditions) {
+        lightConditions = conditions.lightConditions;
+        weatherConditions = conditions.weatherConditions;
+        windStrength = conditions.windStrength;
+        windDirection = conditions.windDirection;
+        shiftWindDirection = conditions.shiftWindDirection;
+        shiftWindStrength = conditions.shiftWindStrength;
+        minWindStrength = conditions.minWindStrength;
+        maxWindStrength = conditions.maxWindStrength;
+        atmosphere = conditions.atmosphere;
+        temperature = conditions.temperature;
+        gravity = conditions.gravity;
+        emi = conditions.emi;
+        fog = conditions.fog;
+        terrainAffected = conditions.terrainAffected;
+        blowingSand = conditions.blowingSand;
+        
+        setTempFromWeather();
+        setWindFromWeather();
+    }
+
+    private void setTempFromWeather() {
+        switch (weatherConditions) {
+            case WE_SLEET:
+            case WE_LIGHT_SNOW:
+                temperature = -40;
+                break;
+            case WE_MOD_SNOW:
+            case WE_HEAVY_SNOW:
+                temperature = -50;
+                break;
+            case WE_ICE_STORM:
+                temperature = -60;
+                break;
+        }
+    }
+
+    private void setWindFromWeather() {
+        switch (weatherConditions) {
+            case WE_SLEET:
+                windStrength = WI_MOD_GALE;
+                break;
+            case WE_ICE_STORM:
+                windStrength = WI_MOD_GALE;
+                break;
+        }
+    }
 }

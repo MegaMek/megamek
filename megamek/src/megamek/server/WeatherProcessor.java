@@ -134,7 +134,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         if(conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM 
                 && game.getBoard().onGround()) {
             iceTurn = iceTurn + 1;
-            if(iceTurn == 14) {
+            if(iceTurn == 9) {
                 ice = true;
             }
         }

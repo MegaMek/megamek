@@ -395,6 +395,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         conditions.setGravity(Float.parseFloat(fldGrav.getText()));
         conditions.setEMI(cEMI.isSelected());
         conditions.setTerrainAffected(cTerrainAffected.isSelected());
+        conditions.setRunOnce(true);
 
         if (client != null) {
             send();

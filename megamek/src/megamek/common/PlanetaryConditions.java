@@ -89,17 +89,21 @@ public class PlanetaryConditions implements Serializable {
 
     //misc
     private boolean blowingSand = false;
+    private boolean runOnce = false;
 
     //set up the specific conditions
     private int lightConditions = WI_NONE;
     private int weatherConditions = WE_NONE;
+    private int oldWeatherConditions = WE_NONE;
     private int windStrength = WI_NONE;
     private int windDirection = -1;
     private boolean shiftWindDirection = false;
     private boolean shiftWindStrength = false;
+    private boolean isSleeting = false;
     private int atmosphere = ATMO_STANDARD;
     private int fog = FOG_NONE;
     private int temperature = 25;
+    private int oldTemperature = 25;
     private float gravity = (float)1.0;
     private boolean emi = false;
     private boolean terrainAffected = true;
@@ -375,9 +379,11 @@ public class PlanetaryConditions implements Serializable {
             switch (Compute.d6()) {
             case 1: // weaker
                 windStrength = Math.max(minWindStrength, --windStrength);
+                doSleetCheck();
                 break;
             case 6: // stronger
                 windStrength = Math.min(maxWindStrength, ++windStrength);
+                doSleetCheck();
                 break;
             }
         }
@@ -924,9 +930,14 @@ public class PlanetaryConditions implements Serializable {
         fog = conditions.fog;
         terrainAffected = conditions.terrainAffected;
         blowingSand = conditions.blowingSand;
+        runOnce = conditions.runOnce;
         
-        setTempFromWeather();
-        setWindFromWeather();
+        if (runOnce) {
+            setTempFromWeather();
+            setWindFromWeather();
+            runOnce = false;
+        }
+
     }
 
     private void setTempFromWeather() {
@@ -949,10 +960,46 @@ public class PlanetaryConditions implements Serializable {
         switch (weatherConditions) {
             case WE_SLEET:
                 windStrength = WI_MOD_GALE;
+                setSleet(true);
                 break;
             case WE_ICE_STORM:
                 windStrength = WI_MOD_GALE;
                 break;
         }
+    }
+
+    public boolean isSleeting() {
+        return isSleeting;
+    }
+
+    public void setSleet(boolean sleet) {
+        isSleeting = sleet;
+    }
+
+    private void doSleetCheck() {
+        if (isSleeting && windStrength < WI_MOD_GALE) {
+            setSleet(false);
+            weatherConditions = WE_NONE;
+            oldWeatherConditions = WE_SLEET;
+            oldTemperature = temperature;
+            temperature = 25;
+        }
+        if (isSleeting() && windStrength > WI_MOD_GALE) {
+            shiftWindStrength = false;
+            windStrength = WI_MOD_GALE;
+        }
+        if ((oldWeatherConditions == WE_SLEET)
+                && (windStrength == WI_MOD_GALE)
+                && !isSleeting() ) {
+            setSleet(true);
+            temperature = oldTemperature;
+            oldWeatherConditions = WE_NONE;
+            oldTemperature = 25;
+            weatherConditions = WE_SLEET;
+        }
+    }
+
+    public void setRunOnce(boolean run) {
+        runOnce = true;
     }
 }

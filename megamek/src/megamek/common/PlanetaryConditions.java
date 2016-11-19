@@ -603,13 +603,13 @@ public class PlanetaryConditions implements Serializable {
      * @return a string given the reason for being doomed, null if not doomed
      */
     public String whyDoomed(Entity en) {
-        if((atmosphere < ATMO_THIN) && en.doomedInVacuum()) {
+        if ((atmosphere < ATMO_THIN) && en.doomedInVacuum()) {
             return "vacuum";
         }
-        if((windStrength == WI_TORNADO_F4) && !(en instanceof Mech)) {
+        if ((windStrength == WI_TORNADO_F4) && !(en instanceof Mech)) {
             return "tornado";
         }
-        if((windStrength == WI_TORNADO_F13)
+        if ((windStrength == WI_TORNADO_F13)
                 && (((en instanceof Infantry) && !(en instanceof BattleArmor))
                         || ((en.getMovementMode() == EntityMovementMode.HOVER)
                     || (en.getMovementMode() == EntityMovementMode.WIGE)
@@ -618,6 +618,9 @@ public class PlanetaryConditions implements Serializable {
         }
         if((windStrength == WI_STORM) && ((en instanceof Infantry) && !(en instanceof BattleArmor))) {
             return "storm";
+        }
+        if ((temperature > 50 || temperature < -30) && en.doomedInExtremeTemp()) {
+            return "extreme temperature";
         }
         return null;
     }

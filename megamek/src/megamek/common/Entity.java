@@ -9609,6 +9609,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     }
 
+    public abstract boolean doomedInExtremeTemp();
+
     public abstract boolean doomedInVacuum();
 
     public abstract boolean doomedOnGround();

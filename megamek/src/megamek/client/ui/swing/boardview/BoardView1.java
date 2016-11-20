@@ -3145,11 +3145,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Returns the absolute position of the upper-left hand corner of the hex
      * graphic
      */
-    private Point getHexLocation(int x, int y) {
+    private Point getHexLocation(int x, int y, boolean ignoreElevation) {
         float elevationAdjust = 0.0f;
 
         IHex hex = game.getBoard().getHex(x, y);
-        if ((hex != null) && useIsometric()) {
+        if ((hex != null) && useIsometric() && !ignoreElevation) {
             int level = hex.getLevel();
             if (level != 0) {
                 elevationAdjust = level * HEX_ELEV * scale * -1.0f;
@@ -3179,21 +3179,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     Point getHexLocation(Coords c) {
-        return getHexLocation(c.getX(), c.getY());
+        return getHexLocation(c.getX(), c.getY(), false);
     }
     
      /**
      * Returns the absolute position of the centre of the hex graphic
      */
-    private Point getCentreHexLocation(int x, int y) {
-        Point p = getHexLocation(x, y);
+    private Point getCentreHexLocation(int x, int y, boolean ignoreElevation) {
+        Point p = getHexLocation(x, y, ignoreElevation);
         p.x += ((HEX_W / 2) * scale);
         p.y += ((HEX_H / 2) * scale);
         return p;
     }
 
-    private Point getCentreHexLocation(Coords c) {
-        return getCentreHexLocation(c.getX(), c.getY());
+    public Point getCentreHexLocation(Coords c) {
+        return getCentreHexLocation(c.getX(), c.getY(), false);
+    }
+
+    public Point getCentreHexLocation(Coords c, boolean ignoreElevation) {
+        return getCentreHexLocation(c.getX(), c.getY(), ignoreElevation);
     }
 
     public void drawRuler(Coords s, Coords e, Color sc, Color ec) {

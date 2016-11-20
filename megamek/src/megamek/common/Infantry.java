@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
@@ -1736,6 +1737,15 @@ public class Infantry extends Entity {
             return Compute.calculateClusterHitTableAmount(7, baseDamage);
         }
         return 0;
+    }
+    
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.CAR, (int)Math.ceil(getWeight()));
+        if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
+            specialAbilities.put(BattleForceSPA.UMU, null);
+        }
     }
     
     @Override

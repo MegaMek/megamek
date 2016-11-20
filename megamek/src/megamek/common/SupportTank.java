@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import java.util.Map;
+
 /**
  * This is a support vehicle
  *
@@ -391,6 +393,22 @@ public class SupportTank extends Tank {
         default:
             //TODO add rail in here when ready
             return super.getBattleForceStructurePoints();
+        }
+    }
+    
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        switch (getBattleForceSize()) {
+        case 3:
+            specialAbilities.put(BattleForceSPA.LG, null);
+            break;
+        case 4:
+            specialAbilities.put(BattleForceSPA.VLG, null);
+            break;
+        case 5:
+            specialAbilities.put(BattleForceSPA.SLG, null);
+            break;
         }
     }
     

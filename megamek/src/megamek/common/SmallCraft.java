@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import java.util.Map;
+
 /**
  * @author Jay Lawson
  */
@@ -738,7 +740,13 @@ public class SmallCraft extends Aero {
         }
         return 0;
     }
-    
+
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.LG, null);
+    }
+
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }

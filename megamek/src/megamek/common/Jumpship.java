@@ -1262,6 +1262,15 @@ public class Jumpship extends Aero {
     }
     
     @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.KF, null);
+        if (hasLF()) {
+            specialAbilities.put(BattleForceSPA.LF, null);
+        }        
+    }
+    
+    @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;
     }

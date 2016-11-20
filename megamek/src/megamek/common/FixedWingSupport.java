@@ -14,6 +14,8 @@
  */
 package megamek.common;
 
+import java.util.Map;
+
 /**
  * @author Jason Tighe
  */
@@ -173,6 +175,16 @@ public class FixedWingSupport extends ConvFighter {
         return 5 + (int) Math.floor(getWeight() / 10);
     }
     
+    
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.ATMO, null);
+        if (getMaxBombPoints() > 0) {
+            specialAbilities.put(BattleForceSPA.BOMB, getMaxBombPoints());
+        }
+    }
+
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER | Entity.ETYPE_FIXED_WING_SUPPORT;
     }

@@ -17,6 +17,7 @@ package megamek.common;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -2154,6 +2155,41 @@ public class BattleArmor extends Infantry {
         }
 
         return baseDamage * damageModifier;
+    }
+    
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        for (Mounted m : getEquipment()) {
+            if (!(m.getType() instanceof MiscType)) {
+                continue;
+            }
+            if (m.getType().hasFlag(MiscType.F_VISUAL_CAMO)
+                    && !m.getType().getName().equals(MIMETIC_ARMOR)) {
+                specialAbilities.put(BattleForceSPA.LMAS, null);
+            } else if (m.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
+                specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
+            } else if (m.getType().hasFlag(MiscType.F_TOOLS)
+                    && (m.getType().getSubType() & MiscType.S_MINESWEEPER) == MiscType.S_MINESWEEPER) {
+                specialAbilities.put(BattleForceSPA.MSW, null);
+            } else if (m.getType().hasFlag(MiscType.F_SPACE_ADAPTATION)) {
+                specialAbilities.put(BattleForceSPA.SOA, null);
+            }
+        }
+        if (canDoMechanizedBA()) {
+            specialAbilities.put(BattleForceSPA.MEC, null);
+        }
+        if (hasMagneticClamps()) {
+            specialAbilities.put(BattleForceSPA.XMEC, null);
+        }
+        switch (getArmorType(0)) {
+        case EquipmentType.T_ARMOR_BA_MIMETIC:
+            specialAbilities.put(BattleForceSPA.MAS, null);
+            break;
+        case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
+            specialAbilities.put(BattleForceSPA.FR, null);
+            break;
+        }
     }
 
     public void setIsExoskeleton(boolean exoskeleton) {

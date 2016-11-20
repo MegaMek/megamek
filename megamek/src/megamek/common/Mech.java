@@ -7644,6 +7644,50 @@ public abstract class Mech extends Entity {
         return results.toString();
     }
 
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.SRCH, null);
+        for (Mounted m : getEquipment()) {
+            if (!(m.getType() instanceof MiscType)) {
+                continue;
+            }
+            if (m.getType().hasFlag(MiscType.F_HARJEL)) {
+                specialAbilities.put(BattleForceSPA.BHJ, null);
+            } else if (((MiscType)m.getType()).isShield()) {
+                specialAbilities.put(BattleForceSPA.SHLD, null);
+            } else if (m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
+                specialAbilities.put(BattleForceSPA.ITSM, null);
+            } else if (m.getType().hasFlag(MiscType.F_TSM)) {
+                specialAbilities.put(BattleForceSPA.TSM, null);
+            } else if (m.getType().hasFlag(MiscType.F_VOIDSIG)) {
+                specialAbilities.put(BattleForceSPA.MAS, null);
+            } else if (isIndustrial() && m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)
+                    && getEngine().getEngineType() != Engine.COMBUSTION_ENGINE) {
+                specialAbilities.put(BattleForceSPA.SOA, null);
+            } else if (m.getType().hasFlag(MiscType.F_NULLSIG)
+                    || m.getType().hasFlag(MiscType.F_CHAMELEON_SHIELD)) {
+                specialAbilities.put(BattleForceSPA.STL, null);
+                specialAbilities.put(BattleForceSPA.ECM, null);
+            } else if (m.getType().hasFlag(MiscType.F_UMU)) {
+                specialAbilities.put(BattleForceSPA.UMU, null);
+            }
+        }
+        if (getCockpitType() == COCKPIT_COMMAND_CONSOLE) {
+            specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
+        }
+        if (isIndustrial()) {
+            if (getCockpitType() == Mech.COCKPIT_STANDARD) {
+                specialAbilities.put(BattleForceSPA.AFC, null);
+            } else {
+                specialAbilities.put(BattleForceSPA.BFC, null);
+            }
+        } else {
+            specialAbilities.put(BattleForceSPA.SOA, null);
+        }
+
+    }
+    
     public abstract boolean hasMPReducingHardenedArmor();
 
     /**

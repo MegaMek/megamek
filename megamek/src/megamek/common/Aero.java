@@ -4154,6 +4154,25 @@ public class Aero extends Entity {
         return totalHeat;        
     }
 
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        for (Mounted m : getEquipment()) {
+            if (m.getType().hasFlag(MiscType.F_SPACE_MINE_DISPENSER)) {
+                specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
+            }
+        }
+        if ((getEntityType() & (ETYPE_SMALL_CRAFT | ETYPE_JUMPSHIP | ETYPE_FIXED_WING_SUPPORT)) == 0) {
+            specialAbilities.put(BattleForceSPA.BOMB, getWeightClass() + 1);            
+        }
+        if ((getEntityType() & (ETYPE_JUMPSHIP | ETYPE_CONV_FIGHTER)) == 0) {
+            specialAbilities.put(BattleForceSPA.SPC, null);
+        }
+        if (isVSTOL()) {
+            specialAbilities.put(BattleForceSPA.VSTOL, null);
+        }
+    }
+
     /**
      * Is this a primitive ASF?
      *

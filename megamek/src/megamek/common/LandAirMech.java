@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import java.util.Map;
+
 public class LandAirMech extends BipedMech {
 
     /**
@@ -97,6 +99,16 @@ public class LandAirMech extends BipedMech {
         return getFighterModeRunMP(true, false);
     }
     
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        for (Mounted m : getEquipment()) {
+            if (m.getType().hasFlag(MiscType.F_BOMB_BAY)) {
+                specialAbilities.merge(BattleForceSPA.BOMB, 1, Integer::sum);
+            }
+        }
+    }
+
     public long getEntityType(){
         return Entity.ETYPE_MECH | Entity.ETYPE_LAND_AIR_MECH;
     }

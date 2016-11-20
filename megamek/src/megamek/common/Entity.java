@@ -12090,6 +12090,17 @@ Targetable, RoundUpdated, PhaseUpdated {
         }
 
         public int getBattleForceArmorPoints() {
+            return (int)Math.round(getBattleForceArmorPoints(null));
+        }
+        
+        /**
+         * Calculates the intermediate value for armor points (retaining fractional amounts)
+         * and adds any special abilities conferred by armor.
+         * 
+         * @param spas  BattleForce special abilities and their values. Can be null.
+         * @return      The armor value of this entity
+         */
+        public double getBattleForceArmorPoints(Map<BattleForceSPA,Integer> spas) {
             double armorPoints = 0;
 
             for (int loc = 0; loc < locations(); loc++) {
@@ -12097,10 +12108,16 @@ Targetable, RoundUpdated, PhaseUpdated {
                 switch (getArmorType(loc)) {
                 case EquipmentType.T_ARMOR_COMMERCIAL:
                     armorMod = .5;
+                    if (spas != null) {
+                        spas.put(BattleForceSPA.BAR, null);
+                    }
                     break;
                 case EquipmentType.T_ARMOR_INDUSTRIAL:
                 case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
                     armorMod = getBARRating(0) / 10;
+                    if (spas != null) {
+                        spas.put(BattleForceSPA.BAR, null);
+                    }
                     break;
                 case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
                     armorMod = 1.2;
@@ -12111,6 +12128,22 @@ Targetable, RoundUpdated, PhaseUpdated {
                 case EquipmentType.T_ARMOR_REFLECTIVE:
                 case EquipmentType.T_ARMOR_REACTIVE:
                     armorMod = .75;
+                    break;
+                case EquipmentType.T_ARMOR_STEALTH:
+                case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
+                    if (spas != null) {
+                        spas.put(BattleForceSPA.STL, null);
+                        spas.put(BattleForceSPA.ECM, null);
+                    }
+                    break;
+                case EquipmentType.T_ARMOR_BA_STEALTH:
+                case EquipmentType.T_ARMOR_BA_STEALTH_BASIC:
+                case EquipmentType.T_ARMOR_BA_STEALTH_IMP:
+                case EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE:
+                    if (spas != null) {
+                        spas.put(BattleForceSPA.STL, null);
+                        spas.put(BattleForceSPA.LECM, null);
+                    }
                     break;
                 }
                 armorPoints += Math.ceil(getArmor(loc) * armorMod);
@@ -12192,7 +12225,7 @@ Targetable, RoundUpdated, PhaseUpdated {
          */
         public String getBattleForceLocationName(int index) {
             if (isTurretLocation(index)) {
-                return "Turret";
+                return "TUR";
             }
             return "";
         }
@@ -12247,7 +12280,6 @@ Targetable, RoundUpdated, PhaseUpdated {
             double frontArcWeaponsTotalDamage = 0;
             double rearArcWeaponsTotalDamage = 0;
             double totalHeat = 0;
-            boolean hasArtemis = false;
             boolean hasTC = hasTargComp();
             double baseDamage = 0;
 
@@ -12257,7 +12289,6 @@ Targetable, RoundUpdated, PhaseUpdated {
 
             for (int pos = 0; pos < weaponsList.size(); pos++) {
                 double damageModifier = 1;
-                hasArtemis = false;
                 Mounted mount = weaponsList.get(pos);
                 double weaponCount = location < 0?
                         1.0 : getBattleForceLocationMultiplier(location, mount.getLocation(), mount.isRearMounted());
@@ -12900,14 +12931,12 @@ Targetable, RoundUpdated, PhaseUpdated {
             if (isOmni()) {
                 results.add("OMNI");
             }
+            
+            results.add("SRCH");
 
-            //        if (hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT)) {
-            //            results.add("SRCH");
-            //        }
-
-            //        if (hasStealth()) {
-            //            results.add("STL");
-            //        }
+            if (hasStealth()) {
+                results.add("STL");
+            }
 
             int srmDamage = getBattleForceStandardWeaponsDamage(
                     Entity.BATTLEFORCEMEDIUMRANGE, -1, AmmoType.T_SRM, false, true);
@@ -12938,7 +12967,172 @@ Targetable, RoundUpdated, PhaseUpdated {
 
             return results.toString();
         }
+        
+        public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+            for (Mounted m : getEquipment()) {
+                if (m.getType().hasFlag(MiscType.F_BAP)) {
+                    specialAbilities.put(BattleForceSPA.RCN, null);
+                    if (m.getType().hasFlag(MiscType.F_BLOODHOUND)) {
+                        specialAbilities.put(BattleForceSPA.BH, null);                        
+                    } else if (m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)) {
+                        specialAbilities.put(BattleForceSPA.LPRB, null);                        
+                    } else if (m.getType().hasFlag(MiscType.F_WATCHDOG)) {
+                        specialAbilities.put(BattleForceSPA.WAT, null);                        
+                    } else {
+                        specialAbilities.put(BattleForceSPA.PRB, null);
+                    }
+                } else if (m.getType().hasFlag(MiscType.F_ECM)) {
+                    if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+                        specialAbilities.put(BattleForceSPA.AECM, null);
+                    } else if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+                        specialAbilities.put(BattleForceSPA.LECM, null);
+                    } else {
+                        specialAbilities.put(BattleForceSPA.ECM, null);
+                    }
+                } else if (m.getType().hasFlag(MiscType.F_BOOBY_TRAP)) {
+                    specialAbilities.put(BattleForceSPA.BT, null);
+                } else if (m.getType().hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                        || m.getType().hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                        || m.getType().hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {
+                    specialAbilities.put(BattleForceSPA.BRID, null);
+                } else if (m.getType().hasFlag(MiscType.F_C3S)) {
+                    if (m.getType().hasFlag(MiscType.F_C3SBS)) {
+                        specialAbilities.put(BattleForceSPA.C3BSS, null);
+                    } else if (m.getType().hasFlag(MiscType.F_C3EM)) {
+                        specialAbilities.merge(BattleForceSPA.C3EM, 1, Integer::sum);
+                    } else {
+                        specialAbilities.put(BattleForceSPA.C3S, null);
+                    }
+                } else if (m.getType().hasFlag(MiscType.F_C3I)) {
+                    if ((getEntityType() & ETYPE_AERO) == ETYPE_AERO) {
+                        specialAbilities.put(BattleForceSPA.NC3, null);
+                    } else {
+                        specialAbilities.put(BattleForceSPA.C3I, null);
+                        specialAbilities.merge(BattleForceSPA.MHQ, 2, Integer::sum);
+                    }
+                } else if (m.getType().hasFlag(MiscType.F_CASE)) {
+                    specialAbilities.put(BattleForceSPA.CASE, null);
+                } else if (m.getType().hasFlag(MiscType.F_CASEII)) {
+                    specialAbilities.put(BattleForceSPA.CASEII, null);
+                } else if (m.getType().hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                    specialAbilities.put(BattleForceSPA.DRO, null);
+                } else if (m.getType().hasFlag(MiscType.F_DRONE_EXTRA)) {
+                    specialAbilities.merge(BattleForceSPA.DCC, 1, Integer::sum);
+                } else if (m.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
+                    specialAbilities.put(BattleForceSPA.ES, null);
+                } else if (m.getType().hasFlag(MiscType.F_ECM)) {
+                    specialAbilities.put(BattleForceSPA.ECM, null);
+                } else if (m.getType().hasFlag(MiscType.F_BULLDOZER)) {
+                    specialAbilities.put(BattleForceSPA.ENG, null);
+                } else if (m.getType().hasFlag(MiscType.F_CLUB)) {
+                    specialAbilities.put(BattleForceSPA.MEL, null);
+                    if ((m.getType().getSubType() &
+                            (MiscType.S_BACKHOE | MiscType.S_PILE_DRIVER
+                                    | MiscType.S_MINING_DRILL | MiscType.S_ROCK_CUTTER
+                                    | MiscType.S_WRECKING_BALL)) != 0) {
+                        specialAbilities.put(BattleForceSPA.ENG, null);
+                    } else if ((m.getType().getSubType() &
+                            (MiscType.S_DUAL_SAW | MiscType.S_CHAINSAW
+                                    | MiscType.S_BUZZSAW)) != 0) {
+                        specialAbilities.put(BattleForceSPA.SAW, null);
+                    }
+                } else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
+                    specialAbilities.put(BattleForceSPA.FR, null);
+                } else if (m.getType().hasFlag(MiscType.F_MOBILE_HPG)) {
+                    specialAbilities.put(BattleForceSPA.HPG, null);
+                } else if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+                    specialAbilities.merge(BattleForceSPA.MHQ, (int)m.getType().getTonnage(this), Integer::sum);
+                    if (m.getType().getTonnage(this) >= getWeight() / 20.0) {
+                        specialAbilities.put(BattleForceSPA.RCN, null);
+                    }
+                } else if (m.getType().hasFlag(MiscType.F_SENSOR_DISPENSER)) {
+                    specialAbilities.merge(BattleForceSPA.RSD, 1, Integer::sum);
+                    specialAbilities.put(BattleForceSPA.RCN, null);
+                } else if (m.getType().hasFlag(MiscType.F_LOOKDOWN_RADAR)
+                        || m.getType().hasFlag(MiscType.F_RECON_CAMERA)
+                        || m.getType().hasFlag(MiscType.F_HIRES_IMAGER)
+                        || m.getType().hasFlag(MiscType.F_HYPERSPECTRAL_IMAGER)
+                        || m.getType().hasFlag(MiscType.F_INFRARED_IMAGER)) {
+                } else if (m.getType().hasFlag(MiscType.F_SEARCHLIGHT)) {
+                    specialAbilities.put(BattleForceSPA.SRCH, null);
+                }                
+            }
 
+            if (isOmni()) {
+                specialAbilities.put(BattleForceSPA.OMNI, null);
+            }
+            
+            //TODO: Variable Range targeting is not implemented
+            
+            if (getAmmo().size() > 0) {
+                if (isClan()) {
+                    specialAbilities.put(BattleForceSPA.CASE, null);
+                }
+            } else {
+                specialAbilities.put(BattleForceSPA.ENE, null);
+            }
+            
+            if (getAmmo().stream().map(m -> (AmmoType)m.getType())
+                    .anyMatch(at -> at.hasFlag(AmmoType.F_TELE_MISSILE))) {
+                specialAbilities.put(BattleForceSPA.TELE, null);                
+            }
+
+            if (hasEngine()
+                    && getEngine().getEngineType() != Engine.COMBUSTION_ENGINE
+                    && getEngine().getEngineType() != Engine.STEAM
+                    && getEngine().getEngineType() != Engine.FUEL_CELL) {
+                specialAbilities.put(BattleForceSPA.EEE, null);
+            }
+            
+            for (Transporter t : getTransports()) {
+                if (t instanceof ASFBay) {
+                    specialAbilities.merge(BattleForceSPA.AT, (int)((ASFBay)t).getCapacity(), Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.ATxD, ((ASFBay)t).getDoors(), Integer::sum);
+                } else if (t instanceof CargoBay) {
+                    specialAbilities.merge(BattleForceSPA.CT, (int)((CargoBay)t).getCapacity(), Integer::sum);                
+                    specialAbilities.merge(BattleForceSPA.CTxD, ((CargoBay)t).getDoors(), Integer::sum);
+                } else if (t instanceof DockingCollar) {
+                    specialAbilities.merge(BattleForceSPA.DT, 1, Integer::sum);                
+                } else if (t instanceof InfantryBay) {
+                    // We do not record number of doors for infantry
+                    specialAbilities.merge(BattleForceSPA.IT, (int)((InfantryBay)t).getCapacity(), Integer::sum);                
+                } else if (t instanceof MechBay) {
+                    specialAbilities.merge(BattleForceSPA.MT, (int)((MechBay)t).getCapacity(), Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.MTxD, ((MechBay)t).getDoors(), Integer::sum);
+                } else if (t instanceof ProtomechBay) {
+                    specialAbilities.merge(BattleForceSPA.PT, (int)((ProtomechBay)t).getCapacity(), Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.PTxD, ((ProtomechBay)t).getDoors(), Integer::sum);
+                } else if (t instanceof SmallCraftBay) {
+                    specialAbilities.merge(BattleForceSPA.ST, (int)((SmallCraftBay)t).getCapacity(), Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.STxD, ((SmallCraftBay)t).getDoors(), Integer::sum);
+                } else if (t instanceof LightVehicleBay) {
+                    specialAbilities.merge(BattleForceSPA.VTM, (int)((LightVehicleBay)t).getCapacity(), Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.VTMxD, ((LightVehicleBay)t).getDoors(), Integer::sum);
+                } else if (t instanceof HeavyVehicleBay) {
+                    specialAbilities.merge(BattleForceSPA.VTH, (int)((HeavyVehicleBay)t).getCapacity(), Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.VTHxD, ((HeavyVehicleBay)t).getDoors(), Integer::sum);
+                }
+            }
+
+            topLoop: for (int location = 0; location < locations(); location++) {
+                for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+                    CriticalSlot crit = getCritical(location, slot);
+                    if (null != crit) {
+                        if (crit.isArmored()) {
+                            specialAbilities.put(BattleForceSPA.ARM, null);
+                            break topLoop;
+                        } else if (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+                            Mounted mount = crit.getMount();
+                            if (mount.isArmored()) {
+                                specialAbilities.put(BattleForceSPA.ARM, null);
+                                break topLoop;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+       
         public int getBattleForceSize() {
             // the default BF Size is for ground Combat elements. Other types will
             // need to override this

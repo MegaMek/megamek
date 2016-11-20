@@ -3559,6 +3559,38 @@ public class Tank extends Entity {
         return results.toString();
     }
     
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.SRCH, null);
+        for (Mounted m : getEquipment()) {
+            if (m.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
+                specialAbilities.put(BattleForceSPA.AFC, null);
+            } else if (m.getType().hasFlag(MiscType.F_BASIC_FIRECONTROL)) {
+                specialAbilities.put(BattleForceSPA.BFC, null);
+            } else if (m.getType().hasFlag(MiscType.F_AMPHIBIOUS)) {
+                specialAbilities.put(BattleForceSPA.AMP, null);
+            } else if (m.getType().hasFlag(MiscType.F_ARMORED_MOTIVE_SYSTEM)) {
+                specialAbilities.put(BattleForceSPA.ARS, null);
+            } else if (m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                specialAbilities.put(BattleForceSPA.SEAL, null);
+            } else if (m.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) { 
+                specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
+            } else if (m.getType().hasFlag(MiscType.F_MINESWEEPER)) {
+                specialAbilities.put(BattleForceSPA.MSW, null);
+            } else if (m.getType().hasFlag(MiscType.F_MASH)
+                    || m.getType().hasFlag(MiscType.F_MASH_EXTRA)) { 
+                specialAbilities.merge(BattleForceSPA.MASH, 1, Integer::sum);
+            } else if (m.getType().hasFlag(MiscType.F_MOBILE_FIELD_BASE)) {
+                specialAbilities.put(BattleForceSPA.MFB, null);
+            } else if (m.getType().hasFlag(MiscType.F_COMMAND_CONSOLE)) {
+                specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
+            } else if (m.getType().hasFlag(MiscType.F_OFF_ROAD)) {
+                specialAbilities.put(BattleForceSPA.ORO, null);
+            }
+            //TODO: Fire-resistant chassis mod
+        }
+    }
+    
     @Override
     public boolean isTurretLocation(int index) {
         return index > 0;

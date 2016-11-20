@@ -7,8 +7,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
+
+import megamek.common.weapons.InfantryAttack;
 
 /**
  * @author Neoancient
@@ -21,6 +25,9 @@ public class BattleForceElement {
     static final int[] CAPITAL_RANGES = {Entity.BATTLEFORCE_SHORT_CAPITAL,
         Entity.BATTLEFORCE_MEDIUM_CAPITAL, Entity.BATTLEFORCE_LONG_CAPITAL, Entity.BATTLEFORCE_EXTREME_CAPITAL
     };
+    
+    public enum SpecialAbilities {
+    };
 
     private String name;
     private int size;
@@ -28,13 +35,13 @@ public class BattleForceElement {
     private int jumpPoints;
     private String movementMode;
     private String movement;
-    private int armor;
+    private double armor;
     private double threshold = -1;
     private int structure;
     private WeaponLocation[] damage;
     private String[] locationNames;
     private int points;
-    private String specialAbilities;
+    private EnumMap<BattleForceSPA,Integer> specialAbilities = new EnumMap<>(BattleForceSPA.class);
     
     public BattleForceElement(Entity en) {
         name = en.getShortName();
@@ -43,7 +50,7 @@ public class BattleForceElement {
         jumpPoints = (int)en.getBattleForceJumpPoints();
         movementMode = en.getMovementModeAsBattleForceString();
         movement = en.getBattleForceMovement();
-        armor = en.getBattleForceArmorPoints();
+        armor = en.getBattleForceArmorPoints(specialAbilities);
         if (en instanceof Aero) {
             threshold = armor / 10.0;
         }
@@ -59,7 +66,16 @@ public class BattleForceElement {
         }
         computeDamage(en);
         points = en.getBattleForcePoints();
-        specialAbilities = en.getBattleForceSpecialAbilities();
+        en.addBattleForceSpecialAbilities(specialAbilities);
+        if (specialAbilities.containsKey(BattleForceSPA.CT)) {
+            int tons = specialAbilities.get(BattleForceSPA.CT);
+            specialAbilities.put(BattleForceSPA.CK, tons / 1000);
+            if (tons % 1000 == 0) {
+                specialAbilities.remove(BattleForceSPA.CT);
+            } else {
+                specialAbilities.put(BattleForceSPA.CT, tons % 1000);
+            }
+        }
     }
     
     public String getName() {
@@ -106,15 +122,13 @@ public class BattleForceElement {
         return points;
     }
     
-    public String getSpecialAbilities() {
-        return specialAbilities;
-    }
-    
     public void computeDamage(Entity en) {
         double[] baseDamage = new double[4];
         double totalHeat = 0;
         boolean hasTC = en.hasTargComp();
         int[] ranges;
+        int heat = 0;
+        double pointDefense = 0;
         //Track weapons we've already calculated ammunition for
         HashMap<String,Boolean> ammoForWeapon = new HashMap<>();
 
@@ -134,21 +148,111 @@ public class BattleForceElement {
             
             ranges = weapon.isCapital()? CAPITAL_RANGES : STANDARD_RANGES;
             
-            if ((weapon.getAmmoType() == AmmoType.T_INARC)
-                    || (weapon.getAmmoType() == AmmoType.T_NARC)) {
-                continue;
+            if (weapon.getAmmoType() == AmmoType.T_INARC) {
+               specialAbilities.merge(BattleForceSPA.INARC, 1, Integer::sum);
+               continue;
             }
-
-            if (weapon.getAtClass() == WeaponType.CLASS_SCREEN) {
-                continue;
-            }
-
-            if (weapon.hasFlag(WeaponType.F_ARTILLERY)) {
-                // Each Artillery weapon is separately accounted for
+            if (weapon.getAmmoType() == AmmoType.T_NARC) {
+                if (weapon.hasFlag(WeaponType.F_BA_WEAPON)) {
+                    specialAbilities.merge(BattleForceSPA.CNARC, 1, Integer::sum);
+                } else {
+                    specialAbilities.merge(BattleForceSPA.SNARC, 1, Integer::sum);
+                }
                 continue;
             }
             
-            if (weapon.getDamage() == WeaponType.DAMAGE_SPECIAL) {
+            if (weapon.getAtClass() == WeaponType.CLASS_SCREEN) {
+                specialAbilities.merge(BattleForceSPA.SCR, 1, Integer::sum);
+                continue;
+            }
+
+            if (weapon.hasFlag(WeaponType.F_AMS)) {
+                specialAbilities.put(BattleForceSPA.AMS, null);
+                continue;
+            }
+
+            if (weapon.hasFlag(WeaponType.F_TAG)) {
+                if (weapon.hasFlag(WeaponType.F_C3MBS)) {
+                    specialAbilities.merge(BattleForceSPA.C3BSM, 1, Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.MHQ, 6, Integer::sum);
+                } else if (weapon.hasFlag(WeaponType.F_C3M)) {
+                    specialAbilities.merge(BattleForceSPA.C3M, 1, Integer::sum);
+                    specialAbilities.merge(BattleForceSPA.MHQ, 5, Integer::sum);
+                }
+                if (weapon.getShortRange() < 5) {
+                    specialAbilities.put(BattleForceSPA.LTAG, null);
+                } else {
+                    specialAbilities.put(BattleForceSPA.TAG, null);
+                }
+                continue;
+            }
+            
+            if (weapon.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
+                BattleForceSPA artType = null;
+                switch (weapon.getAmmoType()) {
+                case AmmoType.T_ARROW_IV:
+                    if (weapon.getInternalName().substring(0, 1).equals("C")) {
+                        artType = BattleForceSPA.ARTAC;
+                    } else {
+                        artType = BattleForceSPA.ARTAIS;
+                    }
+                    break;
+                case AmmoType.T_LONG_TOM:
+                    artType = BattleForceSPA.ARTLT;
+                    break;
+                case AmmoType.T_SNIPER:
+                    artType = BattleForceSPA.ARTS;
+                    break;
+                case AmmoType.T_THUMPER:
+                    artType = BattleForceSPA.ARTT;
+                    break;
+                case AmmoType.T_LONG_TOM_CANNON:
+                    artType = BattleForceSPA.ARTLTC;
+                    break;
+                case AmmoType.T_SNIPER_CANNON:
+                    artType = BattleForceSPA.ARTSC;
+                    break;
+                case AmmoType.T_THUMPER_CANNON:
+                    artType = BattleForceSPA.ARTTC;
+                    break;
+                case AmmoType.T_CRUISE_MISSILE:
+                    switch(weapon.getRackSize()) {
+                    case 50:
+                        artType = BattleForceSPA.ARTCM5;
+                        break;
+                    case 70:
+                        artType = BattleForceSPA.ARTCM7;
+                        break;
+                    case 90:
+                        artType = BattleForceSPA.ARTCM9;
+                        break;
+                    case 120:
+                        artType = BattleForceSPA.ARTCM12;
+                        break;
+                    }
+                }
+                if (artType != null) {
+                    specialAbilities.merge(artType, weapon.getRackSize(), Integer::sum);
+                }
+                continue;
+            }
+            
+            if (weapon.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
+                specialAbilities.merge(BattleForceSPA.BOMB, 1, Integer::sum);
+                continue;
+            }
+            
+            if (weapon.getAmmoType() == AmmoType.T_TASER) {
+                if (en instanceof BattleArmor) {
+                    specialAbilities.merge(BattleForceSPA.BTA, 1, Integer::sum);
+                } else {
+                    specialAbilities.merge(BattleForceSPA.MTA, 1, Integer::sum);
+                }
+                continue;
+            }
+            
+            if (weapon instanceof InfantryAttack) {
+                specialAbilities.put(BattleForceSPA.AM, null);
                 continue;
             }
 
@@ -216,6 +320,16 @@ public class BattleForceElement {
                     && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
                 damageModifier *= 1.10;
             }
+            
+            if (weapon.hasFlag(WeaponType.F_FLAMER)) {
+                heat += 2;
+            } else if (weapon.hasFlag(WeaponType.F_PLASMA)) {
+                if (weapon.getInternalName().contains("Rifle")) {
+                    heat += 3;
+                } else {
+                    heat += 7;
+                }
+            }
             for (int loc = 0; loc < damage.length; loc++) {
                 for (int r = 0; r < ranges.length; r++) {
                     double dam = baseDamage[r] * damageModifier
@@ -252,6 +366,7 @@ public class BattleForceElement {
                                     damage[loc].lrmDamage[r] += dam;
                                     break;
                                 }
+                                break;
                             case AmmoType.T_SRM_TORPEDO:
                             case AmmoType.T_LRM_TORPEDO:
                                 damage[loc].torpDamage[r] += dam;
@@ -273,6 +388,16 @@ public class BattleForceElement {
                     damage[loc].indirect += baseDamage[2] * damageModifier
                             * en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
                 }
+                if (!(en instanceof Aero)
+                        && (weapon.getAmmoType() == AmmoType.T_AC_LBX
+                        || weapon.getAmmoType() == AmmoType.T_AC_LBX_THB
+                        || weapon.getAmmoType() == AmmoType.T_HAG)) {
+                    damage[loc].flak += baseDamage[1] * damageModifier
+                            * en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
+                }
+            }
+            if (en instanceof Aero && weapon.getAtClass() == WeaponType.CLASS_POINT_DEFENSE) {
+                pointDefense += baseDamage[0] * damageModifier;
             }
         }
         
@@ -280,6 +405,10 @@ public class BattleForceElement {
             for (int r = 0; r < STANDARD_RANGES.length; r++) {
                 damage[0].allDamage[r] = en.getBattleForceStandardWeaponsDamage(STANDARD_RANGES[r], 0);
             }
+        }
+        
+        if (en instanceof Aero && pointDefense > 0) {
+            specialAbilities.put(BattleForceSPA.PNT, (int)Math.ceil(pointDefense / 10.0));
         }
 
         totalHeat = en.getBattleForceTotalHeatGeneration(false) - 4;
@@ -298,11 +427,18 @@ public class BattleForceElement {
                     damage[loc].capital[r] *= adjustment;
                     damage[loc].subCapital[r] *= adjustment;
                     damage[loc].missiles[r] *= adjustment;
+                    damage[loc].indirect *= adjustment;
+                    damage[loc].flak *= adjustment;
                 }
             }
         }
+        //Rules state that all flamer and plasma weapons on the unit contribute to the heat rating, so we don't separate by arc
+        if (heat > 10) {
+            specialAbilities.put(BattleForceSPA.HT, 2);
+        } else if (heat > 5) {
+            specialAbilities.put(BattleForceSPA.HT, 1);
+        }
     }
-    
     public String getBFDamageString(int loc) {
         StringBuilder str = new StringBuilder(locationNames[loc]);
         if (locationNames[loc].length() > 0) {
@@ -356,14 +492,17 @@ public class BattleForceElement {
                     (int)Math.round(damage[loc].getLRMDamage(3) / 10.0)));
         }
         if (damage[loc].hasTorpDamage()) {
-            str.append(";LRM").append(String.format("%d/%d/%d/%d",
+            str.append(";TORP").append(String.format("%d/%d/%d/%d",
                     (int)Math.round(damage[loc].getTorpDamage(0) / 10.0),
                     (int)Math.round(damage[loc].getTorpDamage(1) / 10.0),
                     (int)Math.round(damage[loc].getTorpDamage(2) / 10.0),
                     (int)Math.round(damage[loc].getTorpDamage(3) / 10.0)));
         }
-        if (damage[loc].indirect >= 0.5) {
+        if (damage[loc].indirect >= 5) {
             str.append(";IF").append((int)Math.round(damage[loc].getIndirect() / 10.0));
+        }
+        if (damage[loc].flak >= 5) {
+            str.append(";FLAK").append((int)Math.round(damage[loc].getFlak() / 10.0));
         }
         if (locationNames[loc].length() > 0) {
             str.append(")");
@@ -378,7 +517,7 @@ public class BattleForceElement {
         w.write("\t");
         w.write(movement);
         w.write("\t");
-        w.write(Integer.toString(armor));
+        w.write(Integer.toString((int)Math.round(armor)));
         if (threshold >= 0) {
             w.write("-" + threshold);//TODO: threshold
         }
@@ -414,7 +553,21 @@ public class BattleForceElement {
         w.write("\t");
         w.write(Integer.toString(points));
         w.write("\t");
-        w.write(specialAbilities);
+        StringBuilder str = new StringBuilder();
+        w.write(specialAbilities.entrySet().stream()
+                .filter(e -> !e.getKey().isDoor())
+                .map(e -> {
+                    str.setLength(0);
+                    str.append(e.getKey().toString());
+                    if (e.getValue() != null) {
+                        str.append(Integer.toString(e.getValue()));
+                    }
+                    if (e.getKey().getDoor() != null) {
+                        str.append("D").append(Integer.toString(specialAbilities.get(e.getKey().getDoor())));
+                    }
+                    return str.toString();
+                })
+                .collect(Collectors.joining(", ")));
         w.newLine();
     }
 
@@ -428,6 +581,7 @@ public class BattleForceElement {
         double[] subCapital = new double[4];
         double[] missiles = new double[4];
         double indirect;
+        double flak;
         double overheat;
         
         public double getBFStandardDamage(int index) {
@@ -548,6 +702,10 @@ public class BattleForceElement {
         
         public double getIndirect() {
             return indirect;
+        }
+        
+        public double getFlak() {
+            return flak;
         }
     }
 

@@ -2129,6 +2129,12 @@ public class Protomech extends Entity {
     }
 
     @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.SOA, null);
+    }
+    
+    @Override
     public int getEngineHits() {
         if(this.isEngineHit()) {
             return 1;

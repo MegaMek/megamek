@@ -17,6 +17,8 @@
  */
 package megamek.common;
 
+import java.util.Map;
+
 /**
  * @author Andrew Hunter VTOLs are helicopters (more or less.)
  */
@@ -603,6 +605,11 @@ public class VTOL extends Tank {
         return 1.0; 
     }
 
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.ATMO, null);
+    }
+    
     @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;

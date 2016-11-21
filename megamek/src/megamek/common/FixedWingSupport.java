@@ -181,7 +181,7 @@ public class FixedWingSupport extends ConvFighter {
         super.addBattleForceSpecialAbilities(specialAbilities);
         specialAbilities.put(BattleForceSPA.ATMO, null);
         if (getMaxBombPoints() > 0) {
-            specialAbilities.put(BattleForceSPA.BOMB, getMaxBombPoints());
+            specialAbilities.put(BattleForceSPA.BOMB, getMaxBombPoints() / 5);
         }
     }
 

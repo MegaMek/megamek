@@ -121,6 +121,7 @@ public class BattleForceElement {
         int[] ranges;
         int heat = 0;
         double pointDefense = 0;
+        int bombRacks = 0;
         //Track weapons we've already calculated ammunition for
         HashMap<String,Boolean> ammoForWeapon = new HashMap<>();
 
@@ -230,7 +231,7 @@ public class BattleForceElement {
             }
             
             if (weapon.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
-                specialAbilities.merge(BattleForceSPA.BOMB, 1, Integer::sum);
+                bombRacks++;
                 continue;
             }
             
@@ -435,6 +436,11 @@ public class BattleForceElement {
             for (int r = 0; r < STANDARD_RANGES.length; r++) {
                 damage[0].allDamage[r] = en.getBattleForceStandardWeaponsDamage(STANDARD_RANGES[r], 0);
             }
+        }
+        
+        if (en instanceof BattleArmor && bombRacks > 0) {
+            specialAbilities.put(BattleForceSPA.BOMB,
+                    (bombRacks * ((BattleArmor)en).getShootingStrength()) / 5);
         }
         
         if (en instanceof Aero && pointDefense > 0) {

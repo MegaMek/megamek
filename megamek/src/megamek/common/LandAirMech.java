@@ -102,10 +102,10 @@ public class LandAirMech extends BipedMech {
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
-        for (Mounted m : getEquipment()) {
-            if (m.getType().hasFlag(MiscType.F_BOMB_BAY)) {
-                specialAbilities.merge(BattleForceSPA.BOMB, 1, Integer::sum);
-            }
+        int bombs = (int)getEquipment().stream().filter(m -> m.getType().hasFlag(MiscType.F_BOMB_BAY))
+                .count();
+        if (bombs > 0) {
+            specialAbilities.put(BattleForceSPA.BOMB, bombs / 5);
         }
         specialAbilities.put(BattleForceSPA.LAM, null);
     }

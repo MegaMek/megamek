@@ -89,6 +89,7 @@ public class PlanetaryConditions implements Serializable {
 
     //misc
     private boolean blowingSand = false;
+    private boolean sandStorm = false;
     private boolean runOnce = false;
 
     //set up the specific conditions
@@ -380,10 +381,12 @@ public class PlanetaryConditions implements Serializable {
             case 1: // weaker
                 windStrength = Math.max(minWindStrength, --windStrength);
                 doSleetCheck();
+                doSandStormCheck();
                 break;
             case 6: // stronger
                 windStrength = Math.min(maxWindStrength, ++windStrength);
                 doSleetCheck();
+                doSandStormCheck();
                 break;
             }
         }
@@ -938,6 +941,7 @@ public class PlanetaryConditions implements Serializable {
         if (runOnce) {
             setTempFromWeather();
             setWindFromWeather();
+            setSandStorm();
             runOnce = false;
         }
 
@@ -999,6 +1003,24 @@ public class PlanetaryConditions implements Serializable {
             oldWeatherConditions = WE_NONE;
             oldTemperature = 25;
             weatherConditions = WE_SLEET;
+        }
+    }
+
+    private void setSandStorm() {
+        if (blowingSand && windStrength < WI_MOD_GALE) {
+            windStrength = WI_MOD_GALE;
+            sandStorm = true;
+        }
+    }
+
+    private void doSandStormCheck() {
+        if (blowingSand && windStrength < WI_MOD_GALE) {
+            sandStorm = blowingSand;
+            blowingSand = false;
+        }
+        if (sandStorm && windStrength > WI_LIGHT_GALE) {
+            sandStorm = blowingSand;
+            blowingSand = true;
         }
     }
 

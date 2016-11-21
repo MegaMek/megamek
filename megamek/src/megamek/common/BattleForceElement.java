@@ -27,10 +27,43 @@ public class BattleForceElement {
         Entity.BATTLEFORCE_MEDIUM_CAPITAL, Entity.BATTLEFORCE_LONG_CAPITAL, Entity.BATTLEFORCE_EXTREME_CAPITAL
     };
     
-    public enum SpecialAbilities {
+    public enum ASUnitType {
+        BM, IM, PM, CV, SV, MS, BA, CI, AF, CF, SC, DS, DA, JS, WS, SS;
+        
+        static ASUnitType getUnitType(Entity en) {
+            if (en instanceof Mech) {
+                return ((Mech)en).isIndustrial()? IM : BM;
+            } else if (en instanceof Protomech) {
+                return PM;
+            } else if (en instanceof Tank) {
+                return en.isSupportVehicle()?SV : CV;
+            } else if (en instanceof BattleArmor) {
+                return BA;
+            } else if (en instanceof Infantry) {
+                return CI;
+            } else if (en instanceof SpaceStation) {
+                return SS;
+            } else if (en instanceof Warship) {
+                return WS;
+            } else if (en instanceof Jumpship) {
+                return JS;
+            } else if (en instanceof Dropship) {
+                return ((Dropship)en).isSpheroid()? DS : DA;
+            } else if (en instanceof SmallCraft) {
+                return SC;
+            } else if (en instanceof FixedWingSupport) {
+                return SV;
+            } else if (en instanceof ConvFighter) {
+                return CF;
+            } else if (en instanceof Aero) {
+                return AF;
+            }
+            return null;
+        }
     };
 
     private String name;
+    private ASUnitType asUnitType;
     private int size;
     private int walkPoints;
     private int jumpPoints;
@@ -46,6 +79,7 @@ public class BattleForceElement {
     
     public BattleForceElement(Entity en) {
         name = en.getShortName();
+        asUnitType = ASUnitType.getUnitType(en);
         size = en.getBattleForceSize();
         walkPoints = (int)en.getBattleForceMovementPoints();
         jumpPoints = (int)en.getBattleForceJumpPoints();
@@ -72,6 +106,10 @@ public class BattleForceElement {
     
     public String getName() {
         return name;
+    }
+    
+    public ASUnitType getUnitType() {
+        return asUnitType;
     }
     
     public int getSize() {

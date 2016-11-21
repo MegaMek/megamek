@@ -2174,6 +2174,8 @@ public class BattleArmor extends Infantry {
                 specialAbilities.put(BattleForceSPA.MSW, null);
             } else if (m.getType().hasFlag(MiscType.F_SPACE_ADAPTATION)) {
                 specialAbilities.put(BattleForceSPA.SOA, null);
+            } else if (m.getType().hasFlag(MiscType.F_PARAFOIL)) {
+                specialAbilities.put(BattleForceSPA.PARA, null);
             }
         }
         if (canDoMechanizedBA()) {

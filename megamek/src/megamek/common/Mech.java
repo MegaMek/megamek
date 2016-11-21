@@ -7564,9 +7564,40 @@ public abstract class Mech extends Entity {
         return battleForceStructure;
 
     }
+    
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 2;
+    }
+    
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        if ((index == 0 && !rearMounted
+                || (index == 1) && rearMounted)) {
+            return 1.0;
+        }
+        return 0;
+    }
 
     @Override
+    public String getBattleForceLocationName(int index) {
+        if (index == 1) {
+            return "REAR";
+        }
+        return "";
+    }
+    
+    @Override
+    public boolean isBattleForceRearLocation(int index) {
+        return index == 1;
+    }
+    
+    @Override
     public int getBattleForceTotalHeatGeneration(boolean allowRear) {
+        return getBattleForceTotalHeatGeneration(allowRear, true);
+    }
+
+    public int getBattleForceTotalHeatGeneration(boolean allowRear, boolean includeSR) {
         int totalHeat = 0;
 
         // finish the max heat calculations
@@ -7579,6 +7610,7 @@ public abstract class Mech extends Entity {
         for (Mounted mount : getWeaponList()) {
             WeaponType weapon = (WeaponType) mount.getType();
             if (weapon.hasFlag(WeaponType.F_ONESHOT)
+                || (!includeSR && weapon.getLongRange() < BATTLEFORCEMEDIUMRANGE)
                 || (allowRear && !mount.isRearMounted())
                 || (!allowRear && mount.isRearMounted())) {
                 continue;
@@ -7654,6 +7686,10 @@ public abstract class Mech extends Entity {
             }
             if (m.getType().hasFlag(MiscType.F_HARJEL)) {
                 specialAbilities.put(BattleForceSPA.BHJ, null);
+            } else if (m.getType().hasFlag(MiscType.F_HARJEL_II)) {
+                specialAbilities.put(BattleForceSPA.BHJ2, null);
+            } else if (m.getType().hasFlag(MiscType.F_HARJEL_III)) {
+                specialAbilities.put(BattleForceSPA.BHJ3, null);
             } else if (((MiscType)m.getType()).isShield()) {
                 specialAbilities.put(BattleForceSPA.SHLD, null);
             } else if (m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
@@ -7671,10 +7707,14 @@ public abstract class Mech extends Entity {
                 specialAbilities.put(BattleForceSPA.ECM, null);
             } else if (m.getType().hasFlag(MiscType.F_UMU)) {
                 specialAbilities.put(BattleForceSPA.UMU, null);
+            } else if (m.getType().hasFlag(MiscType.F_BATTLEMECH_NIU)) {
+                specialAbilities.put(BattleForceSPA.DN, null);
             }
         }
         if (getCockpitType() == COCKPIT_COMMAND_CONSOLE) {
             specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
+        } else if (getCockpitType() == COCKPIT_VRRP) {
+            specialAbilities.merge(BattleForceSPA.VR, 1, Integer::sum);
         }
         if (isIndustrial()) {
             if (getCockpitType() == Mech.COCKPIT_STANDARD) {
@@ -7684,6 +7724,9 @@ public abstract class Mech extends Entity {
             }
         } else {
             specialAbilities.put(BattleForceSPA.SOA, null);
+        }
+        if (getBattleForceTotalHeatGeneration(false, false) - 4 > getHeatCapacity()) {
+            specialAbilities.put(BattleForceSPA.OVL, null);
         }
 
     }

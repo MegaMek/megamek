@@ -3483,21 +3483,24 @@ public class Tank extends Entity {
     @Override
     public int getNumBattleForceWeaponsLocations() {
         if (m_bHasNoTurret) {
-            return 1;
-        } else if  (m_bHasNoDualTurret) {
             return 2;
-        } else {
+        } else if  (m_bHasNoDualTurret) {
             return 3;
+        } else {
+            return 4;
         }
     }
     
     @Override
     public String getBattleForceLocationName(int index) {
-        if (index > 0) {
+        if (index == 1) {
+            return "REAR";
+        }
+        if (index > 1) {
             if (m_bHasNoDualTurret) {
-                return "Turret";
+                return "TUR";
             } else {
-                return "Turret" + index;
+                return "TUR" + index;
             }
         } else {
             return "";
@@ -3517,11 +3520,16 @@ public class Tank extends Entity {
             }
             break;
         case 1:
-            if (location == LOC_TURRET) {
+            if (location == LOC_REAR) {
                 return 1.0;
             }
             break;
         case 2:
+            if (location == LOC_TURRET) {
+                return 1.0;
+            }
+            break;
+        case 3:
             if (location == LOC_TURRET_2) {
                 return 1.0;
             }
@@ -3561,7 +3569,9 @@ public class Tank extends Entity {
     
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
-        specialAbilities.put(BattleForceSPA.SRCH, null);
+        if (!isSupportVehicle()) {
+            specialAbilities.put(BattleForceSPA.SRCH, null);
+        }
         for (Mounted m : getEquipment()) {
             if (m.getType().hasFlag(MiscType.F_ADVANCED_FIRECONTROL)) {
                 specialAbilities.put(BattleForceSPA.AFC, null);
@@ -3573,6 +3583,10 @@ public class Tank extends Entity {
                 specialAbilities.put(BattleForceSPA.ARS, null);
             } else if (m.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 specialAbilities.put(BattleForceSPA.SEAL, null);
+                if (hasEngine() && getEngine().getEngineType() != Engine.COMBUSTION_ENGINE
+                        && getEngine().getEngineType() != Engine.STEAM) {
+                    specialAbilities.put(BattleForceSPA.SOA, null);
+                }
             } else if (m.getType().hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) { 
                 specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
             } else if (m.getType().hasFlag(MiscType.F_MINESWEEPER)) {
@@ -3586,6 +3600,11 @@ public class Tank extends Entity {
                 specialAbilities.merge(BattleForceSPA.MHQ, 1, Integer::sum);
             } else if (m.getType().hasFlag(MiscType.F_OFF_ROAD)) {
                 specialAbilities.put(BattleForceSPA.ORO, null);
+            } else if (m.getType().hasFlag(MiscType.F_DUNE_BUGGY)) {
+                specialAbilities.put(BattleForceSPA.DUN, null);
+            } else if (m.getType().hasFlag(MiscType.F_TRACTOR_MODIFICATION)
+                    || m.getType().hasFlag(MiscType.F_TRAILER_MODIFICATION)) {
+                specialAbilities.put(BattleForceSPA.HTC, null);
             }
             //TODO: Fire-resistant chassis mod
         }
@@ -3593,7 +3612,12 @@ public class Tank extends Entity {
     
     @Override
     public boolean isTurretLocation(int index) {
-        return index > 0;
+        return index > 1;
+    }
+
+    @Override
+    public boolean isBattleForceRearLocation(int index) {
+        return index == 1;
     }
 
     @Override

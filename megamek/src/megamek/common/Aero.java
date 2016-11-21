@@ -4103,13 +4103,27 @@ public class Aero extends Entity {
     public int getBattleForceStructurePoints() {
         return (int) Math.ceil(getSI() * 0.50);
     }
+    
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 2;
+    }
 
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
-        if (location == LOC_AFT) {
-            return 0.0;
+        if ((index == 0 && location != LOC_AFT && !rearMounted)
+                || (index == 1 && (location == LOC_AFT || rearMounted))) {
+            return 1.0;            
         }
-        return 1.0; 
+        return 0; 
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        if (index == 1) {
+            return "REAR";
+        }
+        return "";
     }
     
     /**
@@ -4117,6 +4131,13 @@ public class Aero extends Entity {
      */
     @Override
     public int getBattleForceTotalHeatGeneration(boolean allowRear) {
+        return getBattleForceTotalHeatGeneration(allowRear, true);
+    }
+    
+    /**
+     * AlphaStrike requires a separate heat calculation with short range weapons excluded
+     */
+    public int getBattleForceTotalHeatGeneration(boolean allowRear, boolean includeSR) {
         int totalHeat = 0;
 
         for (Mounted mount : getWeaponList()) {
@@ -4127,6 +4148,7 @@ public class Aero extends Entity {
                 }
             }
             if (weapon.hasFlag(WeaponType.F_ONESHOT)
+                || (!includeSR && weapon.getLongRange() < BATTLEFORCEMEDIUMRANGE)
                 || (allowRear && !mount.isRearMounted() && mount.getLocation() != LOC_AFT)
                 || (!allowRear && (mount.isRearMounted() || mount.getLocation() == LOC_AFT))) {
                 continue;
@@ -4170,6 +4192,10 @@ public class Aero extends Entity {
         }
         if (isVSTOL()) {
             specialAbilities.put(BattleForceSPA.VSTOL, null);
+        }
+        if (getEntityType() == ETYPE_AERO
+                && getBattleForceTotalHeatGeneration(false, false) - 4 > getHeatCapacity()) {
+            specialAbilities.put(BattleForceSPA.OVL, null);
         }
     }
 

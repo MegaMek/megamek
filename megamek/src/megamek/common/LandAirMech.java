@@ -107,6 +107,7 @@ public class LandAirMech extends BipedMech {
                 specialAbilities.merge(BattleForceSPA.BOMB, 1, Integer::sum);
             }
         }
+        specialAbilities.put(BattleForceSPA.LAM, null);
     }
 
     public long getEntityType(){

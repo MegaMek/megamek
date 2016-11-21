@@ -2131,7 +2131,22 @@ public class Protomech extends Entity {
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
+        for (Mounted m : getEquipment()) {
+            if (!(m.getType() instanceof MiscType)) {
+                continue;
+            }
+            if (m.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                if (getWeight() < 10) {
+                    specialAbilities.put(BattleForceSPA.MCS, null);
+                } else {
+                    specialAbilities.put(BattleForceSPA.UCS, null);                    
+                }
+            }
+        }
         specialAbilities.put(BattleForceSPA.SOA, null);
+        if (getMovementMode().equals(EntityMovementMode.WIGE)) {
+            specialAbilities.put(BattleForceSPA.GLD, null);
+        }
     }
     
     @Override

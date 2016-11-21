@@ -1768,5 +1768,13 @@ public class Dropship extends SmallCraft {
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT | Entity.ETYPE_DROPSHIP;
     }
+    
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        if (getNCrew() >= 30) {
+            specialAbilities.put(BattleForceSPA.CRW, (int)Math.round(getNCrew() / 60.0));
+        }
+    }
 
 }

@@ -1268,6 +1268,9 @@ public class Jumpship extends Aero {
         if (hasLF()) {
             specialAbilities.put(BattleForceSPA.LF, null);
         }        
+        if (getNCrew() >= 60) {
+            specialAbilities.put(BattleForceSPA.CRW, (int)Math.round(getNCrew() / 120.0));
+        }
     }
     
     @Override

@@ -556,7 +556,7 @@ public class BattleForceElement {
         w.write("\t");
         w.write(Integer.toString((int)Math.round(armor)));
         if (threshold >= 0) {
-            w.write("-" + threshold);//TODO: threshold
+            w.write("-" + (int)Math.ceil(threshold));//TODO: threshold
         }
         w.write("\t");
         w.write(Integer.toString(structure));
@@ -579,7 +579,7 @@ public class BattleForceElement {
         sj = new StringJoiner(", ");
         for (int loc = 0; loc < damage.length; loc++) {
             if (damage[loc].getOverheat() >= 10) {
-                sj.add(locationNames[loc] + damage[loc].getOverheat());
+                sj.add(locationNames[loc] + Math.max(4, (int)Math.round(damage[loc].getOverheat() / 10.0)));
             }
         }
         if (sj.length() > 0) {

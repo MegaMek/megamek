@@ -19892,7 +19892,7 @@ public class Server implements Runnable {
                 // example...
                 continue;
             }
-            String reason = game.getPlanetaryConditions().whyDoomed(entity);
+            String reason = game.getPlanetaryConditions().whyDoomed(entity, game);
             if (null != reason) {
                 r = new Report(6015);
                 r.subject = entity.getId();

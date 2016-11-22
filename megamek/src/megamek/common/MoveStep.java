@@ -2546,6 +2546,7 @@ public class MoveStep implements Serializable {
      * Amount of movement points required to move from start to dest
      */
     protected void calcMovementCostFor(IGame game, MoveStep prevStep) {
+        ITerrainFactory tf = Terrains.getTerrainFactory();
         final Coords prev = prevStep.getPosition();
         final int prevEl = prevStep.getElevation();
         final EntityMovementMode moveMode = getEntity()
@@ -2564,6 +2565,23 @@ public class MoveStep implements Serializable {
 
         mp = 1;
 
+        // If the weather is Ice Storm check pavement road or bridge for black ice
+        // FIXME Testing for bridge and road is easy but how do you separate it from other terrains?
+        if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM
+                && destHex.hasPavement()
+                && !destHex.containsTerrain(Terrains.BLACK_ICE)) {
+            int blackIceChance = Compute.d6();
+            if (blackIceChance > 3) {
+                destHex.addTerrain(tf.createTerrain(Terrains.BLACK_ICE, 1));
+            }
+        }
+
+        // apply penalties for pavement, roads, and bridges(?)
+        if (destHex.containsTerrain(Terrains.BLACK_ICE) 
+                && isPavementStep()
+                && isCareful()) {
+            mp += 1;
+        }
 
         // 0 MP infantry units can move 1 hex
         if (isInfantry

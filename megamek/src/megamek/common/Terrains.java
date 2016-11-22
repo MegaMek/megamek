@@ -37,16 +37,17 @@ public class Terrains implements ITerrainFactory {
     //Sheer Cliffs
 
     //Terrain modifications
-    public static final int PAVEMENT = 12;
-    public static final int ROAD     = 13;
-    public static final int SWAMP    = 14; //1: normal 2: just became quicksand 3: quicksand
-    public static final int MUD      = 15;
-    public static final int RAPIDS   = 16; //1: rapids 2: torrent
-    public static final int ICE      = 17;
-    public static final int SNOW     = 18; // 1: thin 2: deep
-    public static final int FIRE     = 19; // 1: normal, fire 2: inferno fire, 3: inferno bombs, 4: inferno IV
-    public static final int SMOKE    = 20; // 1: light smoke 2: heavy smoke 3:light LI smoke 4: Heavy LI smoke
-    public static final int GEYSER   = 21; // 1: dormant 2: active 3: magma vent
+    public static final int PAVEMENT    = 12;
+    public static final int ROAD        = 13;
+    public static final int SWAMP       = 14; //1: normal 2: just became quicksand 3: quicksand
+    public static final int MUD         = 15;
+    public static final int RAPIDS      = 16; //1: rapids 2: torrent
+    public static final int ICE         = 17;
+    public static final int BLACK_ICE   = 18;
+    public static final int SNOW        = 19; // 1: thin 2: deep
+    public static final int FIRE        = 20; // 1: normal, fire 2: inferno fire, 3: inferno bombs, 4: inferno IV
+    public static final int SMOKE       = 21; // 1: light smoke 2: heavy smoke 3:light LI smoke 4: Heavy LI smoke
+    public static final int GEYSER      = 22; // 1: dormant 2: active 3: magma vent
     //unimplemented
     //Black Ice
     //Bug Storm
@@ -63,34 +64,34 @@ public class Terrains implements ITerrainFactory {
     
 
     //Building stuff
-    public static final int BUILDING       = 22; // 1: light 2: medium 3: heavy 4: hardened 5: wall
-    public static final int BLDG_CF        = 23;
-    public static final int BLDG_ELEV      = 24;
-    public static final int BLDG_BASEMENT_TYPE = 25; // level equals BasemenType, one of the values of the BasementType enum
-    public static final int BLDG_CLASS     = 26; //1: hangars 2: fortresses 3: gun emplacements
-    public static final int BLDG_ARMOR     = 27;
+    public static final int BUILDING            = 23; // 1: light 2: medium 3: heavy 4: hardened 5: wall
+    public static final int BLDG_CF             = 24;
+    public static final int BLDG_ELEV           = 25;
+    public static final int BLDG_BASEMENT_TYPE  = 26; // level equals BasemenType, one of the values of the BasementType enum
+    public static final int BLDG_CLASS          = 27; //1: hangars 2: fortresses 3: gun emplacements
+    public static final int BLDG_ARMOR          = 28;
     //leaving this empty will be interpreted as standard
-    public static final int BRIDGE         = 28;
-    public static final int BRIDGE_CF      = 29;
-    public static final int BRIDGE_ELEV    = 30;
-    public static final int FUEL_TANK      = 31;
-    public static final int FUEL_TANK_CF   = 32;
-    public static final int FUEL_TANK_ELEV = 33;
-    public static final int FUEL_TANK_MAGN = 34;
+    public static final int BRIDGE              = 29;
+    public static final int BRIDGE_CF           = 30;
+    public static final int BRIDGE_ELEV         = 31;
+    public static final int FUEL_TANK           = 32;
+    public static final int FUEL_TANK_CF        = 33;
+    public static final int FUEL_TANK_ELEV      = 34;
+    public static final int FUEL_TANK_MAGN      = 35;
 
     // special types
-    public static final int IMPASSABLE = 35;
-    public static final int ELEVATOR   = 36; // level=elevation it moves to,exits=d6 rolls it moves on
-    public static final int FORTIFIED  = 37;
-    public static final int SCREEN     = 38;
+    public static final int IMPASSABLE = 36;
+    public static final int ELEVATOR   = 37; // level=elevation it moves to,exits=d6 rolls it moves on
+    public static final int FORTIFIED  = 38;
+    public static final int SCREEN     = 39;
 
     //fluff
-    public static final int FLUFF = 39;
-    public static final int ARMS  = 40; // blown off arms for use as clubs, level = number of arms in that hex
-    public static final int LEGS  = 41; // blown off legs for use as clubs, level = number of legs in that hex
+    public static final int FLUFF = 40;
+    public static final int ARMS  = 41; // blown off arms for use as clubs, level = number of arms in that hex
+    public static final int LEGS  = 42; // blown off legs for use as clubs, level = number of legs in that hex
 
-    public static final int METAL_CONTENT = 42; // Is there metal content that will block magscan sensors?
-    public static final int BLDG_BASE_COLLAPSED = 43; //1 means collapsed
+    public static final int METAL_CONTENT = 43; // Is there metal content that will block magscan sensors?
+    public static final int BLDG_BASE_COLLAPSED = 44; //1 means collapsed
 
     /**
      * Keeps track of the different type of terrains that can have exits.
@@ -101,7 +102,7 @@ public class Terrains implements ITerrainFactory {
     private static final String[] names = { "none", "woods", "water", "rough",
         "rubble", "jungle", "sand", "tundra", "magma", "planted_fields",
         "heavy_industrial", "space",
-        "pavement", "road", "swamp", "mud", "rapids", "ice", "snow",
+        "pavement", "road", "swamp", "mud", "rapids", "ice", "black ice", "snow",
         "fire", "smoke", "geyser",
         "building", "bldg_cf", "bldg_elev", "bldg_basement_type", "bldg_class", "bldg_armor", "bridge", "bridge_cf",
         "bridge_elev", "fuel_tank", "fuel_tank_cf", "fuel_tank_elev", "fuel_tank_magn",
@@ -211,6 +212,8 @@ public class Terrains implements ITerrainFactory {
                 return "Swamp";
             case(ICE):
                 return "Ice";
+            case(BLACK_ICE):
+                return "Black Ice";
             case(FORTIFIED):
                 return "Improved position";
             case(GEYSER):
@@ -397,6 +400,7 @@ public class Terrains implements ITerrainFactory {
             return 200;
         case(ROAD):
             return 150;
+        case(BLACK_ICE):
         case(ICE):
             return 40;
         case(JUNGLE):

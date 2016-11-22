@@ -520,7 +520,9 @@ public class PlanetaryConditions implements Serializable {
     public int getMovementMods(Entity en) {
         int mod = 0;
 
-        //wind mods
+        // weather mods are calculated based on conditional effects ie extreme temperatures, wind
+
+        // wind mods
         switch(windStrength) {
         case(WI_LIGHT_GALE):
             if(!(en instanceof BattleArmor)
@@ -553,26 +555,7 @@ public class PlanetaryConditions implements Serializable {
             break;
         }
 
-        //weather mods (clarified in an email exchange with TPTB)
-        switch(weatherConditions) {
-        case(WE_LIGHT_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || ((en instanceof Aero) && !en.isAirborne())) {
-                mod -= 1;
-            }
-            break;
-        case(WE_MOD_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || ((en instanceof Aero) && !en.isAirborne())) {
-                mod -= 2;
-            }
-            break;
-        case(WE_HEAVY_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || ((en instanceof Aero) && !en.isAirborne())) {
-                mod -= 3;
-            }
-            break;
-        }
-
-        //atmospheric pressure mods
+        // atmospheric pressure mods
         switch(atmosphere) {
         case(ATMO_THIN):
             if((en.getMovementMode() == EntityMovementMode.HOVER)
@@ -591,12 +574,10 @@ public class PlanetaryConditions implements Serializable {
             break;
         }
 
-        //temperature difference
+        // temperature difference
         if((en instanceof Tank) || (en instanceof Infantry) || (en instanceof Protomech)) {
             mod -= Math.abs(getTemperatureDifference(50,-30));
         }
-
-        //TODO: awaiting clarification on the effect of other weather on movement
 
         return mod;
     }

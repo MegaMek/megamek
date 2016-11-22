@@ -27850,6 +27850,10 @@ public class Server implements Runnable {
         if (boards_dir.isDirectory()) {
             getBoardSizesInDir(boards_dir, board_sizes);
         }
+        boards_dir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
+        if (boards_dir.isDirectory()) {
+            getBoardSizesInDir(boards_dir, board_sizes);
+        }
 
         return board_sizes;
     }
@@ -27875,6 +27879,11 @@ public class Server implements Runnable {
         ArrayList<String> tempList = new ArrayList<String>();
         Comparator<String> sortComp = StringUtil.stringComparator();
         scanForBoardsInDir(boardDir, "", dimensions, tempList);
+        // Check boards in userData dir
+        boardDir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
+        if (boardDir.isDirectory()) {
+            scanForBoardsInDir(boardDir, "", dimensions, tempList);
+        }
         // if there are any boards, add these:
         if (tempList.size() > 0) {
             boards.add(MapSettings.BOARD_RANDOM);

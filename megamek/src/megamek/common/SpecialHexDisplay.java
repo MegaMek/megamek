@@ -16,7 +16,6 @@ package megamek.common;
 
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.File;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -33,7 +32,7 @@ public class SpecialHexDisplay implements Serializable {
     private static final long serialVersionUID = 27470795993329492L;
 
     public enum Type {
-        ARTILLERY_AUTOHIT(new File(Configuration.hexesDir(), 
+        ARTILLERY_AUTOHIT(new MegaMekFile(Configuration.hexesDir(), 
                 "artyauto.gif").toString()) { //$NON-NLS-1$
             @Override
             public boolean drawBefore() {

@@ -189,8 +189,8 @@ public class MechSummaryCache {
         Vector<MechSummary> vMechs = new Vector<MechSummary>();
         Set<String> sKnownFiles = new HashSet<String>();
         long lLastCheck = 0;
-        entityVerifier = EntityVerifier.getInstance(new File(getUnitCacheDir(),
-                EntityVerifier.CONFIG_FILENAME));
+        entityVerifier = EntityVerifier.getInstance(new MegaMekFile(getUnitCacheDir(),
+                EntityVerifier.CONFIG_FILENAME).getFile());
         hFailedFiles = new HashMap<String, String>();
 
         EquipmentType.initializeTypes(); // load master equipment lists
@@ -199,8 +199,8 @@ public class MechSummaryCache {
         loadReport.append("Reading unit files:\n");
 
         if (!ignoreUnofficial) {
-            File unit_cache_path = new File(getUnitCacheDir(),
-                    FILENAME_UNITS_CACHE);
+            File unit_cache_path = new MegaMekFile(getUnitCacheDir(),
+                    FILENAME_UNITS_CACHE).getFile();
             // check the cache
             try {
                 if (unit_cache_path.exists()

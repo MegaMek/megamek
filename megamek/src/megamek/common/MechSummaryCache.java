@@ -246,6 +246,11 @@ public class MechSummaryCache {
         boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
                 lLastCheck, Configuration.unitsDir(), ignoreUnofficial);
 
+        File userDataUnits = new File(Configuration.userdataDir(), Configuration.unitsDir().toString());
+        if (userDataUnits.isDirectory()) {
+            bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, userDataUnits, ignoreUnofficial);
+        }
+
         // convert to array
         m_data = new MechSummary[vMechs.size()];
         vMechs.copyInto(m_data);

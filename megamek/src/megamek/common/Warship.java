@@ -360,6 +360,10 @@ public class Warship extends Jumpship {
         return 8;
     }
 
+    public int getNumAlphaStrikeWeaponsLocations() {
+        return 4;
+    }
+
     @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         if (index == location) {
@@ -368,9 +372,54 @@ public class Warship extends Jumpship {
         return 0;
     }
     
+    public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
+        switch (location) {
+        case LOC_NOSE:
+        case LOC_FLS:
+        case LOC_FRS:
+            if (index == 0) {
+                return 1.0;
+            }
+            break;
+        case LOC_LBS:
+            if (index == 1) {
+                return 1.0;
+            }
+            break;            
+        case LOC_RBS:
+            if (index == 2) {
+                return 1.0;
+            }
+            break;            
+        case LOC_AFT:
+        case LOC_ALS:
+        case LOC_ARS:
+            if (index == 3) {
+                return 1.0;
+            }
+            break;
+        }
+        return 0;
+    }
+
     @Override
     public String getBattleForceLocationName(int index) {
         return getLocationAbbrs()[index];
+    }
+    
+    @Override
+    public String getAlphaStrikeLocationName(int index) {
+        switch (index) {
+        case 0:
+            return getLocationAbbrs()[LOC_NOSE];
+        case 1:
+            return getLocationAbbrs()[LOC_LBS];
+        case 2:
+            return getLocationAbbrs()[LOC_RBS];
+        case 3:
+            return getLocationAbbrs()[LOC_AFT];
+        }
+        return "";
     }
     
     public long getEntityType(){

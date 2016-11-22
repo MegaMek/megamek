@@ -12516,23 +12516,44 @@ Targetable, RoundUpdated, PhaseUpdated {
                             weapon.getRackSize()) * 2;
                 }
                 break;
+            case AmmoType.T_SRM_ADVANCED:
+                baseDamage = Compute.calculateClusterHitTableAmount(8,
+                        weapon.getRackSize() * 2);
+                break;
             case AmmoType.T_ATM:
-                minRangeDamageModifier = 1;
+                //Proto weapon will be fusillade, which uses the same damage as iATM.
+                if (!weapon.hasFlag(WeaponType.F_PROTO_WEAPON)) {
+                    minRangeDamageModifier = 1;
+                    switch (range) {
+                    case Entity.BATTLEFORCESHORTRANGE:
+                        baseDamage = Compute
+                        .calculateClusterHitTableAmount(9,
+                                weapon.getRackSize()) * 3;
+                        break;
+                    case Entity.BATTLEFORCEMEDIUMRANGE:
+                        baseDamage = Compute
+                        .calculateClusterHitTableAmount(9,
+                                weapon.getRackSize()) * 2;
+                        break;
+                    case Entity.BATTLEFORCELONGRANGE:
+                        baseDamage = Compute
+                        .calculateClusterHitTableAmount(9,
+                                weapon.getRackSize());
+                        break;
+                    }
+                    break;
+                }
+                //Else fall through to iATM
+            case AmmoType.T_IATM:
                 switch (range) {
                 case Entity.BATTLEFORCESHORTRANGE:
-                    baseDamage = Compute
-                    .calculateClusterHitTableAmount(9,
-                            weapon.getRackSize()) * 3;
+                    baseDamage = weapon.getRackSize() * 3;
                     break;
                 case Entity.BATTLEFORCEMEDIUMRANGE:
-                    baseDamage = Compute
-                    .calculateClusterHitTableAmount(9,
-                            weapon.getRackSize()) * 2;
+                    baseDamage = weapon.getRackSize() * 2;
                     break;
                 case Entity.BATTLEFORCELONGRANGE:
-                    baseDamage = Compute
-                    .calculateClusterHitTableAmount(9,
-                            weapon.getRackSize());
+                    baseDamage = weapon.getRackSize();
                     break;
                 }
                 break;
@@ -12958,6 +12979,9 @@ Targetable, RoundUpdated, PhaseUpdated {
         
         public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
             for (Mounted m : getEquipment()) {
+                if (!(m.getType() instanceof MiscType)) {
+                    continue;
+                }
                 if (m.getType().hasFlag(MiscType.F_BAP)) {
                     specialAbilities.put(BattleForceSPA.RCN, null);
                     if (m.getType().hasFlag(MiscType.F_BLOODHOUND)) {

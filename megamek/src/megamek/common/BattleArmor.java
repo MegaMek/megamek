@@ -2168,6 +2168,14 @@ public class BattleArmor extends Infantry {
         return baseDamage * damageModifier;
     }
     
+    public double getAlphaStrikeWeaponDamage(Mounted mount, int range) {
+        double baseDamage = super.getBattleForceWeaponDamage(mount, range);
+        if (range == 0) {
+            baseDamage += countWorkingMisc(MiscType.F_ARMORED_GLOVE);
+        }
+        return baseDamage * (AlphaStrikeTroopFactor[getShootingStrength()] + 0.5);
+    }
+    
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);

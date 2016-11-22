@@ -1745,6 +1745,37 @@ public class Infantry extends Entity {
         return 0;
     }
     
+    protected static final int[] AlphaStrikeTroopFactor = {
+        0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6,
+        7, 8, 8, 9, 9, 10, 10, 11, 11, 12,
+        13, 14, 15, 16, 16, 17, 17, 17, 18, 18
+    };
+    
+    public double[] getAlphaStrikeInfantryDamage() {
+        double[] retVal = new double[4];
+        if (getPrimaryWeapon() == null) {
+            return retVal;
+        }
+        
+        int baseRange = 0;
+        if (getSecondaryWeapon() != null && getSecondaryN() >= 2) {
+            baseRange = getSecondaryWeapon().getInfantryRange();
+        } else if (getPrimaryWeapon() != null){
+            baseRange = getPrimaryWeapon().getInfantryRange();
+        }
+        int baseDamage = (int)Math.ceil(getDamagePerTrooper()
+                * AlphaStrikeTroopFactor[getShootingStrength()]);
+        int maxRange = baseRange * 3;
+        retVal[0] = baseDamage;
+        if (maxRange >= 4) {
+            retVal[1] = baseDamage;
+        }
+        if (maxRange >= 16) {
+            retVal[2] = baseDamage;
+        }
+        return retVal;
+    }
+    
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);

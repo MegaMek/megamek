@@ -17,6 +17,7 @@ v0.41.27-git
 + Issue #416: Kill Count Victory ignores kills from destroyed units
 + Bug: Fix to Ammo Names and restoring Low/Profile for vehicles.
 + Issue #410: Underlying terrain modifiers always applying to skid checks
++ Issue #48: Combine, Dual Saw, Chainsaw, improper damage against conv inf
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.

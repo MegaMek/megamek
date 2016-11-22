@@ -923,16 +923,25 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             String[] names = new String[clubs.size()];
             for (int loop = 0; loop < names.length; loop++) {
                 Mounted club = clubs.get(loop);
+                boolean targetConvInf = (target instanceof Infantry)
+                        && !(target instanceof BattleArmor);
                 final ToHitData toHit = ClubAttackAction.toHit(clientgui
                         .getClient().getGame(), cen, target, club, ash
                         .getAimTable());
                 final int dmg = ClubAttackAction.getDamageFor(ce(), club,
-                        (target instanceof Infantry)
-                                && !(target instanceof BattleArmor));
+                        targetConvInf);
+                // Need to do this outside getDamageFor, as it only returns int
+                String dmgString = dmg + "";
+                if ((((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)
+                        || ((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW)
+                        || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
+                        && targetConvInf) {
+                    dmgString = "1d6";
+                }
                 names[loop] = Messages.getString(
                                 "PhysicalDisplay.ChooseClubDialog.line", //$NON-NLS-1$
                                 new Object[] { club.getName(),
-                                        toHit.getValueAsString(), dmg });
+                                        toHit.getValueAsString(), dmgString });
             }
 
             String input = (String) JOptionPane
@@ -981,13 +990,20 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, club, ash.getAimTable());
-        
+        boolean targetConvInf = (target instanceof Infantry)
+                && !(target instanceof BattleArmor);
         final double clubOdds = Compute.oddsAbove(toHit.getValue(),
                 isAptPiloting);
         final int clubDmg = ClubAttackAction.getDamageFor(en, club,
-                (target instanceof Infantry)
-                        && !(target instanceof BattleArmor));
-        
+                targetConvInf);
+        // Need to do this outside getDamageFor, as it only returns int
+        String dmgString = clubDmg + "";
+        if ((((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
+                && targetConvInf) {
+            dmgString = "1d6";
+        }
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", //$NON-NLS-1$ 
                 new Object[] { target.getDisplayName() });
         String message = Messages
@@ -996,7 +1012,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 toHit.getValueAsString(),
                                 clubOdds,
                                 toHit.getDesc(),
-                                clubDmg,
+                                dmgString,
                                 toHit.getTableDesc() });
         
         if (isMeleeMaster) {

@@ -495,8 +495,9 @@ public class BattleForceElement {
         }
 
         totalHeat = en.getBattleForceTotalHeatGeneration(false) - 4;
-        if (totalHeat > en.getHeatCapacity()) {
-            double adjustment = en.getHeatCapacity() / totalHeat;
+        int heatCapacity = calcHeatCapacity(en);
+        if (totalHeat > heatCapacity) {
+            double adjustment = heatCapacity / totalHeat;
             for (int loc = 0; loc < en.getNumBattleForceWeaponsLocations(); loc++) {
                 if (en.isBattleForceRearLocation(loc)) {
                     continue;
@@ -601,6 +602,37 @@ public class BattleForceElement {
             }
         }
     }
+    
+    public int calcHeatCapacity(Entity en) {
+        int capacity = 0;
+
+        for (Mounted mounted : en.getEquipment()) {
+            if (mounted.getType() instanceof AmmoType
+                    && ((AmmoType)mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
+                capacity++;
+            }
+            if (!(mounted.getType() instanceof MiscType)) {
+                continue;
+            }
+            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+                capacity += 1;
+            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                capacity += 2;
+            } else if (mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                capacity += 2;
+            } else if (mounted.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+                capacity += 1;
+            } else if (mounted.getType().hasFlag(MiscType.F_COOLANT_SYSTEM)) {
+                capacity += 2;
+            } else if (mounted.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                capacity += 1;
+            } else if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
+                capacity += 3;
+            }
+        }
+        return capacity;
+    }
+
     public String getBFDamageString(int loc) {
         StringBuilder str = new StringBuilder(bfLocationNames[loc]);
         if (bfLocationNames[loc].length() > 0) {

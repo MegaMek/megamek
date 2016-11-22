@@ -1115,8 +1115,8 @@ public class Jumpship extends Aero {
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
-        // accumulate some more thrust
-        // We assume that thrust will be accumulated. If this is proven wrong by
+        // accumulate some more 
+        // We assume that  will be accumulated. If this is proven wrong by
         // the movement
         // then we make the proper adjustments in server#processMovement
         // until I hear from Welshman, I am assuming that you cannot "hold back"
@@ -1193,6 +1193,11 @@ public class Jumpship extends Aero {
     @Override
     public boolean usesWeaponBays() {
         return true;
+    }
+    
+    @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        moves.put("k", (int)(getStationKeepingThrust() * 10));
     }
 
     @Override

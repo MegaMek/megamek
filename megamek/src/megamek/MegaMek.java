@@ -409,6 +409,7 @@ public class MegaMek {
         private static final String OPTION_UNIT_EXPORT = "export"; //$NON-NLS-1$
         private static final String OPTION_OFFICAL_UNIT_LIST = "oul"; //$NON-NLS-1$
         private static final String OPTION_UNIT_BATTLEFORCE_CONVERSION = "bfc"; //$NON-NLS-1$
+        private static final String OPTION_UNIT_ALPHASTRIKE_CONVERSION = "asc"; //$NON-NLS-1$
         private static final String OPTION_DATADIR = "data"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
@@ -501,6 +502,13 @@ public class MegaMek {
                             OPTION_UNIT_BATTLEFORCE_CONVERSION)) {
                 nextToken();
                 processUnitBattleForceConverter();
+            }
+
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(
+                            OPTION_UNIT_ALPHASTRIKE_CONVERSION)) {
+                nextToken();
+                processUnitAlphaStrikeConverter();
             }
 
             if ((getToken() == TOK_OPTION)
@@ -699,7 +707,7 @@ public class MegaMek {
                                 .getEntity();
                         
                         BattleForceElement bfe = new BattleForceElement(entity);
-                        bfe.writeCsv(w);
+                        bfe.writeCsv(w, false);
 /*
                         w.write(unit.getName());
                         w.write("\t");
@@ -739,6 +747,47 @@ public class MegaMek {
                         w.write(entity.getBattleForceSpecialAbilities());
                         w.newLine();
  */                   }
+                    w.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            System.exit(0);
+
+        }
+
+        private void processUnitAlphaStrikeConverter() {
+
+            String filename;
+            if (getToken() == TOK_LITERAL) {
+                filename = getTokenValue();
+                nextToken();
+
+                if (!new File("./docs").exists()) {
+                    new File("./docs").mkdir();
+                }
+
+                try {
+                    File file = new File("./docs/" + filename);
+                    BufferedWriter w = new BufferedWriter(new FileWriter(file));
+                    w.write("Megamek Unit AlphaStrike Converter");
+                    w.newLine();
+                    w.write("This file can be regenerated with java -jar MegaMek.jar -asc filename");
+                    w.newLine();
+                    w.write("Element\tType\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilites");
+                    w.newLine();
+
+                    MechSummary[] units = MechSummaryCache.getInstance()
+                            .getAllMechs();
+                    for (MechSummary unit : units) {
+                        Entity entity = new MechFileParser(
+                                unit.getSourceFile(), unit.getEntryName())
+                                .getEntity();
+                        
+                        BattleForceElement bfe = new BattleForceElement(entity);
+                        bfe.writeCsv(w, true);
+                   }
                     w.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();

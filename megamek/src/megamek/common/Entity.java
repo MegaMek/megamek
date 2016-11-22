@@ -12008,16 +12008,18 @@ Targetable, RoundUpdated, PhaseUpdated {
             return baseBFMove;
         }
 
-        public long getAlphaStrikeMovementPoints() {
-            return getBattleForceMovementPoints() * 2;
-        }
-
         public long getBattleForceJumpPoints() {
             return 0;
         }
-
-        public long getAlphaStrikeJumpPoints() {
-            return getJumpMP() * 2;
+        
+        public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+            moves.put(getMovementModeAsBattleForceString(), getWalkMP() * 2);
+            if (getJumpMP() > 0) {
+                if (getWalkMP() == getJumpMP()) {
+                    moves.remove("");
+                }
+                moves.put("j", getJumpMP() * 2);
+            }
         }
 
         /**

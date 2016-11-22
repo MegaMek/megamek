@@ -4082,8 +4082,8 @@ public class Aero extends Entity {
     }
 
     @Override
-    public long getAlphaStrikeMovementPoints() {
-        return getBattleForceMovementPoints();
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        moves.put(getMovementModeAsBattleForceString(), getWalkMP());
     }
 
     @Override

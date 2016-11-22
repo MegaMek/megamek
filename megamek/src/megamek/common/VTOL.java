@@ -596,6 +596,15 @@ public class VTOL extends Tank {
     }
 
     @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        if (getEquipment().stream().anyMatch(m -> m.getType().hasFlag(MiscType.F_JET_BOOSTER))) {
+            moves.put("v", (int)Math.round(getWalkMP() * 2.5));
+        } else {
+            moves.put("v", getWalkMP() * 2);
+        }
+    }
+    
+    @Override
     public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
         if (index == 1 && location == LOC_REAR) {
             return 1.0;

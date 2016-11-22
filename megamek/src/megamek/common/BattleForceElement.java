@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
@@ -69,12 +70,14 @@ public class BattleForceElement {
     private int jumpPoints;
     private String movementMode;
     private String movement;
+    private LinkedHashMap<String,Integer> asMovement = new LinkedHashMap<>();
     private double armor;
+    private double asArmorDivisor = 1.0; //used to modify conventional infantry armor value for AlphaStrike
     private double threshold = -1;
     private int structure;
     private WeaponLocation[] damage;
     private String[] locationNames;
-    private int points;
+    private double points;
     private EnumMap<BattleForceSPA,Integer> specialAbilities = new EnumMap<>(BattleForceSPA.class);
     
     public BattleForceElement(Entity en) {
@@ -85,7 +88,14 @@ public class BattleForceElement {
         jumpPoints = (int)en.getBattleForceJumpPoints();
         movementMode = en.getMovementModeAsBattleForceString();
         movement = en.getBattleForceMovement();
+        en.setAlphaStrikeMovement(asMovement);
         armor = en.getBattleForceArmorPoints();
+        if (en.getEntityType() == Entity.ETYPE_INFANTRY) {
+            asArmorDivisor = ((Infantry)en).getDamageDivisor();
+            if (((Infantry)en).isMechanized()) {
+                asArmorDivisor /= 2.0;
+            }
+        }
         if (en instanceof Aero) {
             threshold = armor / 10.0;
         }
@@ -100,7 +110,7 @@ public class BattleForceElement {
             }
         }
         computeDamage(en);
-        points = en.getBattleForcePoints();
+        points = en.calculateBattleValue(true, true) / 100.0;
         en.addBattleForceSpecialAbilities(specialAbilities);
     }
     
@@ -132,12 +142,28 @@ public class BattleForceElement {
         return movement;
     }
     
-    public int getArmor() {
+    public int getFinalArmor() {
         return (int)Math.round(armor);
     }
     
-    public int getThreshold() {
+    public int getASFinalArmor() {
+        return (int)Math.round(armor * asArmorDivisor);
+    }
+    
+    public double getArmor() {
+        return armor;
+    }
+    
+    public double getASArmorDivisor() {
+        return asArmorDivisor;
+    }
+    
+    public int getFinalThreshold() {
         return (int)Math.ceil(threshold);
+    }
+    
+    public double getThreshold() {
+        return threshold;
     }
     
     public int getStructure() {
@@ -148,7 +174,11 @@ public class BattleForceElement {
         return locationNames[loc];
     }
 
-    public int getPoints() {
+    public int getFinalPoints() {
+        return Math.max(1, (int)Math.round(points));
+    }
+    
+    public double getPoints() {
         return points;
     }
     
@@ -591,14 +621,25 @@ public class BattleForceElement {
         return str.toString();
     }
     
-    public void writeCsv(BufferedWriter w) throws IOException {
+    public void writeCsv(BufferedWriter w, boolean alphaStrike) throws IOException {
         w.write(name);
+        if (alphaStrike) {
+            w.write("\t");
+            w.write(asUnitType.toString());
+        }
         w.write("\t");
         w.write(Integer.toString(size));
         w.write("\t");
-        w.write(movement);
+        if (alphaStrike) {
+            w.write(asMovement.entrySet().stream()
+                    .map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
+                            + "\"" + e.getKey())
+                    .collect(Collectors.joining("/")));
+        } else {
+            w.write(movement);
+        }
         w.write("\t");
-        w.write(Integer.toString((int)Math.round(armor)));
+        w.write(Integer.toString(alphaStrike? getASFinalArmor() : getFinalArmor()));
         if (threshold >= 0) {
             w.write("-" + (int)Math.ceil(threshold));//TODO: threshold
         }
@@ -632,10 +673,11 @@ public class BattleForceElement {
             w.write("-");
         }
         w.write("\t");
-        w.write(Integer.toString(points));
+        w.write(Integer.toString(getFinalPoints()));
         w.write("\t");
         w.write(specialAbilities.keySet().stream()
-                .filter(spa -> spa.usedByBattleForce() && !spa.isDoor())
+                .filter(spa -> alphaStrike? spa.usedByAlphaStrike() : spa.usedByBattleForce()
+                        && !spa.isDoor())
                 .map(spa -> formatSPAString(spa, false))
                 .collect(Collectors.joining(", ")));
         w.newLine();

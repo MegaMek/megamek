@@ -7450,6 +7450,39 @@ public abstract class Mech extends Entity {
     }
 
     @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        double move = getWalkMP();
+
+        if (hasMASCAndSuperCharger()) {
+            move *= 1.5;
+        } else if (hasMASC()) {
+            move *= 1.25;
+        }
+
+        if (hasMPReducingHardenedArmor()) {
+            move--;
+        }
+        
+        if (hasShield()) {
+            move--;
+        }
+
+        int baseMove = (int)Math.round(move * 2);
+        if (getJumpMP() * 2 == baseMove) {
+            moves.put("j", baseMove);
+        } else {
+            moves.put("", baseMove);
+            if (getJumpMP() > 0) {
+                moves.put("j", getJumpMP() * 2);
+            }
+        }
+        int umu = this.getAllUMUCount();
+        if (umu > 0) {
+            moves.put("s", umu * 2);
+        }
+    }
+    
+    @Override
     public long getBattleForceJumpPoints() {
         int baseBFMove = getWalkMP();
         int baseBFJump = getJumpMP();

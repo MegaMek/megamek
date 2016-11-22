@@ -1999,6 +1999,17 @@ public class BattleArmor extends Infantry {
     }    
 
     @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        if (getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
+            moves.put("j", getOriginalJumpMP() * 2);
+        } else if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
+            moves.put("s", getActiveUMUCount() * 2);
+        } else {
+            moves.put(getMovementModeAsBattleForceString(), getOriginalWalkMP() * 2);
+        }
+    }
+    
+    @Override
     public int getBattleForceArmorPoints() {
         double armor = 0;
         for (int i = 1; i < locations(); i++) {

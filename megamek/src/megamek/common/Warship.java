@@ -16,6 +16,8 @@
  */
 package megamek.common;
 
+import java.util.Map;
+
 
 /**
  * @author Jay Lawson
@@ -327,7 +329,12 @@ public class Warship extends Jumpship {
     public double getBVTypeModifier() {
         return 0.8;
     }
-    
+
+    @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        moves.put("", getWalkMP());
+    }
+
     @Override
     public int getBattleForceSize() {
         //The tables are on page 356 of StartOps

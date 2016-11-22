@@ -1673,6 +1673,12 @@ public class Infantry extends Entity {
     }
 
     @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        moves.put(getMovementModeAsBattleForceString(),
+                Math.max(getWalkMP(), getJumpMP()) * 2);
+    }
+    
+    @Override
     public int getBattleForceSize() {
         //The tables are on page 356 of StartOps
         return 1;

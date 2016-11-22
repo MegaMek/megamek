@@ -3465,6 +3465,31 @@ public class Tank extends Entity {
     }
 
     @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        double move = getWalkMP();
+
+        if (getEquipment().stream().anyMatch(m -> m.getType() instanceof MiscType
+                && m.getType().hasFlag(MiscType.F_MASC)
+                && m.getType().hasSubType(MiscType.S_SUPERCHARGER))) {
+            move *= 1.25;
+        }
+
+        int baseMove = (int)Math.round(move * 2);
+        if (getJumpMP() == baseMove) {
+            moves.put("j", baseMove);
+        } else {
+            moves.put(getMovementModeAsBattleForceString(), baseMove);
+            if (getJumpMP() > 0) {
+                moves.put("j", getJumpMP() * 2);
+            }
+        }
+        int umu = getAllUMUCount();
+        if (umu > 0) {
+            moves.put("s", umu * 2);
+        }
+    }
+    
+    @Override
     /**
      * returns the battle force structure points for a vehicle.
      * Composite and Reinforced structures are Mech only, so we don't need to worry

@@ -7685,7 +7685,7 @@ public class Server implements Runnable {
 
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
-                    prevStep, prevFacing, curFacing, lastPos, curPos,
+                    prevStep, step, prevFacing, curFacing, lastPos, curPos,
                     isInfantry, distance - 1);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Have an entity-meaningful PSR message.

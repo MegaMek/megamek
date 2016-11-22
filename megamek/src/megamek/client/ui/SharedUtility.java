@@ -167,7 +167,7 @@ public class SharedUtility {
 
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
-                    prevStep, prevFacing, curFacing, lastPos, curPos,
+                    prevStep, step, prevFacing, curFacing, lastPos, curPos,
                     isInfantry, distance - 1);
             checkNag(rollTarget, nagReport, psrList);
 

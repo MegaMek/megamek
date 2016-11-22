@@ -6503,12 +6503,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * roll for the piloting skill check.
      */
     public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex,
-            EntityMovementType overallMoveType, MoveStep prevStep,
+            EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep,
             int prevFacing, int curFacing, Coords lastPos, Coords curPos,
             boolean isInfantry, int distance) {
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        addPilotingModifierForTerrain(roll, lastPos);
+        // If we aren't traveling along a road, apply terrain modifiers
+        if (!((prevStep == null || prevStep.isPavementStep()) && currStep.isPavementStep())) {
+            addPilotingModifierForTerrain(roll, lastPos);
+        }
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,

@@ -863,7 +863,7 @@ public class Board implements Serializable, IBoard {
         }
 
         // check data integrity
-        if (isValid(nd, errBuff) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
+        if (isValid(nd, nw, nh, errBuff) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
             newData(nw, nh, nd, errBuff);
         } else if (errBuff == null){
             System.err.println("board data invalid");
@@ -873,16 +873,27 @@ public class Board implements Serializable, IBoard {
 
     public boolean isValid() {
         // Search for black-listed hexes
-        return isValid(data, null);
+        return isValid(data, width, height, null);
     }
 
-    private boolean isValid(IHex[] data, StringBuffer errBuff) {
+    private boolean isValid(IHex[] data, int width, int height, StringBuffer errBuff) {
         // Search for black-listed hexes
-        for (IHex hex : data) {
-            if (hex == null)
-                return false;
-            if (!hex.isValid(errBuff))
-                return false;
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                IHex hex = data[(y * width) + x];
+                if (hex == null) {
+                    return false;
+                }
+                StringBuffer currBuff = new StringBuffer();
+                boolean valid = hex.isValid(currBuff);
+                // Return early if we aren't logging errors
+                if (!valid && (errBuff == null)) {
+                    return false;
+                } else if (!valid) { // Otherwise, log the error for later output
+                    errBuff.append("Hex " + String.format("%1$02d%02$2d", x + 1, y + 1) + " is invalid!\n");
+                    errBuff.append(currBuff.toString().replaceAll("^", "\t"));
+                }
+            }
         }
         return true;
     }

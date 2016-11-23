@@ -7636,7 +7636,7 @@ public abstract class Mech extends Entity {
         // finish the max heat calculations
         if (this.getJumpMP() > 0) {
             totalHeat += getJumpHeat(getJumpMP());
-        } else if (!((Mech) this).isIndustrial() && hasEngine()) {
+        } else if (!isIndustrial() && hasEngine()) {
             totalHeat += getEngine().getRunHeat(this);
         }
 

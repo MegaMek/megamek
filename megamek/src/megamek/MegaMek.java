@@ -37,6 +37,7 @@ import megamek.client.TimerSingleton;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.common.Aero;
+import megamek.common.AlphaStrikeElement;
 import megamek.common.BattleArmor;
 import megamek.common.BattleForceElement;
 import megamek.common.Configuration;
@@ -707,7 +708,7 @@ public class MegaMek {
                                 .getEntity();
                         
                         BattleForceElement bfe = new BattleForceElement(entity);
-                        bfe.writeCsv(w, false);
+                        bfe.writeCsv(w);
 /*
                         w.write(unit.getName());
                         w.write("\t");
@@ -785,8 +786,8 @@ public class MegaMek {
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
                         
-                        BattleForceElement bfe = new BattleForceElement(entity);
-                        bfe.writeCsv(w, true);
+                        AlphaStrikeElement ase = new AlphaStrikeElement(entity);
+                        ase.writeCsv(w);
                    }
                     w.close();
                 } catch (Exception ex) {

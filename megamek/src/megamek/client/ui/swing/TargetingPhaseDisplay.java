@@ -621,7 +621,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         // Determine which entities are spotted
         Set<Integer> spottedEntities = new HashSet<>();
         for (Entity target : game.getEntitiesVector()) {
-            if (target.isSpotting()) {
+            if (!target.isEnemyOf(ce()) && target.isSpotting()) {
                 spottedEntities.add(target.getSpotTargetId());
             }
         }

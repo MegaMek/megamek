@@ -319,5 +319,5 @@ public interface IHex extends Cloneable {
 
     public abstract void setCoords(Coords c);
 
-    public abstract boolean isValid();
+    public abstract boolean isValid(StringBuffer errBuff);
 }

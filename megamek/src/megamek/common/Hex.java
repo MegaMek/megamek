@@ -622,9 +622,9 @@ public class Hex implements IHex, Serializable {
     }
 
     @Override
-    public boolean isValid() {
+    public boolean isValid(StringBuffer errBuff) {
         for (ITerrain terrain : terrains.values()) {
-            if (terrain != null && !terrain.isValid())
+            if (terrain != null && !terrain.isValid(errBuff))
                 return false;
         }
         return true;

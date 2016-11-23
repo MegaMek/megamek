@@ -562,34 +562,38 @@ public class Terrain implements ITerrain, Serializable {
         }
     }
 
-    public boolean isValid() {
-        if (type == Terrains.WOODS && level < 1)
-            level = 1;
-        if (type == Terrains.WOODS && level > 3)
-            level = 3;
-        if (type == Terrains.SWAMP && (level < 1 || level > 3))
-            return false;
-        if (type == Terrains.ROUGH && (level < 1 || level > 2))
-            return false;
-        if (type == Terrains.JUNGLE && (level < 1 || level > 3))
-            return false;
-        if (type == Terrains.WATER && (level < 0))
-            return false;
-        if (type == Terrains.RAPIDS && (level < 1 || level > 2))
-            return false;
-        if (type == Terrains.ICE && level != 1)
-            return false;
-        if (type == Terrains.GEYSER && (level < 1 || level > 3))
-            return false;
-        if (type == Terrains.FORTIFIED && level != 1)
-            return false;
-        if (type == Terrains.RUBBLE && (level < 1 || level > 6))
-            return false;
-        if (type == Terrains.FIRE && (level < 1 || level > 4))
-            return false;
-        if (type == Terrains.SMOKE && (level < 1 || level > 5))
-            return false;
+    public boolean isValid(StringBuffer errBuff) {
+        boolean rv = true;
+        if (type == Terrains.WOODS && (level < 1 || level > 3)) {
+            rv = false;
+        } else if (type == Terrains.SWAMP && (level < 1 || level > 3)) {
+            rv = false;
+        } else if (type == Terrains.ROUGH && (level < 1 || level > 2)) {
+            rv = false;
+        } else if (type == Terrains.JUNGLE && (level < 1 || level > 3)) {
+            rv = false;
+        } else if (type == Terrains.WATER && (level < 0)) {
+            rv = false;
+        } else if (type == Terrains.RAPIDS && (level < 1 || level > 2)) {
+            rv = false;
+        } else if (type == Terrains.ICE && level != 1) {
+            rv = false;
+        } else if (type == Terrains.GEYSER && (level < 1 || level > 3)) {
+            rv = false;
+        } else if (type == Terrains.FORTIFIED && level != 1) {
+            rv = false;
+        } else if (type == Terrains.RUBBLE && (level < 1 || level > 6)) {
+            rv = false;
+        } else if (type == Terrains.FIRE && (level < 1 || level > 4)) {
+            rv = false;
+        } else if (type == Terrains.SMOKE && (level < 1 || level > 5)) {
+            rv = false;
+        }
+        
+        if (!rv && (errBuff != null)) {
+            errBuff.append("Illegal level! For " + toString() + "\n");
+        }
 
-        return true;
+        return rv;
     }
 }

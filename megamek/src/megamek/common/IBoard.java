@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardListener;
 
 /**
@@ -52,8 +53,10 @@ public interface IBoard {
      *            the height dimension.
      * @param data
      *            new hex data appropriate for the board.
+     * @param errBuff
+     *            A buffer for storing error messages, if any.  This is allowed to be null.
      */
-    public abstract void newData(int width, int height, IHex[] data);
+    public abstract void newData(int width, int height, IHex[] data, @Nullable StringBuffer errBuff);
 
     /**
      * Creates a new data set for the board, with the specified dimensions;

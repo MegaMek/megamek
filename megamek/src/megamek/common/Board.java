@@ -26,9 +26,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -237,12 +239,12 @@ public class Board implements Serializable, IBoard {
      * 
      * @see megamek.common.IBoard#newData(int, int, megamek.common.IHex[])
      */
-    public void newData(int width, int height, IHex[] data) {
+    public void newData(int width, int height, IHex[] data, StringBuffer errBuff) {
         this.width = width;
         this.height = height;
         this.data = data;
 
-        initializeAll();
+        initializeAll(errBuff);
         processBoardEvent(new BoardEvent(this, null, BoardEvent.BOARD_NEW_BOARD));
     }
 
@@ -252,7 +254,7 @@ public class Board implements Serializable, IBoard {
      * @see megamek.common.IBoard#newData(int, int)
      */
     public void newData(int width, int height) {
-        newData(width, height, new IHex[width * height]);
+        newData(width, height, new IHex[width * height], null);
     }
 
     public Enumeration<Coords> getHexesAtDistance(Coords coords, int distance) {
@@ -319,7 +321,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Initialize all hexes
      */
-    protected void initializeAll() {
+    protected void initializeAll(StringBuffer errBuff) {
         // Initialize all buildings.
         buildings.removeAllElements();
         if (bldgByCoords == null) {
@@ -351,8 +353,15 @@ public class Board implements Serializable, IBoard {
                         } catch (IllegalArgumentException excep) {
                             // Log the error and remove the
                             // building from the board.
-                            System.err.println("Unable to create building.");
-                            excep.printStackTrace();
+                            if (errBuff == null) {
+                                System.err.println("Unable to create building.");
+                                excep.printStackTrace();
+                            } else {
+                                errBuff.append("Unable to create building at " + coords.toString() + "!\n");
+                                StringWriter errors = new StringWriter();
+                                excep.printStackTrace(new PrintWriter(errors));
+                                errBuff.append(errors.toString());
+                            }
                             curHex.removeTerrain(Terrains.BUILDING);
                         }
                     } // End building-is-new
@@ -767,6 +776,10 @@ public class Board implements Serializable, IBoard {
      * Loads this board from an InputStream
      */
     public void load(InputStream is) {
+        load(is, null);
+    }
+        
+    public void load(InputStream is, StringBuffer errBuff) {
         int nw = 0, nh = 0, di = 0;
         IHex[] nd = new IHex[0];
         resetStoredElevation();
@@ -850,9 +863,9 @@ public class Board implements Serializable, IBoard {
         }
 
         // check data integrity
-        if (isValid(nd) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
-            newData(nw, nh, nd);
-        } else {
+        if (isValid(nd, errBuff) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
+            newData(nw, nh, nd, errBuff);
+        } else if (errBuff == null){
             System.err.println("board data invalid");
         }
 
@@ -860,15 +873,15 @@ public class Board implements Serializable, IBoard {
 
     public boolean isValid() {
         // Search for black-listed hexes
-        return isValid(data);
+        return isValid(data, null);
     }
 
-    private boolean isValid(IHex[] data) {
+    private boolean isValid(IHex[] data, StringBuffer errBuff) {
         // Search for black-listed hexes
         for (IHex hex : data) {
             if (hex == null)
                 return false;
-            if (!hex.isValid())
+            if (!hex.isValid(errBuff))
                 return false;
         }
         return true;

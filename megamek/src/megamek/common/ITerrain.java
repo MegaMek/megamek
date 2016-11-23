@@ -117,6 +117,6 @@ public interface ITerrain {
 
     public abstract void getUnstuckModifier(int elev, PilotingRollData rollTarget);
     
-    public boolean isValid();
+    public boolean isValid(StringBuffer errBuff);
 
 }

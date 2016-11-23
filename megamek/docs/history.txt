@@ -19,6 +19,7 @@ v0.41.27-git
 + Issue #410: Underlying terrain modifiers always applying to skid checks
 + Issue #48: Combine, Dual Saw, Chainsaw, improper damage against conv inf
 + Issue #411: MM allows illegal terrain combinations in boards
++ Added tooltip entry for spotting; spotters now display who they're spotting
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.

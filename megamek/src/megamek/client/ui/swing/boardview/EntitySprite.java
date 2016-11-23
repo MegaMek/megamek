@@ -869,7 +869,12 @@ class EntitySprite extends Sprite {
                     bv.game.getEntity(entity.getSwarmAttackerId())
                             .getDisplayName());
         }
-        
+
+        // Spotting
+        if (entity.isSpotting()) {
+            addToTT("Spotting", BR, bv.game.getEntity(entity.getSpotTargetId()).getDisplayName());
+        }
+
         // If DB, add information about who sees this Entity
         if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             StringBuffer playerList = new StringBuffer();

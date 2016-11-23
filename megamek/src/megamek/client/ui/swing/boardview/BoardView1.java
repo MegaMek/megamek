@@ -173,6 +173,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 
 /**
@@ -3919,15 +3920,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void setFiringSolutions(Entity attacker,
-            Map<Integer, ToHitData> firingSolutions) {
+            Map<Integer, FiringSolution> firingSolutions) {
 
         clearFiringSolutionData();
         if (firingSolutions == null) {
             return;
         }
-        for (ToHitData thd : firingSolutions.values()) {
-            FiringSolutionSprite sprite = new FiringSolutionSprite(
-                    this, thd.getValue(), thd.getRange(), thd.getLocation());
+        for (FiringSolution sln : firingSolutions.values()) {
+            FiringSolutionSprite sprite = new FiringSolutionSprite(this, sln);
             firingSprites.add(sprite);
         }
     }

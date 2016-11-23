@@ -90,6 +90,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.FiringSolution;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -831,7 +832,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
-        Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
+        Map<Integer, FiringSolution> fs = new HashMap<>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
                     OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
@@ -844,7 +845,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(ce().getPosition().distance(target.getPosition()));
-                fs.put(target.getId(), thd);
+                fs.put(target.getId(), new FiringSolution(thd, false));
             }
         }
         clientgui.getBoardView().setFiringSolutions(ce(), fs);

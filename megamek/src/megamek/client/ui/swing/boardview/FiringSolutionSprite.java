@@ -9,8 +9,8 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Coords;
 import megamek.common.TargetRoll;
+import megamek.common.util.FiringSolution;
 
 /**
  * Sprite for displaying generic firing information. This is used for
@@ -38,17 +38,19 @@ class FiringSolutionSprite extends HexSprite {
             BoardView1.HEX_H * 3 / 4 - 2);
 
     // sprite object data
+    private FiringSolution fsoln;
     private String range;
     private String toHitMod;
     private boolean noHitPossible = false;
     private Shape finalHex;
 
-    public FiringSolutionSprite(BoardView1 boardView1, final int thm,
-            final int r, final Coords l) {
-        super(boardView1, l);
+    public FiringSolutionSprite(BoardView1 boardView1, final FiringSolution fsoln) {
+        super(boardView1, fsoln.getToHitData().getLocation());
         updateBounds();
         
+        this.fsoln = fsoln;
         // modifier
+        int thm = fsoln.getToHitData().getValue();
         toHitMod = Integer.toString(thm);
         if (thm >= 0) toHitMod = "+" + toHitMod;
         if ((thm == TargetRoll.IMPOSSIBLE)
@@ -56,6 +58,7 @@ class FiringSolutionSprite extends HexSprite {
             noHitPossible = true;
         
         // range
+        int r = fsoln.getToHitData().getRange();
         range = Integer.toString(r);
 
         // create the small hex shape
@@ -121,6 +124,10 @@ class FiringSolutionSprite extends HexSprite {
             graph.draw(finalHex);
         }
         
+        if (fsoln.isTargetSpotted()) {
+
+        }
+
         graph.dispose();
     }
 

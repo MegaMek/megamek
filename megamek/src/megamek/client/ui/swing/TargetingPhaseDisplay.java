@@ -71,6 +71,7 @@ import megamek.common.actions.TriggerAPPodAction;
 import megamek.common.actions.TriggerBPodAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.FiringSolution;
 import megamek.common.weapons.ArtilleryWeapon;
 
 /*
@@ -614,7 +615,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
-        Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
+        Map<Integer, FiringSolution> fs = new HashMap<>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
                     OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
@@ -627,7 +628,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(ce().getPosition().distance(target.getPosition()));
-                fs.put(target.getId(), thd);
+                fs.put(target.getId(), new FiringSolution(thd, false));
             }
         }
         clientgui.getBoardView().setFiringSolutions(ce(), fs);

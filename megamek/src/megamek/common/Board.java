@@ -26,11 +26,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -358,9 +356,7 @@ public class Board implements Serializable, IBoard {
                                 excep.printStackTrace();
                             } else {
                                 errBuff.append("Unable to create building at " + coords.toString() + "!\n");
-                                StringWriter errors = new StringWriter();
-                                excep.printStackTrace(new PrintWriter(errors));
-                                errBuff.append(errors.toString());
+                                errBuff.append(excep.getMessage() + "\n");
                             }
                             curHex.removeTerrain(Terrains.BUILDING);
                         }
@@ -384,10 +380,15 @@ public class Board implements Serializable, IBoard {
                             }
                         } catch (IllegalArgumentException excep) {
                             // Log the error and remove the
-                            // building from the board.
-                            System.err.println("Unable to create building.");
-                            excep.printStackTrace();
-                            curHex.removeTerrain(Terrains.BUILDING);
+                            // fuel tank from the board.
+                            if (errBuff == null) {
+                                System.err.println("Unable to create fuel tank.");
+                                excep.printStackTrace();
+                            } else {
+                                errBuff.append("Unable to create fuel tank at " + coords.toString() + "!\n");
+                                errBuff.append(excep.getMessage() + "\n");
+                            }
+                            curHex.removeTerrain(Terrains.FUEL_TANK);
                         }
                     } // End building-is-new
                 } // End hex-has-building
@@ -409,9 +410,14 @@ public class Board implements Serializable, IBoard {
                             }
                         } catch (IllegalArgumentException excep) {
                             // Log the error and remove the
-                            // building from the board.
-                            System.err.println("Unable to create bridge.");
-                            excep.printStackTrace();
+                            // bridge from the board.
+                            if (errBuff == null) {
+                                System.err.println("Unable to create bridge.");
+                                excep.printStackTrace();
+                            } else {
+                                errBuff.append("Unable to create bridge at " + coords.toString() + "!\n");
+                                errBuff.append(excep.getMessage() + "\n");
+                            }
                             curHex.removeTerrain(Terrains.BRIDGE);
                         }
 

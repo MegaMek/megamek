@@ -22,6 +22,7 @@ v0.41.27-git
 + Added tooltip entry for spotting; spotters now display who they're spotting
 + Issue #422: Firing solutions now indicates units that are spotted
 + Issue #395: New MechWarrior minimap icons: circle, or infantry icon w/ dot
++ Issue #423: Squadron Armor tab is empty
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.

@@ -25,10 +25,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -832,6 +834,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
+
+        // Determine which entities are spotted
+        Set<Integer> spottedEntities = new HashSet<>();
+        for (Entity target : game.getEntitiesVector()) {
+            if (target.isSpotting()) {
+                spottedEntities.add(target.getSpotTargetId());
+            }
+        }
+
+        // Calculate firing solutions
         Map<Integer, FiringSolution> fs = new HashMap<>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
@@ -845,7 +857,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(ce().getPosition().distance(target.getPosition()));
-                fs.put(target.getId(), new FiringSolution(thd, false));
+                fs.put(target.getId(), new FiringSolution(thd, spottedEntities.contains(target.getId())));
             }
         }
         clientgui.getBoardView().setFiringSolutions(ce(), fs);

@@ -79,6 +79,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
+import megamek.common.MechWarrior;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.Targetable;
@@ -1338,6 +1339,9 @@ public class MiniMap extends JPanel {
                     GlyphVector gv = font.createGlyphVector(fontContext, s);
                     g2.fill(gv.getOutline((int)STRAT_CX-stringWidth/2,(float)SYMBOLSIZE.getHeight()/3.0f));
                 }
+            } else if (entity instanceof MechWarrior) {
+                g2.setColor(Color.black);
+                g2.fillOval(0 - 25, 0 - 25, 50, 50);
             }
             // Draw the unit icon in black
             g2.draw(form);
@@ -1345,23 +1349,43 @@ public class MiniMap extends JPanel {
             g2.setTransform(svTransform);
             
         } else {
+            // Drawn a circle for MechWarriors
+            if (entity instanceof MechWarrior) {
+                // Draw a slight dark border
+                int radius = unitSize - 3;
+                int dia = radius * 2;
+                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
+                g.setColor(new Color(100,100,100,200));
+                g.drawOval(baseX - radius, baseY - radius, dia, dia);
 
-            // Draw a slight dark border to set off the icon from the background
-            ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
-            g.setColor(new Color(100,100,100,200));
-            g.drawPolygon(xPoints, yPoints, xPoints.length);
-            
-            // Fill the icon according to the player color
-            Color pColor = new Color(
-                    PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
-            g.setColor(pColor);
-            g.fillPolygon(xPoints, yPoints, xPoints.length);
-            
-            // Draw a white border to better show the player color
-            // maybe useful later: if (!entity.isSelectableThisTurn()) {
-            ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
-            g.setColor(Color.WHITE);
-            g.drawPolygon(xPoints, yPoints, xPoints.length);
+                // Fill the icon according to player color
+                Color pColor = new Color(
+                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
+                g.setColor(pColor);
+                g.fillOval(baseX - radius, baseY - radius, dia, dia);
+
+                // Draw a white border to better show the player color
+                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
+                g.setColor(Color.WHITE);
+                g.drawOval(baseX - radius, baseY - radius, dia, dia);
+            } else {
+                // Draw a slight dark border to set off the icon from the background
+                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
+                g.setColor(new Color(100,100,100,200));
+                g.drawPolygon(xPoints, yPoints, xPoints.length);
+
+                // Fill the icon according to the player color
+                Color pColor = new Color(
+                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
+                g.setColor(pColor);
+                g.fillPolygon(xPoints, yPoints, xPoints.length);
+
+                // Draw a white border to better show the player color
+                // maybe useful later: if (!entity.isSelectableThisTurn()) {
+                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
+                g.setColor(Color.WHITE);
+                g.drawPolygon(xPoints, yPoints, xPoints.length);
+            }
 
         }
         

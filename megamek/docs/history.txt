@@ -25,6 +25,7 @@ v0.41.27-git
 + Issue #423: Squadron Armor tab is empty
 + Issue #367: Building Fires Not Shown On Minimap
 + Bug: Jumping can never be considered "along a road"; fixes some missed PSRs
++ Issue #402: Jumping meks should not be allowed to stand after falling
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.

@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
@@ -60,5 +61,17 @@ public abstract class UACWeapon extends AmmoWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new UltraWeaponHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = getRackSize() * 1.5;
+            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage / 10.0;
     }
 }

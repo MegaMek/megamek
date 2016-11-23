@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -50,4 +51,20 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
         return new StreakLRMHandler(toHit, waa, game, server);
     }
 
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = getRackSize();
+            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage / 10.0;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_STANDARD;
+    }
 }

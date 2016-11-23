@@ -81,4 +81,19 @@ public abstract class SRMWeapon extends MissileWeapon {
         return new SRMHandler(toHit, waa, game, server);
 
     }
+    
+    @Override
+    public double getBattleForceDamage(int range) {
+        return super.getBattleForceDamage(range) * 2;
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, int baSquadSize) {
+        return super.getBattleForceDamage(range, baSquadSize) * 2;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_SRM;
+    }
 }

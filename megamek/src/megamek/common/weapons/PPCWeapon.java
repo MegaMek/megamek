@@ -17,7 +17,10 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -51,4 +54,29 @@ public abstract class PPCWeapon extends EnergyWeapon {
         return new PPCHandler(toHit, waa, game, server);
     }
 
+    @Override
+    public double getBattleForceDamage(int range, Mounted capacitor) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            //Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
+            if (getDamage() == DAMAGE_VARIABLE
+                    && range == Entity.BATTLEFORCEMEDIUMRANGE
+                    && getLongRange() < Entity.BATTLEFORCELONGRANGE) {
+                damage = getDamage(Entity.BATTLEFORCELONGRANGE);
+            } else {
+                damage = getDamage(range);
+            }
+            if (capacitor != null && capacitor.getType() instanceof MiscType
+                    && ((MiscType)capacitor.getType()).hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                damage = (damage + 5) / 2;
+            }
+            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+            if (getToHitModifier() != 0) {
+                damage -= damage * getToHitModifier() * 0.05; 
+            }
+        }
+        return damage / 10.0;        
+    }
 }

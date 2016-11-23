@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.Entity;
 import megamek.common.TechConstants;
 
 /**
@@ -62,5 +63,18 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_F;
         
+    }
+
+    @Override
+    public int getBattleForceHeatDamage(int range) {
+        if (range <= Entity.BATTLEFORCEMEDIUMRANGE) {
+            return 3;
+        }
+        return 0;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_HEAT;
     }
 }

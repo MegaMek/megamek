@@ -13,7 +13,11 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -47,6 +51,38 @@ public abstract class MissileWeapon extends AmmoWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new MissileWeaponHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        if (range > getLongRange()) {
+            return 0;
+        }
+        int clusterRoll = 7;
+        if (fcs != null && fcs.getType() instanceof MiscType) {
+            if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS)) {
+                clusterRoll = 9;
+            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_V)) {
+                clusterRoll = 10;
+            }
+        }
+        double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
+        if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+            damage = adjustBattleForceDamageForMinRange(damage);
+        }
+        return damage / 10.0;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, int baSquadSize) {
+        if (range > getLongRange()) {
+            return 0;
+        }
+        double damage = Compute.calculateClusterHitTableAmount(7, getRackSize() * baSquadSize);
+        if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+            damage = adjustBattleForceDamageForMinRange(damage);
+        }
+        return damage / 10.0;
     }
 
 }

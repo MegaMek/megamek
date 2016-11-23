@@ -185,7 +185,17 @@ public class WeaponType extends EquipmentType {
     public static final int WEAPON_BURST_7D6 = 14;
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
-
+    
+    public static final int BFCLASS_STANDARD = 0;
+    public static final int BFCLASS_LRM = 1;
+    public static final int BFCLASS_SRM = 2;
+    public static final int BFCLASS_MML = 3; //Not a separate category, but adds to both SRM and LRM
+    public static final int BFCLASS_TORP = 4;
+    public static final int BFCLASS_AC = 5;
+    public static final int BFCLASS_FLAK = 6;
+    public static final int BFCLASS_IATM = 7;
+    public static final int BFCLASS_REL = 8;
+    public static final int BFCLASS_HEAT = 9;
 
     public static String[] classNames =
         { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon" };
@@ -552,6 +562,77 @@ public class WeaponType extends EquipmentType {
             default:
                 return EquipmentType.get("Misc Bay");
         }
+    }
+    
+    /**
+     * Damage calculation for BattleForce and AlphaStrike
+     * @param range - the range in hexes
+     * @return - damage in BattleForce scale
+     */
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            //Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
+            if (getDamage() == DAMAGE_VARIABLE
+                    && range == Entity.BATTLEFORCEMEDIUMRANGE
+                    && getLongRange() < Entity.BATTLEFORCELONGRANGE) {
+                damage = getDamage(Entity.BATTLEFORCELONGRANGE);
+            } else {
+                damage = getDamage(range);
+            }
+            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+            if (getToHitModifier() != 0) {
+                damage -= damage * getToHitModifier() * 0.05; 
+            }
+        }
+        return damage / 10.0;
+    }
+    
+    /**
+     * Damage calculation for BattleForce and AlphaStrike for missile weapons that may have advanced fire control
+     * @param range - the range in hexes
+     * @param fcs   - linked Artemis or Apollo FCS (null for none)
+     * @return - damage in BattleForce scale
+     */
+    public double getBattleForceDamage (int range, Mounted fcs) {
+        return getBattleForceDamage(range);
+    }
+    
+    public double adjustBattleForceDamageForMinRange(double damage) {
+        return damage * (12 - getMinimumRange()) / 12.0;
+    }
+
+    /**
+     * BattleForce-scale damage for BattleArmor, using cluster hits table based on squad size.
+     * AlphaStrike uses a different method.
+     * @param range - the range in hexes
+     * @param baSquadSize - the number of suits in the squad/point/level i
+     * @return - damage in BattleForce scale
+     */
+    public double getBattleForceDamage(int range, int baSquadSize) {
+        return Compute.calculateClusterHitTableAmount(7, baSquadSize) * getBattleForceDamage(range);
+    }
+    
+    /**
+     * Reports the class of weapons for those that are tracked separately from standard damage
+     * @return
+     */
+    public int getBattleForceClass() {
+        return BFCLASS_STANDARD;
+    }
+    
+    /**
+     * 
+     * @return - BattleForce scale damage for weapons that have the HEAT special ability
+     */
+    public int getBattleForceHeatDamage(int range) {
+        return 0;
+    }
+    
+    public boolean hasIndirectFire() {
+        return false;
     }
 
     /**

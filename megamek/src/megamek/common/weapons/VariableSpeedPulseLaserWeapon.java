@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -69,4 +70,29 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
         return damageLong;
     }
 
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            //Variable damage weapons that cannot reach into the BF long range band use LR damage for the MR band
+            if (range == Entity.BATTLEFORCEMEDIUMRANGE
+                    && getLongRange() < Entity.BATTLEFORCELONGRANGE) {
+                damage = getDamage(Entity.BATTLEFORCELONGRANGE);
+            } else {
+                damage = getDamage(range);
+            }
+            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+            //To hit mods vary with range
+            if (range <= getShortRange()) {
+                damage *= 1.15;
+            } else if (range <= getMediumRange()) {
+                damage *= 1.10;
+            } else {
+                damage *= 1.05;
+            }
+        }
+        return damage / 10.0;
+    }
 }

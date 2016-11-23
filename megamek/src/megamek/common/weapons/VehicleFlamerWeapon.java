@@ -62,4 +62,18 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
             return new VehicleFlamerHandler(toHit, waa, game, server);
         }
     }
+
+    @Override
+    public int getBattleForceHeatDamage(int range) {
+        //Clan ER Flamer does damage at medium
+        if (getMediumRange() > range) {
+            return getDamage();
+        }
+        return 0;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_HEAT;
+    }
 }

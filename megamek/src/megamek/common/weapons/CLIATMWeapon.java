@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
@@ -53,5 +54,32 @@ public abstract class CLIATMWeapon extends MissileWeapon {
         
         // MML does different handlers here. I think I'll go with implementing different ammo in the Handler.
         return new CLIATMHandler(toHit, waa, game, server);
+    }
+
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = getRackSize();
+            if (range < Entity.BATTLEFORCESHORTRANGE) {
+                damage *= 3;
+            } else if (range < Entity.BATTLEFORCEMEDIUMRANGE) {
+                damage *= 2;
+            }
+            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage / 10.0;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_IATM;
+    }
+    
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
     }
 }

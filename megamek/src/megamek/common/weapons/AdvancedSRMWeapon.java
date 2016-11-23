@@ -14,6 +14,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -49,5 +51,37 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new AdvancedSRMHandler(toHit, waa, game, server);
+    }
+
+    /**
+     * non-squad size version for AlphaStrike base damage
+     */
+    @Override 
+    public double getBattleForceDamage(int range) {
+        if (range > getLongRange()) {
+            return 0;
+        }
+        double damage = Compute.calculateClusterHitTableAmount(8, getRackSize()) * 2;
+        if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+            damage = adjustBattleForceDamageForMinRange(damage);
+        }
+        return damage / 10.0;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, int baSquadSize) {
+        if (range > getLongRange()) {
+            return 0;
+        }
+        double damage = Compute.calculateClusterHitTableAmount(8, getRackSize() * baSquadSize);
+        if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+            damage = adjustBattleForceDamageForMinRange(damage);
+        }
+        return damage / 10.0;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_STANDARD;
     }
 }

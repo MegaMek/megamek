@@ -18,6 +18,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -85,5 +87,22 @@ public class ISSilverBulletGauss extends GaussWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new LBXHandler(toHit, waa, game, server);
     }
+    
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = Compute.calculateClusterHitTableAmount(7, getRackSize()) / 10.0;
+            damage *= 1.05; // -1 to hit
+            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage;
+    }    
 
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_FLAK;
+    }
 }

@@ -18,6 +18,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -54,4 +56,26 @@ public abstract class HAGWeapon extends GaussWeapon {
         return new HAGWeaponHandler(toHit, waa, game, server);
     }
 
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            int clusterRoll = 5;
+            if (range < Entity.BATTLEFORCEMEDIUMRANGE) {
+                clusterRoll = 9;
+            } else if (range < Entity.BATTLEFORCELONGRANGE) {
+                clusterRoll = 7;
+            }
+            damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
+            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage / 10.0;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_FLAK;
+    }
 }

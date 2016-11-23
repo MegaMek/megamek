@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -50,4 +51,20 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
         return new ThunderBoltWeaponHandler(toHit, waa, game, server);
     }
 
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = getRackSize();
+            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage / 10.0;
+    }
+    
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
 }

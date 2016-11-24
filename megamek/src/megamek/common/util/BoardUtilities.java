@@ -998,7 +998,8 @@ public class BoardUtilities {
 
                 //heavy rain - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
                 //rapids in all depth 1+ water
-                if(weatherCond == PlanetaryConditions.WE_HEAVY_RAIN) {
+                if ((weatherCond == PlanetaryConditions.WE_HEAVY_RAIN)
+                        || (weatherCond == PlanetaryConditions.WE_GUSTING_RAIN)) {
                     if(hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && (hex.depth() > 0)) {
                         hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 1));
                     }

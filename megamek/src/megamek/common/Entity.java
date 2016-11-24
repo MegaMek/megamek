@@ -12174,7 +12174,7 @@ Targetable, RoundUpdated, PhaseUpdated {
         }
 
         public int getNumAlphaStrikeWeaponsLocations() {
-            return 1;
+            return getNumBattleForceWeaponsLocations();
         }
 
         /**

@@ -63,9 +63,4 @@ public abstract class FlamerWeapon extends EnergyWeapon {
         }
         return 0;
     }
-    
-    @Override
-    public int getBattleForceClass() {
-        return BFCLASS_HEAT;
-    }
 }

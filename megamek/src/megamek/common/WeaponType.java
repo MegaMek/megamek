@@ -186,6 +186,9 @@ public class WeaponType extends EquipmentType {
     // Used for BA vs BA damage for BA Plasma Rifle
     public static final int WEAPON_PLASMA = 15;
     
+    public static String[] classNames =
+        { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon" };
+
     public static final int BFCLASS_STANDARD = 0;
     public static final int BFCLASS_LRM = 1;
     public static final int BFCLASS_SRM = 2;
@@ -195,10 +198,15 @@ public class WeaponType extends EquipmentType {
     public static final int BFCLASS_FLAK = 6;
     public static final int BFCLASS_IATM = 7;
     public static final int BFCLASS_REL = 8;
-    public static final int BFCLASS_HEAT = 9;
-
-    public static String[] classNames =
-        { "Unknown", "Laser", "Point Defense", "PPC", "Pulse Laser", "Artilery", "AMS", "AC", "LBX", "LRM", "SRM", "MRM", "ATM", "Rocket Launcher", "Capital Laser", "Capital PPC", "Capital AC", "Capital Gauss", "Capital Missile", "AR10", "Screen", "Sub Capital Cannon" };
+    public static final int BFCLASS_CAPITAL = 9;
+    public static final int BFCLASS_SUBCAPITAL = 10;
+    public static final int BFCLASS_CAPITAL_MISSILE = 11;
+    public static final int BFCLASS_NUM = 12;
+    
+    public static final String[] BF_CLASS_NAMES = {
+        "", "LRM", "SRM", "MML", "TORP", "AC", "FLAK", "iATM",
+        "REL", "CAP", "SCAP", "CMISS"
+    };
 
     // protected RangeType rangeL;
     protected int heat;

@@ -86,9 +86,4 @@ public class CLPlasmaCannon extends AmmoWeapon {
         }
         return 0;
     }
-    
-    @Override
-    public int getBattleForceClass() {
-        return BFCLASS_HEAT;
-    }
 }

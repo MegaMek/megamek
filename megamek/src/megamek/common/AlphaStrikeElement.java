@@ -64,6 +64,15 @@ public class AlphaStrikeElement extends BattleForceElement {
             }
             armor *= divisor;
         }
+        if (en instanceof BattleArmor) {
+            int ap = en.countWorkingMisc(MiscType.F_AP_MOUNT);
+            if (en.hasWorkingMisc(MiscType.F_ARMORED_GLOVE)) {
+                ap++;
+            }
+            double apDamage = ap * 0.05 * (TROOP_FACTOR[Math.min(((BattleArmor)en).getShootingStrength(), 30)] + 0.5);
+            weaponLocations[0].addDamage(0, apDamage);
+            weaponLocations[0].addDamage(WeaponType.BFCLASS_STANDARD, 0, apDamage);
+        }
     }
 
     protected void initWeaponLocations(Entity en) {
@@ -78,19 +87,34 @@ public class AlphaStrikeElement extends BattleForceElement {
         }
     }
     
-    public ASUnitType getUnitType() {
-        return asUnitType;
+    protected static final int[] TROOP_FACTOR = {
+        0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6,
+        7, 8, 8, 9, 9, 10, 10, 11, 11, 12,
+        13, 14, 15, 16, 16, 17, 17, 17, 18, 18
+    };
+    
+    @Override
+    protected double getConvInfantryStandardDamage(int range, Infantry inf) {
+        if (inf.getPrimaryWeapon() == null) {
+            return inf.getDamagePerTrooper() * TROOP_FACTOR[Math.min(inf.getShootingStrength(), 30)]
+                    / 10.0;
+        } else {
+            return 0;
+        }
     }
     
     @Override
-    protected void setBaseDamageForWeapon(Entity en, Mounted mount, double[] damage, int[] ranges) {
-        if (en instanceof BattleArmor) {
-            for (int r = 0; r < ranges.length; r++) {
-                damage[r] = ((BattleArmor)en).getAlphaStrikeWeaponDamage(mount, ranges[r]);
-            }
-        } else {
-            super.setBaseDamageForWeapon(en, mount, damage, ranges);
+    protected double getBattleArmorDamage(WeaponType weapon, int range, BattleArmor ba, boolean apmMount) {
+        //AP mounts have a set value that is added later
+        if (apmMount) {
+            return 0;
         }
+        return weapon.getBattleForceDamage(range)
+                * (TROOP_FACTOR[Math.min(ba.getShootingStrength(), 30)] + 0.5);        
+    }
+    
+    public ASUnitType getUnitType() {
+        return asUnitType;
     }
     
     public String getASDamageString(int loc) {
@@ -98,44 +122,21 @@ public class AlphaStrikeElement extends BattleForceElement {
         if (locationNames[loc].length() > 0) {
             str.append("(");
         }
-        str.append(getASRangeString(weaponLocations[loc].allDamage));
-        if (weaponLocations[loc].hasCapitalDamage(0)) {
-            str.append(";CAP").append(getASRangeString(weaponLocations[loc].capital));
+        str.append(weaponLocations[loc].formatDamageRounded(true));
+        for (int i = WeaponType.BFCLASS_CAPITAL; i < WeaponType.BFCLASS_NUM; i++) {
+            if (weaponLocations[loc].hasDamageClass(i)) {
+                str.append(";").append(WeaponType.BF_CLASS_NAMES[i])
+                    .append(weaponLocations[loc].formatDamageRounded(i, true));
+            }
         }
-        if (weaponLocations[loc].hasSubcapitalDamage(0)) {
-            str.append(";SCAP").append(getASRangeString(weaponLocations[loc].subCapital));
+        for (int i = 1; i < WeaponType.BFCLASS_CAPITAL; i++) {
+            if (weaponLocations[loc].hasDamageClass(i)) {
+                str.append(";").append(WeaponType.BF_CLASS_NAMES[i])
+                    .append(weaponLocations[loc].formatDamageRounded(i, true));
+            }
         }
-        if (weaponLocations[loc].hasCapitalMissileDamage(0)) {
-            str.append(";CMIS").append(getASRangeString(weaponLocations[loc].missiles));
-        }
-        if (weaponLocations[loc].hasACDamage(0)) {
-            str.append(";AC").append(getASRangeString(weaponLocations[loc].acDamage));
-        }
-        if (weaponLocations[loc].hasFlakDamage(0)) {
-            str.append(";FLAK").append(getASRangeString(weaponLocations[loc].flakDamage));
-        }
-        if (weaponLocations[loc].hasSRMDamage(0)) {
-            str.append(";SRM").append(getASRangeString(weaponLocations[loc].srmDamage));
-        }
-        if (weaponLocations[loc].hasLRMDamage(0)) {
-            str.append(";LRM").append(getASRangeString(weaponLocations[loc].lrmDamage));
-        }
-        if (weaponLocations[loc].hasTorpDamage(0)) {
-            str.append(";TORP").append(getASRangeString(weaponLocations[loc].torpDamage));
-        }
-        if (weaponLocations[loc].hasIATMDamage(0)) {
-            str.append(";IATM").append(getASRangeString(weaponLocations[loc].iatmDamage));
-        }
-        if (weaponLocations[loc].hasRELDamage(0)) {
-            str.append(";REL").append(getASRangeString(weaponLocations[loc].relDamage));
-        }
-        if (weaponLocations[loc].hasHeatDamage(0)) {
-            str.append(";HEAT").append(getASRangeString(weaponLocations[loc].heatDamage));
-        }
-        if (weaponLocations[loc].indirect > 5) {
-            str.append(";IF").append((int)Math.round(weaponLocations[loc].getIndirect() / 10.0));
-        } else if (weaponLocations[loc].indirect > 0) {
-            str.append(";IF0*");            
+        if (weaponLocations[loc].getIF() >= 0.5) {
+            str.append(";IF").append((int)Math.round(weaponLocations[loc].getIF()));
         }
         if (locationNames[loc].length() > 0) {
             str.append(")");

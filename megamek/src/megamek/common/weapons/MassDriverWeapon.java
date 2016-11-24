@@ -34,4 +34,9 @@ public abstract class MassDriverWeapon extends GaussWeapon {
         this.flags = F_MASS_DRIVER;
         this.maxRange = RANGE_LONG;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL;
+    }
 }

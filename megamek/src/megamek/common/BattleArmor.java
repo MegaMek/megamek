@@ -2001,7 +2001,7 @@ public class BattleArmor extends Infantry {
     @Override
     public void setAlphaStrikeMovement(Map<String,Integer> moves) {
         if (getMovementMode().equals(EntityMovementMode.INF_JUMP)) {
-            moves.put("j", getOriginalJumpMP() * 2);
+            moves.put("j", getJumpMP(true, true, true) * 2);
         } else if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
             moves.put("s", getActiveUMUCount() * 2);
         } else {
@@ -2195,13 +2195,12 @@ public class BattleArmor extends Infantry {
                 specialAbilities.put(BattleForceSPA.SOA, null);
             } else if (m.getType().hasFlag(MiscType.F_PARAFOIL)) {
                 specialAbilities.put(BattleForceSPA.PARA, null);
+            } else if (m.getType().hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                specialAbilities.put(BattleForceSPA.XMEC, null);
             }
         }
         if (canDoMechanizedBA()) {
             specialAbilities.put(BattleForceSPA.MEC, null);
-        }
-        if (hasMagneticClamps()) {
-            specialAbilities.put(BattleForceSPA.XMEC, null);
         }
         switch (getArmorType(0)) {
         case EquipmentType.T_ARMOR_BA_MIMETIC:

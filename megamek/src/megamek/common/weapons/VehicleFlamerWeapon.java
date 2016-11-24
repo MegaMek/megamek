@@ -71,9 +71,4 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
         }
         return 0;
     }
-    
-    @Override
-    public int getBattleForceClass() {
-        return BFCLASS_HEAT;
-    }
 }

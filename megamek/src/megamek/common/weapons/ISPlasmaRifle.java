@@ -85,9 +85,4 @@ public class ISPlasmaRifle extends AmmoWeapon {
         }
         return 0;
     }
-    
-    @Override
-    public int getBattleForceClass() {
-        return BFCLASS_HEAT;
-    }
 }

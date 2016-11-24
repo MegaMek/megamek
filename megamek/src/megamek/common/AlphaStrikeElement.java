@@ -14,6 +14,9 @@ import java.util.stream.Collectors;
  *
  */
 public class AlphaStrikeElement extends BattleForceElement {
+    
+    // AP weapon mounts have a set damage value.
+    static final double AP_MOUNT_DAMAGE = 0.05;
 
     public enum ASUnitType {
         BM, IM, PM, CV, SV, MS, BA, CI, AF, CF, SC, DS, DA, JS, WS, SS;
@@ -64,12 +67,9 @@ public class AlphaStrikeElement extends BattleForceElement {
             }
             armor *= divisor;
         }
-        if (en instanceof BattleArmor) {
-            int ap = en.countWorkingMisc(MiscType.F_AP_MOUNT);
-            if (en.hasWorkingMisc(MiscType.F_ARMORED_GLOVE)) {
-                ap++;
-            }
-            double apDamage = ap * 0.05 * (TROOP_FACTOR[Math.min(((BattleArmor)en).getShootingStrength(), 30)] + 0.5);
+        //Armored Glove counts as an additional AP mounted weapon
+        if (en instanceof BattleArmor && en.hasWorkingMisc(MiscType.F_ARMORED_GLOVE)) {
+            double apDamage = AP_MOUNT_DAMAGE * (TROOP_FACTOR[Math.min(((BattleArmor)en).getShootingStrength(), 30)] + 0.5);
             weaponLocations[0].addDamage(0, apDamage);
             weaponLocations[0].addDamage(WeaponType.BFCLASS_STANDARD, 0, apDamage);
         }
@@ -105,12 +105,15 @@ public class AlphaStrikeElement extends BattleForceElement {
     
     @Override
     protected double getBattleArmorDamage(WeaponType weapon, int range, BattleArmor ba, boolean apmMount) {
-        //AP mounts have a set value that is added later
+        double dam = 0;
         if (apmMount) {
-            return 0;
+            if (range == 0) {
+                dam = AP_MOUNT_DAMAGE;
+            }
+        } else {
+            dam = weapon.getBattleForceDamage(range);
         }
-        return weapon.getBattleForceDamage(range)
-                * (TROOP_FACTOR[Math.min(ba.getShootingStrength(), 30)] + 0.5);        
+        return dam * (TROOP_FACTOR[Math.min(ba.getShootingStrength(), 30)] + 0.5);        
     }
     
     public ASUnitType getUnitType() {

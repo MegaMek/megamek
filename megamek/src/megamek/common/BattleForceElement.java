@@ -478,36 +478,17 @@ public class BattleForceElement {
     }
     
     public int calcHeatCapacity(Entity en) {
-        return en.getHeatCapacity();
-        /*
-        int capacity = 0;
-
+        int capacity = en.getHeatCapacity();
         for (Mounted mounted : en.getEquipment()) {
             if (mounted.getType() instanceof AmmoType
                     && ((AmmoType)mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
                 capacity++;
-            }
-            if (!(mounted.getType() instanceof MiscType)) {
-                continue;
-            }
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            } else if (mounted.getType() instanceof MiscType
+                    && mounted.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
                 capacity += 1;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-                capacity += 2;
-            } else if (mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
-                capacity += 2;
-            } else if (mounted.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
-                capacity += 1;
-            } else if (mounted.getType().hasFlag(MiscType.F_COOLANT_SYSTEM)) {
-                capacity += 2;
-            } else if (mounted.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
-                capacity += 1;
-            } else if (mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
-                capacity += 3;
             }
         }
         return capacity;
-        */
     }
     
     public String getBFDamageString(int loc) {

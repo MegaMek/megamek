@@ -349,8 +349,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         disableButtons();
 
+        int elevation = en.getElevation();
+        // If elevation was set in lounge, try to preserve it
+        // Server.processDeployment will adjust elevation, so we want to account for this
+        if ((en instanceof VTOL) && (elevation >= 1)) {
+            IHex hex = clientgui.getClient().getGame().getBoard().getHex(en.getPosition());
+            elevation = Math.max(0, elevation - (hex.ceiling() - hex.surface() + 1));
+        }
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
-                en.getElevation(), en.getLoadedUnits(), assaultDropPreference);
+                elevation, en.getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);
 
         if (ce().isWeapOrderChanged()) {

@@ -10,6 +10,7 @@ import java.util.EnumMap;
  *
  */
 public enum BattleForceSPA {
+    //From StratOps
     PRB, AFC, AT, ATxD, AMP, AECM, AM, AMS, ARTAIS, ARTAC,
     ARTCM5, ARTCM7, ARTCM9, ARTCM12, ARTT, ARTS, ARTLT,ARTTC, ARTSC, ARTLTC, ARM, ARS, ATMO,
     BAR, BFC, BHJ, SHLD, BH, BOMB, BT, BRID, C3BSS, C3BSM, C3EM, C3M, C3RS, C3S, C3I, CAR,
@@ -19,12 +20,13 @@ public enum BattleForceSPA {
     MASH, MFB, MHQ, SNARC, CNARC, NC3, ORO, OMNI, PNT,
     PT, PTxD, RAIL, RCN, RSD, SAW, SCR, SRCH, ST, STxD, SDS, SOA, SPC, STL, SLG, TAG, MTA, BTA,
     TELE, TSM, UMU, VRT, VTM, VTMxD, VTH, VTHxD, VTS, VTSxD, VLG, VSTOL, WAT,
+    //From IOps
+    ABA, BRA, BHJ2, BHJ3, BIM, DN, GLD, IRA, LAM, MCS, UCS, NOVA, CASEP, QV, RHS,
+    RAMS, ECS, DJ, HJ, RBT, JAM, TSEMP, TSEMPO, TSI, VR,
     //Battleforce only
-    EEE,
+    ATAC, DB, EEE, PL, TCP,
     //AlphaStrike only
-    ABA, BRA, BHJ2, BHJ3, BIM, CRW, CR, DN, DUN, EE, FC, FF, GLD, IRA, LAM, MCS, UCS, MTN,
-    NOVA, OVL, PARA, CASEP, TSMX, QV, RHS, RCA, RFA, RAMS, ECS, DJ, HJ, RBT, JAM, TSEMP,
-    TSEMPO, HTC, TRN, TSI, VR
+    CRW, CR, DUN, EE, FC, FF, MTN, OVL, PARA, TSMX, RCA, RFA, HTC, TRN,
     ;
     
     static EnumMap<BattleForceSPA,BattleForceSPA> transportBayDoors;
@@ -41,11 +43,11 @@ public enum BattleForceSPA {
     }
     
     public boolean usedByBattleForce() {
-        return ordinal() < ABA.ordinal();
+        return ordinal() < CRW.ordinal();
     }
     
     public boolean usedByAlphaStrike() {
-        return ordinal() < EEE.ordinal() || ordinal() >= ABA.ordinal();
+        return ordinal() < ATAC.ordinal() || ordinal() >= CRW.ordinal();
     }
     
     public boolean isDoor() {

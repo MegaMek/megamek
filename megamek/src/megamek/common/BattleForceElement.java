@@ -466,17 +466,39 @@ public class BattleForceElement {
                     continue;
                 }
                 if (en instanceof Mech || en.getEntityType() == Entity.ETYPE_AERO) {
-                    weaponLocations[loc].overheat = weaponLocations[loc].getDamage(1) - weaponLocations[loc].getDamage(1) * adjustment;
+                    int rangeIndex = 1;
+                    int base = (int)Math.round(weaponLocations[loc].getDamage(1));
+                    if (base == 0) {
+                        rangeIndex = 0;
+                        base = (int)Math.round(weaponLocations[loc].getDamage(0));                        
+                    }
+                    if (base == 0) {
+                        continue;
+                    }
+                    int heatAdjusted = (int)Math.round(weaponLocations[loc].getDamage(rangeIndex) * adjustment);
+                    if (heatAdjusted < base) {
+                        weaponLocations[loc].overheat = Math.min(base - heatAdjusted, 4);
+                    }
                 }
                 weaponLocations[loc].adjustForHeat(adjustment);
             }
         }
+        if (weaponLocations[0].getOverheat() > 0
+                && (en instanceof Mech || en.getEntityType() == Entity.ETYPE_AERO)) {
+            int heatLong = en.getWeaponList().stream()
+                    .filter(m -> m.getType() instanceof WeaponType
+                            && !m.isRearMounted()
+                            && !en.isBattleForceRearLocation(m.getLocation()))
+                    .map(m -> (WeaponType)m.getType())
+                    .filter(w -> w.getLongRange() >= Entity.BATTLEFORCEMEDIUMRANGE)
+                    .mapToInt(WeaponType::getHeat)
+                    .sum();
+            if (heatLong - 4 > heatCapacity) {
+                specialAbilities.put(BattleForceSPA.OVL, null);
+            }
+        }
     }
 
-    public int calcTotalHeatGeneration(Entity en) {
-        return en.getBattleForceTotalHeatGeneration(false);
-    }
-    
     public int calcHeatCapacity(Entity en) {
         int capacity = en.getHeatCapacity();
         for (Mounted mounted : en.getEquipment()) {
@@ -562,8 +584,8 @@ public class BattleForceElement {
         w.write("\t");
         sj = new StringJoiner(", ");
         for (int loc = 0; loc < weaponLocations.length; loc++) {
-            if (weaponLocations[loc].getOverheat() >= 10) {
-                sj.add(locationNames[loc] + Math.max(4, (int)Math.round(weaponLocations[loc].getOverheat() / 10.0)));
+            if (weaponLocations[loc].getOverheat() >= 1) {
+                sj.add(locationNames[loc] + Math.max(4, (int)Math.round(weaponLocations[loc].getOverheat())));
             }
         }
         if (sj.length() > 0) {

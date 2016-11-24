@@ -185,8 +185,8 @@ public class AlphaStrikeElement extends BattleForceElement {
         w.write("\t");
         sj = new StringJoiner(", ");
         for (int loc = 0; loc < weaponLocations.length; loc++) {
-            if (weaponLocations[loc].getOverheat() >= 10) {
-                sj.add(locationNames[loc] + Math.max(4, (int)Math.round(weaponLocations[loc].getOverheat() / 10.0)));
+            if (weaponLocations[loc].getOverheat() >= 1) {
+                sj.add(locationNames[loc] + Math.max(4, (int)Math.round(weaponLocations[loc].getOverheat())));
             }
         }
         if (sj.length() > 0) {

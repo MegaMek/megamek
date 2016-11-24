@@ -4193,10 +4193,6 @@ public class Aero extends Entity {
         if (isVSTOL()) {
             specialAbilities.put(BattleForceSPA.VSTOL, null);
         }
-        if (getEntityType() == ETYPE_AERO
-                && getBattleForceTotalHeatGeneration(false, false) - 4 > getHeatCapacity()) {
-            specialAbilities.put(BattleForceSPA.OVL, null);
-        }
     }
 
     /**

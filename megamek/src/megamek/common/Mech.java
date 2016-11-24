@@ -7758,10 +7758,6 @@ public abstract class Mech extends Entity {
         } else {
             specialAbilities.put(BattleForceSPA.SOA, null);
         }
-        if (getBattleForceTotalHeatGeneration(false, false) - 4 > getHeatCapacity()) {
-            specialAbilities.put(BattleForceSPA.OVL, null);
-        }
-
     }
     
     public abstract boolean hasMPReducingHardenedArmor();

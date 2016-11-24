@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * @author Neoancient
@@ -209,6 +210,10 @@ public class AlphaStrikeElement extends BattleForceElement {
         if (spa.equals(BattleForceSPA.BOMB)
                 && (asUnitType.equals(ASUnitType.AF) || asUnitType.equals(ASUnitType.CF))) {
             return spa.toString() + (specialAbilities.get(spa) - 1);
+        }
+        if (spa.equals(BattleForceSPA.HT)) {
+            return spa.toString()
+                    + IntStream.range(0,4).mapToObj(String::valueOf).collect(Collectors.joining("/"));
         }
         return super.formatSPAString(spa);
     }

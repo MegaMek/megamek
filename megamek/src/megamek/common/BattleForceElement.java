@@ -15,6 +15,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.MissileWeapon;
 
@@ -41,6 +42,7 @@ public class BattleForceElement {
     protected int structure;
     protected WeaponLocation[] weaponLocations;
     protected String[] locationNames;
+    protected int[] heat;
     protected double points;
     protected EnumMap<BattleForceSPA,Integer> specialAbilities = new EnumMap<>(BattleForceSPA.class);
     
@@ -57,6 +59,7 @@ public class BattleForceElement {
         }
         structure = en.getBattleForceStructurePoints();
         initWeaponLocations(en);
+        heat = new int[4];
         computeDamage(en);
         points = en.calculateBattleValue(true, true) / 100.0;
         en.addBattleForceSpecialAbilities(specialAbilities);
@@ -134,7 +137,6 @@ public class BattleForceElement {
         double[] baseDamage = new double[4];
         boolean hasTC = en.hasTargComp();
         int[] ranges;
-        int heat = 0;
         double pointDefense = 0;
         int bombRacks = 0;
         //Track weapons we've already calculated ammunition for
@@ -333,12 +335,25 @@ public class BattleForceElement {
                 }
             }
             
-            for (int r = 0; r < ranges.length; r++) {
-                if (en instanceof BattleArmor) {
-                    baseDamage[r] = getBattleArmorDamage(weapon, ranges[r], ((BattleArmor)en),
-                            mount.isAPMMounted());
-                } else {
-                    baseDamage[r] = weapon.getBattleForceDamage(ranges[r], mount.getLinkedBy());
+            if (weapon instanceof BayWeapon) {
+                for (int index : mount.getBayWeapons()) {
+                    Mounted m = en.getEquipment(index);
+                    if (m.getType() instanceof WeaponType) {
+                        for (int r = 0; r < ranges.length; r++) {
+                            baseDamage[r] += ((WeaponType)m.getType()).getBattleForceDamage(ranges[r], m.getLinkedBy());
+                            heat[r] += ((WeaponType)m.getType()).getBattleForceHeatDamage(ranges[r]);
+                        }
+                    }
+                }
+            } else {
+                for (int r = 0; r < ranges.length; r++) {
+                    if (en instanceof BattleArmor) {
+                        baseDamage[r] = getBattleArmorDamage(weapon, ranges[r], ((BattleArmor)en),
+                                mount.isAPMMounted());
+                    } else {
+                        baseDamage[r] = weapon.getBattleForceDamage(ranges[r], mount.getLinkedBy());
+                    }
+                    heat[r] += weapon.getBattleForceHeatDamage(ranges[r]);
                 }
             }
 
@@ -371,7 +386,6 @@ public class BattleForceElement {
                     } else {
                         weaponLocations[loc].addDamage(weapon.getBattleForceClass(), r, dam);
                     }
-                    weaponLocations[loc].addHeat(r, weapon.getBattleForceHeatDamage(ranges[r]));
                     if (r == 2 && !(en instanceof Aero) && weapon.hasIndirectFire()) {
                         weaponLocations[loc].addIF(dam);
                     }
@@ -418,9 +432,9 @@ public class BattleForceElement {
 
         adjustForHeat(en);
         //Rules state that all flamer and plasma weapons on the unit contribute to the heat rating, so we don't separate by arc
-        if (heat > 10) {
+        if (heat[0] > 10) {
             specialAbilities.put(BattleForceSPA.HT, 2);
-        } else if (heat > 5) {
+        } else if (heat[0] > 5) {
             specialAbilities.put(BattleForceSPA.HT, 1);
         }
     }

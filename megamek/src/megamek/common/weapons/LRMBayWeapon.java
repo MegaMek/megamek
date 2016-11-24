@@ -47,4 +47,9 @@ public class LRMBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.atClass = CLASS_LRM;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_LRM;
+    }
 }

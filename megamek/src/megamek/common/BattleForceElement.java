@@ -334,13 +334,7 @@ public class BattleForceElement {
             }
 
             if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                if (en instanceof BattleArmor) {
-                    if (weapon instanceof MissileWeapon) {
-                        damageModifier *= 0.75;
-                    }
-                } else {
-                    damageModifier *= .1;
-                }
+                damageModifier *= .1;
             }
             
             if (weapon instanceof BayWeapon) {

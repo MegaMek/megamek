@@ -28,6 +28,7 @@ v0.41.27-git
 + Issue #402: Jumping meks should not be allowed to stand after falling
 + Quirks for Buildings.
 + Issue #386: VTOLs don't deploy at lounge specified height
++ Issue #341: Armor properties not updated for damage transfer location
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.

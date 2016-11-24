@@ -21108,47 +21108,21 @@ public class Server implements Runnable {
         boolean tookInternalDamage = damageIS;
         IHex te_hex = null;
 
-        boolean hardenedArmor = false;
-        boolean ferroLamellorArmor = false;
-        boolean reflectiveArmor = false;
-        boolean reactiveArmor = false;
-        boolean ballisticArmor = false;
-        boolean impactArmor = false;
+        boolean hardenedArmor = ((te instanceof Mech) || (te instanceof Tank))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
+        boolean ferroLamellorArmor = ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+        boolean reflectiveArmor = (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
+                || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE));
+        boolean reactiveArmor = (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
+                || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE));
+        boolean ballisticArmor = ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+        boolean impactArmor = (te instanceof Mech)
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
         boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
-
-        if (((te instanceof Mech) || (te instanceof Tank))
-            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)) {
-            hardenedArmor = true;
-        }
-
-        if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
-            ferroLamellorArmor = true;
-        }
-
-        if ((((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                    && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
-            || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE))) {
-            reflectiveArmor = true; // note that BA reflec receives
-            // "all of the bonuses but none of the drawbacks"
-        }
-
-        if ((((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                    && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
-            || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE))) {
-            reactiveArmor = true; // note that BA reactive receives
-            // "all of the bonuses but none of the drawbacks"
-        }
-
-        if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
-            ballisticArmor = true;
-        }
-
-        if ((te instanceof Mech)
-            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
-            impactArmor = true;
-        }
 
         // TACs from the hit location table
         int crits;
@@ -22761,6 +22735,23 @@ public class Server implements Runnable {
             // loop terminates anyway.)
             if (damage > 0) {
                 hit = nextHit;
+                // Need to update armor status for the new location
+                hardenedArmor = ((te instanceof Mech) || (te instanceof Tank))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
+                ferroLamellorArmor = ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+                reflectiveArmor = (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
+                        || (isBattleArmor
+                                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE));
+                reactiveArmor = (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
+                        || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE));
+                ballisticArmor = ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+                impactArmor = (te instanceof Mech)
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
+                bar5 = te.getBARRating(hit.getLocation()) <= 5;
             }
             if (damageIS) {
                 wasDamageIS = true;

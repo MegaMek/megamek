@@ -700,54 +700,13 @@ public class MegaMek {
                     MechSummary[] units = MechSummaryCache.getInstance()
                             .getAllMechs();
                     for (MechSummary unit : units) {
-//                        if (!unit.getUnitType().equalsIgnoreCase("mek")) {
-//                            continue;
-//                        }
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
                         
                         BattleForceElement bfe = new BattleForceElement(entity);
                         bfe.writeCsv(w);
-/*
-                        w.write(unit.getName());
-                        w.write("\t");
-                        w.write(Integer.toString(entity.getBattleForceSize()));
-                        w.write("\t");
-                        w.write(entity.getBattleForceMovement());
-                        w.write("\t");
-                        w.write(entity
-                                .getBattleForceArmorPoints() + entity.getBattleForceDamageThresholdString());
-                        w.write("\t");
-                        w.write(Integer.toString(entity
-                                .getBattleForceStructurePoints()));
-                        w.write("\t");
-                        // Most Aero units and some ground units have multiple
-                        // facings.
-                        // Also, each facing potentially has Capital, Capital
-                        // Missile, and Sub Capital brackets as well.
-                        for (int loc = 0; loc < entity.getNumBattleForceWeaponsLocations(); loc++) {
-                            if (entity.getBattleForceLocationName(loc).length() > 0) {
-                                w.write(entity.getBattleForceLocationName(loc) + ":");
-                            }
-                            w.write(String.format("%d/%d/%d", entity
-                                    .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE, loc, -1),
-                                    entity
-                                    .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE, loc, -1),
-                                    entity
-                                    .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE, loc, -1)));
-                            if (loc + 1 < entity.getNumBattleForceWeaponsLocations()) {
-                                w.write(", ");
-                            }
-                        }
-                        w.write("\t");
-                        w.write(entity.getBattleForceOverHeatValue());
-                        w.write("\t");
-                        w.write(Integer.toString(entity.getBattleForcePoints()));
-                        w.write("\t");
-                        w.write(entity.getBattleForceSpecialAbilities());
-                        w.newLine();
- */                   }
+                    }
                     w.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();

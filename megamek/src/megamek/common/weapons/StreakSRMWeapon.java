@@ -14,7 +14,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;

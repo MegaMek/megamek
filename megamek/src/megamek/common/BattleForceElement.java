@@ -24,12 +24,20 @@ import megamek.common.weapons.MissileWeapon;
  *
  */
 public class BattleForceElement {
-    static final int[] STANDARD_RANGES = {Entity.BATTLEFORCESHORTRANGE,
-        Entity.BATTLEFORCEMEDIUMRANGE, Entity.BATTLEFORCELONGRANGE, Entity.BATTLEFORCEEXTREMERANGE
-    };
-    static final int[] CAPITAL_RANGES = {Entity.BATTLEFORCE_SHORT_CAPITAL,
-        Entity.BATTLEFORCE_MEDIUM_CAPITAL, Entity.BATTLEFORCE_LONG_CAPITAL, Entity.BATTLEFORCE_EXTREME_CAPITAL
-    };
+    
+    static final int RANGE_BAND_SHORT = 0;
+    static final int RANGE_BAND_MEDIUM = 1;
+    static final int RANGE_BAND_LONG = 2;
+    static final int RANGE_BAND_EXTREME = 3;
+    static final int RANGE_BAND_NUM = 4;
+    
+    static final int[] STANDARD_RANGES = {0, 4, 16, 24};
+    static final int[] CAPITAL_RANGES = {0, 13, 25, 41};
+    
+    public static final int SHORT_RANGE = STANDARD_RANGES[RANGE_BAND_SHORT];
+    public static final int MEDIUM_RANGE = STANDARD_RANGES[RANGE_BAND_MEDIUM];
+    public static final int LONG_RANGE = STANDARD_RANGES[RANGE_BAND_LONG];
+    public static final int EXTREME_RANGE = STANDARD_RANGES[RANGE_BAND_EXTREME];
     
     protected String name;
     protected int size;
@@ -59,7 +67,7 @@ public class BattleForceElement {
         }
         structure = en.getBattleForceStructurePoints();
         initWeaponLocations(en);
-        heat = new int[4];
+        heat = new int[RANGE_BAND_NUM];
         computeDamage(en);
         points = en.calculateBattleValue(true, true) / 100.0;
         en.addBattleForceSpecialAbilities(specialAbilities);
@@ -134,7 +142,7 @@ public class BattleForceElement {
     }
     
     public void computeDamage(Entity en) {
-        double[] baseDamage = new double[4];
+        double[] baseDamage = new double[RANGE_BAND_NUM];
         boolean hasTC = en.hasTargComp();
         int[] ranges;
         double pointDefense = 0;
@@ -375,9 +383,9 @@ public class BattleForceElement {
                         weaponLocations[loc].addDamage(r, dam);
                     }
                     if (weapon.getBattleForceClass() == WeaponType.BFCLASS_MML) {
-                        if (r == 0) {
+                        if (r == RANGE_BAND_SHORT) {
                             weaponLocations[loc].addDamage(WeaponType.BFCLASS_SRM, r, dam);
-                        } else if (r == 1) {
+                        } else if (r == RANGE_BAND_MEDIUM) {
                             weaponLocations[loc].addDamage(WeaponType.BFCLASS_SRM, r, dam / 2.0);
                             weaponLocations[loc].addDamage(WeaponType.BFCLASS_LRM, r, dam / 2.0);
                         } else {
@@ -386,13 +394,13 @@ public class BattleForceElement {
                     } else {
                         weaponLocations[loc].addDamage(weapon.getBattleForceClass(), r, dam);
                     }
-                    if (r == 2 && !(en instanceof Aero) && weapon.hasIndirectFire()) {
+                    if (r == RANGE_BAND_LONG && !(en instanceof Aero) && weapon.hasIndirectFire()) {
                         weaponLocations[loc].addIF(dam);
                     }
                 }
             }
             if (en instanceof Aero && weapon.getAtClass() == WeaponType.CLASS_POINT_DEFENSE) {
-                pointDefense += baseDamage[0] * damageModifier;
+                pointDefense += baseDamage[RANGE_BAND_SHORT] * damageModifier;
             }
         }
         
@@ -432,9 +440,9 @@ public class BattleForceElement {
 
         adjustForHeat(en);
         //Rules state that all flamer and plasma weapons on the unit contribute to the heat rating, so we don't separate by arc
-        if (heat[0] > 10) {
+        if (heat[RANGE_BAND_SHORT] > 10) {
             specialAbilities.put(BattleForceSPA.HT, 2);
-        } else if (heat[0] > 5) {
+        } else if (heat[RANGE_BAND_SHORT] > 5) {
             specialAbilities.put(BattleForceSPA.HT, 1);
         }
     }
@@ -490,7 +498,7 @@ public class BattleForceElement {
                             && !m.isRearMounted()
                             && !en.isBattleForceRearLocation(m.getLocation()))
                     .map(m -> (WeaponType)m.getType())
-                    .filter(w -> w.getLongRange() >= Entity.BATTLEFORCEMEDIUMRANGE)
+                    .filter(w -> w.getLongRange() >= MEDIUM_RANGE)
                     .mapToInt(WeaponType::getHeat)
                     .sum();
             if (heatLong - 4 > heatCapacity) {
@@ -630,7 +638,7 @@ public class BattleForceElement {
         }
     }
 
-    protected class WeaponLocation {
+    static protected class WeaponLocation {
         List<Double> standardDamage = new ArrayList<>();
         Map<Integer,List<Double>> specialDamage = new HashMap<>();
         List<Integer> heat = new ArrayList<>();
@@ -761,7 +769,7 @@ public class BattleForceElement {
         }
         
         private String formatDamageUp(List<Double> damage) {
-            while (damage.size() < 4) {
+            while (damage.size() < RANGE_BAND_NUM) {
                 damage.add(0.0);
             }
             return damage.stream().map(d -> String.valueOf((int)Math.ceil(d)))
@@ -769,7 +777,7 @@ public class BattleForceElement {
         }
 
         private String formatDamageRounded(List<Double> damage, boolean showMinDamage) {
-            while (damage.size() < 4) {
+            while (damage.size() < RANGE_BAND_NUM) {
                 damage.add(0.0);
             }
             return damage.stream().map(d -> {

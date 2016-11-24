@@ -18,8 +18,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
 import megamek.common.Compute;
-import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -70,7 +70,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getRackSize()) / 10.0;
             damage *= 1.05; // -1 to hit
-            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

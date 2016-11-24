@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.Entity;
+import megamek.common.BattleForceElement;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -81,7 +81,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
 
     @Override
     public int getBattleForceHeatDamage(int range) {
-        if (range <= Entity.BATTLEFORCELONGRANGE) {
+        if (range <= BattleForceElement.LONG_RANGE) {
             return 7;
         }
         return 0;

@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.Entity;
+import megamek.common.BattleForceElement;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Mounted;
@@ -79,7 +79,7 @@ public abstract class RACWeapon extends UACWeapon {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = getRackSize() * 6;
-            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

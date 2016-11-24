@@ -15,15 +15,12 @@
 package megamek.common;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.InfantryAttack;
-import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -2031,151 +2028,6 @@ public class BattleArmor extends Infantry {
         return 2;
     }
 
-    public int getBattleForceStandardWeaponsDamage(int range, int location, int ammoType,
-            boolean ignoreHeat, boolean ignoreSpecialAbility) {
-        double totalDamage = 0;
-        double baseDamage = 0;
-
-        TreeSet<String> weaponsUsed = new TreeSet<String>();
-
-        ArrayList<Mounted> weaponsList = getWeaponList();
-        
-        for (int pos = 0; pos < weaponList.size(); pos++) {
-            double damageModifier = 1;
-            int weaponCount = 1;
-            Mounted mount = weaponsList.get(pos);
-            if ((mount == null)
-                    || (mount.isDWPMounted() && !hasDWP())
-                    || weaponsUsed.contains(mount.getName())) {
-                continue;
-            }
-
-            WeaponType weapon = (WeaponType) mount.getType();
-
-            if (weapon.getLongRange() < range || weapon.getDamage() == WeaponType.DAMAGE_SPECIAL) {
-                continue;
-            }
-
-            if ((ammoType != AmmoType.T_NA)
-                    && (weapon.getAmmoType() != ammoType)) {
-                continue;
-            }
-
-            if (weapon.hasFlag(WeaponType.F_ARTILLERY)) {
-                // Each Artillery weapon is separately accounted for
-                continue;
-            }
-
-            //Only track ammo for missile weapons
-            if (weapon.hasFlag(WeaponType.F_MISSILE)) {
-                weaponsUsed.add(weapon.getName());
-                for (int nextPos = pos + 1; nextPos < weaponList.size(); nextPos++) {
-                    Mounted nextWeapon = weaponList.get(nextPos);
-
-                    if (nextWeapon == null) {
-                        continue;
-                    }
-
-                    if (nextWeapon.getType().equals(weapon)) {
-                        weaponCount++;
-                    }
-
-                }
-                int ammoCount = weaponCount;
-                // Check if they have enough ammo for all the guns to last at
-                // least 10 rounds
-                for (Mounted ammo : getAmmo()) {
-
-                    AmmoType at = (AmmoType) ammo.getType();
-                    if ((at.getAmmoType() == weapon.getAmmoType())
-                            && (at.getRackSize() == weapon.getRackSize())) {
-                        ammoCount += at.getShots();
-                    }
-                }
-
-                if ((ammoCount / weaponCount) < 10) {
-                    damageModifier *= .75;
-                }
-            }
-            
-            if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                damageModifier *= .1;
-            }
-
-            baseDamage = getBattleForceWeaponDamage(mount, range) * damageModifier;
-
-            totalDamage += baseDamage * damageModifier;
-        }
-
-        //Add squad support weapons, if any
-        totalDamage += super.getBattleForceStandardWeaponsDamage(range, 0, ammoType,
-                ignoreHeat, ignoreSpecialAbility);
-        //+1 per vibro claw
-        totalDamage += getVibroClaws() / this.getShootingStrength();
-        
-        if (ignoreSpecialAbility && (totalDamage < 10)) {
-            totalDamage = 0;
-        } else if ((ammoType != AmmoType.T_NA)) {
-            totalDamage = Math.round(totalDamage / 10);
-        } else {
-            totalDamage = Math.ceil(totalDamage / 10);
-        }
-        
-        return (int) totalDamage;
-    }
-
-    public double getBattleForceWeaponDamage(Mounted mount, int range) {
-        final WeaponType weapon = (WeaponType)mount.getType();
-        double baseDamage = 0;
-        double damageModifier = 1;
-        if (weapon.getLongRange() < range) {
-            return 0;
-        }
-        if (weapon.getAmmoType() == AmmoType.T_SRM) {
-            baseDamage = Compute.calculateClusterHitTableAmount(7,
-                    weapon.getRackSize() * getShootingStrength()) * 2;
-        } else if (weapon.getAmmoType() == AmmoType.T_SRM_ADVANCED) {
-            baseDamage = Compute.calculateClusterHitTableAmount(8,
-                    weapon.getRackSize() * getShootingStrength()) * 2;                    
-        } else if (weapon.hasFlag(WeaponType.F_MISSILE)) {
-            baseDamage = Compute.calculateClusterHitTableAmount(7,
-                    weapon.getRackSize() * getShootingStrength());
-        } else {
-            baseDamage = Compute.calculateClusterHitTableAmount(7,
-                    weapon.getDamage(range) * getShootingStrength());
-        }
-
-        if (weapon instanceof VariableSpeedPulseLaserWeapon) {
-            switch (range) {
-                case Entity.BATTLEFORCESHORTRANGE:
-                    damageModifier *= battleForceToHitModifier[1];
-                    break;
-                case Entity.BATTLEFORCEMEDIUMRANGE:
-                    damageModifier *= battleForceToHitModifier[2];
-                    break;
-                case Entity.BATTLEFORCELONGRANGE:
-                    damageModifier *= battleForceToHitModifier[3];
-                    break;
-            }
-        }
-
-        if (range == Entity.BATTLEFORCESHORTRANGE) {
-            int minRange = Math.min(6,
-                    Math.max(0, weapon.getMinimumRange()));
-            damageModifier *= battleForceMinRangeModifier[minRange];
-        }
-
-        return baseDamage * damageModifier;
-    }
-    
-    public double getAlphaStrikeWeaponDamage(Mounted mount, int range) {
-        double baseDamage = super.getBattleForceWeaponDamage(mount, range);
-        if (range == 0) {
-            baseDamage += countWorkingMisc(MiscType.F_ARMORED_GLOVE);
-        }
-        return baseDamage * (AlphaStrikeTroopFactor[getShootingStrength()] + 0.5);
-    }
-    
     @Override
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);

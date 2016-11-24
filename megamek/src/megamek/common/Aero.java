@@ -4129,15 +4129,7 @@ public class Aero extends Entity {
     /**
      * We need to check whether the weapon is mounted in LOC_AFT in addition to isRearMounted()
      */
-    @Override
     public int getBattleForceTotalHeatGeneration(boolean allowRear) {
-        return getBattleForceTotalHeatGeneration(allowRear, true);
-    }
-    
-    /**
-     * AlphaStrike requires a separate heat calculation with short range weapons excluded
-     */
-    public int getBattleForceTotalHeatGeneration(boolean allowRear, boolean includeSR) {
         int totalHeat = 0;
 
         for (Mounted mount : getWeaponList()) {
@@ -4148,7 +4140,6 @@ public class Aero extends Entity {
                 }
             }
             if (weapon.hasFlag(WeaponType.F_ONESHOT)
-                || (!includeSR && weapon.getLongRange() < BATTLEFORCEMEDIUMRANGE)
                 || (allowRear && !mount.isRearMounted() && mount.getLocation() != LOC_AFT)
                 || (!allowRear && (mount.isRearMounted() || mount.getLocation() == LOC_AFT))) {
                 continue;

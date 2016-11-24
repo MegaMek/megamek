@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
@@ -7627,10 +7626,6 @@ public abstract class Mech extends Entity {
     
     @Override
     public int getBattleForceTotalHeatGeneration(boolean allowRear) {
-        return getBattleForceTotalHeatGeneration(allowRear, true);
-    }
-
-    public int getBattleForceTotalHeatGeneration(boolean allowRear, boolean includeSR) {
         int totalHeat = 0;
 
         // finish the max heat calculations
@@ -7643,7 +7638,6 @@ public abstract class Mech extends Entity {
         for (Mounted mount : getWeaponList()) {
             WeaponType weapon = (WeaponType) mount.getType();
             if (weapon.hasFlag(WeaponType.F_ONESHOT)
-                || (!includeSR && weapon.getLongRange() < BATTLEFORCEMEDIUMRANGE)
                 || (allowRear && !mount.isRearMounted())
                 || (!allowRear && mount.isRearMounted())) {
                 continue;
@@ -7663,50 +7657,6 @@ public abstract class Mech extends Entity {
         }
 
         return totalHeat;        
-    }
-    
-    @Override
-    public String getBattleForceSpecialAbilities() {
-        StringJoiner results = new StringJoiner(", ");
-        String general = super.getBattleForceSpecialAbilities();
-        if (!general.equals("None")) {
-            results.add(general);
-        }
-        if (isIndustrial() && (getCockpitType() == Mech.COCKPIT_STANDARD)) {
-            results.add("AFC");
-        }
-
-        if (hasArmoredCockpit() || hasArmoredGyro() || hasArmoredEngine()) {
-            results.add("ARM");
-        } else {
-            topLoop: for (int location = 0; location <= locations(); location++) {
-                for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
-                    CriticalSlot crit = getCritical(location, slot);
-                    if ((null != crit)
-                            && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
-                        Mounted mount = crit.getMount();
-                        if (mount.isArmored()) {
-                            results.add("ARM");
-                            break topLoop;
-                        }
-                    }
-                }
-            }
-        }
-
-        if (isIndustrial()) {
-            results.add("BFC");
-        }
-
-        if (hasIndustrialTSM()) {
-            results.add("ITSM");
-        }
-
-        if (hasTSM()) {
-            results.add("TSM");
-        }
-        
-        return results.toString();
     }
 
     @Override

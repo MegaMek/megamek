@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringJoiner;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
@@ -3561,35 +3560,6 @@ public class Tank extends Entity {
             break;
         }
         return 0; 
-    }
-    
-    @Override
-    public String getBattleForceSpecialAbilities() {
-        StringJoiner results = new StringJoiner(", ");
-        String general = super.getBattleForceSpecialAbilities();
-
-        if (!general.equals("None")) {
-            results.add(general);
-        }
-
-        if (hasArmoredChassis() || hasArmoredEngine()) {
-            results.add("ARM");
-        } else {
-            topLoop: for (int location = 0; location <= locations(); location++) {
-                for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
-                    CriticalSlot crit = getCritical(location, slot);
-                    if ((null != crit)
-                            && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)) {
-                        Mounted mount = crit.getMount();
-                        if (mount.isArmored()) {
-                            results.add("ARM");
-                            break topLoop;
-                        }
-                    }
-                }
-            }
-        }
-        return results.toString();
     }
     
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {

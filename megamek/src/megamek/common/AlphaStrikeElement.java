@@ -213,7 +213,8 @@ public class AlphaStrikeElement extends BattleForceElement {
         }
         if (spa.equals(BattleForceSPA.HT)) {
             return spa.toString()
-                    + IntStream.range(0,4).mapToObj(String::valueOf).collect(Collectors.joining("/"));
+                    + IntStream.range(0, RANGE_BAND_NUM)
+                    .mapToObj(String::valueOf).collect(Collectors.joining("/"));
         }
         return super.formatSPAString(spa);
     }

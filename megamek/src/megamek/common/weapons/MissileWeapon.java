@@ -13,8 +13,8 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.BattleForceElement;
 import megamek.common.Compute;
-import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -72,7 +72,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
             }
         }
         double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
-        if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;
@@ -84,7 +84,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
             return 0;
         }
         double damage = Compute.calculateClusterHitTableAmount(7, getRackSize() * baSquadSize);
-        if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
         return damage / 10.0;

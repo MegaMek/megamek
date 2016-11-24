@@ -14,8 +14,8 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
 import megamek.common.Compute;
-import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -71,7 +71,7 @@ public class CLBALBX extends Weapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getDamage());
             damage *= 1.05; // -1 to hit
-            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }
@@ -84,7 +84,7 @@ public class CLBALBX extends Weapon {
         if (range <= getLongRange()) {
             damage = Compute.calculateClusterHitTableAmount(7, getDamage() * baSquadSize);
             damage *= 1.05; // -1 to hit
-            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

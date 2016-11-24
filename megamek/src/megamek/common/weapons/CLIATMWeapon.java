@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.Entity;
+import megamek.common.BattleForceElement;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
@@ -61,12 +61,12 @@ public abstract class CLIATMWeapon extends MissileWeapon {
         double damage = 0;
         if (range <= getLongRange()) {
             damage = getRackSize();
-            if (range < Entity.BATTLEFORCESHORTRANGE) {
+            if (range < BattleForceElement.MEDIUM_RANGE) {
                 damage *= 3;
-            } else if (range < Entity.BATTLEFORCEMEDIUMRANGE) {
+            } else if (range < BattleForceElement.LONG_RANGE) {
                 damage *= 2;
             }
-            if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
                 damage = adjustBattleForceDamageForMinRange(damage);
             }
         }

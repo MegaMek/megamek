@@ -14,8 +14,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
 import megamek.common.Compute;
-import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.MiscType;
@@ -131,12 +131,12 @@ public abstract class MMLWeapon extends MissileWeapon {
             }
         }
         double damage = Compute.calculateClusterHitTableAmount(clusterRoll, getRackSize());
-        if (range == Entity.BATTLEFORCESHORTRANGE && getMinimumRange() > 0) {
+        if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
             damage = adjustBattleForceDamageForMinRange(damage);
         }
-        if (range < Entity.BATTLEFORCEMEDIUMRANGE) {
+        if (range < BattleForceElement.MEDIUM_RANGE) {
             damage *= 2;
-        } else if (range < Entity.BATTLEFORCELONGRANGE) {
+        } else if (range < BattleForceElement.LONG_RANGE) {
             damage *= 1.5;
         }
         return damage / 10.0;

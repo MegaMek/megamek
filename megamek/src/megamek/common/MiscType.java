@@ -403,7 +403,6 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_SUBMERSIBLE = BigInteger.valueOf(1)
             .shiftLeft(185);
 
-
     // Flag for BattleArmor Modular Equipment Adaptor
     public static final BigInteger F_BA_MEA = BigInteger.valueOf(1)
             .shiftLeft(186);
@@ -429,6 +428,8 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_REUSABLE = BigInteger.valueOf(1)
     		.shiftLeft(196);
     		
+    public static final BigInteger F_BLOODHOUND = BigInteger.valueOf(1)
+            .shiftLeft(197);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -607,7 +608,7 @@ public class MiscType extends EquipmentType {
                 return (0.250 / 3);
             } else {
                 if (hasSubType(S_JETBOOSTER)) {
-                    return entity.getEngine().getWeightEngine(entity) / 10.0f;
+                    return entity.hasEngine() ? entity.getEngine().getWeightEngine(entity) / 10.0f : 0.0f;
                 }
                 if (hasSubType(S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
@@ -650,6 +651,7 @@ public class MiscType extends EquipmentType {
             // round to half ton
             weaponWeight /= 10;
             return Math.ceil(weaponWeight * 2.0f) / 2.0f;
+            
         } else if (hasFlag(F_PINTLE_TURRET)) {
             double weaponWeight = 0;
             // 5% of linked weapons' weight
@@ -658,14 +660,19 @@ public class MiscType extends EquipmentType {
                     weaponWeight += m.getType().getTonnage(entity);
                 }
             }
-            // TODO: round to kilogram
-            weaponWeight /= 20;
-            return weaponWeight;
+            
+            TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
+            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
+                roundWeight = TestEntity.Ceil.KILO;
+            }
+            double weight = weaponWeight / 20;
+            return TestEntity.ceil(weight, roundWeight);
+           
         } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-                return (entity.getWeight() * 0.1f);
+                return Math.round((entity.getWeight() * 0.1f) * 2.0f) / 2.0f;
             } else {
-                return (entity.getWeight() * 0.15f);
+                return Math.round((entity.getWeight() * 0.15f) * 2.0f) / 2.0f;
             }
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
@@ -821,6 +828,7 @@ public class MiscType extends EquipmentType {
             }
             double weight = cargoTonnage / 20f;
             return TestEntity.ceil(weight, roundWeight);
+            
         } else if (hasFlag(F_BASIC_FIRECONTROL)) {
             // 5% of weapon weight
             double weaponWeight = 0;
@@ -832,7 +840,8 @@ public class MiscType extends EquipmentType {
                 roundWeight = TestEntity.Ceil.KILO;
             }
             double weight = weaponWeight / 20;
-            return TestEntity.ceil(weight, roundWeight);
+                        return TestEntity.ceil(weight, roundWeight);
+        
         } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
             // 10% of weapon weight
             double weaponWeight = 0;
@@ -911,12 +920,12 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
                 costValue = getTonnage(entity, loc) * 100000;
             } else if (hasFlag(F_JET_BOOSTER)) {
-                costValue = entity.getEngine().getRating() * 10000;
+                costValue = (entity.hasEngine() ? entity.getEngine().getRating() * 10000 : 0);
             } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
                 costValue = (getTonnage(entity, loc) * 10000) + 5000;
             } else if (hasFlag(MiscType.F_MASC)) {
                 if (entity instanceof Protomech) {
-                    costValue = Math.round(entity.getEngine().getRating()
+                    costValue = Math.round((entity.hasEngine() ? entity.getEngine().getRating() : 0)
                             * 1000 * entity.getWeight() * 0.025f);
                 } else if (entity instanceof BattleArmor) {
                     costValue = entity.getOriginalWalkMP() * 75000;
@@ -934,7 +943,7 @@ public class MiscType extends EquipmentType {
                     } else if (getInternalName().equals("CLMASC")) {
                         mascTonnage = (int) Math.round(entity.getWeight() / 25.0f);
                     }
-                    costValue = entity.getEngine().getRating() * mascTonnage
+                    costValue = (entity.hasEngine() ? entity.getEngine().getRating() : 0) * mascTonnage
                             * 1000;
                 }
             } else if (hasFlag(MiscType.F_TARGCOMP)) {
@@ -984,11 +993,13 @@ public class MiscType extends EquipmentType {
                 costValue = swordTons * 10000;
             } else if (hasFlag(MiscType.F_CLUB)
                     && hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
-                int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity.getWeight() / 20.0));
+            	//10k per ton for the actual blade, plus 10k for the mechanism
+                int bladeTons = (int)Math.ceil(entity.getWeight() / 20.0);
                 costValue = (1 + bladeTons) * 10000;
             } else if (hasFlag(MiscType.F_TRACKS)) {
-                costValue = (int) Math.ceil((500 * entity.getEngine()
-                        .getRating() * entity.getWeight()) / 75);
+                costValue = (int) Math.ceil((500
+                    * (entity.hasEngine() ? entity.getEngine().getRating() : 0)
+                    * entity.getWeight()) / 75);
             } else if (hasFlag(MiscType.F_TALON)) {
                 costValue = (int) Math.ceil(getTonnage(entity, loc) * 300);
             } else if (hasFlag(MiscType.F_SPIKES)) {
@@ -1082,7 +1093,11 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(MiscType.F_FERRO_FIBROUS)
                 || hasFlag(MiscType.F_REACTIVE)) {
             if (entity.isClanArmor(1) && !entity.hasPatchworkArmor()) {
-                return 7;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return 4;
+                } else {
+                    return 7;
+                }
             } else if (entity.hasPatchworkArmor()) {
                 int slots = 0;
                 for (int i = 0; i < entity.locations(); i++) {
@@ -1095,13 +1110,25 @@ public class MiscType extends EquipmentType {
                         }
                     }
                 }
-                return slots;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return (int)Math.ceil(slots / 2.0);
+                } else {
+                    return slots;
+                }
             } else {
-                return 14;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return 7;
+                } else {
+                    return 14;
+                }
             }
         } else if (hasFlag(MiscType.F_REFLECTIVE)) {
             if (entity.isClanArmor(1) && !entity.hasPatchworkArmor()) {
-                return 5;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return 3;
+                } else {
+                    return 5;
+                }
             } else if (entity.hasPatchworkArmor()) {
                 int slots = 0;
                 for (int i = 0; i < entity.locations(); i++) {
@@ -1113,12 +1140,24 @@ public class MiscType extends EquipmentType {
                         }
                     }
                 }
-                return slots;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return (int)Math.ceil(slots / 2.0);
+                } else {
+                    return slots;
+                }
             }
-            return 10;
+            if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                return 5;
+            } else {
+                return 10;
+            }
         } else if (hasFlag(MiscType.F_LIGHT_FERRO)) {
             if (!entity.hasPatchworkArmor()) {
-                return 7;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return 4;
+                } else {
+                    return 7;
+                }
             } else {
                 int slots = 0;
                 for (int i = 0; i < entity.locations(); i++) {
@@ -1126,11 +1165,19 @@ public class MiscType extends EquipmentType {
                         slots++;
                     }
                 }
-                return slots;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return (int)Math.ceil(slots / 2.0);
+                } else {
+                    return slots;
+                }
             }
         } else if (hasFlag(MiscType.F_HEAVY_FERRO)) {
             if (!entity.hasPatchworkArmor()) {
-                return 21;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return 11;
+                } else {
+                    return 21;
+                }
             } else {
                 int slots = 0;
                 for (int i = 0; i < entity.locations(); i++) {
@@ -1138,11 +1185,19 @@ public class MiscType extends EquipmentType {
                         slots += 3;
                     }
                 }
-                return slots;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return (int)Math.ceil(slots / 2.0);
+                } else {
+                    return slots;
+                }
             }
         } else if (hasFlag(MiscType.F_FERRO_LAMELLOR)) {
             if (!entity.hasPatchworkArmor()) {
-                return 12;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return 6;
+                } else {
+                    return 12;
+                }
             } else {
                 int slots = 0;
                 for (int i = 0; i < entity.locations(); i++) {
@@ -1150,11 +1205,19 @@ public class MiscType extends EquipmentType {
                         slots += 2;
                     }
                 }
-                return slots;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return (int)Math.ceil(slots / 2.0);
+                } else {
+                    return slots;
+                }
             }
         } else if (hasFlag(MiscType.F_FERRO_FIBROUS_PROTO)) {
             if (!entity.hasPatchworkArmor()) {
-                return 16;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return 8;
+                } else {
+                    return 16;
+                }
             } else {
                 int slots = 0;
                 for (int i = 0; i < entity.locations(); i++) {
@@ -1162,14 +1225,26 @@ public class MiscType extends EquipmentType {
                         slots += 2;
                     }
                 }
-                return slots;
+                if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                    return (int)Math.ceil(slots / 2.0);
+                } else {
+                    return slots;
+                }
             }
         } else if (hasFlag(MiscType.F_ANTI_PENETRATIVE_ABLATIVE)
                 || hasFlag(MiscType.F_HEAT_DISSIPATING)) {
-            return 6;
+            if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                return 3;
+            } else {
+                return 6;
+            }
         } else if (hasFlag(MiscType.F_BALLISTIC_REINFORCED)
                 || hasFlag(MiscType.F_IMPACT_RESISTANT)) {
-            return 10;
+            if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                return 5;
+            } else {
+                return 10;
+            }
         } else if (hasFlag(F_JUMP_BOOSTER) || hasFlag(F_TALON)) {
             return (entity instanceof QuadMech) ? 8 : 4; // all slots in all
             // legs
@@ -1710,7 +1785,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createConvertibleModification());
         EquipmentType.addType(MiscType.createISDuneBuggyChassis());
         EquipmentType.addType(MiscType.createCLDuneBuggyChassis());
-        EquipmentType.addType(MiscType.createEnviromentalSealedChassis());
+        EquipmentType.addType(MiscType.createEnvironmentalSealedChassis());
         EquipmentType.addType(MiscType.createHydroFoilChassisModification());
         EquipmentType.addType(MiscType.createMonocycleModification());
         EquipmentType.addType(MiscType.createISOffRoadChassis());
@@ -2776,7 +2851,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
-        misc.name = "MRM Apollo FCS";
+        misc.name = "Apollo MRM FCS";
         misc.setInternalName("ISApollo");
         misc.addLookupName("IS MRM Apollo Fire Control System");
         misc.addLookupName("IS MRM Apollo FCS");
@@ -3317,11 +3392,11 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createEnviromentalSealedChassis() {
+    public static MiscType createEnvironmentalSealedChassis() {
         MiscType misc = new MiscType();
 
-        misc.name = "Enviromental Sealed Chassis";
-        misc.setInternalName("Enviromental Sealed Chassis");
+        misc.name = "Environmental Sealed Chassis";
+        misc.setInternalName("Environmental Sealed Chassis");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
@@ -5443,6 +5518,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.industrial = true;
         misc.introDate = 2820;
+        misc.flags = misc.flags.or(F_INDUSTRIAL_STRUCTURE);
         misc.techLevel.put(2820, misc.techLevel.get(3071));
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_C, EquipmentType.RATING_C };
@@ -5620,8 +5696,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticals = 3;
         misc.cost = 500000;
-        misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);;
+        misc.flags = misc.flags.or(F_BAP).or(F_BLOODHOUND).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 25;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
@@ -5644,8 +5720,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticals = 2;
         misc.cost = 750000;
-        misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);;
+        misc.flags = misc.flags.or(F_BAP).or(F_BLOODHOUND).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 25;
         //Since its Tactical Handbook Using TO Values
         misc.availRating = new int[] { EquipmentType.RATING_X,
@@ -7914,7 +7990,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Sprayer";
         misc.setInternalName("Tank Sprayer");
-        misc.tonnage = 0.015f;
+        misc.tonnage = 0.015;
         misc.criticals = 1;
         misc.cost = 1000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SPRAYER);
@@ -10261,7 +10337,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createExternalStoresHardpoint() {
         MiscType misc = new MiscType();
-        misc.tonnage = 0.2f;
+        misc.tonnage = 0.2;
         misc.cost = 5000;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "External Stores Hardpoint";
@@ -10278,7 +10354,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createManipulator() {
         MiscType misc = new MiscType();
-        misc.tonnage = 0.01f;
+        misc.tonnage = 0.01;
         misc.cost = 7500;
         misc.criticals = 1;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
@@ -10703,7 +10779,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.1f;
+        misc.tonnage = 0.1;
         misc.techRating = RATING_A;
         misc.cost = 100;
         misc.introDate = 1950;
@@ -10720,7 +10796,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.2f;
+        misc.tonnage = 0.2;
         misc.techRating = RATING_A;
         misc.cost = 200;
         misc.introDate = 1950;
@@ -10737,7 +10813,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.3f;
+        misc.tonnage = 0.3;
         misc.techRating = RATING_A;
         misc.cost = 300;
         misc.introDate = 1950;
@@ -10754,7 +10830,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.4f;
+        misc.tonnage = 0.4;
         misc.techRating = RATING_A;
         misc.cost = 400;
         misc.introDate = 1950;
@@ -10771,7 +10847,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.5f;
+        misc.tonnage = 0.5;
         misc.techRating = RATING_A;
         misc.cost = 500;
         misc.introDate = 1950;

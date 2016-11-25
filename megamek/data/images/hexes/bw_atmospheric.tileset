@@ -27,13 +27,22 @@
 # rough
 # woods
 # water
-# ice / rapids
 # road
+# ice / rapids
 # building
 # bridge
 # fire
 # smoke
 # elevator
+base 0 "space:1" "" "largeTextures/BigSpace.jpg"
+
+include "bloodwolf/grass/ThemeGrass.tileinc"
+include "bloodwolf/hq_boring/ThemeJungle.tileinc"
+include "bloodwolf/snow/ThemeSnow.tileinc"
+base * "" "lunar" "largeTextures/textureLunar.jpg"
+base * "" "mars" "largeTextures/textureMars.jpg"
+base * "" "volcano" "largeTextures/textureVolcano.jpg"
+include "StandardIncludes/StandardThemes.tileinc"
 
 include "StandardIncludes/StandardFluff.tileinc"
 include "StandardIncludes/StandardFuelTanks.tileinc"
@@ -48,21 +57,21 @@ include "StandardIncludes/StandardElevator.tileinc"
 include "StandardIncludes/StandardLimbs.tileinc"
 include "StandardIncludes/StandardSpace.tileinc"
 
-include "bloodwolf/grass/ThemeGrass.tileinc"
-include "bloodwolf/jungle/ThemeJungle.tileinc"
-include "bloodwolf/snow/ThemeSnow.tileinc"
-
+super * "swamp:1" "grass" "bloodwolf/hq_boring/swamp_3.png;bloodwolf/hq_boring/swamp_4.png;bloodwolf/hq_boring/swamp_5.png"
 super * "swamp:1" "" "bloodwolf/hq_boring/swamp_0.png;bloodwolf/hq_boring/swamp_1.png;bloodwolf/hq_boring/swamp_2.png"
 
 super * "rough:1" "" "hq_boring/rough_0.png;hq_boring/rough_1.png;hq_boring/rough_2.png;hq_boring/rough_3.png"
 super * "rough:2" "" "bloodwolf/hq_boring/ultra_rough.png"
 
+super * "woods:1" "snow" "bloodwolf/snow/snow_l_woods_0.png;bloodwolf/snow/snow_l_woods_1.png;bloodwolf/snow/snow_l_woods_2.png"
+super * "woods:2" "snow" "bloodwolf/snow/snow_h_woods_0.png;bloodwolf/snow/snow_h_woods_1.png;bloodwolf/snow/snow_h_woods_2.png"
+
+super * "woods:1" "volcano" "snow/snow_lf.png"
+super * "woods:2" "volcano" "snow/snow_hf.png"
+
 super * "woods:1" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_boring/lf3.png"
 super * "woods:2" "" "hq_boring/hf0.png;hq_boring/hf1.png;hq_boring/hf2.png"
 super * "woods:3" "" "bloodwolf/hq_boring/uhf0.png"
-
-include "StandardIncludes/BasicBridges.tileinc"
-include "StandardIncludes/BasicRoads.tileinc"
 
 super * "water:0" "" "bloodwolf/hq_boring/blue_water_0.png"
 super * "water:1" "" "bloodwolf/hq_boring/blue_water_1.png"
@@ -71,9 +80,43 @@ super * "water:3" "" "bloodwolf/hq_boring/blue_water_3.png"
 super * "water:4" "" "bloodwolf/hq_boring/blue_water_4.png"
 super * "water:*" "" "bloodwolf/hq_boring/blue_water_4.png"
 
+super * "rapids:1" "" "transparent/rapids.png"
+super * "rapids:2" "" "transparent/rapids.png"
+
 super * "ice:1" "" "bloodwolf/hq_boring/ice_0.png;bloodwolf/hq_boring/ice_1.png;bloodwolf/hq_boring/ice_2.png"
 
+super * "geyser:1" "" "boring/geyservent.gif"
+# geyser 2 is rendered with smoke
+super * "geyser:3" "" "boring/geyservent.gif"
+
+super * "fortified:1" "" "boring/sandbags.gif"
+
+super * "rubble:1" "" "boring/rubble_light.gif"
+super * "rubble:2" "" "boring/rubble_medium.gif"
+super * "rubble:3" "" "boring/rubble_heavy.gif"
+super * "rubble:4" "" "boring/rubble_hardened.gif"
+#level 5 is wall rubble
+super * "rubble:5" "" "boring/rubble_light.gif"
+super * "rubble:6" "" "boring/rubble_ultra.gif"
+
+include "StandardIncludes/BasicBridges.tileinc"
+include "StandardIncludes/BasicRoads.tileinc"
+
+super * "heavy_industrial:*" "" "transparent/heavy_industrial_zone.gif"
+
 super * "fire:1" "" "bloodwolf/hq_boring/fire_0.png;bloodwolf/hq_boring/fire_1.png;bloodwolf/hq_boring/fire_2.png"
+super * "fire:2" "" "transparent/inferno.png"
+super * "fire:3" "" "transparent/inferno.png"
+super * "fire:4" "" "transparent/inferno.png"
+super * "smoke:1" "" "transparent/light_smoke.png"
+super * "smoke:2" "" "transparent/heavy_smoke.png"
+super * "smoke:3" "" "transparent/lismoke.gif"
+super * "smoke:4" "" "transparent/lismoke.gif"
+super * "smoke:5" "" "transparent/chaff.gif"
+
+super * "screen:*" "" "boring/screen.gif"
+
+super * "geyser:2" "" "transparent/geysererupt.png"
 
 base 0 "" "" "bloodwolf/hq_boring/beige_plains_0.png"
 base 1 "" "" "bloodwolf/hq_boring/beige_plains_1.png"
@@ -82,12 +125,35 @@ base 3 "" "" "bloodwolf/hq_boring/beige_plains_3.png"
 base 4 "" "" "bloodwolf/hq_boring/beige_plains_4.png"
 base 5 "" "" "bloodwolf/hq_boring/beige_plains_5.png"
 base 6 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
+base 7 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
+base 8 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
+base 9 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
+base 10 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
 base -1 "" "" "bloodwolf/hq_boring/beige_sinkhole_1.png"
 base -2 "" "" "bloodwolf/hq_boring/beige_sinkhole_2.png"
 base -3 "" "" "bloodwolf/hq_boring/beige_sinkhole_3.png"
 base -4 "" "" "bloodwolf/hq_boring/beige_sinkhole_4.png"
 base -5 "" "" "bloodwolf/hq_boring/beige_sinkhole_5.png"
 base -6 "" "" "bloodwolf/hq_boring/beige_sinkhole_6.png"
+
+base 0 "pavement:1" "" "boring/grey_pavement_0.gif"
+base 1 "pavement:1" "" "boring/grey_pavement_1.gif"
+base 2 "pavement:1" "" "boring/grey_pavement_2.gif"
+base 3 "pavement:1" "" "boring/grey_pavement_2.gif"
+base 4 "pavement:1" "" "boring/grey_pavement_3.gif"
+base 5 "pavement:1" "" "boring/grey_pavement_3.gif"
+base 6 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 7 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 8 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 9 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 10 "pavement:1" "" "boring/grey_pavement_5.gif"
+base 20 "pavement:1" "" "boring/grey_pavement_6.gif"
+base 30 "pavement:1" "" "boring/grey_pavement_7.gif"
+base 40 "pavement:1" "" "boring/grey_pavement_8.gif"
+
+base * "planted_fields:1" "" "boring/vineyard.png"
+
+base * "magma:1" "" "largeTextures/BigMagma.jpg"
 
 base -3 "mud:1" "" "bloodwolf/hq_boring/mud_-3.gif"
 base -2 "mud:1" "" "bloodwolf/hq_boring/mud_-2.gif"
@@ -104,5 +170,26 @@ base 0 "sand:1" "" "bloodwolf/hq_boring/sand_0.png"
 base 1 "sand:1" "" "bloodwolf/hq_boring/sand_1.png"
 base 2 "sand:1" "" "bloodwolf/hq_boring/sand_2.png"
 base 3 "sand:1" "" "bloodwolf/hq_boring/sand_3.png"
+base 4 "sand:1" "" "bloodwolf/hq_boring/sand_3.png"
 
-include "atmospheric.tileset"
+base 0 "snow:1" "" "bloodwolf/snow/snow_0.gif"
+base 1 "snow:1" "" "bloodwolf/snow/snow_1.gif"
+base 2 "snow:1" "" "bloodwolf/snow/snow_2.gif"
+base 3 "snow:1" "" "bloodwolf/snow/snow_3.gif"
+base 4 "snow:1" "" "bloodwolf/snow/snow_4.gif"
+base 5 "snow:1" "" "bloodwolf/snow/snow_5.gif"
+base 6 "snow:1" "" "bloodwolf/snow/snow_6.gif"
+base 7 "snow:1" "" "bloodwolf/snow/snow_6.gif"
+base 8 "snow:1" "" "bloodwolf/snow/snow_6.gif"
+base 9 "snow:1" "" "bloodwolf/snow/snow_6.gif"
+base 10 "snow:1" "" "bloodwolf/snow/snow_6.gif"
+base -1 "snow:1" "" "bloodwolf/snow/snow_-1.gif"
+base -2 "snow:1" "" "bloodwolf/snow/snow_-2.gif"
+base -3 "snow:1" "" "bloodwolf/snow/snow_-3.gif"
+base -4 "snow:1" "" "bloodwolf/snow/snow_-4.gif"
+base -5 "snow:1" "" "bloodwolf/snow/snow_-5.gif"
+base -6 "snow:1" "" "bloodwolf/snow/snow_-6.gif"
+
+base * "tundra:1" "" "largeTextures/BigTundra.jpg"
+
+base * "impassable:1" "" "largeTextures/BigRock.jpg"

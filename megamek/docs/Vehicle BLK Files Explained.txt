@@ -100,7 +100,7 @@ Then comes the <type> entry:
 IS Level 2
 </type>
 
-The entry depends on the unit't tech level, the following values are what needs
+The entry depends on the unit's tech level, the following values are what needs
 to be used:
 
 "IS Level 1"
@@ -224,7 +224,7 @@ Aero
 </UnitType>
 
 Notice that in this case, the unit type is set to Aero.  You can also set it to
-Dropship, Jumpship, Warsship, and SpaceStation.
+Dropship, Jumpship, Warship, and SpaceStation.
 
 <Name>
 Sabutai

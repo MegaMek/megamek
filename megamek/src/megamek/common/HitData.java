@@ -37,6 +37,7 @@ public class HitData {
     private int effect;
     private boolean hitAimedLocation = false;
     private int specCritMod = 0;
+    private boolean specCrit = false;
     private int motiveMod = 0;
     private int glancing = 0;
     private boolean fromFront = true; // True if attack came in through hex in
@@ -67,43 +68,44 @@ public class HitData {
 
 
     public HitData(int location) {
-        this(location, false, EFFECT_NONE, false, 0);
+        this(location, false, EFFECT_NONE, false, 0, false);
     }
 
     public HitData(int location, boolean rear) {
-        this(location, rear, EFFECT_NONE, false, 0);
+        this(location, rear, EFFECT_NONE, false, 0, false);
     }
 
     public HitData(int location, boolean rear, int effects) {
-        this(location, rear, effects, false, 0);
+        this(location, rear, effects, false, 0, false);
     }
 
     public HitData(int location, boolean rear, boolean hitAimedLocation) {
-        this(location, rear, EFFECT_NONE, hitAimedLocation, 0);
+        this(location, rear, EFFECT_NONE, hitAimedLocation, 0, false);
     }
 
     public HitData(int location, boolean rear, int effect,
-            boolean hitAimedLocation, int specCrit) {
-        this(location, rear, effect, hitAimedLocation, specCrit, true,
-                HitData.DAMAGE_NONE);
+            boolean hitAimedLocation, int specCritMod, boolean specCrit) {
+        this(location, rear, effect, hitAimedLocation, specCritMod, specCrit,
+                true, HitData.DAMAGE_NONE);
 
     }
 
     public HitData(int location, boolean rear, int effect,
-            boolean hitAimedLocation, int specCrit, boolean fromWhere,
-            int damageType) {
-        this(location, rear, effect, hitAimedLocation, specCrit, fromWhere,
-                damageType, 0);
+            boolean hitAimedLocation, int specCritMod, boolean specCrit,
+            boolean fromWhere, int damageType) {
+        this(location, rear, effect, hitAimedLocation, specCritMod, specCrit,
+                fromWhere, damageType, 0);
     }
 
     public HitData(int location, boolean rear, int effect,
-            boolean hitAimedLocation, int specCrit, boolean fromWhere,
-            int damageType, int glancing) {
+            boolean hitAimedLocation, int specCritMod, boolean specCrit,
+            boolean fromWhere, int damageType, int glancing) {
         this.location = location;
         this.rear = rear;
         this.effect = effect;
         this.hitAimedLocation = hitAimedLocation;
-        specCritMod = specCrit;
+        this.specCritMod = specCritMod;
+        this.specCrit = specCrit;
         fromFront = fromWhere;
         generalDamageType = damageType;
         this.glancing = glancing;
@@ -118,6 +120,7 @@ public class HitData {
     }
 
     public void makeArmorPiercing(AmmoType inType, int modifer) {
+        specCrit = true;
         if (inType.getRackSize() == 2) {
             specCritMod = -4;
         } else if (inType.getRackSize() == 4) {
@@ -155,6 +158,10 @@ public class HitData {
         return specCritMod;
     }
 
+    public boolean getSpecCrit() {
+        return specCrit;
+    }
+
     public int getLocation() {
         return location;
     }
@@ -180,6 +187,7 @@ public class HitData {
     }
 
     public void setSpecCritmod(int val) {
+        specCrit = true;
         specCritMod = val;
     }
 

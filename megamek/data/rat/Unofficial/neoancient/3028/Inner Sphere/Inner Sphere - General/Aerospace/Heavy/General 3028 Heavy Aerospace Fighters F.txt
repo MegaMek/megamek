@@ -1,5 +1,0 @@
-Neoancient General 3028 Heavy Aerospace Fighters F
-Eagle EGL-R10,1
-Eagle EGL-R6,1
-Eagle EGL-R9,1
-Thunderbird TRB-D36,2

@@ -1,8 +1,0 @@
-Neoancient Taurian 2950 Jumpships
-Invader Jumpship (PPC),2
-Invader Jumpship (Standard),2
-Merchant Jumpship (Standard),2
-Monolith Jumpship (Standard),1
-Scout JumpShip (Standard),1
-Star Lord JumpShip (Standard),1
-Tramp JumpShip (Standard),2

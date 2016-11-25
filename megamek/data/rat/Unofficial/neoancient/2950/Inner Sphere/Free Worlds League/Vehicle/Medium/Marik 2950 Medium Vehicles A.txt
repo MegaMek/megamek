@@ -1,7 +1,0 @@
-Neoancient Marik 2950 Medium Vehicles A
-@Neoancient Liao 2870 Medium Vehicles B,5
-@Neoancient Steiner 2870 Medium Vehicles B,6
-Condor Heavy Hover Tank (Standard),41
-Hetzer Wheeled Assault Gun (Standard),23
-Maxim Heavy Hover Transport (Standard),51
-Vedette Medium Tank (Standard),100

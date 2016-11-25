@@ -139,6 +139,8 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
+                        ((CardLayout) displayP.getLayout()).show(displayP,
+                                "movement");
                         tabStrip.setTab(0);
                     }
 
@@ -159,6 +161,8 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
+                        ((CardLayout) displayP.getLayout()).show(displayP,
+                                "pilot");
                         tabStrip.setTab(1);
                     }
 
@@ -179,6 +183,8 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
+                        ((CardLayout) displayP.getLayout()).show(displayP,
+                                "armor");
                         tabStrip.setTab(2);
                     }
 
@@ -199,6 +205,8 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
+                        ((CardLayout) displayP.getLayout()).show(displayP,
+                                "systems");
                         tabStrip.setTab(3);
                     }
 
@@ -219,6 +227,8 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
+                        ((CardLayout) displayP.getLayout()).show(displayP,
+                                "weapons");
                         tabStrip.setTab(4);
                     }
 
@@ -239,6 +249,8 @@ public class UnitDisplay extends JPanel {
 
                     @Override
                     public void performAction() {
+                        ((CardLayout) displayP.getLayout()).show(displayP,
+                                "extras");
                         tabStrip.setTab(5);
                     }
 

@@ -452,7 +452,7 @@ public class MechSummaryCache {
         }
 
         ms.setGyroType(e.getGyroType());
-        if (e.getEngine() != null){
+        if (e.hasEngine()){
             ms.setEngineName(e.getEngine().getEngineName());
         } else {
             ms.setEngineName("None");

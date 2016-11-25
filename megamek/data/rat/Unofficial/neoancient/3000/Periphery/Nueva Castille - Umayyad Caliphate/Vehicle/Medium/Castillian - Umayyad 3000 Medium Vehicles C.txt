@@ -1,7 +1,0 @@
-Neoancient Castillian - Umayyad 3000 Medium Vehicles C
-@Neoancient Hansa 2950 Medium Vehicles D,17
-Condor Heavy Hover Tank (Standard),87
-Goblin Medium Tank (Standard),72
-Hetzer Wheeled Assault Gun (SRM),21
-Hetzer Wheeled Assault Gun (Standard),56
-Maxim Heavy Hover Transport (Standard),100

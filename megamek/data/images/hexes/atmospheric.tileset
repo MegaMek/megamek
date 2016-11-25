@@ -30,8 +30,8 @@
 # rough
 # woods
 # water
-# ice / rapids
 # road
+# ice / rapids
 # building
 # bridge
 # fire
@@ -62,15 +62,21 @@ super * "swamp:3" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksan
 super * "rough:1" "" "transparent/rough_0.png;transparent/rough_1.png;transparent/rough_2.png"
 super * "rough:2" "" "transparent/ultra_rough.png"
 
+super * "woods:1" "jungle" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "woods:2" "jungle" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "woods:3" "jungle" "jungle/ultra_heavy_jungle1.png"
+
+super * "woods:1" "snow" "snow/snow_lf.png"
+super * "woods:2" "snow" "snow/snow_hf.png"
+
+super * "woods:1" "volcano" "snow/snow_lf.png"
+super * "woods:2" "volcano" "snow/snow_hf.png"
+
 super * "woods:1;fluff:12" "" "boring/orchard.png"
 super * "woods:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
 #hf2.gif has been taken out because it looks too much like ultra heavy
 super * "woods:2" "" "boring/hf0.gif;boring/hf1.gif;boring/hf3.gif"
 super * "woods:3" "" "boring/uhf.gif"
-
-super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"
 
 super * "water:0" "" "transparent/blue_water_1.png"
 super * "water:1" "" "transparent/blue_water_1.png"
@@ -82,49 +88,13 @@ super * "water:*" "" "transparent/blue_water_4.png"
 super * "rapids:1" "" "transparent/rapids.png"
 super * "rapids:2" "" "transparent/rapids.png"
 
-include "StandardIncludes/BasicBridges.tileinc"
-include "StandardIncludes/BasicRoads.tileinc"
-
 super * "ice:1" "" "transparent/ice.png"
 
 super * "geyser:1" "" "boring/geyservent.gif"
 # geyser 2 is rendered with smoke
 super * "geyser:3" "" "boring/geyservent.gif"
 
-super * "fluff:14:0" "" "runway/runway_number_36.png"
-super * "fluff:14:1" "" "runway/runway_number_06.png"
-super * "fluff:14:2" "" "runway/runway_number_12.png"
-super * "fluff:14:3" "" "runway/runway_number_18.png"
-super * "fluff:14:4" "" "runway/runway_number_24.png"
-super * "fluff:14:5" "" "runway/runway_number_30.png"
-super * "fluff:14:6" "" "runway/runway_number_36l.png"
-super * "fluff:14:7" "" "runway/runway_number_06l.png"
-super * "fluff:14:8" "" "runway/runway_number_12l.png"
-super * "fluff:14:9" "" "runway/runway_number_18l.png"
-super * "fluff:14:10" "" "runway/runway_number_24l.png"
-super * "fluff:14:11" "" "runway/runway_number_30l.png"
-super * "fluff:14:12" "" "runway/runway_number_36c.png"
-super * "fluff:14:13" "" "runway/runway_number_06c.png"
-super * "fluff:14:14" "" "runway/runway_number_12c.png"
-super * "fluff:14:15" "" "runway/runway_number_18c.png"
-super * "fluff:14:16" "" "runway/runway_number_24c.png"
-super * "fluff:14:17" "" "runway/runway_number_30c.png"
-super * "fluff:14:18" "" "runway/runway_number_36r.png"
-super * "fluff:14:19" "" "runway/runway_number_06r.png"
-super * "fluff:14:20" "" "runway/runway_number_12r.png"
-super * "fluff:14:21" "" "runway/runway_number_18r.png"
-super * "fluff:14:22" "" "runway/runway_number_24r.png"
-super * "fluff:14:23" "" "runway/runway_number_30r.png"
-super * "fluff:14:24" "" "runway/runway_middle_1.png"
-super * "fluff:14:25" "" "runway/runway_middle_2.png"
-super * "fluff:14:26" "" "runway/runway_middle_3.png"
-super * "fluff:14:27" "" "runway/runway_start_1.png"
-super * "fluff:14:28" "" "runway/runway_start_2.png"
-super * "fluff:14:29" "" "runway/runway_start_3.png"
-
-
 super * "fortified:1" "" "boring/sandbags.gif"
-
 
 super * "rubble:1" "" "boring/rubble_light.gif"
 super * "rubble:2" "" "boring/rubble_medium.gif"
@@ -134,6 +104,8 @@ super * "rubble:4" "" "boring/rubble_hardened.gif"
 super * "rubble:5" "" "boring/rubble_light.gif"
 super * "rubble:6" "" "boring/rubble_ultra.gif"
 
+include "StandardIncludes/BasicBridges.tileinc"
+include "StandardIncludes/BasicRoads.tileinc"
 
 super * "heavy_industrial:*" "" "transparent/heavy_industrial_zone.gif"
 
@@ -167,12 +139,6 @@ base -2 "" "" "boring/beige_sinkhole_2.gif"
 base -3 "" "" "boring/beige_sinkhole_3.gif"
 
 base 0 "space:1" "" "boring/space.gif"
-
-#base 0 "woods:1" "" "boring/light_forest_0.gif"
-#base 1 "woods:1" "" "boring/light_forest_1.gif"
-#base 2 "woods:1" "" "boring/light_forest_2.gif"
-#base 0 "woods:2" "" "boring/heavy_forest_0.gif"
-#base 1 "woods:2" "" "boring/heavy_forest_1.gif"
 
 base 0 "pavement:1" "" "boring/grey_pavement_0.gif"
 base 1 "pavement:1" "" "boring/grey_pavement_1.gif"
@@ -230,13 +196,7 @@ base 0 "sand:1" "" "sand/sand_0.gif"
 base 1 "sand:1" "" "sand/sand_1.gif"
 base 2 "sand:1" "" "sand/sand_2.gif"
 base 3 "sand:1" "" "sand/sand_3.gif"
-
-base -2 "tundra:1" "" "tundra/tundra_-2.gif"
-base -1 "tundra:1" "" "tundra/tundra_-1.gif"
-base 0 "tundra:1" "" "tundra/tundra_0.gif"
-base 1 "tundra:1" "" "tundra/tundra_1.gif"
-base 2 "tundra:1" "" "tundra/tundra_2.gif"
-base 3 "tundra:1" "" "tundra/tundra_3.gif"
+base 4 "sand:1" "" "sand/sand_4.gif"
 
 base 0 "snow:1" "" "snow/snow_0.gif"
 base 1 "snow:1" "" "snow/snow_1.gif"
@@ -256,5 +216,11 @@ base -4 "snow:1" "" "snow/snow_-4.gif"
 base -5 "snow:1" "" "snow/snow_-5.gif"
 base -6 "snow:1" "" "snow/snow_-6.gif"
 
-base * "impassable:1" "" "boring/solidrock.gif"
+base -2 "tundra:1" "" "tundra/tundra_-2.gif"
+base -1 "tundra:1" "" "tundra/tundra_-1.gif"
+base 0 "tundra:1" "" "tundra/tundra_0.gif"
+base 1 "tundra:1" "" "tundra/tundra_1.gif"
+base 2 "tundra:1" "" "tundra/tundra_2.gif"
+base 3 "tundra:1" "" "tundra/tundra_3.gif"
 
+base * "impassable:1" "" "boring/solidrock.gif"

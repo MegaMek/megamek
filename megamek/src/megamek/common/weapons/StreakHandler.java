@@ -62,7 +62,8 @@ public class StreakHandler extends MissileWeaponHandler {
             int toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             return toReturn;
         }
         return 2;
@@ -210,7 +211,8 @@ public class StreakHandler extends MissileWeaponHandler {
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+            boolean bldgDamagedOnMiss, Building bldg,
+            Vector<Report> vPhaseReport) {
         return false;
     }
 

@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import megamek.MegaMek;
 import megamek.client.Client;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 
 /**
@@ -510,22 +511,38 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
         output.write("<record version=\"" + MegaMek.VERSION + "\" >");
+        
+        ArrayList<Entity> living = new ArrayList<Entity>();
+        ArrayList<Entity> allied = new ArrayList<Entity>();
+        ArrayList<Entity> salvage = new ArrayList<Entity>();
+        ArrayList<Entity> devastated = new ArrayList<Entity>();
+        Hashtable<String, String> kills = new Hashtable<String, String>();        
 
-        // Make a list of the player's surviving units
-        ArrayList<Entity> living = client.getGame().getPlayerEntities(client.getLocalPlayer(), false);
-
-        // Be sure to include all units that have retreated.
-        for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
-            Entity ent = iter.nextElement();
-            if (ent.getOwnerId() == client.getLocalPlayer().getId()) {
-                living.add(ent);
+        //Sort entities into player's, enemies, and allies and add to survivors, salvage, and allies.
+        Iterator<Entity> entities = client.getGame().getEntities();
+        while(entities.hasNext()) {
+            Entity entity = entities.next();
+            if (entity.getOwner().getId() == client.getLocalPlayer().getId()) {
+            	living.add(entity);
+            } else if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+                 if(!entity.canEscape()) {
+                     kills.put(entity.getDisplayName(), "None");
+                 }
+                 salvage.add(entity);
+            } else {
+            	allied.add(entity);
             }
         }
 
-        // separate out salvage and devastated units and record kills if possible
-        ArrayList<Entity> salvage = new ArrayList<Entity>();
-        ArrayList<Entity> devastated = new ArrayList<Entity>();
-        Hashtable<String, String> kills = new Hashtable<String, String>();
+        // Be sure to include all units that have retreated in survivor and allied sections
+        for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
+            Entity ent = iter.nextElement();
+            if (ent.getOwner().getId() == client.getLocalPlayer().getId()) {
+            	living.add(ent);
+            } else if (!ent.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            	allied.add(ent);
+            }
+        }
 
         //salvageable stuff
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
@@ -544,18 +561,6 @@ public class EntityListFile {
             salvage.add(entity);
         }
 
-        //look for surviving enemy entities and add them to the possible salvage
-        Iterator<Entity> entities = client.getGame().getEntities();
-        while(entities.hasNext()) {
-            Entity entity = entities.next();
-            if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
-                 if(!entity.canEscape()) {
-                     kills.put(entity.getDisplayName(), "None");
-                 }
-                 salvage.add(entity);
-            }
-        }
-
         //devastated units
         Enumeration<Entity> devastation = client.getGame().getDevastatedEntities();
         while (devastation.hasMoreElements()) {
@@ -572,7 +577,7 @@ public class EntityListFile {
             }
             devastated.add(entity);
         }
-
+        
         if(!living.isEmpty()) {
             output.write(CommonConstants.NL);
             output.write(indentStr(1) + "<survivors>");
@@ -585,6 +590,21 @@ public class EntityListFile {
             }
             // Finish writing.
             output.write(indentStr(1) + "</survivors>");
+            output.write(CommonConstants.NL);
+        }
+
+        if(!allied.isEmpty()) {
+            output.write(CommonConstants.NL);
+            output.write(indentStr(1) + "<allies>");
+            output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            try {
+                writeEntityList(output, allied);
+            } catch(IOException exception) {
+                throw exception;
+            }
+            // Finish writing.
+            output.write(indentStr(1) + "</allies>");
             output.write(CommonConstants.NL);
         }
 
@@ -725,6 +745,38 @@ public class EntityListFile {
                 output.write("\" pickUpId=\"");
                 output.write(((MechWarrior)entity).getPickedUpByExternalIdAsString());
             }
+
+            // Save some values for conventional infantry
+            if ((entity instanceof Infantry)
+                    && !(entity instanceof BattleArmor)) {
+                Infantry inf = (Infantry) entity;
+                if (inf.getDamageDivisor() != 1) {
+                    output.write("\" " + MULParser.ARMOR_DIVISOR + "=\"");
+                    output.write(inf.getDamageDivisor() + "");
+                }
+                if (inf.isArmorEncumbering()) {
+                    output.write("\" " + MULParser.ARMOR_ENC + "=\"1");
+                }
+                if (inf.hasSpaceSuit()) {
+                    output.write("\" " + MULParser.SPACESUIT + "=\"1");
+                }
+                if (inf.hasDEST()) {
+                    output.write("\" " + MULParser.DEST_ARMOR + "=\"1");
+                }
+                if (inf.hasSneakCamo()) {
+                    output.write("\" " + MULParser.SNEAK_CAMO + "=\"1");
+                }
+                if (inf.hasSneakIR()) {
+                    output.write("\" " + MULParser.SNEAK_IR + "=\"1");
+                }
+                if (inf.hasSneakECM()) {
+                    output.write("\" " + MULParser.SNEAK_ECM + "=\"1");
+                }
+                if (inf.getSpecializations() > 0) {
+                    output.write("\" " + MULParser.INF_SPEC + "=\"");
+                    output.write(inf.getSpecializations() + "");
+                }
+            }
             output.write("\">");
             output.write(CommonConstants.NL);
 
@@ -740,7 +792,7 @@ public class EntityListFile {
             output.write(String.valueOf(crew.getGunnery()));
             if ((null != entity.getGame())
                     && entity.getGame().getOptions()
-                            .booleanOption("rpg_gunnery")) {
+                            .booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
                 output.write("\" gunneryL=\"");
                 output.write(String.valueOf(crew.getGunneryL()));
                 output.write("\" gunneryM=\"");
@@ -752,7 +804,7 @@ public class EntityListFile {
             output.write(String.valueOf(crew.getPiloting()));
             if ((null != entity.getGame())
                     && entity.getGame().getOptions()
-                            .booleanOption("artillery_skill")) {
+                            .booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
                 output.write("\" artillery=\"");
                 output.write(String.valueOf(crew.getArtillery()));
             }
@@ -798,7 +850,7 @@ public class EntityListFile {
                     output.write("\" autoeject=\"false");
                 }
                 if (entity.game.getOptions().booleanOption(
-                        "conditional_ejection")) {
+                        OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
                     if (((Mech) entity).isCondEjectAmmo()) {
                         output.write("\" condejectammo=\"true");
                     } else {

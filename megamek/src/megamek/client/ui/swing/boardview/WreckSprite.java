@@ -6,10 +6,10 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.FilteredImageSource;
 
-import megamek.client.ui.swing.util.KeyAlphaFilter;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Entity;
+import megamek.common.util.ImageUtil;
 
 /**
  * Sprite for an wreck. Consists of an image, drawn from the Tile Manager
@@ -68,19 +68,8 @@ class WreckSprite extends Sprite {
                 .getAscent());
 
         // create image for buffer
-        Image tempImage;
-        Graphics graph;
-        try {
-            tempImage = bv.createImage(bounds.width, bounds.height);
-            graph = tempImage.getGraphics();
-        } catch (NullPointerException ex) {
-            // argh! but I want it!
-            return;
-        }
-
-        // fill with key color
-        graph.setColor(new Color(BoardView1.TRANSPARENT));
-        graph.fillRect(0, 0, bounds.width, bounds.height);
+        image = ImageUtil.createAcceleratedImage(bounds.width, bounds.height);
+        Graphics graph = image.getGraphics();
 
         // Draw wreck image,if we've got one.
         Image wreck = bv.tileManager.wreckMarkerFor(entity, -1);
@@ -88,7 +77,8 @@ class WreckSprite extends Sprite {
             graph.drawImage(wreck, 0, 0, this);
         }
 
-        if (secondaryPos == -1) {
+        if ((secondaryPos == -1) && GUIPreferences.getInstance()
+                .getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
             // draw box with shortName
             Color text = Color.lightGray;
             Color bkgd = Color.darkGray;
@@ -108,11 +98,8 @@ class WreckSprite extends Sprite {
         }
 
         // create final image
-        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                tempImage.getSource(), new KeyAlphaFilter(
-                        BoardView1.TRANSPARENT))), false);
+        image = bv.getScaledImage(image, false);
         graph.dispose();
-        tempImage.flush();
     }
 
     /**

@@ -916,22 +916,22 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         // ignored
     }
 
-	@Override
-	public void componentHidden(ComponentEvent arg0) {
-	}
+    @Override
+    public void componentHidden(ComponentEvent arg0) {
+    }
 
-	@Override
-	public void componentMoved(ComponentEvent arg0) {
-	}
+    @Override
+    public void componentMoved(ComponentEvent arg0) {
+    }
 
-	@Override
-	public void componentResized(ComponentEvent arg0) {
-		bv.setPreferredSize(getSize());		
-	}
+    @Override
+    public void componentResized(ComponentEvent arg0) {
+        bv.setPreferredSize(getSize());
+    }
 
-	@Override
-	public void componentShown(ComponentEvent arg0) {
-	}
+    @Override
+    public void componentShown(ComponentEvent arg0) {
+    }
 
     /**
      * Returns the panel for the current phase. The ClientGUI is split into the

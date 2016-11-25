@@ -14,7 +14,7 @@ import java.awt.image.ImageObserver;
  * which they draw onto the screen when told to. Sprites keep a bounds
  * rectangle, so it's easy to tell when they return onscreen.
  */
-abstract class Sprite implements ImageObserver {
+abstract class Sprite implements ImageObserver, Comparable<Sprite> {
 
     protected final BoardView1 bv;
     protected Rectangle bounds;
@@ -112,5 +112,21 @@ abstract class Sprite implements ImageObserver {
     
     public void setHidden(boolean h) {
         hidden = h;
+    }
+
+    /**
+     * Determines the sprites draw priority: sprites with a higher priority get
+     * drawn last, ensuring that they are "on top" of other sprites.
+     * @return
+     */
+    protected int getSpritePriority() {
+        return 0;
+    }
+
+    /**
+     * Compares two sprites for purposes of draw ordering.
+     */
+    public int compareTo(Sprite o) {
+        return this.getSpritePriority() - o.getSpritePriority();
     }
 }

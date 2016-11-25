@@ -66,10 +66,11 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             double toReturn = wtype.getRackSize();
-            toReturn = Compute.directBlowInfantryDamage(toReturn,
-                    bDirect ? toHit.getMoS() / 3 : 0,
+            toReturn = Compute.directBlowInfantryDamage(
+                    toReturn, bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             if (bGlancing) {
                 toReturn /= 2;
             }

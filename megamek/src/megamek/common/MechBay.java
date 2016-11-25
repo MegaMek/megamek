@@ -88,7 +88,9 @@ public final class MechBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Mech - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? " units" : " unit");
+        return "Mech (" + getDoors() + " doors) - "
+                + String.format("%1$,.0f", currentSpace)
+                + (currentSpace > 1 ? " units" : " unit");
     }
 
     @Override

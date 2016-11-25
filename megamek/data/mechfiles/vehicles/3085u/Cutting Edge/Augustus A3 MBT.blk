@@ -69,7 +69,7 @@ IS Level 2
 </year>
 
 <source>
-TRO 3085
+TRO 3085 - Age of War
 </source>
 
 <internal_type>
@@ -83,6 +83,10 @@ TRO 3085
 <engine_type>
 1
 </engine_type>
+
+<fuel>
+1.5
+</fuel>
 
 <barrating>
 7

@@ -30,6 +30,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
@@ -318,11 +319,10 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // jumping into heavy woods is danger
-        if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
             IHex hex = game.getBoard().getHex(step.getPosition());
             if ((hex != null) && isJumping() && step.isEndPos(this)) {
-                PilotingRollData psr = entity.checkLandingInHeavyWoods(
-                        step.getMovementType(false), hex);
+                PilotingRollData psr = entity.checkLandingInHeavyWoods(step.getMovementType(false), hex);
                 if (psr.getValue() != PilotingRollData.CHECK_FALSE) {
                     step.setDanger(true);
                 }
@@ -391,6 +391,47 @@ public class MovePath implements Cloneable, Serializable {
             }
             this.addStep(step);
         }
+
+        // Can't move out of a hex with an enemy unit unless we started
+        // there, BUT we're allowed to turn, unload, or go prone.
+        Coords pos = getEntity().getPosition();
+        boolean isMech = getEntity() instanceof Mech;
+        int elev = getEntity().getElevation();
+        if (Compute.isEnemyIn(getGame(), getEntity(), pos, false, isMech, elev)) {
+            // There is an enemy, can't go out and back in, and go out again
+            boolean left = false;
+            boolean returned = false;
+            for (MoveStep step : steps) {
+                if (!left) {
+                    if (!step.getPosition().equals(getEntity().getPosition())
+                        || !(step.getElevation() == getEntity().getElevation())) {
+                        // we left the location
+                        left = true;
+                        continue;
+                    }
+                    continue;
+                }
+                if (!returned) {
+                    if (step.getPosition().equals(getEntity().getPosition())
+                        && (step.getElevation() == getEntity().getElevation())) {
+                        // we returned to the location
+                        returned = true;
+                        continue;
+                    }
+                    continue;
+                }
+                // We've returned, only following 4 types are legal
+                if ((step.getType() != MovePath.MoveStepType.TURN_LEFT)
+                        && (step.getType() != MovePath.MoveStepType.TURN_RIGHT)
+                        && (step.getType() != MovePath.MoveStepType.UNLOAD)
+                        && (step.getType() != MovePath.MoveStepType.GO_PRONE)) {
+                    // we only need to identify the first illegal move
+                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                    break;
+                }
+            }
+        }
+
         if (clip) {
             clipToPossible();
         }
@@ -649,54 +690,9 @@ public class MovePath implements Cloneable, Serializable {
             // nothing to clip
             return;
         }
-        // Do a final check for bad moves, and clip movement after the first bad
-        // one
-        final Vector<MoveStep> goodSteps = new Vector<MoveStep>();
-        Enumeration<MoveStep> i = steps.elements();
-        MoveStep step = i.nextElement();
-        // Can't move out of a hex with an enemy unit unless we started
-        // there, BUT we're allowed to turn, unload, or go prone.
-        if (Compute.isEnemyIn(getGame(), getEntity(),
-                getEntity().getPosition(), false, getEntity() instanceof Mech,
-                getEntity().getElevation())) {
-            // This is an enemy, we can't go out and back in, and go out again
-            boolean left = false;
-            boolean returned = false;
-            while (i.hasMoreElements()) {
-                step = i.nextElement();
-                if (!left) {
-                    if (!step.getPosition().equals(getEntity().getPosition())
-                        || !(step.getElevation() == getEntity().getElevation())) {
-                        // we left the location
-                        left = true;
-                        continue;
-                    }
-                    continue;
-                }
-                if (!returned) {
-                    if (step.getPosition().equals(getEntity().getPosition())
-                        && (step.getElevation() == getEntity().getElevation())) {
-                        // we returned to the location
-                        returned = true;
-                        continue;
-                    }
-                    continue;
-                }
-                // we've returned, anything other than the following 4 types are
-                // illegal
-                if ((step.getType() != MovePath.MoveStepType.TURN_LEFT)
-                        && (step.getType() != MovePath.MoveStepType.TURN_RIGHT)
-                        && (step.getType() != MovePath.MoveStepType.UNLOAD)
-                        && (step.getType() != MovePath.MoveStepType.GO_PRONE)) {
-                    // we only need to identify the first illegal move
-                    step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
-                    break;
-                }
-            }
-        }
-        i = steps.elements();
-        while (i.hasMoreElements()) {
-            step = i.nextElement();
+        // Do final check for bad moves, and clip movement after first bad one
+        final Vector<MoveStep> goodSteps = new Vector<>();
+        for (MoveStep step : steps) {
             if (step.getMovementType(isEndStep(step)) != EntityMovementType.MOVE_ILLEGAL) {
                 goodSteps.addElement(step);
             } else {

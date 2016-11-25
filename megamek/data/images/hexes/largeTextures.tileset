@@ -1,5 +1,5 @@
 # Example tileset for showing off how larger textures work
-# Based off of atmospheric
+# Based off of hq_atmospheric
 #
 # format is:
 # base/super <elevation> <terrains> <theme> <image>
@@ -22,16 +22,13 @@
 #   when multiple "super" images are used in a hex, the first one in this file is drawn first.
 #   Themed "super" images must appear before the default ones
 #
-
-
-include "StandardIncludes/StandardThemes.tileinc"
-
-include "StandardIncludes/BasicBridges.tileinc"
-include "StandardIncludes/BasicRoads.tileinc"
+base 0 "space:1" "" "largeTextures/BigSpace.jpg"
 
 include "StandardIncludes/StandardFluff.tileinc"
 include "StandardIncludes/StandardFuelTanks.tileinc"
 
+include "lunar/LunarBuildings.tileinc"
+include "mars/MarsBuildings.tileinc"
 include "StandardIncludes/BuildingsNonSClassArmor.tileinc"
 include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
 include "StandardIncludes/BuildingsSClassArmor.tileinc"
@@ -43,21 +40,65 @@ include "StandardIncludes/StandardLimbs.tileinc"
 include "StandardIncludes/StandardSpace.tileinc"
 
 
-super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
-super * "swamp:2" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
-super * "swamp:3" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
+super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png"
+#levels 2 and 3 of swamp are for quicksand
+super * "swamp:2" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
+super * "swamp:3" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
 
-super * "rough:1" "" "hq_boring/rough_0.png;hq_boring/rough_1.png;hq_boring/rough_2.png"
+super 0 "rough:1" "lunar" "lunar/lunar_rough_0.gif"
+super 1 "rough:1" "lunar" "lunar/lunar_rough_0.gif"
+super 2 "rough:1" "lunar" "lunar/lunar_rough_1.gif"
+super 3 "rough:1" "lunar" "lunar/lunar_rough_1.gif"
+super 4 "rough:1" "lunar" "lunar/lunar_rough_1.gif"
+super 5 "rough:1" "lunar" "lunar/lunar_rough_3.gif"
+super 6 "rough:1" "lunar" "lunar/lunar_rough_3.gif"
+super 7 "rough:1" "lunar" "lunar/lunar_rough_3.gif"
+super 8 "rough:1" "lunar" "lunar/lunar_rough_5.gif"
+super 9 "rough:1" "lunar" "lunar/lunar_rough_5.gif"
+super 10 "rough:1" "lunar" "lunar/lunar_rough_5.gif"
+super -1 "rough:1" "lunar" "lunar/lunar_sinkhole_rough_1.gif"
+super -2 "rough:1" "lunar" "lunar/lunar_sinkhole_rough_1.gif"
+super -3 "rough:1" "lunar" "lunar/lunar_sinkhole_rough_2.gif"
+super -4 "rough:1" "lunar" "lunar/lunar_sinkhole_rough_2.gif"
+super -5 "rough:1" "lunar" "lunar/lunar_sinkhole_rough_3.gif"
+super -6 "rough:1" "lunar" "lunar/lunar_sinkhole_rough_3.gif"
+
+super 0 "rough:1" "mars" "mars/mars_rough_0.gif"
+super 1 "rough:1" "mars" "mars/mars_rough_0.gif"
+super 2 "rough:1" "mars" "mars/mars_rough_1.gif"
+super 3 "rough:1" "mars" "mars/mars_rough_1.gif"
+super 4 "rough:1" "mars" "mars/mars_rough_1.gif"
+super 5 "rough:1" "mars" "mars/mars_rough_3.gif"
+super 6 "rough:1" "mars" "mars/mars_rough_3.gif"
+super 7 "rough:1" "mars" "mars/mars_rough_3.gif"
+super 8 "rough:1" "mars" "mars/mars_rough_5.gif"
+super 9 "rough:1" "mars" "mars/mars_rough_5.gif"
+super 10 "rough:1" "mars" "mars/mars_rough_5.gif"
+super -1 "rough:1" "mars" "mars/mars_sinkhole_rough_1.gif"
+super -2 "rough:1" "mars" "mars/mars_sinkhole_rough_1.gif"
+super -3 "rough:1" "mars" "mars/mars_sinkhole_rough_2.gif"
+super -4 "rough:1" "mars" "mars/mars_sinkhole_rough_2.gif"
+super -5 "rough:1" "mars" "mars/mars_sinkhole_rough_3.gif"
+super -6 "rough:1" "mars" "mars/mars_sinkhole_rough_3.gif"
+
+super * "rough:1" "" "hq_boring/rough_0.png;hq_boring/rough_1.png;hq_boring/rough_2.png;hq_boring/rough_3.png"
 super * "rough:2" "" "transparent/ultra_rough.png"
+
+super * "woods:1" "jungle" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "woods:2" "jungle" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "woods:3" "jungle" "jungle/ultra_heavy_jungle1.png"
+
+super * "woods:1" "snow" "snow/snow_lf.png"
+super * "woods:2" "snow" "snow/snow_hf.png"
+
+super * "woods:1" "volcano" "snow/snow_lf.png"
+super * "woods:2" "volcano" "snow/snow_hf.png"
 
 super * "woods:1;fluff:12" "" "boring/orchard.png"
 super * "woods:1" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_boring/lf3.png"
+#hf2.gif has been taken out because it looks too much like ultra heavy
 super * "woods:2" "" "hq_boring/hf0.png;hq_boring/hf1.png;hq_boring/hf2.png"
 super * "woods:3" "" "boring/uhf.gif"
-
-super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"
 
 super * "water:0" "" "transparent/blue_water_1.png"
 super * "water:1" "" "transparent/blue_water_1.png"
@@ -66,14 +107,14 @@ super * "water:3" "" "transparent/blue_water_3.png"
 super * "water:4" "" "transparent/blue_water_4.png"
 super * "water:*" "" "transparent/blue_water_4.png"
 
-super * "geyser:1" "" "boring/geyservent.gif"
-# geyser 2 is rendered with smoke
-super * "geyser:3" "" "boring/geyservent.gif"
-
 super * "rapids:1" "" "transparent/rapids.png"
 super * "rapids:2" "" "transparent/rapids.png"
 
 super * "ice:1" "" "transparent/ice.png"
+
+super * "geyser:1" "" "boring/geyservent.gif"
+# geyser 2 is rendered with smoke
+super * "geyser:3" "" "boring/geyservent.gif"
 
 super * "fortified:1" "" "boring/sandbags.gif"
 
@@ -84,6 +125,9 @@ super * "rubble:4" "" "boring/rubble_hardened.gif"
 #level 5 is wall rubble
 super * "rubble:5" "" "boring/rubble_light.gif"
 super * "rubble:6" "" "boring/rubble_ultra.gif"
+
+include "StandardIncludes/BasicBridges.tileinc"
+include "StandardIncludes/BasicRoads.tileinc"
 
 super * "heavy_industrial:*" "" "transparent/heavy_industrial_zone.gif"
 
@@ -101,18 +145,11 @@ super * "screen:*" "" "boring/screen.gif"
 
 super * "geyser:2" "" "transparent/geysererupt.png"
 
-
-# NON-THEMED BASE
-
-base * "impassable:1" "" "boring/solidrock.gif"
-
-base 0 "" "" "largeTextures/Texture4.jpg"
-base 1 "" "" "largeTextures/Texture4.jpg"
-base 2 "" "" "largeTextures/Texture4.jpg"
-base 3 "" "" "largeTextures/Texture4c.jpg"
-base -1 "" "" "largeTextures/Texture4b.jpg"
-
-
+base 0 "" "" "largeTextures/texture4b.jpg"
+base 1 "" "" "largeTextures/texture4.jpg"
+base 2 "" "" "largeTextures/texture4.jpg"
+base 3 "" "" "largeTextures/texture4c.jpg"
+base -1 "" "" "largeTextures/texture4b.jpg"
 
 base 0 "pavement:1" "" "boring/grey_pavement_0.gif"
 base 1 "pavement:1" "" "boring/grey_pavement_1.gif"
@@ -129,47 +166,17 @@ base 20 "pavement:1" "" "boring/grey_pavement_6.gif"
 base 30 "pavement:1" "" "boring/grey_pavement_7.gif"
 base 40 "pavement:1" "" "boring/grey_pavement_8.gif"
 
-base * "planted_fields:1" "" "boring/fields.gif"
-base * "planted_fields:2" "" "boring/vineyard.png"
+base * "planted_fields:1" "" "boring/vineyard.png"
+base * "planted_fields:2" "" "boring/fields.gif"
 base * "planted_fields:3" "" "boring/soybeans.png"
 
-base * "mud:1" "" "boring/mud_1.gif"
-base * "mud:2" "" "boring/mud_2.gif"
+base * "mud:1" "" "largeTextures/BigMud.jpg"
 
-base -2 "magma:1" "" "magma/crust_-2.gif"
-base -1 "magma:1" "" "magma/crust_-1.gif"
-base 0 "magma:1" "" "magma/crust_0.gif"
-base 1 "magma:1" "" "magma/crust_1.gif"
-base 2 "magma:1" "" "magma/crust_2.gif"
-base 3 "magma:1" "" "magma/crust_3.gif"
+base * "magma:1" "" "largeTextures/BigMagma.jpg"
 
-base -2 "magma:2" "" "magma/magma_-2.gif"
-base -1 "magma:2" "" "magma/magma_-1.gif"
-base 0 "magma:2" "" "magma/magma_0.gif"
-base 1 "magma:2" "" "magma/magma_1.gif"
-base 2 "magma:2" "" "magma/magma_2.gif"
-base 3 "magma:2" "" "magma/magma_3.gif"
+base * "sand:1" "" "largeTextures/texture5.jpg"
 
-base -2 "mud:1" "" "mud/mud_-2.gif"
-base -1 "mud:1" "" "mud/mud_-1.gif"
-base 0 "mud:1" "" "mud/mud_0.gif"
-base 1 "mud:1" "" "mud/mud_1.gif"
-base 2 "mud:1" "" "mud/mud_2.gif"
-base 3 "mud:1" "" "mud/mud_3.gif"
-
-base -2 "mud:2" "" "mud/deepmud_-2.gif"
-base -1 "mud:2" "" "mud/deepmud_-1.gif"
-base 0 "mud:2" "" "mud/deepmud_0.gif"
-base 1 "mud:2" "" "mud/deepmud_1.gif"
-base 2 "mud:2" "" "mud/deepmud_2.gif"
-base 3 "mud:2" "" "mud/deepmud_3.gif"
-
-base -2 "sand:1" "" "hq_boring/sand_-2.png"
-base -1 "sand:1" "" "hq_boring/sand_-1.png"
-base 0 "sand:1" "" "largeTextures/texture5.jpg"
-base 1 "sand:1" "" "hq_boring/sand_1.png"
-base 2 "sand:1" "" "hq_boring/sand_2.png"
-base 3 "sand:1" "" "hq_boring/sand_3.png"
+base * "snow:1" "" "largeTextures/BigSnow1.jpg"
 
 base -2 "tundra:1" "" "tundra/tundra_-2.gif"
 base -1 "tundra:1" "" "tundra/tundra_-1.gif"
@@ -178,37 +185,48 @@ base 1 "tundra:1" "" "tundra/tundra_1.gif"
 base 2 "tundra:1" "" "tundra/tundra_2.gif"
 base 3 "tundra:1" "" "tundra/tundra_3.gif"
 
-base 0 "snow:1" "" "largeTextures/BigSnow1.jpg"
-#base 1 "snow:1" "" "snow/snow_1.gif"
-#base 2 "snow:1" "" "snow/snow_2.gif"
-#base 3 "snow:1" "" "snow/snow_3.gif"
-#base 4 "snow:1" "" "snow/snow_4.gif"
-#base 5 "snow:1" "" "snow/snow_5.gif"
-#base 6 "snow:1" "" "snow/snow_6.gif"
-#base 7 "snow:1" "" "snow/snow_7.gif"
-#base 8 "snow:1" "" "snow/snow_8.gif"
-#base 9 "snow:1" "" "snow/snow_9.gif"
-#base 10 "snow:1" "" "snow/snow_10.gif"
-#base -1 "snow:1" "" "snow/snow_-1.gif"
-#base -2 "snow:1" "" "snow/snow_-2.gif"
-#base -3 "snow:1" "" "snow/snow_-3.gif"
-#base -4 "snow:1" "" "snow/snow_-4.gif"
-#base -5 "snow:1" "" "snow/snow_-5.gif"
-#base -6 "snow:1" "" "snow/snow_-6.gif"
+base * "impassable:1" "" "largeTextures/BigRock.jpg"
 
-# -------- Grasslands Theme ------------
+#------------------- BEGIN grass theme
 
 base 0 "" "grass" "largeTextures/texture6.jpg"
-base 1 "" "grass" "largeTextures/texture6.jpg"
-base 2 "" "grass" "largeTextures/texture6.jpg"
-base 3 "" "grass" "largeTextures/texture7.jpg"
-base -1 "" "grass" "largeTextures/texture8.jpg"
+base 1 "" "grass" "largeTextures/texture7.jpg"
+base 2 "" "grass" "largeTextures/texture7.jpg"
+base 3 "" "grass" "largeTextures/texture8.jpg"
+base -1 "" "grass" "largeTextures/texture6.jpg"
 
-base 0 "rough:1" "grass" "grass/grass_rough_0.gif"
-base 1 "rough:1" "grass" "grass/grass_rough_1.gif"
-base 3 "rough:1" "grass" "grass/grass_rough_3.gif"
-base 4 "rough:1" "grass" "grass/grass_rough_3.gif"
-base 5 "rough:1" "grass" "grass/grass_rough_5.gif"
-base -1 "rough:1" "grass" "grass/grass_sinkhole_rough_1.gif"
-base -2 "rough:1" "grass" "grass/grass_sinkhole_rough_2.gif"
-base -3 "rough:1" "grass" "grass/grass_sinkhole_rough_3.gif"
+#------------------- END grass theme
+
+#------------------- BEGIN jungle theme
+
+base 0 "" "jungle" "largeTextures/texture4b.jpg"
+base 1 "" "jungle" "largeTextures/texture4.jpg"
+base 2 "" "jungle" "largeTextures/texture4.jpg"
+base 3 "" "jungle" "largeTextures/texture4c.jpg"
+base -1 "" "jungle" "largeTextures/texture4b.jpg"
+
+#------------------- END jungle theme
+
+#------------------- BEGIN lunar theme
+
+base * "" "lunar" "largeTextures/textureLunar.jpg"
+
+#------------------- END lunar theme
+
+#------------------- BEGIN mars theme
+
+base * "" "mars" "largeTextures/textureMars.jpg"
+
+#------------------- END mars theme
+
+#------------------- BEGIN snow theme
+
+base * "" "snow" "largeTextures/BigSnow1.jpg"
+
+#------------------- END snow theme
+
+#------------------- BEGIN volcano theme
+
+base * "" "volcano" "largeTextures/textureVolcano.jpg"
+
+#------------------- END volcano theme

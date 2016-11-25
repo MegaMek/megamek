@@ -1,5 +1,21 @@
 # Theme Lunar Buildings
 
+super * "building:4;bldg_elev:1;bldg_cf:*" "lunar" "lunar/Sml_Tower_5.gif"
+super * "building:4;bldg_elev:2;bldg_cf:*" "lunar" "lunar/Sml_Tower_6.gif"
+super * "building:4;bldg_elev:*;bldg_cf:*" "lunar" "lunar/Sml_Tower_6.gif"
+
+super * "building:3;bldg_elev:1;bldg_cf:*" "lunar" "lunar/Sml_Tower_3.gif"
+super * "building:3;bldg_elev:2;bldg_cf:*" "lunar" "lunar/Sml_Tower_4.gif"
+super * "building:3;bldg_elev:*;bldg_cf:*" "lunar" "lunar/Sml_Tower_4.gif"
+
+super * "building:2;bldg_elev:1;bldg_cf:*" "lunar" "lunar/Sml_Tower_1.gif"
+super * "building:2;bldg_elev:2;bldg_cf:*" "lunar" "lunar/Sml_Tower_2.gif"
+super * "building:2;bldg_elev:*;bldg_cf:*" "lunar" "lunar/Sml_Tower_2.gif"
+
+super * "building:1;bldg_elev:1;bldg_cf:*" "lunar" "lunar/Fuel_Pod_1.gif"
+super * "building:1;bldg_elev:2;bldg_cf:*" "lunar" "lunar/Glass_Dome_1.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*" "lunar" "lunar/Glass_Dome_1.gif"
+
 super * "building:1;bldg_elev:*;bldg_cf:*;fluff:0" "lunar" "lunar/Glass_Dome_1.gif"
 super * "building:1;bldg_elev:*;bldg_cf:*;fluff:1" "lunar" "lunar/Sml_Tower_1.gif"
 super * "building:1;bldg_elev:*;bldg_cf:*;fluff:2" "lunar" "lunar/Sml_Tower_2.gif"

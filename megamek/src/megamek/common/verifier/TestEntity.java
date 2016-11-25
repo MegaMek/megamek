@@ -255,6 +255,22 @@ public abstract class TestEntity implements TestEntityOption {
                 + ((Math.ceil(weight * 10) == (weight * 10)) ? "0" : "");
     }
 
+    /**
+     * Allows a value to be truncuated to an arbitrary number of decimal places.
+     *
+     * @param value
+     *            The input value
+     * @param precision
+     *            The number of decimals to truncate at
+     *
+     * @return The input value truncated to the number of decimal places
+     *         supplied
+     */
+    public static double setPrecision(double value, int precision) {
+        return Math.round(value * Math.pow(10, precision))
+                / Math.pow(10, precision);
+    }
+
     private boolean hasMASC() {
         if (getEntity() instanceof Mech) {
             return ((Mech) getEntity()).hasMASC();
@@ -287,14 +303,13 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public String printWeightEngine() {
-        return StringUtil.makeLength("Engine: " + engine.getEngineName(),
+        return StringUtil.makeLength("Engine: " + ((null != engine) ? engine.getEngineName() : "---"),
                 getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightEngine()) + "\n";
     }
 
     public double getWeightEngine() {
-        double weight = engine.getWeightEngine(getEntity(),
-                getWeightCeilingEngine());
+        double weight = ((null != engine) ? engine.getWeightEngine(getEntity(), getWeightCeilingEngine()) : 0);
         return weight;
     }
 
@@ -830,7 +845,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
             */
         }
-        if (getEntity().getEngine() != null) {
+        if (getEntity().hasEngine()) {
             // TODO: Enable TL testing for engines
             //  This ends up causing canon units to fail, and we have to come
             //  up with a way to deal with this
@@ -1128,10 +1143,11 @@ public abstract class TestEntity implements TestEntityOption {
                 }
             }
             if (mech.hasWorkingWeapon(WeaponType.F_TASER)) {
-                switch (mech.getEngine().getEngineType()) {
+                switch (mech.hasEngine() ? mech.getEngine().getEngineType() : Engine.NONE) {
                     case Engine.FISSION:
                     case Engine.FUEL_CELL:
                     case Engine.COMBUSTION_ENGINE:
+                    case Engine.NONE:
                         buff.append("Mech Taser needs fusion engine\n");
                         illegal = true;
                         break;
@@ -1372,11 +1388,11 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("primitive mechs can't mount advanced inner structure\n");
                     illegal = true;
                 }
-                if ((mech.getEngine().getEngineType() == Engine.XL_ENGINE)
+                if(mech.hasEngine() && ((mech.getEngine().getEngineType() == Engine.XL_ENGINE)
                         || (mech.getEngine().getEngineType() == Engine.LIGHT_ENGINE)
                         || (mech.getEngine().getEngineType() == Engine.COMPACT_ENGINE)
                         || mech.getEngine().hasFlag(Engine.LARGE_ENGINE)
-                        || (mech.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
+                        || (mech.getEngine().getEngineType() == Engine.XXL_ENGINE))) {
                     buff.append("primitive mechs can't mount XL, Light, Compact, XXL or Large Engines\n");
                     illegal = true;
                 }

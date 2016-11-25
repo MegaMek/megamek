@@ -1,9 +1,0 @@
-Neoancient Clan Smoke Jaguar 3060 ProtoMeks
-Centaur (Standard),38
-Gorgon (Standard),83
-Harpy (Standard),100
-Hydra (Standard),83
-Minotaur (Standard),83
-Roc (Standard),83
-Satyr (Standard),31
-Siren (Standard),83

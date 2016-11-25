@@ -37,6 +37,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -63,7 +64,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_MISSILE;
-        advancedAMS = g.getOptions().booleanOption("tacops_ams");
+        advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
         sSalvoType = " missile(s) ";
     }
 
@@ -283,7 +284,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             if (bGlancing) {
                 toReturn /= 2;
             }
@@ -363,11 +365,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+            boolean bldgDamagedOnMiss, Building bldg,
+            Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
         if ((entityTarget != null)
+                && !entityTarget.isAirborne()
+                && !entityTarget.isAirborneVTOLorWIGE()
                 && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
             server.tryIgniteHex(target.getPosition(), subjectId, false, false,
                     new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
@@ -394,9 +399,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
         }
 
-        // BMRr, pg. 51: "All shots that were aimed at a target inside
-        // a building and miss do full damage to the building instead."
-        if (!targetInBuilding
+        // TW, pg. 171 - shots that miss a target in a building don't damage the
+        // building, unless the attacker is adjacent
+        if (!bldgDamagedOnMiss
                 || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
@@ -545,6 +550,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
         boolean bNemesisConfusable = isNemesisConfusable();
 
         if (entityTarget != null) {
@@ -658,7 +666,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
@@ -674,7 +682,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
@@ -708,7 +716,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
                 return false;
             }
@@ -718,15 +726,28 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // ways
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
-        int hits = calcHits(vPhaseReport);
+        int hits;
         if (target.isAirborne() || game.getBoard().inSpace()) {
-            //if we added a line to the phase report for calc hits, remove it now
-            while(vPhaseReport.size() > id) {
-                vPhaseReport.removeElementAt(vPhaseReport.size()-1);
-            }
+            // Ensures AMS state is properly updated
+            getAMSHitsMod(new Vector<Report>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
             hits = aeroResults[0];
             nCluster = aeroResults[1];
+            // Need to report hit (normally reported in calcHits)
+            if (!bMissed && amsEngaged && !ae.isCapitalFighter()) {
+                int amsRoll = Compute.d6();
+                r = new Report(3352);
+                r.subject = subjectId;
+                r.add(amsRoll);
+                vPhaseReport.add(r);
+                hits = Math.max(0, hits - amsRoll);
+            } else if (!bMissed) {
+                r = new Report(3390);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            }
+        } else {
+            hits = calcHits(vPhaseReport);
         }
 
         // We have to adjust the reports on a miss, so they line up
@@ -737,17 +758,47 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
 
         if (!bMissed){
-            // The building shields all units from a certain amount of damage.
-            // The amount is based upon the building's CF at the phase's start.
+            // Buildings shield all units from a certain amount of damage.
+            // Amount is based upon the building's CF at the phase's start.
             int bldgAbsorbs = 0;
-            if (targetInBuilding && (bldg != null)) {
+            if (targetInBuilding && (bldg != null)
+                    && (toHit.getThruBldg() == null)) {
                 bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+            }
+            
+            // Attacking infantry in buildings from same building
+            if (targetInBuilding && (bldg != null)
+                    && (toHit.getThruBldg() != null)
+                    && (entityTarget instanceof Infantry)) {
+                // If elevation is the same, building doesn't absorb
+                if (ae.getElevation() != entityTarget.getElevation()) {
+                    int dmgClass = wtype.getInfantryDamageClass();
+                    int nDamage;
+                    if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
+                        nDamage = nDamPerHit * Math.min(nCluster, hits);
+                    } else {
+                        // Need to indicate to handleEntityDamage that the
+                        // absorbed damage shouldn't reduce incoming damage,
+                        // since the incoming damage was reduced in
+                        // Compute.directBlowInfantryDamage
+                        nDamage = -wtype.getDamage(nRange)
+                                * Math.min(nCluster, hits);
+                    }
+                    bldgAbsorbs = (int) Math.round(nDamage
+                            * bldg.getInfDmgFromInside());
+                } else {
+                    // Used later to indicate a special report
+                    bldgAbsorbs = Integer.MIN_VALUE;
+                }
             }
 
             // Make sure the player knows when his attack causes no damage.
             if (hits == 0) {
                 r = new Report(3365);
                 r.subject = subjectId;
+                if (target.isAirborne() || game.getBoard().inSpace()) {
+                    r.indent(2);
+                }
                 vPhaseReport.addElement(r);
             }
 
@@ -787,9 +838,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
             // When shooting at a non-infantry unit in a building and the
             //  shot misses, the building is damaged instead, TW pg 171
-            int dist = ae.getPosition().distance(target.getPosition());
-            if (targetInBuilding && !(entityTarget instanceof Infantry) &&
-                    (dist == 1)){
+            if (bldgDamagedOnMiss){
                 r = new Report(6429);
                 r.indent(2);
                 r.subject = ae.getId();

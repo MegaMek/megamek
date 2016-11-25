@@ -46,11 +46,15 @@ standardseats:.225:3
 6
 </engine_type>
 
+<fuel>
+.018
+</fuel>
+
 <armor>
 3
 3
 3
-1
+2
 1
 </armor>
 
@@ -63,7 +67,7 @@ standardseats:.225:3
 </structural_tech_rating>
 
 <Body Equipment>
-AmphibiousChassis
+Armored Chassis
 Advanced Fire Control
 PintleTurret
 </Body Equipment>
@@ -88,10 +92,9 @@ InfantrySupportLaser
 </Turret Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Star League
 </source>
 
 <tonnage>
 4.0
 </tonnage>
-

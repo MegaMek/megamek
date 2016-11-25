@@ -729,8 +729,8 @@ public class Protomech extends Entity {
             case LOC_MAINGUN:
                 return new HitData(LOC_TORSO, hit.isRear(), hit.getEffect(),
                         hit.hitAimedLocation(), hit.getSpecCritMod(),
-                        hit.isFromFront(), hit.getGeneralDamageType(),
-                        hit.glancingMod());
+                        hit.getSpecCrit(), hit.isFromFront(),
+                        hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_TORSO:
             default:
                 return new HitData(LOC_DESTROYED);
@@ -1953,7 +1953,7 @@ public class Protomech extends Entity {
         retVal += 540 * weight;
 
         // Engine cost is based on tonnage and rating.
-        if (getEngine() != null) {
+        if (hasEngine()) {
             retVal += (5000 * weight * getEngine().getRating()) / 75;
         }
 
@@ -2108,7 +2108,7 @@ public class Protomech extends Entity {
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType,
             IHex prevHex, EntityMovementType overallMoveType,
-            MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
+            MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos,
             Coords curPos, boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
                 "ProtoMechs can't skid");
@@ -2118,10 +2118,6 @@ public class Protomech extends Entity {
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         return getRunMP(gravity, ignoreheat, ignoremodulararmor);
-    }
-
-    public void setEngine(Engine engine) {
-        this.engine = engine;
     }
 
     @Override

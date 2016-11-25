@@ -15,9 +15,12 @@
 package megamek.common;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -43,6 +46,26 @@ public class Infantry extends Entity {
      *
      */
     private static final long serialVersionUID = -8706716079307721282L;
+
+    /**
+     * Infantry Specializations
+     */
+    public static int BRIDGE_ENGINEERS  = 1 << 0;
+    public static int DEMO_ENGINEERS    = 1 << 1;
+    public static int FIRE_ENGINEERS    = 1 << 2;
+    public static int MINE_ENGINEERS    = 1 << 3;
+    public static int SENSOR_ENGINEERS  = 1 << 4;
+    public static int TRENCH_ENGINEERS  = 1 << 5;
+    public static int MARINES           = 1 << 6;
+    public static int MOUNTAIN_TROOPS   = 1 << 7;
+    public static int PARAMEDICS        = 1 << 8;
+    public static int PARATROOPS        = 1 << 9;
+    public static int TAG_TROOPS        = 1 << 10;
+    public static int SCUBA             = 1 << 11;
+    public static int NUM_SPECIALIZATIONS = 12;
+    public static int COMBAT_ENGINEERS = BRIDGE_ENGINEERS | DEMO_ENGINEERS
+            | FIRE_ENGINEERS | MINE_ENGINEERS | SENSOR_ENGINEERS
+            | TRENCH_ENGINEERS;
 
     /**
      * squad size and number
@@ -88,7 +111,11 @@ public class Infantry extends Entity {
     private boolean sneak_camo = false;
     private boolean sneak_ir = false;
     private boolean sneak_ecm = false;
-    private boolean mountain = false;
+
+    /**
+     * Stores which infantry specializations are active.
+     */
+    private int infSpecs = 0;
 
     /**
      * The location for infantry equipment.
@@ -224,23 +251,22 @@ public class Infantry extends Entity {
             mp = Math.max(mp - 1, 1);
         }
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("tsm_implant"))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("dermal_armor"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
                 && (getMovementMode() != EntityMovementMode.TRACKED)
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
             mp = Math.max(mp - 1, 0);
         }
         if((null != getCrew())
-                && getCrew().getOptions().booleanOption("pl_masc")
+                && getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_MASC)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
                     || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
         }
-        if ((null != getCrew())
-                && getCrew().getOptions().booleanOption("foot_cav")
+        if ((null != getCrew()) && getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
-                    || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
+                        || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
         }
         if(hasActiveFieldArtillery()) {
@@ -265,7 +291,7 @@ public class Infantry extends Entity {
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if( (game != null)
-                && game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE) ) {
             if(getWalkMP(gravity, ignoreheat, ignoremodulararmor) > 0) {
                 return getWalkMP(gravity, ignoreheat, ignoremodulararmor) + 1;
             }
@@ -291,8 +317,8 @@ public class Infantry extends Entity {
     public int getJumpMP(boolean gravity) {
         int mp = getOriginalJumpMP();
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("tsm_implant"))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("dermal_armor"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);
         }
@@ -591,7 +617,7 @@ public class Infantry extends Entity {
     public int getWeaponArc(int wn) {
         Mounted mounted = getEquipment(wn);
         if(mounted.getLocation() == LOC_FIELD_GUNS) {
-            if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                 return Compute.ARC_TURRET;
             }
             return Compute.ARC_FORWARD;
@@ -799,12 +825,13 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Infantry can only change 1 elevation level at a time unless Mountain Inf which is 3.
+     * Infantry can only change 1 elevation level at a time unless Mountain Inf
+     * which is 3.
      */
     @Override
     public int getMaxElevationChange() {
-        if (hasMountain()) {
-        return 3;
+        if (hasSpecialization(MOUNTAIN_TROOPS)) {
+            return 3;
         }
         return 1;
     }
@@ -1051,7 +1078,7 @@ public class Infantry extends Entity {
     }
     @Override
     public boolean canAssaultDrop() {
-        return game.getOptions().booleanOption("paratroopers");
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS);
     }
 
     @Override
@@ -1067,7 +1094,7 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isEligibleForFiring() {
-        if(game.getOptions().booleanOption("tacops_fast_infantry_move")) {
+        if(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE)) {
             if(moved == EntityMovementType.MOVE_RUN) {
                 return false;
             }
@@ -1241,14 +1268,94 @@ public class Infantry extends Entity {
         dest = b;
     }
     
-    public boolean hasMountain() {
-        return mountain;
+    public boolean hasSpecialization(int spec) {
+        return (infSpecs & spec) > 0;
+    }
+
+    public int getSpecializations() {
+        return infSpecs;
+    }
+
+    public void setSpecializations(int spec) {
+        // Equipment for Trench/Fieldworks Engineers
+        if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
+            // Need to add vibro shovels
+            try {
+                EquipmentType shovels = EquipmentType.get("Vibro-Shovel");
+                addEquipment(shovels, Infantry.LOC_INFANTRY);
+            } catch (LocationFullException e) {
+                e.printStackTrace();
+            }
+        } else if ((spec & TRENCH_ENGINEERS) == 0
+                && (infSpecs & TRENCH_ENGINEERS) > 0) {
+            // Need to remove vibro shovels
+            List<Mounted> eqToRemove = new ArrayList<>();
+            for (Mounted eq : getEquipment()) {
+                if (eq.getType().hasFlag(MiscType.F_TOOLS)
+                        && eq.getType().hasSubType(MiscType.S_VIBROSHOVEL)) {
+                    eqToRemove.add(eq);
+                }
+            }
+            getEquipment().removeAll(eqToRemove);
+            getMisc().removeAll(eqToRemove);
+        }
+        // Equipment for Demolition Engineers
+        if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
+            // Need to add vibro shovels
+            try {
+                EquipmentType shovels = EquipmentType.get("Demolition Charge");
+                addEquipment(shovels, Infantry.LOC_INFANTRY);
+            } catch (LocationFullException e) {
+                e.printStackTrace();
+            }
+        } else if ((spec & DEMO_ENGINEERS) == 0
+                && (infSpecs & DEMO_ENGINEERS) > 0) {
+            // Need to remove vibro shovels
+            List<Mounted> eqToRemove = new ArrayList<>();
+            for (Mounted eq : getEquipment()) {
+                if (eq.getType().hasFlag(MiscType.F_TOOLS)
+                        && eq.getType()
+                                .hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
+                    eqToRemove.add(eq);
+                }
+            }
+            getEquipment().removeAll(eqToRemove);
+            getMisc().removeAll(eqToRemove);
+        }
+        infSpecs = spec;
+        
     }
     
-    public void setMountain(boolean b) {
-        mountain = b;
+    public static String getSpecializationName(int spec) {
+        StringBuilder name = new StringBuilder();
+        for (int i = 0; i < NUM_SPECIALIZATIONS; i++) {
+            int currSpec = 1 << i;
+            if ((spec & currSpec) < 1) {
+                continue;
+            }
+            if (name.length() > 0) {
+                name.append(" ");
+            }
+            name.append(Messages.getString("Infantry.specialization" + i));
+        }
+        return name.toString();
     }
-    
+
+    public static String getSpecializationTooltip(int spec) {
+        StringBuilder name = new StringBuilder();
+        for (int i = 0; i < NUM_SPECIALIZATIONS; i++) {
+            int currSpec = 1 << i;
+            if ((spec & currSpec) < 1) {
+                continue;
+            }
+            if (name.length() > 0) {
+                name.append(" ");
+            }
+            name.append(Messages.getString("Infantry.specializationTip" + i));
+        }
+        return name.toString();
+    }
+
     public boolean hasSneakCamo() {
         return sneak_camo;
     }
@@ -1341,6 +1448,15 @@ public class Infantry extends Entity {
         // Return the result.
         return result;
     } // End public TargetRoll getStealthModifier( char )
+
+    /**
+     * Determines if the infantry has any type of stealth system.
+     *
+     * @return
+     */
+    public boolean isStealthy() {
+       return  dest || sneak_camo || sneak_ir || sneak_ecm;
+    }
 
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryW = w;
@@ -1485,6 +1601,10 @@ public class Infantry extends Entity {
             sArmor.append("E");
         }
 
+        if (hasSpaceSuit()) {
+            sArmor.append(" (Spacesuit) ");
+        }
+
         if(hasDEST()) {
             sArmor.append(" (DEST) ");
         }
@@ -1503,7 +1623,6 @@ public class Infantry extends Entity {
 
 
         return sArmor.toString();
-
     }
 
     /**
@@ -1626,6 +1745,11 @@ public class Infantry extends Entity {
         return false;
     }
 
+    @Override
+    public boolean hasEngine() {
+        return false;
+    }
+
     /**
      * Mounts the specified equipment in the specified location.
      */
@@ -1698,5 +1822,15 @@ public class Infantry extends Entity {
     public void setTakingCover(boolean isTakingCover) {
         this.isTakingCover = isTakingCover;
     }
-    
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 1;
+    }
 } // End class Infantry

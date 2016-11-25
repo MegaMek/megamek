@@ -1,5 +1,5 @@
 INTRODUCTION
-------------
+============
 MegaMek is a Java version of BattleTech that you can play with your friends 
 over the internet.  All rules from Total Warfare are
 implemented.  Rules from Tactical Operations and Strategic Operations are
@@ -22,7 +22,7 @@ Operations, and Strategic Operations.
 
 
 RUNNING MEGAMEK
----------------
+===============
 Java programs run in their own environment, called a Virtual Machine or VM
 for short.  These Java VMs are available on most systems from a variety of 
 sources.  Most modern systems have one installed by default.
@@ -39,7 +39,7 @@ Running MegaMek from the command line: To do this using Sun Java, or most
 other implementations, navigate to the directory containing the .jar file and 
 run:
 
-java -jar MegaMek.jar
+`java -jar MegaMek.jar`
 
 If none of the above options work for you, see the "INSTALLING OR UPDATING
 YOUR JAVA RUNTIME" section, below.
@@ -52,26 +52,28 @@ have been done (you only need to do the above steps once), you will
 need to set the classpath to the classes folder and the current folder
 and run "MegaMek.class".  For example, using Sun Java, run:
 
-java -cp .;classes megamek/MegaMek
+`java -cp .;classes megamek/MegaMek`
 
 Note that in some cases, the semicolon may need to be escaped:
-java -cp .\;classes megamek/MegaMek
+`java -cp .\;classes megamek/MegaMek`
 
 
 INSTALLING OR UPDATING YOUR JAVA RUNTIME
-----------------------------------------
+========================================
 If your system did not come with a Java VM, or you need to update your Java
 VM, here are some links.
 
-Sun Java (Linux, Solaris, Windows):
-http://java.sun.com/j2se/downloads.html
+**Oracle Java (Linux, Solaris, Windows):**
+http://www.oracle.com/technetwork/java/javase/downloads/index.html
 
-Mac OSX 10.1 and above:
-Java updates are included in OS updates for 10.1 and above.  There is no
-external way to update your Java VM.
+**Mac OSX:**
+See this support article on the apple support website for 
+instructions:
+https://support.apple.com/en-us/HT204036
 
-Earlier Mac OS versions:
-http://developer.apple.com/java/download.html
+**OpenJDK (Linux):**
+Open source version of Java. Used by most major Linux distributions.
+http://openjdk.java.net/install/
 
 GCJ/Gnu classpath (Linux):
 Of interest to experienced developers, there may be some
@@ -79,14 +81,14 @@ compatibility problems.
 http://gcc.gnu.org/java/
 
 Microsoft VM (Windows):
-Microsoft no longer makes their VM available for seperate download.
+Microsoft no longer makes their VM available for separate download.
 This version of MegaMek uses features not supported by the Microsoft JVM.
 
-IBM VM:
+**IBM VM:**
 MegaMek seems to react badly to this VM - it is not recommended.
 
 CONNECTING
-----------
+==========
 MegaMek is a network game.  One player hosts a game and the rest of the
 players connect.  The connecting players can connect from anywhere with a 
 TCP/IP connection to the host, including the same computer (see hotseat, below.)
@@ -101,8 +103,8 @@ Once the lobby screen comes up, other players can connect and the game can
 begin.  The other players will need to know the IP address of the host computer.
 There are several ways to determine your IP address.  If you are on 
 Windows 9x/ME, you can use the Run command on the start menu and enter 
-"winipcfg".  On Windows 2000/NT/XP, you will need to open a command prompt and 
-type "ipconfig".  As a last resort, there are some web pages, such as 
+"winipcfg".  On Windows 2000/NT/XP/Vista/7/8/10, you will need to open a command 
+prompt and type "ipconfig".  As a last resort, there are some web pages, such as 
 www.whatismyip.com that will try to detect your IP address, but if your internet
 service uses a proxy or firewall, these pages cannot accurately detect it.
 
@@ -127,9 +129,9 @@ most platforms.
 
 
 PLAYING THE GAME
-----------------
+================
 
-Pre-game Lobby:
+###Pre-game Lobby:
 
 Here you can chat, specify what units you wish to use, select map settings,
 declare starting positions, and change your player's color.  When everybody
@@ -155,37 +157,52 @@ degrees (North becomes South, East becomes West, and vice versa) by clicking
 on the "Rotate Board" checkbox; the fact that the map is rotated will be shown
 in the middle column.
 
-[SURPRISE] means that the Server will pick a random map and not tell you what
-it has picked until the game starts.  [RANDOM] means that the Server will pick
+**[SURPRISE]** means that the Server will pick a random map and not tell you what
+it has picked until the game starts.  
+
+**[RANDOM]** means that the Server will pick
 a map as soon as you hit "Okay".
 
-[GENERATED] means that the server will create random terrain for you to play on.
+**[GENERATED]** means that the server will create random terrain for you to play on.
 You need to use the "generated map settings" button to select what kind of terrain
 you want.
+
 There is a set of settings with drop down list of choices.  For most settings, you
 can pick "none", "low", "medium" or "high". Except for cities, where you pick a 
 type of city instead.
-Theme - leave blank for the default theme, or enter a theme supported by your tileset.
-        grass, lunar, mars, snow are supported by the standard tileset
-Elevation - how hilly you want the map
-Cliffs - chance of 2+ level elevation changes, if you have enough elevation already
-Woods - higher settings have more and larger tree patchs and more heavy woods
-Roughs - higher settings have more and larger rough patches
-Lakes - works the same as woods, but deep water instead of heavy woods
+
+**Theme** - leave blank for the default theme, or enter a theme supported by your tileset.
+        grass, jungle, lunar, mars, snow, and volcano are supported by the standard tileset
+        
+**Elevation** - how hilly you want the map
+
+**Cliffs** - chance of 2+ level elevation changes, if you have enough elevation already
+
+**Woods** - higher settings have more and larger tree patchs and more heavy woods
+
+**Roughs** - higher settings have more and larger rough patches
+
+**Lakes** - works the same as woods, but deep water instead of heavy woods
 Swamps/Pavement/Ice/Rubble/Fortified all work like roughs. 
 Fortified hexes are described in the MaxTech rulebook.
-River - chance to have a river running across the map
-Road - chance to have a single road running across the map
-Craters - chance for craters, also the size and number.  Good for a "moonscape" map
-City:
-HUB - roads wander out from the centre with plenty of twists and turns. A common
+
+**River** - chance to have a river running across the map
+
+**Road** - chance to have a single road running across the map
+
+**Craters** - chance for craters, also the size and number.  Good for a "moonscape" map
+
+**City:**
+**HUB** - roads wander out from the centre with plenty of twists and turns. A common
         pattern for older european cities.
-GRID - vertical and horizontal roads divide the city into rectangular blocks. A pattern
+        
+**GRID** - vertical and horizontal roads divide the city into rectangular blocks. A pattern
         common in newer cities, especially in north america and asia.
-METRO - a grid with roads forming a diagonal X from the centre as well. 
+        
+**METRO** - a grid with roads forming a diagonal X from the centre as well. 
 
 Water and swamp will affect the city plan, as the builders will have to make bridges to
-        cross it or just give up and stop the road at the edge.
+        cross it or just give up and stop the road at the edge.        
 Mountain tops (4+ height) are expensive to build on, so they will only build in the valleys. 
 Other terrain will just be bulldozed in the name of progress, though you may find a few
         hexes left between buildings.  
@@ -193,13 +210,13 @@ Other terrain will just be bulldozed in the name of progress, though you may fin
 There is also an "advanced" button, which lets you fine-tune the map to your liking.
 See the "advanced map settings" section near the end of this file
 
-Initiative Report:
+###Initiative Report:
 
 Each player's initiative rolls and the corresponding turn order will be shown
 here.
 
 
-Movement Phase:
+###Movement Phase:
 
 The buttons at the bottom of the screen let you change between different
 modes of movement, switch to another unit, or commit to your current path.
@@ -280,13 +297,13 @@ the "go down" button to select a lower floor if you want to.
 The Esc key clears all current movement.
 
 
-Movement Report:
+###Movement Report:
 
 If any units needed piloting skill rolls during their movement, a report
 showing the results of these rolls will be shown.
 
 
-Weapons Fire Phase:
+###Weapons Fire Phase:
 
 If you need to check the range and line of sight (LoS) between two hexes, 
 there are two tools available for you to use; the LoS tool and the ruler 
@@ -324,7 +341,7 @@ listed, go ahead.
 Secondary facing changes (torso twists) are accomplished by holding Shift and 
 clicking on the board.  Your unit will attempt to change its secondary facing 
 in the direction specified.  If you assign a weapon to a target and then
-attempt a facing change, the weapons fire will be cancelled.
+attempt a facing change, the weapons fire will be canceled.
 
 You can not switch to another unit after declaring some weapons fire.  To 
 switch to another unit, first cancel all current fire by hitting the Esc key.  
@@ -334,10 +351,10 @@ fire will be committed.
 An Anti-Mek trained infantry platoon or Battle Armor squad that is in the same
 hex as a Mek can conduct a Leg Attack or a Swarm Mek attack.  The base to-hit
 number varies with the number of men in the unit.  A Swarm Mek attack against
-a Mek that is prone and/or immoble gains a -4 modifier to its to-hit roll.  A
+a Mek that is prone and/or immobile gains a -4 modifier to its to-hit roll.  A
 successful Leg Attack may cause critical damage to one of the Meks legs; if no
 critical is rolled, the leg will take 4 points of damage (which may damage the
-leg's internal structure, and cause another critical roll).  A successfull
+leg's internal structure, and cause another critical roll).  A successful
 Swarm Mek attack does no damage in the turn it hits, but it means that the unit
 has attached itself to the Mek, and can begin to cause significant damage on
 subsequent turns.  Starting the turn after the unit starts a Swarming a Mek,
@@ -350,14 +367,14 @@ to do so will cancel the "solo" action.  Swarming infantry can not be targeted
 by any attacks other than a "Brush Off" attack (see Physical Attacks Phase).
 
 
-Weapons Fire Report:
+###Weapons Fire Report:
 
 If there were any weapon attacks, the server will resolve them all at the end
 of the phase in the order they were declared.  The results will be shown in a
 report.
 
 
-Physical Attacks Phase:
+###Physical Attacks Phase:
 
 To declare a physical attack, select your target on the board and click the
 button corresponding to the attack you want to make.  If a physical attack 
@@ -379,7 +396,7 @@ Armor squad can attempt to "Brush Off" the squad with either or both arms.  Any
 the Mek.  Any successful "Brush Off" attack ends a Swarm Mek attack.
 
 
-End of Turn Report:
+###End of Turn Report:
 
 If there were any physical attacks, the results will be shown.  
 The results of the Heat and End phases will be shown.  
@@ -388,7 +405,7 @@ After this phase, it's time for initiative again!  Hurrah!
 
 
 CUSTOM UNITS
-------------
+============
 All units (mechs, vehicles, infantry, etc.) are located in the
 data/mechfiles directory.  They may be individual files or zipped up
 into archives (".zip"), and you may also create subdirectories if you
@@ -396,40 +413,40 @@ like.  There is also a special directory, named "unsupported" that
 contains units that you would like MegaMek to ignore.  Mechs can be
 loaded from any of several formats:
 
- MegaMek Native - files with the extension ".mtf"
+ **MegaMek Native** - files with the extension ".mtf"
     A simple format that is very whitespace sensitive.  All of the
     meks distributed with MegaMek are in this format, so just look
     inside the zips for examples of the format.  Units of this
-    file type can be created with MegaMekLab, Solaris Skunk Werks,
-    and the HMPRead program.
+    file type can be created with _MegaMekLab_, _Solaris Skunk Werks_,
+    and the _HMPRead_ program.
 
- Heavy Metal - files with the extensions ".hmp" and ".hmv"
+ **Heavy Metal** - files with the extensions ".hmp" and ".hmv"
     This is a commercial mech design program officially sanctioned by
     FanPro.  MegaMek can read most ".hmp or ".hmv" files directly, but
     there are still some known problems.  Please note that neither
     Heavy Metal Pro nor Heavy Metal Vee is associated with MegaMek, so
     please do not email its authors about MegaMek.
 
- The Drawing Board - files with the extension ".xml"
+ **The Drawing Board** - files with the extension ".xml"
     The Drawing Board is a very slick freeware editor written by
     Blackstone Interactive (Cord Awtry). In order to use it with MegaMek,
     you must install the program and then use the patch to update to
     version 2.0.23. Once you have created your mech, use the "File"->"Save
     as XML file" command to create the ".xml" file.
 
- MekMaker - files with the extension ".blk"
+ **MekMaker** - files with the extension ".blk"
     Mech files with the extension ".blk" are created by MekMaker, a Java
     mech design program specifically created to work with MegaMek.
-    MekMaker was the offical mech design program, but it has since been
+    MekMaker was the official mech design program, but it has since been
     abandoned and is therefore not up to date with the current ruleset.
     It's homepage is at: http://mekmaker.sourceforge.net/
 
- Mech Engineer Pro - files with the extension ".mep"
+ **Mech Engineer Pro** - files with the extension ".mep"
    This is an older freeware program not made by the makers of
    MegaMek.  You can find this program on many Battletech web sites.
    It is not up to date with the current ruleset.
 
-Note on mixed tech units:
+_Note on mixed tech units:_
 Units that contain both Inner Sphere and Clan technology are allowed
 with certain restrictions.  Only ".mtf", ".xml", and ".blk" files may
 contain mixed tech units.  In addition, some equipment cannot differ
@@ -439,70 +456,97 @@ and CASE.  Clan units have the same restricted equipment list.
 
 
 ADVANCED MAP SETTINGS
----------------------
-Tip: Use the basic settings, then select advanced, and the boxes will be filled in with the values from the basic
-settings.
+=====================
+_**Tip:** Use the basic settings, then select advanced, and the boxes will be filled in with the values from the basic
+settings._
 
-Board Size - set the size of the map sheet generated.  When using generated
+**Board Size** - set the size of the map sheet generated.  When using generated
 maps, it is better to generate one large play area than to try and combine
 multiple mapsheets.
-Theme - leave blank, or enter a theme supported by the tileset.
+
+**Theme** - leave blank, or enter a theme supported by the tileset.
         grass, lunar, mars, snow are themes supported by the standard tileset.
-Elevation settings:
-	Amount of elevation: changes the "roughness" of the map, a low number
-	will have less elevation changes than a high number
-	Elevation range: height difference between the lowest and highest hex 
-	on the map.  Level 0 is set to the most common height.
-	Probability of inverting: % chance to make a sinkhole instead of a mountain.
-	Algorithm: 0 generates rolling hills, 1 generates spiky terrain, 2 combines
-	both generators.  0 is likely to have less LOS blocking terrain.
-	Cliffs: % chance to change a steep slope into a cliff.  For example, if
-	a group of level 1 hexes have level 0 and level 2 hexes adjacent, they will all
-	be moved to level 0, giving a cliff for mechs to hide behind.  The effect is
-	quite subtle unless you have quite a high elevation range to begin with.
-Patch terrain settings (woods, roughs, swamps, lakes, pavements, rubble, fortified, ice):
-	Each of these work the same way, but place a different type of terrain.
-	Number of XXX: the number of patches which would be present on a 16x17 map.
-	scales up if you have a bigger map.
-	XXX size in hexes: the size of each patch of terrain
-	probability for heavy woods/deep water: % chance to place instead of light.
-River/road settings:
-	Probability is a % chance to have one on the map.  If a road crosses water,
-	you'll get a bridge.
-Crater settings:
-	Probability for craters: % chance that craters are present
-	Number of craters: as for number of woods, the number that would be present on
-	a 16x17 map, scaled up for larger maps.
-	Crater radius: size range for each crater.
-Special effects settings:
-	Each probability is a % chance.
-	FX modifier changes the amount of effect each one has. Values should be small,
-	e.g -3 to +3
-	fires: woods hexes will be set on fire or already burned down to rough at the
-	start of the game. + modifier increases number of burned down hexes, - modifier
-	increases number of unscathed woods.
-	frozen water: water hexes are ice-covered. +modifier decreases the water depth,
-	so for example with a modifier of 1, shallow water hexes are frozen solid and
-	deep water hexes are converted to ice covered shallow water.
-	flooded map: hexes with negative elevations are converted to water hexes, while
-	level 0 hexes are converted to swamps.  Ideal for hovercraft and naval units.
-	modifier changes the "sea level"
-	drought: water hexes are dried up, to shallower water, swamp or rough.  Modifier
-	changes the severity of the drought.
-	special effects can be combined - e.g. flood + drought = rocky shore, 
-	flood + frozen + high modifier = glacier
-City Settings:
-	City type is the same as for the basic settings.
-	City Blocks (0-) [16 default]: higher numbers mean more roads on the map. 
-	Scales with map size.
-	CF min/max (1-150) [10-100 default]: CF range for generated buildings. 
-	The CF determines the building type from the table in BMR. 
-	Floors min/max (1-50) [1-6 default]: height range for generated buildings 
-	Density (1-100) [75 default]: % chance of a building in each hex where a 
-	building is possible. Also chance to try and build multi-hex buildings. 
+        
+**Elevation settings:** 
+
+**Amount of elevation** - changes the "roughness" of the map, a low number
+will have less elevation changes than a high number
+Elevation range: height difference between the lowest and highest hex 
+on the map.  Level 0 is set to the most common height.
+
+**Probability of inverting** -  % chance to make a sinkhole instead of a mountain.
+
+**Algorithm** - 0 generates rolling hills, 1 generates spiky terrain, 2 combines
+both generators.  0 is likely to have less LOS blocking terrain.
+
+**Cliffs** - % chance to change a steep slope into a cliff.  For example, if
+a group of level 1 hexes have level 0 and level 2 hexes adjacent, they will all
+be moved to level 0, giving a cliff for mechs to hide behind.  The effect is
+quite subtle unless you have quite a high elevation range to begin with.
+
+**Patch terrain settings (woods, roughs, swamps, lakes, pavements, rubble, fortified, ice):**
+
+Each of these work the same way, but place a different type of terrain.
+
+**Number of XXX** - the number of patches which would be present on a 16x17 map.
+scales up if you have a bigger map.
+
+**XXX size in hexes** - the size of each patch of terrain
+
+**Probability for heavy woods/deep water** - % chance to place instead of light.
+
+**River/road settings** - Probability is a % chance to have one on the map.  If a road crosses water, 
+you'll get a bridge.
+
+**Crater settings:**
+    
+**Probability for craters:** - % chance that craters are present
+Number of craters: as for number of woods, the number that would be present on
+a 16x17 map, scaled up for larger maps.
+
+**Crater radius** - size range for each crater.
+
+**Special effects settings:**
+
+Each probability is a % chance.
+FX modifier changes the amount of effect each one has. Values should be small,
+e.g -3 to +3
+
+**Fires** - woods hexes will be set on fire or already burned down to rough at the
+start of the game. + modifier increases number of burned down hexes, - modifier
+increases number of unscathed woods.
+
+**Frozen water** -  water hexes are ice-covered. +modifier decreases the water depth,
+so for example with a modifier of 1, shallow water hexes are frozen solid and
+deep water hexes are converted to ice covered shallow water.
+
+**Flooded map:** - hexes with negative elevations are converted to water hexes, while
+level 0 hexes are converted to swamps.  Ideal for hovercraft and naval units.
+modifier changes the "sea level"
+
+**Drought** - water hexes are dried up, to shallower water, swamp or rough.  Modifier
+changes the severity of the drought.
+
+_**Special effects can be combined** - e.g. flood + drought = rocky shore, 
+flood + frozen + high modifier = glacier_
+
+**City Settings:**
+
+City type is the same as for the basic settings.
+
+**City Blocks (0-) [16 default]** - higher numbers mean more roads on the map. 
+Scales with map size.
+
+**CF min/max (1-150) [10-100 default]** - CF range for generated buildings. 
+The CF determines the building type from the table in BMR.
+
+**Floors min/max (1-50) [1-6 default]** - height range for generated buildings
+ 
+**Density (1-100) [75 default]** - % chance of a building in each hex where a 
+building is possible. Also chance to try and build multi-hex buildings. 
 
 DIFFERENCES BETWEEN THE BOARD GAME AND MEGAMEK
-----------------------------------------------
+==============================================
 Although MegaMek tries to be faithful to the original board game rules, in
 some cases, due to technical or design limitations, this is not possible.
 These differences are not considered "bugs."  If you spot any more 
@@ -522,27 +566,25 @@ discrepancies, please contact the author (see "CONTACT" below.)
     MegaMek currently picks the hex for you, choosing high elevations over low
     ones, to avoid falling damage.
     
-
-
-
-
+    
 CONTACT & FURTHER INFORMATION
------------------------------
+=============================
 For more information, and to get the latest version of MegaMek, visit the
 website at:
-http://megamek.sourceforge.net/
+http://www.megamek.info/
 
 For more information about the BattleTech board game, visit it's website at:
-http://www.classicbattletech.com/
+http://bg.battletech.com/
 
+To submit a bug report, suggestion, or feature request please visit
+https://github.com/MegaMek/megamek/issues
 
-To contact the author with bug reports, suggestions, or anything else, visit 
-the contact page on the MegaMek website, or send email to bmazur@sev.org
+To discuss all things MegaMek, please visit the forums at http://megamek.info/forums/
 
 
 
 COPYRIGHT & LICENSE INFORMATION
--------------------------------
+===============================
 MegaMek - Copyright (C) 2002 Ben Mazur (bmazur@sev.org)
   
 This program is free software; you can redistribute it and/or modify it 
@@ -555,6 +597,6 @@ WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
 for more details.
 
-BattleTech, Mech, BattleMech and MechWarrior are Registered Trademarks of 
-WizKids, LLC.  Original BattleTech material Copyright by  WizKids, LLC.  
+MechWarrior, BattleMech, ‘Mech and AeroTech are registered trademarks of 
+The Topps Company, Inc. Original BattleTech material Copyright by Catalyst Game Labs
 All Rights Reserved.  Used without permission. 

@@ -12,6 +12,9 @@
 #   theme for which this image is used instead.  E.G. "snow"
 # <image> can be a list separated by ; character. In this case, they are shuffled
 #   for each hex painted.
+#   Each image can be just a cut-out part of a larger image. The syntax for this is:
+#   "imagefile(X,Y-W,H)", with X and Y being the pixel positions of the upper left corner
+#   and W and H the width and height, respectively (typically 84 and 72).
 #
 # Image Size:
 #   Hexes in MegaMek are drawn to be 84x72 pixels.  In general, hex textures follow this size.
@@ -28,15 +31,53 @@
 # rough
 # woods
 # water
-# ice / rapids
 # road
+# ice / rapids
 # building
 # bridge
 # fire
 # smoke
 # elevator
 
+include "StandardIncludes/StandardThemes.tileinc"
 
+include "StandardIncludes/StandardFluff.tileinc"
+include "StandardIncludes/StandardFuelTanks.tileinc"
+
+include "StandardIncludes/BuildingsNonSClassArmor.tileinc"
+include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
+include "StandardIncludes/BuildingsSClassArmor.tileinc"
+include "StandardIncludes/BuildingsSClassNoArmor.tileinc"
+
+include "StandardIncludes/StandardRailMaglev.tileinc"
+include "StandardIncludes/StandardElevator.tileinc"
+include "StandardIncludes/StandardLimbs.tileinc"
+include "StandardIncludes/StandardSpace.tileinc"
+
+
+super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png"
+#levels 2 and 3 of swamp are for quicksand
+super * "swamp:2" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
+super * "swamp:3" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
+
+super * "rough:1" "" "hq_boring/rough_0.png;hq_boring/rough_1.png;hq_boring/rough_2.png;hq_boring/rough_3.png"
+super * "rough:2" "" "transparent/ultra_rough.png"
+
+super * "woods:1" "jungle" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "woods:2" "jungle" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "woods:3" "jungle" "jungle/ultra_heavy_jungle1.png"
+
+super * "woods:1" "snow" "snow/snow_lf.png"
+super * "woods:2" "snow" "snow/snow_hf.png"
+
+super * "woods:1" "volcano" "snow/snow_lf.png"
+super * "woods:2" "volcano" "snow/snow_hf.png"
+
+super * "woods:1;fluff:12" "" "boring/orchard.png"
+super * "woods:1" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_boring/lf3.png"
+#hf2.gif has been taken out because it looks too much like ultra heavy
+super * "woods:2" "" "hq_boring/hf0.png;hq_boring/hf1.png;hq_boring/hf2.png"
+super * "woods:3" "" "boring/uhf.gif"
 
 super * "water:0" "" "transparent/anim_water_1.gif"
 super * "water:1" "" "transparent/anim_water_1.gif"
@@ -45,5 +86,142 @@ super * "water:3" "" "transparent/anim_water_3.gif"
 super * "water:4" "" "transparent/anim_water_4.gif"
 super * "water:*" "" "transparent/anim_water_4.gif"
 
-include "atmospheric.tileset"
+super * "rapids:1" "" "transparent/rapids.png"
+super * "rapids:2" "" "transparent/rapids.png"
 
+super * "ice:1" "" "transparent/ice.png"
+
+super * "geyser:1" "" "boring/geyservent.gif"
+# geyser 2 is rendered with smoke
+super * "geyser:3" "" "boring/geyservent.gif"
+
+super * "fortified:1" "" "boring/sandbags.gif"
+
+super * "rubble:1" "" "boring/rubble_light.gif"
+super * "rubble:2" "" "boring/rubble_medium.gif"
+super * "rubble:3" "" "boring/rubble_heavy.gif"
+super * "rubble:4" "" "boring/rubble_hardened.gif"
+#level 5 is wall rubble
+super * "rubble:5" "" "boring/rubble_light.gif"
+super * "rubble:6" "" "boring/rubble_ultra.gif"
+
+include "StandardIncludes/BasicBridges.tileinc"
+include "StandardIncludes/BasicRoads.tileinc"
+
+super * "heavy_industrial:*" "" "transparent/heavy_industrial_zone.gif"
+
+super * "fire:1" "" "boring/fire.gif"
+super * "fire:2" "" "transparent/inferno.png"
+super * "fire:3" "" "transparent/inferno.png"
+super * "fire:4" "" "transparent/inferno.png"
+super * "smoke:1" "" "transparent/light_smoke.png"
+super * "smoke:2" "" "transparent/heavy_smoke.png"
+super * "smoke:3" "" "transparent/lismoke.gif"
+super * "smoke:4" "" "transparent/lismoke.gif"
+super * "smoke:5" "" "transparent/chaff.gif"
+
+super * "screen:*" "" "boring/screen.gif"
+
+super * "geyser:2" "" "transparent/geysererupt.png"
+
+base 0 "" "" "hq_boring/beige_plains_0.png"
+base 1 "" "" "hq_boring/beige_plains_1.png"
+base 2 "" "" "hq_boring/beige_plains_2.png"
+base 3 "" "" "hq_boring/beige_plains_3.png"
+base 4 "" "" "hq_boring/beige_plains_4.png"
+base 5 "" "" "hq_boring/beige_plains_5.png"
+base 6 "" "" "hq_boring/beige_plains_6.png"
+base 7 "" "" "hq_boring/beige_plains_7.png"
+base 8 "" "" "hq_boring/beige_plains_8.png"
+base 9 "" "" "hq_boring/beige_plains_9.png"
+base 10 "" "" "hq_boring/beige_plains_10.png"
+base -1 "" "" "hq_boring/beige_sinkhole_1.png"
+base -2 "" "" "hq_boring/beige_sinkhole_2.png"
+base -3 "" "" "hq_boring/beige_sinkhole_3.png"
+
+base 0 "space:1" "" "boring/space.gif"
+
+base 0 "pavement:1" "" "boring/grey_pavement_0.gif"
+base 1 "pavement:1" "" "boring/grey_pavement_1.gif"
+base 2 "pavement:1" "" "boring/grey_pavement_2.gif"
+base 3 "pavement:1" "" "boring/grey_pavement_2.gif"
+base 4 "pavement:1" "" "boring/grey_pavement_3.gif"
+base 5 "pavement:1" "" "boring/grey_pavement_3.gif"
+base 6 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 7 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 8 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 9 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 10 "pavement:1" "" "boring/grey_pavement_5.gif"
+base 20 "pavement:1" "" "boring/grey_pavement_6.gif"
+base 30 "pavement:1" "" "boring/grey_pavement_7.gif"
+base 40 "pavement:1" "" "boring/grey_pavement_8.gif"
+
+base * "planted_fields:1" "" "boring/fields.gif"
+base * "planted_fields:2" "" "boring/vineyard.png"
+base * "planted_fields:3" "" "boring/soybeans.png"
+
+base * "mud:1" "" "boring/mud_1.gif"
+base * "mud:2" "" "boring/mud_2.gif"
+
+base -2 "magma:1" "" "magma/crust_-2.gif"
+base -1 "magma:1" "" "magma/crust_-1.gif"
+base 0 "magma:1" "" "magma/crust_0.gif"
+base 1 "magma:1" "" "magma/crust_1.gif"
+base 2 "magma:1" "" "magma/crust_2.gif"
+base 3 "magma:1" "" "magma/crust_3.gif"
+
+base -2 "magma:2" "" "magma/magma_-2.gif"
+base -1 "magma:2" "" "magma/magma_-1.gif"
+base 0 "magma:2" "" "magma/magma_0.gif"
+base 1 "magma:2" "" "magma/magma_1.gif"
+base 2 "magma:2" "" "magma/magma_2.gif"
+base 3 "magma:2" "" "magma/magma_3.gif"
+
+base -2 "mud:1" "" "mud/mud_-2.gif"
+base -1 "mud:1" "" "mud/mud_-1.gif"
+base 0 "mud:1" "" "mud/mud_0.gif"
+base 1 "mud:1" "" "mud/mud_1.gif"
+base 2 "mud:1" "" "mud/mud_2.gif"
+base 3 "mud:1" "" "mud/mud_3.gif"
+
+base -2 "mud:2" "" "mud/deepmud_-2.gif"
+base -1 "mud:2" "" "mud/deepmud_-1.gif"
+base 0 "mud:2" "" "mud/deepmud_0.gif"
+base 1 "mud:2" "" "mud/deepmud_1.gif"
+base 2 "mud:2" "" "mud/deepmud_2.gif"
+base 3 "mud:2" "" "mud/deepmud_3.gif"
+
+base -2 "sand:1" "" "hq_boring/sand_-2.png"
+base -1 "sand:1" "" "hq_boring/sand_-1.png"
+base 0 "sand:1" "" "hq_boring/sand_0.png"
+base 1 "sand:1" "" "hq_boring/sand_1.png"
+base 2 "sand:1" "" "hq_boring/sand_2.png"
+base 3 "sand:1" "" "hq_boring/sand_3.png"
+base 4 "sand:1" "" "hq_boring/sand_4.png"
+
+base 0 "snow:1" "" "snow/snow_0.gif"
+base 1 "snow:1" "" "snow/snow_1.gif"
+base 2 "snow:1" "" "snow/snow_2.gif"
+base 3 "snow:1" "" "snow/snow_3.gif"
+base 4 "snow:1" "" "snow/snow_4.gif"
+base 5 "snow:1" "" "snow/snow_5.gif"
+base 6 "snow:1" "" "snow/snow_6.gif"
+base 7 "snow:1" "" "snow/snow_7.gif"
+base 8 "snow:1" "" "snow/snow_8.gif"
+base 9 "snow:1" "" "snow/snow_9.gif"
+base 10 "snow:1" "" "snow/snow_10.gif"
+base -1 "snow:1" "" "snow/snow_-1.gif"
+base -2 "snow:1" "" "snow/snow_-2.gif"
+base -3 "snow:1" "" "snow/snow_-3.gif"
+base -4 "snow:1" "" "snow/snow_-4.gif"
+base -5 "snow:1" "" "snow/snow_-5.gif"
+base -6 "snow:1" "" "snow/snow_-6.gif"
+
+base -2 "tundra:1" "" "tundra/tundra_-2.gif"
+base -1 "tundra:1" "" "tundra/tundra_-1.gif"
+base 0 "tundra:1" "" "tundra/tundra_0.gif"
+base 1 "tundra:1" "" "tundra/tundra_1.gif"
+base 2 "tundra:1" "" "tundra/tundra_2.gif"
+base 3 "tundra:1" "" "tundra/tundra_3.gif"
+
+base * "impassable:1" "" "boring/solidrock.gif"

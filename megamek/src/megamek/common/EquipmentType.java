@@ -492,6 +492,20 @@ public class EquipmentType {
     }
 
     /**
+     * Remove a specific mode from the list of modes.
+     *
+     * @param mode
+     * @return
+     */
+    public boolean removeMode(String mode) {
+        if (modes != null) {
+            return modes.remove(mode);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * Clears the modes that this type of equipment can be in. This is useful
      * where a subtype such as Streak LRMs has no modes, but the supertype of
      * that type such as standard LRMs has modes that do not apply to the

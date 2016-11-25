@@ -30,6 +30,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -79,7 +80,57 @@ import megamek.common.preference.PreferenceManager;
 public class CommonSettingsDialog extends ClientDialog implements
         ActionListener, ItemListener, FocusListener, ListSelectionListener,
         ChangeListener {
-    
+
+    /**
+     * A class for storing information about an GUIPreferences advanced option.
+     *
+     * @author arlith
+     *
+     */
+    private class AdvancedOptionData implements Comparable<AdvancedOptionData> {
+
+        public String option;
+
+        public AdvancedOptionData(String option) {
+            this.option = option;
+        }
+
+        /**
+         * Returns true if this option has tooltip text.
+         *
+         * @return
+         */
+        public boolean hasTooltipText() {
+            return Messages.keyExists("AdvancedOptions." + option + ".tooltip");
+        }
+
+        /**
+         * Returns the tooltip text for this option.
+         *
+         * @return
+         */
+        public String getTooltipText() {
+            return Messages.getString("AdvancedOptions." + option + ".tooltip");
+        }
+
+        /**
+         * Returns a human-readable name for this advanced option.
+         *
+         */
+        public String toString() {
+            if (Messages.keyExists("AdvancedOptions." + option + ".name")) {
+                return Messages.getString("AdvancedOptions." + option + ".name");
+            } else {
+                return option;
+            }
+        }
+
+        @Override
+        public int compareTo(AdvancedOptionData other) {
+            return this.toString().compareTo(other.toString());
+        }
+    }
+
     private class PhaseCommandListMouseAdapter extends MouseInputAdapter {
         private boolean mouseDragging = false;
         private int dragSourceIndex;
@@ -165,6 +216,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox aOHexShadows;
     private JCheckBox floatingIso;
     private JCheckBox mmSymbol;
+    private JCheckBox entityOwnerColor;
     private JCheckBox useSoftCenter;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
@@ -193,8 +245,8 @@ public class CommonSettingsDialog extends ClientDialog implements
     
     private JComboBox<String> skinFiles;
 
-    // Key Binds
-    private JList<String> keys;
+    // Avanced Settings
+    private JList<AdvancedOptionData> keys;
     private int keysIndex = 0;
     private JTextField value;
 
@@ -363,8 +415,16 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(showUnitId);
         comps.add(row);
-        
+
+        entityOwnerColor = new JCheckBox(Messages.getString("CommonSettingsDialog.entityOwnerColor")); //$NON-NLS-1$
+        entityOwnerColor.setToolTipText(Messages.getString("CommonSettingsDialog.entityOwnerColorTip"));
+        entityOwnerColor.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(entityOwnerColor);
+        comps.add(row);
+
         useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter")); //$NON-NLS-1$
+        useSoftCenter.setToolTipText(Messages.getString("CommonSettingsDialog.useSoftCenterTip"));
         useSoftCenter.addItemListener(this);
         row = new ArrayList<>();
         row.add(useSoftCenter);
@@ -692,6 +752,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         levelhighlight.setSelected(gs.getLevelHighlight());
         shadowMap.setSelected(gs.getShadowMap());
         useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
+        entityOwnerColor.setSelected(gs.getEntityOwnerLabelColor());
 
 
         File dir = new File("data" + File.separator + "images" + File.separator
@@ -717,8 +778,8 @@ public class CommonSettingsDialog extends ClientDialog implements
                     return fileName.endsWith(".xml");
                 } 
             });
-        Arrays.sort(xmlFiles);
         if (xmlFiles != null) {
+            Arrays.sort(xmlFiles);
             for (String file : xmlFiles) {
                 if (SkinXMLHandler.validSkinSpecFile(file)) {
                     skinFiles.addItem(file);
@@ -773,6 +834,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         GUIPreferences gs = GUIPreferences.getInstance();
         IClientPreferences cs = PreferenceManager.getClientPreferences();
 
+        gs.setShowDamageLevel(showDamageLevel.isSelected());
+        gs.setEntityOwnerLabelColor(entityOwnerColor.isSelected());
         gs.setMinimapEnabled(minimapEnabled.isSelected());
         gs.setAutoEndFiring(autoEndFiring.isSelected());
         gs.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
@@ -830,8 +893,6 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
-        gs.setShowDamageLevel(showDamageLevel.isSelected());
-        
         String newSkinFile = (String)skinFiles.getSelectedItem();
         String oldSkinFile = gs.getSkinFile();
         if (!oldSkinFile.equals(newSkinFile)) {
@@ -1112,7 +1173,7 @@ public class CommonSettingsDialog extends ClientDialog implements
             return;
         } 
         // For Advanced options
-        String option = "Advanced" + keys.getModel().getElementAt(keysIndex); 
+        String option = "Advanced" + keys.getModel().getElementAt(keysIndex).option;
         GUIPreferences.getInstance().setValue(option, value.getText());
         if (option.equals(GUIPreferences.ADVANCED_SHOW_COORDS)
                 && (clientgui != null) && (clientgui.bv != null)) {
@@ -1695,13 +1756,29 @@ public class CommonSettingsDialog extends ClientDialog implements
         JPanel p = new JPanel();
 
         String[] s = GUIPreferences.getInstance().getAdvancedProperties();
-        Arrays.sort(s);
+        AdvancedOptionData[] opts = new AdvancedOptionData[s.length];
         for (int i = 0; i < s.length; i++) {
             s[i] = s[i].substring(s[i].indexOf("Advanced") + 8, s[i].length());
+            opts[i] = new AdvancedOptionData(s[i]);
         }
-        keys = new JList<String>(s);
+        Arrays.sort(opts);
+        keys = new JList<>(opts);
         keys.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         keys.addListSelectionListener(this);
+        keys.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int index = keys.locationToIndex(e.getPoint());
+                if (index > -1) {
+                    AdvancedOptionData dat = keys.getModel().getElementAt(index);
+                    if (dat.hasTooltipText()) {
+                        keys.setToolTipText(dat.getTooltipText());
+                    } else {
+                        keys.setToolTipText(null);
+                    }
+                }
+            }
+        });
         p.add(keys);
 
         value = new JTextField(10);
@@ -1717,7 +1794,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
         if (event.getSource().equals(keys)) {
             value.setText(GUIPreferences.getInstance().getString(
-                    "Advanced" + keys.getSelectedValue()));
+                    "Advanced" + keys.getSelectedValue().option));
             keysIndex = keys.getSelectedIndex();
         }
     }

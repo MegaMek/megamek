@@ -1,0 +1,34 @@
+#Guns block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+Artillery Turret
+</Name>
+<Model>
+Thumper
+</Model>
+<Year>
+1950
+</Year>
+<Type>
+IS Level 3
+</Type>
+<Turret>
+1
+</Turret>
+<Guns Equipment>
+ISThumperArtillery
+ISThumperArtillery Ammo
+ISThumperArtillery Ammo
+ISThumperArtillery Ammo
+ISThumperArtillery Ammo
+ISThumperArtillery Ammo
+</Guns Equipment>

@@ -15,8 +15,10 @@
 package megamek.common;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
@@ -407,7 +409,7 @@ public class BattleArmor extends Infantry {
     public int getRunMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         boolean fastMove = (game != null) &&
-                game.getOptions().booleanOption("tacops_fast_infantry_move");
+                game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE);
         if(fastMove) {
             return getWalkMP(gravity, ignoreheat, ignoremodulararmor, false,
                     false) + 1;
@@ -572,7 +574,7 @@ public class BattleArmor extends Infantry {
         int critLocation = Compute.d6();
         // TacOps p. 108 Trooper takes a crit if a second roll is the same
         // location as the first.
-        if (game.getOptions().booleanOption("tacops_ba_criticals")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS)
                 && (loc == critLocation)) {
             return new HitData(loc, false, HitData.EFFECT_CRITICAL);
         }
@@ -801,10 +803,10 @@ public class BattleArmor extends Infantry {
      */
     @Override
     protected int[] getNoOfSlots() {
-        if (!isInitialized || isClan()) {
+        if(!isInitialized) {
             return CLAN_NUM_OF_SLOTS;
         }
-        return IS_NUM_OF_SLOTS;
+        return Arrays.copyOf(isClan() ? CLAN_NUM_OF_SLOTS : IS_NUM_OF_SLOTS, troopers + 1);
     }
 
     /**
@@ -1910,7 +1912,7 @@ public class BattleArmor extends Infantry {
         // for transport purposes. Following Tactical Operations gives us a
         // more realistic weight per trooper
         if ((game != null)
-                && game.getOptions().booleanOption("tacops_ba_weight")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
             double troopton = troopers;
             switch (getWeightClass()) {
                 case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
@@ -2438,6 +2440,17 @@ public class BattleArmor extends Infantry {
             }
         }
         return toReturn;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 2;
     }
 
 

@@ -104,26 +104,21 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
             for (Entity entity : game.getEntitiesVector(coords)) {
                 // if fighter squadron all fighters are damaged
                 if (entity instanceof FighterSquadron) {
-                    for (Entity fighter : ((FighterSquadron) entity)
-                            .getFighters()) {
+                    entity.getSubEntities().ifPresent(ents -> ents.forEach(
+                    ent -> {
                         ToHitData squadronToHit = new ToHitData();
                         squadronToHit.setHitTable(ToHitData.HIT_NORMAL);
-                        HitData hit = fighter.rollHitLocation(
-                                squadronToHit.getHitTable(),
-                                ToHitData.SIDE_FRONT);
+                        HitData hit = ent.rollHitLocation(squadronToHit.getHitTable(), ToHitData.SIDE_FRONT);
                         hit.setCapital(false);
-                        vPhaseReport.addAll(server.damageEntity(fighter, hit,
-                                attackValue));
-                        server.creditKill(fighter, ae);
-                    }
+                        vPhaseReport.addAll(server.damageEntity(ent, hit, attackValue));
+                        server.creditKill(ent, ae);
+                    }));
                 } else {
                     ToHitData hexToHit = new ToHitData();
                     hexToHit.setHitTable(ToHitData.HIT_NORMAL);
-                    HitData hit = entity.rollHitLocation(
-                            hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
+                    HitData hit = entity.rollHitLocation(hexToHit.getHitTable(), ToHitData.SIDE_FRONT);
                     hit.setCapital(false);
-                    vPhaseReport.addAll(server.damageEntity(entity, hit,
-                            attackValue));
+                    vPhaseReport.addAll(server.damageEntity(entity, hit, attackValue));
                     server.creditKill(entity, ae);
                 }
             }

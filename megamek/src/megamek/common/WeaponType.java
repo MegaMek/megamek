@@ -126,7 +126,9 @@ public class WeaponType extends EquipmentType {
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
     
+    //Used for TSEMP Weapons.
     public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
+    public static final BigInteger F_REPEATING = BigInteger.valueOf(1).shiftLeft(61);
     
     //Naval Mass Drivers
     public static final BigInteger F_MASS_DRIVER = BigInteger.valueOf(1).shiftLeft(58);
@@ -317,7 +319,8 @@ public class WeaponType extends EquipmentType {
         int mRange = getMediumRange();
         int lRange = getLongRange();
         int eRange = getExtremeRange();
-        if (getAmmoType() == AmmoType.T_ATM) {
+        boolean hasLoadedAmmo = (weapon.getLinked() != null);
+        if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
                 minRange = 4;
@@ -333,7 +336,7 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
-        if (getAmmoType() == AmmoType.T_IATM) {
+        if ((getAmmoType() == AmmoType.T_IATM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
                 minRange = 4;
@@ -349,7 +352,7 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
-        if (getAmmoType() == AmmoType.T_MML) {
+        if ((getAmmoType() == AmmoType.T_MML) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if (atype.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 minRange = 6;
@@ -1625,6 +1628,7 @@ public class WeaponType extends EquipmentType {
 
         EquipmentType.addType(new ISTSEMPCannon());
         EquipmentType.addType(new ISTSEMPOneShot());
+        EquipmentType.addType(new ISTSEMPRepeatingCannon());
 
         EquipmentType.addType(new ISAPDS());
         EquipmentType.addType(new ISBAAPDS());

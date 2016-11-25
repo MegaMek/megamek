@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
+import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -205,7 +206,8 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
-        try(BufferedReader reader
+        try(
+        BufferedReader reader
                 = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) { //$NON-NLS-1$
             int lineNumber = 0;
             String key = "Huh"; //$NON-NLS-1$
@@ -372,6 +374,8 @@ public class RandomUnitGenerator implements Serializable {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
             } catch(IOException e) {
                 System.err.println(String.format("Unable to load %s", ratFile.getName())); //$NON-NLS-1$
+                System.err.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -382,12 +386,44 @@ public class RandomUnitGenerator implements Serializable {
      * @return - a string giving the name
      */
     public ArrayList<MechSummary> generate(int numRolls, String ratName) {
+    	return generate(numRolls, ratName, null);
+    }
+
+	/**
+     * Generate a list of units from the RAT.
+	 *     
+	 * @param numRolls - the number of units to roll from the RAT
+	 * @param ratName - name of the RAT to roll on
+	 * @param filter - entries in the RAT must pass this condition to be included. If null, no filter is applied.
+     * @return - a list of units determined by the random rolls
+	 */
+    public ArrayList<MechSummary> generate(int numRolls, String ratName, Predicate<MechSummary> filter) {
         ArrayList<MechSummary> units = new ArrayList<>();
 
         try {
             Map<String, RatEntry> ratMap = getRatMap();
             if (null != ratMap) {
                 RatEntry re = ratMap.get(ratName);
+                if (filter != null) {
+                	RatEntry filtered = new RatEntry();
+                	float totalWeight = 0.0f;
+                	MechSummaryCache msc = MechSummaryCache.getInstance();
+                	for (int i = 0; i < re.getUnits().size(); i++) {
+                		if (!re.getUnits().get(i).startsWith("@")) {
+	                		MechSummary ms = msc.getMech(re.getUnits().get(i));
+	                		if (ms == null || !filter.test(ms)) {
+	                			continue;
+	                		}
+                		}
+            			filtered.getUnits().add(re.getUnits().get(i));
+            			filtered.getWeights().add(re.getWeights().get(i));
+            			totalWeight += re.getWeights().get(i);
+                	}
+                	for (int i = 0; i < filtered.getWeights().size(); i++) {
+                		filtered.getWeights().set(i, filtered.getWeights().get(i) / totalWeight);
+                	}
+                	re = filtered;
+                }
                 if ((null != re) && (re.getUnits().size() > 0)) {
                     for (int roll = 0; roll < numRolls; roll++) {
                         double rand = getRandom();
@@ -400,7 +436,7 @@ public class RandomUnitGenerator implements Serializable {
 
                         // If this is a RAT reference, roll the unit on the referenced RAT.
                         if (name.startsWith("@")) {
-                            units.addAll(generate(1, name.replaceFirst("@", "")));
+                            units.addAll(generate(1, name.replaceFirst("@", ""), filter));
                             continue;
                         }
 
@@ -426,7 +462,11 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     public ArrayList<MechSummary> generate(int numRolls) {
-        return generate(numRolls, getChosenRAT());
+        return generate(numRolls, getChosenRAT(), null);
+    }
+
+    public ArrayList<MechSummary> generate(int numRolls, Predicate<MechSummary> filter) {
+        return generate(numRolls, getChosenRAT(), filter);
     }
 
     public Map<String, RatEntry> getRatMap() {

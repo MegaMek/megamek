@@ -97,7 +97,7 @@ public class BipedMech extends Mech {
                 if (!isLocationBad(i)) {
                     if (legHasHipCrit(i)) {
                         hipHits++;
-                        if ((game == null) || !game.getOptions().booleanOption("tacops_leg_damage")) {
+                        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                             continue;
                         }
                     }
@@ -113,7 +113,7 @@ public class BipedMech extends Mech {
             wmp = (legsDestroyed == 1) ? 1 : 0;
         } else {
             if (hipHits > 0) {
-                if ((game != null) && game.getOptions().booleanOption("tacops_leg_damage")) {
+                if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                     wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
                 } else {
                     wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
@@ -133,7 +133,7 @@ public class BipedMech extends Mech {
 
         if (!ignoreheat) {
             // factor in heat
-            if ((game != null) && game.getOptions().booleanOption("tacops_heat")) {
+            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 if (heat < 30) {
                     wmp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -240,7 +240,7 @@ public class BipedMech extends Mech {
                 // check for damaged hip actuators
                 if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                    if (!game.getOptions().booleanOption("tacops_leg_damage")) {
+                    if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         continue;
                     }
                 }
@@ -737,7 +737,7 @@ public class BipedMech extends Mech {
     @Override
     public boolean canGoHullDown() {
         // check the option
-        boolean retVal = game.getOptions().booleanOption("tacops_hull_down");
+        boolean retVal = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         if (!retVal) {
             return false;
         }
@@ -775,7 +775,7 @@ public class BipedMech extends Mech {
             return;
         }
 
-        if (game.getOptions().booleanOption("tacops_attempting_stand")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND)) {
             int[] locsToCheck = new int[2];
 
             locsToCheck[0] = Mech.LOC_RARM;

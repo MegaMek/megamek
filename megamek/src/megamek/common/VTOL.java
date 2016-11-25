@@ -17,6 +17,8 @@
  */
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * @author Andrew Hunter VTOLs are helicopters (more or less.)
  */
@@ -73,15 +75,13 @@ public class VTOL extends Tank {
      *      megamek.common.Coords, boolean, int)
      */
     @Override
-    public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex,
-            EntityMovementType overallMoveType, MoveStep prevStep, int prevFacing,
-            int curFacing, Coords lastPos, Coords curPos, boolean isInfantry,
-            int distance) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        roll.addModifier(TargetRoll.CHECK_FALSE,
-                "Check false: VTOLs can't skid");
-        return roll;
-    }
+	public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex, EntityMovementType overallMoveType,
+	        MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+	        boolean isInfantry, int distance) {
+		PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+		roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: VTOLs can't skid");
+		return roll;
+	}
 
     /*
      * (non-Javadoc)
@@ -242,7 +242,7 @@ public class VTOL extends Tank {
             case 7:
                 break;
             case 8:
-                if (bSide && !game.getOptions().booleanOption("tacops_vehicle_effective")) {
+                if (bSide && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                     rv.setEffect(HitData.EFFECT_CRITICAL);
                 }
                 break;
@@ -306,7 +306,7 @@ public class VTOL extends Tank {
             roll = 12;
         }
         if ((roll < 6)
-                || (game.getOptions().booleanOption("vehicles_threshold")
+                || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                         && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }
@@ -395,13 +395,17 @@ public class VTOL extends Tank {
                         }
                     case 11:
                         if (!engineHit) {
-                            return CRIT_ENGINE;
+                            return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit) {
-                            return CRIT_ENGINE;
-                        } else if (!getEngine().isFusion()) {
-                            return CRIT_FUEL_TANK;
+                        if(hasEngine()) {
+                            if (getEngine().isFusion() && !engineHit) {
+                                return CRIT_ENGINE;
+                            } else if (!getEngine().isFusion()) {
+                                return CRIT_FUEL_TANK;
+                            }
+                        } else {
+                            return CRIT_NONE;
                         }
                 }
             } else if (loc == LOC_ROTOR) {
@@ -488,7 +492,7 @@ public class VTOL extends Tank {
                         }
                     case 10:
                         if (!engineHit) {
-                            return CRIT_ENGINE;
+                            return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
@@ -497,10 +501,14 @@ public class VTOL extends Tank {
                             }
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit) {
-                            return CRIT_ENGINE;
-                        } else if (!getEngine().isFusion()) {
-                            return CRIT_FUEL_TANK;
+                        if(hasEngine()) {
+                            if (getEngine().isFusion() && !engineHit) {
+                                return CRIT_ENGINE;
+                            } else if (!getEngine().isFusion()) {
+                                return CRIT_FUEL_TANK;
+                            }
+                        } else {
+                            return CRIT_NONE;
                         }
                 }
             }
@@ -521,8 +529,8 @@ public class VTOL extends Tank {
         }
 
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption("vdni")
-                && !getCrew().getOptions().booleanOption("bvdni")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
@@ -588,6 +596,17 @@ public class VTOL extends Tank {
     @Override
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 8;
     }
 
 }

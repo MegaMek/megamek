@@ -53,8 +53,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
@@ -68,13 +66,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -86,6 +85,8 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
@@ -103,7 +104,6 @@ import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.TilesetManager;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -173,6 +173,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 
 /**
@@ -191,13 +192,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int BOARD_HEX_POPUP = 4;
 
     // the dimensions of megamek's hex images
-    static final int HEX_W = 84;
-    static final int HEX_H = 72;
+    static final int HEX_W = HexTileset.HEX_W;
+    static final int HEX_H = HexTileset.HEX_H;
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
-    private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
-                                                 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f};
+    private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
+            0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f };
+
+    private static final int[] ZOOM_SCALE_TYPES = {
+            ImageUtil.IMAGE_SCALE_AVG_FILTER, ImageUtil.IMAGE_SCALE_AVG_FILTER,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC };
     
     public static final int [] allDirections = {0,1,2,3,4,5};
     
@@ -250,8 +259,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private boolean shouldScroll = false;
 
     // entity sprites
-    private List<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
-    private List<IsometricSprite> isometricSprites = new ArrayList<IsometricSprite>();
+    private Queue<EntitySprite> entitySprites = new PriorityQueue<EntitySprite>();
+    private Queue<IsometricSprite> isometricSprites = new PriorityQueue<IsometricSprite>();
 
     private ArrayList<FlareSprite> flareSprites = new ArrayList<FlareSprite>();
     /**
@@ -413,10 +422,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // reference to our timertask for redraw
     private TimerTask ourTask = null;
 
-    BufferedImage bvBgBuffer = null;
-    ImageIcon bvBgIcon = null;
+    BufferedImage bvBgImage = null;
+    boolean bvBgShouldTile = false;
     BufferedImage scrollPaneBgBuffer = null;
-    ImageIcon scrollPaneBgIcon = null;
+    Image scrollPaneBgImg = null;
 
     List<Image> boardBackgrounds = new ArrayList<>();
 
@@ -969,6 +978,37 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
 
                 });
+
+        // Register the action for Toggling drawing unit labels
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_DRAW_LABELS.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        GUIPreferences guip = GUIPreferences.getInstance();
+                        boolean drawLabels = guip.getBoolean(
+                                GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL);
+                        guip.setValue(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL,
+                                !drawLabels);
+                        updateEntityLabels();
+                        for (Sprite s: wreckSprites) {
+                            s.prepare();
+                        }
+                        for (Sprite s: isometricWreckSprites) {
+                            s.prepare();
+                        }
+                    }
+
+                });
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1022,6 +1062,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
+        }
+        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+            updateEntityLabels();
+            for (Sprite s: wreckSprites) {
+                s.prepare();
+            }
+            for (Sprite s: isometricWreckSprites) {
+                s.prepare();
+            }
         }
     }
 
@@ -1123,7 +1172,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (guip.getAntiAliasing()) {
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                              RenderingHints.VALUE_ANTIALIAS_ON);
+                    RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
         if (!isTileImagesLoaded()) {
@@ -1138,30 +1187,45 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         Rectangle viewRect = scrollpane.getVisibleRect();
-        if ((bvBgBuffer == null) || (bvBgBuffer.getWidth() != viewRect.getWidth())
-            || (bvBgBuffer.getHeight() != viewRect.getHeight())) {
-            pingMinimap();
-            bvBgBuffer = new BufferedImage((int) viewRect.getWidth(),
-                                           (int) viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics bgGraph = bvBgBuffer.getGraphics();
-            if (bvBgIcon != null) {
-                int w = (int) viewRect.getWidth();
-                int h = (int) viewRect.getHeight();
-                int iW = bvBgIcon.getIconWidth();
-                int iH = bvBgIcon.getIconHeight();
-                // If the unit icon hasn't been loaded, prevent an infinite loop
-                if ((iW < 1) || (iH < 1)) {
-                    return;
+        if (bvBgShouldTile && (bvBgImage != null)) {
+            Rectangle clipping = g.getClipBounds();
+            int x = 0;
+            int y = 0;
+            int w = bvBgImage.getWidth();
+            int h = bvBgImage.getHeight();
+            while (y < clipping.getHeight()) {
+                int yRem = 0;
+                if (y == 0) {
+                    yRem = clipping.y % h;
                 }
-                for (int x = 0; x < w; x += iW) {
-                    for (int y = 0; y < h; y += iH) {
-                        bgGraph.drawImage(bvBgIcon.getImage(), x, y,
-                                          bvBgIcon.getImageObserver());
+                x = 0;
+                while (x < clipping.getWidth()) {
+                    int xRem = 0;
+                    if (x == 0) {
+                        xRem = clipping.x % w;
                     }
+                    if (xRem != 0 || yRem != 0) {
+                        g.drawImage(
+                                bvBgImage.getSubimage(xRem, yRem, w - xRem,
+                                        h - yRem),
+                                clipping.x + x, clipping.y + y, this);
+                    } else {
+                        g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
+                                this);
+                    }
+                    x += w - xRem;
                 }
+                y += h - yRem;
             }
+        } else if (bvBgImage != null) {
+            g.drawImage(bvBgImage, -getX(), -getY(), (int) viewRect.getWidth(),
+                    (int) viewRect.getHeight(), this);
+        } else {
+            MetalTheme theme = new DefaultMetalTheme();
+            g.setColor(theme.getControl());
+            g.fillRect(-getX(), -getY(), (int) viewRect.getWidth(),
+                    (int) viewRect.getHeight());
         }
-        g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
 
         // Used to pad the board edge
         g.translate(HEX_W, HEX_H);
@@ -1305,7 +1369,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             String s = String.format("%1$5.3f", averageTime / 1000000d);
             g.setFont(fpsFont);
             g.setColor(Color.YELLOW);
-            g.drawString(s, g.getClipBounds().x + 5, g.getClipBounds().y + 20);
+            g.drawString(s, -getX() + 5, -getY() + 20);
         }
     }
     
@@ -1637,7 +1701,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * onscreen.
      */
     private synchronized void drawSprites(Graphics g,
-            List<? extends Sprite> spriteArrayList) {
+            Collection<? extends Sprite> spriteArrayList) {
         for (Sprite sprite : spriteArrayList) {
             drawSprite(g, sprite);
         }
@@ -1674,7 +1738,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @param spriteArrayList The complete list of all IsometricSprite on the board.
      */
     private synchronized void drawIsometricSpritesForHex(Coords c, Graphics g,
-            List<IsometricSprite> spriteArrayList) {
+            Collection<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
@@ -1728,7 +1792,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * for all sprites.
      */
     private final void drawIsometricSprites(Graphics g,
-            List<IsometricSprite> spriteArrayList) {
+            Collection<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             // This can potentially be an expensive operation
@@ -2144,14 +2208,107 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * This method creates an image the size of the entire board (all
      * mapsheets), draws the hexes onto it, and returns that image.
      */
-    public BufferedImage getEntireBoardImage() {
+    public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
+        boardGraph.setClip(0, 0, boardSize.width, boardSize.height);
         if (GUIPreferences.getInstance().getAntiAliasing()) {
             boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                         RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        drawHexes(boardGraph, new Rectangle(boardSize), true);
+        // Draw hexes
+        drawHexes(boardGraph, new Rectangle(boardSize), ignoreUnits);
+
+        // If we aren't ignoring units, draw everything else
+        if (!ignoreUnits) {
+            // draw wrecks
+            if (GUIPreferences.getInstance().getShowWrecks()
+                    && !useIsometric()) {
+                drawSprites(boardGraph, wreckSprites);
+            }
+
+            // Field of Fire
+            if (!useIsometric()
+                    && GUIPreferences.getInstance().getShowFieldOfFire()) {
+                drawSprites(boardGraph, fieldofFireSprites);
+            }
+
+            if ((game.getPhase() == Phase.PHASE_MOVEMENT) && !useIsometric()) {
+                drawSprites(boardGraph, moveEnvSprites);
+                drawSprites(boardGraph, moveModEnvSprites);
+            }
+
+            // Minefield signs all over the place!
+            drawMinefields(boardGraph);
+
+            // Artillery targets
+            drawArtilleryHexes(boardGraph);
+
+            // draw highlight border
+            drawSprite(boardGraph, highlightSprite);
+
+            // draw cursors
+            drawSprite(boardGraph, cursorSprite);
+            drawSprite(boardGraph, selectedSprite);
+            drawSprite(boardGraph, firstLOSSprite);
+            drawSprite(boardGraph, secondLOSSprite);
+
+            // draw deployment indicators.
+            // For Isometric rendering, this is done during drawHexes
+            if ((en_Deployer != null) && !useIsometric()) {
+                drawDeployment(boardGraph);
+            }
+
+            if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
+                    && (showAllDeployment)) {
+                drawAllDeployment(boardGraph);
+            }
+
+            // draw Flare Sprites
+            drawSprites(boardGraph, flareSprites);
+
+            // draw C3 links
+            drawSprites(boardGraph, c3Sprites);
+
+            // draw flyover routes
+            if (game.getBoard().onGround()) {
+                drawSprites(boardGraph, flyOverSprites);
+            }
+
+            // draw onscreen entities
+            drawSprites(boardGraph, entitySprites);
+
+            // draw moving onscreen entities
+            drawSprites(boardGraph, movingEntitySprites);
+
+            // draw ghost onscreen entities
+            drawSprites(boardGraph, ghostEntitySprites);
+
+            // draw onscreen attacks
+            drawSprites(boardGraph, attackSprites);
+
+            // draw movement vectors.
+            if (game.useVectorMove()
+                && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                drawSprites(boardGraph, movementSprites);
+            }
+
+            // draw movement, if valid
+            drawSprites(boardGraph, pathSprites);
+
+            // draw firing solution sprites, but only during the firing phase
+            if ((game.getPhase() == Phase.PHASE_FIRING) ||
+                (game.getPhase() == Phase.PHASE_OFFBOARD)) {
+                drawSprites(boardGraph, firingSprites);
+            }
+
+            if (game.getPhase() == Phase.PHASE_FIRING) {
+                for (Coords c : strafingCoords) {
+                    drawHexBorder(boardGraph, getHexLocation(c), Color.yellow, 0, 3);
+                }
+            }
+        }
+
         boardGraph.dispose();
         return (BufferedImage) entireBoard;
     }
@@ -2989,11 +3146,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Returns the absolute position of the upper-left hand corner of the hex
      * graphic
      */
-    private Point getHexLocation(int x, int y) {
+    private Point getHexLocation(int x, int y, boolean ignoreElevation) {
         float elevationAdjust = 0.0f;
 
         IHex hex = game.getBoard().getHex(x, y);
-        if ((hex != null) && useIsometric()) {
+        if ((hex != null) && useIsometric() && !ignoreElevation) {
             int level = hex.getLevel();
             if (level != 0) {
                 elevationAdjust = level * HEX_ELEV * scale * -1.0f;
@@ -3023,21 +3180,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     Point getHexLocation(Coords c) {
-        return getHexLocation(c.getX(), c.getY());
+        return getHexLocation(c.getX(), c.getY(), false);
     }
     
      /**
      * Returns the absolute position of the centre of the hex graphic
      */
-    private Point getCentreHexLocation(int x, int y) {
-        Point p = getHexLocation(x, y);
+    private Point getCentreHexLocation(int x, int y, boolean ignoreElevation) {
+        Point p = getHexLocation(x, y, ignoreElevation);
         p.x += ((HEX_W / 2) * scale);
         p.y += ((HEX_H / 2) * scale);
         return p;
     }
 
-    private Point getCentreHexLocation(Coords c) {
-        return getCentreHexLocation(c.getX(), c.getY());
+    public Point getCentreHexLocation(Coords c) {
+        return getCentreHexLocation(c.getX(), c.getY(), false);
+    }
+
+    public Point getCentreHexLocation(Coords c, boolean ignoreElevation) {
+        return getCentreHexLocation(c.getX(), c.getY(), ignoreElevation);
     }
 
     public void drawRuler(Coords s, Coords e, Color sc, Color ec) {
@@ -3122,13 +3283,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // We can ignore secondary locations for now, as we don't have moving
         // multi-location entitys (will need to change for mobile structures)
 
-        ArrayList<EntitySprite> newSprites;
-        ArrayList<IsometricSprite> isoSprites;
+        PriorityQueue<EntitySprite> newSprites;
+        PriorityQueue<IsometricSprite> isoSprites;
         HashMap<List<Integer>, EntitySprite> newSpriteIds;
         HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds;
 
+        // Remove sprite for Entity, so it's not displayed while moving
         if (sprite != null) {
-            newSprites = new ArrayList<EntitySprite>(entitySprites);
+            newSprites = new PriorityQueue<EntitySprite>(entitySprites);
             newSpriteIds = new HashMap<>(entitySpriteIds);
 
             newSprites.remove(sprite);
@@ -3137,9 +3299,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             entitySprites = newSprites;
             entitySpriteIds = newSpriteIds;
         }
-
+        // Remove iso sprite for Entity, so it's not displayed while moving
         if (isoSprite != null) {
-            isoSprites = new ArrayList<IsometricSprite>(isometricSprites);
+            isoSprites = new PriorityQueue<IsometricSprite>(isometricSprites);
             newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
 
             isoSprites.remove(isoSprite);
@@ -3154,14 +3316,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 movingEntitySprites);
         HashMap<Integer, MovingEntitySprite> newMovingSpriteIds = new HashMap<>(
                 movingEntitySpriteIds);
-
+        // Remove any old movement sprite
         if (mSprite != null) {
             newMovingSprites.remove(mSprite);
         }
-
+        // Create new movement sprite
         if (entity.getPosition() != null) {
             mSprite = new MovingEntitySprite(this, entity, position, facing,
-                                             elevation);
+                    elevation);
             newMovingSprites.add(mSprite);
             newMovingSpriteIds.put(entityId, mSprite);
         }
@@ -3261,11 +3423,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // Create a copy of the sprite list
-        ArrayList<EntitySprite> newSprites = new ArrayList<>(entitySprites);
+        Queue<EntitySprite> newSprites = new PriorityQueue<>(entitySprites);
         HashMap<List<Integer>, EntitySprite> newSpriteIds = 
                 new HashMap<>(entitySpriteIds);
-        ArrayList<IsometricSprite> isoSprites = 
-                new ArrayList<>(isometricSprites);
+        Queue<IsometricSprite> isoSprites = new PriorityQueue<>(
+                isometricSprites);
         HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds = 
                 new HashMap<>(isometricSpriteIds);
 
@@ -3294,13 +3456,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Create the new sprites
         Coords position = entity.getPosition();
         boolean canSee = (localPlayer == null)
-                || !game.getOptions().booleanOption("double_blind")
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 || !entity.getOwner().isEnemyOf(localPlayer)
                 || entity.hasSeenEntity(localPlayer)
                 || entity.hasDetectedEntity(localPlayer);
 
         canSee &= (localPlayer == null)
-                || !game.getOptions().booleanOption("hidden_units")
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
                 || !entity.getOwner().isEnemyOf(localPlayer)
                 || !entity.isHidden();
 
@@ -3385,8 +3547,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     void redrawAllEntities() {
         int numEntities = game.getNoOfEntities();
-        List<EntitySprite> newSprites = new ArrayList<EntitySprite>(numEntities);
-        List<IsometricSprite> newIsometricSprites = new ArrayList<>(numEntities);
+        // Prevent IllegalArgumentException
+        numEntities = Math.max(1, numEntities);
+        Queue<EntitySprite> newSprites = new PriorityQueue<EntitySprite>(
+                numEntities);
+        Queue<IsometricSprite> newIsometricSprites = new PriorityQueue<>(
+                numEntities);
         Map<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(
                 numEntities);
         Map<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(
@@ -3426,14 +3592,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 continue;
             }
             if ((localPlayer != null)
-                && game.getOptions().booleanOption("double_blind")
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && entity.getOwner().isEnemyOf(localPlayer)
                 && !entity.hasSeenEntity(localPlayer)
                 && !entity.hasDetectedEntity(localPlayer)) {
                 continue;
             }
             if ((localPlayer != null)
-                    && game.getOptions().booleanOption("hidden_units")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
                     && entity.getOwner().isEnemyOf(localPlayer)
                     && entity.isHidden()) {
                 continue;
@@ -3754,15 +3920,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void setFiringSolutions(Entity attacker,
-            Map<Integer, ToHitData> firingSolutions) {
+            Map<Integer, FiringSolution> firingSolutions) {
 
         clearFiringSolutionData();
         if (firingSolutions == null) {
             return;
         }
-        for (ToHitData thd : firingSolutions.values()) {
-            FiringSolutionSprite sprite = new FiringSolutionSprite(
-                    this, thd.getValue(), thd.getRange(), thd.getLocation());
+        for (FiringSolution sln : firingSolutions.values()) {
+            FiringSolutionSprite sprite = new FiringSolutionSprite(this, sln);
             firingSprites.add(sprite);
         }
     }
@@ -4866,9 +5031,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 refreshMoveVectors();
             }
             if ((mp != null) && (mp.size() > 0) && guip.getShowMoveStep()
-                    && !gopts.booleanOption("simultaneous_movement")) {
+                    && !gopts.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
                 if ((localPlayer == null)
-                        || !game.getOptions().booleanOption("double_blind")
+                        || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                         || !en.getOwner().isEnemyOf(localPlayer)
                         || en.hasSeenEntity(localPlayer)) {
                     addMovingUnit(en, mp);
@@ -5064,7 +5229,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             // If this unit isn't spotted somehow, it's ECM doesn't show up
             if ((localPlayer != null)
-                    && game.getOptions().booleanOption("double_blind")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && e.getOwner().isEnemyOf(localPlayer)
                     && !e.hasSeenEntity(localPlayer)
                     && !e.hasDetectedEntity(localPlayer)) {
@@ -5103,7 +5268,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (ECMInfo ecmInfo : allEcmInfo) {
             // Can't see ECM field of unspotted unit
             if ((ecmInfo.getEntity() != null) && (localPlayer != null)
-                    && game.getOptions().booleanOption("double_blind")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer)
                     && !ecmInfo.getEntity().hasSeenEntity(localPlayer)
                     && !ecmInfo.getEntity().hasDetectedEntity(localPlayer)) {
@@ -5163,12 +5328,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             processAffectedCoords(c, ecm, eccm, newECMHexes, newECCMHexes);
         }
 
+        Set<Coords> updatedHexes = new HashSet<>();
+        if (ecmHexes != null) {
+            updatedHexes.addAll(ecmHexes.keySet());
+        }
+        if (eccmHexes != null) {
+            updatedHexes.addAll(eccmHexes.keySet());
+        }
+        updatedHexes.addAll(newECMHexes.keySet());
+        updatedHexes.addAll(newECCMHexes.keySet());
+        clearHexImageCache(updatedHexes);
+
         synchronized (this) {
             ecmHexes    = newECMHexes;
             ecmCenters  = newECMCenters;
             eccmHexes   = newECCMHexes;
             eccmCenters = newECCMCenters;
         }
+
         repaint();
     }
 
@@ -5695,28 +5872,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Setup background icons
         try {
-            java.net.URI imgURL;
             File file;
             if (bvSkinSpec.backgrounds.size() > 0) {
                 file = new File(Configuration.widgetsDir(),
                                 bvSkinSpec.backgrounds.get(0));
-                imgURL = file.toURI();
                 if (!file.exists()) {
                     System.err.println("BoardView1 Error: icon doesn't exist: "
                                        + file.getAbsolutePath());
                 } else {
-                    bvBgIcon = new ImageIcon(imgURL.toURL());
+                    bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(
+                            file.getAbsolutePath(),
+                            Toolkit.getDefaultToolkit());
+                    bvBgShouldTile = bvSkinSpec.tileBackground;
                 }
             }
             if (bvSkinSpec.backgrounds.size() > 1) {
                 file = new File(Configuration.widgetsDir(),
                                 bvSkinSpec.backgrounds.get(1));
-                imgURL = file.toURI();
                 if (!file.exists()) {
                     System.err.println("BoardView1 Error: icon doesn't exist: "
                                        + file.getAbsolutePath());
                 } else {
-                    scrollPaneBgIcon = new ImageIcon(imgURL.toURL());
+                    scrollPaneBgImg = ImageUtil.loadImageFromFile(
+                            file.getAbsolutePath(),
+                            Toolkit.getDefaultToolkit());
                 }
             }
         } catch (Exception e) {
@@ -5734,30 +5913,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             @Override
             protected void paintComponent(Graphics g) {
-                if (scrollPaneBgIcon == null) {
+                if (scrollPaneBgImg == null) {
                     super.paintComponent(g);
                     return;
                 }
                 int w = getWidth();
                 int h = getHeight();
-                int iW = scrollPaneBgIcon.getIconWidth();
-                int iH = scrollPaneBgIcon.getIconHeight();
+                int iW = scrollPaneBgImg.getWidth(null);
+                int iH = scrollPaneBgImg.getHeight(null);
                 if ((scrollPaneBgBuffer == null)
                     || (scrollPaneBgBuffer.getWidth() != w)
                     || (scrollPaneBgBuffer.getHeight() != h)) {
                     scrollPaneBgBuffer = new BufferedImage(w, h,
                             BufferedImage.TYPE_INT_RGB);
                     Graphics bgGraph = scrollPaneBgBuffer.getGraphics();
-                    // If the unit icon hasn't been loaded, prevent an infinite loop
+                    // If the unit icon not loaded, prevent infinite loop
                     if ((iW < 1) || (iH < 1)) {
                         return;
                     }
                     for (int x = 0; x < w; x += iW) {
                         for (int y = 0; y < h; y += iH) {
-                            bgGraph.drawImage(scrollPaneBgIcon.getImage(), x, y,
-                                              scrollPaneBgIcon.getImageObserver());
+                            bgGraph.drawImage(scrollPaneBgImg, x, y, null);
                         }
                     }
+                    bgGraph.dispose();
                 }
                 g.drawImage(scrollPaneBgBuffer, 0, 0, null);
             }
@@ -5988,13 +6167,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * The actual scaling code.
      */
     private Image scale(Image img, int width, int height) {
-        ImageFilter filter;
-        filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
-                img.getHeight(null), width, height);
-
-        ImageProducer prod;
-        prod = new FilteredImageSource(img.getSource(), filter);
-        return Toolkit.getDefaultToolkit().createImage(prod);
+        return ImageUtil.getScaledImage(img, width, height,
+                ZOOM_SCALE_TYPES[zoomIndex]);
     }
 
     public boolean toggleIsometric() {
@@ -6084,6 +6258,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
+     * Clear a specific list of Coords from the hex image cache.
+     * @param coords
+     */
+    public void clearHexImageCache(Set<Coords> coords) {
+        for (Coords c : coords) {
+            hexImageCache.remove(c);
+        }
+    }
+
+    /**
      * Check to see if the HexImageCache should be cleared because of
      * field-of-view changes.
      */
@@ -6169,7 +6353,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check if extreme range is used
         int maxrange = 4;
         if (game.getOptions().
-                booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)) maxrange = 5;
+                booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) maxrange = 5;
         
         // create the lists of hexes
         List<Set<Coords>> fieldFire = new ArrayList<Set<Coords>>(5);

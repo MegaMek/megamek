@@ -77,11 +77,12 @@ public class MGHandler extends AmmoWeaponHandler {
             }
         } else {
             if ((target instanceof Infantry)
-                && !(target instanceof BattleArmor)) {
-                toReturn = Compute.directBlowInfantryDamage(toReturn,
-                                                            bDirect ? toHit.getMoS() / 3 : 0,
-                                                            wtype.getInfantryDamageClass(),
-                                                            ((Infantry) target).isMechanized());
+                    && !(target instanceof BattleArmor)) {
+                toReturn = Compute.directBlowInfantryDamage(
+                        wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
+                        wtype.getInfantryDamageClass(),
+                        ((Infantry) target).isMechanized(),
+                        toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
                 if (bGlancing) {
                     toReturn = (int) Math.floor(toReturn / 2.0);
                 }
@@ -96,12 +97,12 @@ public class MGHandler extends AmmoWeaponHandler {
                 }
             }
         }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn *= .75;
             toReturn = (int) Math.floor(toReturn);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }

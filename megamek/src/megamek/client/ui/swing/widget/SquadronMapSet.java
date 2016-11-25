@@ -21,6 +21,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -30,6 +32,7 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.IGame;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Class which keeps set of all areas required to represent Capital Fighter unit
@@ -79,8 +82,7 @@ public class SquadronMapSet implements DisplayMapSet {
         /*
          * Set the max_size based on current game options
          */
-        if ((g != null)
-                && g.getOptions().booleanOption("allow_large_squadrons")) {
+        if ((g != null) && g.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)) {
             max_size = FighterSquadron.ALTERNATE_MAX_SIZE;
         } else {
             max_size = FighterSquadron.MAX_SIZE;
@@ -127,59 +129,59 @@ public class SquadronMapSet implements DisplayMapSet {
     }
 
     public void setEntity(Entity e) {
-        FighterSquadron fs = (FighterSquadron) e;
+        List<Entity> fighters = e.getSubEntities().orElse(Collections.emptyList());
+        int numFighters = Math.min(max_size, fighters.size());
+        for(int i = 0; i < numFighters; ++ i) {
+            final Aero fighter = (Aero) fighters.get(i);
+            if(null != fighter) {
+                int armor = fighter.getCapArmor();
+                int armorO = fighter.getCap0Armor();
+                armorVLabel[i].setValue(Integer.toString(armor));
 
-        for (int i = 0; i < fs.getN0Fighters(); i++) {
-            Aero fighter = fs.getFighter(i);
-            int armor = fighter.getCapArmor();
-            int armorO = fighter.getCap0Armor();
-            armorVLabel[i].setValue(Integer.toString(armor));
+                if (fighter.getGame().getOptions().booleanOption(
+                        OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                    armor = (int) Math.ceil(armor / 10.0);
+                    armorO = (int) Math.ceil(armorO / 10.0);
+                }
 
-            if (fighter.getGame().getOptions().booleanOption("aero_sanity")) {
-                armor = (int) Math.ceil(armor / 10.0);
-                armorO = (int) Math.ceil(armorO / 10.0);
+                drawArmorImage(armorImage[i], armor, armorO);
+                drawCrits(avCritImage[i], fighter.getAvionicsHits());
+                drawCrits(engineCritImage[i], fighter.getEngineHits());
+                drawCrits(fcsCritImage[i], fighter.getFCSHits());
+                drawCrits(sensorCritImage[i], fighter.getSensorHits());
+                drawCrits(pilotCritImage[i], fighter.getCrew().getHits());
+
+                nameLabel[i].setString(fighter.getDisplayName());
+
+                armorArea[i].setVisible(true);
+                armorVLabel[i].setVisible(true);
+                avCritArea[i].setVisible(true);
+                engineCritArea[i].setVisible(true);
+                fcsCritArea[i].setVisible(true);
+                sensorCritArea[i].setVisible(true);
+                pilotCritArea[i].setVisible(true);
+                nameLabel[i].setVisible(true);
+                avCritLabel[i].setVisible(true);
+                engineCritLabel[i].setVisible(true);
+                fcsCritLabel[i].setVisible(true);
+                sensorCritLabel[i].setVisible(true);
+                pilotCritLabel[i].setVisible(true);
+            } else {
+                armorArea[i].setVisible(false);
+                armorVLabel[i].setVisible(false);
+                avCritArea[i].setVisible(false);
+                engineCritArea[i].setVisible(false);
+                fcsCritArea[i].setVisible(false);
+                sensorCritArea[i].setVisible(false);
+                pilotCritArea[i].setVisible(false);
+                nameLabel[i].setVisible(false);
+                avCritLabel[i].setVisible(false);
+                engineCritLabel[i].setVisible(false);
+                fcsCritLabel[i].setVisible(false);
+                sensorCritLabel[i].setVisible(false);
+                pilotCritLabel[i].setVisible(false);
             }
-
-            drawArmorImage(armorImage[i], armor, armorO);
-            drawCrits(avCritImage[i], fighter.getAvionicsHits());
-            drawCrits(engineCritImage[i], fighter.getEngineHits());
-            drawCrits(fcsCritImage[i], fighter.getFCSHits());
-            drawCrits(sensorCritImage[i], fighter.getSensorHits());
-            drawCrits(pilotCritImage[i], fighter.getCrew().getHits());
-
-            nameLabel[i].setString(fighter.getDisplayName());
-
-            armorArea[i].setVisible(true);
-            armorVLabel[i].setVisible(true);
-            avCritArea[i].setVisible(true);
-            engineCritArea[i].setVisible(true);
-            fcsCritArea[i].setVisible(true);
-            sensorCritArea[i].setVisible(true);
-            pilotCritArea[i].setVisible(true);
-            nameLabel[i].setVisible(true);
-            avCritLabel[i].setVisible(true);
-            engineCritLabel[i].setVisible(true);
-            fcsCritLabel[i].setVisible(true);
-            sensorCritLabel[i].setVisible(true);
-            pilotCritLabel[i].setVisible(true);
         }
-
-        for (int j = fs.getN0Fighters(); j < max_size; j++) {
-            armorArea[j].setVisible(false);
-            armorVLabel[j].setVisible(false);
-            avCritArea[j].setVisible(false);
-            engineCritArea[j].setVisible(false);
-            fcsCritArea[j].setVisible(false);
-            sensorCritArea[j].setVisible(false);
-            pilotCritArea[j].setVisible(false);
-            nameLabel[j].setVisible(false);
-            avCritLabel[j].setVisible(false);
-            engineCritLabel[j].setVisible(false);
-            fcsCritLabel[j].setVisible(false);
-            sensorCritLabel[j].setVisible(false);
-            pilotCritLabel[j].setVisible(false);
-        }
-
     }
 
     private void setContent() {
@@ -203,24 +205,18 @@ public class SquadronMapSet implements DisplayMapSet {
 
     private void setAreas() {
         for (int i = 0; i < max_size; i++) {
-            armorImage[i] = comp.createImage(armorCols * (squareSize + 1),
-                    armorRows * (squareSize + 1));
+            armorImage[i] = comp.createImage(armorCols * (squareSize + 1), armorRows * (squareSize + 1));
             armorArea[i] = new PMPicArea(armorImage[i]);
 
-            avCritImage[i] = comp.createImage(3 * (squareSize + 1),
-                    squareSize + 1);
+            avCritImage[i] = comp.createImage(3 * (squareSize + 1), squareSize + 1);
             avCritArea[i] = new PMPicArea(avCritImage[i]);
-            engineCritImage[i] = comp.createImage(3 * (squareSize + 1),
-                    squareSize + 1);
+            engineCritImage[i] = comp.createImage(3 * (squareSize + 1), squareSize + 1);
             engineCritArea[i] = new PMPicArea(engineCritImage[i]);
-            fcsCritImage[i] = comp.createImage(3 * (squareSize + 1),
-                    squareSize + 1);
+            fcsCritImage[i] = comp.createImage(3 * (squareSize + 1), squareSize + 1);
             fcsCritArea[i] = new PMPicArea(fcsCritImage[i]);
-            sensorCritImage[i] = comp.createImage(3 * (squareSize + 1),
-                    squareSize + 1);
+            sensorCritImage[i] = comp.createImage(3 * (squareSize + 1), squareSize + 1);
             sensorCritArea[i] = new PMPicArea(sensorCritImage[i]);
-            pilotCritImage[i] = comp.createImage(6 * (squareSize + 1),
-                    squareSize + 1);
+            pilotCritImage[i] = comp.createImage(6 * (squareSize + 1), squareSize + 1);
             pilotCritArea[i] = new PMPicArea(pilotCritImage[i]);
         }
     }
@@ -234,81 +230,58 @@ public class SquadronMapSet implements DisplayMapSet {
             engineCritLabel[i] = new PMSimpleLabel("Engine:", fm, Color.white); //$NON-NLS-1$
             fcsCritLabel[i] = new PMSimpleLabel("FCS:", fm, Color.white); //$NON-NLS-1$
             sensorCritLabel[i] = new PMSimpleLabel("Sensors:", fm, Color.white); //$NON-NLS-1$
-            pilotCritLabel[i] = new PMSimpleLabel(
-                    "Pilot hits:", fm, Color.white); //$NON-NLS-1$
+            pilotCritLabel[i] = new PMSimpleLabel("Pilot hits:", fm, Color.white); //$NON-NLS-1$
         }
     }
 
     private void setBackGround() {
-        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
-                .getUnitDisplaySkin();
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler.getUnitDisplaySkin();
 
         Image tile = comp.getToolkit()
-                .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
-                                .getBackgroundTile()).toString());
+                .getImage(new File(Configuration.widgetsDir(), udSpec.getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getTopLine())
-                        .toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getTopLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getBottomLine())
-                        .toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getLeftLine())
-                        .toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getRightLine())
-                        .toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
-                        .toString());
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_LEFT;
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getTopLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
-                        .getBottomLeftCorner()).toString());
-        PMUtil.setImage(tile, comp);
-        bgDrawers.addElement(new BackGroundDrawer(tile, b));
-
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
-                | BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit()
-                .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+                .getImage(new File(Configuration.widgetsDir(), udSpec.getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
-                | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
-                        .getBottomRightCorner()).toString());
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP | BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getTopRightCorner()).toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
+
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM | BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit()
+                .getImage(new File(Configuration.widgetsDir(), udSpec.getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
@@ -320,35 +293,24 @@ public class SquadronMapSet implements DisplayMapSet {
             nameLabel[i].translate(0, blockSize * i);
             armorArea[i].translate(0, squareSize + (blockSize * i));
             armorVLabel[i].translate((armorCols * (squareSize + 1)) / 2,
-                    (blockSize * i) + squareSize + ((armorRows * (squareSize + 1))
-                            / 2));
+                    (blockSize * i) + squareSize + ((armorRows * (squareSize + 1)) / 2));
 
-            avCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), stepY
-                    + (blockSize * i));
-            engineCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), (2
-                    * stepY) + (blockSize * i));
-            fcsCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), (3
-                    * stepY) + (blockSize * i));
-            sensorCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), (4
-                    * stepY) + (blockSize * i));
-            pilotCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), (5
-                    * stepY) + (blockSize * i));
+            avCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), stepY + (blockSize * i));
+            engineCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), (2 * stepY) + (blockSize * i));
+            fcsCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), (3 * stepY) + (blockSize * i));
+            sensorCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), (4 * stepY) + (blockSize * i));
+            pilotCritLabel[i].translate(5 + (armorCols * (squareSize + 1)), (5 * stepY) + (blockSize * i));
 
-            avCritArea[i].translate(10 + pilotCritLabel[0].width + (armorCols
-                    * (squareSize + 1)), (stepY - (squareSize + 1)) + (blockSize
-                    * i));
-            engineCritArea[i].translate(10 + pilotCritLabel[0].width
-                    + (armorCols * (squareSize + 1)), ((2 * stepY)
-                    - (squareSize + 1)) + (blockSize * i));
-            fcsCritArea[i].translate(10 + pilotCritLabel[0].width + (armorCols
-                    * (squareSize + 1)), ((3 * stepY) - (squareSize + 1))
-                    + (blockSize * i));
-            sensorCritArea[i].translate(10 + pilotCritLabel[0].width
-                    + (armorCols * (squareSize + 1)), ((4 * stepY)
-                    - (squareSize + 1)) + (blockSize * i));
-            pilotCritArea[i].translate(10 + pilotCritLabel[0].width + (armorCols
-                    * (squareSize + 1)), ((5 * stepY) - (squareSize + 1))
-                    + (blockSize * i));
+            avCritArea[i].translate(10 + pilotCritLabel[0].width + (armorCols * (squareSize + 1)),
+                    (stepY - (squareSize + 1)) + (blockSize * i));
+            engineCritArea[i].translate(10 + pilotCritLabel[0].width + (armorCols * (squareSize + 1)),
+                    ((2 * stepY) - (squareSize + 1)) + (blockSize * i));
+            fcsCritArea[i].translate(10 + pilotCritLabel[0].width + (armorCols * (squareSize + 1)),
+                    ((3 * stepY) - (squareSize + 1)) + (blockSize * i));
+            sensorCritArea[i].translate(10 + pilotCritLabel[0].width + (armorCols * (squareSize + 1)),
+                    ((4 * stepY) - (squareSize + 1)) + (blockSize * i));
+            pilotCritArea[i].translate(10 + pilotCritLabel[0].width + (armorCols * (squareSize + 1)),
+                    ((5 * stepY) - (squareSize + 1)) + (blockSize * i));
         }
     }
 
@@ -377,15 +339,13 @@ public class SquadronMapSet implements DisplayMapSet {
             int row = i / armorRows;
             int column = i - (row * armorRows);
             g.setColor(Color.black);
-            g.fillRect(row * (squareSize + 1), column * (squareSize + 1),
-                    (squareSize + 1), (squareSize + 1));
+            g.fillRect(row * (squareSize + 1), column * (squareSize + 1), (squareSize + 1), (squareSize + 1));
         }
         for (int i = 0; i < a; i++) {
             int row = i / armorRows;
             int column = i - (row * armorRows);
             g.setColor(Color.green.darker());
-            g.fillRect(row * (squareSize + 1), column * (squareSize + 1),
-                    squareSize, squareSize);
+            g.fillRect(row * (squareSize + 1), column * (squareSize + 1), squareSize, squareSize);
         }
     }
 

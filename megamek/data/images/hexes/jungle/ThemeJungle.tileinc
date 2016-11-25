@@ -1,0 +1,16 @@
+# Standard Jungle Theme
+
+base 0 "" "jungle" "boring/beige_plains_0.gif"
+base 1 "" "jungle" "boring/beige_plains_1.gif"
+base 2 "" "jungle" "boring/beige_plains_2.gif"
+base 3 "" "jungle" "boring/beige_plains_3.gif"
+base 4 "" "jungle" "boring/beige_plains_4.gif"
+base 5 "" "jungle" "boring/beige_plains_5.gif"
+base 6 "" "jungle" "boring/beige_plains_6.gif"
+base 7 "" "jungle" "boring/beige_plains_7.gif"
+base 8 "" "jungle" "boring/beige_plains_8.gif"
+base 9 "" "jungle" "boring/beige_plains_9.gif"
+base 10 "" "jungle" "boring/beige_plains_10.gif"
+base -1 "" "jungle" "boring/beige_sinkhole_1.gif"
+base -2 "" "jungle" "boring/beige_sinkhole_2.gif"
+base -3 "" "jungle" "boring/beige_sinkhole_3.gif"

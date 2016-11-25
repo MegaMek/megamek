@@ -26,6 +26,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -54,55 +55,6 @@ public class SRMInfernoHandler extends SRMHandler {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
-     * .Entity, boolean, megamek.common.Building)
-     */
-    @Override
-    protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
-        // Shots that miss an entity can set fires.
-        // Buildings can't be accidentally ignited,
-        // and some weapons can't ignite fires.
-        if ((entityTarget != null)
-                && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
-            server.tryIgniteHex(target.getPosition(), subjectId, false, true,
-                    new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
-                    vPhaseReport);
-        }
-
-        // shots that miss an entity can also potential cause explosions in a
-        // heavy industrial hex
-        server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
-
-        // Report any AMS action.
-        if (amsEngaged) {
-            Report r = new Report(3230);
-            r.indent();
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }
-
-        // Report any APDS action.
-        if (apdsEngaged) {
-            Report r = new Report(3231);
-            r.indent();
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-        }        
-
-        // BMRr, pg. 51: "All shots that were aimed at a target inside
-        // a building and miss do full damage to the building instead."
-        if (!targetInBuilding
-                || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
-            return false;
-        }
-        return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -119,6 +71,9 @@ public class SRMInfernoHandler extends SRMHandler {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -174,7 +129,7 @@ public class SRMInfernoHandler extends SRMHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
@@ -190,7 +145,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
@@ -216,7 +171,7 @@ public class SRMInfernoHandler extends SRMHandler {
             reportMiss(vPhaseReport);
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
                 return false;
             }

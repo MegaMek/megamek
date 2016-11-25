@@ -1,8 +1,0 @@
-Neoancient Clan Ice Hellion 2815 Assault Vehicles
-Alacorn Heavy Tank Mk III,18
-Alacorn Heavy Tank Mk IV,18
-Alacorn Heavy Tank Mk VI,73
-Fury Command Tank (Fury II),36
-Fury Command Tank (Royal),73
-Puma Assault Tank PAT-005b,100
-Rhino Fire Support Tank (Royal),98

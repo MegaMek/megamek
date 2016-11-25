@@ -167,6 +167,10 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                               + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            String ttKey = "PhysicalDisplay." + cmd.getCmd() + ".tooltip";
+            if (Messages.keyExists(ttKey)) {
+                newButton.setToolTipText(Messages.getString(ttKey));
+            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -285,7 +289,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if ((entity instanceof Mech)
             && !entity.isProne()
             && entity.getCrew().getOptions()
-                     .booleanOption("dodge_maneuver")) { //$NON-NLS-1$
+                     .booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER)) { //$NON-NLS-1$
             setDodgeEnabled(true);
         }
     }
@@ -418,7 +422,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getOptions()
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption("melee_master");
+                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         
         final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, PunchAttackAction.LEFT);
@@ -463,7 +467,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             if ((en instanceof Mech)
                     && (target instanceof Entity)
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("tacops_retractable_blades")
+                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
                     && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
                     && ((Mech) ce()).hasRetractedBlade(Mech.LOC_LARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(Messages
@@ -477,7 +481,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     && (target instanceof Entity)
                     && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("tacops_retractable_blades")
+                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
                     && ((Mech) en).hasRetractedBlade(Mech.LOC_RARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(Messages
                         .getString("PhysicalDisplay.ExtendBladeDialog"
@@ -575,7 +579,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getOptions()
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption("melee_master");
+                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         
         ToHitData leftLeg = KickAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, KickAttackAction.LEFT);
@@ -919,16 +923,25 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             String[] names = new String[clubs.size()];
             for (int loop = 0; loop < names.length; loop++) {
                 Mounted club = clubs.get(loop);
+                boolean targetConvInf = (target instanceof Infantry)
+                        && !(target instanceof BattleArmor);
                 final ToHitData toHit = ClubAttackAction.toHit(clientgui
                         .getClient().getGame(), cen, target, club, ash
                         .getAimTable());
                 final int dmg = ClubAttackAction.getDamageFor(ce(), club,
-                        (target instanceof Infantry)
-                                && !(target instanceof BattleArmor));
+                        targetConvInf);
+                // Need to do this outside getDamageFor, as it only returns int
+                String dmgString = dmg + "";
+                if ((((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)
+                        || ((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW)
+                        || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
+                        && targetConvInf) {
+                    dmgString = "1d6";
+                }
                 names[loop] = Messages.getString(
                                 "PhysicalDisplay.ChooseClubDialog.line", //$NON-NLS-1$
                                 new Object[] { club.getName(),
-                                        toHit.getValueAsString(), dmg });
+                                        toHit.getValueAsString(), dmgString });
             }
 
             String input = (String) JOptionPane
@@ -973,17 +986,24 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getOptions()
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption("melee_master");
+                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, club, ash.getAimTable());
-        
+        boolean targetConvInf = (target instanceof Infantry)
+                && !(target instanceof BattleArmor);
         final double clubOdds = Compute.oddsAbove(toHit.getValue(),
                 isAptPiloting);
         final int clubDmg = ClubAttackAction.getDamageFor(en, club,
-                (target instanceof Infantry)
-                        && !(target instanceof BattleArmor));
-        
+                targetConvInf);
+        // Need to do this outside getDamageFor, as it only returns int
+        String dmgString = clubDmg + "";
+        if ((((MiscType) club.getType()).hasSubType(MiscType.S_COMBINE)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
+                && targetConvInf) {
+            dmgString = "1d6";
+        }
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", //$NON-NLS-1$ 
                 new Object[] { target.getDisplayName() });
         String message = Messages
@@ -992,7 +1012,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 toHit.getValueAsString(),
                                 clubOdds,
                                 toHit.getDesc(),
-                                clubDmg,
+                                dmgString,
                                 toHit.getTableDesc() });
         
         if (isMeleeMaster) {

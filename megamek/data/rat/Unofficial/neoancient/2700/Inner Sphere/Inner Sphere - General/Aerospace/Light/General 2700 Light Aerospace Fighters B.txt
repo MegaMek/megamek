@@ -1,6 +1,0 @@
-Neoancient General 2700 Light Aerospace Fighters B
-Centurion CNT-1D,85
-Rogue RGU-133E,100
-Rogue RGU-133F,75
-Rogue RGU-133L,50
-Sabre SB-27,85

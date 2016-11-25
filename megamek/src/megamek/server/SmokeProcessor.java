@@ -23,6 +23,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Report;
 import megamek.common.Terrains;
+import megamek.common.options.OptionsConstants;
 
 public class SmokeProcessor extends DynamicTerrainProcessor {
 
@@ -72,7 +73,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
 
         for( Coords coords : cloud.getCoordsList() ){
             IHex smokeHex = game.getBoard().getHex(coords);
-            if ( smokeHex != null ){
+            if (smokeHex != null ){
                 if (smokeHex.containsTerrain(Terrains.SMOKE)) {
                     if (smokeHex.terrainLevel(Terrains.SMOKE) 
                             == SmokeCloud.SMOKE_LIGHT) {
@@ -97,11 +98,11 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
      */
     public void updateSmoke(){
         //Have to remove all smoke at once before creating new ones.
-        for ( SmokeCloud cloud : server.getSmokeCloudList() ){
+        for (SmokeCloud cloud : server.getSmokeCloudList()){
             server.removeSmokeTerrain(cloud);
             // Dissipate the cloud, this gets handled in FireProcessor if 
             //  TO start fires is on
-            if (!game.getOptions().booleanOption("tacops_start_fire")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
                 if ((cloud.getDuration() > 0)
                         && ((cloud.getDuration() - 1) > 0)) {
                     cloud.setDuration(cloud.getDuration() - 1);

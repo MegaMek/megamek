@@ -1,8 +1,0 @@
-Neoancient ComStar 3028 Warships
-Black Lion Battlecruiser (2691),33
-Cameron Battlecruiser (2688),33
-Congress Frigate (2542),67
-Dante Frigate (Standard),100
-Potemkin Troop Cruiser (2611),33
-Sovetskii Soyuz Heavy Cruiser (2742),33
-Whirlwind Destroyer (2606),33

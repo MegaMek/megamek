@@ -19,6 +19,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -27,6 +28,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -94,8 +96,12 @@ public class BayWeaponHandler extends WeaponHandler {
 
     @Override
     protected void addHeat() {
+        // Only add heat for first shot in strafe
+        if (isStrafing && !isStrafingFirstShot()) {
+            return;
+        }        
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if (game.getOptions().booleanOption("heat_by_bay")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 for (int wId : weapon.getBayWeapons()) {
                     Mounted m = ae.getEquipment(wId);
                     ae.heatBuildup += m.getCurrentHeat();
@@ -123,7 +129,7 @@ public class BayWeaponHandler extends WeaponHandler {
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
 
-        if(game.getOptions().booleanOption("aero_sanity")) {
+        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
         }
 
@@ -144,6 +150,9 @@ public class BayWeaponHandler extends WeaponHandler {
 
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -206,7 +215,7 @@ public class BayWeaponHandler extends WeaponHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
@@ -222,7 +231,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
@@ -255,7 +264,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
                 return false;
             }
@@ -310,11 +319,38 @@ public class BayWeaponHandler extends WeaponHandler {
             }
             bSalvo = true;
 
-            // The building shields all units from a certain amount of damage.
-            // The amount is based upon the building's CF at the phase's start.
+            // Buildings shield all units from a certain amount of damage.
+            // Amount is based upon the building's CF at the phase's start.
             int bldgAbsorbs = 0;
-            if (targetInBuilding && (bldg != null)) {
+            if (targetInBuilding && (bldg != null)
+                    && (toHit.getThruBldg() == null)) {
                 bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+            }
+            
+            // Attacking infantry in buildings from same building
+            if (targetInBuilding && (bldg != null)
+                    && (toHit.getThruBldg() != null)
+                    && (entityTarget instanceof Infantry)) {
+                // If elevation is the same, building doesn't absorb
+                if (ae.getElevation() != entityTarget.getElevation()) {
+                    int dmgClass = wtype.getInfantryDamageClass();
+                    int nDamage;
+                    if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
+                        nDamage = nDamPerHit * Math.min(nCluster, hits);
+                    } else {
+                        // Need to indicate to handleEntityDamage that the
+                        // absorbed damage shouldn't reduce incoming damage,
+                        // since the incoming damage was reduced in
+                        // Compute.directBlowInfantryDamage
+                        nDamage = -wtype.getDamage(nRange)
+                                * Math.min(nCluster, hits);
+                    }
+                    bldgAbsorbs = (int) Math.round(nDamage
+                            * bldg.getInfDmgFromInside());
+                } else {
+                    // Used later to indicate a special report
+                    bldgAbsorbs = Integer.MIN_VALUE;
+                }
             }
 
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
@@ -336,6 +372,9 @@ public class BayWeaponHandler extends WeaponHandler {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -394,7 +433,7 @@ public class BayWeaponHandler extends WeaponHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
@@ -410,7 +449,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+        bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                 && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
         if (bDirect) {
             r = new Report(3189);
@@ -439,7 +478,7 @@ public class BayWeaponHandler extends WeaponHandler {
         // We have to adjust the reports on a miss, so they line up
         if (bMissed){
             reportMiss(vPhaseReport);
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
                 return false;
             }

@@ -24,6 +24,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
@@ -31,6 +32,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -99,6 +101,9 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         }
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -154,7 +159,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
@@ -209,7 +214,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
                 return false;
             }
@@ -341,7 +346,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
                 break;
             case Targetable.TYPE_ENTITY:
                 if (ae.isEnemyOf((Entity) ti.target)
-                        || game.getOptions().booleanOption("friendly_fire")) {
+                        || game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
                     allowed.add(ti);
                 }
                 break;
@@ -436,7 +441,8 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+            boolean bldgDamagedOnMiss, Building bldg,
+            Vector<Report> vPhaseReport) {
         return true;
     }
 }

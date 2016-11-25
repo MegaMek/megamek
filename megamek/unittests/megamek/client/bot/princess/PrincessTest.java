@@ -63,7 +63,7 @@ public class PrincessTest {
                                                    Mockito.any(LogLevel.class), Mockito.anyString());
         Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
-        Mockito.when(mockPrincess.getMyFleeingEntities()).thenReturn(new HashSet<Integer>(0));
+        Mockito.when(mockPrincess.getMyFleeingEntities()).thenReturn(new HashSet<>(0));
     }
 
     @Test

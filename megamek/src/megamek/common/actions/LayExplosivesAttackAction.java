@@ -15,6 +15,7 @@
 package megamek.common.actions;
 
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.MiscType;
@@ -22,6 +23,7 @@ import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class LayExplosivesAttackAction extends AbstractAttackAction {
 
@@ -45,13 +47,12 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
         if (!(entity instanceof Infantry))
             return 0;
         Infantry inf = (Infantry) entity;
-        // maxtech page 41, damage for each turn as much as a normal shot would
-        // do
-        // should only be on motorized rifle platoons
-        // return inf.getDamage(inf.getShootingStrength()) <<
-        // (inf.turnsLayingExplosives - 1);
-        // TODO: fixme
-        return 2 << (inf.turnsLayingExplosives - 1);
+        InfantryWeapon srmWeap = (InfantryWeapon) EquipmentType
+                .get("SRM Launcher (Std, Two-Shot)");
+        int dmg = (int) Math.round(srmWeap.getInfantryDamage()
+                * inf.getShootingStrength());
+        int numTurns = Math.min(6, inf.turnsLayingExplosives);
+        return dmg * numTurns;
     }
 
     public ToHitData toHit(IGame game) {
@@ -65,15 +66,13 @@ public class LayExplosivesAttackAction extends AbstractAttackAction {
     public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         if ((target.getTargetType() != Targetable.TYPE_BUILDING)
-                || (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
+                && (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "You can only target buildings");
         }
         if (ae == null)
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "You can't attack from a null entity!");
-        // if(b == null || b.getId() != target.getTargetId())
-        // return new ToHitData(TargetRoll.IMPOSSIBLE, "Target out of range");
         if (!(ae instanceof Infantry))
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Attacker is not infantry");

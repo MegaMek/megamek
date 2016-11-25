@@ -5,7 +5,7 @@ Modified by Chris Stadther
 Format of a Scenario file: 
 This document is to layout the file format of the .mms files. (Megamek Scenario Files). 
 
-Any line begining with the "#" is a comment and is not read by MegaMek when loading a Scenario. There are 13 sections to a .mms (MegaMek Scenario) file. Comprising of the following: 
+Any line beginning with the "#" is a comment and is not read by MegaMek when loading a Scenario. There are 13 sections to a .mms (MegaMek Scenario) file. Comprising of the following: 
 1. The MegaMek Version 
 2. Campaign Game Integration
 3. Name of the Scenario 
@@ -86,7 +86,7 @@ Factions=Irregulars,WacosRangers
 # Only used if the faction contains a unit without specified starting coordinates (not used in this scenario) 
 # Valid values are N,NE,E,SE,S,SW,W,NW,C (center), and R (random) 
 # Example: Location_Kurita=C This is currently the only working way of a "specified" placement. It will place 
-# all the Units in this location on the map randomly. It also determains facing randomly. 
+# all the Units in this location on the map randomly. It also determines facing randomly. 
 Location_Irregulars=W
 Location_WacosRangers=E
 
@@ -112,7 +112,7 @@ Unit_Irregulars_4=Wasp WSP-1A,John Malvinson,4,3,S,09,00
 # Unit name (Must match Faction List) Unit Number. Must be sequential, if a number is skipped, it will not place 
 # the units after it. 
 # Mech Type with variant Pilot Name Pilot,Gunnery skills Facing. 
-# Here are the availible options: N,NE,E,SE,S,SW,W,NW,C (center), and R (random) 
+# Here are the available options: N,NE,E,SE,S,SW,W,NW,C (center), and R (random) 
 # Hex Placement. The first set of numbers specifies the Hex the unit is in, second set of numbers is the Hex it 
 # is facing. (NOTE: The Hex Placement option is NOT used in the current version). 
 
@@ -133,7 +133,7 @@ Unit_WacosRangers_4=Cyclops CP-10-Z,Sgt Lenny Markbright,3,3,N,08,12
 # Unit name (Must match Faction List) Unit Number. Must be sequential, if a number is skipped, it will not place 
 # the units after it. 
 # Mech Type with variant Pilot Name Pilot,Gunnery skills Facing. 
-# Here are the availible options: N,NE,E,SE,S,SW,W,NW,C (center), and R (random) 
+# Here are the available options: N,NE,E,SE,S,SW,W,NW,C (center), and R (random) 
 # Hex Placement. The first set of numbers specifies the Hex the unit is in, second set of numbers is the Hex it 
 # is facing. (NOTE: The Hex Placement option is NOT used in the current version). 
 
@@ -156,7 +156,7 @@ Unit_WacosRangers_1_ExternalID=1
 # Additional advantages to add to pilots. Most of these require the 'MaxTech Level3 Pilot Advantages' game
 # option to be turned on. The possible values are:
 # dodge_maneuver, maneuvering_ace, melee_specialist, pain_resistance
-# Multiple advantages for one pilot are seperated by spaces
+# Multiple advantages for one pilot are separated by spaces
 Unit_Irregulars_2_Advantages=melee_specialist pain_resistance
 Unit_WacosRangers_2_Advantages=dodge_maneuver
 
@@ -185,7 +185,7 @@ Unit_WacosRangers_1_Damage=5
 # Battle Armor
 #      Unit#=0(First Unit Number) to Armor 
 #      EG Unit_Kurita_3_DamageSpecific=N2:1,N3:0
-#          Will set unit 3 to have 1 Armor Remaning
+#          Will set unit 3 to have 1 Armor Remaining
 #          while unit 4 Destroyed
 #
 # Proto Mechs
@@ -222,14 +222,14 @@ Unit_WacosRangers_1_DamageSpecific=I1:3,N2:2
 # The unit below has had critical hits to the center torso slots 3 and 2
 Unit_WacosRangers_1_CritHit=1:3,1:2
 
-# Lastly you can damage the mech pilor directly by assigning the pilot hits.
+# Lastly you can damage the mech pilot directly by assigning the pilot hits.
 Unit_WacosRangers_1_PilotHits=1
 
 
 17. Ammunition Setup
 # Set Ammo Ammount(Only Works for Mechs)
 #
-# Note will not be able to specifiy a value larger then Inital Ammout
+# Note will not be able to specify a value larger then Inital Ammo
 # 
 # Loc and Slots are the same as Crit Locations
 #

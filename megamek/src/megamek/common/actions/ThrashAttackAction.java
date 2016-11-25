@@ -24,6 +24,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.options.OptionsConstants;
 
 /**
  * The prone attacker thrashes at the target.
@@ -69,7 +70,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
             te = (Entity) target;
         }
         
-        if (!game.getOptions().booleanOption("friendly_fire")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if (target.getTargetType() == Targetable.TYPE_ENTITY
                     && (((Entity)target).getOwnerId() == ae.getOwnerId()

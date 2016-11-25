@@ -111,6 +111,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * added once.
      */
     protected boolean isStrafingFirstShot = false;
+    
+    /**
+     * Used to store reports from calls to <code>calcDamagePerHit</code>.  This
+     * is necessary because the method is called before the report needs to be
+     * added.
+     */
+    protected Vector<Report> calcDmgPerHitReport = new Vector<>();
 
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
@@ -156,11 +163,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
      *         or an AMS only shooting down some missiles.
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+            boolean bldgDamagedOnMiss, Building bldg,
+            Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
         if ((entityTarget != null)
+                && !entityTarget.isAirborne()
+                && !entityTarget.isAirborneVTOLorWIGE()
                 && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
             server.tryIgniteHex(target.getPosition(), subjectId, false, false,
                     new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
@@ -171,9 +181,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
-        // BMRr, pg. 51: "All shots that were aimed at a target inside
-        // a building and miss do full damage to the building instead."
-        if (!targetInBuilding
+        // TW, pg. 171 - shots that miss a target in a building don't damage the
+        // building, unless the attacker is adjacent
+        if (!bldgDamagedOnMiss
                 || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
@@ -236,7 +246,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // this will work differently for cluster and non-cluster
         // weapons, and differently for capital fighter/fighter
         // squadrons
-        if (game.getOptions().booleanOption("aero_sanity")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             // everything will use the normal hits and clusters for hits weapon
             // unless
             // we have a squadron or capital scale entity
@@ -341,7 +351,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         boolean heatAdded = false;
         int numAttacks = 1;
-        if (game.getOptions().booleanOption("uac_tworolls")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
                 && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                         .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
                 && !weapon.curMode().equals("Single")) {
@@ -352,6 +362,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -422,7 +435,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             bMissed = roll < toHit.getValue();
 
             // are we a glancing hit?
-            if (game.getOptions().booleanOption("tacops_glancing_blows")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)) {
                 if (roll == toHit.getValue()) {
                     bGlancing = true;
                     r = new Report(3186);
@@ -438,7 +451,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
             // Set Margin of Success/Failure.
             toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-            bDirect = game.getOptions().booleanOption("tacops_direct_blow")
+            bDirect = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                     && ((toHit.getMoS() / 3) >= 1) && (entityTarget != null);
             if (bDirect) {
                 r = new Report(3189);
@@ -448,8 +461,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             // Do this stuff first, because some weapon's miss report reference
-            // the
-            // amount of shots fired and stuff.
+            // the amount of shots fired and stuff.
+            Vector<Report> dmgPerHitReport = new Vector<>();
             nDamPerHit = calcDamagePerHit();
             if (!heatAdded) {
                 addHeat();
@@ -475,7 +488,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             if (bMissed && !missReported) {
-                if (game.getOptions().booleanOption("uac_tworolls")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
                         && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                                 .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
                         && (i == 2)) {
@@ -485,9 +498,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
 
                 // Works out fire setting, AMS shots, and whether continuation
-                // is
-                // necessary.
-                if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+                // is necessary.
+                if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                         vPhaseReport) && (i < 2)) {
                     returnedReports.addAll(vPhaseReport);
                     return false;
@@ -519,13 +531,39 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             if (!bMissed) {
-                // The building shields all units from a certain amount of
-                // damage.
-                // The amount is based upon the building's CF at the phase's
-                // start.
+                vPhaseReport.addAll(dmgPerHitReport);
+                // Buildings shield all units from a certain amount of damage.
+                // Amount is based upon the building's CF at the phase's start.
                 int bldgAbsorbs = 0;
-                if (targetInBuilding && (bldg != null)) {
+                if (targetInBuilding && (bldg != null)
+                        && (toHit.getThruBldg() == null)) {
                     bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+                }
+                
+                // Attacking infantry in buildings from same building
+                if (targetInBuilding && (bldg != null)
+                        && (toHit.getThruBldg() != null)
+                        && (entityTarget instanceof Infantry)) {
+                    // If elevation is the same, building doesn't absorb
+                    if (ae.getElevation() != entityTarget.getElevation()) {
+                        int dmgClass = wtype.getInfantryDamageClass();
+                        int nDamage;
+                        if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
+                            nDamage = nDamPerHit * Math.min(nCluster, hits);
+                        } else {
+                            // Need to indicate to handleEntityDamage that the
+                            // absorbed damage shouldn't reduce incoming damage,
+                            // since the incoming damage was reduced in
+                            // Compute.directBlowInfantryDamage
+                            nDamage = -wtype.getDamage(nRange)
+                                    * Math.min(nCluster, hits);
+                        }
+                        bldgAbsorbs = (int) Math.round(nDamage
+                                * bldg.getInfDmgFromInside());
+                    } else {
+                        // Used later to indicate a special report
+                        bldgAbsorbs = Integer.MIN_VALUE;
+                    }
                 }
 
                 // Make sure the player knows when his attack causes no damage.
@@ -593,9 +631,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
                 // When shooting at a non-infantry unit in a building and the
                 // shot misses, the building is damaged instead, TW pg 171
-                int dist = ae.getPosition().distance(target.getPosition());
-                if (targetInBuilding && !(entityTarget instanceof Infantry)
-                        && dist == 1) {
+                if (bldgDamagedOnMiss) {
                     r = new Report(6429);
                     r.indent(2);
                     r.subject = ae.getId();
@@ -612,7 +648,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     hits = 0;
                 }
             }
-            if (game.getOptions().booleanOption("uac_tworolls")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
                     && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                             .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
                     && (i == 2)) {
@@ -653,7 +689,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         double toReturn = wtype.getDamage(nRange);
 
         // Check for BA vs BA weapon effectiveness, if option is on
-        if (game.getOptions().booleanOption("tacops_ba_vs_ba")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA)
                 && (target instanceof BattleArmor)) {
             // We don't check to make sure the attacker is BA, as most weapons
             // will return their normal damage.
@@ -666,7 +702,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -681,12 +718,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         if (game.getOptions().booleanOption(
-                OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
@@ -702,7 +739,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         int av = 0;
         // if we have a ground firing unit, then AV should not be determined by
         // aero range brackets
-        if (!ae.isAirborne() || game.getOptions().booleanOption("uac_tworolls")) {
+        if (!ae.isAirborne() || game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)) {
             if (usesClusterTable()) {
                 // for cluster weapons just use the short range AV
                 av = wtype.getRoundShortAV();
@@ -979,10 +1016,33 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (bDirect) {
             hit.makeDirectBlow(toHit.getMoS() / 3);
         }
+        
+        // Report calcDmgPerHitReports here
+        if (calcDmgPerHitReport.size() > 0) {
+            vPhaseReport.addAll(calcDmgPerHitReport);
+        }
+    
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
+            Report.addNewline(vPhaseReport);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
+        // Units on same level, report building absorbs no damage
+        } else if (bldgAbsorbs == Integer.MIN_VALUE) {
+            Report.addNewline(vPhaseReport);
+            Report r = new Report(9976);
+            r.subject = ae.getId();
+            r.indent(2);
+            vPhaseReport.add(r);
+        // Cases where absorbed damage doesn't reduce incoming damage
+        } else if (bldgAbsorbs < 0) {
+            int toBldg = -bldgAbsorbs;
             Report.addNewline(vPhaseReport);
             Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
                     entityTarget.getPosition());
@@ -1111,9 +1171,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         vPhaseReport.addAll(buildingReport);
 
-        // Damage any infantry in the hex.
-        vPhaseReport.addAll(server.damageInfantryIn(bldg, nDamage, coords,
-                wtype.getInfantryDamageClass()));
+        // Damage any infantry in hex, unless attack between units in same bldg
+        if (toHit.getThruBldg() == null) {
+            vPhaseReport.addAll(server.damageInfantryIn(bldg, nDamage, coords,
+                    wtype.getInfantryDamageClass()));
+        }
     }
 
     protected boolean allShotsHit() {
@@ -1122,7 +1184,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return true;
         }
-        if (game.getOptions().booleanOption("aero_sanity")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && ((Entity) target).isCapitalScale()
                 && !((Entity) target).isCapitalFighter()) {
@@ -1205,8 +1267,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void addHeat() {
+        // Only add heat for first shot in strafe
+        if (isStrafing && !isStrafingFirstShot()) {
+            return;
+        }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if (ae.usesWeaponBays() && !game.getOptions().booleanOption("heat_by_bay")) {
+            if (ae.usesWeaponBays() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
                 if (!ae.hasArcFired(loc, rearMount)) {
@@ -1214,9 +1280,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     ae.setArcFired(loc, rearMount);
                 }
             } else {
-                if (!isStrafing() || isStrafingFirstShot()) {
-                    ae.heatBuildup += (weapon.getCurrentHeat());
-                }
+                ae.heatBuildup += (weapon.getCurrentHeat());
             }
         }
     }
@@ -1258,7 +1322,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             Vector<Report> vPhaseReport) {
         boolean isAboveWoods = ((entityTarget != null) && ((entityTarget
                 .relHeight() >= 2) || (entityTarget.isAirborne())));
-        if (game.getOptions().booleanOption("tacops_woods_cover")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
                 && !isAboveWoods
                 && (game.getBoard().getHex(entityTarget.getPosition())
                         .containsTerrain(Terrains.WOODS) || game.getBoard()
@@ -1409,7 +1473,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         int nMissilesModifier = nSalvoBonus;
 
         int[] ranges = wtype.getRanges(weapon);
-        if (clusterRangePenalty && game.getOptions().booleanOption("tacops_clusterhitpen")) {
+        if (clusterRangePenalty && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN)) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
             } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
@@ -1419,11 +1483,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > ranges[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > ranges[RangeType.RANGE_EXTREME])) {
             nMissilesModifier -= 3;
         }
@@ -1441,9 +1505,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         if (null != ae.getCrew()) {
-            if (ae.getCrew().getOptions().booleanOption("sandblaster")
-                && ae.getCrew().getOptions().stringOption("weapon_specialist")
-                     .equals(wtype.getName())) {
+            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SANDBLASTER) && ae.getCrew()
+                    .getOptions().stringOption(OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(wtype.getName())) {
                 if (nRange > ranges[RangeType.RANGE_MEDIUM]) {
                     nMissilesModifier += 2;
                 } else if (nRange > ranges[RangeType.RANGE_SHORT]) {
@@ -1451,9 +1514,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 } else {
                     nMissilesModifier += 4;
                 }
-            } else if (ae.getCrew().getOptions().booleanOption("cluster_master")) {
+            } else if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_CLUSTER_MASTER)) {
                 nMissilesModifier += 2;
-            } else if (ae.getCrew().getOptions().booleanOption("cluster_hitter")) {
+            } else if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_CLUSTER_HITTER)) {
                 nMissilesModifier += 1;
             }
         }

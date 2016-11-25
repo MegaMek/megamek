@@ -139,6 +139,14 @@ public class Aero extends Entity {
     // are we tracking any altitude loss due to air-to-ground assaults
     private int altLoss = 0;
 
+    /**
+     * Track how much altitude has been lost this turn.  This is important for
+     * properly making weapon attacks, so WeaponAttackActions knows what the
+     * altitude was before the attack happened, since the altitude lose is
+     * applied before the attack resolves.
+     */
+    private int altLossThisRound = 0;
+
     private boolean spheroid = false;
 
     // deal with heat
@@ -466,7 +474,7 @@ public class Aero extends Entity {
 
     public void autoSetCapArmor() {
         double divisor = 10.0;
-        if((null != game) && game.getOptions().booleanOption("aero_sanity")) {
+        if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             divisor = 1.0;
         }
         capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
@@ -475,7 +483,7 @@ public class Aero extends Entity {
 
     public void autoSetFatalThresh() {
         int baseThresh = 2;
-        if((null != game) && game.getOptions().booleanOption("aero_sanity")) {
+        if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             baseThresh = 20;
         }
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
@@ -711,7 +719,7 @@ public class Aero extends Entity {
         setCurrentVelocity(getNextVelocity());
 
         // if using variable damage thresholds then autoset them
-        if (game.getOptions().booleanOption("variable_damage_thresh")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH)) {
             autoSetThresh();
             autoSetFatalThresh();
         }
@@ -746,7 +754,7 @@ public class Aero extends Entity {
         weaponBayList.removeAll(bombAttacksToRemove);
 
         // Add the space bomb attack
-        if (game.getOptions().booleanOption("stratops_space_bomb")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
                 && game.getBoard().inSpace()
                 && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
             try {
@@ -768,6 +776,8 @@ public class Aero extends Entity {
                 }
             }
         }
+
+        resetAltLossThisRound();
     }
 
     /**
@@ -1971,6 +1981,7 @@ public class Aero extends Entity {
 
             // sort the heat-using weapons by modified BV
             Collections.sort(heatBVs, new Comparator<ArrayList<Object>>() {
+                @Override
                 public int compare(ArrayList<Object> obj1, ArrayList<Object> obj2) {
                     // first element in the the ArrayList is BV, second is heat
                     // if same BV, lower heat first
@@ -2454,12 +2465,12 @@ public class Aero extends Entity {
             prd.addModifier(1, "Modular Armor");
         }
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption("vdni") && !getCrew().getOptions().booleanOption("bvdni")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI) && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ((getCockpitType() == Aero.COCKPIT_SMALL) && !getCrew().getOptions().booleanOption("bvdni")) {
+        if ((getCockpitType() == Aero.COCKPIT_SMALL) && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(1, "Small Cockpit");
         }
 
@@ -2604,8 +2615,8 @@ public class Aero extends Entity {
 
     public int getThresh(int loc) {
         if(isCapitalFighter()) {
-            if((null != game) && game.getOptions().booleanOption("aero_sanity")) {
-                if (game.getOptions().booleanOption("variable_damage_thresh")) {
+            if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH)) {
                     return (int)Math.round(getCapArmor() / 40.0)+1;
                 } else {
                     return (int)Math.round(getCap0Armor() / 40.0)+1;
@@ -2628,16 +2639,6 @@ public class Aero extends Entity {
     @Override
     public boolean isRepairable() {
         return true; // deal with this later
-    }
-
-    /**
-     * Restores the entity after serialization
-     */
-    @Override
-    public void restore() {
-        super.restore();
-        // not sure what to put here
-
     }
 
     @Override
@@ -2685,8 +2686,10 @@ public class Aero extends Entity {
         cost += 25000 + (10 * getWeight());
 
         // engine
-        cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
-
+        if(hasEngine()) {
+            cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
+        }
+        
         // fuel tanks
         cost += (200 * getFuel()) / 80.0;
 
@@ -2727,7 +2730,7 @@ public class Aero extends Entity {
 
     @Override
     public boolean doomedOnGround() {
-        return !game.getOptions().booleanOption("aero_ground_move");
+        return !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE);
     }
 
     @Override
@@ -2751,9 +2754,10 @@ public class Aero extends Entity {
     }
      */
 
+    @Override
     public void setEngine(Engine e) {
-        engine = e;
-        if (e.engineValid) {
+        super.setEngine(e);
+        if(hasEngine() && getEngine().engineValid) {
             setOriginalWalkMP(calculateWalk());
         }
     }
@@ -2767,6 +2771,9 @@ public class Aero extends Entity {
     }
 
     protected int calculateWalk() {
+        if(!hasEngine()) {
+            return 0;
+        }
         if (isPrimitive()) {
             double rating = getEngine().getRating();
             rating /= 1.2;
@@ -3433,7 +3440,7 @@ public class Aero extends Entity {
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < bombChoices[type]; i++) {
                 if ((type == BombType.B_ALAMO)
-                        && !game.getOptions().booleanOption("at2_nukes")) {
+                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
                 }
                 if ((type > BombType.B_TAG)
@@ -3518,7 +3525,9 @@ public class Aero extends Entity {
         super.setGameOptions();
 
         for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof EnergyWeapon) && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) && (game != null) && game.getOptions().booleanOption("tacops_energy_weapons")) {
+            if ((mounted.getType() instanceof EnergyWeapon)
+                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) && (game != null)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
 
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
@@ -3635,7 +3644,7 @@ public class Aero extends Entity {
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
         return Math.min(super.getECMRange(), 0);
@@ -3646,7 +3655,7 @@ public class Aero extends Entity {
      */
     @Override
     public double getECCMStrength() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !game.getBoard().inSpace()) {
             return super.getECCMStrength();
         }
         if (hasActiveECCM()) {
@@ -3862,6 +3871,18 @@ public class Aero extends Entity {
 
     public void resetAltLoss() {
         altLoss = 0;
+    }
+
+    public int getAltLossThisRound() {
+        return altLossThisRound;
+    }
+
+    public void setAltLossThisRound(int i) {
+        altLossThisRound = i;
+    }
+
+    public void resetAltLossThisRound() {
+        altLossThisRound = 0;
     }
 
     @Override
@@ -4340,5 +4361,17 @@ public class Aero extends Entity {
 
     public boolean isInASquadron(){
         return game.getEntity(getTransportId()) instanceof FighterSquadron;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    @Override
+    public int getSpriteDrawPriority() {
+        return 10;
     }
 }

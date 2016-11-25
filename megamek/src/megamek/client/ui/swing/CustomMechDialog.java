@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.swing.JButton;
@@ -76,6 +77,7 @@ import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
@@ -104,6 +106,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
      *
      */
     private static final long serialVersionUID = -6809436986445582731L;
+
+    public static int DONE = 0;
+    public static int NEXT = 1;
+    public static int PREV = 2;
 
     private JPanel panPilot;
     private JPanel panDeploy;
@@ -279,9 +285,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private JPanel panEquip = new JPanel();
 
-    Entity entity;
+    private List<Entity> entities;
 
     private boolean okay;
+
+    private int status = CustomMechDialog.DONE;
 
     ClientGUI clientgui;
 
@@ -312,14 +320,51 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     /**
      * Creates new CustomMechDialog
      */
-    public CustomMechDialog(ClientGUI clientgui, Client client, Entity entity,
+    public CustomMechDialog(ClientGUI clientgui, Client client, List<Entity> entities,
             boolean editable) {
         super(clientgui.frame,
                 Messages.getString("CustomMechDialog.title"), true); //$NON-NLS-1$
 
-        this.entity = entity;
+        this.entities = entities;
         this.clientgui = clientgui;
         this.client = client;
+
+        // Ensure we have at least one passed entity
+        //  Anything less makes no sense
+        if (entities.size() < 1) {
+            throw new IllegalStateException("Must pass at least one Entity!");
+        }
+
+        boolean multipleEntities = entities.size() > 1;
+        boolean quirksEnabled = clientgui.getClient().getGame().getOptions()
+                .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
+        boolean partialRepairsEnabled = clientgui.getClient().getGame()
+                .getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS);
+        final Entity entity = entities.get(0);
+        boolean isAero = true;
+        boolean isInfantry = true;
+        boolean isMech = true;
+        boolean isProtomech = true;
+        boolean isTank = true;
+        boolean isVTOL = true;
+        boolean eligibleForOffBoard = true;
+        
+        for (Entity e : entities) {
+            isAero &= e instanceof Aero;
+            isInfantry &= e instanceof Infantry;
+            isMech &= e instanceof Mech;
+            isTank &= e instanceof Tank;
+            isProtomech &= e instanceof Protomech;
+            isVTOL &= e instanceof VTOL;
+            boolean entityEligibleForOffBoard = false;
+            for (Mounted mounted : e.getWeaponList()) {
+                WeaponType wtype = (WeaponType) mounted.getType();
+                if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                    entityEligibleForOffBoard = true;
+                }
+            }
+            eligibleForOffBoard &= entityEligibleForOffBoard;
+        }
 
         // set up the panels
         JPanel mainPanel = new JPanel(new GridBagLayout());
@@ -344,18 +389,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 GBC.eol().fill(GridBagConstraints.BOTH).insets(5, 5, 5, 5));
         mainPanel.add(panButtons, GBC.eol().anchor(GridBagConstraints.CENTER));
 
+        if (!multipleEntities) {
         tabAll.addTab(Messages.getString("CustomMechDialog.tabPilot"), scrPilot);
         tabAll.addTab(Messages.getString("CustomMechDialog.tabEquipment"),
                 scrEquip);
+        }
         tabAll.addTab(Messages.getString("CustomMechDialog.tabDeployment"),
                 scrDeploy);
-        if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("stratops_quirks")) {
+        if (quirksEnabled && !multipleEntities) {
             scrQuirks.setPreferredSize(scrEquip.getPreferredSize());
             tabAll.addTab("Quirks", scrQuirks);
         }
-        if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("stratops_partialrepairs")) {
+        if (partialRepairsEnabled && !multipleEntities) {
             tabAll.addTab(
                     Messages.getString("CustomMechDialog.tabPartialRepairs"),
                     scrPartreps);
@@ -376,10 +421,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         this.editable = editable;
 
         // **PILOT TAB**/
-        if (entity instanceof Tank) {
+        if (isTank) {
             labPiloting.setText(Messages
                     .getString("CustomMechDialog.labDriving"));
-        } else if (entity instanceof Infantry) {
+        } else if (isInfantry) {
             labPiloting.setText(Messages
                     .getString("CustomMechDialog.labAntiMech"));
         } else {
@@ -410,7 +455,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panPilot.add(labNick, GBC.std());
         panPilot.add(fldNick, GBC.eop());
 
-        if (client.getGame().getOptions().booleanOption("rpg_gunnery")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
 
             panPilot.add(labGunneryL, GBC.std());
             panPilot.add(fldGunneryL, GBC.eol());
@@ -429,51 +474,51 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panPilot.add(labPiloting, GBC.std());
         panPilot.add(fldPiloting, GBC.eop());
 
-        if (client.getGame().getOptions().booleanOption("artillery_skill")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             panPilot.add(labArtillery, GBC.std());
             panPilot.add(fldArtillery, GBC.eop());
         }
 
-        if (client.getGame().getOptions().booleanOption("tacops_fatigue")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)) {
             labFatigue.setToolTipText(Messages
                     .getString("CustomMechDialog.labFatigueToolTip"));
             panPilot.add(labFatigue, GBC.std());
             panPilot.add(fldFatigue, GBC.eop());
         }
 
-        if (client.getGame().getOptions().booleanOption("toughness")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
             panPilot.add(labTough, GBC.std());
             panPilot.add(fldTough, GBC.eop());
         }
 
         if (client.getGame().getOptions()
-                .booleanOption("individual_initiative")) {
+                .booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             panPilot.add(labInit, GBC.std());
             panPilot.add(fldInit, GBC.eop());
         }
 
-        if (client.getGame().getOptions().booleanOption("command_init")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
             panPilot.add(labCommandInit, GBC.std());
             panPilot.add(fldCommandInit, GBC.eop());
         }
 
         // Set up commanders for commander killed victory condition
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("commander_killed")) { //$NON-NLS-1$
+                .booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) { //$NON-NLS-1$
             panPilot.add(labCommander, GBC.std());
             panPilot.add(chCommander, GBC.eol());
             chCommander.setSelected(entity.isCommander());
         }
 
-        if (entity instanceof Protomech) {
+        if (isProtomech) {
             // All Protomechs have a callsign.
             StringBuffer callsign = new StringBuffer(
                     Messages.getString("CustomMechDialog.Callsign")); //$NON-NLS-1$
             callsign.append(": "); //$NON-NLS-1$
             callsign.append(
-                    (this.entity.getUnitNumber() + PreferenceManager
+                    (entity.getUnitNumber() + PreferenceManager
                             .getClientPreferences().getUnitStartChar()))
-                    .append('-').append(this.entity.getId());
+                    .append('-').append(entity.getId());
             labCallsign.setText(callsign.toString());
             panPilot.add(labCallsign,
                     GBC.eol().anchor(GridBagConstraints.CENTER));
@@ -482,11 +527,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // that *aren't* in the entity's unit.
             Iterator<Entity> otherUnitEntities = client.getGame()
                     .getSelectedEntities(new EntitySelector() {
-                        private final int ownerId = CustomMechDialog.this.entity
-                                .getOwnerId();
+                        private final int ownerId = entity.getOwnerId();
 
-                        private final short unitNumber = CustomMechDialog.this.entity
-                                .getUnitNumber();
+                        private final short unitNumber = entity.getUnitNumber();
 
                         public boolean accept(Entity unitEntity) {
                             if ((unitEntity instanceof Protomech)
@@ -508,32 +551,24 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("pilot_advantages") //$NON-NLS-1$
+                .booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES) //$NON-NLS-1$
                 || clientgui.getClient().getGame().getOptions()
-                        .booleanOption("edge") //$NON-NLS-1$
+                        .booleanOption(OptionsConstants.EDGE) //$NON-NLS-1$
                 || clientgui.getClient().getGame().getOptions()
-                        .booleanOption("manei_domini")) { //$NON-NLS-1$
+                        .booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { //$NON-NLS-1$
 
             panPilot.add(panOptions, GBC.eop());
         }
 
         // **DEPLOYMENT TAB**//
-        boolean eligibleForOffBoard = false;
-        for (Mounted mounted : entity.getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-                eligibleForOffBoard = true;
-            }
-        }
-
-        if (entity instanceof Aero) {
+        if (isAero) {
             panDeploy.add(labStartVelocity, GBC.std());
             panDeploy.add(fldStartVelocity, GBC.eol());
 
             panDeploy.add(labStartAltitude, GBC.std());
             panDeploy.add(fldStartAltitude, GBC.eol());
         }
-        if (entity instanceof VTOL) {
+        if (isVTOL) {
             panDeploy.add(labStartHeight, GBC.std());
             panDeploy.add(fldStartHeight, GBC.eol());
         }
@@ -549,7 +584,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panDeploy.add(labDeploymentZone, GBC.std());
         panDeploy.add(choDeploymentZone, GBC.eol());
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("begin_shutdown")
+                .booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN)
                 && !(entity instanceof Infantry)
                 && !(entity instanceof GunEmplacement)) {
             panDeploy.add(labDeployShutdown, GBC.std());
@@ -557,7 +592,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             chDeployShutdown.setSelected(entity.isManualShutdown());
         }
 
-        if (entity instanceof Mech) {
+        if (isMech) {
             panDeploy.add(labDeployHullDown, GBC.std());
             panDeploy.add(chDeployHullDown, GBC.eol());
             chDeployHullDown.setSelected(entity.isHullDown()
@@ -573,7 +608,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         refreshDeployment();
 
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("hidden_units")) {
+                .booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             panDeploy.add(labHidden, GBC.std());
             panDeploy.add(chHidden, GBC.eol());
             chHidden.setSelected(entity.isHidden());
@@ -637,7 +672,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         fldCommandInit.setText(Integer.toString(entity.getCrew()
                 .getCommandBonus()));
         fldCommandInit.addActionListener(this);
-        if (entity instanceof Aero) {
+        if (isAero) {
             Aero a = (Aero) entity;
             fldStartVelocity.setText(new Integer(a.getCurrentVelocity())
                     .toString());
@@ -646,7 +681,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldStartAltitude.setText(new Integer(a.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
         }
-        if (entity instanceof VTOL) {
+        if (isVTOL) {
             VTOL v = (VTOL) entity;
             fldStartHeight.setText(new Integer(v.getElevation()).toString());
             fldStartHeight.addActionListener(this);
@@ -694,6 +729,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         setLocationRelativeTo(clientgui);
     }
 
+    public int getSelectedTab() {
+        return tabAll.getSelectedIndex();
+    }
+
+    public void setSelectedTab(int idx) {
+        tabAll.setSelectedIndex(idx);
+    }
+
     private void setupButtons() {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
@@ -714,6 +757,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     private void setOptions() {
+        Entity entity = entities.get(0);
         IOption option;
         for (final Object newVar : optionComps) {
             DialogOptionComponent comp = (DialogOptionComponent) newVar;
@@ -748,24 +792,25 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES)
                     && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("pilot_advantages")) {
+                            .booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) {
                 continue;
             }
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.EDGE_ADVANTAGES)
                     && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("edge")) {
+                            .booleanOption(OptionsConstants.EDGE)) {
                 continue;
             }
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES)
                     && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("manei_domini")) {
+                            .booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
                 continue;
             }
 
             addGroup(group, gridbag, c);
 
+            Entity entity = entities.get(0);
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
@@ -776,18 +821,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
                 // a bunch of stuf should get disabled for conv infantry
                 if ((((entity instanceof Infantry) && !(entity instanceof BattleArmor)))
-                        && (option.getName().equals("vdni") || option.getName()
-                                .equals("bvdni"))) {
+                        && (option.getName().equals(OptionsConstants.MD_VDNI) || option.getName()
+                                .equals(OptionsConstants.MD_BVDNI))) {
                     continue;
                 }
 
                 // a bunch of stuff should get disabled for all but conventional
                 // infantry
                 if (!((entity instanceof Infantry) && !(entity instanceof BattleArmor))
-                        && (option.getName().equals("grappler")
-                                || option.getName().equals("pl_masc")
-                                || option.getName().equals("cyber_eye_im") || option
-                                .getName().equals("cyber_eye_tele"))) {
+                        && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
+                                || option.getName().equals(OptionsConstants.MD_PL_MASC)
+                                || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO) || option
+                                .getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {
                     continue;
                 }
 
@@ -799,6 +844,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     private void setPartReps() {
+        Entity entity = entities.get(0);
         IOption option;
         for (final Object newVar : partRepsComps) {
             DialogOptionComponent comp = (DialogOptionComponent) newVar;
@@ -819,6 +865,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     public void refreshPartReps() {
+        Entity entity = entities.get(0);
         panPartReps.removeAll();
         partRepsComps = new ArrayList<DialogOptionComponent>();
         for (Enumeration<IOptionGroup> i = partReps.getGroups(); i
@@ -852,12 +899,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panOptions.add(groupLabel);
     }
 
-    private void addOption(IOption option, GridBagLayout gridbag,
-            GridBagConstraints c, boolean editable) {
-        DialogOptionComponent optionComp = new DialogOptionComponent(this,
-                option, editable);
+    private void addOption(IOption option, GridBagLayout gridbag, GridBagConstraints c, boolean editable) {
+        Entity entity = entities.get(0);
+        DialogOptionComponent optionComp = new DialogOptionComponent(this, option, editable);
 
-        if ("weapon_specialist".equals(option.getName())) { //$NON-NLS-1$
+        if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) { // $NON-NLS-1$
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
             TreeSet<String> uniqueWeapons = new TreeSet<String>();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
@@ -870,11 +916,20 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             optionComp.setSelected(option.stringValue());
         }
 
-        if ("specialist".equals(option.getName())) { //$NON-NLS-1$
+        if (OptionsConstants.GUNNERY_SPECIALIST               
+                .equals(option.getName())) { //$NON-NLS-1$
             optionComp.addValue(Crew.SPECIAL_NONE);
             optionComp.addValue(Crew.SPECIAL_LASER);
             optionComp.addValue(Crew.SPECIAL_BALLISTIC);
             optionComp.addValue(Crew.SPECIAL_MISSILE);
+            optionComp.setSelected(option.stringValue());
+        }
+
+        if (OptionsConstants.GUNNERY_RANGE_MASTER.equals(option.getName())) { //$NON-NLS-1$
+            optionComp.addValue(Crew.RANGEMASTER_NONE);
+            optionComp.addValue(Crew.RANGEMASTER_MEDIUM);
+            optionComp.addValue(Crew.RANGEMASTER_LONG);
+            optionComp.addValue(Crew.RANGEMASTER_EXTREME);
             optionComp.setSelected(option.stringValue());
         }
 
@@ -899,6 +954,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         return okay;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
     private void refreshDeployment() {
         choDeploymentRound.removeItemListener(this);
         
@@ -906,6 +965,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         choDeploymentRound.addItem(Messages
                 .getString("CustomMechDialog.StartOfGame")); //$NON-NLS-1$
 
+        Entity entity = entities.get(0);
         if (entity.getDeployRound() < 1) {
             choDeploymentRound.setSelectedIndex(0);
         }
@@ -980,6 +1040,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
      *            units.
      */
     private void refreshUnitNum(Iterator<Entity> others) {
+        Entity entity = entities.get(0);
         // Clear the list of old values
         choUnitNum.removeAllItems();
         entityUnitNum.clear();
@@ -1010,7 +1071,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         if (actionEvent.getSource().equals(butRandomSkill)) {
             int[] skills = client.getRandomSkillsGenerator().getRandomSkills(
-                    entity);
+                    entities.get(0));
             fldGunnery.setText(Integer.toString(skills[0]));
             fldPiloting.setText(Integer.toString(skills[1]));
             return;
@@ -1021,13 +1082,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
         if (actionEvent.getSource().equals(butOffBoardDistance)) {
             int maxDistance = 19 * 17; // Long Tom
-            for (Mounted wep : entity.getWeaponList()) {
-                EquipmentType e = wep.getType();
-                WeaponType w = (WeaponType) e;
-                if (w.hasFlag(WeaponType.F_ARTILLERY)) {
-                    int nDistance = (w.getLongRange() - 1) * 17;
-                    if (nDistance < maxDistance) {
-                        maxDistance = nDistance;
+            for (Entity entity : entities) {
+                for (Mounted wep : entity.getWeaponList()) {
+                    EquipmentType e = wep.getType();
+                    WeaponType w = (WeaponType) e;
+                    if (w.hasFlag(WeaponType.F_ARTILLERY)) {
+                        int nDistance = (w.getLongRange() - 1) * 17;
+                        if (nDistance < maxDistance) {
+                            maxDistance = nDistance;
+                        }
                     }
                 }
             }
@@ -1037,7 +1100,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     clientgui.frame,
                     Messages.getString("CustomMechDialog.offboardDistanceTitle"),
                     Messages.getString("CustomMechDialog.offboardDistanceQuestion"),
-                    Math.min(Math.max(entity.getOffBoardDistance(), 17),
+                    Math.min(
+                            Math.max(entities.get(0).getOffBoardDistance(), 17),
                             maxDistance), 17, maxDistance);
             if (!sl.showDialog()) {
                 return;
@@ -1051,119 +1115,116 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             return;
         }
 
-        if (!actionEvent.getSource().equals(butCancel)) {
-            // get values
-            String name = fldName.getText();
-            String nick = fldNick.getText();
-            int gunnery;
-            int gunneryL;
-            int gunneryM;
-            int gunneryB;
-            int artillery;
-            int fatigue = 0;
-            int piloting;
-            int tough = 0;
-            int init = 0;
-            int command = 0;
-            int velocity = 0;
-            int altitude = 0;
-            int height = 0;
-            int offBoardDistance;
-            String externalId = entity.getCrew().getExternalIdAsString();
-            try {
-                gunnery = Integer.parseInt(fldGunnery.getText());
-                gunneryL = Integer.parseInt(fldGunneryL.getText());
-                gunneryM = Integer.parseInt(fldGunneryM.getText());
-                gunneryB = Integer.parseInt(fldGunneryB.getText());
-                piloting = Integer.parseInt(fldPiloting.getText());
-                artillery = Integer.parseInt(fldArtillery.getText());
-                tough = Integer.parseInt(fldTough.getText());
-                init = Integer.parseInt(fldInit.getText());
-                fatigue = Integer.parseInt(fldFatigue.getText());
-                command = Integer.parseInt(fldCommandInit.getText());
-                if (entity instanceof Aero) {
-                    velocity = Integer.parseInt(fldStartVelocity.getText());
-                    altitude = Integer.parseInt(fldStartAltitude.getText());
-                }
-                if (entity instanceof VTOL) {
-                    height = Integer.parseInt(fldStartHeight.getText());
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane
-                        .showMessageDialog(
-                                clientgui.frame,
-                                Messages.getString("CustomMechDialog.EnterValidSkills"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+        if (actionEvent.getSource().equals(butCancel)) {
+            setVisible(false);
+            return;
+        }
+
+        // Set instanceof flags
+        String msg, title;
+        boolean isAero = true;
+        boolean isVTOL = true;
+        for (Entity e : entities) {
+            isAero &= e instanceof Aero;
+            isVTOL &= e instanceof VTOL;
+        }
+
+        // get values
+        String name = fldName.getText();
+        String nick = fldNick.getText();
+        int gunnery;
+        int gunneryL;
+        int gunneryM;
+        int gunneryB;
+        int artillery;
+        int fatigue = 0;
+        int piloting;
+        int tough = 0;
+        int init = 0;
+        int command = 0;
+        int velocity = 0;
+        int altitude = 0;
+        int height = 0;
+        int offBoardDistance;
+        String externalId = entities.get(0).getCrew().getExternalIdAsString();
+        try {
+            gunnery = Integer.parseInt(fldGunnery.getText());
+            gunneryL = Integer.parseInt(fldGunneryL.getText());
+            gunneryM = Integer.parseInt(fldGunneryM.getText());
+            gunneryB = Integer.parseInt(fldGunneryB.getText());
+            piloting = Integer.parseInt(fldPiloting.getText());
+            artillery = Integer.parseInt(fldArtillery.getText());
+            tough = Integer.parseInt(fldTough.getText());
+            init = Integer.parseInt(fldInit.getText());
+            fatigue = Integer.parseInt(fldFatigue.getText());
+            command = Integer.parseInt(fldCommandInit.getText());
+            if (isAero) {
+                velocity = Integer.parseInt(fldStartVelocity.getText());
+                altitude = Integer.parseInt(fldStartAltitude.getText());
+            }
+            if (isVTOL) {
+                height = Integer.parseInt(fldStartHeight.getText());
+            }
+        } catch (NumberFormatException e) {
+            msg = Messages.getString("CustomMechDialog.EnterValidSkills"); //$NON-NLS-1$
+            title = Messages.getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // keep these reasonable, please
+        if ((gunnery < 0) || (gunnery > 8) || (piloting < 0) || (piloting > 8)
+                || (gunneryL < 0) || (gunneryL > 8) || (gunneryM < 0)
+                || (gunneryM > 8) || (gunneryB < 0) || (gunneryB > 8)
+                || (artillery < 0) || (artillery > 8)) {
+            msg = Messages.getString("CustomMechDialog.EnterSkillsBetween0_8"); //$NON-NLS-1$
+            title = Messages.getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (isAero) {
+            if ((velocity > (2 * entities.get(0).getWalkMP()))
+                    || (velocity < 0)) {
+                msg = Messages
+                        .getString("CustomMechDialog.EnterCorrectVelocity"); //$NON-NLS-1$
+                title = Messages
+                        .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
+                JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            // keep these reasonable, please
-            if ((gunnery < 0) || (gunnery > 8) || (piloting < 0)
-                    || (piloting > 8) || (gunneryL < 0) || (gunneryL > 8)
-                    || (gunneryM < 0) || (gunneryM > 8) || (gunneryB < 0)
-                    || (gunneryB > 8) || (artillery < 0) || (artillery > 8)) {
-                JOptionPane
-                        .showMessageDialog(
-                                clientgui.frame,
-                                Messages.getString("CustomMechDialog.EnterSkillsBetween0_8"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            if ((altitude < 0) || (altitude > 10)) {
+                msg = Messages
+                        .getString("CustomMechDialog.EnterCorrectAltitude"); //$NON-NLS-1$
+                title = Messages
+                        .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
+                JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                        JOptionPane.ERROR_MESSAGE);
                 return;
             }
+        }
 
-            if (entity instanceof Aero) {
-                if ((velocity > (2 * entity.getWalkMP())) || (velocity < 0)) {
-                    JOptionPane
-                            .showMessageDialog(
-                                    clientgui.frame,
-                                    Messages.getString("CustomMechDialog.EnterCorrectVelocity"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
-                    return;
-                }
-                if ((altitude < 0) || (altitude > 10)) {
-                    JOptionPane
-                            .showMessageDialog(
-                                    clientgui.frame,
-                                    Messages.getString("CustomMechDialog.EnterCorrectAltitude"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
-                    return;
-                }
-            }
+        if (isVTOL && (height > 50)) {
+            msg = Messages.getString("CustomMechDialog.EnterCorrectHeight"); //$NON-NLS-1$
+            title = Messages.getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-            if ((entity instanceof VTOL) && (height > 50)) {
-                JOptionPane
-                        .showMessageDialog(
-                                clientgui.frame,
-                                Messages.getString("CustomMechDialog.EnterCorrectHeight"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
-                return;
-            }
+        // Apply single-entity settings
+        if (entities.size() == 1) {
+            Entity entity = entities.get(0);
 
-            entity.setHidden(chHidden.isSelected());
-
-            if (chOffBoard.isSelected()) {
-                try {
-                    offBoardDistance = distance;
-                } catch (NumberFormatException e) {
-                    JOptionPane
-                            .showMessageDialog(
-                                    clientgui.frame,
-                                    Messages.getString("CustomMechDialog.EnterValidSkills"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
-                    return;
-                }
-                if (offBoardDistance < 17) {
-                    JOptionPane
-                            .showMessageDialog(
-                                    clientgui.frame,
-                                    Messages.getString("CustomMechDialog.OffboardDistance"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
-                    return;
-                }
-                entity.setOffBoard(offBoardDistance, OffBoardDirection
-                        .getDirection(choOffBoardDirection.getSelectedIndex()));
+            if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+                entity.setCrew(new Crew(name, Compute.getFullCrewSize(entity),
+                        gunneryL, gunneryM, gunneryB, piloting));
             } else {
-                entity.setOffBoard(0, OffBoardDirection.NONE);
-            }
-
-            // change entity
-            if (client.getGame().getOptions().booleanOption("rpg_gunnery")) {
-                entity.setCrew(new Crew(name, Compute.getFullCrewSize(entity), gunneryL, gunneryM, gunneryB,
-                        piloting));
-            } else {
-                entity.setCrew(new Crew(name, Compute.getFullCrewSize(entity), gunnery, piloting));
+                entity.setCrew(new Crew(name, Compute.getFullCrewSize(entity),
+                        gunnery, piloting));
             }
             entity.getCrew().setArtillery(artillery);
             entity.getCrew().setFatigue(fatigue);
@@ -1174,27 +1235,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entity.getCrew().setPortraitCategory(portraitDialog.getCategory());
             entity.getCrew().setPortraitFileName(portraitDialog.getFileName());
             entity.getCrew().setExternalIdAsString(externalId);
-            if (entity instanceof Aero) {
-                Aero a = (Aero) entity;
-                a.setCurrentVelocity(velocity);
-                a.setNextVelocity(velocity);
-                // we need to determine whether this aero is airborne or not in
-                // order for
-                // prohibited terrain and stacking to work right in the
-                // deployment phase
-                // this is very tricky because in atmosphere, zero altitude does
-                // not
-                // necessarily mean grounded
-                if (altitude <= 0) {
-                    a.land();
-                } else {
-                    a.liftOff(altitude);
-                }
-            }
-            if (entity instanceof VTOL) {
-                VTOL v = (VTOL) entity;
-                v.setElevation(height);
-            }
 
             // If the player wants to swap unit numbers, update both
             // entities and send an update packet for the other entity.
@@ -1206,6 +1246,86 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 client.sendUpdateEntity(other);
             }
 
+            // update commander status
+            entity.setCommander(chCommander.isSelected());
+
+            setOptions();
+            setQuirks();
+            setPartReps();
+            m_equip.applyChoices();
+
+            if (entity instanceof BattleArmor) {
+                // have to reset internals because of dermal armor option
+                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                    ((BattleArmor) entity).setInternal(2);
+                } else {
+                    ((BattleArmor) entity).setInternal(1);
+                }
+            } else if (entity instanceof Infantry) {
+                // need to reset armor on conventional infantry
+                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                    entity.initializeArmor(
+                            entity.getOInternal(Infantry.LOC_INFANTRY),
+                            Infantry.LOC_INFANTRY);
+                } else {
+                    entity.initializeArmor(0, Infantry.LOC_INFANTRY);
+                }
+            }
+        }
+
+        // Apply multiple-entity settings
+        for (Entity entity : entities) {
+            entity.setHidden(chHidden.isSelected());
+
+            if (chOffBoard.isSelected()) {
+                try {
+                    offBoardDistance = distance;
+                } catch (NumberFormatException e) {
+                    msg = Messages
+                            .getString("CustomMechDialog.EnterValidSkills"); //$NON-NLS-1$
+                    title = Messages
+                            .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
+                    JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (offBoardDistance < 17) {
+                    msg = Messages
+                            .getString("CustomMechDialog.OffboardDistance"); //$NON-NLS-1$
+                    title = Messages
+                            .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
+                    JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                entity.setOffBoard(offBoardDistance, OffBoardDirection
+                        .getDirection(choOffBoardDirection.getSelectedIndex()));
+            } else {
+                entity.setOffBoard(0, OffBoardDirection.NONE);
+            }
+
+            if (isAero) {
+                Aero a = (Aero) entity;
+                a.setCurrentVelocity(velocity);
+                a.setNextVelocity(velocity);
+                // we need to determine whether this aero is airborne or not in
+                // order for prohibited terrain and stacking to work right in
+                // the
+                // deployment phase this is very tricky because in atmosphere,
+                // zero
+                // altitude does not necessarily mean grounded
+                if (altitude <= 0) {
+                    a.land();
+                } else {
+                    a.liftOff(altitude);
+                }
+            }
+
+            if (isVTOL) {
+                VTOL v = (VTOL) entity;
+                v.setElevation(height);
+            }
+
             // Set the entity's deployment position and round.
             entity.setStartingPos(choDeploymentZone.getSelectedIndex() - 1);
             entity.setDeployRound(choDeploymentRound.getSelectedIndex());
@@ -1213,7 +1333,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Should the entity begin the game shutdown?
             if (chDeployShutdown.isSelected()
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("begin_shutdown")) {
+                            .booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {
                 entity.performManualShutdown();
             } else { // We need to else this in case someone turned the option
                      // on, set their units, and then turned the option off.
@@ -1225,91 +1345,57 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             // Should the entity begin the game prone?
             entity.setHullDown(chDeployHullDown.isSelected());
-
-            // update commander status
-            entity.setCommander(chCommander.isSelected());
-
-            setOptions();
-            setQuirks();
-            setPartReps();
-            m_equip.applyChoices();
-
-            if (entity instanceof BattleArmor) {
-                // have to reset internals because of dermal armor option
-                if (entity.getCrew().getOptions().booleanOption("dermal_armor")) {
-                    ((BattleArmor) entity).setInternal(2);
-                } else {
-                    ((BattleArmor) entity).setInternal(1);
-                }
-            } else if (entity instanceof Infantry) {
-                // need to reset armor on conventional infantry
-                if (entity.getCrew().getOptions().booleanOption("dermal_armor")) {
-                    entity.initializeArmor(
-                            entity.getOInternal(Infantry.LOC_INFANTRY),
-                            Infantry.LOC_INFANTRY);
-                } else {
-                    entity.initializeArmor(0, Infantry.LOC_INFANTRY);
-                }
-            }
-
-            okay = true;
-            clientgui.chatlounge.refreshEntities();
         }
-        
-        // Check validity of unit after customization
-        EntityVerifier verifier = EntityVerifier.getInstance(
-                new File(Configuration.unitsDir(),
-                        EntityVerifier.CONFIG_FILENAME));
-        TestEntity testEntity = null;
-        if (entity instanceof Mech) {
-            testEntity = new TestMech((Mech) entity, verifier.mechOption,
-                    null);
-        } else if ((entity instanceof Tank) && 
-                !(entity instanceof GunEmplacement)) {
-            if (entity.isSupportVehicle()) {
-                testEntity = new TestSupportVehicle(
-                        (Tank) entity,
-                        verifier.tankOption, null);
+
+        okay = true;
+        status = DONE;
+        clientgui.chatlounge.refreshEntities();
+
+        // Check validity of units after customization
+        for (Entity entity : entities) {
+            EntityVerifier verifier = EntityVerifier.getInstance(new File(
+                    Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
+            TestEntity testEntity = null;
+            if (entity instanceof Mech) {
+                testEntity = new TestMech((Mech) entity, verifier.mechOption,
+                        null);
+            } else if ((entity instanceof Tank)
+                    && !(entity instanceof GunEmplacement)) {
+                if (entity.isSupportVehicle()) {
+                    testEntity = new TestSupportVehicle((Tank) entity,
+                            verifier.tankOption, null);
+                } else {
+                    testEntity = new TestTank((Tank) entity,
+                            verifier.tankOption, null);
+                }
+            } else if (entity.getEntityType() == Entity.ETYPE_AERO
+                    && entity.getEntityType() != Entity.ETYPE_DROPSHIP
+                    && entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT
+                    && entity.getEntityType() != Entity.ETYPE_FIGHTER_SQUADRON
+                    && entity.getEntityType() != Entity.ETYPE_JUMPSHIP
+                    && entity.getEntityType() != Entity.ETYPE_SPACE_STATION) {
+                testEntity = new TestAero((Aero) entity, verifier.mechOption,
+                        null);
+            } else if (entity instanceof BattleArmor) {
+                testEntity = new TestBattleArmor((BattleArmor) entity,
+                        verifier.baOption, null);
+            }
+            int gameTL = TechConstants.getGameTechLevel(client.getGame(),
+                    entity.isClan());
+            if ((testEntity != null)
+                    && !testEntity.correctEntity(new StringBuffer(), gameTL)) {
+                entity.setDesignValid(false);
             } else {
-                testEntity = new TestTank((Tank) entity,
-                        verifier.tankOption, null);
+                entity.setDesignValid(true);
             }
-        }else if (entity.getEntityType() == Entity.ETYPE_AERO
-                && entity.getEntityType() != 
-                        Entity.ETYPE_DROPSHIP
-                && entity.getEntityType() != 
-                        Entity.ETYPE_SMALL_CRAFT
-                && entity.getEntityType() != 
-                        Entity.ETYPE_FIGHTER_SQUADRON
-                && entity.getEntityType() != 
-                        Entity.ETYPE_JUMPSHIP
-                && entity.getEntityType() != 
-                        Entity.ETYPE_SPACE_STATION) {
-            testEntity = new TestAero((Aero)entity, 
-                    verifier.mechOption, null);
-        } else if (entity instanceof BattleArmor){
-            testEntity = new TestBattleArmor((BattleArmor) entity, 
-                    verifier.baOption, null);
         }
-        int gameTL = TechConstants.getGameTechLevel(client.getGame(),
-                entity.isClan());
-        if ((testEntity != null)
-                && !testEntity.correctEntity(new StringBuffer(), gameTL)) {
-            entity.setDesignValid(false);
-        } else {
-            entity.setDesignValid(true);
-        }
-            
-        setVisible(false);
-        Entity nextOne = null;
+
         if (actionEvent.getSource().equals(butPrev)) {
-            nextOne = getNextEntity(false);
+            status = PREV;
         } else if (actionEvent.getSource().equals(butNext)) {
-            nextOne = getNextEntity(true);
+            status = NEXT;
         }
-        if (nextOne != null) {
-            clientgui.chatlounge.customizeMech(nextOne);
-        }
+        setVisible(false);
     }
 
     public void itemStateChanged(ItemEvent itemEvent) {
@@ -1331,20 +1417,25 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
     }
 
-    private Entity getNextEntity(boolean forward) {
+    public Entity getNextEntity(boolean forward) {
         IGame game = client.getGame();
-        boolean bd = game.getOptions().booleanOption("blind_drop"); //$NON-NLS-1$
-        boolean rbd = game.getOptions().booleanOption("real_blind_drop"); //$NON-NLS-1$
+        boolean bd = game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP); //$NON-NLS-1$
+        boolean rbd = game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP); //$NON-NLS-1$
         IPlayer p = client.getLocalPlayer();
 
         Entity nextOne;
+        Entity entity;
         if (forward) {
+            entity = entities.get(entities.size() - 1);
             nextOne = game.getNextEntityFromList(entity);
         } else {
+            entity = entities.get(0);
             nextOne = game.getPreviousEntityFromList(entity);
         }
-        while ((nextOne != null) && !nextOne.equals(entity)) {
-            if (nextOne.getOwner().equals(p) || (!(bd || rbd) && nextOne.getOwner().equals(entity.getOwner()))) {
+        while ((nextOne != null) && !entities.contains(nextOne)) {
+            if (nextOne.getOwner().equals(p)
+                    || (!(bd || rbd) && nextOne.getOwner().equals(
+                            entity.getOwner()))) {
                 return nextOne;
             }
             if (forward) {
@@ -1357,6 +1448,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     private void setupEquip() {
+        Entity entity = entities.get(0);
         GridBagLayout gbl = new GridBagLayout();
         panEquip.setLayout(gbl);
 

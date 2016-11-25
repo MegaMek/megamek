@@ -24,9 +24,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -71,6 +73,7 @@ import megamek.common.actions.TriggerAPPodAction;
 import megamek.common.actions.TriggerBPodAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.FiringSolution;
 import megamek.common.weapons.ArtilleryWeapon;
 
 /*
@@ -177,6 +180,10 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            String ttKey = "TargetingPhaseDisplay." + cmd.getCmd() + ".tooltip";
+            if (Messages.keyExists(ttKey)) {
+                newButton.setToolTipText(Messages.getString(ttKey));
+            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -416,6 +423,50 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     }
                 });
 
+        // Register the action for NEXT_MODE
+        controller.registerCommandAction(KeyCommandBind.NEXT_MODE.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        changeMode(true);
+                    }
+                });
+
+        // Register the action for PREV_MODE
+        controller.registerCommandAction(KeyCommandBind.PREV_MODE.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        changeMode(false);
+                    }
+                });
+
         // Register the action for CLEAR
         controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
                 new CommandAction() {
@@ -566,10 +617,20 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
-        Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
+
+        // Determine which entities are spotted
+        Set<Integer> spottedEntities = new HashSet<>();
+        for (Entity target : game.getEntitiesVector()) {
+            if (!target.isEnemyOf(ce()) && target.isSpotting()) {
+                spottedEntities.add(target.getSpotTargetId());
+            }
+        }
+
+        // Calculate firing solutions
+        Map<Integer, FiringSolution> fs = new HashMap<>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
-                    "friendly_fire"); //$NON-NLS-1$
+                    OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
@@ -579,7 +640,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(ce().getPosition().distance(target.getPosition()));
-                fs.put(target.getId(), thd);
+                fs.put(target.getId(), new FiringSolution(thd, spottedEntities.contains(target.getId())));
             }
         }
         clientgui.getBoardView().setFiringSolutions(ce(), fs);
@@ -672,7 +733,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     /**
      * Fire Mode - Adds a Fire Mode Change to the current Attack Action
      */
-    private void changeMode() {
+    private void changeMode(boolean forward) {
         int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
 
         // Do nothing we have no unit selected.
@@ -693,7 +754,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // send change to the server
-        int nMode = m.switchMode();
+        int nMode = m.switchMode(forward);
         clientgui.getClient().sendModeChange(cen, wn, nMode);
 
         // notify the player
@@ -1260,7 +1321,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private Targetable chooseTarget(Coords pos) {
 
         boolean friendlyFire = clientgui.getClient().getGame().getOptions()
-                .booleanOption("friendly_fire"); //$NON-NLS-1$
+                .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
         Iterator<Entity> choices;
@@ -1411,7 +1472,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_FLIP_ARMS.getCmd())) {
             updateFlipArms(!ce().getArmsFlipped());
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_MODE.getCmd())) {
-            changeMode();
+            changeMode(true);
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_CANCEL.getCmd())) {
             clear();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SEARCHLIGHT.getCmd())) {

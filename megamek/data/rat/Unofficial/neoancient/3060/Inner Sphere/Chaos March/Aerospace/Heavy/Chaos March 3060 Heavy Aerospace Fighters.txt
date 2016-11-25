@@ -1,8 +1,0 @@
-Neoancient Chaos March 3060 Heavy Aerospace Fighters
-@Neoancient Liao 3055 Heavy Aerospace Fighters D,1
-@Neoancient Marik 3055 Heavy Aerospace Fighters D,1
-@Neoancient Steiner 3055 Heavy Aerospace Fighters D,2
-Eagle EGL-R10,12
-Eagle EGL-R6,24
-Eagle EGL-R9,12
-Thunderbird TRB-D36,100

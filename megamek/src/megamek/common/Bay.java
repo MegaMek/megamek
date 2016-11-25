@@ -279,7 +279,8 @@ public class Bay implements Transporter {
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString(boolean showrecovery) {
-        return " - " + currentSpace + (currentSpace > 1 ? " units" : " unit");
+        return "(" + getDoors() + " doors)  - " + currentSpace
+                + (currentSpace > 1 ? " units" : " unit");
     }
 
     @Override

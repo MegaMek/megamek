@@ -26,6 +26,7 @@ public class SupportTank extends Tank {
      */
     private static final long serialVersionUID = -9028127010133768714L;
     private int[] barRating;
+    private double fuelTonnage = 0;
     
     public final static double[] SV_TR_MULTIPLIERS = {1.60, 1.30, 1.15, 1.00, 0.85, 0.66}; 
 
@@ -292,8 +293,17 @@ public class SupportTank extends Tank {
                return 0;
         }
     }
-    
+
     //FUEL CAPACITY TM 128
+    @Override
+    public double getFuelTonnage() {
+        return fuelTonnage;
+    }
+
+    public void setFuelTonnage(double fuel) {
+        fuelTonnage = fuel;
+    }
+
     //DETERMINE SI TM 130
     //ADD LIFT/DIVE EQUIPMENT TM 131
     //ADD CONTROL AND CREW STUFF TM 131

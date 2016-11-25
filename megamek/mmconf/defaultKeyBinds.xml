@@ -94,29 +94,71 @@
 
       <KeyBind>
         <command>prevUnit</command>
-        <keyCode>90</keyCode> <!-- Z -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>nextUnit</command>
-        <keyCode>67</keyCode> <!-- C -->
-        <modifier>0</modifier>          
-        <isRepeatable>false</isRepeatable>
-      </KeyBind>
-
-      <KeyBind>
-        <command>prevTarget</command>
         <keyCode>81</keyCode> <!-- Shift-Q -->
         <modifier>1</modifier>          
         <isRepeatable>false</isRepeatable>
       </KeyBind>
 
       <KeyBind>
-        <command>nextTarget</command>
+        <command>nextUnit</command>
         <keyCode>69</keyCode> <!-- Shift-E -->
         <modifier>1</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>prevTarget</command>
+        <keyCode>90</keyCode> <!-- Z -->
+        <modifier>0</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>nextTarget</command>
+        <keyCode>67</keyCode> <!-- C -->
+        <modifier>0</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>prevTargetValid</command>
+        <keyCode>90</keyCode> <!-- Shift Z -->
+        <modifier>1</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>nextTargetValid</command>
+        <keyCode>67</keyCode> <!-- Shift C -->
+        <modifier>1</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>prevTargetNoAllies</command>
+        <keyCode>90</keyCode> <!-- Ctrl Z -->
+        <modifier>2</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>nextTargetNoAllies</command>
+        <keyCode>67</keyCode> <!-- Ctrl C -->
+        <modifier>2</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>prevTargetValidNoAllies</command>
+        <keyCode>90</keyCode> <!-- Ctrl-Shift Z -->
+        <modifier>3</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>nextTargetValidNoAllies</command>
+        <keyCode>67</keyCode> <!-- Ctrl-Shift C -->
+        <modifier>3</modifier>          
         <isRepeatable>false</isRepeatable>
       </KeyBind>
 
@@ -236,6 +278,27 @@
         <command>toggleJump</command>
         <keyCode>74</keyCode> <!-- J -->
         <modifier>0</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>prevMode</command>
+        <keyCode>9</keyCode> <!-- Shift Tab -->
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>nextMode</command>
+        <keyCode>9</keyCode> <!-- Tab -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>toggleDrawLabels</command>
+        <keyCode>89</keyCode> <!-- Y -->
+        <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
       </KeyBind>
 

@@ -282,11 +282,14 @@ public class Engine implements Serializable {
      * @return true if it is not an internal combustion engine.
      */
     public boolean isFusion() {
-        if ((engineType == COMBUSTION_ENGINE) || (engineType == FISSION) || (engineType == FUEL_CELL) || (engineType == NONE)) {
+        if ((engineType == COMBUSTION_ENGINE) || (engineType == FISSION) || (engineType == FUEL_CELL) || (engineType == NONE)
+        		|| (engineType == BATTERY) || (engineType == SOLAR) || (engineType == STEAM) || (engineType == MAGLEV)      		        		
+        		) {
             return false;
         }
         return true;
     }
+ 
 
     /**
      * Returns the weight of the engine in tons, rounded to the next highest half
@@ -315,6 +318,7 @@ public class Engine implements Serializable {
                     .getEngineTechRating()];
             double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
+            weight = TestEntity.setPrecision(weight, 4);
             roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.getWeight() < 5) {
                 roundWeight = TestEntity.Ceil.KILO;

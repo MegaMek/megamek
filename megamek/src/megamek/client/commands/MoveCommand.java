@@ -21,6 +21,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author dirk
@@ -125,8 +126,8 @@ public class MoveCommand extends ClientCommand {
 
                     return "Trying to get up but the mech is not prone.";
                 } else if (args[1].equalsIgnoreCase("CAREFULSTAND")) {
-                    if (cmd.getFinalProne() || cmd.getFinalHullDown()
-                            && getClient().getGame().getOptions().booleanOption("tacops_careful_stand")) {
+                    if (cmd.getFinalProne() || cmd.getFinalHullDown() && getClient().getGame().getOptions()
+                            .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)) {
                         cmd.addStep(MoveStepType.CAREFUL_STAND);
                         return "Mech will try to stand up. this requieres a piloting roll.";
                     }

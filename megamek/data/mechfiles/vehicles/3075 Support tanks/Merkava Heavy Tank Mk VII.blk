@@ -1,0 +1,93 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Merkava Heavy Tank
+</Name>
+
+<Model>
+Mk VII
+</Model>
+
+<year>
+2435
+</year>
+
+<type>
+IS Level 1
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+32
+32
+32
+24
+32
+</armor>
+
+<barrating>
+9
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+Advanced Fire Control
+Armored Chassis
+IS Ammo AC/5
+IS Ammo SRM-4
+IS Ammo LRM-10
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/5
+LRM 10
+SRM 4
+Machine Gun
+</Turret Equipment>
+
+<source>
+TRO 3075 - Age of War
+</source>
+
+<tonnage>
+75.0
+</tonnage>

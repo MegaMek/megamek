@@ -19,13 +19,19 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.common.Coords;
 import sun.awt.image.ToolkitImage;
 
@@ -47,19 +53,24 @@ public final class ImageUtil {
         }
         GC = (null != gd) ? gd.getDefaultConfiguration() : null;
     }
-    
+
+    public static final int IMAGE_SCALE_BICUBIC = 1;
+    public static final int IMAGE_SCALE_AVG_FILTER = 2;
+
     /**
-     * @return an image in a format best fitting for hardware acceleration, if possible,
-     *         else just the image passed to it
+     * @return an image in a format best fitting for hardware acceleration, if
+     *         possible, else just the image passed to it
      */
-    public static BufferedImage createAcceleratedImage(BufferedImage base) {
-        if((null == GC) || (null == base)) {
-            return base;
+    public static BufferedImage createAcceleratedImage(Image base) {
+        if ((null == GC) || (null == base)) {
+            return null;
         }
-        BufferedImage acceleratedImage
-            = GC.createCompatibleImage(base.getWidth(), base.getHeight(), base.getTransparency());
+        BufferedImage acceleratedImage = GC.createCompatibleImage(
+                base.getWidth(null), base.getHeight(null),
+                Transparency.TRANSLUCENT);
         Graphics2D g2d = acceleratedImage.createGraphics();
-        g2d.drawImage(base, 0, 0, base.getWidth(), base.getHeight(), null);
+        g2d.drawImage(base, 0, 0, base.getWidth(null), base.getHeight(null),
+                null);
         g2d.dispose();
         return acceleratedImage;
     }
@@ -73,6 +84,45 @@ public final class ImageUtil {
         }
         BufferedImage acceleratedImage = GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
         return acceleratedImage;
+    }
+
+    /**
+     * Get a scaled version of the input image.
+     *
+     * @param img
+     * @return
+     */
+    public static BufferedImage getScaledImage(Image img, int newWidth,
+            int newHeight) {
+        return getScaledImage(img, newWidth, newHeight, IMAGE_SCALE_BICUBIC);
+    }
+
+    /**
+     * Get a scaled version of the input image, using the supplied type to
+     * select which scaling method to use.
+     *
+     * @param img
+     * @return
+     */
+    public static BufferedImage getScaledImage(Image img, int newWidth,
+            int newHeight, int scaleType) {
+        if (scaleType == IMAGE_SCALE_BICUBIC) {
+            BufferedImage scaled = createAcceleratedImage(newWidth, newHeight);
+            Graphics2D g2 = (Graphics2D) scaled.getGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2.drawImage(img, 0, 0, newWidth, newHeight, null);
+            return scaled;
+        } else {
+            ImageFilter filter;
+            filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
+                    img.getHeight(null), newWidth, newHeight);
+
+            ImageProducer prod;
+            prod = new FilteredImageSource(img.getSource(), filter);
+            return ImageUtil.createAcceleratedImage(
+                    Toolkit.getDefaultToolkit().createImage(prod));
+        }
     }
 
     /** Image loaders */
@@ -112,20 +162,34 @@ public final class ImageUtil {
     public static class AWTImageLoader implements ImageLoader {
         @Override
         public Image loadImage(String fileName, Toolkit toolkit) {
+            File fin = new File(fileName);
+            if (!fin.exists()) {
+                System.out.println("Trying to load image for a non-existant "
+                        + "file! Path: " + fileName);
+            }
             ToolkitImage result = (ToolkitImage) toolkit.getImage(fileName);
             if(null == result) {
                 return null;
             }
             FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            result.preload(observer);
-            while(!observer.isLoaded()) {
-                try {
-                    Thread.sleep(10);
-                } catch(InterruptedException ex) {
-                    break;
+            // Check to see if the image is loaded
+            int infoFlags = result.check(observer);
+            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
+                // Image not loaded, wait for it to load
+                long startTime = System.currentTimeMillis();
+                long maxRuntime = 10000;
+                long runTime = 0;
+                result.preload(observer);
+                while (!observer.isLoaded() && runTime < maxRuntime) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        // Do nothing
+                    }
+                    runTime = System.currentTimeMillis() - startTime;
                 }
             }
-            return ImageUtil.createAcceleratedImage(result.getBufferedImage());
+            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
         }
     }
     
@@ -170,12 +234,21 @@ public final class ImageUtil {
                 return null;
             }
             FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            base.preload(observer);
-            while(!observer.isLoaded()) {
-                try {
-                    Thread.sleep(10);
-                } catch(InterruptedException ex) {
-                    break;
+            // Check to see if the image is loaded
+            int infoFlags = base.check(observer);
+            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
+                // Image not loaded, wait for it to load
+                long startTime = System.currentTimeMillis();
+                long maxRuntime = 10000;
+                long runTime = 0;
+                base.preload(observer);
+                while (!observer.isLoaded() && runTime < maxRuntime) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        // Do nothing
+                    }
+                    runTime = System.currentTimeMillis() - startTime;
                 }
             }
             BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
@@ -189,10 +262,11 @@ public final class ImageUtil {
     
     private static class FinishedLoadingObserver implements ImageObserver {
         private static final int DONE
-            = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.ALLBITS;
+            = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS | ImageObserver.ALLBITS;
         
         private final Thread mainThread;
         private volatile boolean loaded = false;
+        private volatile boolean animated = false;
 
         public FinishedLoadingObserver(Thread mainThread) {
             this.mainThread = mainThread;
@@ -200,8 +274,9 @@ public final class ImageUtil {
         
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-            if((infoflags & DONE) > 1) {
+            if((infoflags & DONE) > 0) {
                 loaded = true;
+                animated = ((infoflags & ImageObserver.FRAMEBITS) > 0);
                 mainThread.interrupt();
                 return false;
             }
@@ -210,6 +285,10 @@ public final class ImageUtil {
         
         public boolean isLoaded() {
             return loaded;
+        }
+        
+        public boolean isAnimated() {
+            return animated;
         }
     }
 }

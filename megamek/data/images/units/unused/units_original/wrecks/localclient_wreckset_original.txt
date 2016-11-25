@@ -1,0 +1,21 @@
+# The format goes as follows:
+# {chassis/exact} [model] [image filename] 
+#
+# Note that infantry does not make wrecks...
+# 
+# Use exact to specify the unit exactly, for example:
+# exact "Marauder MAD-3R" "marauder.gif"
+# exact "Timber Wolf Prime" "timberwolf.gif"
+# 
+# You may also just specify a graphic for a chassis, for example:
+# chassis "Marauder" "marauder.gif"
+#
+# Images should be greyscale, 84x72 pixel gifs with the chassis centered.  The
+# tinting process is subtractive, so make images light.
+#
+# As of v0.29.61, mechset files can include other mechset files.
+
+### Add new entries between this and end ###
+### End ###
+
+# Add any include files below so that they override what is in this file.

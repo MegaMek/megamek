@@ -1,6 +1,7 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -9,6 +10,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.Transparency;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -278,7 +280,7 @@ class EntitySprite extends Sprite {
     @Override
     public void prepare() {
         final IBoard board = bv.game.getBoard();
-   
+        final GUIPreferences guip = GUIPreferences.getInstance();
         // recalculate bounds & label
         getBounds();
         
@@ -303,7 +305,7 @@ class EntitySprite extends Sprite {
                 // draw the unit icon translucent if:
                 // hidden from the enemy (and activated graphics setting); or
                 // submerged
-                boolean translucentHiddenUnits = GUIPreferences.getInstance()
+                boolean translucentHiddenUnits = guip
                         .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
                 boolean shouldBeTranslucent = (trackThisEntitiesVisibilityInfo(entity)
                         && !entity.isVisibleToEnemy()) || entity.isHidden();
@@ -367,13 +369,20 @@ class EntitySprite extends Sprite {
             }
             
             // Prone, Hulldown, Stuck, Immobile, Jammed
-            if (entity.isProne()) stStr.add(new Status(Color.RED, "PRONE"));
-            if (entity.isHiddenActivating()) stStr.add(new Status(Color.RED, "ACTIVATING"));
-            if (entity.isHidden()) stStr.add(new Status(Color.RED, "HIDDEN"));
-            if (entity.isHullDown()) stStr.add(new Status(Color.ORANGE, "HULLDOWN"));
-            if ((entity.isStuck())) stStr.add(new Status(Color.ORANGE, "STUCK"));
-            if (!ge && entity.isImmobile()) stStr.add(new Status(Color.RED, "IMMOBILE"));
-            if (isAffectedByECM()) stStr.add(new Status(Color.YELLOW, "Jammed"));
+            if (entity.isProne()) 
+                stStr.add(new Status(Color.RED, "PRONE"));
+            if (entity.isHiddenActivating())
+                stStr.add(new Status(Color.RED, "ACTIVATING"));
+            if (entity.isHidden())
+                stStr.add(new Status(Color.RED, "HIDDEN"));
+            if (entity.isHullDown())
+                stStr.add(new Status(Color.ORANGE, "HULLDOWN"));
+            if ((entity.isStuck()))
+                stStr.add(new Status(Color.ORANGE, "STUCK"));
+            if (!ge && entity.isImmobile())
+                stStr.add(new Status(Color.RED, "IMMOBILE"));
+            if (isAffectedByECM())
+                stStr.add(new Status(Color.YELLOW, "Jammed"));
             
             // Turret Lock 
             if (turretLocked) stStr.add(new Status(Color.YELLOW, "LOCKED"));
@@ -412,14 +421,20 @@ class EntitySprite extends Sprite {
             
             // Infantry
             if (isInfantry) {
-                int dig = ((Infantry) entity).getDugIn();
+                Infantry inf = ((Infantry) entity);
+                int dig = inf.getDugIn();
                 if (dig == Infantry.DUG_IN_COMPLETE) {
                     stStr.add(new Status(Color.PINK, "D", SMALL));
                 } else if (dig != Infantry.DUG_IN_NONE) {
                     stStr.add(new Status(Color.YELLOW, "Working", DIRECT));
                     stStr.add(new Status(Color.PINK, "D", SMALL));
-                } else if (((Infantry)entity).isTakingCover()) {
+                } else if (inf.isTakingCover()) {
                     stStr.add(new Status(Color.YELLOW, "TakingCover"));
+                }
+                
+                if (inf.turnsLayingExplosives >= 0) {
+                    stStr.add(new Status(Color.YELLOW, "Working", DIRECT));
+                    stStr.add(new Status(Color.PINK, "E", SMALL));
                 }
             }
             
@@ -437,7 +452,7 @@ class EntitySprite extends Sprite {
                 }
             }
             
-            if (GUIPreferences.getInstance().getShowDamageLevel()) {
+            if (guip.getShowDamageLevel()) {
                 Color damageColor = getDamageColor();
                 if (damageColor != null) {
                     stStr.add(new Status(damageColor, 0, SMALL));
@@ -451,27 +466,41 @@ class EntitySprite extends Sprite {
             graph.scale(1/bv.scale, 1/bv.scale);
             
             // Label background
-            if (criticalStatus) {
-                graph.setColor(LABEL_CRITICAL_BACK);
-            } else {
-                graph.setColor(LABEL_BACK);
+            if (guip.getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+                if (criticalStatus) {
+                    graph.setColor(LABEL_CRITICAL_BACK);
+                } else {
+                    graph.setColor(LABEL_BACK);
+                }
+                graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width,
+                        labelRect.height, 5, 10);
+
+                if (guip.getEntityOwnerLabelColor()) {
+                    graph.setColor(PlayerColors.getColor(
+                            entity.getOwner().getColorIndex(), false));
+                    Stroke oldStroke = graph.getStroke();
+                    graph.setStroke(new BasicStroke(3));
+                    graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,
+                            labelRect.width + 1, labelRect.height + 1, 5, 10);
+                    graph.setStroke(oldStroke);
+                }
+
+                // Label text
+                graph.setFont(labelFont);
+                Color textColor = LABEL_TEXT_COLOR;
+                if (!entity.isDone() && !onlyDetectedBySensors()) {
+                    textColor = guip.getColor(
+                            GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
+                }
+                if (isSelected) {
+                    textColor = guip.getColor(
+                            GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
+                }
+                bv.drawCenteredText(graph, getAdjShortName(),
+                        labelRect.x + labelRect.width / 2,
+                        labelRect.y + labelRect.height / 2 - 1, textColor,
+                        (entity.isDone() && !onlyDetectedBySensors()));
             }
-            graph.fillRoundRect(labelRect.x, labelRect.y, 
-                    labelRect.width, labelRect.height, 5, 10);
-            
-            // Label text
-            graph.setFont(labelFont);
-            Color textColor = LABEL_TEXT_COLOR;
-            if (!entity.isDone() && !onlyDetectedBySensors()) {
-                textColor = GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
-            }
-            if (isSelected) {
-                textColor = GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
-            }
-            bv.drawCenteredText(graph, getAdjShortName(), labelRect.x+labelRect.width/2,
-                    labelRect.y+labelRect.height/2-1, textColor, (entity.isDone() && !onlyDetectedBySensors()));
 
             // Past here, everything is drawing status that shouldn't be seen
             // on a sensor return, so we'll just quit here
@@ -570,9 +599,9 @@ class EntitySprite extends Sprite {
         if (localPlayer == null) {
             return false;
         }
-        if (bv.game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
+        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
                 && ((e.getOwner().getId() == localPlayer.getId()) || (bv.game
-                        .getOptions().booleanOption("team_vision") //$NON-NLS-1$
+                        .getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
                 && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
             return true;
         }
@@ -587,11 +616,11 @@ class EntitySprite extends Sprite {
      */
     private boolean onlyDetectedBySensors() {
         boolean sensors = bv.game.getOptions().booleanOption(
-                "tacops_sensors");
+                OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
-                "sensors_detect_all");
+                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = bv.game.getOptions().booleanOption(
-                "double_blind");
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());
         boolean hasDetected = entity.hasDetectedEntity(bv.getLocalPlayer());
 
@@ -720,6 +749,14 @@ class EntitySprite extends Sprite {
                 PilotOptions.MD_ADVANTAGES) > 0)) 
             addToTT("MD", NOBR);
         
+        if (entity instanceof Infantry) {
+            Infantry inf = (Infantry) entity;
+            int spec = inf.getSpecializations();
+            if (spec > 0) {
+                addToTT("InfSpec", BR, Infantry.getSpecializationName(spec));
+            }
+        }
+
         // Unit movement ability
         if (thisGunEmp == null) {
             addToTT("Movement", BR, entity.getWalkMP(), entity.getRunMPasString());
@@ -825,12 +862,24 @@ class EntitySprite extends Sprite {
         if (isAffectedByECM()) {
             addToTT("Jammed", BR);
         }
-        
+
+        // Swarmed
+        if (entity.getSwarmAttackerId() != Entity.NONE) {
+            addToTT("Swarmed", BR,
+                    bv.game.getEntity(entity.getSwarmAttackerId())
+                            .getDisplayName());
+        }
+
+        // Spotting
+        if (entity.isSpotting()) {
+            addToTT("Spotting", BR, bv.game.getEntity(entity.getSpotTargetId()).getDisplayName());
+        }
+
         // If DB, add information about who sees this Entity
-        if (bv.game.getOptions().booleanOption("double_blind")) {
+        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             StringBuffer playerList = new StringBuffer();
             boolean teamVision = bv.game.getOptions().booleanOption(
-                    "team_vision");
+                    OptionsConstants.ADVANCED_TEAM_VISION);
             for (IPlayer player : entity.getWhoCanSee()) {
                 if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
                     playerList.append(player.getName());
@@ -844,7 +893,7 @@ class EntitySprite extends Sprite {
         }
 
         // If sensors, display what sensors this unit is using
-        if (bv.game.getOptions().booleanOption("tacops_sensors")) {
+        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             addToTT("Sensors", BR, entity.getSensorDesc());
         }
 
@@ -876,7 +925,7 @@ class EntitySprite extends Sprite {
                 }
                 int maxRange = RangeType.RANGE_LONG;
                 if (bv.game.getOptions().booleanOption(
-                        OptionsConstants.AC_TAC_OPS_RANGE)) {
+                        OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
                     maxRange = RangeType.RANGE_EXTREME;
                 }
                 for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
@@ -986,6 +1035,10 @@ class EntitySprite extends Sprite {
     /** Returns if the entity is marked as selected for movement etc., recoloring the label */
     public boolean getSelected() {
         return isSelected;
+    }
+
+    protected int getSpritePriority() {
+        return entity.getSpriteDrawPriority();
     }
 }
 

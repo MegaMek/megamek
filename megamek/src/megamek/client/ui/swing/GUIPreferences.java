@@ -46,12 +46,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
     public static final String ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE = "AdvancedChatLoungeTabFontSize";
+    public static final String ADVANCED_DRAW_ENTITY_LABEL = "AdvancedDrawEntityLabel";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE = "AdvancedMechDisplayArmorLargeFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE = "AdvancedMechDisplayArmorMediumFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE = "AdvancedMechDisplayArmorSmallFontSize";
     public static final String ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE = "AdvancedMechDisplayLargeFontSize";
     public static final String ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE = "AdvancedMechDisplayMediumFontSize";
     public static final String ADVANCED_MECH_DISPLAY_WRAP_LENGTH = "AdvancedMechDisplayWrapLength";
+    public static final String ADVANCED_MOVE_DEFAULT_CLIMB_MODE = "AdvancedMoveDefaultClimbMode";
     public static final String ADVANCED_MOVE_DEFAULT_COLOR = "AdvancedMoveDefaultColor";
     public static final String ADVANCED_MOVE_ILLEGAL_COLOR = "AdvancedMoveIllegalColor";
     public static final String ADVANCED_MOVE_JUMP_COLOR = "AdvancedMoveJumpColor";
@@ -95,10 +97,13 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
+    public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
+    public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
     public static final String DISPLAY_POS_X = "DisplayPosX";
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
+    public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String FOCUS = "Focus";
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
@@ -210,12 +215,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
         store.setDefault(ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE, 16);
+        store.setDefault(ADVANCED_DRAW_ENTITY_LABEL, true);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE, 9);
         store.setDefault(ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_WRAP_LENGTH, 24);
+        setDefault(ADVANCED_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(ADVANCED_MOVE_DEFAULT_COLOR, "cyan");
         setDefault(ADVANCED_MOVE_ILLEGAL_COLOR, "darkGray");
         setDefault(ADVANCED_MOVE_JUMP_COLOR, "red");
@@ -263,8 +270,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CHAT_LOUNGE_TABS, true);
+        store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
+        store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
+        store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
         store.setDefault(FIRING_SOLUTIONS,true);
@@ -331,7 +341,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
-        store.setDefault(SKIN_FILE, "skins/defaultSkin.xml");
+        store.setDefault(SKIN_FILE, "BW - Default.xml");
         store.setDefault(SOFTCENTER, false);
 
         store.setDefault(RAT_TECH_LEVEL, 0);
@@ -394,6 +404,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getChatLoungeTabs() {
         return store.getBoolean(CHAT_LOUNGE_TABS);
     }
+    
+    public int getCustomUnitHeight() {
+        return store.getInt(CUSTOM_UNIT_HEIGHT);
+    }
+
+    public int getCustomUnitWidth() {
+        return store.getInt(CUSTOM_UNIT_WIDTH);
+    }
 
     public int getDisplayPosX() {
         return store.getInt(DISPLAY_POS_X);
@@ -409,6 +427,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getDisplaySizeWidth() {
         return store.getInt(DISPLAY_SIZE_WIDTH);
+    }
+
+    public boolean getEntityOwnerLabelColor() {
+        return store.getBoolean(ENTITY_OWNER_LABEL_COLOR);
     }
 
     public boolean getFocus() {
@@ -724,36 +746,36 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public String getSkinFile() {
         return store.getString(SKIN_FILE);
     }
-    
+
     public int getDefaultWeaponSortOrder() {
         return store.getInt(DEFAULT_WEAP_SORT_ORDER);
     }
 
-    public void setAntiAliasing(boolean state){
+    public void setAntiAliasing(boolean state) {
         store.setValue(ANTIALIASING, state);
     }
-    
-    public void setShadowMap(boolean state){
+
+    public void setShadowMap(boolean state) {
         store.setValue(SHADOWMAP, state);
     }
-    
-    public void setAOHexShadows(boolean state){
+
+    public void setAOHexShadows(boolean state) {
         store.setValue(AOHEXSHADOWS, state);
     }
-    
-    public void setFloatingIso(boolean state){
+
+    public void setFloatingIso(boolean state) {
         store.setValue(FLOATINGISO, state);
     }
 
-    public void setMmSymbol(boolean state){
+    public void setMmSymbol(boolean state) {
         store.setValue(MMSYMBOL, state);
     }
 
-    public void setLevelHighlight(boolean state){
+    public void setLevelHighlight(boolean state) {
         store.setValue(LEVELHIGHLIGHT, state);
     }
 
-    public boolean getShowDamageLevel(){
+    public boolean getShowDamageLevel() {
         return store.getBoolean(SHOW_DAMAGE_LEVEL);
     }
 
@@ -767,6 +789,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setChatloungeTabs(boolean state) {
         store.setValue(CHAT_LOUNGE_TABS, state);
+    }
+
+    public void setCustomUnitHeight(int state) {
+        store.setValue(CUSTOM_UNIT_HEIGHT, state);
+    }
+
+    public void setCustomUnitWidth(int state) {
+        store.setValue(CUSTOM_UNIT_WIDTH, state);
     }
 
     public void setDisplayPosX(int i) {
@@ -783,6 +813,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDisplaySizeWidth(int i) {
         store.setValue(DISPLAY_SIZE_WIDTH, i);
+    }
+
+    public void setEntityOwnerLabelColor(boolean i) {
+        store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
     }
 
     public void setGetFocus(boolean state) {

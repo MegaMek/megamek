@@ -1,5 +1,4 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
@@ -7,10 +6,6 @@
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Hi-Scout Drone
@@ -25,7 +20,7 @@ Hi-Scout Drone
 </year>
 
 <source>
-RS 3039 Unabriged
+TRO 3039 - Succession Wars
 </source>
 
 <type>
@@ -41,8 +36,12 @@ Hover
 </motion_type>
 
 <engine_type>
-1
+6
 </engine_type>
+
+<fuel>
+.033
+</fuel>
 
 <cruiseMP>
 15

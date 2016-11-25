@@ -48,10 +48,16 @@ public enum KeyCommandBind {
     FIRE("fire", false, KeyEvent.VK_F, 0), // Default: F
     NEXT_WEAPON("nextWeapon", false, KeyEvent.VK_E, 0), // Default: E
     PREV_WEAPON("prevWeapon", false, KeyEvent.VK_Q, 0), // Default: Q
-    NEXT_UNIT("nextUnit", false, KeyEvent.VK_C, 0), // Default: C
-    PREV_UNIT("prevUnit", false, KeyEvent.VK_Z, 0), // Default: Z
-    NEXT_TARGET("nextTarget", false, KeyEvent.VK_E, InputEvent.SHIFT_MASK), // Default: Shift-E
-    PREV_TARGET("prevTarget", false, KeyEvent.VK_Q, InputEvent.SHIFT_MASK), // Default: Shift-Q
+    NEXT_UNIT("nextUnit", false, KeyEvent.VK_E, InputEvent.SHIFT_MASK), // Default: Shift-E
+    PREV_UNIT("prevUnit", false, KeyEvent.VK_Q, InputEvent.SHIFT_MASK), // Default: Shift0Q
+    NEXT_TARGET("nextTarget", false, KeyEvent.VK_C, 0), // Default: C
+    PREV_TARGET("prevTarget", false, KeyEvent.VK_Z, 0), // Default: Z
+    NEXT_TARGET_VALID("nextTargetValid", false, KeyEvent.VK_C, InputEvent.SHIFT_MASK), // Default: Shift-C
+    PREV_TARGET_VALID("prevTargetValid", false, KeyEvent.VK_Z, InputEvent.SHIFT_MASK), // Default: Shift-Z
+    NEXT_TARGET_NOALLIES("nextTargetNoAllies", false, KeyEvent.VK_C, InputEvent.CTRL_MASK), // Default: Ctrl-C
+    PREV_TARGET_NOALLIES("prevTargetNoAllies", false, KeyEvent.VK_Z, InputEvent.CTRL_MASK), // Default: Ctrl-Z
+    NEXT_TARGET_VALID_NO_ALLIES("nextTargetValidNoAllies", false, KeyEvent.VK_C, InputEvent.CTRL_MASK & InputEvent.SHIFT_MASK), // Default: Ctrl-Shift-C
+    PREV_TARGET_VALID_NO_ALLIES("prevTargetValidNoAllies", false, KeyEvent.VK_Z, InputEvent.CTRL_MASK & InputEvent.SHIFT_MASK), // Default: Ctrl-Shift-Z
     // Undo an action, such as a move step in the movement phase
     UNDO("undo",false, KeyEvent.VK_BACK_SPACE, 0), // Default: Backspace
     MOVE_ENVELOPE("movementEnvelope",false, KeyEvent.VK_R, 0), // Default: R
@@ -69,8 +75,12 @@ public enum KeyCommandBind {
     UD_WEAPONS("udWeapons", false, KeyEvent.VK_F5, 0), // Default: F5
     UD_EXTRAS("udExtras", false, KeyEvent.VK_F6, 0), // Default: F6
     /** Toggles between Jumping and Walk/Run, also acts as a reset when a unit cannot jump */
-    TOGGLE_MOVEMODE("toggleJump", false, KeyEvent.VK_J, 0); // Default: J
-    
+    TOGGLE_MOVEMODE("toggleJump", false, KeyEvent.VK_J, 0), // Default: J
+    PREV_MODE("prevMode", false, KeyEvent.VK_TAB, InputEvent.CTRL_MASK), // Default: Tab
+    NEXT_MODE("nextMode", false, KeyEvent.VK_TAB, 0), // Default: Tab
+    TOGGLE_DRAW_LABELS("toggleDrawLabels", false, KeyEvent.VK_Y, 0); // Default: Y
+
+
     /**
      * The command associated with this binding.
      */

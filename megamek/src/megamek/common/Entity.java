@@ -29,11 +29,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
@@ -214,7 +216,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the engine and structural tech ratings match.
      */
     protected int engineTechRating = USE_STRUCTURAL_RATING;
-    protected Engine engine;
+    private Engine engine;
     protected boolean mixedTech = false;
     protected boolean designValid = true;
     protected boolean useManualBV = false;
@@ -273,6 +275,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean unjammingRAC = false;
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
+    protected boolean selfDestructedThisTurn = false;
     /**
      * Variable to store the state of a possible externally mounted searchlight.
      * True if an operable searchlight is externally mounted, false if one isn't
@@ -635,8 +638,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean canon;
 
     private int assaultDropInProgress = 0;
-    private boolean climbMode = false; // save climb mode from turn to turn for
-    // convenience
+    private boolean climbMode = GUIPreferences.getInstance()
+            .getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE);
 
     protected int lastTarget = Entity.NONE;
     protected String lastTargetDisplayName = "";
@@ -945,6 +948,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @param game the game.
      */
+    @Override
     public void setGame(IGame game) {
         this.game = game;
         restore();
@@ -1166,13 +1170,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * be an enemy of itself.
      */
     public boolean isEnemyOf(Entity other) {
-        if (other == null) {
+        if(null == other) {
             return false;
         }
-        if (null == owner) {
+        if(null == owner) {
             return ((id != other.getId()) && (ownerId != other.ownerId));
         }
-        return (id != other.getId()) && owner.isEnemyOf(other.getOwner());
+        return (id != other.getId())
+            && ((null == other.getOwner()) || owner.isEnemyOf(other.getOwner()));
     }
 
     public Crew getCrew() {
@@ -1229,14 +1234,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     // Targetable interface
+    @Override
     public int getTargetType() {
         return Targetable.TYPE_ENTITY;
     }
 
+    @Override
     public int getTargetId() {
         return getId();
     }
 
+    @Override
     public int getHeight() {
         return height();
     }
@@ -1355,6 +1363,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Is this entity shut down or is the crew unconscious?
      */
+    @Override
     public boolean isImmobile() {
         return isShutDown() || ((crew != null) && crew.isUnconscious());
     }
@@ -1464,6 +1473,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * named getLocation(), since I want the word location to refer to hit
      * locations on a mech or vehicle.
      */
+    @Override
     public Coords getPosition() {
         return position;
     }
@@ -1676,6 +1686,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns the elevation of this entity, relative to the current Hex's
      * surface
      */
+    @Override
     public int getElevation() {
         if (Entity.NONE != getTransportId()) {
             return game.getEntity(getTransportId()).getElevation();
@@ -1915,6 +1926,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the surface of the hex the entity is in , i.e.
      * relHeight() == getElevation() + getHeight()
      */
+    @Override
     public int relHeight() {
         return getElevation() + height();
     }
@@ -1922,6 +1934,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Returns the display name for this entity.
      */
+    @Override
     public String getDisplayName() {
         if (displayName == null) {
             generateDisplayName();
@@ -2080,7 +2093,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                  || (wtype.getAmmoType() == AmmoType.T_LAC))
                 && mounted.isJammed()
                 && !mounted.isDestroyed()
-                && game.getOptions().booleanOption("unjam_uac")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
                 return true;
             }
         }
@@ -2156,7 +2169,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getHeatMPReduction() {
         int minus;
 
-        if ((game != null) && game.getOptions().booleanOption("tacops_heat")) {
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
             if (heat < 30) {
                 minus = (heat / 5);
             } else if (heat >= 49) {
@@ -2926,7 +2939,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (heat >= 24) {
             mod++;
         }
-        boolean mtHeat = game.getOptions().booleanOption("tacops_heat");
+        boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
         if (mtHeat && (heat >= 33)) {
             mod++;
         }
@@ -2937,7 +2950,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod++;
         }
         if ((mod > 0) && (getCrew() != null)
-            && getCrew().getOptions().booleanOption("some_like_it_hot")) {
+                && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SOME_LIKE_IT_HOT)) {
             mod--;
         }
 
@@ -4351,7 +4364,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if (!isShutDown()) {
@@ -4381,10 +4394,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveAngelECM() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
-        if (game.getOptions().booleanOption("tacops_angel_ecm")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM)
             && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -4406,7 +4419,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveNovaECM() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if (!isShutDown()) {
@@ -4475,11 +4488,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveECCM() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
-        if ((game.getOptions().booleanOption("tacops_eccm") || game
-                .getOptions().booleanOption("stratops_ecm")) && !isShutDown()) {
+        if ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM) || game
+                .getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
                 // TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same
@@ -4507,8 +4520,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveAngelECCM() {
-        if (game.getOptions().booleanOption("tacops_angel_ecm")
-            && game.getOptions().booleanOption("tacops_eccm")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM)
+            && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
             && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -4534,7 +4547,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getECMRange() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return Entity.NONE;
         }
         // If we have stealth up and running, there's no bubble.
@@ -4597,7 +4610,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                getPosition(), getPosition())) {
                             return false;
                         }
-                        return true;
+                        return true;  
                     }
                     return !checkECM
                            || (game == null)
@@ -4606,13 +4619,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+       
         // check for Manei Domini implants
-        if (((crew.getOptions().booleanOption("cyber_eye_im") || crew
-                .getOptions().booleanOption("mm_eye_im"))
-             && (this instanceof Infantry) && !(this instanceof BattleArmor))
-            || (crew.getOptions().booleanOption("mm_eye_im") && (crew
-                                                                         .getOptions().booleanOption("vdni") || crew
-                                                                         .getOptions().booleanOption("bvdni")))) {
+        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO)
+        	|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)	
+        	|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
+        		&& (this instanceof Infantry) && !(this instanceof BattleArmor))
+            || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
+            		&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
+			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) 
+               
+        {
             return !checkECM
                    || !ComputeECM.isAffectedByECM(this, getPosition(),
                                                   getPosition());
@@ -4624,10 +4641,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                   getPosition());
         }
         // check for SPA
-        if (crew.getOptions().booleanOption("eagle_eyes")) {
-            return !checkECM
-                   || !ComputeECM.isAffectedByECM(this, getPosition(),
-                                                  getPosition());
+        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
+            return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
         return false;
@@ -4645,13 +4660,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         int cyberBonus = 0;
-        if (((crew.getOptions().booleanOption("cyber_eye_im") || crew
-                .getOptions().booleanOption("mm_eye_im"))
-                && (this instanceof Infantry) && !(this instanceof BattleArmor))
-                || (crew.getOptions().booleanOption("mm_eye_im") && (crew
-                        .getOptions().booleanOption("vdni") || crew
-                        .getOptions().booleanOption("bvdni")))) {
-            cyberBonus = 1;
+        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) 
+        		|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
+        		|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)
+                	&& (this instanceof Infantry) && !(this instanceof BattleArmor))        		
+                || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
+                	&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
+    			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) {
+            cyberBonus = 2;
         }
 
         // check for quirks
@@ -4664,7 +4680,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check for SPA
         int spaBonus = 0;
-        if (crew.getOptions().booleanOption("eagle_eyes")) {
+        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
             spaBonus = 1;
         }
 
@@ -4946,8 +4962,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         if ((this instanceof Infantry) && (null != crew)
-            && crew.getOptions().booleanOption("mm_eye_im")
-            && crew.getOptions().booleanOption("boost_comm_implant")) {
+            && crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS)
+            && crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
             return true;
         }
         return false;
@@ -5437,6 +5453,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @param roundNumber the <code>int</code> number of the new round
      */
+    @Override
     public void newRound(int roundNumber) {
         fell = false;
         struck = false;
@@ -5604,6 +5621,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         clearAttackedByThisTurn();
 
         setMadePointblankShot(false);
+
+        setSelfDestructedThisTurn(false);
+
+        setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
     }
 
     /**
@@ -5879,12 +5900,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean useGeometricMeanBV() {
         return useGeometricBV || ((game != null)
-                                  && game.getOptions().booleanOption("geometric_mean_bv"));
+                                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV));
     }
 
     public boolean useReducedOverheatModifierBV() {
         return (useReducedOverheatModifierBV || ((game != null)
-                                                && game.getOptions().booleanOption("reduced_overheat_modifier_bv")));
+                                                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)));
     }
 
     /**
@@ -6111,7 +6132,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_fatigue")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
             && crew.isPilotingFatigued()) {
             roll.addModifier(1, "fatigue");
         }
@@ -6136,7 +6157,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Add in any modifiers due to global conditions like light/weather/etc.
      */
     public PilotingRollData addConditionBonuses(PilotingRollData roll,
-                                                EntityMovementType moveType) {
+            EntityMovementType moveType) {
 
         if (moveType == EntityMovementType.MOVE_SPRINT) {
             roll.addModifier(2, "Sprinting");
@@ -6157,29 +6178,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
-        if ((weatherMod != 0)
-            && !game.getBoard().inSpace()
-            && ((null == crew) || !crew.getOptions().booleanOption(
-                "allweather"))) {
+        if ((weatherMod != 0) && !game.getBoard().inSpace()
+                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(weatherMod, conditions.getWeatherDisplayableName());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
-        if ((windMod != 0)
-            && !game.getBoard().inSpace()
-            && ((null == crew) || !crew.getOptions().booleanOption(
-                "allweather"))) {
+        if ((windMod != 0) && !game.getBoard().inSpace()
+                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(windMod, conditions.getWindDisplayableName());
         }
 
-        // check gravity conditions for all entities
-        int gravMod = conditions.getGravityPilotPenalty();
-        if ((gravMod != 0) && !game.getBoard().inSpace()) {
-            roll.addModifier(gravMod, "high/low gravity");
-        }
         return roll;
-
     }
 
     /**
@@ -6471,6 +6482,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (step.getMpUsed() > getJumpMP(false)) {
                     roll.append(new PilotingRollData(getId(), 0,
                             "used more MPs than at 1G possible"));
+                    int gravMod = game.getPlanetaryConditions()
+                            .getGravityPilotPenalty();
+                    if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                        roll.addModifier(gravMod, game
+                                .getPlanetaryConditions().getGravity()
+                                + "G gravity");
+                    }
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE,
                             "Check false: Entity did not use more "
@@ -6486,35 +6504,38 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Checks if the entity might skid on pavement. If so, returns the target
      * roll for the piloting skill check.
      */
-    public PilotingRollData checkSkid(EntityMovementType moveType,
-            IHex prevHex, EntityMovementType overallMoveType,
-            MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
-            Coords curPos, boolean isInfantry, int distance) {
+    public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex,
+            EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep,
+            int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+            boolean isInfantry, int distance) {
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        addPilotingModifierForTerrain(roll, lastPos);
+        // If we aren't traveling along a road, apply terrain modifiers
+        if (!((prevStep == null || prevStep.isPavementStep()) && currStep.isPavementStep())) {
+            addPilotingModifierForTerrain(roll, lastPos);
+        }
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: flyinge entities don't skid");
+                    "Check false: flyinge entities don't skid");
             return roll;
         }
 
         if (isInfantry) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: infantry don't skid");
+                    "Check false: infantry don't skid");
             return roll;
         }
 
         if (moveType == EntityMovementType.MOVE_JUMP) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: jumping entities don't skid");
+                    "Check false: jumping entities don't skid");
             return roll;
         }
 
         if ((null != prevStep) && prevStep.isHasJustStood()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: getting up entities don't skid");
+                    "Check false: getting up entities don't skid");
             return roll;
         }
 
@@ -6523,40 +6544,50 @@ public abstract class Entity extends TurnOrdered implements Transporter,
          * game.getBoard().getHex(curPos); }
          */
 
+        boolean prevStepPavement;
+        if (prevStep != null) {
+            prevStepPavement = prevStep.isPavementStep();
+        } else {
+            prevStepPavement = prevHex.hasPavement();
+        }
+
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
-        if ((prevHex != null)
-            && prevHex.containsTerrain(Terrains.ICE)
-            && (((movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE)) || ((
-                                                                                                                      (movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE)) && ((game
-                                                                                                                                                                                                                            .getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) || (game
-                                                                                                                                                                                                                                                                                                                     .getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM))))
-            && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+        if ((prevHex != null) && prevHex.containsTerrain(Terrains.ICE)
+                && (((movementMode != EntityMovementMode.HOVER)
+                        && (movementMode != EntityMovementMode.WIGE))
+                        || (((movementMode == EntityMovementMode.HOVER)
+                                || (movementMode == EntityMovementMode.WIGE))
+                                && ((game.getPlanetaryConditions()
+                                        .getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
+                                        || (game.getPlanetaryConditions()
+                                                .getWindStrength() >= PlanetaryConditions.WI_STORM))))
+                && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             roll.append(new PilotingRollData(getId(),
-                                             getMovementBeforeSkidPSRModifier(distance),
-                                             "turning on ice"));
+                    getMovementBeforeSkidPSRModifier(distance),
+                    "turning on ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
-        } else if ((prevHex != null)
-                   && (prevStep.isPavementStep()
-                       && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType
-                .MOVE_SPRINT))
-                       && (movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))
-                   && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+        } else if ((prevStepPavement
+                && ((overallMoveType == EntityMovementType.MOVE_RUN)
+                        || (overallMoveType == EntityMovementType.MOVE_SPRINT))
+                && (movementMode != EntityMovementMode.HOVER)
+                && (movementMode != EntityMovementMode.WIGE))
+                && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             if (this instanceof Mech) {
                 roll.append(new PilotingRollData(getId(),
-                                                 getMovementBeforeSkidPSRModifier(distance),
-                                                 "running & turning on pavement"));
+                        getMovementBeforeSkidPSRModifier(distance),
+                        "running & turning on pavement"));
             } else {
                 roll.append(new PilotingRollData(getId(),
-                                                 getMovementBeforeSkidPSRModifier(distance),
-                                                 "reckless driving on pavement"));
+                        getMovementBeforeSkidPSRModifier(distance),
+                        "reckless driving on pavement"));
             }
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: Entity is not apparently skidding");
+                    "Check false: Entity is not apparently skidding");
             return roll;
         }
     }
@@ -6567,20 +6598,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public PilotingRollData checkRubbleMove(MoveStep step,
             EntityMovementType moveType, IHex curHex, Coords lastPos,
-            Coords curPos, boolean isLastStep) {
+            Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         boolean enteringRubble = true;
         addPilotingModifierForTerrain(roll, curPos, enteringRubble);
 
         if (!lastPos.equals(curPos)
-            && ((moveType != EntityMovementType.MOVE_JUMP)
-                || isLastStep)
-            && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
-            && (this instanceof Mech)) {
+                && ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep)
+                && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
+                && (this instanceof Mech)) {
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: Entity is not entering rubble");
+                    "Check false: Entity is not entering rubble");
         }
 
         return roll;
@@ -6600,17 +6630,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
                 && (moveType != EntityMovementType.MOVE_JUMP)
                 && (step.getElevation() == 0) && !isPavementStep) {
-            roll.append(new PilotingRollData(getId(), bgMod,
-                    "avoid bogging down"));
+            roll.append(
+                    new PilotingRollData(getId(), bgMod, "avoid bogging down"));
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }
             addPilotingModifierForTerrain(roll, curPos, false);
             adjustDifficultTerrainPSRModifier(roll);
         } else {
-            roll.addModifier(
-                    TargetRoll.CHECK_FALSE,
-                    "Check false: Not entering bog-down terrain, or jumping/hovering over such terrain");
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: Not entering bog-down terrain, "
+                    + "or jumping/hovering over such terrain");
         }
         return roll;
     }
@@ -6645,7 +6675,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * target roll for the piloting skill check.
      */
     public PilotingRollData checkWaterMove(int waterLevel,
-                                           EntityMovementType overallMoveType) {
+            EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int mod;
@@ -6659,12 +6689,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (waterLevel > 0) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Depth "
-                                                           + waterLevel + " Water"));
+            roll.append(new PilotingRollData(getId(), mod,
+                    "entering Depth " + waterLevel + " Water"));
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: No water here.");
+                    "Check false: No water here.");
         }
 
         return roll;
@@ -6897,7 +6927,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = -1;
         }
 
-        if (getCrew().getOptions().booleanOption("maneuvering_ace")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE)) {
             mod--;
         }
 
@@ -6997,6 +7027,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    @Override
     public boolean canLoad(Entity unit) {
         return this.canLoad(unit, true);
     }
@@ -7036,6 +7067,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.load(unit, true, bayNumber);
     }
 
+    @Override
     public void load(Entity unit) {
         this.load(unit, true, -1);
     }
@@ -7183,6 +7215,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * returned <code>List</code> is independant from the under- lying
      * data structure; modifying one does not affect the other.
      */
+    @Override
     public List<Entity> getLoadedUnits() {
         List<Entity> result = new ArrayList<Entity>();
 
@@ -7587,6 +7620,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>true</code> if the unit was contained in this space,
      * <code>false</code> otherwise.
      */
+    @Override
     public boolean unload(Entity unit) {
         // Walk through this entity's transport components;
         // try to remove the unit from each in turn.
@@ -7603,6 +7637,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    @Override
     public void resetTransporter() {
         // Walk through this entity's transport components;
         // and resets them
@@ -7618,10 +7653,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @return A <code>String</code> meant for a human.
      */
+    @Override
     public String getUnusedString() {
         return getUnusedString(false);
     }
 
+    @Override
     public double getUnused() {
         double capacity = 0;
         for (Transporter transport : transports) {
@@ -7687,6 +7724,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>true</code> if a transported unit is in the way,
      * <code>false</code> if the weapon can fire.
      */
+    @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         // Walk through this entity's transport components;
         // check each for blockage in turn.
@@ -7716,6 +7754,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * location. This value will be <code>null</code> if no unit is
      * transported on the outside at that location.
      */
+    @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
         // Walk through this entity's transport components;
         // check each for an exterior unit in turn.
@@ -7732,6 +7771,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return null;
     }
 
+    @Override
     public ArrayList<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>();
         for (Transporter t : transports) {
@@ -7740,6 +7780,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return rv;
     }
 
+    @Override
     public int getCargoMpReduction() {
         int rv = 0;
         for (Transporter t : transports) {
@@ -8109,7 +8150,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return true, if the entity is active
      */
     public boolean canSpot() {
-        if (game.getOptions().booleanOption("pilots_cannot_spot")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT)
             && (this instanceof MechWarrior)) {
             return false;
         }
@@ -8312,7 +8353,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isVisibleToEnemy() {
         // If double blind isn't on, the unit is always visible
-        if ((game != null) && !game.getOptions().booleanOption("double_blind")) {
+        if ((game != null) && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
         }
         return visibleToEnemy;
@@ -8324,7 +8365,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isDetectedByEnemy() {
         // If double blind isn't on, the unit is always detected
-        if ((game != null) && !game.getOptions().booleanOption("double_blind")) {
+        if ((game != null) && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
         }
         return detectedByEnemy;
@@ -8355,7 +8396,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean hasSeenEntity(IPlayer p) {
         // No double blind - everyone sees everything
-        if ((game == null) || !game.getOptions().booleanOption("double_blind")) {
+        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
         }
         // Null players see nothing
@@ -8386,7 +8427,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
         // If team vision, see if any players on team can see
-        if (game.getOptions().booleanOption("team_vision")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
             for (IPlayer teammate : game.getPlayersVector()) {
                 if ((teammate.getTeam() == p.getTeam())
                         && entitySeenBy.contains(teammate)) {
@@ -8432,7 +8473,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasDetectedEntity(IPlayer p) {
         // No sensors - no one detects anything
         if ((game == null)
-                || !game.getOptions().booleanOption("tacops_sensors")) {
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             return false;
         }
         // Null players detect nothing
@@ -8458,7 +8499,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
         // If team vision, see if any players on team can see
-        if (game.getOptions().booleanOption("team_vision")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
             for (IPlayer teammate : game.getPlayersVector()) {
                 if ((teammate.getTeam() == p.getTeam())
                         && entityDetectedBy.contains(teammate)) {
@@ -8482,14 +8523,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean alliedUnit = 
                 !getOwner().isEnemyOf(spotter)
                 || (getOwner().getTeam() == spotter.getTeam() 
-                    && game.getOptions().booleanOption("team_vision"));
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION));
         
         boolean sensors = game.getOptions().booleanOption(
-                "tacops_sensors");
+                OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = game.getOptions().booleanOption(
-                "sensors_detect_all");
+                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = game.getOptions().booleanOption(
-                "double_blind");
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
         
         return sensors && doubleBlind && !alliedUnit && !sensorsDetectAll 
                 && !hasSeenEntity(spotter) && hasDetectedEntity(spotter);
@@ -8531,12 +8572,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isUsingManAce() {
-        return getCrew().getOptions().booleanOption("maneuvering_ace");
+        return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE);
     }
 
     public Enumeration<Entity> getKills() {
         final int killer = id;
         return game.getSelectedOutOfGameEntities(new EntitySelector() {
+            @Override
             public boolean accept(Entity entity) {
                 if (killer == entity.killerId) {
                     return true;
@@ -8549,6 +8591,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getKillNumber() {
         final int killer = id;
         return game.getSelectedOutOfGameEntityCount(new EntitySelector() {
+            @Override
             public boolean accept(Entity entity) {
                 if (killer == entity.killerId) {
                     return true;
@@ -8585,7 +8628,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // Hidden units shouldn't be counted for turn order, unless deploying
-        if (isHidden() && phase != IGame.Phase.PHASE_DEPLOYMENT) {
+        if (isHidden() && phase != Phase.PHASE_DEPLOYMENT
+                && phase != Phase.PHASE_FIRING) {
             return false;
         }
 
@@ -8650,7 +8694,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // check game options
-        if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_FIRING)) {
             return true;
         }
 
@@ -8687,14 +8731,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return false;
         }
         // check game options
-        if (!game.getOptions().booleanOption("skip_ineligable_movement")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT)) {
             return true;
         }
 
-        // must be active
-        if (!isActive()
+        // Must be active: this is slightly different  from isActive();
+        //   we don't want to skip manually shutdown units (so they can restart)
+        boolean isActive = (!shutDown || isManualShutdown()) && !destroyed
+                && getCrew().isActive() && !unloadedThisTurn && deployed;
+        if (!isActive
             || (isImmobile() && !isManualShutdown() && !canUnjamRAC() &&
-                !game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT))) {
+                !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT))) {
             return false;
         }
 
@@ -8738,8 +8785,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isEligibleForPhysical() {
         boolean canHit = false;
-        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
+        if ((this instanceof Infantry)
+                && hasWorkingMisc(MiscType.F_TOOLS,
+                        MiscType.S_DEMOLITION_CHARGE)) {
+            IHex hex = game.getBoard().getHex(getPosition());
+            return hex.containsTerrain(Terrains.BUILDING);
+        }
         // only mechs and protos have physical attacks (except tank charges)
         if (!((this instanceof Mech) || (this instanceof Protomech) || (this instanceof Infantry))) {
             return false;
@@ -8753,7 +8806,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // check game options
-        if (game.getOptions().booleanOption("no_clan_physical") && isClan()
+        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan()
             && !hasINarcPodsAttached() && (getSwarmAttackerId() == NONE)) {
             return false;
         }
@@ -8764,7 +8817,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
 
-        if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL)) {
             return true;
         }
 
@@ -8812,7 +8865,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // check if we can dodge and target can attack us,
             // then we are eligible.
             canHit |= ((this instanceof Mech) && !isProne()
-                       && getCrew().getOptions().booleanOption("dodge_maneuver") && Compute
+                       && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER) && Compute
                     .canPhysicalTarget(game, target.getId(), this));
         }
 
@@ -8853,7 +8906,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isEligibleForArtyAutoHitHexes() {
         return isEligibleForTargetingPhase()
                && (isOffBoard() || game.getOptions().booleanOption(
-                "on_map_predesignate"));
+                OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE));
     }
 
     public boolean isEligibleForTargetingPhase() {
@@ -8908,6 +8961,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *
      * @see megamek.common.Targetable#isOffBoard()
      */
+    @Override
     public boolean isOffBoard() {
         return offBoardDistance > 0;
     }
@@ -9255,6 +9309,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getShortRangeModifier() {
         int mod = 0;
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_MEDIUM)) {
+            mod = 2;
+        }
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LONG)) {
+            mod = 4;
+        }
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
+            mod = 6;
+        }
+        if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
+            mod = mod / 2;
+        }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_S)) {
             mod--;
         }
@@ -9272,7 +9338,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getMediumRangeModifier() {
         int mod = 2;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_MEDIUM)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_M)) {
@@ -9286,7 +9355,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLongRangeModifier() {
         int mod = 4;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LONG)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_L)) {
@@ -9306,7 +9378,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getExtremeRangeModifier() {
         int mod = 6;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
             mod = mod / 2;
         }
         return mod;
@@ -9314,9 +9389,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLOSRangeModifier() {
         int mod = 8;
-        if (getCrew().getOptions().booleanOption("sniper")) {
-            mod = mod / 2;
-        }
         return mod;
     }
 
@@ -9633,12 +9705,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean hasEiCockpit() {
         return ((game != null) && game.getOptions().booleanOption(
-                "all_have_ei_cockpit"));
+                OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT));
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && getCrew().getOptions().booleanOption(
-                "ei_implant"));
+        return (hasEiCockpit() && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_EI_IMPLANT));
     }
 
     public boolean isLayingMines() {
@@ -9663,10 +9734,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    @Override
     public int sideTable(Coords src) {
         return sideTable(src, false);
     }
 
+    @Override
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src, usePrior, facing);
     }
@@ -9710,7 +9783,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         boolean targetIsTank = (this instanceof Tank)
                                || (game.getOptions().booleanOption(
-                "tacops_advanced_mech_hit_locations") && (this instanceof QuadMech));
+                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS) && (this instanceof QuadMech));
         if (targetIsTank) {
             if ((leftBetter == 1) && (fa == 150)) {
                 return ToHitData.SIDE_REAR;
@@ -9892,6 +9965,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public Engine getEngine() {
         return engine;
+    }
+    
+    public boolean hasEngine() {
+        return (null != engine);
+    }
+    
+    public void setEngine(Engine e) {
+        engine = e;
     }
 
     public boolean itemOppositeTech(String s) {
@@ -10162,6 +10243,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return roll;
     }
 
+    @Override
     public boolean isAirborneVTOLorWIGE() {
         // stuff that moves like a VTOL is flying unless at elevation 0 or on
         // top of/in a building,
@@ -10236,12 +10318,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // If we're using the unofficial option for single fighters staying
         // standard scale & we're not a member of a squadron... then false.
         if (!lounge && isFighter()
-            && game.getOptions().booleanOption("single_no_cap")
+            && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_SINGLE_NO_CAP)
             && !isPartOfFighterSquadron()) {
             return false;
         }
 
-        return game.getOptions().booleanOption("stratops_capital_fighter")
+        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)
                && isFighter();
     }
 
@@ -10680,15 +10762,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         for (Mounted mounted : getWeaponList()) {
             if ((mounted.getType() instanceof GaussWeapon)
-                && gameOpts.booleanOption("tacops_gauss_weapons")) {
+                && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS)) {
                 String[] modes = {"Powered Up", "Powered Down"};
                 ((WeaponType) mounted.getType()).setModes(modes);
                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
             } else if ((mounted.getType() instanceof ACWeapon)
-                       && gameOpts.booleanOption("tacops_rapid_ac")) {
+                       && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
                 String[] modes = {"", "Rapid"};
                 ((WeaponType) mounted.getType()).setModes(modes);
-                if (gameOpts.booleanOption("kind_rapid_ac")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC)) {
                     mounted.setKindRapidFire(true);
                 }
             } else if (mounted.getType() instanceof ISBombastLaser) {
@@ -10709,14 +10791,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 modes.add("");
-                if (gameOpts.booleanOption("stratops_bracket_fire")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
                     modes.add("Bracket 80%");
                     modes.add("Bracket 60%");
                     modes.add("Bracket 40%");
                 }
                 if (((mounted.getType() instanceof CapitalLaserBayWeapon)
                      || (mounted.getType() instanceof SCLBayWeapon))
-                    && gameOpts.booleanOption("stratops_aaa_laser")) {
+                    && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER)) {
                     modes.add("AAA");
                     ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
                 }
@@ -10725,7 +10807,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                       .toArray(stringArray));
                 }
             } else if (mounted.getType().hasFlag(WeaponType.F_AMS)
-                       && !gameOpts.booleanOption("auto_ams")) {
+                       && !gameOpts.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 Enumeration<EquipmentMode> modeEnum = mounted.getType().getModes();
                 ArrayList<String> newModes = new ArrayList<>();
                 while (modeEnum.hasMoreElements()) {
@@ -10745,7 +10827,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_BAP)
                 && (this instanceof Aero)
-                && gameOpts.booleanOption("stratops_ecm")) {
+                && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 modes.add("Short");
@@ -10758,22 +10840,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 ArrayList<String> modes = new ArrayList<String>();
                 modes.add("ECM");
                 String[] stringArray = {};
-                if (gameOpts.booleanOption("tacops_eccm")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");
                     }
-                } else if (gameOpts.booleanOption("stratops_ecm")
+                } else if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
                            && (this instanceof Aero)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");
                     }
                 }
-                if (gameOpts.booleanOption("tacops_ghost_target")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET)) {
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & Ghost Targets");
-                        if (gameOpts.booleanOption("tacops_eccm")) {
+                        if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)) {
                             modes.add("ECCM & Ghost Targets");
                         }
                     } else {
@@ -10823,7 +10905,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (this instanceof Aero) {
             return 3;
         } else {
-            if (game.getOptions().booleanOption("tacops_skilled_evasion")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION)) {
                 int piloting = crew.getPiloting();
                 if (piloting < 2) {
                     return 3;
@@ -11021,7 +11103,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // E(C)CM operates differently in space (SO pg 110)
         if (game.getBoard().inSpace()) {
             // No ECM in space unless SO rule is on
-            if (!game.getOptions().booleanOption("stratops_ecm")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 return null;
             }
             int range = getECMRange();
@@ -11102,7 +11184,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // E(C)CM operates differently in space (SO pg 110)
         if (game.getBoard().inSpace()) {
             // No ECCM in space unless SO rule is on
-            if (!game.getOptions().booleanOption("stratops_ecm")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 return null;
             }
             int bapRange = getBAPRange();
@@ -11256,13 +11338,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * @return the initiative bonus this Entity grants for MD implants
      */
-    public int getMDIniBonus() {
-        if (crew.getOptions().booleanOption("comm_implant")
-            || crew.getOptions().booleanOption("boost_comm_implant")) {
-            return 1;
-        }
-        return 0;
-    }
+	/*
+	 * This has been removed in IO see pg 78
+	 * 
+	 * public int getMDIniBonus() { if
+	 * (crew.getOptions().booleanOption(OptionsConstants.MD_COMM_IMPLANT) ||
+	 * crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT))
+	 * { return 1; } return 0; }
+	 */
 
     /**
      * @return the initiative bonus this Entity grants for quirks
@@ -11649,7 +11732,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean hasQuirk(String name) {
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
         return quirks.booleanOption(name);
@@ -11679,7 +11762,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 
@@ -11703,7 +11786,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
         
@@ -11737,7 +11820,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 
@@ -11768,7 +11851,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         StringBuffer qrk = new StringBuffer();
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return qrk.toString();
         }
 
@@ -11823,13 +11906,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int range = getActiveSensor().getRangeByBracket();
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
-        if (game.getOptions().booleanOption("inclusive_sensor_range")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
                + maxSensorRange + ")";
     }
 
+    @Override
     public boolean isAirborne() {
         return (getAltitude() > 0)
                || (getMovementMode() == EntityMovementMode.AERODYNE)
@@ -11878,6 +11962,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         startingPos = i;
     }
 
+    @Override
     public int getAltitude() {
         return altitude;
     }
@@ -12486,10 +12571,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // finish the max heat calculations
         if (this.getJumpMP() > 0) {
             totalHeat += getJumpHeat(getJumpMP());
-        } else {
-            if ((this instanceof Mech) && !((Mech) this).isIndustrial()) {
-                totalHeat += getEngine().getRunHeat(this);
-            }
+        } else if ((this instanceof Mech) && !((Mech) this).isIndustrial() && hasEngine()) {
+            totalHeat += getEngine().getRunHeat(this);
         }
 
         for (Mounted mount : getWeaponList()) {
@@ -12561,6 +12644,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return 4;
     }
 
+    @Override
     public Map<Integer, Coords> getSecondaryPositions() {
         return secondaryPositions;
     }
@@ -12619,7 +12703,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public double getPowerAmplifierWeight() {
         // If we're fusion- or fission-powered, we need no amplifiers to begin
         // with.
-        if (engine.isFusion() || (engine.getEngineType() == Engine.FISSION)) {
+        if(hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
             return 0.0;
         }
         // Otherwise we need to iterate over our weapons, find out which of them
@@ -12875,9 +12959,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getMASCTarget() {
-        if (game.getOptions().booleanOption("alternate_masc_enhanced")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
             return ALTERNATE_MASC_FAILURE_ENHANCED[nMASCLevel];
-        } else if (game.getOptions().booleanOption("alternate_masc")) {
+        } else if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
             return ALTERNATE_MASC_FAILURE[nMASCLevel];
         } else {
             return MASC_FAILURE[nMASCLevel];
@@ -13391,6 +13475,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         selfDestructInitiated = tf;
     }
 
+    public boolean getSelfDestructedThisTurn() {
+        return selfDestructedThisTurn;
+    }
+
+    public void setSelfDestructedThisTurn(boolean tf) {
+        selfDestructedThisTurn = tf;
+    }
+
     public void setIsJumpingNow(boolean jumped) {
         isJumpingNow = jumped;
     }
@@ -13545,6 +13637,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
     }
 
+    @Override
     public void newPhase(IGame.Phase phase) {
         for (Mounted m : getEquipment()) {
             m.newPhase(phase);
@@ -13579,7 +13672,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getTechLevelYear() {
         if (game != null) {
-            return game.getOptions().intOption("year");
+            return game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         }
         return year;
     }
@@ -13728,7 +13821,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getAllowedPhysicalAttacks() {
-        if ((null != crew) && crew.getOptions().booleanOption("melee_master")) {
+        if ((null != crew) && crew.getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER)) {
             return 2;
         }
         return 1;
@@ -13757,7 +13850,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             WeaponType type = (WeaponType) weapon.getType();
             int range = (game.getOptions().booleanOption(
-                    OptionsConstants.AC_TAC_OPS_RANGE) ? type.getExtremeRange()
+                    OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ? type.getExtremeRange()
                     : type.getLongRange());
             if (range > maxRange) {
                 maxRange = range;
@@ -13992,5 +14085,54 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setEngineTechRating(int engineTechRating) {
         this.engineTechRating = engineTechRating;
+    }
+
+    /**
+     * This method (and getActiveSubEntities()) is meant for groups of entities handled as a
+     * singular one. Examples include fighter squadrons on space maps or lances in BattleForce
+     * game modes.
+     * <p>
+     * To check if a given entity consists of multiple sub-entities, use
+     * <pre>
+     * if(entity.getSubEntities().isPresent()) {
+     *     ...
+     * }
+     * </pre>
+     * To iterate over entities (if present), use:
+     * <pre>
+     * entity.getSubEntities().ifPresent(entities -> entities.forEach(
+     *     subEntity -> {
+     *         ...
+     *     });
+     * </pre>
+     * 
+     * @return an optional collection of sub-entities, if this entity is considered a grouping of them.
+     */
+    public Optional<List<Entity>> getSubEntities() {
+        return Optional.empty();
+    }
+    
+    /**
+     * The default implementation calls getSubEntities(), then filters them. This might not be
+     * the optimal code for many applications, so feel free to override both if needed.
+     * 
+     * @return an optional collection of sub-entities, if this entity is considered a grouping of them,
+     *         pre-filtered to only contain active (non-destroyed and non-doomed) entities.
+     */
+    public Optional<List<Entity>> getActiveSubEntities() {
+        return getSubEntities().map(
+            ents -> ents.stream().filter(
+                ent -> !(ent.isDestroyed() || ent.isDoomed())).collect(Collectors.toList()));
+    }
+    
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 0;
     }
 }

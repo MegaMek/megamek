@@ -1,5 +1,0 @@
-Neoancient Chaos March 3060 Medium Aerospace Fighters
-@Neoancient Liao 3055 Medium Aerospace Fighters D,1
-@Neoancient Marik 3055 Medium Aerospace Fighters D,1
-@Neoancient Steiner 3055 Medium Aerospace Fighters D,2
-Lightning LTN-G15,100

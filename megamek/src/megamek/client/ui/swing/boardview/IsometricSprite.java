@@ -19,6 +19,7 @@ import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IPlayer;
 import megamek.common.options.IOptions;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Sprite used for isometric rendering to render an entity partially hidden
@@ -176,9 +177,9 @@ class IsometricSprite extends Sprite {
             g.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.5f));
         }
-        g.drawImage(bv.tileManager.imageFor(entity, secondaryPos),
-                0, 0, this);
-        image = bv.getScaledImage(image, false);
+        g.drawImage(bv.getScaledImage(
+                bv.tileManager.imageFor(entity, secondaryPos), true), 0, 0,
+                this);
         g.dispose();
     }
     
@@ -192,9 +193,9 @@ class IsometricSprite extends Sprite {
             return false;
         }
         IOptions opts = this.bv.game.getOptions();
-        if (opts.booleanOption("double_blind") //$NON-NLS-1$
+        if (opts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
                 && ((e.getOwner().getId() == localPlayer.getId()) 
-                        || (opts.booleanOption("team_vision") //$NON-NLS-1$
+                        || (opts.booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
                 && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
             return true;
         }
@@ -209,11 +210,11 @@ class IsometricSprite extends Sprite {
      */
     private boolean onlyDetectedBySensors() {
         boolean sensors = bv.game.getOptions().booleanOption(
-                "tacops_sensors");
+                OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
-                "sensors_detect_all");
+                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = bv.game.getOptions().booleanOption(
-                "double_blind");
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());
         boolean hasDetected = entity.hasDetectedEntity(bv.getLocalPlayer());
 
@@ -226,4 +227,7 @@ class IsometricSprite extends Sprite {
         }
     }
 
+    protected int getSpritePriority() {
+        return entity.getSpriteDrawPriority();
+    }
 }

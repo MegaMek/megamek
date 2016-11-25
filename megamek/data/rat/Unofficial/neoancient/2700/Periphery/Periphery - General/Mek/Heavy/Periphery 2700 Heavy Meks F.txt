@@ -1,5 +1,0 @@
-Neoancient Periphery 2700 Heavy Meks F
-Catapult CPLT-A1,13
-Catapult CPLT-C1,31
-Catapult CPLT-C4,13
-Orion ON1-K,100

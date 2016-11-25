@@ -53,6 +53,16 @@ import megamek.common.util.StringUtil;
  */
 public class HexTileset {
 
+    /**
+     * The image width of a hex image.
+     */
+    public static int HEX_W = 84;
+
+    /**
+     * The image height of a hex image.
+     */
+    public static int HEX_H = 72;
+
     public static String TRANSPARENT_THEME = "transparent";
 
     private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
@@ -141,7 +151,12 @@ public class HexTileset {
         for (Iterator<HexEntry> i = ortho.iterator(); i.hasNext();) {
             HexEntry entry = i.next();
             if (orthoMatch(hex, entry.getHex()) >= 1.0) {
-                matches.add(entry.getImage(comp, hex.getCoords().hashCode()));
+                Image img = entry.getImage(comp, hex.getCoords().hashCode());
+                if (img != null) {
+                    matches.add(img);
+                } else {
+                    matches.add(ImageUtil.createAcceleratedImage(HEX_W, HEX_H));
+                }
                 // remove involved terrain from consideration
                 int terrTypes[] = entry.getHex().getTerrainTypes();
                 for (int j = 0; j < terrTypes.length; j++) {
@@ -167,7 +182,12 @@ public class HexTileset {
         for (Iterator<HexEntry> i = supers.iterator(); i.hasNext();) {
             HexEntry entry = i.next();
             if (superMatch(hex, entry.getHex()) >= 1.0) {
-                matches.add(entry.getImage(comp, hex.getCoords().hashCode()));
+                Image img = entry.getImage(comp, hex.getCoords().hashCode());
+                if (img != null) {
+                    matches.add(img);
+                } else {
+                    matches.add(ImageUtil.createAcceleratedImage(HEX_W, HEX_H));
+                }
                 // remove involved terrain from consideration
                 int terrTypes[] = entry.getHex().getTerrainTypes();
                 for (int j = 0; j < terrTypes.length; j++) {
@@ -212,7 +232,11 @@ public class HexTileset {
             }
         }
 
-        return bestMatch.getImage(comp, hex.getCoords().hashCode());
+        Image img = bestMatch.getImage(comp, hex.getCoords().hashCode());
+        if (img == null) {
+            img = ImageUtil.createAcceleratedImage(HEX_W, HEX_H);
+        }
+        return img;
     }
 
     // perfect match
@@ -512,6 +536,9 @@ public class HexTileset {
                 || ((com.getTheme() != null) && com.getTheme()
                         .equalsIgnoreCase(org.getTheme()))) {
             theme = 1.0;
+        } else if ((org.getTheme() != null) && (com.getTheme() == null)) {
+            // If no precise themed match, slightly favor unthemed comparisons
+            theme = 0.001;
         } else {
             // also don't throw a match entirely out because the theme is off
             theme = 0.0001;
@@ -561,6 +588,9 @@ public class HexTileset {
                 Image image = ImageUtil.loadImageFromFile(imgFile.toString(), comp.getToolkit());
                 if(null != image) {
                     images.add(image);
+                } else {
+                    System.out.println("Received null image from "
+                            + "ImageUtil.loadImageFromFile!  File: " + imgFile);
                 }
             }
         }

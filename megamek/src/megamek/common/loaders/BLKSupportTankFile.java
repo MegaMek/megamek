@@ -81,6 +81,10 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("engine_type")) {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
+        // TODO: At some point fix this to throw an error if missing
+        if (dataFile.exists("fuel")) {
+            t.setFuelTonnage(dataFile.getDataAsDouble("fuel")[0]);
+        }
         int engineFlags = Engine.TANK_ENGINE | Engine.SUPPORT_VEE_ENGINE;
         if (t.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;

@@ -114,8 +114,9 @@ public class TestMech extends TestEntity {
     @Override
     public double getWeightPowerAmp() {
         if (mech.isIndustrial()
-                && ((mech.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) || (mech
-                        .getEngine().getEngineType() == Engine.FUEL_CELL))) {
+                && (!mech.hasEngine()
+                    || (mech.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
+                    || (mech.getEngine().getEngineType() == Engine.FUEL_CELL))) {
             double powerAmpWeight = 0;
             for (Mounted m : mech.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
@@ -124,8 +125,7 @@ public class TestMech extends TestEntity {
                 }
                 if ((m.getLinkedBy() != null)
                         && (m.getLinkedBy().getType() instanceof MiscType)
-                        && m.getLinkedBy().getType()
-                                .hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                        && m.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)) {
                     powerAmpWeight += ((MiscType) m.getLinkedBy().getType())
                             .getTonnage(mech);
                 }
@@ -172,7 +172,8 @@ public class TestMech extends TestEntity {
             retVal /= 2;
         } else if (mech.getGyroType() == Mech.GYRO_COMPACT) {
             retVal *= 1.5;
-        } else if (mech.getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+        } else if ((mech.getGyroType() == Mech.GYRO_HEAVY_DUTY)
+                || (mech.getGyroType() == Mech.GYRO_SUPERHEAVY)) {
             retVal *= 2;
         } else if (mech.getGyroType() == Mech.GYRO_NONE) {
             retVal = 0;

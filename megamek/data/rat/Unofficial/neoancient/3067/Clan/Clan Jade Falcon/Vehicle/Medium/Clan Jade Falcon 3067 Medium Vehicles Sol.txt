@@ -1,8 +1,0 @@
-Neoancient Clan Jade Falcon 3067 Medium Vehicles Sol
-@Neoancient Clan Wolf 3060 Medium Vehicles Sol,17
-@Neoancient Clan Wolf-in-Exile 3060 Medium Vehicles Sol,2
-@Neoancient Steiner 3060 Medium Vehicles C,2
-Chaparral Missile Artillery Tank (Standard),61
-Thor Artillery Vehicle (Standard),16
-Zephyr Hovertank (Royal),67
-Zephyr Hovertank (Standard),100

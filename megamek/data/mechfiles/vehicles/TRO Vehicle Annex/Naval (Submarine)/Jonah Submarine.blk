@@ -1,5 +1,4 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
@@ -7,10 +6,6 @@
 <UnitType>
 SupportTank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Jonah Submarine
@@ -25,7 +20,7 @@ JN-002
 </year>
 
 <source>
-TRO VAr
+TRO VAr - Star League
 </source>
 
 <type>
@@ -39,9 +34,6 @@ IS Level 2
 <motion_type>
 Submarine
 </motion_type>
-
-<transporters>
-</transporters>
 
 <engine_type>
 0
@@ -90,7 +82,3 @@ Remote Sensor Dispenser
 <transporters>
 standardseats:.225:3
 </transporters>
-
-
-
-

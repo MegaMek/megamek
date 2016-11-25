@@ -137,6 +137,12 @@ public class BoardEditor extends JComponent implements ItemListener,
     MegaMekController controller;
 
     /**
+     * Flag that indicates whether hotkeys should be ignored or not.  This is
+     * used for disabling hot keys when various dialogs are displayed.
+     */
+    private boolean ignoreHotKeys = false;
+
+    /**
      * Creates and lays out a new Board Editor frame.
      */
     public BoardEditor(MegaMekController c) {
@@ -646,9 +652,9 @@ public class BoardEditor extends JComponent implements ItemListener,
     /**
      * Saves the board in PNG image format.
      */
-    private void boardSaveImage() {
+    private void boardSaveImage(boolean ignoreUnits) {
         if (curfileImage == null) {
-            boardSaveAsImage();
+            boardSaveAsImage(ignoreUnits);
             return;
         }
         JDialog waitD = new JDialog(frame, Messages
@@ -666,7 +672,8 @@ public class BoardEditor extends JComponent implements ItemListener,
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(), "png", curfileImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png",
+                    curfileImage);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -721,7 +728,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Opens a file dialog box to select a file to save as; saves the board to
      * the file as an image. Useful for printing boards.
      */
-    private void boardSaveAsImage() {
+    private void boardSaveAsImage(boolean ignoreUnits) {
         JFileChooser fc = new JFileChooser(".");
         fc.setLocation(frame.getLocation().x + 150,
                        frame.getLocation().y + 100);
@@ -756,7 +763,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             }
         }
         frame.setTitle(Messages.getString("BoardEditor.title0") + curfileImage); //$NON-NLS-1$
-        boardSaveImage();
+        boardSaveImage(ignoreUnits);
     }
 
     //
@@ -837,17 +844,29 @@ public class BoardEditor extends JComponent implements ItemListener,
     //
     public void actionPerformed(ActionEvent ae) {
         if ("fileBoardNew".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardNew();
+            ignoreHotKeys = false;
         } else if ("fileBoardExpand".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardResize();
+            ignoreHotKeys = false;
         } else if ("fileBoardOpen".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardLoad();
+            ignoreHotKeys = false;
         } else if ("fileBoardSave".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardSave();
+            ignoreHotKeys = false;
         } else if ("fileBoardSaveAs".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardSaveAs();
+            ignoreHotKeys = false;
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
-            boardSaveAsImage();
+            ignoreHotKeys = true;
+            boardSaveAsImage(false);
+            ignoreHotKeys = false;
         } else if (ae.getSource().equals(butDelTerrain)
                    && (lisTerrain.getSelectedValue() != null)) {
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
@@ -973,8 +992,10 @@ public class BoardEditor extends JComponent implements ItemListener,
      * @return
      */
     public boolean shouldIgnoreHotKeys() {
-        return (about != null && about.isVisible())
-               || (help != null && help.isVisible())
-               || (setdlg != null && setdlg.isVisible());
+        return ignoreHotKeys || (about != null && about.isVisible())
+                || (help != null && help.isVisible())
+                || (setdlg != null && setdlg.isVisible()) || texElev.hasFocus()
+                || texTerrainLevel.hasFocus() || texTerrExits.hasFocus()
+                || texTheme.hasFocus();
     }
 }

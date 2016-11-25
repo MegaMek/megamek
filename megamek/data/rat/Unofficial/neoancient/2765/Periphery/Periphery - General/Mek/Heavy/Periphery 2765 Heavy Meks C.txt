@@ -1,6 +1,0 @@
-Neoancient Periphery 2765 Heavy Meks C
-Catapult CPLT-A1,12
-Catapult CPLT-C1,28
-Catapult CPLT-C4,12
-Dragon DRG-1N,100
-Orion ON1-K,89

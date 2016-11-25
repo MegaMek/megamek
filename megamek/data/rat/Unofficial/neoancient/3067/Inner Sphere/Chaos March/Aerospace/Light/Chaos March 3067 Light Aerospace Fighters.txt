@@ -1,7 +1,0 @@
-Neoancient Chaos March 3067 Light Aerospace Fighters
-@Neoancient Liao 3060 Light Aerospace Fighters D,1
-@Neoancient Marik 3060 Light Aerospace Fighters D,1
-@Neoancient Steiner 3060 Light Aerospace Fighters D,4
-Centurion CNT-1D,100
-Centurion CNT-2D,38
-Sabre SB-27,86

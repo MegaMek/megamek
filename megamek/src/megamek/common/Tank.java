@@ -212,7 +212,7 @@ public class Tank extends Entity {
      * @return The appropriate directional roll modifier.
      */
     public int getMotiveSideMod(int side) {
-        if (game.getOptions().booleanOption("tacops_vehicle_effective")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
             return 0;
         }
         switch (side) {
@@ -437,7 +437,7 @@ public class Tank extends Entity {
     @Override
     public boolean isImmobile() {
         if ((game != null)
-                && game.getOptions().booleanOption("no_immobile_vehicles")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES)) {
             return super.isImmobile();
         }
         return super.isImmobile() || m_bImmobile;
@@ -725,18 +725,18 @@ public class Tank extends Entity {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_FRONT;
                 }
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_NOSE;
                 }
             case LOC_TURRET:
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_TURRET;
                 }
                 return Compute.ARC_FORWARD;
             case LOC_TURRET_2:
                 // Doubles as chin turret location for VTOLs, for which
                 // Tank.LOC_TURRET == magic number 5 == VTOL.LOC_ROTOR.
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_TURRET;
                 }
                 return Compute.ARC_FORWARD;
@@ -747,7 +747,7 @@ public class Tank extends Entity {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_RIGHT;
                 }
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_RIGHT_BROADSIDE;
                 }
                 return Compute.ARC_RIGHTSIDE;
@@ -758,7 +758,7 @@ public class Tank extends Entity {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_LEFT;
                 }
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_LEFT_BROADSIDE;
                 }
                 return Compute.ARC_LEFTSIDE;
@@ -766,7 +766,7 @@ public class Tank extends Entity {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_REAR;
                 }
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_AFT;
                 }
                 return Compute.ARC_REAR;
@@ -863,14 +863,14 @@ public class Tank extends Entity {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
                 case 2:
-                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_CRITICAL);
                     } else {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
                     break;
                 case 3:
-                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -878,7 +878,7 @@ public class Tank extends Entity {
                     rv.setMotiveMod(motiveMod);
                     break;
                 case 4:
-                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -888,7 +888,7 @@ public class Tank extends Entity {
                 case 5:
                     if (bSide) {
                         if (game.getOptions().booleanOption(
-                                "vehicles_threshold")) {
+                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                             rv = new HitData(LOC_FRONT);
                         } else {
@@ -897,7 +897,7 @@ public class Tank extends Entity {
                         }
                     } else if (bRear) {
                         if (game.getOptions().booleanOption(
-                                "vehicles_threshold")) {
+                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                             rv = new HitData(LOC_LEFT);
                         } else {
@@ -906,7 +906,7 @@ public class Tank extends Entity {
                         }
                     } else {
                         if (game.getOptions().booleanOption(
-                                "vehicles_threshold")) {
+                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                             rv = new HitData(LOC_LEFT);
                         } else {
@@ -922,9 +922,9 @@ public class Tank extends Entity {
                 case 8:
                     if (bSide
                             && !game.getOptions().booleanOption(
-                                    "tacops_vehicle_effective")) {
+                                    OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         if (game.getOptions().booleanOption(
-                                "vehicles_threshold")) {
+                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_CRITICAL);
                         } else {
                             rv.setEffect(HitData.EFFECT_CRITICAL);
@@ -933,7 +933,7 @@ public class Tank extends Entity {
                     break;
                 case 9:
                     if (game.getOptions().booleanOption(
-                            "tacops_vehicle_effective")) {
+                            OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         if (bSide) {
                             rv = new HitData(LOC_REAR);
                         } else if (bRear) {
@@ -944,7 +944,7 @@ public class Tank extends Entity {
                     } else {
                         if (bSide) {
                             if (game.getOptions().booleanOption(
-                                    "vehicles_threshold")) {
+                                    OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                                 setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                                 rv = new HitData(LOC_REAR);
                             } else {
@@ -953,7 +953,7 @@ public class Tank extends Entity {
                             }
                         } else if (bRear) {
                             if (game.getOptions().booleanOption(
-                                    "vehicles_threshold")) {
+                                    OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                                 setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                                 rv = new HitData(LOC_RIGHT);
                             } else {
@@ -962,7 +962,7 @@ public class Tank extends Entity {
                             }
                         } else {
                             if (game.getOptions().booleanOption(
-                                    "vehicles_threshold")) {
+                                    OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                                 setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                                 rv = new HitData(LOC_LEFT);
                             } else {
@@ -1014,7 +1014,7 @@ public class Tank extends Entity {
                 case 12:
                     if (ignoreTurret) {
                         if (game.getOptions().booleanOption(
-                                "vehicles_threshold")) {
+                                OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                             setPotCrit(HitData.EFFECT_CRITICAL);
                         } else {
                             rv.setEffect(HitData.EFFECT_CRITICAL);
@@ -1029,7 +1029,7 @@ public class Tank extends Entity {
                             }
                             if (roll <= 3) {
                                 if (game.getOptions().booleanOption(
-                                        "vehicles_threshold")) {
+                                        OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                                     setPotCrit(HitData.EFFECT_CRITICAL);
                                     rv = new HitData(LOC_TURRET_2);
                                 } else {
@@ -1038,7 +1038,7 @@ public class Tank extends Entity {
                                 }
                             } else {
                                 if (game.getOptions().booleanOption(
-                                        "vehicles_threshold")) {
+                                        OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                                     setPotCrit(HitData.EFFECT_CRITICAL);
                                     rv = new HitData(LOC_TURRET);
                                 } else {
@@ -1048,7 +1048,7 @@ public class Tank extends Entity {
                             }
                         } else {
                             if (game.getOptions().booleanOption(
-                                    "vehicles_threshold")) {
+                                    OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                                 setPotCrit(HitData.EFFECT_CRITICAL);
                                 rv = new HitData(LOC_TURRET);
                             } else {
@@ -1992,8 +1992,8 @@ public class Tank extends Entity {
         }
 
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption("vdni")
-                && !getCrew().getOptions().booleanOption("bvdni")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
@@ -2142,9 +2142,9 @@ public class Tank extends Entity {
     public boolean canCharge() {
         // Tanks can charge, except Hovers when the option is set, and WIGEs
         return super.canCharge()
-                && !(game.getOptions().booleanOption("no_hover_charge") && (EntityMovementMode.HOVER == getMovementMode()))
-                && !(EntityMovementMode.WIGE == getMovementMode())
-                && !(getStunnedTurns() > 0);
+                && !(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE)
+                        && (EntityMovementMode.HOVER == getMovementMode()))
+                && !(EntityMovementMode.WIGE == getMovementMode()) && !(getStunnedTurns() > 0);
     }
 
     @Override
@@ -2413,35 +2413,37 @@ public class Tank extends Entity {
         }
 
         // Engine Costs
-        double engineCost;
-        if (isSupportVehicle()) {
-            engineCost = 5000 * getEngine().getWeightEngine(this);
-            switch (getEngine().getEngineType()) {
-                case Engine.STEAM:
-                    engineCost *= 0.8;
-                    break;
-                case Engine.COMBUSTION_ENGINE:
-                    engineCost *= 1.0;
-                    break;
-                case Engine.BATTERY:
-                    engineCost *= 1.2;
-                    break;
-                case Engine.FUEL_CELL:
-                    engineCost *= 1.4;
-                    break;
-                case Engine.SOLAR:
-                    engineCost *= 1.6;
-                    break;
-                case Engine.FISSION:
-                    engineCost *= 3;
-                    break;
-                case Engine.NORMAL_ENGINE:
-                    engineCost *= 2;
-                    break;
+        double engineCost = 0.0;
+        if(hasEngine()) {
+            if (isSupportVehicle()) {
+                engineCost = 5000 * getEngine().getWeightEngine(this);
+                switch (getEngine().getEngineType()) {
+                    case Engine.STEAM:
+                        engineCost *= 0.8;
+                        break;
+                    case Engine.COMBUSTION_ENGINE:
+                        engineCost *= 1.0;
+                        break;
+                    case Engine.BATTERY:
+                        engineCost *= 1.2;
+                        break;
+                    case Engine.FUEL_CELL:
+                        engineCost *= 1.4;
+                        break;
+                    case Engine.SOLAR:
+                        engineCost *= 1.6;
+                        break;
+                    case Engine.FISSION:
+                        engineCost *= 3;
+                        break;
+                    case Engine.NORMAL_ENGINE:
+                        engineCost *= 2;
+                        break;
+                }
+            } else {
+                engineCost = (getEngine().getBaseCost() *
+                        getEngine().getRating() * weight) / 75.0;
             }
-        } else {
-            engineCost = (getEngine().getBaseCost() *
-                    getEngine().getRating() * weight) / 75.0;
         }
         costs[i++] = engineCost;
 
@@ -2484,7 +2486,7 @@ public class Tank extends Entity {
             costs[i++] = 10000 * controlWeight;
         }
 
-        double freeHeatSinks = engine.getWeightFreeEngineHeatSinks();
+        double freeHeatSinks = (hasEngine() ? getEngine().getWeightFreeEngineHeatSinks() : 0);
         int sinks = 0;
         double turretWeight = 0;
         double paWeight = 0;
@@ -2502,7 +2504,7 @@ public class Tank extends Entity {
             }
         }
         paWeight = Math.ceil(paWeight * 2) / 2;
-        if (engine.isFusion()) {
+        if(hasEngine() && getEngine().isFusion()) {
             paWeight = 0;
         }
         turretWeight = Math.ceil(turretWeight * 2) / 2;
@@ -2634,7 +2636,7 @@ public class Tank extends Entity {
         // if the movement is illegal
         IHex occupiedHex = game.getBoard().getHex(getPosition());
         return occupiedHex.containsTerrain(Terrains.FORTIFIED)
-                && game.getOptions().booleanOption("tacops_hull_down");
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
     }
 
     public void setOnFire(boolean inferno) {
@@ -2721,10 +2723,6 @@ public class Tank extends Entity {
         return heavyMovementDamage;
     }
 
-    public void setEngine(Engine e) {
-        engine = e;
-    }
-
     @Override
     public boolean isNuclearHardened() {
         return true;
@@ -2759,7 +2757,7 @@ public class Tank extends Entity {
             roll = 12;
         }
         if ((roll < 6)
-                || (game.getOptions().booleanOption("vehicles_threshold")
+                || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                         && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }
@@ -2852,7 +2850,7 @@ public class Tank extends Entity {
                         }
                     case 10:
                         if (!engineHit) {
-                            return CRIT_ENGINE;
+                            return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
@@ -2862,10 +2860,14 @@ public class Tank extends Entity {
                             }
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit) {
-                            return CRIT_ENGINE;
-                        } else if (!getEngine().isFusion()) {
-                            return CRIT_FUEL_TANK;
+                        if(hasEngine()) {
+                            if (getEngine().isFusion() && !engineHit) {
+                                return CRIT_ENGINE;
+                            } else if (!getEngine().isFusion()) {
+                                return CRIT_FUEL_TANK;
+                            }
+                        } else {
+                            return CRIT_NONE;
                         }
                 }
             } else if ((loc == getLocTurret()) || (loc == getLocTurret2())) {
@@ -2949,13 +2951,17 @@ public class Tank extends Entity {
                         }
                     case 11:
                         if (!engineHit) {
-                            return CRIT_ENGINE;
+                            return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit) {
-                            return CRIT_ENGINE;
-                        } else if (!getEngine().isFusion()) {
-                            return CRIT_FUEL_TANK;
+                        if(hasEngine()) {
+                            if (getEngine().isFusion() && !engineHit) {
+                                return CRIT_ENGINE;
+                            } else if (!getEngine().isFusion()) {
+                                return CRIT_FUEL_TANK;
+                            }
+                        } else {
+                            return CRIT_NONE;
                         }
                 }
             }
@@ -2997,7 +3003,7 @@ public class Tank extends Entity {
                 removeTransporter(t);
             }
         }
-        if (game.getOptions().booleanOption("ba_grab_bars")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
             addTransporter(new BattleArmorHandlesTank());
         } else {
             addTransporter(new ClampMountTank());
@@ -3102,7 +3108,7 @@ public class Tank extends Entity {
      */
     @Override
     public int getForwardArc() {
-        if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
             return Compute.ARC_NOSE;
         }
         return super.getForwardArc();
@@ -3113,7 +3119,7 @@ public class Tank extends Entity {
      */
     @Override
     public int getRearArc() {
-        if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
             return Compute.ARC_AFT;
         }
         return super.getRearArc();
@@ -3228,7 +3234,7 @@ public class Tank extends Entity {
             usedSlots++;
         }
         // different engines take different amounts of slots
-        if (getEngine().isFusion()) {
+        if (hasEngine() && getEngine().isFusion()) {
             if (getEngine().getEngineType() == Engine.LIGHT_ENGINE) {
                 usedSlots++;
             }
@@ -3247,10 +3253,10 @@ public class Tank extends Entity {
                 }
             }
         }
-        if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
+        if (hasEngine() && getEngine().hasFlag(Engine.LARGE_ENGINE)) {
             usedSlots++;
         }
-        if (getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
+        if (hasEngine() && getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
             usedSlots--;
         }
         // for ammo, each type of ammo takes one slots, regardless of
@@ -3648,6 +3654,15 @@ public class Tank extends Entity {
     }
 
     /**
+     * Returns a Support units fuel allotment.
+     * 
+     * @return fuel tonnage
+     */
+    public double getFuelTonnage() {
+        return 0;
+    }
+
+    /**
      * Tanks go Hull Down slightly differently, this method accounts for this
      *
      * @see megamek.common.Entity#setHullDown(boolean)
@@ -3680,7 +3695,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isEjectionPossible() {
-        return game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT)
+        return game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT)
                 && getCrew().isActive()
                 && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
@@ -3707,5 +3722,16 @@ public class Tank extends Entity {
 
     public void setHasNoControlSystems(boolean hasNoControlSystems) {
         this.hasNoControlSystems = hasNoControlSystems;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 4;
     }
 }

@@ -4,6 +4,7 @@
 package megamek.server.commands;
 
 import megamek.common.Entity;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -29,7 +30,7 @@ public class ShowEntityCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-        if (server.getGame().getOptions().booleanOption("double_blind")) {
+        if (server.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             server.sendServerChat(connId,
                     "Sorry, this command is disabled during double blind.");
             return;

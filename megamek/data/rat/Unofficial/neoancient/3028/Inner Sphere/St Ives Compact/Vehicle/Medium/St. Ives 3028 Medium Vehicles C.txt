@@ -1,7 +1,0 @@
-Neoancient St. Ives 3028 Medium Vehicles C
-@Neoancient Liao 3000 Medium Vehicles D,16
-Condor Heavy Hover Tank (Flamer),9
-Condor Heavy Hover Tank (Standard),37
-Maxim Heavy Hover Transport (Standard),51
-Vedette Medium Tank (Liao),100
-Vedette Medium Tank (Standard),63

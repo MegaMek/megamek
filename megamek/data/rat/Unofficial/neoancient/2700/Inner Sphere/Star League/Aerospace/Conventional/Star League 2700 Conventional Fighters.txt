@@ -1,8 +1,0 @@
-Neoancient Star League 2700 Conventional Fighters
-@Neoancient Davion 2700 Conventional Fighters,1
-@Neoancient Kurita 2700 Conventional Fighters,2
-@Neoancient Liao 2700 Conventional Fighters,2
-@Neoancient Marik 2700 Conventional Fighters,2
-@Neoancient Steiner 2700 Conventional Fighters,3
-Heavy Strike Fighter Meteor,100
-Light Strike Fighter Owl,40

@@ -46,7 +46,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * @param g
      */
     public PlasmaRifleHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-                              Server s) {
+            Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
 
@@ -61,12 +61,12 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-                                      Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-                                      int bldgAbsorbs) {
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int bldgAbsorbs) {
         super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                                 nCluster, bldgAbsorbs);
+                nCluster, bldgAbsorbs);
         if (!missed
-            && ((entityTarget instanceof Mech) || (entityTarget instanceof Aero))) {
+                && ((entityTarget instanceof Mech) || (entityTarget instanceof Aero))) {
             Report r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
@@ -77,26 +77,24 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             for (int i = 0; i < nweaponsHit; i++) {
                 extraHeat += Compute.d6();
             }
-            if (entityTarget.getArmor(hit) > 0 &&
-                (entityTarget.getArmorType(hit.getLocation()) ==
-                 EquipmentType.T_ARMOR_REFLECTIVE)) {
+            if (entityTarget.getArmor(hit) > 0
+                    && (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE)) {
                 entityTarget.heatFromExternal += Math.max(1, extraHeat / 2);
                 r.add(Math.max(1, extraHeat / 2));
                 r.choose(true);
                 r.messageId = 3406;
                 r.add(extraHeat);
-                r.add(EquipmentType.armorNames
-                              [entityTarget.getArmorType(hit.getLocation())]);
-            } else if (entityTarget.getArmor(hit) > 0 &&
-                       (entityTarget.getArmorType(hit.getLocation()) ==
-                        EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit
+                        .getLocation())]);
+            } else if (entityTarget.getArmor(hit) > 0
+                    && (entityTarget.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
                 entityTarget.heatFromExternal += extraHeat / 2;
                 r.add(extraHeat / 2);
                 r.choose(true);
                 r.messageId = 3406;
                 r.add(extraHeat);
-                r.add(EquipmentType.armorNames
-                              [entityTarget.getArmorType(hit.getLocation())]);
+                r.add(EquipmentType.armorNames[entityTarget.getArmorType(hit
+                        .getLocation())]);
             } else {
                 entityTarget.heatFromExternal += extraHeat;
                 r.add(extraHeat);
@@ -118,11 +116,13 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             if (bGlancing) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
-            if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
+            if (game.getOptions().booleanOption(
+                    OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
+                    && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 toReturn -= 1;
             }
-            if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+            if (game.getOptions().booleanOption(
+                    OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                     && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
@@ -149,8 +149,8 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         bSalvo = true;
         // pain shunted infantry get half damage
         if ((target instanceof Infantry)
-            && ((Entity) target).getCrew().getOptions()
-                                .booleanOption("pain_shunt")) {
+                && ((Entity) target).getCrew().getOptions()
+                        .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             toReturn = Math.max(toReturn / 2, 1);
         }
         return toReturn;
@@ -172,7 +172,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             // normal one, so only 5 damage
         } else {
             if ((target instanceof BattleArmor)
-                && ((BattleArmor) target).isFireResistant()) {
+                    && ((BattleArmor) target).isFireResistant()) {
                 toReturn = 5;
             } else {
                 toReturn = 10 + Compute.d6(2);
@@ -184,40 +184,9 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         return toReturn;
     }
 
-    /**
-     * @return a <code>boolean</code> value indicating wether or not this attack
-     * needs further calculating, like a missed shot hitting a building,
-     * or an AMS only shooting down some missiles.
-     */
-    @Override
-    protected boolean handleSpecialMiss(Entity entityTarget,
-                                        boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
-        // Shots that miss an entity can set fires.
-        // Buildings can't be accidentally ignited,
-        // and some weapons can't ignite fires.
-        if ((entityTarget != null)
-            && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
-            server.tryIgniteHex(target.getPosition(), subjectId, true, false,
-                                new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
-                                vPhaseReport);
-        }
-
-        // shots that miss an entity can also potential cause explosions in a
-        // heavy industrial hex
-        server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
-
-        // BMRr, pg. 51: "All shots that were aimed at a target inside
-        // a building and miss do full damage to the building instead."
-        if (!targetInBuilding
-            || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
-                                        Building bldg, int hits) {
+            Building bldg, int hits) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -229,13 +198,13 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
             server.tryIgniteHex(target.getPosition(), subjectId, true, false,
-                                tn, true, -1, vPhaseReport);
+                    tn, true, -1, vPhaseReport);
         }
     }
 
     @Override
     protected void handleClearDamage(Vector<Report> vPhaseReport,
-                                     Building bldg, int nDamage) {
+            Building bldg, int nDamage) {
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -259,14 +228,14 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         // a 5 or less
         // you do a normal ignition as though for intentional fires
         if ((bldg != null)
-            && server.tryIgniteHex(target.getPosition(), subjectId, true,
-                                   false,
-                                   new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
-                                   vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, true,
+                        false,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5,
+                        vPhaseReport)) {
             return;
         }
         Vector<Report> clearReports = server.tryClearHex(target.getPosition(),
-                                                         nDamage, subjectId);
+                nDamage, subjectId);
         if (clearReports.size() > 0) {
             vPhaseReport.lastElement().newlines = 0;
         }
@@ -276,7 +245,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
 
     @Override
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,
-                                        Building bldg, int nDamage, Coords coords) {
+            Building bldg, int nDamage, Coords coords) {
         // Plasma weapons deal double damage to buildings.
         super.handleBuildingDamage(vPhaseReport, bldg, nDamage * 2, coords);
     }

@@ -48,7 +48,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage();
 
-        if (game.getOptions().booleanOption("tacops_energy_weapons")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
             && wtype.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
@@ -61,7 +61,7 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
-        if (game.getOptions().booleanOption("tacops_altdmg")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
             if (nRange <= 1) {
                 toReturn++;
             } else if (nRange <= wtype.getMediumRange()) {
@@ -71,20 +71,21 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn / 3.0);
         }        
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                                                        bDirect ? toHit.getMoS() / 3 : 0,
-                                                        wtype.getInfantryDamageClass(),
-                                                        ((Infantry) target).isMechanized());
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }

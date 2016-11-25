@@ -367,7 +367,7 @@ public class TestTank extends TestEntity {
             correct = false;
         }
         // only tanks with fusion engine can be vacuum protected
-        if (!(tank.getEngine().isFusion() 
+        if(tank.hasEngine() && !(tank.getEngine().isFusion() 
                 || (tank.getEngine().getEngineType() == Engine.FUEL_CELL)
                 || (tank.getEngine().getEngineType() == Engine.SOLAR)
                 || (tank.getEngine().getEngineType() == Engine.BATTERY)
@@ -443,6 +443,10 @@ public class TestTank extends TestEntity {
 
     @Override
     public double getWeightPowerAmp() {
+        if (getEntity().isSupportVehicle() && (getEntity().getWeight() < 5)) {
+            return 0;
+        }
+    	
         if (!engine.isFusion() && (engine.getEngineType() != Engine.FISSION)) {
             double weight = 0;
             for (Mounted m : tank.getWeaponList()) {

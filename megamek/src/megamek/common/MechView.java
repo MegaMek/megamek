@@ -22,6 +22,7 @@ package megamek.common;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collections;
 import java.util.Iterator;
 
 import megamek.client.ui.Messages;
@@ -80,6 +81,20 @@ public class MechView {
         sLoadout.append(getMisc()) // has to occur before basic is processed
                 .append("<br>") //$NON-NLS-1$
                 .append(getFailed()).append("<br>");
+
+        if (isInf) {
+            Infantry inf = (Infantry) entity;
+            if (inf.getSpecializations() > 0) {
+                sLoadout.append("<b>Infantry Specializations</b> <br>");
+                for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+                    int spec = 1 << i;
+                    if (inf.hasSpecialization(spec)) {
+                        sLoadout.append(Infantry.getSpecializationName(spec));
+                        sLoadout.append("<br>");
+                    }
+                }
+            }
+        }
         // sBasic.append(getFluffImage(entity)).append("<br>");
         sHead.append("<font size=+1><b>" + entity.getShortNameRaw()
                 + "</b></font>");
@@ -176,7 +191,7 @@ public class MechView {
         if (isMech || isVehicle
                 || (isAero && !isSmallCraft && !isJumpship && !isSquadron)) {
             sBasic.append(Messages.getString("MechView.Engine")); //$NON-NLS-1$
-            sBasic.append(entity.getEngine().getShortEngineName());
+            sBasic.append(entity.hasEngine() ? entity.getEngine().getShortEngineName() : "(none)");
             if (entity.getEngineHits() > 0) {
                 sBasic.append("<font color='red'> (" + entity.getEngineHits()
                         + " hits)</font>");
@@ -557,7 +572,7 @@ public class MechView {
         sIntArm.append("<br>"); //$NON-NLS-1$
 
         sIntArm.append(Messages.getString("MechView.ActiveFighters")) //$NON-NLS-1$
-                .append(fs.getNFighters());
+                .append(fs.getActiveSubEntities().orElse(Collections.emptyList()).size());
 
         sIntArm.append("<br>"); //$NON-NLS-1$
 

@@ -48,6 +48,7 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.SpaghettiVictoryFactory;
@@ -388,7 +389,7 @@ public class Game implements Serializable, IGame {
      */
     public void setupTeams() {
         Vector<Team> initTeams = new Vector<Team>();
-        boolean useTeamInit = getOptions().getOption("team_initiative")
+        boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
                                           .booleanValue();
 
         // Get all NO_TEAM players. If team_initiative is false, all
@@ -586,11 +587,9 @@ public class Game implements Serializable, IGame {
      */
     public boolean hasTacticalGenius(IPlayer player) {
         for (Entity entity : entities) {
-            if (entity.getCrew().getOptions().booleanOption("tactical_genius")
-                && entity.getOwner().equals(player)
-                && !entity.isDestroyed() && entity.isDeployed()
-                && !entity.isCarcass()
-                && !entity.getCrew().isUnconscious()) {
+            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MISC_TACTICAL_GENIUS)
+                    && entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed()
+                    && !entity.isCarcass() && !entity.getCrew().isUnconscious()) {
                 return true;
             }
         }
@@ -604,7 +603,7 @@ public class Game implements Serializable, IGame {
     public List<Entity> getValidTargets(Entity entity) {
         List<Entity> ents = new ArrayList<Entity>();
 
-        boolean friendlyFire = getOptions().booleanOption("friendly_fire");
+        boolean friendlyFire = getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
         for (Entity otherEntity : entities) {
             // Even if friendly fire is acceptable, do not shoot yourself
@@ -653,19 +652,19 @@ public class Game implements Serializable, IGame {
 
     public boolean isPhaseSimultaneous() {
         switch (phase) {
-            case PHASE_DEPLOYMENT:
-                return getOptions().booleanOption("simultaneous_deployment");
-            case PHASE_MOVEMENT:
-                return getOptions().booleanOption("simultaneous_movement");
-            case PHASE_FIRING:
-                return getOptions().booleanOption("simultaneous_firing");
-            case PHASE_PHYSICAL:
-                return getOptions().booleanOption("simultaneous_physical");
-            case PHASE_TARGETING:
-            case PHASE_OFFBOARD:
-                return getOptions().booleanOption("simultaneous_targeting");
-            default:
-                return false;
+        case PHASE_DEPLOYMENT:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT);
+        case PHASE_MOVEMENT:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT);
+        case PHASE_FIRING:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_FIRING);
+        case PHASE_PHYSICAL:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL);
+        case PHASE_TARGETING:
+        case PHASE_OFFBOARD:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
+        default:
+            return false;
         }
     }
 
@@ -1326,7 +1325,7 @@ public class Game implements Serializable, IGame {
 
         // And... lets get this straight now.
         if ((entity instanceof Mech)
-            && getOptions().booleanOption("conditional_ejection")) {
+            && getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
             ((Mech) entity).setAutoEject(true);
             if (((Mech) entity).hasCase()
                 || ((Mech) entity).hasCASEIIAnywhere()) {
@@ -2113,11 +2112,11 @@ public class Game implements Serializable, IGame {
         // then we might not need to remove a turn at all.
         // A turn only needs to be removed when going from 4 inf (2 turns) to
         // 3 inf (1 turn)
-        if (getOptions().booleanOption("inf_move_multi")
+        if (getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
             && (entity instanceof Infantry)
             && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getInfantryLeft(entity.getOwnerId()) % getOptions().intOption(
-                    "inf_proto_move_multi")) != 1) {
+                    OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
                 // exception, if the _next_ turn is an infantry turn, remove
                 // that
                 // contrived, but may come up e.g. one inf accidently kills
@@ -2137,11 +2136,11 @@ public class Game implements Serializable, IGame {
             }
         }
         // Same thing but for protos
-        if (getOptions().booleanOption("protos_move_multi")
+        if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)
             && (entity instanceof Protomech)
             && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
-                    .intOption("inf_proto_move_multi")) != 1) {
+                    .intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
                 // exception, if the _next_ turn is an protomek turn, remove
                 // that
                 // contrived, but may come up e.g. one inf accidently kills
@@ -2162,10 +2161,10 @@ public class Game implements Serializable, IGame {
         }
 
         // Same thing but for vehicles
-        if (getOptions().booleanOption("vehicle_lance_movement")
+        if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
             && (entity instanceof Tank) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getVehiclesLeft(entity.getOwnerId()) % getOptions()
-                    .intOption("vehicle_lance_movement_number")) != 1) {
+                    .intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER)) != 1) {
                 // exception, if the _next_ turn is a tank turn, remove that
                 // contrived, but may come up e.g. one tank accidently kills
                 // another
@@ -2185,10 +2184,10 @@ public class Game implements Serializable, IGame {
         }
 
         // Same thing but for meks
-        if (getOptions().booleanOption("mek_lance_movement")
+        if (getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
             && (entity instanceof Mech) && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getMechsLeft(entity.getOwnerId()) % getOptions()
-                    .intOption("mek_lance_movement_number")) != 1) {
+                    .intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER)) != 1) {
                 // exception, if the _next_ turn is a mech turn, remove that
                 // contrived, but may come up e.g. one mech accidently kills
                 // another
@@ -2213,9 +2212,9 @@ public class Game implements Serializable, IGame {
         //  rules, then we may be removing an infantry unit that would be
         //  considered invalid unless we don't consider the extra validity
         //  checks.
-        if ((getOptions().booleanOption("inf_move_later") &&
+        if ((getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER) &&
              (entity instanceof Infantry)) ||
-            (getOptions().booleanOption("protos_move_later") &&
+            (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER) &&
              (entity instanceof Protomech))) {
             useInfantryMoveLaterCheck = false;
         }
@@ -2403,7 +2402,7 @@ public class Game implements Serializable, IGame {
     }
 
     public void rollInitAndResolveTies() {
-        if (getOptions().booleanOption("individual_initiative")) {
+        if (getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             Vector<TurnOrdered> vRerolls = new Vector<TurnOrdered>();
             for (int i = 0; i < entities.size(); i++) {
                 Entity e = entities.get(i);
@@ -2415,7 +2414,7 @@ public class Game implements Serializable, IGame {
         } else {
             TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests,
                                                getOptions()
-                                                       .booleanOption("initiative_streak_compensation"));
+                                                       .booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
         }
         initiativeRerollRequests.removeAllElements();
 
@@ -2594,7 +2593,7 @@ public class Game implements Serializable, IGame {
         // now, clear them out
         for (i = rollsToRemove.size() - 1; i > -1; i--) {
             extremeGravityRolls.removeElementAt(rollsToRemove.elementAt(i)
-                                                             .intValue());
+                    .intValue());
         }
     }
 
@@ -2698,7 +2697,6 @@ public class Game implements Serializable, IGame {
 
     public void addReports(Vector<Report> v) {
         if (v.size() == 0) {
-            System.out.println("Game.addReports() received blank vector.");
             return;
         }
         gameReports.add(roundCount, v);
@@ -3009,10 +3007,10 @@ public class Game implements Serializable, IGame {
             Entity entity = iter.next();
             boolean excluded = false;
             if ((entity instanceof Infantry)
-                && getOptions().booleanOption("inf_move_later")) {
+                && getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) {
                 excluded = true;
             } else if ((entity instanceof Protomech)
-                       && getOptions().booleanOption("protos_move_later")) {
+                       && getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)) {
                 excluded = true;
             }
 
@@ -3321,8 +3319,8 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean gameTimerIsExpired() {
-        return ((getOptions().booleanOption("use_game_turn_limit")) && (getRoundCount() == getOptions()
-                .intOption("game_turn_limit")));
+        return ((getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT)) && (getRoundCount() == getOptions()
+                .intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT)));
     }
 
     /**
@@ -3343,7 +3341,7 @@ public class Game implements Serializable, IGame {
     // a shortcut function for determining whether vectored movement is
     // applicable
     public boolean useVectorMove() {
-        return getOptions().booleanOption("advanced_movement")
+        return getOptions().booleanOption(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT)
                && board.inSpace();
     }
 

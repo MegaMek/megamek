@@ -264,7 +264,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public EquipmentType getType() {
-        return type;
+        return (null != type) ? type : (type = EquipmentType.get(typeName));
     }
 
     /**
@@ -289,17 +289,34 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     /**
-     * Switches the equipment mode to the next available.
+     * Switches the equipment mode to the next or previous available.
      *
+     * @param forward
+     *            Flag that determines whether the mode should be advanced
+     *            forward or backwards.
      * @return new mode number, or <code>-1</code> if it's not available.
      */
-    public int switchMode() {
+    public int switchMode(boolean forward) {
         if (type.hasModes()) {
             int nMode = 0;
             if (pendingMode > -1) {
-                nMode = (pendingMode + 1) % type.getModesCount();
+                if (forward) {
+                    nMode = (pendingMode + 1) % type.getModesCount();
+                } else {
+                    nMode = (pendingMode - 1);
+                    if (nMode < 0) {
+                        nMode = type.getModesCount() - 1;
+                    }
+                }
             } else {
-                nMode = (mode + 1) % type.getModesCount();
+                if (forward) {
+                    nMode = (mode + 1) % type.getModesCount();
+                } else {
+                    nMode = (mode - 1);
+                    if (nMode < 0) {
+                        nMode = type.getModesCount() - 1;
+                    }
+                }
             }
             setMode(nMode);
             return nMode;
@@ -1534,7 +1551,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if ((null == entity)
                 || (null == entity.getGame())
                 || !entity.getGame().getOptions()
-                        .booleanOption("stratops_quirks")) {
+                        .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
         return quirks.booleanOption(name);
@@ -1547,7 +1564,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         int count = 0;
 
         if ((null == entity) || (null == entity.game)
-                || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+                || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 
@@ -1574,7 +1591,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         StringBuffer qrk = new StringBuffer();
 
         if ((null == entity) || (null == entity.game)
-                || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+                || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return qrk.toString();
         }
 

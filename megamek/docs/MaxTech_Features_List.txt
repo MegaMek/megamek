@@ -158,8 +158,8 @@ Speed demon					No
 Tactical genius				Yes
 Weapon specialist			Yes
 
-Duelling rules (p47-48)
-Individual initiative		Yes			useful for clan zellbriggen play
+Dueling rules (p47-48)
+Individual initiative		Yes			useful for clan zellbrigen play
 All other rules				No
 
 Misc. rules (p48-56)
@@ -177,12 +177,12 @@ Compact engine				Yes
 ICE engine					Yes
 Large engine				No
 XXL engine					No
-Long range targetting		Yes
-Short range targetting		Yes
-Variable range targetting	No
-Anti air targetting			Yes
+Long range targeting		Yes
+Short range targeting		Yes
+Variable range targeting	No
+Anti air targeting			Yes
 Multi-trac					No
-Enhanced sattelite uplink	No
+Enhanced satellite uplink	No
 Command console				No
 EI system					Yes			all clan mechs assumed to have it, 
 										if the pilot has the EI implant "skill"
@@ -257,7 +257,7 @@ Heat seeking missiles		No
 Smoke missiles				No
 NARC bola pod				No
 Null signature system		Yes
-PPC field inibitor			Yes
+PPC field inhibitor			Yes
 PPC capacitor				No
 X-pulse laser				Yes
 Supercharger				Yes

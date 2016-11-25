@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+.01
+</fuel>
+
 <armor>
 0
 0
@@ -77,7 +81,7 @@ pillionseats:.025:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <tonnage>

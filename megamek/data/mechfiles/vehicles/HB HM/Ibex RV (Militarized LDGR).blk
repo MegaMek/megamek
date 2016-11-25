@@ -21,7 +21,7 @@ Ibex RV
 </Model>
 
 <year>
-3063
+3064
 </year>
 
 <type>
@@ -39,6 +39,10 @@ Wheeled
 <engine_type>
 1
 </engine_type>
+
+<fuel>
+.011
+</fuel>
 
 <armor>
 2
@@ -77,13 +81,13 @@ PintleTurret
 <transporters>
 cargobay:.388:1
 troopspace:.6
+standardseats:.6:8
 </transporters>
 
 <source>
-HB HD
+HB:House Marik - Civil War
 </source>
 
 <tonnage>
 2.0
 </tonnage>
-

@@ -6,11 +6,11 @@
 # {chassis/exact} [model] [image filename]
 
 # Use exact to specify the unit exactly, for example:
-# exact "Marauder MAD-3R" "marauder.gif"
-# exact "Timber Wolf Prime" "timberwolf.gif"
+# exact "Marauder MAD-3R" ""mechs/marauder.png"
+# exact "Timber Wolf Prime" ""mechs/timberwolf.png"
 
 # You may also just specify a graphic for a chassis, for example:
-# chassis "Marauder" "marauder.gif"
+# chassis "Marauder" "mechs/marauder.png"
 
 # Images should be greyscale, 84x72 pixel GIF files with the chassis centered.
 # The tinting process is subtractive, so make images light.

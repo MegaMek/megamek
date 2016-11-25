@@ -1,0 +1,20 @@
+This optional rule was devised by TigerShark, and the description was copied from : http://bg.battletech.com/forums/index.php/topic,30779.0.html
+
+================================================================================
+
+
+This chart corrects the errors on the current Total Warfare/Tech Manual chart and streamlines the pilot skills for quick reference/usage. The only change is reducing the base piloting to 10% per level below 5 from TechManual's base 15%, making the quintessential 3/4 a 32% gain, rather than 36%.
+
+Under the current rule set, piloting BV increases generally favor the lower-skilled 'swarm' vs. the highly-skilled, smaller army. Armor and tonnage disparity is cited as the primary reason for this difference and piloting increases eventually reach a level of diminishing returns quite early. The skill table below will possibly replace the canon table in Cycle 3 of MekWars: The Wars of Reaving.
+
+        0     1     2     3     4     5     6     7     8
+0     2.70, 2.52, 2.34, 2.16, 1.98, 1.80, 1.75, 1.67, 1.59
+1     2.40, 2.24, 2.08, 1.98, 1.76, 1.60, 1.58, 1.51, 1.44
+2     2.10, 1.96, 1.82, 1.68, 1.54, 1.40, 1.33, 1.31, 1.25
+3     1.80, 1.68, 1.56, 1.44, 1.32, 1.20, 1.14, 1.08, 1.06
+4     1.50, 1.40, 1.30, 1.20, 1.10, 1.00, 0.95, 0.90, 0.85
+5     1.50, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77
+6     1.43, 1.33, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72
+7     1.36, 1.26, 1.16, 1.04, 0.92, 0.80, 0.76, 0.72, 0.68
+8     1.28, 1.19, 1.10, 1.01, 0.86, 0.75, 0.71, 0.68, 0.64
+

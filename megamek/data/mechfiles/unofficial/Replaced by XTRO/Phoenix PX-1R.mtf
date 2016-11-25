@@ -1,0 +1,152 @@
+Version:1.1
+Phoenix (3075 Version)
+PX-1R 
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2474
+Source:TRO 3075
+Rules Level:5
+
+Mass:50
+Engine:240 Fusion Engine
+Structure:Standard
+Myomer:Standard
+Cockpit:Primitive Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Single
+Walk MP:4
+Jump MP:4
+
+Armor:Primitive(Inner Sphere)
+LA Armor:13
+RA Armor:13
+LT Armor:14
+RT Armor:14
+CT Armor:17
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:3
+Particle Cannon, Right Arm
+SRM 2, Left Torso
+SRM 2, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Particle Cannon
+Particle Cannon
+Particle Cannon
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+SRM 2
+SRM 2
+IS Ammo SRM-2
+IS Ammo SRM-2
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

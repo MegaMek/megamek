@@ -1,7 +1,0 @@
-Neoancient Liao 3039 Light Aerospace Fighters A
-@Neoancient Andurien 3028 Light Aerospace Fighters,1
-@Neoancient Davion 3028 Light Aerospace Fighters B,2
-@Neoancient Marik 3028 Light Aerospace Fighters B,1
-Centurion CNT-1D,25
-Centurion CNT-2D,9
-Thrush TR-7,100

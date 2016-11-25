@@ -1,6 +1,0 @@
-Neoancient General 2950 Medium Aerospace Fighters F
-Hellcat II HCT-212,48
-Ironsides IRN-SD1,45
-Ironsides IRN-SD2,11
-Lightning LTN-G15,100
-Samurai SL-25,25

@@ -77,6 +77,7 @@ import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
@@ -171,7 +172,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         if (null != cl) {
             setLocationRelativeTo(cl.frame);
             asd = new AdvancedSearchDialog(cl.frame,
-                    client.getGame().getOptions().intOption("year"));
+                    client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
         }
     }
 
@@ -608,7 +609,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         final boolean checkSupportVee = comboUnitType.getSelectedItem().equals(
                 Messages.getString("MechSelectorDialog.SupportVee"));
         final boolean cannonOnly = (null != client)
-                && client.getGame().getOptions().booleanOption("canon_only");
+                && client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_CANON_ONLY);
         //If current expression doesn't parse, don't update.
         try {
             unitTypeFilter = new RowFilter<MechTableModel,Integer>() {
@@ -618,7 +619,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                     MechSummary mech = mechModel.getMechSummary(entry
                             .getIdentifier());
                     int year = (null != client) ? client.getGame().getOptions()
-                            .intOption("year") : 999999;
+                            .intOption(OptionsConstants.ALLOWED_YEAR) : 999999;
                     boolean techLevelMatch = false;
                     for (int tl : nTypes) {
                         if (mech.getType() == tl) {
@@ -887,7 +888,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 case COL_BV:
                     return "BV";
                 case COL_YEAR:
-                    return "Year";
+                    return OptionsConstants.ALLOWED_YEAR;
                 case COL_COST:
                     return "Price";
                 case COL_LEVEL:
@@ -934,7 +935,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             }
             if (col == COL_WEIGHT) {
                 if ((opts != null) && ms.getUnitType().equals("BattleArmor")) {
-                    if (opts.booleanOption("tacops_ba_weight")) {
+                    if (opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
                         return ms.getTOweight();
                     } else {
                         return ms.getTWweight();
@@ -944,15 +945,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             }
             if (col == COL_BV) {
                 if ((opts != null)
-                        && opts.booleanOption("geometric_mean_bv")) {
-                    if (opts.booleanOption("reduced_overheat_modifier_bv")) {
+                        && opts.booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV)) {
+                    if (opts.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
                         return ms.getRHGMBV();
                     } else {
                         return ms.getGMBV();
                     }
                 } else {
                     if ((opts != null)
-                            && opts.booleanOption("reduced_overheat_modifier_bv")) {
+                            && opts.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
                         return ms.getRHBV();
                     } else {
                         return ms.getBV();

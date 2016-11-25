@@ -1,0 +1,86 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Reaper Self-Propelled Artillery
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2321
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+18
+18
+18
+18
+</armor>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<barrating>
+6
+</barrating>
+
+<Body Equipment>
+ISThumperAmmo
+ISThumperAmmo
+ISThumperAmmo
+Advanced Fire Control
+</Body Equipment>
+
+<Front Equipment>
+Small Laser
+ISThumper
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+XTRO Primitives V - Age of War
+</source>
+
+<tonnage>
+55.0
+</tonnage>
+

@@ -36,12 +36,12 @@ public class ISBAAPDS extends Weapon {
         super();
         name = "RISC Advanced Point Defense System";
         setInternalName("ISBAAPDS");
-        tonnage = 0.35f;
+        tonnage = 0.35;
         criticals = 2;
         bv = 7;
         longRange = 3;
-        flags = flags.or(F_BA_WEAPON)
-                .or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC);
+		flags = flags.or(F_BA_WEAPON).or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC).andNot(F_MECH_WEAPON)
+				.andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 50000;

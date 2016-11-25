@@ -48,6 +48,7 @@ import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.VTOL;
 
@@ -861,7 +862,7 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.weightx = 1.0;
         panSystem.add(lifeSupportCrit, gridBagConstraints);
 
-        if ((aero instanceof Dropship) || (aero instanceof Jumpship)) {
+        if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy = 6;
             gridBagConstraints.weightx = 0.0;
@@ -1082,7 +1083,7 @@ public class UnitEditorDialog extends JDialog {
                 aero.setGearHit(gearCrit.getHits() > 0);
             }
             if (null != lifeSupportCrit) {
-                aero.setLifeSupport(lifeSupportCrit.getHits() > 0);
+                aero.setLifeSupport(lifeSupportCrit.getHits() == 0);
             }
             if (null != leftThrusterCrit) {
                 aero.setLeftThrustHits(leftThrusterCrit.getHits());

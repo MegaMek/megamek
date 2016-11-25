@@ -1,7 +1,0 @@
-Neoancient Clan Cloud Cobra 3000 Heavy Aerospace Fighters Keshik
-@Neoancient Clan Coyote 2950 Heavy Aerospace Fighters Keshik,1
-Hydaspes (Standard),27
-Kirghiz A,86
-Kirghiz B,100
-Kirghiz C,57
-Kirghiz Prime,100

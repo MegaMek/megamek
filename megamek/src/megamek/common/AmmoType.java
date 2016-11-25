@@ -395,6 +395,16 @@ public class AmmoType extends EquipmentType {
                 .getRackSize()));
     }
 
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = ammoType;
+		result = prime * result
+				+ ((flags == null) ? 0 : flags.hashCode());
+		result = prime * result + rackSize;
+		return result;
+	}
+
     public int getAmmoType() {
         return ammoType;
     }
@@ -7008,6 +7018,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.subMunitionBegin = 6;
+        ammo.subMunitionLength = 2;
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
@@ -7036,6 +7048,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.subMunitionBegin = 6;
+        ammo.subMunitionLength = 2;
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
@@ -7089,6 +7103,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.subMunitionBegin = 6;
+        ammo.subMunitionLength = 2;
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
@@ -7117,6 +7133,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.subMunitionBegin = 6;
+        ammo.subMunitionLength = 2;
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
@@ -7169,6 +7187,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.subMunitionBegin = 6;
+        ammo.subMunitionLength = 2;
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
@@ -7197,6 +7217,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.subMunitionBegin = 6;
+        ammo.subMunitionLength = 2;
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
@@ -7249,6 +7271,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 2;
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
@@ -7276,6 +7300,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_ATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 2;
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
@@ -7326,6 +7352,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 2;
         ammo.shots = 20;
         ammo.bv = 21;
         ammo.cost = 75000;
@@ -7352,6 +7380,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 2;
         ammo.shots = 20;
         ammo.bv = 21;
         ammo.cost = 75000;
@@ -7379,6 +7409,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IIW;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 3;
         ammo.shots = 20;
         ammo.bv = 27; // 21 * 1.3 = 27.3, round down (?)
         ammo.cost = 75000;
@@ -7406,6 +7438,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IMP;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 3;
         ammo.shots = 20;
         ammo.bv = 42; // 21 * 2 = 42
         ammo.cost = 75000;
@@ -7458,6 +7492,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 2;
         ammo.shots = 10;
         ammo.bv = 39;
         ammo.cost = 75000;
@@ -7483,6 +7519,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 2;
         ammo.shots = 10;
         ammo.bv = 39;
         ammo.cost = 75000;
@@ -7510,6 +7548,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IIW;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 3;
         ammo.shots = 10;
         ammo.bv = 51; // 50.7 round up (?)
         ammo.cost = 75000;
@@ -7537,6 +7577,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IMP;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 3;
         ammo.shots = 10;
         ammo.bv = 78; // 39 * 2 = 78
         ammo.cost = 75000;
@@ -7589,6 +7631,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 2;
         ammo.shots = 7;
         ammo.bv = 54;
         ammo.cost = 75000;
@@ -7615,6 +7659,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 2;
         ammo.shots = 7;
         ammo.bv = 54;
         ammo.cost = 75000;
@@ -7642,6 +7688,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IIW;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 3;
         ammo.shots = 7;
         ammo.bv = 70; // 54 * 1.3 = 70.2, round down (?)
         ammo.cost = 75000;
@@ -7669,6 +7717,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IMP;
+        ammo.subMunitionBegin = 7;
+        ammo.subMunitionLength = 3;
         ammo.shots = 7;
         ammo.bv = 108; // 54 * 2 = 108
         ammo.cost = 75000;
@@ -7720,6 +7770,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_EXTENDED_RANGE;
+        ammo.subMunitionBegin = 8;
+        ammo.subMunitionLength = 2;
         ammo.shots = 5;
         ammo.bv = 78;
         ammo.cost = 75000;
@@ -7746,6 +7798,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_HIGH_EXPLOSIVE;
+        ammo.subMunitionBegin = 8;
+        ammo.subMunitionLength = 2;
         ammo.shots = 5;
         ammo.bv = 78;
         ammo.cost = 75000;
@@ -7773,6 +7827,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IIW;
+        ammo.subMunitionBegin = 8;
+        ammo.subMunitionLength = 3;
         ammo.shots = 5;
         ammo.bv = 101; // 78 * 1.3 = 101.4, round down (?)
         ammo.cost = 75000;
@@ -7800,6 +7856,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_IATM;
         ammo.munitionType = M_IATM_IMP;
+        ammo.subMunitionBegin = 8;
+        ammo.subMunitionLength = 3;
         ammo.shots = 5;
         ammo.bv = 156; // 78 * 2 = 156
         ammo.cost = 75000;
@@ -8505,6 +8563,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Proto AC/2";
         ammo.setInternalName("Clan ProtoMech AC/2 Ammo");
         ammo.addLookupName("CLProtoAC2Ammo");
+        ammo.addLookupName("CLProtoAC2 Ammo");
         ammo.damagePerShot = 2;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_PAC;
@@ -8530,6 +8589,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Proto AC/4";
         ammo.setInternalName("Clan ProtoMech AC/4 Ammo");
         ammo.addLookupName("CLProtoAC4Ammo");
+        ammo.addLookupName("CLProtoAC4 Ammo");
         ammo.damagePerShot = 4;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_PAC;
@@ -8555,6 +8615,7 @@ public class AmmoType extends EquipmentType {
         ammo.shortName = "Proto AC/8";
         ammo.setInternalName("Clan ProtoMech AC/8 Ammo");
         ammo.addLookupName("CLProtoAC8Ammo");
+        ammo.addLookupName("CLProtoAC8 Ammo");
         ammo.damagePerShot = 8;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_PAC;
@@ -12149,258 +12210,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-
-
-    private static AmmoType createISEnhancedLRM5Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        ammo.name = "Enhanced LRM 5 Ammo";
-        ammo.shortName = "NLRM 5";
-        ammo.setInternalName("ISEnhancedLRM5 Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_NLRM;
-        ammo.shots = 24;
-        ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.bv = 7;
-        ammo.cost = 31000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
-        ammo.techRating = RATING_E;
-
-        return ammo;
-    }
-
-    private static AmmoType createISEnhancedLRM10Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        ammo.name = "Enhanced LRM 10 Ammo";
-        ammo.shortName = "NLRM 10";
-        ammo.setInternalName("ISEnhancedLRM10 Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 10;
-        ammo.ammoType = AmmoType.T_NLRM;
-        ammo.shots = 12;
-        ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.bv = 13;
-        ammo.cost = 31000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
-        ammo.techRating = RATING_E;
-
-        return ammo;
-    }
-
-    private static AmmoType createISEnhancedLRM15Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        ammo.name = "Enhanced LRM 15 Ammo";
-        ammo.shortName = "NLRM 15";
-        ammo.setInternalName("ISEnhancedLRM15 Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.T_NLRM;
-        ammo.shots = 8;
-        ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.bv = 20;
-        ammo.cost = 31000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
-        ammo.techRating = RATING_E;
-
-        return ammo;
-    }
-
-    private static AmmoType createISEnhancedLRM20Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        ammo.name = "Enhanced LRM 20 Ammo";
-        ammo.shortName = "NLRM 20";
-        ammo.setInternalName("ISEnhancedLRM20 Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_NLRM;
-        ammo.shots = 6;
-        ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.bv = 26;
-        ammo.cost = 31000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
-        ammo.techRating = RATING_E;
-
-        return ammo;
-    }
-
-    private static AmmoType createISLightRifleAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Light Rifle Ammo";
-        ammo.shortName = "Light Rifle";
-        ammo.setInternalName("IS Ammo Light Rifle");
-        ammo.addLookupName("ISLight Rifle Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_RIFLE;
-        ammo.shots = 18;
-        ammo.bv = 3;
-        ammo.cost = 1000;
-        ammo.introDate = 1950;
-        ammo.extinctDate = 2820;
-        ammo.reintroDate = 3079;
-        ammo.techLevel.put(1950, TechConstants.T_IS_UNOFFICIAL);
-        ammo.techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
-        ammo.availRating = new int[] { RATING_C ,RATING_F ,RATING_X ,RATING_D};
-        ammo.techRating = RATING_B;
-        ammo.rulesRefs = "338, TO";
-
-        return ammo;
-    }
-
-    private static AmmoType createISMediumRifleAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Medium Rifle Ammo";
-        ammo.shortName = "Medium Rifle";
-        ammo.setInternalName("IS Ammo Medium Rifle");
-        ammo.addLookupName("ISMedium Rifle Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 6;
-        ammo.ammoType = AmmoType.T_RIFLE;
-        ammo.shots = 9;
-        ammo.bv = 6;
-        ammo.cost = 1000;
-        ammo.introDate = 1950;
-        ammo.extinctDate = 2820;
-        ammo.reintroDate = 3079;
-        ammo.techLevel.put(1950, TechConstants.T_IS_UNOFFICIAL);
-        ammo.techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
-        ammo.availRating = new int[] { RATING_C ,RATING_F ,RATING_X ,RATING_D};
-        ammo.techRating = RATING_B;
-        ammo.rulesRefs = "338, TO";
-
-        return ammo;
-    }
-
-    private static AmmoType createISHeavyRifleAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Heavy Rifle Ammo";
-        ammo.shortName = "Heavy Rifle";
-        ammo.setInternalName("IS Ammo Heavy Rifle");
-        ammo.addLookupName("ISHeavy Rifle Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 9;
-        ammo.ammoType = AmmoType.T_RIFLE;
-        ammo.shots = 6;
-        ammo.bv = 11;
-        ammo.cost = 1000;
-        ammo.introDate = 1950;
-        ammo.extinctDate = 2820;
-        ammo.reintroDate = 3079;
-        ammo.techLevel.put(1950, TechConstants.T_IS_UNOFFICIAL);
-        ammo.techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
-        ammo.availRating = new int[] { RATING_C ,RATING_F ,RATING_X ,RATING_D};
-        ammo.techRating = RATING_B;
-        ammo.rulesRefs = "338, TO";
-
-        return ammo;
-    }
-
-    private static AmmoType createCLVGLAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "VGL Fragmentation Grenade";
-        ammo.subMunitionBegin = 4;
-        ammo.subMunitionLength = 13;
-        ammo.shortName = "VGL Fragmentation";
-        ammo.setInternalName("CL Ammo VGL");
-        ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
-        ammo.damagePerShot = 0;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_VGL;
-        ammo.munitionType = AmmoType.M_STANDARD;
-        ammo.shots = 1;
-        ammo.bv = 0;
-        ammo.cost = 0;
-        ammo.tonnage = 0;
-        ammo.introDate = 2815;
-        ammo.techLevel.put(2815, TechConstants.T_CLAN_ADVANCED);   ///ADV
-        ammo.techLevel.put(2830, TechConstants.T_CLAN_TW);   ///COMMON
-        ammo.availRating = new int[] { RATING_X, RATING_B, RATING_B, RATING_B };
-        ammo.techRating = RATING_B;
-        ammo.rulesRefs = "364, TO";
-        return ammo;
-    }
-
-    private static AmmoType createISVGLAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "VGL Fragmentation Grenade";
-        ammo.subMunitionBegin = 4;
-        ammo.subMunitionLength = 13;
-        ammo.shortName = "VGL Fragmentation";
-        ammo.setInternalName("IS Ammo VGL");
-        ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
-        ammo.damagePerShot = 0;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_VGL;
-        ammo.munitionType = AmmoType.M_STANDARD;
-        ammo.shots = 1;
-        ammo.bv = 0;
-        ammo.cost = 0;
-        ammo.tonnage = 0;
-        ammo.introDate = 1950;
-        ammo.techLevel.put(1950, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
-        ammo.techLevel.put(2200, TechConstants.T_IS_ADVANCED);   ///ADV
-        ammo.techLevel.put(3065, TechConstants.T_ALLOWED_ALL);   ///COMMON
-        ammo.availRating = new int[] { RATING_B, RATING_B, RATING_B, RATING_B };
-        ammo.techRating = RATING_B;
-        ammo.rulesRefs = "364, TO";
-        return ammo;
-    }
-
-    private static AmmoType createISC3RemoteSensorAmmo() {
-        AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
-        ammo.name = "C3 Remote Sensors";
-        ammo.shortName = "C3 Remote Sensor";
-        ammo.setInternalName("ISC3Sensors");
-        ammo.explosive = false;
-        ammo.damagePerShot = 0; // only used for ammo crits
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_C3_REMOTE_SENSOR;
-        ammo.shots = 4;
-        ammo.bv = 6;
-        ammo.cost = 100000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3072;
-        ammo.techLevel.put(3072, ammo.techLevel.get(3067));
-        ammo.techRating = RATING_E;
-
-        return ammo;
-    }
-    
     //UNOFFICIAL AMMOs
     private static AmmoType createISAC15Ammo() {
         AmmoType ammo = new AmmoType();
@@ -13116,10 +12925,256 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
 
         return ammo;
-    }    
-    
-    
-    
+    }
+
+    private static AmmoType createISEnhancedLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.name = "Enhanced LRM 5 Ammo";
+        ammo.shortName = "NLRM 5";
+        ammo.setInternalName("ISEnhancedLRM5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_NLRM;
+        ammo.shots = 24;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[]{"", "HotLoad"});
+        ammo.bv = 7;
+        ammo.cost = 31000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.introDate = 3058;
+        ammo.techLevel.put(3058, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techRating = RATING_E;
+
+        return ammo;
+    }
+
+    private static AmmoType createISEnhancedLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.name = "Enhanced LRM 10 Ammo";
+        ammo.shortName = "NLRM 10";
+        ammo.setInternalName("ISEnhancedLRM10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_NLRM;
+        ammo.shots = 12;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[]{"", "HotLoad"});
+        ammo.bv = 13;
+        ammo.cost = 31000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.introDate = 3058;
+        ammo.techLevel.put(3058, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techRating = RATING_E;
+
+        return ammo;
+    }
+
+    private static AmmoType createISEnhancedLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.name = "Enhanced LRM 15 Ammo";
+        ammo.shortName = "NLRM 15";
+        ammo.setInternalName("ISEnhancedLRM15 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_NLRM;
+        ammo.shots = 8;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[]{"", "HotLoad"});
+        ammo.bv = 20;
+        ammo.cost = 31000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.introDate = 3058;
+        ammo.techLevel.put(3058, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techRating = RATING_E;
+
+        return ammo;
+    }
+
+    private static AmmoType createISEnhancedLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.name = "Enhanced LRM 20 Ammo";
+        ammo.shortName = "NLRM 20";
+        ammo.setInternalName("ISEnhancedLRM20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_NLRM;
+        ammo.shots = 6;
+        ammo.flags = ammo.flags.or(F_HOTLOAD);
+        ammo.setModes(new String[]{"", "HotLoad"});
+        ammo.bv = 26;
+        ammo.cost = 31000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.introDate = 3058;
+        ammo.techLevel.put(3058, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techRating = RATING_E;
+
+        return ammo;
+    }
+
+    private static AmmoType createISLightRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.name = "Light Rifle Ammo";
+        ammo.shortName = "Light Rifle";
+        ammo.setInternalName("IS Ammo Light Rifle");
+        ammo.addLookupName("ISLight Rifle Ammo");
+        ammo.addLookupName("ISLightRifle Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_RIFLE;
+        ammo.shots = 18;
+        ammo.bv = 3;
+        ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_C,
+                EquipmentType.RATING_F, EquipmentType.RATING_X};
+        ammo.introDate = 1950;
+        ammo.techLevel.put(1950, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techRating = RATING_B;
+
+        return ammo;
+    }
+
+    private static AmmoType createISMediumRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.name = "Medium Rifle Ammo";
+        ammo.shortName = "Medium Rifle";
+        ammo.setInternalName("IS Ammo Medium Rifle");
+        ammo.addLookupName("ISMedium Rifle Ammo");
+        ammo.addLookupName("ISMediumRifle Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_RIFLE;
+        ammo.shots = 9;
+        ammo.bv = 6;
+        ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_C,
+                EquipmentType.RATING_F, EquipmentType.RATING_X};
+        ammo.introDate = 1950;
+        ammo.techLevel.put(1950, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techRating = RATING_B;
+
+        return ammo;
+    }
+
+    private static AmmoType createISHeavyRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.name = "Heavy Rifle Ammo";
+        ammo.shortName = "Heavy Rifle";
+        ammo.setInternalName("IS Ammo Heavy Rifle");
+        ammo.addLookupName("ISHeavy Rifle Ammo");
+        ammo.addLookupName("ISHeavyRifle Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_RIFLE;
+        ammo.shots = 6;
+        ammo.bv = 11;
+        ammo.cost = 1000;
+        ammo.availRating = new int[]{EquipmentType.RATING_C,
+                EquipmentType.RATING_F, EquipmentType.RATING_X};
+        ammo.introDate = 1950;
+        ammo.techLevel.put(1950, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
+        ammo.techRating = RATING_B;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLVGLAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3067, TechConstants.T_CLAN_ADVANCED);
+        ammo.name = "VGL Fragmentation Grenade";
+        ammo.subMunitionBegin = 4;
+        ammo.subMunitionLength = 13;
+        ammo.shortName = "VGL Fragmentation";
+        ammo.setInternalName("CL Ammo VGL");
+        ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
+        ammo.damagePerShot = 0;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_VGL;
+        ammo.munitionType = AmmoType.M_STANDARD;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 0;
+        ammo.tonnage = 0;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 2820;
+        ammo.techLevel.put(2820, ammo.techLevel.get(3067));
+        ammo.techRating = RATING_B;
+        return ammo;
+    }
+
+    private static AmmoType createISVGLAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
+        ammo.name = "VGL Fragmentation Grenade";
+        ammo.subMunitionBegin = 4;
+        ammo.subMunitionLength = 13;
+        ammo.shortName = "VGL Fragmentation";
+        ammo.setInternalName("IS Ammo VGL");
+        ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
+        ammo.damagePerShot = 0;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_VGL;
+        ammo.munitionType = AmmoType.M_STANDARD;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 0;
+        ammo.tonnage = 0;
+        ammo.availRating = new int[]{EquipmentType.RATING_B,
+                EquipmentType.RATING_B, EquipmentType.RATING_B};
+        ammo.introDate = 1950;
+        ammo.techLevel.put(1950, ammo.techLevel.get(3067));
+        ammo.techRating = RATING_B;
+        return ammo;
+    }
+
+    private static AmmoType createISC3RemoteSensorAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.name = "C3 Remote Sensors";
+        ammo.shortName = "C3 Remote Sensor";
+        ammo.setInternalName("ISC3Sensors");
+        ammo.explosive = false;
+        ammo.damagePerShot = 0; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_C3_REMOTE_SENSOR;
+        ammo.shots = 4;
+        ammo.bv = 6;
+        ammo.cost = 100000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.introDate = 3072;
+        ammo.techLevel.put(3072, ammo.techLevel.get(3067));
+        ammo.techRating = RATING_E;
+
+        return ammo;
+    }
 
     @Override
     public String toString() {

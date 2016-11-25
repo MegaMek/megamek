@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Schrek PPC Carrier
@@ -24,29 +24,21 @@ Schrek PPC Carrier
 2813
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-80.0
-</tonnage>
 
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
-
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
 
 <armor>
 24
@@ -76,4 +68,12 @@ PPC
 PPC
 PPC
 </Turret Equipment>
+
+<source>
+TRO 3039 - Succession Wars
+</source>
+
+<tonnage>
+80.0
+</tonnage>
 

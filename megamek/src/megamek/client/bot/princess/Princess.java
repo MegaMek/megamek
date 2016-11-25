@@ -58,6 +58,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
 import megamek.common.net.Packet;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 
@@ -753,7 +754,7 @@ public class Princess extends BotClient {
                 return true;
             }
 
-            MovePath.MoveStepType type = (getBooleanOption("tacops_careful_stand") ?
+            MovePath.MoveStepType type = (getBooleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND) ?
                                           MovePath.MoveStepType.CAREFUL_STAND :
                                           MovePath.MoveStepType.GET_UP);
             MoveStep getUp = new MoveStep(movePath, type);
@@ -808,7 +809,7 @@ public class Princess extends BotClient {
 
             // moves this entity during movement phase
             log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
-            getPrecognition().insureUpToDate();
+            getPrecognition().ensureUpToDate();
 
             if (isFallingBack(entity)) {
                 String msg = entity.getDisplayName();
@@ -1288,7 +1289,7 @@ public class Princess extends BotClient {
         int highestEnemyInitiativeBonus = -1;
         int highestEnemyInitiativeId = -1;
         for (Entity entity : getEnemyEntities()) {
-            int initBonus = entity.getHQIniBonus() + entity.getMDIniBonus() + entity.getQuirkIniBonus();
+            int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus(); //+ entity.getMDIniBonus() Removed in IO
             if (initBonus > highestEnemyInitiativeBonus) {
                 highestEnemyInitiativeBonus = initBonus;
                 highestEnemyInitiativeId = entity.getId();

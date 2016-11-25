@@ -681,8 +681,11 @@ public class MoveStep implements Serializable {
             prev.setFromEntity(entity, game);
             prev.isCarefulPath = isCareful();
             prev.isJumpingPath = isJumping();
-            setFirstStep(prev.mpUsed == 0); // Bug 1519330 - its not a first
-            // step when continuing after a fall
+            setFirstStep(prev.mpUsed == 0); // Bug 1519330 - its not a first step when continuing after a fall
+        } else if (prev.isFirstStep() // Some step types don't remove first step status
+                && ((prev.getType() == MoveStepType.CLIMB_MODE_ON)
+                        || (prev.getType() == MoveStepType.CLIMB_MODE_OFF))) {
+            setFirstStep(true);
         }
         switch (getType()) {
             case UNLOAD:
@@ -1423,7 +1426,7 @@ public class MoveStep implements Serializable {
         // If this step isn't the end step anymore, we might not be in danger
         // after all
         IHex pos = getGame().getBoard().getHex(position);
-        if (getGame().getOptions().booleanOption("psr_jump_heavy_woods")) {
+        if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
             if (!isEnd
                     && isJumping()
                     && (pos.containsTerrain(Terrains.WOODS, 2) 
@@ -1784,7 +1787,7 @@ public class MoveStep implements Serializable {
             }
 
             // check the fuel requirements
-            if (game.getOptions().booleanOption("fuel_consumption")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
                 int fuelUsed = mpUsed + Math.max(mpUsed - a.getWalkMP(), 0);
                 if (fuelUsed > a.getFuel()) {
                     return;
@@ -2182,7 +2185,7 @@ public class MoveStep implements Serializable {
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr
                 entity.gotPavementBonus = true;
-            } else if (game.getOptions().booleanOption("tacops_sprint")
+            } else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)
                     && (entity instanceof Mech)
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
@@ -2190,7 +2193,7 @@ public class MoveStep implements Serializable {
                 movementType = EntityMovementType.MOVE_SPRINT;
             } else if ((getMpUsed() <= sprintMP)
                     && !isRunProhibited() && !isEvading()
-                    && game.getOptions().booleanOption("tacops_sprint")) {
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
                 setUsingMASC(true);
                 setTargetNumberMASC(entity.getMASCTarget());
                 movementType = EntityMovementType.MOVE_SPRINT;
@@ -2577,7 +2580,7 @@ public class MoveStep implements Serializable {
 
 
         boolean applyNightPen =
-                !game.getOptions().booleanOption("no_night_move_pen");
+                !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN);
         boolean carefulExempt =
                 (moveMode == EntityMovementMode.VTOL) || isJumping();
 
@@ -2619,7 +2622,7 @@ public class MoveStep implements Serializable {
         }
 
         // Account for terrain, unless we're moving along a road.
-        if (!isPavementStep) {
+        if (!isPavementStep()) {
 
             if ((moveMode != EntityMovementMode.BIPED_SWIM)
                     && (moveMode != EntityMovementMode.QUAD_SWIM)
@@ -2660,7 +2663,7 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
-            if (game.getOptions().booleanOption("tacops_leaping") && isMech
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING) && isMech
                     && (delta_e > 2) && (nDestEl < nSrcEl)) {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else
@@ -2846,8 +2849,8 @@ public class MoveStep implements Serializable {
                 && isThisStepBackwards()
                 && !(isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
                 && (((destAlt != srcAlt) && !game.getOptions().booleanOption(
-                "tacops_walk_backwards")) || (game.getOptions()
-                .booleanOption("tacops_walk_backwards") && (Math
+                OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)) || (game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS) && (Math
                 .abs(destAlt - srcAlt) > 1)))) {
             // System.err.println("Can't back up across an elevation change.");
             return false;
@@ -2956,11 +2959,11 @@ public class MoveStep implements Serializable {
                 && (destAlt != srcAlt)
                 && !(entity instanceof VTOL)
                 && !(isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))) {
-            if (game.getOptions().booleanOption("tacops_walk_backwards")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)
                     && (Math.abs(destAlt - srcAlt) > 1)) {
                 return false;
             }
-            if (!game.getOptions().booleanOption("tacops_walk_backwards")
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)
                     && (destAlt != srcAlt)) {
                 return false;
             }
@@ -2986,8 +2989,8 @@ public class MoveStep implements Serializable {
                 && (destHex.terrainLevel(Terrains.WATER) > 0)
                 && !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0))
                 && !dest.equals(entity.getPosition())
-                && !firstStep
-                && !isPavementStep) {
+                && !isFirstStep()
+                && !isPavementStep()) {
             return false;
         }
 
@@ -3101,7 +3104,7 @@ public class MoveStep implements Serializable {
                 && (type != MoveStepType.UNLOAD)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
-                && entity.isLocationProhibited(src, getElevation()) && !isPavementStep) {
+                && entity.isLocationProhibited(src, getElevation()) && !isPavementStep()) {
             // System.err.println("in restriced terrain");
             return false;
         }

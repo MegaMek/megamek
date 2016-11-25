@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
+import megamek.common.options.OptionsConstants;
 import megamek.server.SmokeCloud;
 
 /**
@@ -529,7 +530,7 @@ public class LosEffects {
             return los;
         }
 
-        if(game.getOptions().booleanOption("tacops_dead_zones") && isDeadZone(game, ai)) {
+        if(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES) && isDeadZone(game, ai)) {
             LosEffects los = new LosEffects();
             los.blocked = true;
             los.blockedByHill = true;
@@ -539,8 +540,8 @@ public class LosEffects {
             return los;
         }
         
-        boolean diagramLos = game.getOptions().booleanOption("tacops_LOS1");
-        boolean partialCover = game.getOptions().booleanOption("tacops_partial_cover");
+        boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1);
+        boolean partialCover = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER);
         double degree = ai.attackPos.degree(ai.targetPos);
         LosEffects finalLoS;
         if (degree % 60 == 30) {
@@ -598,7 +599,7 @@ public class LosEffects {
         }
 
         if (buildingLevelsOrHexes > 2) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by buildin hexes or levels.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by building hexes or levels.");
         }
 
         if ((ultraWoods >= 1) || (lightWoods + (heavyWoods * 2) > 2)) {
@@ -684,7 +685,7 @@ public class LosEffects {
         }
 
         if (targetCover != COVER_NONE) {
-            if (game.getOptions().booleanOption("tacops_partial_cover")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
                 if ((targetCover == COVER_75LEFT) || (targetCover == COVER_75RIGHT)) {
                     modifiers.addModifier(1, "target has 75% cover");
                 } else if (targetCover >= COVER_HORIZONTAL) {
@@ -792,7 +793,9 @@ public class LosEffects {
                         ai.attackPos)) {
             los.setThruBldg(game.getBoard().getBuildingAt(in.get(0)));
             //elevation differences count as building hexes passed through
-            los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight-ai.attackHeight) - (ai.targetAbsHeight-ai.targetHeight)));
+            los.buildingLevelsOrHexes += (Math
+                    .abs((ai.attackAbsHeight - ai.attackHeight)
+                            - (ai.targetAbsHeight - ai.targetHeight)));
         }
 
         // add non-divided line segments
@@ -807,6 +810,11 @@ public class LosEffects {
 
         // if blocked already, return that
         if (los.losModifiers(game).getValue() == TargetRoll.IMPOSSIBLE) {
+            return los;
+        }
+
+        // If there src & dst hexes are the same, nothing to do
+        if (in.size() < 2) {
             return los;
         }
 
@@ -830,7 +838,7 @@ public class LosEffects {
             }
        
             // Check for advanced cover, only 'mechs can get partial cover
-            if (game.getOptions().booleanOption("tacops_partial_cover") && 
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER) && 
                     ai.targetIsMech) {
                 // 75% and vertical cover will have blocked LoS
                 boolean losBlockedByCover = false;
@@ -902,7 +910,7 @@ public class LosEffects {
                 }                
             }
             
-            if (game.getOptions().booleanOption("tacops_partial_cover") && 
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER) && 
                     ai.attackerIsMech) {
                 // 75% and vertical cover will have blocked LoS
                 boolean losBlockedByCover = false;
@@ -1334,8 +1342,8 @@ public class LosEffects {
      */
     public static int dividedLeftBetter(ArrayList<Coords> in, IGame game,
             AttackInfo ai, boolean targetInBuilding, LosEffects los) {
-        boolean diagramLos = game.getOptions().booleanOption("tacops_LOS1");
-        boolean partialCover = game.getOptions().booleanOption("tacops_partial_cover");
+        boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1);
+        boolean partialCover = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER);
         LosEffects leftTotal = new LosEffects();
         LosEffects rightTotal = new LosEffects();
         for (int i = 1; i < in.size() - 2; i += 3) {

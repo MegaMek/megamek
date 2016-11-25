@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Represents a player in the game.
@@ -318,9 +319,11 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public boolean isEnemyOf(IPlayer other) {
-        return ((id != other.getId()) 
-                && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) 
-                        || (team != other.getTeam())));
+        if(null == other) {
+            return true;
+        }
+        return (id != other.getId()) 
+            && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
     }
 
     /**
@@ -484,14 +487,18 @@ public final class Player extends TurnOrdered implements IPlayer {
         }
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
-                if (game.getOptions().booleanOption("tacops_mobile_hqs")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)
                     && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
                     bonusHQ = entity.getHQIniBonus();
                 }
-                if (game.getOptions().booleanOption("manei_domini")
-                    && (bonusMD == 0) && (entity.getMDIniBonus() > 0)) {
-                    bonusMD = entity.getMDIniBonus();
-                }
+                
+				/*
+				 * REMOVED IN IO. 
+				 * if (game.getOptions().booleanOption(OptionsConstants.
+				 * RPG_MANEI_DOMINI) && (bonusMD == 0) &&
+				 * (entity.getMDIniBonus() > 0)) { bonusMD =
+				 * entity.getMDIniBonus(); }
+				 */
                 if (entity.getQuirkIniBonus() > bonusQ) {
                     //TODO: I am assuming that the quirk initiative bonuses go to the highest,
                     //rather than being cumulative
@@ -510,7 +517,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getCommandBonus() {
         int commandb = 0;
-        if (game.getOptions().booleanOption("command_init")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
             for (Entity entity : game.getEntitiesVector()) {
                 if ((null != entity.getOwner())
                     && entity.getOwner().equals(this)

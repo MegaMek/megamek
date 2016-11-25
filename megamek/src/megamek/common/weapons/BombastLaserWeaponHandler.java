@@ -13,18 +13,13 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.Infantry;
-import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
-public class BombastLaserWeaponHandler extends WeaponHandler {
+public class BombastLaserWeaponHandler extends EnergyWeaponHandler {
     /**
      *
      */
@@ -36,61 +31,9 @@ public class BombastLaserWeaponHandler extends WeaponHandler {
      * @param g
      */
     public BombastLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
-                                     IGame g, Server s) {
+            IGame g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
-    @Override
-    protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage(nRange);
-
-        toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
-        // during a swarm, all damage gets applied as one block to one location
-        if ((ae instanceof BattleArmor)
-            && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
-            && !(weapon.isSquadSupportWeapon())
-            && (ae.getSwarmTargetId() == target.getTargetId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
-        }
-        // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
-        if (game.getOptions().booleanOption("tacops_altdmg")) {
-            if (nRange <= 1) {
-                toReturn++;
-            } else if (nRange <= wtype.getMediumRange()) {
-                // Do Nothing for Short and Medium Range
-            } else if (nRange <= wtype.getLongRange()) {
-                toReturn--;
-            }
-        }
-
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
-            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            toReturn -= 1;
-        }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
-            toReturn = (int) Math.floor(toReturn * .75);
-        }
-
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn,
-                                                        bDirect ? toHit.getMoS() / 3 : 0,
-                                                        wtype.getInfantryDamageClass(),
-                                                        ((Infantry) target).isMechanized());
-        } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
-        }
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-
-        return (int) Math.ceil(toReturn);
     }
 
 }

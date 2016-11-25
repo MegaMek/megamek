@@ -1,0 +1,43 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Field Gunners
+</Name>
+<Model>
+(UAC20)
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+Auto Rifle
+</Primary>
+<Field Guns Equipment>
+ISUltraAC20
+ISUltraAC20 Ammo
+</Field Guns Equipment>
+<type>
+IS Level 3
+</type>
+<year>
+3060
+</year>
+<motion_type>
+Tracked
+</motion_type>
+
+<history>
+Intro date is based on when the weapon becomes an Advanced weapon. Since MM can't make certain units unavailable when a weapon becomes extinct these units may become invalid.
+</history>

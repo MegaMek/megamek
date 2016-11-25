@@ -1,9 +1,0 @@
-Neoancient Liao 2765 Warships
-Aegis Heavy Cruiser (2372),83
-Baron Destroyer (Standard),50
-Black Lion I-Battlecruiser,17
-Carson Destroyer (Standard),33
-Du Shi Wang Battleship (Standard),83
-Essex Destroyer (2711),33
-Lola I Destroyer (Standard),33
-Soyal Heavy Cruiser (Standard),100

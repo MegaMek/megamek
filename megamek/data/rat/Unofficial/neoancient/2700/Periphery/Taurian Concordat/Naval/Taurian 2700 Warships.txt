@@ -1,6 +1,0 @@
-Neoancient Taurian 2700 Warships
-Concordat Frigate (2506),50
-Dart Light Cruiser (Standard),13
-Lola II Destroyer (Standard),25
-Pinto Corvette (Standard),100
-Wagon Wheel Frigate (Standard),38

@@ -4172,7 +4172,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if ((ms != null)
                     && ((ms.getType() == MoveStepType.CLIMB_MODE_ON) || (ms
                             .getType() == MoveStepType.CLIMB_MODE_OFF))) {
+                MoveStep lastStep = cmd.getLastStep();
                 cmd.removeLastStep();
+                // Add another climb mode step
+                // Without this, we end up with 3 effect modes: no climb step, climb step on, climb step off
+                // This affects how the StepSprite gets rendered, so it's more clear to keep a climb step
+                // once one has been added
+                if (lastStep.getType() == MoveStepType.CLIMB_MODE_ON) {
+                    cmd.addStep(MoveStepType.CLIMB_MODE_OFF);
+                } else {
+                    cmd.addStep(MoveStepType.CLIMB_MODE_ON);
+                }
             } else if (cmd.getFinalClimbMode()) {
                 cmd.addStep(MoveStepType.CLIMB_MODE_OFF);
             } else {

@@ -29,6 +29,7 @@ v0.41.27-git
 + Quirks for Buildings.
 + Issue #386: VTOLs don't deploy at lounge specified height
 + Issue #341: Armor properties not updated for damage transfer location
++ Issue #360: Hull-down punches to lower target uses wrong location
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.

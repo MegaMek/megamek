@@ -4189,6 +4189,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.CLIMB_MODE_ON);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
+            computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_LAY_MINE.getCmd())) {
             int i = chooseMineToLay();
             if (i != -1) {

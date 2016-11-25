@@ -15,6 +15,7 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import megamek.common.weapons.ArtilleryBayWeapon;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.MissileWeapon;
@@ -69,7 +70,7 @@ public class BattleForceElement {
         initWeaponLocations(en);
         heat = new int[RANGE_BAND_NUM];
         computeDamage(en);
-        points = en.calculateBattleValue(true, true) / 100.0;
+        points = calculatePointValue(en);
         en.addBattleForceSpecialAbilities(specialAbilities);
     }
     
@@ -205,53 +206,16 @@ public class BattleForceElement {
             }
             
             if (weapon.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
-                BattleForceSPA artType = null;
-                switch (weapon.getAmmoType()) {
-                case AmmoType.T_ARROW_IV:
-                    if (weapon.getInternalName().substring(0, 1).equals("C")) {
-                        artType = BattleForceSPA.ARTAC;
-                    } else {
-                        artType = BattleForceSPA.ARTAIS;
-                    }
-                    break;
-                case AmmoType.T_LONG_TOM:
-                    artType = BattleForceSPA.ARTLT;
-                    break;
-                case AmmoType.T_SNIPER:
-                    artType = BattleForceSPA.ARTS;
-                    break;
-                case AmmoType.T_THUMPER:
-                    artType = BattleForceSPA.ARTT;
-                    break;
-                case AmmoType.T_LONG_TOM_CANNON:
-                    artType = BattleForceSPA.ARTLTC;
-                    break;
-                case AmmoType.T_SNIPER_CANNON:
-                    artType = BattleForceSPA.ARTSC;
-                    break;
-                case AmmoType.T_THUMPER_CANNON:
-                    artType = BattleForceSPA.ARTTC;
-                    break;
-                case AmmoType.T_CRUISE_MISSILE:
-                    switch(weapon.getRackSize()) {
-                    case 50:
-                        artType = BattleForceSPA.ARTCM5;
-                        break;
-                    case 70:
-                        artType = BattleForceSPA.ARTCM7;
-                        break;
-                    case 90:
-                        artType = BattleForceSPA.ARTCM9;
-                        break;
-                    case 120:
-                        artType = BattleForceSPA.ARTCM12;
-                        break;
-                    }
-                }
-                if (artType != null) {
-                    specialAbilities.merge(artType, weapon.getRackSize(), Integer::sum);
-                }
+                addArtillery(weapon);
                 continue;
+            }
+            if (weapon instanceof ArtilleryBayWeapon) {
+                for (int index : mount.getBayWeapons()) {
+                    Mounted m = en.getEquipment(index);
+                    if (m.getType() instanceof WeaponType) {
+                        addArtillery((WeaponType)m.getType());
+                    }
+                }
             }
             
             if (weapon.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
@@ -441,6 +405,58 @@ public class BattleForceElement {
         }
     }
     
+    protected void addArtillery(WeaponType weapon) {
+        BattleForceSPA artType = null;
+        switch (weapon.getAmmoType()) {
+        case AmmoType.T_ARROW_IV:
+            if (weapon.getInternalName().substring(0, 1).equals("C")) {
+                artType = BattleForceSPA.ARTAC;
+            } else {
+                artType = BattleForceSPA.ARTAIS;
+            }
+            break;
+        case AmmoType.T_LONG_TOM:
+            artType = BattleForceSPA.ARTLT;
+            break;
+        case AmmoType.T_SNIPER:
+            artType = BattleForceSPA.ARTS;
+            break;
+        case AmmoType.T_THUMPER:
+            artType = BattleForceSPA.ARTT;
+            break;
+        case AmmoType.T_LONG_TOM_CANNON:
+            artType = BattleForceSPA.ARTLTC;
+            break;
+        case AmmoType.T_SNIPER_CANNON:
+            artType = BattleForceSPA.ARTSC;
+            break;
+        case AmmoType.T_THUMPER_CANNON:
+            artType = BattleForceSPA.ARTTC;
+            break;
+        case AmmoType.T_CRUISE_MISSILE:
+            switch(weapon.getRackSize()) {
+            case 50:
+                artType = BattleForceSPA.ARTCM5;
+                break;
+            case 70:
+                artType = BattleForceSPA.ARTCM7;
+                break;
+            case 90:
+                artType = BattleForceSPA.ARTCM9;
+                break;
+            case 120:
+                artType = BattleForceSPA.ARTCM12;
+                break;
+            }
+        case AmmoType.T_BA_TUBE:
+            artType = BattleForceSPA.ARTBA;
+            break;
+        }
+        if (artType != null) {
+            specialAbilities.merge(artType, 1, Integer::sum);
+        }        
+    }
+    
     /* BattleForce and AlphaStrike calculate infantry damage differently */
     protected double getConvInfantryStandardDamage(int range, Infantry inf) {
         if (inf.getPrimaryWeapon() == null) {
@@ -513,6 +529,10 @@ public class BattleForceElement {
             }
         }
         return capacity;
+    }
+
+    public double calculatePointValue(Entity en) {
+        return en.calculateBattleValue(true, true) / 100.0;
     }
     
     public String getBFDamageString(int loc) {

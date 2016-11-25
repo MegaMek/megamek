@@ -3606,7 +3606,7 @@ public class Tank extends Entity {
     }
     
     @Override
-    public boolean isTurretLocation(int index) {
+    public boolean isBattleForceTurretLocation(int index) {
         return index > 1;
     }
 

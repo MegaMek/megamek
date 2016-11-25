@@ -12166,7 +12166,7 @@ Targetable, RoundUpdated, PhaseUpdated {
             return getBattleForceLocationMultiplier(index, location, rearMounted);
         }
 
-        public boolean isTurretLocation(int index) {
+        public boolean isBattleForceTurretLocation(int index) {
             return false;
         }
         
@@ -12180,7 +12180,7 @@ Targetable, RoundUpdated, PhaseUpdated {
          * @return
          */
         public String getBattleForceLocationName(int index) {
-            if (isTurretLocation(index)) {
+            if (isBattleForceTurretLocation(index)) {
                 return "TUR";
             }
             return "";
@@ -12190,6 +12190,10 @@ Targetable, RoundUpdated, PhaseUpdated {
             return getBattleForceLocationName(index);
         }
 
+        public boolean useForAlphaStrikePointCalc(int loc) {
+            return loc == 0 || isBattleForceTurretLocation(loc);
+        }
+        
         /**
          * Only used by Mechs and ASFs, which require different approaches to determining rear mountings
          * @param allowRear - Use rear-mounted weapons instead of forward

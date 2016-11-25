@@ -121,6 +121,8 @@ public class AlphaStrikeElement extends BattleForceElement {
         return asUnitType;
     }
     
+    //TODO: Override calculatePointValue(Entity en)
+    
     public String getASDamageString(int loc) {
         StringBuilder str = new StringBuilder(locationNames[loc]);
         if (locationNames[loc].length() > 0) {

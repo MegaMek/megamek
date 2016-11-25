@@ -21790,8 +21790,8 @@ public class Server implements Runnable {
                 } else if (ballisticArmor
                            && ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
                                || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING)
-                               || (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC) || (hit
-                                                                                                       .getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
+                               || (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC)
+                               || (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
                     tmpDamageHold = damage;
                     damage = Math.max(1, damage / 2);
                     r = new Report(6088);
@@ -22210,36 +22210,15 @@ public class Server implements Runnable {
                     r.indent(2);
                     r.add(damage);
                     vDesc.add(r);
-                    if (damage > te
-                            .getArmor(te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                                   : te instanceof LargeSupportTank ?
-                                                                     LargeSupportTank.LOC_REAR
-                                                                                                    : Tank.LOC_REAR)) {
-                        te.setArmor(
-                                IArmorState.ARMOR_DESTROYED,
-                                te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                             : te instanceof LargeSupportTank ? LargeSupportTank
-                                        .LOC_REAR
-                                                                                              : Tank.LOC_REAR);
+                    int loc = (te instanceof SuperHeavyTank) ? SuperHeavyTank.LOC_REAR
+                            : (te instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : Tank.LOC_REAR;
+                    if (damage > te.getArmor(loc)) {
+                        te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
                         r = new Report(6090);
                     } else {
-                        te.setArmor(
-                                te.getArmor(te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                                         : te instanceof LargeSupportTank ?
-                                                                           LargeSupportTank.LOC_REAR
-                                                                                                          : Tank
-                                                                                   .LOC_REAR)
-                                - damage,
-                                te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                             : te instanceof LargeSupportTank ? LargeSupportTank
-                                        .LOC_REAR
-                                                                                              : Tank.LOC_REAR);
+                        te.setArmor(te.getArmor(loc) - damage, loc);
                         r = new Report(6085);
-                        r.add(te.getArmor(te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                                       : te instanceof LargeSupportTank ?
-                                                                         LargeSupportTank.LOC_REAR
-                                                                                                        : Tank
-                                                                                 .LOC_REAR));
+                        r.add(te.getArmor(loc));
                     }
                     r.subject = te_n;
                     r.indent(3);
@@ -22252,8 +22231,7 @@ public class Server implements Runnable {
                     } else {
                         critIndex = Tank.CRIT_CREW_STUNNED;
                     }
-                    vDesc.addAll(applyCriticalHit(te, Entity.NONE,
-                                                  new CriticalSlot(0, critIndex), true, 0, false));
+                    vDesc.addAll(applyCriticalHit(te, Entity.NONE, new CriticalSlot(0, critIndex), true, 0, false));
                 }
 
                 // is there internal structure in the location hit?
@@ -22314,16 +22292,12 @@ public class Server implements Runnable {
                         // Handle Protomech pilot damage
                         // due to location destruction
                         if (te instanceof Protomech) {
-                            int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit
-                                    .getLocation()]
-                                       - ((Protomech) te).getPilotDamageTaken(hit
-                                                                                      .getLocation());
+                            int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
+                                    - ((Protomech) te).getPilotDamageTaken(hit.getLocation());
                             if (hits > 0) {
                                 vDesc.addAll(damageCrew(te, hits));
-                                ((Protomech) te).setPilotDamageTaken(hit
-                                                                             .getLocation(),
-                                                                     Protomech.POSSIBLE_PILOT_DAMAGE[hit
-                                                                             .getLocation()]);
+                                ((Protomech) te).setPilotDamageTaken(hit.getLocation(),
+                                        Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                             }
                         }
 

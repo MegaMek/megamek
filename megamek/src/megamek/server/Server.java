@@ -21811,22 +21811,30 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
                            && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
-                           && !isBattleArmor) { // BA reflec does not receive extra
-                    // physical damage
+                           && !isBattleArmor) { // BA reflec does not receive extra physical damage
                     tmpDamageHold = damage;
-                    damage *= 2;
+                    int currArmor = te.getArmor(hit);
+                    int dmgToDouble = Math.max(0, currArmor / 2);
+                    damage += dmgToDouble;
                     r = new Report(6066);
                     r.subject = te_n;
                     r.indent(3);
+                    r.add(currArmor);
+                    r.add(dmgToDouble);
+                    r.add(dmgToDouble * 2);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor && areaSatArty && !isBattleArmor) {
-                    tmpDamageHold = damage; // BA reflec does not receive extra
-                    // AE damage
-                    damage *= 2;
+                    tmpDamageHold = damage; // BA reflec does not receive extra AE damage
+                    int currArmor = te.getArmor(hit);
+                    int dmgToDouble = Math.max(0, currArmor / 2);
+                    damage += dmgToDouble;
                     r = new Report(6087);
                     r.subject = te_n;
                     r.indent(3);
+                    r.add(currArmor);
+                    r.add(dmgToDouble);
+                    r.add(dmgToDouble * 2);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor

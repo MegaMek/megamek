@@ -1043,6 +1043,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Remove Careful stand, in case it was set
         ce.setCarefulStand(false);
         ce.setIsJumpingNow(false);
+        ce.setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
 
         // switch back from swimming to normal mode.
         if (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM) {

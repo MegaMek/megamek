@@ -681,8 +681,11 @@ public class MoveStep implements Serializable {
             prev.setFromEntity(entity, game);
             prev.isCarefulPath = isCareful();
             prev.isJumpingPath = isJumping();
-            setFirstStep(prev.mpUsed == 0); // Bug 1519330 - its not a first
-            // step when continuing after a fall
+            setFirstStep(prev.mpUsed == 0); // Bug 1519330 - its not a first step when continuing after a fall
+        } else if (prev.isFirstStep() // Some step types don't remove first step status
+                && ((prev.getType() == MoveStepType.CLIMB_MODE_ON)
+                        || (prev.getType() == MoveStepType.CLIMB_MODE_OFF))) {
+            setFirstStep(true);
         }
         switch (getType()) {
             case UNLOAD:

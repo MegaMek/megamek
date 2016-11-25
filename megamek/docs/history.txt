@@ -30,6 +30,11 @@ v0.41.27-git
 + Issue #386: VTOLs don't deploy at lounge specified height
 + Issue #341: Armor properties not updated for damage transfer location
 + Issue #360: Hull-down punches to lower target uses wrong location
++ Issue #326: Changing climb-mode prevents first-step amnesty
++ Bug: Climb Mode toggle appears to have three modes
++ Feature: Default Climb Mode is now an Advanced Client Setting
++ Issue #172: Climb Mode now defaults to "Climb Up" instead of "Go Thru"
+
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.

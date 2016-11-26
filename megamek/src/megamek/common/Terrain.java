@@ -592,8 +592,10 @@ public class Terrain implements ITerrain, Serializable {
             rv = false;
         } else if (type == Terrains.SMOKE && (level < 1 || level > 5)) {
             rv = false;
+        } else if (type == Terrains.MAGMA && (level < 1 || level > 2)) {
+            rv = false;
         }
-        
+
         if (!rv && (errBuff != null)) {
             errBuff.append("Illegal level! For " + toString() + "\n");
         }

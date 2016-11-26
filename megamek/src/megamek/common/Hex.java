@@ -644,6 +644,18 @@ public class Hex implements IHex, Serializable {
         }
         // Some terrains must be grouped, check for those.
 
+        // Rapids
+        if ((containsTerrain(Terrains.RAPIDS))) {
+            if (!containsTerrain(Terrains.WATER)) {
+                rv = false;
+                errBuff.append("Rapids must occurr within water!\n");
+            }
+            if (this.depth() >= 0) {
+                rv = false;
+                errBuff.append("Rapids must occurr in depth 1 or greater!\n");
+            }
+        }
+
         // Buildings
         if ((containsTerrain(Terrains.BUILDING)
                 && (!containsTerrain(Terrains.BLDG_CF) || !containsTerrain(Terrains.BLDG_ELEV)))

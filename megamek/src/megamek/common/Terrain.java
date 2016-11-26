@@ -435,6 +435,10 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.RAPIDS:
+            // Doesn't apply to Hover, or airborne WiGE or VTOL
+            if (e.isAirborneVTOLorWIGE() || (e.getMovementMode() == EntityMovementMode.HOVER)) {
+                return 0;
+            }
             if (level == 2) {
                 if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
                     return 1;

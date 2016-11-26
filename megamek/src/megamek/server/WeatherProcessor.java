@@ -100,7 +100,8 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         debugTime("resolve weather 1", true);
 
         //first we need to increment the conditions
-        if(conditions.getWeather() == PlanetaryConditions.WE_MOD_SNOW 
+        if(conditions.getWeather() == PlanetaryConditions.WE_MOD_SNOW
+                || conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
                 && game.getBoard().onGround()) {
             modSnowTurn = modSnowTurn + 1;
             if(modSnowTurn == 9) {

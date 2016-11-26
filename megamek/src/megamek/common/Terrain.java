@@ -435,6 +435,10 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.RAPIDS:
+            // Doesn't apply to Hover, or airborne WiGE or VTOL
+            if (e.isAirborneVTOLorWIGE() || (e.getMovementMode() == EntityMovementMode.HOVER)) {
+                return 0;
+            }
             if (level == 2) {
                 if ((e instanceof Mech) && ((Mech) e).isSuperHeavy()) {
                     return 1;
@@ -588,8 +592,10 @@ public class Terrain implements ITerrain, Serializable {
             rv = false;
         } else if (type == Terrains.SMOKE && (level < 1 || level > 5)) {
             rv = false;
+        } else if (type == Terrains.MAGMA && (level < 1 || level > 2)) {
+            rv = false;
         }
-        
+
         if (!rv && (errBuff != null)) {
             errBuff.append("Illegal level! For " + toString() + "\n");
         }

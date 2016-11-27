@@ -2656,72 +2656,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 drawHexBorder(g, tint.darker(), 5, 10);
             }
         }
-        
-        // Darken the hex image if nighttime 
-        /*
-        if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) 
-                && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)
-                && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
-            
-            scaledImage = getScaledImage(tileManager.getNightFog(), true);
-            Composite svComposite = g.getComposite();
 
-            if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) {
-                g.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_ATOP, 1f));
-                g.drawImage(scaledImage, 0, 0, this);
-            } else if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_FULL_MOON) {
-                g.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_ATOP, 0.8f));
-                g.drawImage(scaledImage, 0, 0, this);
-            }
-            g.setComposite(svComposite);
-        }*/
-        
+        // Darken the hex for night-time, if applicable
         if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) 
                 && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
-            
             for (int x = 0; x < hexImage.getWidth(); ++x) {
                 for (int y = 0; y < hexImage.getHeight(); ++y) {
-                    int rgb = hexImage.getRGB(x, y);
-
-                    int rd = (rgb >> 16) & 0xFF; 
-                    int gr = (rgb >> 8) & 0xFF; 
-                    int bl = rgb & 0xFF; 
-                    int al = (rgb >> 24); 
-
-                    switch (game.getPlanetaryConditions().getLight()) {
-                    case PlanetaryConditions.L_FULL_MOON:
-                        rd = rd/4; // 1/4 red
-                        gr = gr/4; // 1/4 green
-                        bl = bl/2; // half blue
-                        break;
-                    case PlanetaryConditions.L_PITCH_BLACK:
-                        int gy = (rd+gr+bl)/16;
-                        if (Math.random()<0.3) {
-                            gy=gy*4/5;
-                        }
-                        if (Math.random()<0.3) {
-                            gy=gy*5/4;
-                        }
-                        rd = gy+rd/5;
-                        gr = gy+gr/5;
-                        bl = gy+bl/5;
-                        break;
-                    case PlanetaryConditions.L_MOONLESS:
-                        rd = rd/4; 
-                        gr = gr/4; 
-                        bl = bl/2; 
-                        break;
-                    case PlanetaryConditions.L_DUSK:
-                        bl = bl*3/4; 
-                        break;
-                    default:
-                    }
-
-                    int nc = (al << 24) + (rd << 16) + (gr << 8) + bl; 
-                    hexImage.setRGB(x, y, nc);
+                    hexImage.setRGB(x, y, getNightDarkenedColor(hexImage.getRGB(x, y)));
                 }
             }
         }
@@ -2930,7 +2872,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (tileManager.orthoFor(oHex) != null) {
             for (Image image : tileManager.orthoFor(oHex)) {
-                Image scaledImage = getScaledImage(image, true);
+                BufferedImage scaledImage = ImageUtil.createAcceleratedImage(getScaledImage(image, true));
+
+                // Darken the hex for night-time, if applicable
+                if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
+                        && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)
+                        && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
+                    for (int x = 0; x < scaledImage.getWidth(null); ++x) {
+                        for (int y = 0; y < scaledImage.getHeight(); ++y) {
+                            scaledImage.setRGB(x, y, getNightDarkenedColor(scaledImage.getRGB(x, y)));
+                        }
+                    }
+                }
 
                 // draw orthogonal
                 boardGraph.drawImage(scaledImage, orthX, orthY, this);
@@ -3087,6 +3040,50 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else {
             return (srcHex.floor() != destHex.floor());
         }
+    }
+
+    /**
+     * Given an int-packed RGB value, apply a modifier for the light level and return the result.
+     *
+     * @param rgb int-packed ARGB value.
+     * @return An int-packed ARGB value, which is an adjusted value of the input, based on the light level
+     */
+    public int getNightDarkenedColor(int rgb) {
+        int rd = (rgb >> 16) & 0xFF;
+        int gr = (rgb >> 8) & 0xFF;
+        int bl = rgb & 0xFF;
+        int al = (rgb >> 24);
+
+        switch (game.getPlanetaryConditions().getLight()) {
+        case PlanetaryConditions.L_FULL_MOON:
+            rd = rd / 4; // 1/4 red
+            gr = gr / 4; // 1/4 green
+            bl = bl / 2; // half blue
+            break;
+        case PlanetaryConditions.L_PITCH_BLACK:
+            int gy = (rd + gr + bl) / 16;
+            if (Math.random() < 0.3) {
+                gy = gy * 4 / 5;
+            }
+            if (Math.random() < 0.3) {
+                gy = gy * 5 / 4;
+            }
+            rd = gy + rd / 5;
+            gr = gy + gr / 5;
+            bl = gy + bl / 5;
+            break;
+        case PlanetaryConditions.L_MOONLESS:
+            rd = rd / 4;
+            gr = gr / 4;
+            bl = bl / 2;
+            break;
+        case PlanetaryConditions.L_DUSK:
+            bl = bl * 3 / 4;
+            break;
+        default:
+        }
+
+        return (al << 24) + (rd << 16) + (gr << 8) + bl;
     }
     
     /**

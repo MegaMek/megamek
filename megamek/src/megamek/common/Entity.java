@@ -6557,6 +6557,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 && ((game.getPlanetaryConditions()
                                         .getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
                                         || (game.getPlanetaryConditions()
+                                                .getWeather() == PlanetaryConditions.WE_BLIZZARD)
+                                        || (game.getPlanetaryConditions()
                                                 .getWindStrength() >= PlanetaryConditions.WI_STORM))))
                 && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             roll.append(new PilotingRollData(getId(),

@@ -32507,6 +32507,7 @@ public class Server implements Runnable {
         }
 
         if ((game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)
+                || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_BLIZZARD)
                 || ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) && (game
                         .getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE))) {
             rollTarget.addModifier(3, "Really Bad Weather");

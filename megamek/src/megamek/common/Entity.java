@@ -2312,8 +2312,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns this entity's original jumping mp.
      */
     public int getOriginalJumpMP() {
+    	return getOriginalJumpMP(false);
+    }
+    
+    public int getOriginalJumpMP(boolean ignoreModularArmor) {
 
-        if (hasModularArmor()) {
+        if (!ignoreModularArmor && hasModularArmor()) {
             return Math.max(0, jumpMP - 1);
         }
 

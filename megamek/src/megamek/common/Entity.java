@@ -13656,7 +13656,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 setDestroyed(true);
             }
         }
-
+        setIsJumpingNow(false);
     }
 
     /**

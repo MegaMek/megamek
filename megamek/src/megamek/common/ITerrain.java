@@ -116,5 +116,7 @@ public interface ITerrain {
     public abstract int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
 
     public abstract void getUnstuckModifier(int elev, PilotingRollData rollTarget);
+    
+    public boolean isValid(StringBuffer errBuff);
 
 }

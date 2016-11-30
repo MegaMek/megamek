@@ -4816,6 +4816,11 @@ public class Compute {
         final int dest2srcDir = (src2destDir + 3) % 6;
         boolean result = false;
 
+        // Jumping shouldn't be considered to be moving on pavement
+        if (moveStep.isJumping()) {
+            return false;
+        }
+
         // We may be moving in the same hex.
         if (src.equals(dest)
                 && (srcHex.containsTerrain(Terrains.PAVEMENT)

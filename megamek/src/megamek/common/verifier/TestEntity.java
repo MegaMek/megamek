@@ -1250,6 +1250,17 @@ public abstract class TestEntity implements TestEntityOption {
                         }
                     }
                 }
+                if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
+                	if (m.getLocation() == Mech.LOC_HEAD) {
+                        buff.append("Jump jet must be mounted in leg or torso\n");
+                        illegal = true;
+                	} else if (!(mech instanceof QuadMech)
+                			&& (m.getLocation() == Mech.LOC_LARM
+                					|| m.getLocation() == Mech.LOC_RARM)) {
+                        buff.append("Jump jet must be mounted in leg or torso\n");
+                        illegal = true;
+                	}
+                }
                 if (m.getType().hasFlag(MiscType.F_REMOTE_DRONE_COMMAND_CONSOLE)) {
                     if (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
                         buff.append("cockpit command console can't be combined with remote drone command console\n");

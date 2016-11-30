@@ -638,8 +638,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean canon;
 
     private int assaultDropInProgress = 0;
-    private boolean climbMode = false; // save climb mode from turn to turn for
-    // convenience
+    private boolean climbMode = GUIPreferences.getInstance()
+            .getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE);
 
     protected int lastTarget = Entity.NONE;
     protected String lastTargetDisplayName = "";
@@ -2312,8 +2312,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns this entity's original jumping mp.
      */
     public int getOriginalJumpMP() {
+    	return getOriginalJumpMP(false);
+    }
+    
+    public int getOriginalJumpMP(boolean ignoreModularArmor) {
 
-        if (hasModularArmor()) {
+        if (!ignoreModularArmor && hasModularArmor()) {
             return Math.max(0, jumpMP - 1);
         }
 
@@ -5623,6 +5627,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         setMadePointblankShot(false);
 
         setSelfDestructedThisTurn(false);
+
+        setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
     }
 
     /**
@@ -13650,7 +13656,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 setDestroyed(true);
             }
         }
-
+        setIsJumpingNow(false);
     }
 
     /**

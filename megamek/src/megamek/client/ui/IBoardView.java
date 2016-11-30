@@ -28,8 +28,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IPlayer;
 import megamek.common.MovePath;
-import megamek.common.ToHitData;
 import megamek.common.actions.AttackAction;
+import megamek.common.util.FiringSolution;
 
 public interface IBoardView extends MechDisplayListener {
 
@@ -46,7 +46,7 @@ public interface IBoardView extends MechDisplayListener {
     public void drawMovementData(Entity ce, MovePath cmd);
     public void clearMovementData();
     public void setFiringSolutions(Entity attacker,
-            Map<Integer,ToHitData> firingSolutions);
+            Map<Integer,FiringSolution> firingSolutions);
     public void setMovementEnvelope(Map<Coords,Integer> mvEnvData,
             int walk, int run, int jump, int gear);
     public void clearFiringSolutionData();

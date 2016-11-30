@@ -92,7 +92,7 @@ public class BoardUtilities {
         IBoard result = new Board();
         result.setRoadsAutoExit(roadsAutoExit);
         // Initialize all hexes - buildings, exits, etc
-        result.newData(resultWidth, resultHeight, resultData);
+        result.newData(resultWidth, resultHeight, resultData, null);
         if (boardListContainsBackground) {
             result.setNumBoardsHeight(sheetHeight);
             result.setNumBoardsWidth(sheetWidth);

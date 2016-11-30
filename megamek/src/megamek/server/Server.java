@@ -9079,15 +9079,11 @@ public class Server implements Runnable {
         // Need to check here if the 'Mech actually went from non-prone to prone
         // here because 'fellDuringMovement' is sometimes abused just to force
         // another turn and so doesn't reliably tell us.
-        boolean continueTurnFromFall = !(game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT) && (entity instanceof Mech)
-                && !wasProne && entity.isProne())
-                && (fellDuringMovement && !entity.isCarefulStand()) // Careful
-                                                                    // standing
-                                                                    // takes up
-                                                                    // the whole
-                                                                    // turn
-                && !turnOver && (entity.mpUsed < entity.getRunMP());
+        boolean continueTurnFromFall = !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT)
+                && (entity instanceof Mech) && !wasProne && entity.isProne()
+                && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
+                && !turnOver && (entity.mpUsed < entity.getRunMP())
+                && (overallMoveType != EntityMovementType.MOVE_JUMP);
         if ((continueTurnFromFall || continueTurnFromPBS)
                 && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
@@ -21113,47 +21109,21 @@ public class Server implements Runnable {
         boolean tookInternalDamage = damageIS;
         IHex te_hex = null;
 
-        boolean hardenedArmor = false;
-        boolean ferroLamellorArmor = false;
-        boolean reflectiveArmor = false;
-        boolean reactiveArmor = false;
-        boolean ballisticArmor = false;
-        boolean impactArmor = false;
+        boolean hardenedArmor = ((te instanceof Mech) || (te instanceof Tank))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
+        boolean ferroLamellorArmor = ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+        boolean reflectiveArmor = (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
+                || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE));
+        boolean reactiveArmor = (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
+                || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE));
+        boolean ballisticArmor = ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+        boolean impactArmor = (te instanceof Mech)
+                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
         boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
-
-        if (((te instanceof Mech) || (te instanceof Tank))
-            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED)) {
-            hardenedArmor = true;
-        }
-
-        if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR)) {
-            ferroLamellorArmor = true;
-        }
-
-        if ((((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                    && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
-            || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE))) {
-            reflectiveArmor = true; // note that BA reflec receives
-            // "all of the bonuses but none of the drawbacks"
-        }
-
-        if ((((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-                    && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
-            || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE))) {
-            reactiveArmor = true; // note that BA reactive receives
-            // "all of the bonuses but none of the drawbacks"
-        }
-
-        if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
-            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
-            ballisticArmor = true;
-        }
-
-        if ((te instanceof Mech)
-            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
-            impactArmor = true;
-        }
 
         // TACs from the hit location table
         int crits;
@@ -21821,8 +21791,8 @@ public class Server implements Runnable {
                 } else if (ballisticArmor
                            && ((hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
                                || (hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING)
-                               || (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC) || (hit
-                                                                                                       .getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
+                               || (hit.getGeneralDamageType() == HitData.DAMAGE_BALLISTIC)
+                               || (hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE))) {
                     tmpDamageHold = damage;
                     damage = Math.max(1, damage / 2);
                     r = new Report(6088);
@@ -21842,22 +21812,30 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
                            && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)
-                           && !isBattleArmor) { // BA reflec does not receive extra
-                    // physical damage
+                           && !isBattleArmor) { // BA reflec does not receive extra physical damage
                     tmpDamageHold = damage;
-                    damage *= 2;
+                    int currArmor = te.getArmor(hit);
+                    int dmgToDouble = Math.max(0, currArmor / 2);
+                    damage += dmgToDouble;
                     r = new Report(6066);
                     r.subject = te_n;
                     r.indent(3);
+                    r.add(currArmor);
+                    r.add(dmgToDouble);
+                    r.add(dmgToDouble * 2);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor && areaSatArty && !isBattleArmor) {
-                    tmpDamageHold = damage; // BA reflec does not receive extra
-                    // AE damage
-                    damage *= 2;
+                    tmpDamageHold = damage; // BA reflec does not receive extra AE damage
+                    int currArmor = te.getArmor(hit);
+                    int dmgToDouble = Math.max(0, currArmor / 2);
+                    damage += dmgToDouble;
                     r = new Report(6087);
                     r.subject = te_n;
                     r.indent(3);
+                    r.add(currArmor);
+                    r.add(dmgToDouble);
+                    r.add(dmgToDouble * 2);
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
@@ -22241,36 +22219,15 @@ public class Server implements Runnable {
                     r.indent(2);
                     r.add(damage);
                     vDesc.add(r);
-                    if (damage > te
-                            .getArmor(te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                                   : te instanceof LargeSupportTank ?
-                                                                     LargeSupportTank.LOC_REAR
-                                                                                                    : Tank.LOC_REAR)) {
-                        te.setArmor(
-                                IArmorState.ARMOR_DESTROYED,
-                                te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                             : te instanceof LargeSupportTank ? LargeSupportTank
-                                        .LOC_REAR
-                                                                                              : Tank.LOC_REAR);
+                    int loc = (te instanceof SuperHeavyTank) ? SuperHeavyTank.LOC_REAR
+                            : (te instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR : Tank.LOC_REAR;
+                    if (damage > te.getArmor(loc)) {
+                        te.setArmor(IArmorState.ARMOR_DESTROYED, loc);
                         r = new Report(6090);
                     } else {
-                        te.setArmor(
-                                te.getArmor(te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                                         : te instanceof LargeSupportTank ?
-                                                                           LargeSupportTank.LOC_REAR
-                                                                                                          : Tank
-                                                                                   .LOC_REAR)
-                                - damage,
-                                te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                             : te instanceof LargeSupportTank ? LargeSupportTank
-                                        .LOC_REAR
-                                                                                              : Tank.LOC_REAR);
+                        te.setArmor(te.getArmor(loc) - damage, loc);
                         r = new Report(6085);
-                        r.add(te.getArmor(te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                                                       : te instanceof LargeSupportTank ?
-                                                                         LargeSupportTank.LOC_REAR
-                                                                                                        : Tank
-                                                                                 .LOC_REAR));
+                        r.add(te.getArmor(loc));
                     }
                     r.subject = te_n;
                     r.indent(3);
@@ -22283,8 +22240,7 @@ public class Server implements Runnable {
                     } else {
                         critIndex = Tank.CRIT_CREW_STUNNED;
                     }
-                    vDesc.addAll(applyCriticalHit(te, Entity.NONE,
-                                                  new CriticalSlot(0, critIndex), true, 0, false));
+                    vDesc.addAll(applyCriticalHit(te, Entity.NONE, new CriticalSlot(0, critIndex), true, 0, false));
                 }
 
                 // is there internal structure in the location hit?
@@ -22345,16 +22301,12 @@ public class Server implements Runnable {
                         // Handle Protomech pilot damage
                         // due to location destruction
                         if (te instanceof Protomech) {
-                            int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit
-                                    .getLocation()]
-                                       - ((Protomech) te).getPilotDamageTaken(hit
-                                                                                      .getLocation());
+                            int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]
+                                    - ((Protomech) te).getPilotDamageTaken(hit.getLocation());
                             if (hits > 0) {
                                 vDesc.addAll(damageCrew(te, hits));
-                                ((Protomech) te).setPilotDamageTaken(hit
-                                                                             .getLocation(),
-                                                                     Protomech.POSSIBLE_PILOT_DAMAGE[hit
-                                                                             .getLocation()]);
+                                ((Protomech) te).setPilotDamageTaken(hit.getLocation(),
+                                        Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                             }
                         }
 
@@ -22766,6 +22718,23 @@ public class Server implements Runnable {
             // loop terminates anyway.)
             if (damage > 0) {
                 hit = nextHit;
+                // Need to update armor status for the new location
+                hardenedArmor = ((te instanceof Mech) || (te instanceof Tank))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED);
+                ferroLamellorArmor = ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_FERRO_LAMELLOR);
+                reflectiveArmor = (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
+                        || (isBattleArmor
+                                && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE));
+                reactiveArmor = (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
+                        || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE));
+                ballisticArmor = ((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED);
+                impactArmor = (te instanceof Mech)
+                        && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT);
+                bar5 = te.getBARRating(hit.getLocation()) <= 5;
             }
             if (damageIS) {
                 wasDamageIS = true;

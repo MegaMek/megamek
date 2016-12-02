@@ -68,6 +68,9 @@ public final class Configuration {
     /** The default images directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_IMAGES = "images";
 
+    /** The default file that maps image filenames to locations withn an image atlas. */
+    private static final String DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP = "images/imgFileAtlasMap.xml";
+
     /** The default board backgrounds directory name (under the images directory). */
     private static final String DEFAULT_DIR_NAME_BOARD_BACKGROUNDS = "board_backgrounds";
 
@@ -337,6 +340,36 @@ public final class Configuration {
     }
 
     /**
+     * Return the configured file that maps an image file to a location within
+     * an image atlas, if set, otherwise return the default path, relative to
+     * the configured data directory.
+     * 
+     * @return {@link File} containing the path to the image file to atlas loc file.
+     */
+    public static File imageFileAtlasMapFile() {
+        lock.readLock().lock();
+        try {
+            return (imgFileAtlasMapFile != null) ? imgFileAtlasMapFile : new File(dataDir(),
+                    DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Set the  image file to atlas loc file to an arbitrary location (<b>not</b> relative to
+     * the data directory).
+     *
+     * @param images_dir_path
+     *            The path to the images directory.
+     */
+    public static void setImageFileAtlasMapFile(final File imgFileAtlasMapFilePath) {
+        lock.writeLock().lock();
+        imgFileAtlasMapFile = imgFileAtlasMapFilePath;
+        lock.writeLock().unlock();
+    }
+
+    /**
      * Return the configured board backgrounds directory, if set, otherwise
      * return the default path, relative to the configured images directory.
      *
@@ -581,6 +614,9 @@ public final class Configuration {
     /** The configured images directory. */
     private static File images_dir = null;
 
+    /** The path to the imgFileAtlasMapFile. */
+    private static File imgFileAtlasMapFile = null;
+    
     /** The configured images directory. */
     private static File board_backgrounds_dir = null;
 

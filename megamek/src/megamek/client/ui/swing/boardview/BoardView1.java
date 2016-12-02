@@ -5068,8 +5068,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (path == null) {
                         boardBackgrounds.add(null);
                     } else {
-                        Image bgImg = ImageUtil.loadImageFromFile(path,
-                                getToolkit());
+                        Image bgImg = ImageUtil.loadImageFromFile(path);
                         ImageProducer prod = bgImg.getSource();
                         if (flipHoriz || flipVert) {
                             AffineTransform at = new AffineTransform();
@@ -5878,8 +5877,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                        + file.getAbsolutePath());
                 } else {
                     bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(
-                            file.getAbsolutePath(),
-                            Toolkit.getDefaultToolkit());
+                            file.getAbsolutePath());
                     bvBgShouldTile = bvSkinSpec.tileBackground;
                 }
             }
@@ -5891,8 +5889,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                        + file.getAbsolutePath());
                 } else {
                     scrollPaneBgImg = ImageUtil.loadImageFromFile(
-                            file.getAbsolutePath(),
-                            Toolkit.getDefaultToolkit());
+                            file.getAbsolutePath());
                 }
             }
         } catch (Exception e) {

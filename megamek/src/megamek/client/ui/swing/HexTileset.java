@@ -585,7 +585,7 @@ public class HexTileset {
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = filenames.elementAt(i);
                 File imgFile = new File(Configuration.hexesDir(), filename);
-                Image image = ImageUtil.loadImageFromFile(imgFile.toString(), comp.getToolkit());
+                Image image = ImageUtil.loadImageFromFile(imgFile.toString());
                 if(null != image) {
                     images.add(image);
                 } else {

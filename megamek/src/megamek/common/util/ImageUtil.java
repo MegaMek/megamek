@@ -140,12 +140,12 @@ public final class ImageUtil {
         }
     }
     
-    public static Image loadImageFromFile(String fileName, Toolkit toolkit) {
+    public static Image loadImageFromFile(String fileName) {
         if(null == fileName) {
             return null;
         }
         for (ImageLoader loader : IMAGE_LOADERS) {
-            Image img = loader.loadImage(fileName, toolkit);
+            Image img = loader.loadImage(fileName);
             if (null != img) {
                 return img;
             }
@@ -155,19 +155,30 @@ public final class ImageUtil {
     
     private ImageUtil() {}
     
+    /**
+     * Interface that defines methods for an ImageLoader.
+     *
+     */
     public interface ImageLoader {
-        Image loadImage(String fileName, Toolkit toolkit);
+        
+        /**
+         * Given a string representation of a file, 
+         * @param fileName
+         * @param toolkit
+         * @return
+         */
+        Image loadImage(String fileName);
     }
     
     public static class AWTImageLoader implements ImageLoader {
         @Override
-        public Image loadImage(String fileName, Toolkit toolkit) {
+        public Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
                 System.out.println("Trying to load image for a non-existant "
                         + "file! Path: " + fileName);
             }
-            ToolkitImage result = (ToolkitImage) toolkit.getImage(fileName);
+            ToolkitImage result = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(fileName);
             if(null == result) {
                 return null;
             }
@@ -212,7 +223,7 @@ public final class ImageUtil {
         }
         
         @Override
-        public Image loadImage(String fileName, Toolkit toolkit) {
+        public Image loadImage(String fileName) {
             int tileStart = fileName.indexOf('(');
             int tileEnd = fileName.indexOf(')');
             if((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
@@ -229,7 +240,7 @@ public final class ImageUtil {
                 return null;
             }
             String baseName = fileName.substring(0, tileStart);
-            ToolkitImage base = (ToolkitImage) toolkit.getImage(baseName);
+            ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseName);
             if(null == base) {
                 return null;
             }

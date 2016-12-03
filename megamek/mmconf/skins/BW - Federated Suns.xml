@@ -72,7 +72,7 @@
 			</edge>
 		</border>
 		<background_image>Bloodwolf/Federated Suns/boardview/background_1.gif</background_image>
-		<background_image>Bloodwolf/Federated Suns/boardview/background.png</background_image>
+		<background_image>Bloodwolf/Parts/boardview/background.png</background_image>
 		<tile_background>true</tile_background>
 		<font_color>#ffffff</font_color>
 		<show_scroll_bars>false</show_scroll_bars>

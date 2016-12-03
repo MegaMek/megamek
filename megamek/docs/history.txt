@@ -164,6 +164,8 @@ v0.41.21 (2016-07-31 10:00 UTC)
 + Bug: Superheavy meks should halve number of criticals for armor (and weren't)
 + Added Superheavy Gyro type for Superheavy meks
 + Unit fixes and new sprites
++ Added missing report 6051 for reporting no damage from non-peneetrating inf
+	weapons
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

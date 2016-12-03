@@ -109,9 +109,9 @@ public class CreateImageAtlases {
             @Override
             public boolean accept(File dir, String name) {
                 // Ignore other atlas files, just in case
-                return name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif")
-                        || name.toLowerCase().endsWith(".jpg")
-                        || name.toLowerCase().endsWith(".jpeg") && !name.contains("_atlas.png");
+                return (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".gif")
+                        || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".jpeg"))
+                        && !name.endsWith("_atlas.png");
             }
         });
 

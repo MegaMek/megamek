@@ -648,13 +648,16 @@ public class PlanetaryConditions implements Serializable {
 
         if ((lightConditions == L_PITCH_BLACK) && !Spotlight
                 && !targetIlluminated) {
-            if(isMechVee) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 3;
             }
-            if(isAero) {
+            if (isAero) {
                 return 5;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 4;
             }
             return 1;
@@ -662,13 +665,16 @@ public class PlanetaryConditions implements Serializable {
                 || ((lightConditions == L_FULL_MOON) && !Spotlight && !targetIlluminated)
                 || (weatherConditions == WE_BLIZZARD)
                 || ((weatherConditions == WE_HEAVY_SNOW) && (windStrength >= WI_STRONG_GALE))) {
-            if(isMechVee) {
+            if(isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 5;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 10;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 8;
             }
             return 2;
@@ -680,63 +686,76 @@ public class PlanetaryConditions implements Serializable {
                 || (weatherConditions == WE_HEAVY_HAIL)
                 || (fog == FOG_HEAVY)
                 || (blowingSand && (windStrength >= WI_MOD_GALE))) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 10;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 20;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 15;
             }
             return 5;
         } else if ((lightConditions == L_PITCH_BLACK) && !targetIlluminated) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 13;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 15;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 14;
             }
             return 6;
         } else if (((lightConditions > L_DAY) && !Spotlight && !targetIlluminated)
                 || (weatherConditions == WE_GUSTING_RAIN)
                 || (weatherConditions == WE_SNOW_FLURRIES)
-                || (((weatherConditions == WE_HEAVY_SNOW) 
-                        || (weatherConditions == WE_MOD_SNOW)) 
-                            && (windStrength >= WI_MOD_GALE)) ) {
-            if(isMechVee) {
+                || (weatherConditions == WE_MOD_SNOW) && (windStrength >= WI_MOD_GALE)) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 15;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 30;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 20;
             }
             return 8;
         } else if((lightConditions > L_DAY) && !targetIlluminated) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 25;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 40;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 30;
             }
             return 13;
         } else if ((weatherConditions == WE_MOD_SNOW)
                 || (weatherConditions == WE_MOD_RAIN)) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 20;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 50;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 25;
             }
             return 10;
@@ -744,24 +763,30 @@ public class PlanetaryConditions implements Serializable {
                 || (weatherConditions == WE_LIGHT_SNOW)
                 || (weatherConditions == WE_LIGHT_RAIN)
                 || (weatherConditions == WE_LIGHT_HAIL) || (fog == FOG_LIGHT)) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 30;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 60;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 35;
             }
             return 15;
         } else {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 60;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 120;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 70;
             }
             return 30;
@@ -971,10 +996,12 @@ public class PlanetaryConditions implements Serializable {
             case WE_ICE_STORM:
             case WE_SNOW_FLURRIES:
                 windStrength = WI_MOD_GALE;
+                shiftWindStrength = false;
                 break;
             case WE_GUSTING_RAIN:
             case WE_BLIZZARD:
                 windStrength = WI_STRONG_GALE;
+                shiftWindStrength = false;
                 break;
         }
     }

@@ -130,6 +130,7 @@ public class CreateImageAtlases {
                 BufferedImage.TYPE_INT_ARGB);
         Graphics g = atlas.getGraphics();
         String imgPath;
+        File atlasFile = new File(dir, dir.getName() + "_atlas.png");
         String atlasLoc;
 
         int row, col;
@@ -157,8 +158,8 @@ public class CreateImageAtlases {
             y = row * hexHeight;
 
             // Update imageFileToAtlas map
-            imgPath = imageDirPath.relativize(imgFile.toPath()).toString();
-            atlasLoc = imgPath + "(" + x + "," + y + "-" + hexWidth + "," + hexHeight + ")";
+            imgPath = imgFile.toString();
+            atlasLoc = atlasFile.toString() + "(" + x + "," + y + "-" + hexWidth + "," + hexHeight + ")";
             imgFileToAtlasMap.put(imgPath, atlasLoc);
             imagesStored.add(imgFile.toString());
 
@@ -178,7 +179,7 @@ public class CreateImageAtlases {
         // Write out atlas
         if (writtenImages > 0) {
             try {
-                ImageIO.write(atlas, "png", new File(dir, dir.getName() + "_atlas.png"));
+                ImageIO.write(atlas, "png", atlasFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }

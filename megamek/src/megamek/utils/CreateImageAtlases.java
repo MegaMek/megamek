@@ -65,6 +65,8 @@ public class CreateImageAtlases {
      */
     ArrayList<String> imagesStored = new ArrayList<>();
 
+    int improperImgDimsCount = 0;
+
     /**
      * 
      */
@@ -143,6 +145,7 @@ public class CreateImageAtlases {
             if (currImg.getHeight() != hexHeight || currImg.getWidth() != hexWidth) {
                 System.out.println("Skipping image " + imgFile + " because dimensions don't match.  Image is "
                         + currImg.getWidth() + " x " + currImg.getHeight());
+                improperImgDimsCount++;
                 continue;
             }
             x = col * hexWidth;
@@ -204,12 +207,12 @@ public class CreateImageAtlases {
 
         atlasCreator.imageDirPath = Configuration.unitImagesDir().toPath();
         atlasCreator.scanDirectory(Configuration.unitImagesDir());
-        
+
         atlasCreator.imageDirPath = Configuration.hexesDir().toPath();
         atlasCreator.scanDirectory(Configuration.hexesDir());
 
         atlasCreator.writeImgFileToAtlasMap();
-        
+
         try (BufferedWriter fout = new BufferedWriter(new FileWriter(new File("atlasedImages.txt")))) {
             for (String imgFile : atlasCreator.imagesStored) {
                 fout.write(imgFile);
@@ -219,5 +222,7 @@ public class CreateImageAtlases {
             System.out.println("Failed to write out list of atlased images!");
             e.printStackTrace();
         }
+
+        System.out.println("Skipped " + atlasCreator.improperImgDimsCount + " images due to improper dimensions.");
     }
 }

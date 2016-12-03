@@ -88,6 +88,10 @@ public class CreateImageAtlases {
      */
     void scanDirectory(File file) {
         if (file.isDirectory()) {
+            // Ignore certian directories
+            if (file.toString().contains("hexes/largeTextures")) {
+                return;
+            }
             processDirectory(file);
             for (File subFile : file.listFiles()) {
                 if (subFile.isDirectory()) {

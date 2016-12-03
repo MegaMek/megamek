@@ -166,6 +166,8 @@ v0.41.21 (2016-07-31 10:00 UTC)
 + Unit fixes and new sprites
 + Added missing report 6051 for reporting no damage from non-peneetrating inf
 	weapons
++ Issue #373: LargeTexture.tileset completion
++ Issue #390: MegaMek Thinks bldg_basement_type:* Is A Base
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

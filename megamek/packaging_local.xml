@@ -33,7 +33,6 @@
 	<property name="localbuilddir" value="${localdir}/${builddir}" />
 
 	<property name="timestampfile" value="${logdir}/timestamp" />
-	<property name="TinyXMLsrc" value="TinyXML07-src.zip" />
 
 	<!-- Name of the target jarfile and the class containing the main-Method -->
 	<property name="jarfile" value="MegaMek.jar" />

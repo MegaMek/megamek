@@ -131,6 +131,7 @@ public class CreateImageAtlases {
         int row, col;
         row = col = 0;
         int x, y;
+        int writtenImages = 0;
         for (File imgFile : imageFiles) {
             BufferedImage currImg;
             try {
@@ -166,14 +167,17 @@ public class CreateImageAtlases {
                 col = 0;
                 row++;
             }
+            writtenImages++;
         }
         g.dispose();
 
         // Write out atlas
-        try {
-            ImageIO.write(atlas, "png", new File(dir, dir.getName() + "_atlas.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (writtenImages > 0) {
+            try {
+                ImageIO.write(atlas, "png", new File(dir, dir.getName() + "_atlas.png"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

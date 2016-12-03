@@ -334,7 +334,7 @@ public final class ImageUtil {
         }
 
         public Image loadImage(String fileName) {
-            if (!imgFileToAtlasMap.containsKey(fileName)) {
+            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(fileName)) {
                 return null;
             }
             return super.loadImage(imgFileToAtlasMap.get(fileName));

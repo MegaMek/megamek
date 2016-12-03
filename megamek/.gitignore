@@ -19,3 +19,5 @@
 /classes/
 /mechs.csv
 /*.ps
+atlasedImages.txt
+data/images/imgFileAtlasMap.xml

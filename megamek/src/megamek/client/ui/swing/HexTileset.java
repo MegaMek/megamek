@@ -248,6 +248,7 @@ public class HexTileset {
     public int incDepth = 0;
 
     public void loadFromFile(String filename) throws IOException {
+        long startTime = System.currentTimeMillis();
         // make input stream for board
         Reader r = new BufferedReader(new FileReader(
                 new File(Configuration.hexesDir(), filename)
@@ -311,6 +312,7 @@ public class HexTileset {
         }
         r.close();
         themes.add(TRANSPARENT_THEME);
+        long endTime = System.currentTimeMillis();
 
         System.out
                 .println("hexTileset: loaded " + bases.size() + 
@@ -321,6 +323,9 @@ public class HexTileset {
         System.out
                 .println("hexTileset: loaded " + ortho.size() + 
                         " ortho images"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (incDepth == 0) {
+            System.out.println("hexTileset loaded in " + (endTime - startTime) + "ms.");
+        }
         incDepth--;
     }
 
@@ -585,7 +590,7 @@ public class HexTileset {
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = filenames.elementAt(i);
                 File imgFile = new File(Configuration.hexesDir(), filename);
-                Image image = ImageUtil.loadImageFromFile(imgFile.toString(), comp.getToolkit());
+                Image image = ImageUtil.loadImageFromFile(imgFile.toString());
                 if(null != image) {
                     images.add(image);
                 } else {

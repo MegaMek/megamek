@@ -13,7 +13,7 @@
  *  for more details.
  */
 
-package megamek.test;
+package megamek.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

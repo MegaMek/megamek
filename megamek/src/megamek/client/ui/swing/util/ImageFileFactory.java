@@ -89,8 +89,7 @@ public class ImageFileFactory implements ItemFileFactory {
                 // Cache the image on first use.
                 if (null == image) {
                     String name = itemFile.getAbsolutePath();
-                    image = ImageUtil.loadImageFromFile(name,
-                            Toolkit.getDefaultToolkit());
+                    image = ImageUtil.loadImageFromFile(name);
                 }
                 // Return a copy of the image.
                 return ImageUtil.getScaledImage(image, 84, 72);

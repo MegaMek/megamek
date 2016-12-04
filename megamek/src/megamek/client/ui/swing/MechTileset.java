@@ -511,7 +511,7 @@ public class MechTileset {
                         "load a file that doesn't exist: "
                         + fin.getPath());
             }
-            image = ImageUtil.loadImageFromFile(fin.toString(), comp.getToolkit());
+            image = ImageUtil.loadImageFromFile(fin.toString());
             if (image == null) {
                 System.out.println("Received null image from "
                         + "ImageUtil.loadImageFromFile!  File: "

@@ -244,7 +244,10 @@ public class CommonSettingsDialog extends ClientDialog implements
     
     private JLabel stampFormatLabel;
     private JLabel gameLogFilenameLabel;
-    
+
+    private JCheckBox gameSummaryBV;
+    private JCheckBox gameSummaryMM;
+
     private JComboBox<String> skinFiles;
 
     // Avanced Settings
@@ -782,6 +785,9 @@ public class CommonSettingsDialog extends ClientDialog implements
             }
         }
 
+        gameSummaryBV.setSelected(gs.getGameSummaryBoardView());
+        gameSummaryMM.setSelected(gs.getGameSummaryMiniMap());
+
         skinFiles.removeAllItems();
         List<String> xmlFiles = new ArrayList<>(Arrays
                 .asList(Configuration.skinsDir().list(new FilenameFilter() {
@@ -910,6 +916,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
+
+        gs.setGameSummaryBoardView(gameSummaryBV.isSelected());
+        gs.setGameSummaryMiniMap(gameSummaryMM.isSelected());
 
         String newSkinFile = (String)skinFiles.getSelectedItem();
         String oldSkinFile = gs.getSkinFile();
@@ -1270,6 +1279,23 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(mmSymbol);
         comps.add(row);
 
+        // Game Summary - BoardView
+        gameSummaryBV = new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryBV.name")); //$NON-NLS-1$
+        gameSummaryBV.setToolTipText(Messages.getString("CommonSettingsDialog.gameSummaryBV.tooltip", //$NON-NLS-1$
+                new Object[] { Configuration.gameSummaryImagesBVDir() }));
+        row = new ArrayList<>();
+        gameSummaryBV.addItemListener(this);
+        row.add(gameSummaryBV);
+        comps.add(row);
+
+        // Game Summary - Mini-map
+        gameSummaryMM = new JCheckBox(Messages.getString("CommonSettingsDialog.gameSummaryMM.name")); //$NON-NLS-1$
+        gameSummaryMM.setToolTipText(Messages.getString("CommonSettingsDialog.gameSummaryMM.tooltip", //$NON-NLS-1$
+                new Object[] { Configuration.gameSummaryImagesMMDir() }));
+        row = new ArrayList<>();
+        gameSummaryMM.addItemListener(this);
+        row.add(gameSummaryMM);
+        comps.add(row);
 
         // Skin
         skinFiles = new JComboBox<String>();

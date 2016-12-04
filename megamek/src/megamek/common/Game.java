@@ -1450,6 +1450,8 @@ public class Game implements Serializable, IGame {
      * Resets this game.
      */
     public synchronized void reset() {
+        uuid = UUID.randomUUID();
+
         roundCount = 0;
 
         entities.clear();

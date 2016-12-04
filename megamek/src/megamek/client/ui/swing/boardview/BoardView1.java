@@ -57,6 +57,7 @@ import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -73,6 +74,7 @@ import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -5103,6 +5105,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
+            if (GUIPreferences.getInstance().getGameSummaryBoardView() && ((e.getOldPhase() == Phase.PHASE_DEPLOYMENT)
+                    || (e.getOldPhase() == Phase.PHASE_MOVEMENT) || (e.getOldPhase() == Phase.PHASE_TARGETING)
+                    || (e.getOldPhase() == Phase.PHASE_FIRING) || (e.getOldPhase() == Phase.PHASE_PHYSICAL))) {
+                File dir = new File(Configuration.gameSummaryImagesBVDir(), game.getUUIDString());
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                File imgFile = new File(dir,
+                        "round_" + game.getRoundCount() + "_" + e.getOldPhase().ordinal() + ".png");
+                try {
+                    ImageIO.write(getEntireBoardImage(false), "png", imgFile);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
             refreshAttacks();
 
             // Clear some information regardless of what phase it is

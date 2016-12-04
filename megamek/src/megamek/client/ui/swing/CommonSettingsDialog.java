@@ -37,7 +37,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Box;
@@ -755,15 +757,29 @@ public class CommonSettingsDialog extends ClientDialog implements
         entityOwnerColor.setSelected(gs.getEntityOwnerLabelColor());
 
 
-        File dir = new File("data" + File.separator + "images" + File.separator
-                + "hexes" + File.separator);
+        File dir = Configuration.hexesDir();
         tileSets = dir.listFiles(new FilenameFilter() {
             public boolean accept(File direc, String name) {
                 return name.endsWith(".tileset");
             }
         });
         tileSetChoice.removeAllItems();
-        for (int i = 0; i < tileSets.length; i++) {
+        for (int i = 0; (tileSets != null) && i < tileSets.length; i++) {
+            String name = tileSets[i].getName();
+            tileSetChoice.addItem(name.substring(0, name.length() - 8));
+            if (name.equals(cs.getMapTileset())) {
+                tileSetChoice.setSelectedIndex(i);
+            }
+        }
+        
+        dir = new File(Configuration.userdataDir(),
+                Configuration.hexesDir().toString());
+        tileSets = dir.listFiles(new FilenameFilter() {
+            public boolean accept(File direc, String name) {
+                return name.endsWith(".tileset");
+            }
+        });
+        for (int i = 0; (tileSets != null) && i < tileSets.length; i++) {
             String name = tileSets[i].getName();
             tileSetChoice.addItem(name.substring(0, name.length() - 8));
             if (name.equals(cs.getMapTileset())) {
@@ -772,18 +788,25 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         skinFiles.removeAllItems();
-        String[] xmlFiles = 
-            Configuration.skinsDir().list(new FilenameFilter() {
-                public boolean accept(File directory, String fileName) {
-                    return fileName.endsWith(".xml");
-                } 
-            });
-        if (xmlFiles != null) {
-            Arrays.sort(xmlFiles);
-            for (String file : xmlFiles) {
-                if (SkinXMLHandler.validSkinSpecFile(file)) {
-                    skinFiles.addItem(file);
-                }
+        List<String> xmlFiles = Arrays
+                .asList(Configuration.skinsDir().list(new FilenameFilter() {
+                    public boolean accept(File directory, String fileName) {
+                        return fileName.endsWith(".xml");
+                    }
+                }));
+        String[] files = new File(Configuration.userdataDir(), Configuration.skinsDir().toString())
+                .list(new FilenameFilter() {
+                    public boolean accept(File directory, String fileName) {
+                        return fileName.endsWith(".xml");
+                    }
+                });
+        if (files != null) {
+            xmlFiles.addAll(Arrays.asList(files));
+        }
+        Collections.sort(xmlFiles);
+        for (String file : xmlFiles) {
+            if (SkinXMLHandler.validSkinSpecFile(file)) {
+                skinFiles.addItem(file);
             }
         }
         // Select the default file first

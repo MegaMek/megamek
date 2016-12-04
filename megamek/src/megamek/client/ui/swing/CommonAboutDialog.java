@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.util.Date;
 
 import javax.swing.ImageIcon;
@@ -39,6 +38,7 @@ import javax.swing.JTextArea;
 
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
+import megamek.common.util.MegaMekFile;
 
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
@@ -66,7 +66,7 @@ public class CommonAboutDialog extends JDialog {
         if (imgTitleImage == null) {
             // Nope. Load it.
             Image image = frame.getToolkit().getImage(
-                    new File(Configuration.miscImagesDir(), FILENAME_MEGAMEK_SPLASH2).toString()
+                    new MegaMekFile(Configuration.miscImagesDir(), FILENAME_MEGAMEK_SPLASH2).toString()
             );
             MediaTracker tracker = new MediaTracker(frame);
             tracker.addImage(image, 0);

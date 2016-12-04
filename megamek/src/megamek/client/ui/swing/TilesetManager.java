@@ -64,6 +64,7 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 import megamek.common.util.ImageUtil;
+import megamek.common.util.MegaMekFile;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -100,7 +101,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     // mech images
     private MechTileset mechTileset = new MechTileset(Configuration.unitImagesDir());
     private MechTileset wreckTileset = new MechTileset(
-            new File(Configuration.unitImagesDir(), DIR_NAME_WRECKS));
+            new MegaMekFile(Configuration.unitImagesDir(), DIR_NAME_WRECKS).getFile());
     private ArrayList<EntityImage> mechImageList = new ArrayList<EntityImage>();
     private HashMap<ArrayList<Integer>, EntityImage> mechImages = new HashMap<ArrayList<Integer>, EntityImage>();
 
@@ -148,7 +149,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             System.out.println("Error loading tileset, "
                     + "reverting to default hexset! " + "Could not find file: "
                     + PreferenceManager.getClientPreferences().getMapTileset());
-            if (!new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).exists()){
+            if (!new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile().exists()){
                 createDefaultHexSet();
             }
             hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
@@ -403,23 +404,23 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         // load minefield sign
-        minefieldSign = boardview.getToolkit().getImage(new File(Configuration.hexesDir(), Minefield.FILENAME_IMAGE).toString());
+        minefieldSign = boardview.getToolkit().getImage(new MegaMekFile(Configuration.hexesDir(), Minefield.FILENAME_IMAGE).toString());
 
         // load night overlay
-        nightFog = boardview.getToolkit().getImage(new File(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString());
+        nightFog = boardview.getToolkit().getImage(new MegaMekFile(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString());
         
         // load the hexMask
-        hexMask = boardview.getToolkit().getImage(new File(Configuration.hexesDir(), FILENAME_HEX_MASK).toString());
+        hexMask = boardview.getToolkit().getImage(new MegaMekFile(Configuration.hexesDir(), FILENAME_HEX_MASK).toString());
 
         // load artillery targets
         artilleryAutohit = boardview.getToolkit().getImage(
-                new File(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE).toString()
+                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_AUTOHIT_IMAGE).toString()
         );
         artilleryAdjusted = boardview.getToolkit().getImage(
-                new File(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE).toString()
+                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_ADJUSTED_IMAGE).toString()
         );
         artilleryIncoming = boardview.getToolkit().getImage(
-                new File(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE).toString()
+                new MegaMekFile(Configuration.hexesDir(), FILENAME_ARTILLERY_INCOMING_IMAGE).toString()
         );
 
         started = true;
@@ -794,7 +795,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     public static void createDefaultHexSet(){
         try {
-            FileOutputStream fos = new FileOutputStream(new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET));
+            FileOutputStream fos = new FileOutputStream(new MegaMekFile(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).getFile());
             PrintStream p = new PrintStream(fos);
 
             p.println("# suggested hex tileset");

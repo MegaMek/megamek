@@ -39,6 +39,9 @@ public final class Configuration {
     // **************************************************************************
     // Directories normally at the top of the game hierarchy.
 
+    /** The default directory for user data */
+    private static final String DEFAULT_USER_DATA_DIR = "userdata";
+    
     /** The default configuration directory. */
     private static final String DEFAULT_DIR_NAME_CONFIG = "mmconf";
 
@@ -115,6 +118,20 @@ public final class Configuration {
 
     // **************************************************************************
     // Static methods for accessing and modifying configuration data.
+
+    /**
+     * Return the configured userdata directory.
+     * 
+     * @return {@link File} containing the path to the userdata directory.
+     */
+    public static File userdataDir() {
+        lock.readLock().lock();
+        try {
+            return userdata_dir;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
 
     /**
      * Return the configured configuration file directory.
@@ -591,6 +608,9 @@ public final class Configuration {
      * This is a little paranoid, but at least I know it will work...
      */
     private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+    /** The configured configuration directory. */
+    private static File userdata_dir = new File(DEFAULT_USER_DATA_DIR);
 
     /** The configured configuration directory. */
     private static File config_dir = new File(DEFAULT_DIR_NAME_CONFIG);

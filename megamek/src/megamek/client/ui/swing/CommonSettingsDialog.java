@@ -783,12 +783,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         skinFiles.removeAllItems();
-        List<String> xmlFiles = Arrays
+        List<String> xmlFiles = new ArrayList<>(Arrays
                 .asList(Configuration.skinsDir().list(new FilenameFilter() {
                     public boolean accept(File directory, String fileName) {
                         return fileName.endsWith(".xml");
                     }
-                }));
+                })));
         String[] files = new File(Configuration.userdataDir(), Configuration.skinsDir().toString())
                 .list(new FilenameFilter() {
                     public boolean accept(File directory, String fileName) {

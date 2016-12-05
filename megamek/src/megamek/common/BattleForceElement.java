@@ -56,7 +56,7 @@ public class BattleForceElement {
     public BattleForceElement(Entity en) {
         name = en.getShortName();
         size = en.getBattleForceSize();
-        en.setBattleForceMovement(movement);
+        computeMovement(en);
         armor = en.getBattleForceArmorPointsRaw();
         if (en instanceof Aero) {
             threshold = armor / 10.0;
@@ -79,6 +79,10 @@ public class BattleForceElement {
                 locationNames[loc] += ":";
             }
         }
+    }
+    
+    protected void computeMovement(Entity en) {
+    	en.setBattleForceMovement(movement);    	
     }
     
     public String getName() {

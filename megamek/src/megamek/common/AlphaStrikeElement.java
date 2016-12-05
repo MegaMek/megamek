@@ -58,7 +58,6 @@ public class AlphaStrikeElement extends BattleForceElement {
     public AlphaStrikeElement(Entity en) {
         super(en);
         asUnitType = ASUnitType.getUnitType(en);
-        en.setAlphaStrikeMovement(movement);
         if (en.getEntityType() == Entity.ETYPE_INFANTRY) {
             double divisor = ((Infantry)en).getDamageDivisor();
             if (((Infantry)en).isMechanized()) {
@@ -84,6 +83,11 @@ public class AlphaStrikeElement extends BattleForceElement {
                 locationNames[loc] += ":";
             }
         }
+    }
+    
+    @Override
+    protected void computeMovement(Entity en) {
+    	en.setAlphaStrikeMovement(movement);    	
     }
     
     protected static final int[] TROOP_FACTOR = {

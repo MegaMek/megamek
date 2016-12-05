@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -105,6 +106,25 @@ public class BattleForceElement {
     
     public int getSize() {
         return size;
+    }
+    
+    public Set<String> getMovementModes() {
+    	return movement.keySet();
+    }
+    
+    public int getMovement(String mode) {
+    	return movement.get(mode);
+    }
+    
+    public int getPrimaryMovement() {
+    	return movement.values().iterator().next();
+    }
+    
+    public String getMovementAsString() {
+    	return movement.entrySet().stream()
+    			.map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
+    					+ e.getKey())
+    			.collect(Collectors.joining("/"));    	
     }
     
     public int getFinalArmor() {
@@ -577,10 +597,7 @@ public class BattleForceElement {
         w.write("\t");
         w.write(Integer.toString(size));
         w.write("\t");
-        w.write(movement.entrySet().stream()
-                .map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
-                        + e.getKey())
-                .collect(Collectors.joining("/")));
+        w.write(getMovementAsString());
         w.write("\t");
         w.write(Integer.toString(getFinalArmor()));
         if (threshold >= 0) {

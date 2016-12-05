@@ -103,6 +103,14 @@ public class AlphaStrikeElement extends BattleForceElement {
     	en.setAlphaStrikeMovement(movement);    	
     }
     
+    @Override
+    public String getMovementAsString() {
+    	return movement.entrySet().stream()
+    			.map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
+    					+ "\"" + e.getKey())
+    			.collect(Collectors.joining("/"));    	
+    }
+    
     protected static final int[] TROOP_FACTOR = {
         0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6,
         7, 8, 8, 9, 9, 10, 10, 11, 11, 12,
@@ -173,10 +181,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         w.write("\t");
         w.write(Integer.toString(size));
         w.write("\t");
-        w.write(movement.entrySet().stream()
-                .map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
-                        + "\"" + e.getKey())
-                .collect(Collectors.joining("/")));
+        w.write(getMovementAsString());
         w.write("\t");
         w.write(Integer.toString((int)Math.round(armor)));
         if (threshold >= 0) {

@@ -111,6 +111,22 @@ public class AlphaStrikeElement extends BattleForceElement {
     			.collect(Collectors.joining("/"));    	
     }
     
+    public int getTargetMoveModifier() {
+    	int base = getPrimaryMovementValue();
+    	if (base > 34) {
+    		return 5;
+    	} else if (base > 18) {
+    		return 4;
+    	} else if (base > 12) {
+    		return 3;
+    	} else if (base > 8) {
+    		return 2;
+    	} else if (base > 4) {
+    		return 1;
+    	}
+    	return 0;
+    }
+    
     protected static final int[] TROOP_FACTOR = {
         0, 0, 1, 2, 3, 3, 4, 4, 5, 5, 6,
         7, 8, 8, 9, 9, 10, 10, 11, 11, 12,

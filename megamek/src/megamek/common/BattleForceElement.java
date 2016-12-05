@@ -116,7 +116,7 @@ public class BattleForceElement {
     	return movement.get(mode);
     }
     
-    public int getPrimaryMovement() {
+    public int getPrimaryMovementValue() {
     	return movement.values().iterator().next();
     }
     

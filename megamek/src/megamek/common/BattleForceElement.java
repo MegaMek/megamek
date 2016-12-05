@@ -641,7 +641,6 @@ public class BattleForceElement {
     static protected class WeaponLocation {
         List<Double> standardDamage = new ArrayList<>();
         Map<Integer,List<Double>> specialDamage = new HashMap<>();
-        List<Integer> heat = new ArrayList<>();
         double indirect;
         double overheat;
         
@@ -693,20 +692,6 @@ public class BattleForceElement {
             return 0;
         }
         
-        public int getHeat(int rangeIndex) {
-            if (heat.size() > rangeIndex) {
-                return heat.get(rangeIndex);
-            }
-            return 0;
-        }
-        
-        public void addHeat(int rangeIndex, int val) {
-            while (heat.size() <= rangeIndex) {
-                heat.add(0);
-            }
-            heat.set(rangeIndex, heat.get(rangeIndex) + val);
-        }
-
         public String formatDamageUp() {
             return formatDamageUp(standardDamage);
         }
@@ -727,11 +712,6 @@ public class BattleForceElement {
                 return formatDamageRounded(specialDamage.get(damageClass), showMinDamage);
             }
             return "0/0/0/0";
-        }
-        
-        public String formatHeat() {
-            return heat.stream().map(i -> String.valueOf(Math.max(2, (i - 1) / 5)))
-                    .collect(Collectors.joining("/"));
         }
         
         public double getIF() {

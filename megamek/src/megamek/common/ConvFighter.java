@@ -18,6 +18,8 @@ package megamek.common;
 
 import java.util.Map;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * @author Jay Lawson
  */
@@ -51,10 +53,11 @@ public class ConvFighter extends Aero {
         int overThrust =  Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
         int used = safeThrust + (2 * overThrust);
-        if(!getEngine().isFusion()) {
-            used = (int)Math.floor(safeThrust * 0.5) + overThrust;
-        } else if(game.getOptions().booleanOption("stratops_conv_fusion_bonus")) {
-            used = (int)Math.floor(safeThrust * 0.5) + (2 * overThrust);
+        if (!getEngine().isFusion()) {
+            used = (int) Math.floor(safeThrust * 0.5) + overThrust;
+        } else if (game.getOptions().booleanOption(
+                OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS)) {
+            used = (int) Math.floor(safeThrust * 0.5) + (2 * overThrust);
         }
         return used;
     }
@@ -73,14 +76,14 @@ public class ConvFighter extends Aero {
         double cost = 0;
 
         // add in cockpit
-        double avionicsWeight  = Math.ceil(weight / 5) / 2;
+        double avionicsWeight = Math.ceil(weight / 5) / 2;
         cost += 4000 * avionicsWeight;
 
         // add VSTOL gear if applicable
         if (isVSTOL()) {
-          double vstolWeight = Math.ceil(weight / 10) / 2;
-          cost += 5000 * vstolWeight;
-}
+            double vstolWeight = Math.ceil(weight / 10) / 2;
+            cost += 5000 * vstolWeight;
+        }
 
         // Structural integrity
         cost += 4000 * getSI();
@@ -102,8 +105,7 @@ public class ConvFighter extends Aero {
                 cost += getArmorWeight(loc) * EquipmentType.getArmorCost(armorType[loc]);
             }
 
-        }
-        else {
+        } else {
             cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
         }
         // heat sinks
@@ -117,7 +119,8 @@ public class ConvFighter extends Aero {
         // power amplifiers, if any
         cost += 20000 * getPowerAmplifierWeight();
 
-        // omni multiplier (leaving this in for now even though conventional fighters
+        // omni multiplier (leaving this in for now even though conventional
+        // fighters
         // don't make for legal omnis)
         double omniMultiplier = 1;
         if (isOmni()) {

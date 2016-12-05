@@ -865,7 +865,7 @@ public class FireControlTest {
         Mockito.when(mockTargetState.isProne()).thenReturn(false);
         Mockito.when(mockTarget.isAirborne()).thenReturn(false);
         Mockito.when(mockTarget.isAirborneVTOLorWIGE()).thenReturn(false);
-        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)))
+        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)))
                .thenReturn(false);
         Mockito.when(mockHex.terrainLevel(Terrains.WOODS)).thenReturn(ITerrain.LEVEL_NONE);
         Mockito.when(mockHex.terrainLevel(Terrains.JUNGLE)).thenReturn(ITerrain.LEVEL_NONE);
@@ -1032,7 +1032,7 @@ public class FireControlTest {
         Mockito.when(mockTargetState.getMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
 
         // Turn on Tac-Ops Standing Still rules.
-        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)))
+        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)))
                .thenReturn(true);
         expected = new ToHitData();
         expected.addModifier(FireControl.TH_TAR_NO_MOVE);
@@ -1050,7 +1050,7 @@ public class FireControlTest {
                                                                                              mockTargetState,
                                                                                              10,
                                                                                              mockGame));
-        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)))
+        Mockito.when(mockGameOptions.booleanOption(Mockito.eq(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)))
                .thenReturn(false);
         Mockito.when(mockTargetState.getMovementType()).thenReturn(EntityMovementType.MOVE_NONE);
 
@@ -1294,7 +1294,7 @@ public class FireControlTest {
         Mockito.when(((Mech) mockShooter).getCockpitType()).thenReturn(Mech.COCKPIT_STANDARD);
 
         // Test turning on the TacOps Attacker Weight modifier.
-        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AGM_TAC_OPS_PHYSICAL_ATTACK_PSR)).thenReturn(true);
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)).thenReturn(true);
         expected = new ToHitData();
         expected.addModifier(mockCrew.getPiloting() - 2, FireControl.TH_PHY_BASE);
         expected.addModifier(FireControl.TH_PHY_LIGHT);
@@ -1317,7 +1317,7 @@ public class FireControlTest {
                                                                                    mockTarget, mockTargetState,
                                                                                    PhysicalAttackType.LEFT_KICK,
                                                                                    mockGame));
-        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AGM_TAC_OPS_PHYSICAL_ATTACK_PSR)).thenReturn(false);
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)).thenReturn(false);
         Mockito.when(mockShooter.getWeightClass()).thenReturn(EntityWeightClass.WEIGHT_LIGHT);
 
         // Test trying to kick infantry in a different hex.
@@ -1529,7 +1529,7 @@ public class FireControlTest {
     @Test
     public void testGuessToHitModifierForWeapon() {
         ToHitData expected;
-        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)).thenReturn(false);
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)).thenReturn(false);
         Mockito.when(mockTarget.hasQuirk(Mockito.eq(OptionsConstants.QUIRK_POS_LOW_PROFILE))).thenReturn(false);
         Mockito.when(mockShooterState.getFacing()).thenReturn(1);
         Mockito.doReturn(true).when(testFireControl).isInArc(Mockito.any(Coords.class), Mockito.anyInt(),
@@ -1794,7 +1794,7 @@ public class FireControlTest {
         assertToHitDataEquals(expected, testFireControl.guessToHitModifierForWeapon(mockShooter, mockShooterState,
                                                                                     mockTarget, mockTargetState,
                                                                                     mockWeapon, mockGame));
-        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)).thenReturn(true);
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)).thenReturn(true);
         Mockito.when(mockTargetState.getPosition()).thenReturn(new Coords(20, 0));
         expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_EXTREME_RANGE);
@@ -1803,7 +1803,7 @@ public class FireControlTest {
                                                                                     mockWeapon, mockGame));
         // todo Test infantry range mods.
         Mockito.when(mockTargetState.getPosition()).thenReturn(mockTargetCoords);
-        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)).thenReturn(false);
+        Mockito.when(mockGameOptions.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)).thenReturn(false);
 
         // todo Test swarming and leg attacks.
 

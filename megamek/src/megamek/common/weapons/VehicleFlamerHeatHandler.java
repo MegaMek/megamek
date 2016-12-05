@@ -32,6 +32,7 @@ import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -66,7 +67,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int bldgAbsorbs) {
         if ((entityTarget instanceof Mech)
-                && game.getOptions().booleanOption("flamer_heat")) {
+                && game.getOptions().booleanOption(OptionsConstants.BASE_FLAMER_HEAT)) {
 
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
@@ -142,7 +143,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
             }
             // pain shunted infantry get half damage
             if (((Entity) target).getCrew().getOptions()
-                    .booleanOption("pain_shunt")) {
+                    .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn /= 2;
             }
             if (bGlancing) {

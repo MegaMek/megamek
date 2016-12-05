@@ -32,6 +32,7 @@ import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Mech;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Very cumbersome class that handles set of polygonal areas and labels for
@@ -185,7 +186,7 @@ public class TripodMechMapSet implements DisplayMapSet {
         Mech m = (Mech) e;
         boolean mtHeat = false;
         if ((e.getGame() != null)
-                && e.getGame().getOptions().booleanOption("tacops_heat")) {
+                && e.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
             mtHeat = true;
         }
         int a = 1;

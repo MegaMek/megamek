@@ -85,6 +85,8 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.plaf.metal.DefaultMetalTheme;
+import javax.swing.plaf.metal.MetalTheme;
 
 import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
@@ -171,6 +173,7 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.FiringSolution;
 import megamek.common.util.ImageUtil;
 
 /**
@@ -1217,6 +1220,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else if (bvBgImage != null) {
             g.drawImage(bvBgImage, -getX(), -getY(), (int) viewRect.getWidth(),
                     (int) viewRect.getHeight(), this);
+        } else {
+            MetalTheme theme = new DefaultMetalTheme();
+            g.setColor(theme.getControl());
+            g.fillRect(-getX(), -getY(), (int) viewRect.getWidth(),
+                    (int) viewRect.getHeight());
         }
 
         // Used to pad the board edge
@@ -2200,14 +2208,107 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * This method creates an image the size of the entire board (all
      * mapsheets), draws the hexes onto it, and returns that image.
      */
-    public BufferedImage getEntireBoardImage() {
+    public BufferedImage getEntireBoardImage(boolean ignoreUnits) {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
+        boardGraph.setClip(0, 0, boardSize.width, boardSize.height);
         if (GUIPreferences.getInstance().getAntiAliasing()) {
             boardGraph.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                         RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        drawHexes(boardGraph, new Rectangle(boardSize), true);
+        // Draw hexes
+        drawHexes(boardGraph, new Rectangle(boardSize), ignoreUnits);
+
+        // If we aren't ignoring units, draw everything else
+        if (!ignoreUnits) {
+            // draw wrecks
+            if (GUIPreferences.getInstance().getShowWrecks()
+                    && !useIsometric()) {
+                drawSprites(boardGraph, wreckSprites);
+            }
+
+            // Field of Fire
+            if (!useIsometric()
+                    && GUIPreferences.getInstance().getShowFieldOfFire()) {
+                drawSprites(boardGraph, fieldofFireSprites);
+            }
+
+            if ((game.getPhase() == Phase.PHASE_MOVEMENT) && !useIsometric()) {
+                drawSprites(boardGraph, moveEnvSprites);
+                drawSprites(boardGraph, moveModEnvSprites);
+            }
+
+            // Minefield signs all over the place!
+            drawMinefields(boardGraph);
+
+            // Artillery targets
+            drawArtilleryHexes(boardGraph);
+
+            // draw highlight border
+            drawSprite(boardGraph, highlightSprite);
+
+            // draw cursors
+            drawSprite(boardGraph, cursorSprite);
+            drawSprite(boardGraph, selectedSprite);
+            drawSprite(boardGraph, firstLOSSprite);
+            drawSprite(boardGraph, secondLOSSprite);
+
+            // draw deployment indicators.
+            // For Isometric rendering, this is done during drawHexes
+            if ((en_Deployer != null) && !useIsometric()) {
+                drawDeployment(boardGraph);
+            }
+
+            if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
+                    && (showAllDeployment)) {
+                drawAllDeployment(boardGraph);
+            }
+
+            // draw Flare Sprites
+            drawSprites(boardGraph, flareSprites);
+
+            // draw C3 links
+            drawSprites(boardGraph, c3Sprites);
+
+            // draw flyover routes
+            if (game.getBoard().onGround()) {
+                drawSprites(boardGraph, flyOverSprites);
+            }
+
+            // draw onscreen entities
+            drawSprites(boardGraph, entitySprites);
+
+            // draw moving onscreen entities
+            drawSprites(boardGraph, movingEntitySprites);
+
+            // draw ghost onscreen entities
+            drawSprites(boardGraph, ghostEntitySprites);
+
+            // draw onscreen attacks
+            drawSprites(boardGraph, attackSprites);
+
+            // draw movement vectors.
+            if (game.useVectorMove()
+                && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                drawSprites(boardGraph, movementSprites);
+            }
+
+            // draw movement, if valid
+            drawSprites(boardGraph, pathSprites);
+
+            // draw firing solution sprites, but only during the firing phase
+            if ((game.getPhase() == Phase.PHASE_FIRING) ||
+                (game.getPhase() == Phase.PHASE_OFFBOARD)) {
+                drawSprites(boardGraph, firingSprites);
+            }
+
+            if (game.getPhase() == Phase.PHASE_FIRING) {
+                for (Coords c : strafingCoords) {
+                    drawHexBorder(boardGraph, getHexLocation(c), Color.yellow, 0, 3);
+                }
+            }
+        }
+
         boardGraph.dispose();
         return (BufferedImage) entireBoard;
     }
@@ -2555,72 +2656,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 drawHexBorder(g, tint.darker(), 5, 10);
             }
         }
-        
-        // Darken the hex image if nighttime 
-        /*
-        if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) 
-                && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)
-                && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
-            
-            scaledImage = getScaledImage(tileManager.getNightFog(), true);
-            Composite svComposite = g.getComposite();
 
-            if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) {
-                g.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_ATOP, 1f));
-                g.drawImage(scaledImage, 0, 0, this);
-            } else if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_FULL_MOON) {
-                g.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_ATOP, 0.8f));
-                g.drawImage(scaledImage, 0, 0, this);
-            }
-            g.setComposite(svComposite);
-        }*/
-        
+        // Darken the hex for night-time, if applicable
         if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) 
                 && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
-            
             for (int x = 0; x < hexImage.getWidth(); ++x) {
                 for (int y = 0; y < hexImage.getHeight(); ++y) {
-                    int rgb = hexImage.getRGB(x, y);
-
-                    int rd = (rgb >> 16) & 0xFF; 
-                    int gr = (rgb >> 8) & 0xFF; 
-                    int bl = rgb & 0xFF; 
-                    int al = (rgb >> 24); 
-
-                    switch (game.getPlanetaryConditions().getLight()) {
-                    case PlanetaryConditions.L_FULL_MOON:
-                        rd = rd/4; // 1/4 red
-                        gr = gr/4; // 1/4 green
-                        bl = bl/2; // half blue
-                        break;
-                    case PlanetaryConditions.L_PITCH_BLACK:
-                        int gy = (rd+gr+bl)/16;
-                        if (Math.random()<0.3) {
-                            gy=gy*4/5;
-                        }
-                        if (Math.random()<0.3) {
-                            gy=gy*5/4;
-                        }
-                        rd = gy+rd/5;
-                        gr = gy+gr/5;
-                        bl = gy+bl/5;
-                        break;
-                    case PlanetaryConditions.L_MOONLESS:
-                        rd = rd/4; 
-                        gr = gr/4; 
-                        bl = bl/2; 
-                        break;
-                    case PlanetaryConditions.L_DUSK:
-                        bl = bl*3/4; 
-                        break;
-                    default:
-                    }
-
-                    int nc = (al << 24) + (rd << 16) + (gr << 8) + bl; 
-                    hexImage.setRGB(x, y, nc);
+                    hexImage.setRGB(x, y, getNightDarkenedColor(hexImage.getRGB(x, y)));
                 }
             }
         }
@@ -2829,7 +2872,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (tileManager.orthoFor(oHex) != null) {
             for (Image image : tileManager.orthoFor(oHex)) {
-                Image scaledImage = getScaledImage(image, true);
+                BufferedImage scaledImage = ImageUtil.createAcceleratedImage(getScaledImage(image, true));
+
+                // Darken the hex for night-time, if applicable
+                if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
+                        && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)
+                        && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
+                    for (int x = 0; x < scaledImage.getWidth(null); ++x) {
+                        for (int y = 0; y < scaledImage.getHeight(); ++y) {
+                            scaledImage.setRGB(x, y, getNightDarkenedColor(scaledImage.getRGB(x, y)));
+                        }
+                    }
+                }
 
                 // draw orthogonal
                 boardGraph.drawImage(scaledImage, orthX, orthY, this);
@@ -2987,6 +3041,50 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return (srcHex.floor() != destHex.floor());
         }
     }
+
+    /**
+     * Given an int-packed RGB value, apply a modifier for the light level and return the result.
+     *
+     * @param rgb int-packed ARGB value.
+     * @return An int-packed ARGB value, which is an adjusted value of the input, based on the light level
+     */
+    public int getNightDarkenedColor(int rgb) {
+        int rd = (rgb >> 16) & 0xFF;
+        int gr = (rgb >> 8) & 0xFF;
+        int bl = rgb & 0xFF;
+        int al = (rgb >> 24);
+
+        switch (game.getPlanetaryConditions().getLight()) {
+        case PlanetaryConditions.L_FULL_MOON:
+            rd = rd / 4; // 1/4 red
+            gr = gr / 4; // 1/4 green
+            bl = bl / 2; // half blue
+            break;
+        case PlanetaryConditions.L_PITCH_BLACK:
+            int gy = (rd + gr + bl) / 16;
+            if (Math.random() < 0.3) {
+                gy = gy * 4 / 5;
+            }
+            if (Math.random() < 0.3) {
+                gy = gy * 5 / 4;
+            }
+            rd = gy + rd / 5;
+            gr = gy + gr / 5;
+            bl = gy + bl / 5;
+            break;
+        case PlanetaryConditions.L_MOONLESS:
+            rd = rd / 4;
+            gr = gr / 4;
+            bl = bl / 2;
+            break;
+        case PlanetaryConditions.L_DUSK:
+            bl = bl * 3 / 4;
+            break;
+        default:
+        }
+
+        return (al << 24) + (rd << 16) + (gr << 8) + bl;
+    }
     
     /**
      * Generates a Shape drawing area for the hex shadow effect in a lower hex
@@ -3045,11 +3143,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Returns the absolute position of the upper-left hand corner of the hex
      * graphic
      */
-    private Point getHexLocation(int x, int y) {
+    private Point getHexLocation(int x, int y, boolean ignoreElevation) {
         float elevationAdjust = 0.0f;
 
         IHex hex = game.getBoard().getHex(x, y);
-        if ((hex != null) && useIsometric()) {
+        if ((hex != null) && useIsometric() && !ignoreElevation) {
             int level = hex.getLevel();
             if (level != 0) {
                 elevationAdjust = level * HEX_ELEV * scale * -1.0f;
@@ -3079,21 +3177,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     Point getHexLocation(Coords c) {
-        return getHexLocation(c.getX(), c.getY());
+        return getHexLocation(c.getX(), c.getY(), false);
     }
     
      /**
      * Returns the absolute position of the centre of the hex graphic
      */
-    private Point getCentreHexLocation(int x, int y) {
-        Point p = getHexLocation(x, y);
+    private Point getCentreHexLocation(int x, int y, boolean ignoreElevation) {
+        Point p = getHexLocation(x, y, ignoreElevation);
         p.x += ((HEX_W / 2) * scale);
         p.y += ((HEX_H / 2) * scale);
         return p;
     }
 
-    private Point getCentreHexLocation(Coords c) {
-        return getCentreHexLocation(c.getX(), c.getY());
+    public Point getCentreHexLocation(Coords c) {
+        return getCentreHexLocation(c.getX(), c.getY(), false);
+    }
+
+    public Point getCentreHexLocation(Coords c, boolean ignoreElevation) {
+        return getCentreHexLocation(c.getX(), c.getY(), ignoreElevation);
     }
 
     public void drawRuler(Coords s, Coords e, Color sc, Color ec) {
@@ -3351,13 +3453,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Create the new sprites
         Coords position = entity.getPosition();
         boolean canSee = (localPlayer == null)
-                || !game.getOptions().booleanOption("double_blind")
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 || !entity.getOwner().isEnemyOf(localPlayer)
                 || entity.hasSeenEntity(localPlayer)
                 || entity.hasDetectedEntity(localPlayer);
 
         canSee &= (localPlayer == null)
-                || !game.getOptions().booleanOption("hidden_units")
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
                 || !entity.getOwner().isEnemyOf(localPlayer)
                 || !entity.isHidden();
 
@@ -3487,14 +3589,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 continue;
             }
             if ((localPlayer != null)
-                && game.getOptions().booleanOption("double_blind")
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && entity.getOwner().isEnemyOf(localPlayer)
                 && !entity.hasSeenEntity(localPlayer)
                 && !entity.hasDetectedEntity(localPlayer)) {
                 continue;
             }
             if ((localPlayer != null)
-                    && game.getOptions().booleanOption("hidden_units")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)
                     && entity.getOwner().isEnemyOf(localPlayer)
                     && entity.isHidden()) {
                 continue;
@@ -3815,15 +3917,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void setFiringSolutions(Entity attacker,
-            Map<Integer, ToHitData> firingSolutions) {
+            Map<Integer, FiringSolution> firingSolutions) {
 
         clearFiringSolutionData();
         if (firingSolutions == null) {
             return;
         }
-        for (ToHitData thd : firingSolutions.values()) {
-            FiringSolutionSprite sprite = new FiringSolutionSprite(
-                    this, thd.getValue(), thd.getRange(), thd.getLocation());
+        for (FiringSolution sln : firingSolutions.values()) {
+            FiringSolutionSprite sprite = new FiringSolutionSprite(this, sln);
             firingSprites.add(sprite);
         }
     }
@@ -4927,9 +5028,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 refreshMoveVectors();
             }
             if ((mp != null) && (mp.size() > 0) && guip.getShowMoveStep()
-                    && !gopts.booleanOption("simultaneous_movement")) {
+                    && !gopts.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
                 if ((localPlayer == null)
-                        || !game.getOptions().booleanOption("double_blind")
+                        || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                         || !en.getOwner().isEnemyOf(localPlayer)
                         || en.hasSeenEntity(localPlayer)) {
                     addMovingUnit(en, mp);
@@ -5125,7 +5226,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             // If this unit isn't spotted somehow, it's ECM doesn't show up
             if ((localPlayer != null)
-                    && game.getOptions().booleanOption("double_blind")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && e.getOwner().isEnemyOf(localPlayer)
                     && !e.hasSeenEntity(localPlayer)
                     && !e.hasDetectedEntity(localPlayer)) {
@@ -5164,7 +5265,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (ECMInfo ecmInfo : allEcmInfo) {
             // Can't see ECM field of unspotted unit
             if ((ecmInfo.getEntity() != null) && (localPlayer != null)
-                    && game.getOptions().booleanOption("double_blind")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer)
                     && !ecmInfo.getEntity().hasSeenEntity(localPlayer)
                     && !ecmInfo.getEntity().hasDetectedEntity(localPlayer)) {
@@ -6249,7 +6350,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check if extreme range is used
         int maxrange = 4;
         if (game.getOptions().
-                booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)) maxrange = 5;
+                booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) maxrange = 5;
         
         // create the lists of hexes
         List<Set<Coords>> fieldFire = new ArrayList<Set<Coords>>(5);

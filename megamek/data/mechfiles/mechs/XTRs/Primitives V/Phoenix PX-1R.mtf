@@ -1,0 +1,152 @@
+Version:1.1
+Phoenix
+PX-1R
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2474
+Source:XTRO Primitives V - Age of War
+Rules Level:5
+
+Mass:50
+Engine:240 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Primitive Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:12 Single
+Walk MP:4
+Jump MP:3
+
+Armor:Primitive(Inner Sphere)
+LA Armor:12
+RA Armor:12
+LT Armor:14
+RT Armor:14
+CT Armor:18
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:3
+PPC, Right Arm
+SRM 2, Left Torso
+SRM 2, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+PPC
+PPC
+PPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISPrototypeJumpJet
+SRM 2
+SRM 2
+IS Ammo SRM-2
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISPrototypeJumpJet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+ISPrototypeJumpJet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

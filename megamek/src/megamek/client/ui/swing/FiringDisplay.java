@@ -25,10 +25,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -90,6 +92,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.FiringSolution;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         ItemListener, ListSelectionListener {
@@ -208,6 +211,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            String ttKey = "FiringDisplay." + cmd.getCmd() + ".tooltip";
+            if (Messages.keyExists(ttKey)) {
+                newButton.setToolTipText(Messages.getString(ttKey));
+            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -441,7 +448,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public void performAction() {
-                        jumpToNextTarget();
+                        jumpToTarget(true, false, false);
                     }
                 });
 
@@ -463,10 +470,141 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
                     @Override
                     public void performAction() {
-                        jumpToPrevTarget();
+                        jumpToTarget(false, false, false);
                     }
                 });
 
+        // Register the action for NEXT_TARGET
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(true, true, false);
+                    }
+                });
+
+        // Register the action for PREV_TARGET
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(false, true, false);
+                    }
+                });
+
+        // Register the action for NEXT_TARGET
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_NOALLIES.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(true, false, true);
+                    }
+                });
+
+        // Register the action for PREV_TARGET
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_NOALLIES.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(false, false, true);
+                    }
+                });
+
+        // Register the action for NEXT_TARGET
+        controller.registerCommandAction(KeyCommandBind.NEXT_TARGET_VALID_NO_ALLIES.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(true, true, true);
+                    }
+                });
+
+        // Register the action for PREV_TARGET
+        controller.registerCommandAction(KeyCommandBind.PREV_TARGET_VALID_NO_ALLIES.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        jumpToTarget(false, true, true);
+                    }
+                });
         // Register the action for NEXT_MODE
         controller.registerCommandAction(KeyCommandBind.NEXT_MODE.cmd,
                 new CommandAction() {
@@ -696,10 +834,20 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
-        Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
+
+        // Determine which entities are spotted
+        Set<Integer> spottedEntities = new HashSet<>();
+        for (Entity target : game.getEntitiesVector()) {
+            if (!target.isEnemyOf(ce()) && target.isSpotting()) {
+                spottedEntities.add(target.getSpotTargetId());
+            }
+        }
+
+        // Calculate firing solutions
+        Map<Integer, FiringSolution> fs = new HashMap<>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
-                    "friendly_fire"); //$NON-NLS-1$
+                    OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
@@ -709,7 +857,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());
                 thd.setRange(ce().getPosition().distance(target.getPosition()));
-                fs.put(target.getId(), thd);
+                fs.put(target.getId(), new FiringSolution(thd, spottedEntities.contains(target.getId())));
             }
         }
         clientgui.getBoardView().setFiringSolutions(ce(), fs);
@@ -758,7 +906,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             if (numButtonGroups > 1)
                 buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
             setFireCalledEnabled(clientgui.getClient().getGame().getOptions()
-                    .booleanOption("tacops_called_shots"));
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
     }
@@ -929,64 +1077,55 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Get the next target. Return null if we don't have any targets.
      */
-    private Entity getNextTarget() {
+    private Entity getNextTarget(boolean nextOrPrev, boolean onlyValid,
+            boolean ignoreAllies) {
         if (visibleTargets == null) {
             return null;
         }
 
-        lastTargetID++;
-
-        if (lastTargetID >= visibleTargets.length) {
-            lastTargetID = 0;
+        Entity result = null;
+        boolean done = false;
+        // Loop until we hit an exit criteria
+        //  Default is one iteration, but may need to skip invalid or allies
+        while (!done) {
+            // Increment or decrement target index
+            if (nextOrPrev) {
+                lastTargetID++;
+            } else {
+                lastTargetID--;
+            }
+            // Check bounds
+            if (lastTargetID < 0) {
+                lastTargetID = visibleTargets.length - 1;
+            } else if (lastTargetID >= visibleTargets.length) {
+                lastTargetID = 0;
+            }
+            // Store target
+            result = visibleTargets[lastTargetID];
+            done = true;
+            // Check done
+            if (onlyValid) {
+                ToHitData toHit = WeaponAttackAction.toHit(
+                        clientgui.getClient().getGame(), ce().getId(), result,
+                        clientgui.mechD.wPan.getSelectedWeaponNum(),
+                        isStrafing);
+                done &= toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
+                        && toHit.getValue() != TargetRoll.IMPOSSIBLE
+                        && toHit.getValue() <= 12;
+            }
+            if (ignoreAllies) {
+                done &= result.isEnemyOf(ce());
+            }
         }
-
-        return visibleTargets[lastTargetID];
+        return result;
     }
 
     /**
      * Jump to our next target. If there isn't one, well, don't do anything.
      */
-    private void jumpToNextTarget() {
-        Entity targ = getNextTarget();
-
-        if (targ == null) {
-            return;
-        }
-
-        // HACK : don't show the choice dialog.
-        showTargetChoice = false;
-
-        clientgui.bv.centerOnHex(targ.getPosition());
-        clientgui.getBoardView().select(targ.getPosition());
-
-        // HACK : show the choice dialog again.
-        showTargetChoice = true;
-        target(targ);
-    }
-
-
-    /**
-     * Get the next target. Return null if we don't have any targets.
-     */
-    private Entity getPrevTarget() {
-        if (visibleTargets == null) {
-            return null;
-        }
-
-        lastTargetID--;
-
-        if (lastTargetID < 0) {
-            lastTargetID = visibleTargets.length - 1;
-        }
-
-        return visibleTargets[lastTargetID];
-    }
-
-    /**
-     * Jump to our next target. If there isn't one, well, don't do anything.
-     */
-    private void jumpToPrevTarget() {
-        Entity targ = getPrevTarget();
+    private void jumpToTarget(boolean nextTarg, boolean onlyValid,
+            boolean ignoreAllies) {
+        Entity targ = getNextTarget(nextTarg, onlyValid, ignoreAllies);
 
         if (targ == null) {
             return;
@@ -1342,7 +1481,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // check if we now shoot at a target in the front arc and previously
         // shot a target in side/rear arc that then was primary target
         // if so, ask and tell the user that to-hits will change
-        if (!game.getOptions().booleanOption("no_forced_primary_targets")
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS)
                 && (ce() instanceof Mech) || (ce() instanceof Tank)
                 || (ce() instanceof Protomech)) {
             EntityAction lastAction = null;
@@ -1691,6 +1830,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             target = hexTarget;
         } else {
             target = t;
+            if ((visibleTargets != null) && (target != null)) {
+                // Set last target ID, so next/prev target behaves correctly
+                for (int i = 0; i < visibleTargets.length; i++) {
+                    if (visibleTargets[i].getId() == target.getTargetId()) {
+                        lastTargetID = i;
+                        break;
+                    }
+                }
+            }
         }
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
             Coords targetPos = Compute.getClosestFlightPath(cen, ce()
@@ -1710,11 +1858,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         IGame game = clientgui.getClient().getGame();
         // allow spotting
         if ((ce() != null) && ce().canSpot() && (target != null)
-                && game.getOptions().booleanOption("indirect_fire")) { //$NON-NLS-1$)
+                && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) { //$NON-NLS-1$)
             boolean hasLos = LosEffects.calculateLos(game, cen, target)
                     .canSee();
             // In double blind, we need to "spot" the target as well as LoS
-            if (game.getOptions().booleanOption("double_blind")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && !Compute.inVisualRange(game, ce(), target)
                     && !Compute.inSensorRange(game, ce(), target, null)) {
                 hasLos = false;
@@ -2057,7 +2205,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_SPOT.getCmd())) {
             doSpot();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_NEXT_TARG.getCmd())) {
-            jumpToNextTarget();
+            boolean onlyValidTargets = (ev.getModifiers() & ActionEvent.SHIFT_MASK) > 0;
+            boolean ignoreAllies = (ev.getModifiers() & ActionEvent.CTRL_MASK) > 0;
+            jumpToTarget(true, onlyValidTargets, ignoreAllies);
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_FLIP_ARMS.getCmd())) {
             updateFlipArms(!ce().getArmsFlipped());
             // Fire Mode - More Fire Mode button handling - Rasia
@@ -2303,7 +2453,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      */
     private Targetable chooseTarget(Coords pos) {
         final IGame game = clientgui.getClient().getGame();
-        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
         Iterator<Entity> choices;

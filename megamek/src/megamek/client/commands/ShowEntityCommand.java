@@ -5,6 +5,7 @@ package megamek.client.commands;
 
 import megamek.client.Client;
 import megamek.common.Entity;
+import megamek.common.options.OptionsConstants;
 
 /**
  * @author dirk 
@@ -31,7 +32,7 @@ public class ShowEntityCommand extends ClientCommand {
     @Override
     public String run(String[] args) {
         // is this nessesary to prevent cheating?
-        if (getClient().getGame().getOptions().booleanOption("double_blind")) {
+        if (getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return "Sorry, this command is disabled during double blind.";
         }
         if (args.length == 1) {

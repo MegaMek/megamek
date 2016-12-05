@@ -40,6 +40,7 @@ import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 
 /**
@@ -353,7 +354,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         int i = 0;
         if ((null != en.getGame())
-                && en.getGame().getOptions().booleanOption("stratops_quirks")) {
+                && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups
                     .hasMoreElements();) {
                 IOptionGroup qGroup = qGroups.nextElement();
@@ -463,7 +464,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             movementTypeR.setVisible(false);
         }
 
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption("double_blind")) {
+        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             curSensorsR.setVisible(true);
             visualRangeR.setVisible(true);
             curSensorsL.setVisible(true);

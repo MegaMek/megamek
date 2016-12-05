@@ -40,6 +40,10 @@ VTOL
 1
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
 11
 8
@@ -79,13 +83,13 @@ Tank Sprayer
 
 <transporters>
 liquidcargobay:12.52:1
+standardseats:.45:6
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Succession Wars
 </source>
 
 <tonnage>
 30.0
 </tonnage>
-

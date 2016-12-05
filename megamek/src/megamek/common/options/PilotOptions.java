@@ -34,79 +34,85 @@ public class PilotOptions extends AbstractOptions {
     @Override
     public void initialize() {
         IBasicOptionGroup adv = addGroup("adv", LVL3_ADVANTAGES); //$NON-NLS-1$
-        
-        // Piloting Abilities - Just uncomment and run with it
-        // addOption(adv, "animal_mimic", false); //$NON-NLS-1$
-        // addOption(adv, "cross_country", false); //$NON-NLS-1$
-        addOption(adv, "dodge_maneuver", false); //$NON-NLS-1$
-        // addOption(adv, "dust_off", false); //$NON-NLS-1$
-        // addOption(adv, "hvy_lifter", false); //$NON-NLS-1$
-        // addOption(adv, "hopper", false); //$NON-NLS-1$
-        addOption(adv, "hopping_jack", false); //$NON-NLS-1$
-        addOption(adv, "hot_dog", false); //$NON-NLS-1$
-        addOption(adv, "jumping_jack", false); //$NON-NLS-1$
-        addOption(adv, "maneuvering_ace", false); //$NON-NLS-1$
-        addOption(adv, "melee_master", false); //$NON-NLS-1$
-        addOption(adv, "melee_specialist", false); //$NON-NLS-1$
-        // addOption(adv, "natural_grace", false); //$NON-NLS-1$
-        // addOption(adv, "ride_wash", false); //$NON-NLS-1$
-        addOption(adv, "shaky_stick", false); //$NON-NLS-1$
-        // addOption(adv, "slugger", false); //$NON-NLS-1$
-        // addOption(adv, "speed_demon", false); //$NON-NLS-1$
-        // addOption(adv, "stand_aside", false); //$NON-NLS-1$
-        // addOption(adv, "swordsman", false); //$NON-NLS-1$
-        // addOption(adv, "tm_", false); //$NON-NLS-1$
-        // addOption(adv, "wind_walker", false); //$NON-NLS-1$
-        // addOption(adv, "zweihander", false); //$NON-NLS-1$
-        
+
+        // addOption(adv, OptionsConstants.PILOT_ANIMAL_MIMIC, false);
+        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false);
+        // //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_DODGE_MANEUVER, false); // $NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_DUST_OFF, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_HVY_LIFTER, false);
+        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_HOPPER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_HOPPING_JACK, false); // $NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_HOT_DOG, false); // $NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_JUMPING_JACK, false); // $NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_MANEUVERING_ACE, false); // $NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_MELEE_MASTER, false); // $NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_MELEE_SPECIALIST, false); // $NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_NATURAL_GRACE, false);
+        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_RIDE_WASH, false);
+        // //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_SHAKY_STICK, false); // $NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_SLUGGER, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_SPEED_DEMON, false);
+        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_STAND_ASIDE, false);
+        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_SWORDSMAN, false);
+        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_TM_, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false);
+        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false);
+        // //$NON-NLS-1$
+
         // Gunnery Abilities
-        // addOption(adv, "blood_stalker", false); //$NON-NLS-1$
-        addOption(adv, "cluster_hitter", false); //$NON-NLS-1$
-        addOption(adv, "cluster_master", false); //$NON-NLS-1$
-        // addOption(adv, "fist_fire", false); //$NON-NLS-1$
-        addOption(adv, "golden_goose", false); //$NON-NLS-1$
-        // addOption(adv, "ground_hugger", false); //$NON-NLS-1$
-        addOption(adv, "specialist", new Vector<String>()); //$NON-NLS-1$
-        // addOption(adv, "marksman", false); //$NON-NLS-1$
-        addOption(adv, "multi_tasker", false); //$NON-NLS-1$
-        addOption(adv, "oblique_artillery", false); //$NON-NLS-1$
-        addOption(adv, "oblique_attacker", false); //$NON-NLS-1$
-        // addOption(adv, "range_master", false); //$NON-NLS-1$
-        addOption(adv, "sandblaster", false); //$NON-NLS-1$
-        // addOption(adv, "sharpshooter", false); //$NON-NLS-1$
-        addOption(adv, "sniper", false); //$NON-NLS-1$
-        addOption(adv, "weapon_specialist", new Vector<String>()); //$NON-NLS-1$
-        
-        // Misc Abilities
-        // addOption(adv, "antagonizer", false); //$NON-NLS-1$
-        // addOption(adv, "combat_intuition", false); //$NON-NLS-1$
-        // addOption(adv, "demoralizer", false); //$NON-NLS-1$
-        addOption(adv, "eagle_eyes", false); //$NON-NLS-1$
-        // addOption(adv, "env_specialist", false); //$NON-NLS-1$
-        addOption(adv, "forward_observer", false); //$NON-NLS-1$
-        // addOption(adv, "human_tro", false); //$NON-NLS-1$
-        addOption(adv, "iron_man", false); //$NON-NLS-1$
-        addOption(adv, OptionsConstants.PILOT_APTITUDE_GUNNERY, false); //$NON-NLS-1$
-        addOption(adv, OptionsConstants.PILOT_APTITUDE_PILOTING, false); //$NON-NLS-1$
-        addOption(adv, "pain_resistance", false); //$NON-NLS-1$
-        addOption(adv, "tactical_genius", false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.GUNNERY_BLOOD_STALKER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_CLUSTER_HITTER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_CLUSTER_MASTER, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.GUNNERY_FIST_FIRE, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_GOLDEN_GOOSE, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.GUNNERY_GROUND_HUGGER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_SPECIALIST, new Vector<String>()); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.GUNNERY_MARKSMAN, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_MULTI_TASKER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_RANGE_MASTER,  new Vector<String>()); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_SANDBLASTER, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.GUNNERY_SHARPSHOOTER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_SNIPER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.GUNNERY_WEAPON_SPECIALIST, new Vector<String>()); //$NON-NLS-1$
+
+         // Misc Abilities
+         // addOption(adv, OptionsConstants.MISC_ANTAGONIZER, false); //$NON-NLS-1$
+         // addOption(adv, OptionsConstants.MISC_COMBAT_INTUITION, false); //$NON-NLS-1$
+         // addOption(adv, OptionsConstants.MISC_DEMORALIZER, false); //$NON-NLS-1$
+         addOption(adv, OptionsConstants.MISC_EAGLE_EYES, false); //$NON-NLS-1$
+         // addOption(adv, OptionsConstants.MISC_ENV_SPECIALIST, false); //$NON-NLS-1$
+         addOption(adv, OptionsConstants.MISC_FORWARD_OBSERVER, false); //$NON-NLS-1$
+         // addOption(adv, OptionsConstants.MISC_HUMAN_TRO, false); //$NON-NLS-1$
+         addOption(adv, OptionsConstants.MISC_IRON_MAN, false); //$NON-NLS-1$
+         addOption(adv, OptionsConstants.MISC_PAIN_RESISTANCE, false); //$NON-NLS-1$
+         addOption(adv, OptionsConstants.MISC_TACTICAL_GENIUS, false); //$NON-NLS-1$
 
         // Infantry abilities - Only one until beast mounts are implemented
-        addOption(adv, "foot_cav", false); //$NON-NLS-1$
-        addOption(adv, "urban_guerrilla", false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.INFANTRY_FOOT_CAV, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.INFANTRY_URBAN_GUERRILLA, false); //$NON-NLS-1$
 
-        // Unofficial
-        addOption(adv, "ei_implant", false); //$NON-NLS-1$
-        addOption(adv, "gunnery_laser", false); //$NON-NLS-1$
-        addOption(adv, "gunnery_missile", false); //$NON-NLS-1$
-        addOption(adv, "gunnery_ballistic", false); //$NON-NLS-1$
-        addOption(adv, "clan_pilot_training", false); //$NON-NLS-1$
-        addOption(adv, "some_like_it_hot", false); //$NON-NLS-1$
-        addOption(adv, "weathered", false); //$NON-NLS-1$
-        addOption(adv, "allweather", false); //$NON-NLS-1$
-        addOption(adv, "blind_fighter", false); //$NON-NLS-1$
-        addOption(adv, "sensor_geek", false); //$NON-NLS-1$
-
+        // Unofficial      
+        addOption(adv, OptionsConstants.UNOFF_EI_IMPLANT, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_GUNNERY_LASER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_GUNNERY_MISSILE, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_GUNNERY_BALLISTIC, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_CLAN_PILOT_TRAINING, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_SOME_LIKE_IT_HOT, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_WEATHERED, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_ALLWEATHER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_BLIND_FIGHTER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.UNOFF_SENSOR_GEEK, false); //$NON-NLS-1$
 
         IBasicOptionGroup edge = addGroup("edge", EDGE_ADVANTAGES); //$NON-NLS-1$
         addOption(edge, "edge", 0); //$NON-NLS-1$
@@ -116,23 +122,45 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, "edge_when_ko", false); //$NON-NLS-1$
         addOption(edge, "edge_when_explosion", false); //$NON-NLS-1$
         addOption(edge, "edge_when_masc_fails", false); //$NON-NLS-1$
+        
+        addOption(edge, OptionsConstants.EDGE, 0); //$NON-NLS-1$
+        //different edge triggers 
+        addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, false); //$NON-NLS-1$
+        addOption(edge, OptionsConstants.EDGE_WHEN_TAC, false); //$NON-NLS-1$
+        addOption(edge, OptionsConstants.EDGE_WHEN_KO, false); //$NON-NLS-1$
+        addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, false); //$NON-NLS-1$
+        addOption(edge, OptionsConstants.EDGE_WHEN_MASC_FAILS, false); //$NON-NLS-1$
 
         // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES); //$NON-NLS-1$
-        addOption(md, "vdni", false); //$NON-NLS-1$
-        addOption(md, "bvdni", false); //$NON-NLS-1$
-        addOption(md, "pain_shunt", false); //$NON-NLS-1$
-        addOption(md, "grappler", false); //$NON-NLS-1$
-        addOption(md, "pl_masc", false); //NON-NLS-1$
-        //TODO: Need to add Active Probe as sensor 
-        //Forum query pending at http://www.classicbattletech.com/forums/index.php/topic,47577.0.html
-        addOption(md, "cyber_eye_im", false); //$NON-NLS-1$
-        addOption(md, "cyber_eye_tele", false); //$NON-NLS-1$
-        addOption(md, "mm_eye_im", false); //$NON-NLS-1$
-        addOption(md, "comm_implant", false); //$NON-NLS-1$
-        addOption(md, "boost_comm_implant", false); //$NON-NLS-1$
-        addOption(md, "dermal_armor", false); //$NON-NLS-1$
-        addOption(md, "tsm_implant", false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PAIN_SHUNT, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_COMM_IMPLANT, false); // $NON-NLS-1$
+        //TODO - -1 bonus when spotting for LRMs and moving through mines.
+        addOption(md, OptionsConstants.MD_BOOST_COMM_IMPLANT, false); // $NON-NLS-1$
+        //TODO - -1 bonus when spotting for LRMs and moving through mines. 
+
+        addOption(md, OptionsConstants.MD_CYBER_IMP_AUDIO, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_CYBER_IMP_VISUAL, false); //$NON-NLS-1$
+
+        addOption(md, OptionsConstants.MD_CYBER_IMP_LASER, false); //$NON-NLS-1$
+  
+        addOption(md, OptionsConstants.MD_MM_IMPLANTS, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_ENH_MM_IMPLANTS, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_FILTRATION, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_GAS_EFFUSER_PHERO, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_GAS_EFFUSER_TOXIN, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_DERMAL_ARMOR, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_DERMAL_CAMO_ARMOR, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_TSM_IMPLANT, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false); //$NON-NLS-1$  
+        addOption(md, OptionsConstants.MD_VDNI, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_BVDNI, false); // $NON-NLS-1$
+        //Prosthetic Limbs (not MD Exclusive)
+        addOption(md, OptionsConstants.MD_PL_ENHANCED, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_MASC, false); // NON-NLS-1$
+        //TODO - Prototype DNI IO pg 83
+        //SUICIDE CHARGE IO pg 83
+
     }
 
     /*

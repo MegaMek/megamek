@@ -652,9 +652,9 @@ public class BoardEditor extends JComponent implements ItemListener,
     /**
      * Saves the board in PNG image format.
      */
-    private void boardSaveImage() {
+    private void boardSaveImage(boolean ignoreUnits) {
         if (curfileImage == null) {
-            boardSaveAsImage();
+            boardSaveAsImage(ignoreUnits);
             return;
         }
         JDialog waitD = new JDialog(frame, Messages
@@ -672,7 +672,8 @@ public class BoardEditor extends JComponent implements ItemListener,
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(), "png", curfileImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png",
+                    curfileImage);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -727,7 +728,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      * Opens a file dialog box to select a file to save as; saves the board to
      * the file as an image. Useful for printing boards.
      */
-    private void boardSaveAsImage() {
+    private void boardSaveAsImage(boolean ignoreUnits) {
         JFileChooser fc = new JFileChooser(".");
         fc.setLocation(frame.getLocation().x + 150,
                        frame.getLocation().y + 100);
@@ -762,7 +763,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             }
         }
         frame.setTitle(Messages.getString("BoardEditor.title0") + curfileImage); //$NON-NLS-1$
-        boardSaveImage();
+        boardSaveImage(ignoreUnits);
     }
 
     //
@@ -864,7 +865,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             ignoreHotKeys = false;
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             ignoreHotKeys = true;
-            boardSaveAsImage();
+            boardSaveAsImage(false);
             ignoreHotKeys = false;
         } else if (ae.getSource().equals(butDelTerrain)
                    && (lisTerrain.getSelectedValue() != null)) {

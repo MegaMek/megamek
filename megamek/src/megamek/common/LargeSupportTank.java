@@ -15,6 +15,7 @@ package megamek.common;
 
 import java.util.ArrayList;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
 /**
@@ -36,6 +37,8 @@ public class LargeSupportTank extends SupportTank {
     public static final int LOC_REAR = 6;
     public static final int LOC_TURRET = 7;
     public static final int LOC_TURRET_2 = 8;
+    
+    private double fuelTonnage = 0;
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
             "RRRS", "RRLS", "RR", "TU", "TU2" };
@@ -154,13 +157,13 @@ public class LargeSupportTank extends SupportTank {
                 case 8:
                     if ((bSide || bRearSide)
                             && !game.getOptions().booleanOption(
-                                    "tacops_vehicle_effective")) {
+                                    OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
                     }
                     break;
                 case 9:
                     if (!game.getOptions().booleanOption(
-                            "tacops_vehicle_effective")) {
+                            OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         rv.setMotiveMod(motiveMod);
                     }
@@ -300,11 +303,11 @@ public class LargeSupportTank extends SupportTank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_FRONT;
                 }
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_NOSE;
                 }
             case LOC_TURRET:
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_TURRET;
                 }
                 return Compute.ARC_FORWARD;
@@ -316,7 +319,7 @@ public class LargeSupportTank extends SupportTank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_RIGHT;
                 }
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_RIGHT_BROADSIDE;
                 }
                 return Compute.ARC_RIGHTSIDE;
@@ -328,7 +331,7 @@ public class LargeSupportTank extends SupportTank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_LEFT;
                 }
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_LEFT_BROADSIDE;
                 }
                 return Compute.ARC_LEFTSIDE;
@@ -336,7 +339,7 @@ public class LargeSupportTank extends SupportTank {
                 if (mounted.isPintleTurretMounted()) {
                     return Compute.ARC_PINTLE_TURRET_REAR;
                 }
-                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                     return Compute.ARC_AFT;
                 }
                 return Compute.ARC_REAR;
@@ -463,5 +466,15 @@ public class LargeSupportTank extends SupportTank {
             }
         }
         return super.isLocationProhibited(c, currElevation);
+    }
+
+    //FUEL CAPACITY TM 128
+    @Override
+    public double getFuelTonnage() {
+        return fuelTonnage;
+    }
+
+    public void setFuelTonnage(double fuel) {
+        fuelTonnage = fuel;
     }
 }

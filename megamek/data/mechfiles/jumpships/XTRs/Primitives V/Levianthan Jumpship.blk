@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Jumpship
+</UnitType>
+
+<Name>
+Leviathan Jumpship
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<Tonnage>
+410000
+</Tonnage>
+
+<Armor>
+13
+13
+13
+13
+13
+13
+</Armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Front Left Side Equipment>
+</Front Left Side Equipment>
+
+<Front Right Side Equipment> 
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment> 
+</Aft Right Side Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<heatsinks>
+114
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+2500
+</fuel>
+
+<type>
+IS Level 5
+</type>
+
+<year>
+2468
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:4:2
+CargoBay:1235:2
+</transporters>
+
+<docking_collar>
+8
+</docking_collar>
+
+<grav_deck>
+2
+</grav_deck>
+
+<escape_pod>
+5
+</escape_pod>
+
+<life_boat>
+5
+</life_boat>
+
+<crew>
+47
+</crew>
+
+<passengers>
+17
+</passengers>
+
+<source>
+XTRO Primitives III - Age of War
+</source>

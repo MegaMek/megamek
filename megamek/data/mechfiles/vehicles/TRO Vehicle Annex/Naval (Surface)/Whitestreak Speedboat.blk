@@ -40,6 +40,10 @@ Naval
 6
 </engine_type>
 
+<fuel>
+.004
+</fuel>
+
 <armor>
 0
 0
@@ -86,9 +90,8 @@ standardseats:.075:1
 </tonnage>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <history>
 </history>
-

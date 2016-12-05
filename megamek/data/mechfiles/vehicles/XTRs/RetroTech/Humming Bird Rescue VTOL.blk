@@ -43,6 +43,10 @@ VTOL
 6
 </engine_type>
 
+<fuel>
+3.5
+</fuel>
+
 <armor>
 9
 8

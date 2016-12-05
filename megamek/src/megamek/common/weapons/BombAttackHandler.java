@@ -33,6 +33,7 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -205,11 +206,11 @@ public class BombAttackHandler extends WeaponHandler {
                     vPhaseReport.add(r);
                 } else {
                     int moF = -typeModifiedToHit.getMoS();
-                    if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
-                        if ((-typeModifiedToHit.getMoS() -2) < 1) {
+                    if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
+                        if ((-typeModifiedToHit.getMoS() - 2) < 1) {
                             moF = 0;
                         } else {
-                            moF = -typeModifiedToHit.getMoS() -2;
+                            moF = -typeModifiedToHit.getMoS() - 2;
                         }
                     }
                     if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {

@@ -50,6 +50,7 @@ import megamek.common.Transporter;
 import megamek.common.VTOL;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.options.OptionsConstants;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
     /**
@@ -126,6 +127,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
                     SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
+            String ttKey = "DeploymentDisplay." + cmd.getCmd() + ".tooltip";
+            if (Messages.keyExists(ttKey)) {
+                newButton.setToolTipText(Messages.getString(ttKey));
+            }
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -228,10 +233,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             setAssaultDropEnabled(ce().canAssaultDrop()
                     && ce().getGame().getOptions()
-                            .booleanOption("assault_drop"));
+                            .booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP));
             if (!ce().canAssaultDrop()
                     && ce().getGame().getOptions()
-                            .booleanOption("assault_drop")) {
+                            .booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)) {
             buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setText(Messages
                         .getString("DeploymentDisplay.AssaultDrop")); //$NON-NLS-1$
                 assaultDropPreference = false;
@@ -344,8 +349,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
 
         disableButtons();
 
+        int elevation = en.getElevation();
+        // If elevation was set in lounge, try to preserve it
+        // Server.processDeployment will adjust elevation, so we want to account for this
+        if ((en instanceof VTOL) && (elevation >= 1)) {
+            IHex hex = clientgui.getClient().getGame().getBoard().getHex(en.getPosition());
+            elevation = Math.max(0, elevation - (hex.ceiling() - hex.surface() + 1));
+        }
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
-                en.getElevation(), en.getLoadedUnits(), assaultDropPreference);
+                elevation, en.getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);
 
         if (ce().isWeapOrderChanged()) {

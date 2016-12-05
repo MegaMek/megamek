@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -251,23 +252,22 @@ public class Infantry extends Entity {
             mp = Math.max(mp - 1, 1);
         }
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("tsm_implant"))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("dermal_armor"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
                 && (getMovementMode() != EntityMovementMode.TRACKED)
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
             mp = Math.max(mp - 1, 0);
         }
         if((null != getCrew())
-                && getCrew().getOptions().booleanOption("pl_masc")
+                && getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_MASC)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
                     || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
         }
-        if ((null != getCrew())
-                && getCrew().getOptions().booleanOption("foot_cav")
+        if ((null != getCrew()) && getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
-                    || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
+                        || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
         }
         if(hasActiveFieldArtillery()) {
@@ -292,7 +292,7 @@ public class Infantry extends Entity {
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if( (game != null)
-                && game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE) ) {
             if(getWalkMP(gravity, ignoreheat, ignoremodulararmor) > 0) {
                 return getWalkMP(gravity, ignoreheat, ignoremodulararmor) + 1;
             }
@@ -318,8 +318,8 @@ public class Infantry extends Entity {
     public int getJumpMP(boolean gravity) {
         int mp = getOriginalJumpMP();
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("tsm_implant"))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("dermal_armor"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);
         }
@@ -618,7 +618,7 @@ public class Infantry extends Entity {
     public int getWeaponArc(int wn) {
         Mounted mounted = getEquipment(wn);
         if(mounted.getLocation() == LOC_FIELD_GUNS) {
-            if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS)) {
                 return Compute.ARC_TURRET;
             }
             return Compute.ARC_FORWARD;
@@ -1079,7 +1079,7 @@ public class Infantry extends Entity {
     }
     @Override
     public boolean canAssaultDrop() {
-        return game.getOptions().booleanOption("paratroopers");
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS);
     }
 
     @Override
@@ -1095,7 +1095,7 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isEligibleForFiring() {
-        if(game.getOptions().booleanOption("tacops_fast_infantry_move")) {
+        if(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE)) {
             if(moved == EntityMovementType.MOVE_RUN) {
                 return false;
             }

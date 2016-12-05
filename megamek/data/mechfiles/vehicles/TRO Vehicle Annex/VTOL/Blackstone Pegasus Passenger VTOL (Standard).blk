@@ -34,6 +34,7 @@ VTOL
 
 <transporters>
 troopspace:7.5
+standardseats:7.5:100
 cargobay:5:1
 </transporters>
 
@@ -44,6 +45,10 @@ cargobay:5:1
 <engine_type>
 6
 </engine_type>
+
+<fuel>
+2
+</fuel>
 
 <armor>
 0
@@ -80,10 +85,9 @@ cargobay:5:1
 </Rotor Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Civil War
 </source>
 
 <tonnage>
 30.0
 </tonnage>
-

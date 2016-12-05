@@ -26,6 +26,7 @@ import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.options.OptionsConstants;
 
 /**
  * The attacker kicks the target.
@@ -103,14 +104,12 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
     /**
      * To-hit number for the specified leg to kick
      */
-    public static ToHitData toHit(IGame game, int attackerId,
-            Targetable target, int leg) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't attack from a null entity!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
 
-        if (!game.getOptions().booleanOption("tacops_jump_jet_attack"))
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK))
             return new ToHitData(TargetRoll.IMPOSSIBLE, "no Jump Jet attack");
 
         String impossible = toHitIsImpossible(game, ae, target);

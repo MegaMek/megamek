@@ -41,6 +41,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.Warship;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Represents one unit charging another. Stores information about where the
@@ -112,7 +113,7 @@ public class RamAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }
         
-        if (!game.getOptions().booleanOption("friendly_fire")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if (target.getTargetType() == Targetable.TYPE_ENTITY
                     && (((Entity)target).getOwnerId() == ae.getOwnerId()

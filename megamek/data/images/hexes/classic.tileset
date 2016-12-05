@@ -14,6 +14,8 @@
 # smoke
 # elevator
 
+include "StandardIncludes/StandardThemes.tileinc"
+
 include "StandardIncludes/StandardFluff.tileinc"
 include "StandardIncludes/StandardFuelTanks.tileinc"
 
@@ -29,12 +31,16 @@ include "StandardIncludes/StandardElevator.tileinc"
 include "StandardIncludes/StandardLimbs.tileinc"
 include "StandardIncludes/StandardSpace.tileinc"
 
-super * "woods:1" "jungle" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
-super * "woods:2" "jungle" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
-super * "woods:3" "jungle" "jungle/ultra_heavy_jungle1.png"
+super * "woods:1" "tropical" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "woods:2" "tropical" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "woods:3" "tropical" "jungle/ultra_heavy_jungle1.png"
 
 super * "woods:1" "volcano" "snow/snow_lf.png"
 super * "woods:2" "volcano" "snow/snow_hf.png"
+
+super * "jungle:1" "" "jungle/light_jungle1.png;jungle/light_jungle2.png;jungle/light_jungle3.png;jungle/light_jungle4.png"
+super * "jungle:2" "" "jungle/heavy_jungle1.png;jungle/heavy_jungle2.png;jungle/heavy_jungle3.png"
+super * "jungle:3" "" "jungle/ultra_heavy_jungle1.png"
 
 super * "water:0" "" "boring/blue_water_1.gif"
 super * "water:1" "" "boring/blue_water_1.gif"
@@ -81,6 +87,8 @@ super * "rubble:6" "" "boring/rubble_ultra.gif"
 include "StandardIncludes/BasicBridges.tileinc"
 include "StandardIncludes/BasicRoads.tileinc"
 
+super * "heavy_industrial:*" "" "transparent/heavy_industrial_zone.gif"
+
 super * "smoke:1" "" "boring/smoke.gif"
 super * "smoke:2" "" "boring/heavysmoke.gif"
 super * "smoke:3" "" "boring/lismoke.gif"
@@ -110,7 +118,35 @@ base -1 "" "" "boring/beige_sinkhole_1.gif"
 base -2 "" "" "boring/beige_sinkhole_2.gif"
 base -3 "" "" "boring/beige_sinkhole_3.gif"
 
-base 0 "space:1" "" "boring/space.gif"
+base 0 "bldg_basement_type:*" "" "boring/grey_pavement_0.gif"
+base 1 "bldg_basement_type:*" "" "boring/grey_pavement_1.gif"
+base 2 "bldg_basement_type:*" "" "boring/grey_pavement_2.gif"
+base 3 "bldg_basement_type:*" "" "boring/grey_pavement_3.gif"
+base 4 "bldg_basement_type:*" "" "boring/grey_pavement_4.gif"
+base 5 "bldg_basement_type:*" "" "boring/grey_pavement_5.gif"
+base 6 "bldg_basement_type:*" "" "boring/grey_pavement_6.gif"
+base 7 "bldg_basement_type:*" "" "boring/grey_pavement_7.gif"
+base 8 "bldg_basement_type:*" "" "boring/grey_pavement_8.gif"
+base 9 "bldg_basement_type:*" "" "boring/grey_pavement_8.gif"
+base 10 "bldg_basement_type:*" "" "boring/grey_pavement_8.gif"
+base -1 "bldg_basement_type:*" "" "boring/grey_pavement_0.gif"
+base -2 "bldg_basement_type:*" "" "boring/grey_pavement_0.gif"
+base -3 "bldg_basement_type:*" "" "boring/grey_pavement_0.gif"
+
+base 0 "pavement:1" "" "boring/grey_pavement_0.gif"
+base 1 "pavement:1" "" "boring/grey_pavement_1.gif"
+base 2 "pavement:1" "" "boring/grey_pavement_2.gif"
+base 3 "pavement:1" "" "boring/grey_pavement_3.gif"
+base 4 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 5 "pavement:1" "" "boring/grey_pavement_5.gif"
+base 6 "pavement:1" "" "boring/grey_pavement_6.gif"
+base 7 "pavement:1" "" "boring/grey_pavement_7.gif"
+base 8 "pavement:1" "" "boring/grey_pavement_8.gif"
+base 9 "pavement:1" "" "boring/grey_pavement_8.gif"
+base 10 "pavement:1" "" "boring/grey_pavement_8.gif"
+base -1 "pavement:1" "" "boring/grey_pavement_0.gif"
+base -2 "pavement:1" "" "boring/grey_pavement_0.gif"
+base -3 "pavement:1" "" "boring/grey_pavement_0.gif"
 
 base 0 "swamp:*" "" "swamp/swamp_clear_0.gif;swamp/swamp_clear_0a.gif;swamp/swamp_clear_0b.gif;swamp/swamp_clear_0c.gif"
 #levels 2 and 3 of swamp are for quicksand
@@ -200,21 +236,6 @@ base * "woods:3" "" "boring/uhf.gif"
 base * "woods:1;snow:1" "" "snow/snow_light_forest_0.gif;snow/snow_light_forest_1.gif;snow/snow_light_forest_2.gif"
 base * "woods:2;snow:1" "" "snow/snow_heavy_forest_0.gif;snow/snow_heavy_forest_1.gif"
 
-base 0 "pavement:1" "" "boring/grey_pavement_0.gif"
-base 1 "pavement:1" "" "boring/grey_pavement_1.gif"
-base 2 "pavement:1" "" "boring/grey_pavement_2.gif"
-base 3 "pavement:1" "" "boring/grey_pavement_2.gif"
-base 4 "pavement:1" "" "boring/grey_pavement_3.gif"
-base 5 "pavement:1" "" "boring/grey_pavement_3.gif"
-base 6 "pavement:1" "" "boring/grey_pavement_4.gif"
-base 7 "pavement:1" "" "boring/grey_pavement_4.gif"
-base 8 "pavement:1" "" "boring/grey_pavement_4.gif"
-base 9 "pavement:1" "" "boring/grey_pavement_4.gif"
-base 10 "pavement:1" "" "boring/grey_pavement_5.gif"
-base 20 "pavement:1" "" "boring/grey_pavement_6.gif"
-base 30 "pavement:1" "" "boring/grey_pavement_7.gif"
-base 40 "pavement:1" "" "boring/grey_pavement_8.gif"
-
 base * "planted_fields:1" "" "boring/fields.gif"
 base * "planted_fields:2" "" "boring/vineyard.png"
 base * "planted_fields:3" "" "boring/soybeans.png"
@@ -285,6 +306,8 @@ base 3 "tundra:1" "" "tundra/tundra_3.gif"
 
 base * "impassable:1" "" "boring/solidrock.gif"
 
+include "StandardIncludes/StandardSpace.tileinc"
+
 #------------------- BEGIN grass theme
 
 base 0 "" "grass" "grass/grass_plains_0.gif"
@@ -340,24 +363,24 @@ base -6 "rough:1;swamp:*" "grass" "grass/grass_swamp_rough_-3.gif"
 
 #------------------- END grass theme
 
-#------------------- BEGIN jungle theme
+#------------------- BEGIN tropical theme
 
-base 0 "" "jungle" "boring/beige_plains_0.gif"
-base 1 "" "jungle" "boring/beige_plains_1.gif"
-base 2 "" "jungle" "boring/beige_plains_2.gif"
-base 3 "" "jungle" "boring/beige_plains_3.gif"
-base 4 "" "jungle" "boring/beige_plains_4.gif"
-base 5 "" "jungle" "boring/beige_plains_5.gif"
-base 6 "" "jungle" "boring/beige_plains_6.gif"
-base 7 "" "jungle" "boring/beige_plains_7.gif"
-base 8 "" "jungle" "boring/beige_plains_8.gif"
-base 9 "" "jungle" "boring/beige_plains_9.gif"
-base 10 "" "jungle" "boring/beige_plains_10.gif"
-base -1 "" "jungle" "boring/beige_sinkhole_1.gif"
-base -2 "" "jungle" "boring/beige_sinkhole_2.gif"
-base -3 "" "jungle" "boring/beige_sinkhole_3.gif"
+base 0 "" "tropical" "boring/beige_plains_0.gif"
+base 1 "" "tropical" "boring/beige_plains_1.gif"
+base 2 "" "tropical" "boring/beige_plains_2.gif"
+base 3 "" "tropical" "boring/beige_plains_3.gif"
+base 4 "" "tropical" "boring/beige_plains_4.gif"
+base 5 "" "tropical" "boring/beige_plains_5.gif"
+base 6 "" "tropical" "boring/beige_plains_6.gif"
+base 7 "" "tropical" "boring/beige_plains_7.gif"
+base 8 "" "tropical" "boring/beige_plains_8.gif"
+base 9 "" "tropical" "boring/beige_plains_9.gif"
+base 10 "" "tropical" "boring/beige_plains_10.gif"
+base -1 "" "tropical" "boring/beige_sinkhole_1.gif"
+base -2 "" "tropical" "boring/beige_sinkhole_2.gif"
+base -3 "" "tropical" "boring/beige_sinkhole_3.gif"
 
-#------------------- END jungle theme
+#------------------- END tropical theme
 
 #------------------- BEGIN lunar theme
 

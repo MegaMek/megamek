@@ -26,6 +26,7 @@ import megamek.common.Report;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
 
@@ -60,7 +61,7 @@ public class HVACWeaponHandler extends ACWeaponHandler {
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
 
-        if (game.getOptions().booleanOption("tacops_start_fire")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)
                 && (game.getPlanetaryConditions().getAtmosphere() >= PlanetaryConditions.ATMO_TRACE)) {
             int rear = (ae.getFacing() + 3 + (weapon.isMechTurretMounted() ? weapon
                     .getFacing() : 0)) % 6;

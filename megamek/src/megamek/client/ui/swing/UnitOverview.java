@@ -44,6 +44,7 @@ import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
 public class UnitOverview implements IDisplayable {
@@ -304,7 +305,7 @@ public class UnitOverview implements IDisplayable {
         boolean mtHeat = false;
         int mHeat = 30;
         if ((entity.getGame() != null)
-                && entity.getGame().getOptions().booleanOption("tacops_heat")) {
+                && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
             mHeat = 50;
             mtHeat = true;
         }

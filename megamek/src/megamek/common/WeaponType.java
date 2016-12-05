@@ -126,7 +126,9 @@ public class WeaponType extends EquipmentType {
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);
     
+    //Used for TSEMP Weapons.
     public static final BigInteger F_TSEMP = BigInteger.valueOf(1).shiftLeft(57);
+    public static final BigInteger F_REPEATING = BigInteger.valueOf(1).shiftLeft(61);
     
     //Naval Mass Drivers
     public static final BigInteger F_MASS_DRIVER = BigInteger.valueOf(1).shiftLeft(58);
@@ -1696,6 +1698,7 @@ public class WeaponType extends EquipmentType {
 
         EquipmentType.addType(new ISTSEMPCannon());
         EquipmentType.addType(new ISTSEMPOneShot());
+        EquipmentType.addType(new ISTSEMPRepeatingCannon());
 
         EquipmentType.addType(new ISAPDS());
         EquipmentType.addType(new ISBAAPDS());

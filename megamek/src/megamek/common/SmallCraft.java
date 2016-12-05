@@ -16,6 +16,8 @@ package megamek.common;
 
 import java.util.Map;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * @author Jay Lawson
  */
@@ -624,7 +626,7 @@ public class SmallCraft extends Aero {
      */
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
         return getECMRange() >= 0;
@@ -638,7 +640,8 @@ public class SmallCraft extends Aero {
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
+                || !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {

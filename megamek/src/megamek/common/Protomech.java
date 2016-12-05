@@ -2108,7 +2108,7 @@ public class Protomech extends Entity {
     @Override
     public PilotingRollData checkSkid(EntityMovementType moveType,
             IHex prevHex, EntityMovementType overallMoveType,
-            MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
+            MoveStep prevStep, MoveStep currStep, int prevFacing, int curFacing, Coords lastPos,
             Coords curPos, boolean isInfantry, int distance) {
         return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
                 "ProtoMechs can't skid");

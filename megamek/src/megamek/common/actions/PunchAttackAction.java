@@ -286,7 +286,12 @@ public class PunchAttackAction extends PhysicalAttackAction {
             }
         } else {
             if (ae.isHullDown()) {
-                toHit.setHitTable(ToHitData.HIT_KICK);
+                // If we are above the target, use punch chart
+                if (attackerHeight > targetElevation) {
+                    toHit.setHitTable(ToHitData.HIT_PUNCH);
+                } else { // If on the same level, it's a punch to the legs
+                    toHit.setHitTable(ToHitData.HIT_KICK);
+                } // Target can't be above, as it wouldn't be legal
             } else {
                 toHit.setHitTable(ToHitData.HIT_PUNCH);
             }

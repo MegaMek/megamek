@@ -25,7 +25,7 @@ Coolant Truck
 </year>
 
 <type>
-IS Level 2
+IS Level 1
 </type>
 
 <motion_type>
@@ -33,8 +33,11 @@ Hover
 </motion_type>
 
 <transporters>
-insulatedcargobay:4:1:1
-insulatedcargobay:2:1:1
+insulatedcargobay:3.48:1:1
+</transporters>
+
+<transporters>
+insulatedcargobay:1.74:1:1
 </transporters>
 
 <cruiseMP>
@@ -76,7 +79,7 @@ Vehicle Flamer
 </Turret Equipment>
 
 <source>
-RS 3039 Unabriged
+TRO 3039 - Star League
 </source>
 
 <tonnage>

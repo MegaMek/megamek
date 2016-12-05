@@ -63,6 +63,7 @@ import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.CLFireExtinguisher;
 import megamek.common.weapons.ISFireExtinguisher;
 
@@ -576,7 +577,7 @@ public class MapMenu extends JPopupMenu {
                 menu.add(item);
             }
 
-            if (game.getOptions().booleanOption("tacops_evade")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
                 item = new JMenuItem(
                         Messages.getString("MovementDisplay.butEvade"));
 
@@ -596,7 +597,7 @@ public class MapMenu extends JPopupMenu {
 
             if (game.getPlanetaryConditions().isRecklessConditions()
                 && !game.getBoard().inSpace()
-                && !game.getOptions().booleanOption("no_night_move_pen")) {
+                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(
                         Messages.getString("MovementDisplay.butReckless"));
 
@@ -702,7 +703,7 @@ public class MapMenu extends JPopupMenu {
 
             menu.add(item);
 
-            if (game.getOptions().booleanOption("tacops_evade")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
                 item = new JMenuItem(
                         Messages.getString("MovementDisplay.butEvade"));
 
@@ -722,7 +723,7 @@ public class MapMenu extends JPopupMenu {
 
             if (game.getPlanetaryConditions().isRecklessConditions()
                 && !game.getBoard().inSpace()
-                && !game.getOptions().booleanOption("no_night_move_pen")) {
+                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(
                         Messages.getString("MovementDisplay.butReckless"));
 
@@ -1040,13 +1041,13 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Stand");
             menu.add(createStandJMenuItem(false));
 
-            if (game.getOptions().booleanOption("tacops_careful_stand")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)
                 && (myEntity.getWalkMP() > 2)
                 && (myEntity.moved == EntityMovementType.MOVE_NONE)) {
                 menu.add(createStandJMenuItem(true));
             }
 
-            if (game.getOptions().booleanOption("tacops_hull_down")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)) {
                 menu.add(createHullDownJMenuItem());
             }
 
@@ -1054,7 +1055,7 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Stand");
             menu.add(createStandJMenuItem(false));
 
-            if (game.getOptions().booleanOption("tacops_careful_stand")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)) {
                 menu.add(createStandJMenuItem(true));
             }
 
@@ -1063,7 +1064,7 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Prone");
             menu.add(createProneJMenuItem());
 
-            if (game.getOptions().booleanOption("tacops_hull_down")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)) {
                 menu.add(createHullDownJMenuItem());
             }
         }
@@ -1145,7 +1146,7 @@ public class MapMenu extends JPopupMenu {
         final boolean isFiringDisplay = (currentPanel instanceof FiringDisplay);
         final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame().getOptions()
-                .booleanOption("tacops_start_fire"); //$NON-NLS-1$
+                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE); //$NON-NLS-1$
         
         IPlayer localPlayer = client.getLocalPlayer();
         
@@ -1502,7 +1503,7 @@ public class MapMenu extends JPopupMenu {
 
         IPlayer localPlayer = client.getLocalPlayer();
         boolean friendlyFire = (game.getOptions()
-                .booleanOption("friendly_fire"));
+                .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE));
 
         for (Entity en : game.getEntitiesVector(coords)) {
             // Only add the unit if it's actually visible

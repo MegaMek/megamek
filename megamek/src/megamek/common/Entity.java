@@ -11975,25 +11975,6 @@ Targetable, RoundUpdated, PhaseUpdated {
             return Math.max(1, points);
         }
 
-        public long getBattleForceMovementPoints() {
-            int baseBFMove = getWalkMP();
-            return baseBFMove;
-        }
-
-        public long getBattleForceJumpPoints() {
-            return 0;
-        }
-        
-        public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-            moves.put(getMovementModeAsBattleForceString(), getWalkMP() * 2);
-            if (getJumpMP() > 0) {
-                if (getWalkMP() == getJumpMP()) {
-                    moves.remove("");
-                }
-                moves.put("j", getJumpMP() * 2);
-            }
-        }
-
         /**
          * Get the movement mode of the entity and return it as a battle force
          * string.
@@ -12036,31 +12017,58 @@ Targetable, RoundUpdated, PhaseUpdated {
                 return "ERROR";
             }
         }
+        
+        /**
+         * Certain unit types can increase this with MASC, supercharger, or jet booster.
+         * AlphaStrike needs the fraction retained because it doubles the movement for ground units,
+         * while BattleForce rounds this to the nearest integer.
+         */
+        public double getBaseBattleForceMovement() {
+        	return getOriginalWalkMP();
+        }
 
         /**
-         * Returns the Battle Force Movement string this is used in a battle force
-         * game
-         *
+         * Handles base, jump, and underwater movement.
+         * 
          * @return
          */
-        public String getBattleForceMovement() {
-            StringBuilder result = new StringBuilder();
-
-            long jumpPoints = getBattleForceJumpPoints();
-            long walkPoints = getBattleForceMovementPoints();
-
-            result.append(walkPoints);
-            result.append(getMovementModeAsBattleForceString());
-
-            if (jumpPoints == walkPoints) {
-                result.append("j");
-            } else if (jumpPoints > 0) {
-                result.append("/");
-                result.append(jumpPoints);
-                result.append("j");
+        public void setBattleForceMovement(Map<String,Integer> movement) {
+        	int baseMove = (int)Math.round(getBaseBattleForceMovement());
+        	int jumpMove = getOriginalJumpMP();
+            if (jumpMove == baseMove && getMovementModeAsBattleForceString().length() == 0) {
+            	movement.put("j", baseMove);
+            } else {
+            	movement.put(getMovementModeAsBattleForceString(), baseMove);
+            	if (jumpMove >= baseMove) {
+            		movement.put("j", jumpMove);
+            	} else if (jumpMove > 0) {
+            		movement.put("j", (int)Math.round(jumpMove * 0.66));
+            	}
             }
+            int umu = getAllUMUCount();
+            if (umu > 0) {
+                movement.put("s", umu);
+            }
+        }
 
-            return result.toString();
+        /**
+         * Doubles base movement. Aero overrides this.
+         */
+        public void setAlphaStrikeMovement(Map<String,Integer> movement) {
+        	int baseMove = (int)Math.round(getBaseBattleForceMovement() * 2);
+        	int jumpMove = getOriginalJumpMP();
+            if (jumpMove == baseMove) {
+            	movement.put("j", baseMove);
+            } else {
+            	movement.put(getMovementModeAsBattleForceString(), baseMove);
+            	if (jumpMove > 0) {
+            		movement.put("j", (int)Math.round(jumpMove * 2));
+            	}
+            }
+            int umu = getAllUMUCount();
+            if (umu > 0) {
+                movement.put("s", umu * 2);
+            }
         }
 
         public int getBattleForceArmorPoints() {

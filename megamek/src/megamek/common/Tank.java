@@ -3449,43 +3449,16 @@ public class Tank extends Entity {
     } // End public TargetRoll getStealthModifier( char )
     
     @Override
-    public long getBattleForceJumpPoints() {
-        int baseBFMove = getWalkMP();
-        int baseBFJump = getJumpMP();
-        long finalBFJump = 0;
+    public double getBaseBattleForceMovement() {
+        double move = getOriginalWalkMP();
 
-        if (baseBFJump >= baseBFMove) {
-            finalBFJump = baseBFJump;
-        } else {
-            finalBFJump = Math.round(baseBFJump * .66);
-        }
-
-        return finalBFJump;
-    }
-
-    @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        double move = getWalkMP();
-
-        if (getEquipment().stream().anyMatch(m -> m.getType() instanceof MiscType
-                && m.getType().hasFlag(MiscType.F_MASC)
-                && m.getType().hasSubType(MiscType.S_SUPERCHARGER))) {
+        if (getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_MASC))
+        		.map(m -> m.getType().getSubType())
+        		.anyMatch(st -> st == MiscType.S_SUPERCHARGER)) {
             move *= 1.25;
         }
 
-        int baseMove = (int)Math.round(move * 2);
-        if (getJumpMP() == baseMove) {
-            moves.put("j", baseMove);
-        } else {
-            moves.put(getMovementModeAsBattleForceString(), baseMove);
-            if (getJumpMP() > 0) {
-                moves.put("j", getJumpMP() * 2);
-            }
-        }
-        int umu = getAllUMUCount();
-        if (umu > 0) {
-            moves.put("s", umu * 2);
-        }
+        return move;
     }
     
     @Override

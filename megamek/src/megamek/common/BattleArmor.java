@@ -1979,20 +1979,13 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
-    public long getBattleForceMovementPoints() {
-        return Math.max(getWalkMP(), getJumpMP());
-    }
-
-    @Override
-    public String getBattleForceMovement() {
-        StringBuilder sb = new StringBuilder();
+    public void setBattleForceMovement(Map<String,Integer> movement) {
         if (hasDWP()) {
-            sb.append(getWalkMP()).append("/");
+        	movement.put("", getWalkMP());
         }
-        sb.append(Math.max(getWalkMP(true, false, false, true, false),
-                getJumpMP(true, false, true)));
-        sb.append(getMovementModeAsBattleForceString());
-        return sb.toString();
+        int move = Math.max(getWalkMP(true, false, false, true, false),
+                getJumpMP(true, true, true));
+        movement.put(getMovementModeAsBattleForceString(), move);
     }    
 
     @Override

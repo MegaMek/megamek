@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -42,10 +43,7 @@ public class BattleForceElement {
     
     protected String name;
     protected int size;
-    protected int walkPoints;
-    protected int jumpPoints;
-    protected String movementMode;
-    protected String movement;
+    protected LinkedHashMap<String,Integer> movement = new LinkedHashMap<>();
     protected double armor;
     protected double threshold = -1;
     protected int structure;
@@ -58,10 +56,7 @@ public class BattleForceElement {
     public BattleForceElement(Entity en) {
         name = en.getShortName();
         size = en.getBattleForceSize();
-        walkPoints = (int)en.getBattleForceMovementPoints();
-        jumpPoints = (int)en.getBattleForceJumpPoints();
-        movementMode = en.getMovementModeAsBattleForceString();
-        movement = en.getBattleForceMovement();
+        en.setBattleForceMovement(movement);
         armor = en.getBattleForceArmorPointsRaw();
         if (en instanceof Aero) {
             threshold = armor / 10.0;
@@ -92,22 +87,6 @@ public class BattleForceElement {
     
     public int getSize() {
         return size;
-    }
-    
-    public int getWalkPoints() {
-        return walkPoints;
-    }
-    
-    public int getJumpPoints() {
-        return jumpPoints;
-    }
-    
-    public String getMovementMode() {
-        return movementMode;
-    }
-    
-    public String getMovementAsString() {
-        return movement;
     }
     
     public int getFinalArmor() {
@@ -580,7 +559,10 @@ public class BattleForceElement {
         w.write("\t");
         w.write(Integer.toString(size));
         w.write("\t");
-        w.write(movement);
+        w.write(movement.entrySet().stream()
+                .map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
+                        + e.getKey())
+                .collect(Collectors.joining("/")));
         w.write("\t");
         w.write(Integer.toString(getFinalArmor()));
         if (threshold >= 0) {

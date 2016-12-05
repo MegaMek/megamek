@@ -7431,26 +7431,8 @@ public abstract class Mech extends Entity {
      */
 
     @Override
-    public long getBattleForceMovementPoints() {
-        int baseBFMove = getWalkMP();
-        long modBFMove = getWalkMP();
-
-        if (hasMASCAndSuperCharger()) {
-            modBFMove = Math.round(baseBFMove * 1.5);
-        } else if (hasMASC()) {
-            modBFMove = Math.round(baseBFMove * 1.25);
-        }
-
-        if (hasMPReducingHardenedArmor()) {
-            modBFMove--;
-        }
-
-        return modBFMove;
-    }
-
-    @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
-        double move = getWalkMP();
+    public double getBaseBattleForceMovement() {
+        double move = getOriginalWalkMP();
 
         if (hasMASCAndSuperCharger()) {
             move *= 1.5;
@@ -7462,40 +7444,14 @@ public abstract class Mech extends Entity {
             move--;
         }
         
-        if (hasShield()) {
+        if (getMisc().stream().filter(m -> m.getType().hasFlag(MiscType.F_CLUB))
+        		.map(m -> m.getType().getSubType())
+        		.anyMatch(st -> st == MiscType.S_SHIELD_LARGE || st == MiscType.S_SHIELD_MEDIUM)) {
             move--;
         }
-
-        int baseMove = (int)Math.round(move * 2);
-        if (getJumpMP() * 2 == baseMove) {
-            moves.put("j", baseMove);
-        } else {
-            moves.put("", baseMove);
-            if (getJumpMP() > 0) {
-                moves.put("j", getJumpMP() * 2);
-            }
-        }
-        int umu = this.getAllUMUCount();
-        if (umu > 0) {
-            moves.put("s", umu * 2);
-        }
+        return move;
     }
     
-    @Override
-    public long getBattleForceJumpPoints() {
-        int baseBFMove = getWalkMP();
-        int baseBFJump = getJumpMP();
-        long finalBFJump = 0;
-
-        if (baseBFJump >= baseBFMove) {
-            finalBFJump = baseBFJump;
-        } else {
-            finalBFJump = Math.round(baseBFJump * .66);
-        }
-
-        return finalBFJump;
-    }
-
     @Override
     /*
      * returns the battle force structure points for a mech

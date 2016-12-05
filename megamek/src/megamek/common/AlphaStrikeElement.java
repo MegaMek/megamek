@@ -5,7 +5,6 @@ package megamek.common;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -55,12 +54,11 @@ public class AlphaStrikeElement extends BattleForceElement {
     };
 
     protected ASUnitType asUnitType;
-    protected LinkedHashMap<String,Integer> asMovement = new LinkedHashMap<>();
     
     public AlphaStrikeElement(Entity en) {
         super(en);
         asUnitType = ASUnitType.getUnitType(en);
-        en.setAlphaStrikeMovement(asMovement);
+        en.setAlphaStrikeMovement(movement);
         if (en.getEntityType() == Entity.ETYPE_INFANTRY) {
             double divisor = ((Infantry)en).getDamageDivisor();
             if (((Infantry)en).isMechanized()) {
@@ -158,7 +156,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         w.write("\t");
         w.write(Integer.toString(size));
         w.write("\t");
-        w.write(asMovement.entrySet().stream()
+        w.write(movement.entrySet().stream()
                 .map(e -> (e.getKey().equals("k")?"0." + e.getValue():e.getValue())
                         + "\"" + e.getKey())
                 .collect(Collectors.joining("/")));

@@ -650,7 +650,7 @@ public class Hex implements IHex, Serializable {
                 rv = false;
                 errBuff.append("Rapids must occurr within water!\n");
             }
-            if (this.depth() >= 0) {
+            if (this.depth() <1) {
                 rv = false;
                 errBuff.append("Rapids must occurr in depth 1 or greater!\n");
             }

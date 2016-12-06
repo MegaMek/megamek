@@ -38,6 +38,9 @@ v0.41.27-git
 + Issue #291: Rapids terrain validation & no PSR mods to hover, wige, vtol
 + Issue #399: Isometric bridges not darkened by night overlay
 + Issue #358: DFA against targets that jumped displaces to top of buildings
++ Data: New Sprites
++ Data/Feature: Turret Project Part 1 - Major additions to the number and 
+	types of turret. Sprites still in progress.
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.
@@ -164,6 +167,10 @@ v0.41.21 (2016-07-31 10:00 UTC)
 + Bug: Superheavy meks should halve number of criticals for armor (and weren't)
 + Added Superheavy Gyro type for Superheavy meks
 + Unit fixes and new sprites
++ Added missing report 6051 for reporting no damage from non-peneetrating inf
+	weapons
++ Issue #373: LargeTexture.tileset completion
++ Issue #390: MegaMek Thinks bldg_basement_type:* Is A Base
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

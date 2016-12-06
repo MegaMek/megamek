@@ -98,6 +98,10 @@ public class AlphaStrikeElement extends BattleForceElement {
         }
     }
     
+    protected double locationMultiplier(Entity en, int loc, Mounted mount) {
+    	return en.getAlphaStrikeLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
+    }
+    
     @Override
     protected void computeMovement(Entity en) {
     	en.setAlphaStrikeMovement(movement);    	

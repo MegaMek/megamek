@@ -353,7 +353,7 @@ public class BattleForceElement {
             }
             
             for (int loc = 0; loc < weaponLocations.length; loc++) {
-                double locMultiplier = en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
+                double locMultiplier = locationMultiplier(en, loc, mount);
                 if (locMultiplier == 0) {
                     continue;
                 }
@@ -425,6 +425,10 @@ public class BattleForceElement {
         } else if (heat[RANGE_BAND_SHORT] > 5) {
             specialAbilities.put(BattleForceSPA.HT, 1);
         }
+    }
+    
+    protected double locationMultiplier(Entity en, int loc, Mounted mount) {
+    	return en.getBattleForceLocationMultiplier(loc, mount.getLocation(), mount.isRearMounted());
     }
     
     protected void addArtillery(WeaponType weapon) {

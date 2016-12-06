@@ -3534,6 +3534,17 @@ public class Tank extends Entity {
         }
         return 0; 
     }
+
+    /**
+     * AlphaStrike combines turrets with the overall (front) damage values.
+     */
+    @Override
+    public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
+    	if (index == 0) {
+    		return location > LOC_BODY? 1.0 : 0.0;
+    	}
+    	return getBattleForceLocationMultiplier(index, location, rearMounted);
+    }
     
     public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);

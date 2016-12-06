@@ -210,7 +210,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         for (int loc = 0; loc < weaponLocations.length; loc++) {
             StringBuilder str = new StringBuilder();
             String damStr = getASDamageString(loc);
-            if (!damStr.contains("(0/0/0/0)")) {
+            if (!damStr.startsWith("(0/0/0)")) {
                 str.append(damStr);
                 sj.add(str.toString());
             }
@@ -218,7 +218,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         if (sj.length() > 0) {
             w.write(sj.toString());
         } else {
-            w.write("0/0/0/0");
+            w.write(rangeBands > 3? "0/0/0/0" : "0/0/0");
         }
         w.write("\t");
         sj = new StringJoiner(", ");
@@ -251,7 +251,7 @@ public class AlphaStrikeElement extends BattleForceElement {
         }
         if (spa.equals(BattleForceSPA.HT)) {
             return spa.toString()
-                    + IntStream.range(0, RANGE_BAND_NUM)
+                    + IntStream.range(0, rangeBands)
                     .mapToObj(String::valueOf).collect(Collectors.joining("/"));
         }
         return super.formatSPAString(spa);

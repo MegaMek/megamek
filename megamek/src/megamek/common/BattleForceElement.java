@@ -46,7 +46,8 @@ public class BattleForceElement {
     static final int RANGE_BAND_MEDIUM = 1;
     static final int RANGE_BAND_LONG = 2;
     static final int RANGE_BAND_EXTREME = 3;
-    static final int RANGE_BAND_NUM = 4;
+    static final int RANGE_BAND_NUM_GROUND = 3;
+    static final int RANGE_BAND_NUM_AERO = 4;
     
     static final int[] STANDARD_RANGES = {0, 4, 16, 24};
     static final int[] CAPITAL_RANGES = {0, 13, 25, 41};
@@ -62,6 +63,7 @@ public class BattleForceElement {
     protected double armor;
     protected double threshold = -1;
     protected int structure;
+    protected int rangeBands = RANGE_BAND_NUM_GROUND;
     protected WeaponLocation[] weaponLocations;
     protected String[] locationNames;
     protected int[] heat;
@@ -77,8 +79,11 @@ public class BattleForceElement {
             threshold = armor / 10.0;
         }
         structure = en.getBattleForceStructurePoints();
+        if (en instanceof Aero) {
+        	rangeBands = RANGE_BAND_NUM_AERO;
+        }
         initWeaponLocations(en);
-        heat = new int[RANGE_BAND_NUM];
+        heat = new int[rangeBands];
         computeDamage(en);
         points = calculatePointValue(en);
         en.addBattleForceSpecialAbilities(specialAbilities);
@@ -160,7 +165,7 @@ public class BattleForceElement {
     }
     
     public void computeDamage(Entity en) {
-        double[] baseDamage = new double[RANGE_BAND_NUM];
+        double[] baseDamage = new double[rangeBands];
         boolean hasTC = en.hasTargComp();
         int[] ranges;
         double pointDefense = 0;
@@ -322,14 +327,14 @@ public class BattleForceElement {
                 for (int index : mount.getBayWeapons()) {
                     Mounted m = en.getEquipment(index);
                     if (m.getType() instanceof WeaponType) {
-                        for (int r = 0; r < ranges.length; r++) {
+                        for (int r = 0; r < rangeBands; r++) {
                             baseDamage[r] += ((WeaponType)m.getType()).getBattleForceDamage(ranges[r], m.getLinkedBy());
                             heat[r] += ((WeaponType)m.getType()).getBattleForceHeatDamage(ranges[r]);
                         }
                     }
                 }
             } else {
-                for (int r = 0; r < ranges.length; r++) {
+                for (int r = 0; r < rangeBands; r++) {
                     if (en instanceof BattleArmor) {
                         baseDamage[r] = getBattleArmorDamage(weapon, ranges[r], ((BattleArmor)en),
                                 mount.isAPMMounted());
@@ -352,7 +357,7 @@ public class BattleForceElement {
                 if (locMultiplier == 0) {
                     continue;
                 }
-                for (int r = 0; r < ranges.length; r++) {
+                for (int r = 0; r < rangeBands; r++) {
                     double dam = baseDamage[r] * damageModifier * locMultiplier;
                     if (!weapon.isCapital()) {
                         weaponLocations[loc].addDamage(r, dam);
@@ -610,7 +615,7 @@ public class BattleForceElement {
         for (int loc = 0; loc < weaponLocations.length; loc++) {
             StringBuilder str = new StringBuilder();
             String damStr = getBFDamageString(loc);
-            if (!damStr.contains("(0/0/0/0)")) {
+            if (!damStr.startsWith("(0/0/0)")) {
                 str.append(damStr);
                 sj.add(str.toString());
             }
@@ -618,7 +623,7 @@ public class BattleForceElement {
         if (sj.length() > 0) {
             w.write(sj.toString());
         } else {
-            w.write("0/0/0/0");
+            w.write(rangeBands > 3? "0/0/0/0" : "0/0/0");
         }
         w.write("\t");
         sj = new StringJoiner(", ");
@@ -669,7 +674,7 @@ public class BattleForceElement {
         }
     }
 
-    static protected class WeaponLocation {
+    protected class WeaponLocation {
         List<Double> standardDamage = new ArrayList<>();
         Map<Integer,List<Double>> specialDamage = new HashMap<>();
         double indirect;
@@ -731,7 +736,7 @@ public class BattleForceElement {
             if (specialDamage.containsKey(damageClass)) {
                 return formatDamageUp(specialDamage.get(damageClass));
             }
-            return "0/0/0/0";
+            return rangeBands > 3? "0/0/0/0" : "0/0/0";
         }
         
         public String formatDamageRounded(boolean showMinDamage) {
@@ -742,7 +747,7 @@ public class BattleForceElement {
             if (specialDamage.containsKey(damageClass)) {
                 return formatDamageRounded(specialDamage.get(damageClass), showMinDamage);
             }
-            return "0/0/0/0";
+            return rangeBands > 3? "0/0/0/0" : "0/0/0";
         }
         
         public double getIF() {
@@ -780,7 +785,7 @@ public class BattleForceElement {
         }
         
         private String formatDamageUp(List<Double> damage) {
-            while (damage.size() < RANGE_BAND_NUM) {
+            while (damage.size() < rangeBands) {
                 damage.add(0.0);
             }
             return damage.stream().map(d -> String.valueOf((int)Math.ceil(d)))
@@ -788,7 +793,7 @@ public class BattleForceElement {
         }
 
         private String formatDamageRounded(List<Double> damage, boolean showMinDamage) {
-            while (damage.size() < RANGE_BAND_NUM) {
+            while (damage.size() < rangeBands) {
                 damage.add(0.0);
             }
             return damage.stream().map(d -> {

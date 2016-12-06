@@ -615,7 +615,7 @@ public class BattleForceElement {
         for (int loc = 0; loc < weaponLocations.length; loc++) {
             StringBuilder str = new StringBuilder();
             String damStr = getBFDamageString(loc);
-            if (!damStr.startsWith("(0/0/0)")) {
+            if (weaponLocations[loc].hasDamageRounded()) {
                 str.append(damStr);
                 sj.add(str.toString());
             }
@@ -688,6 +688,16 @@ public class BattleForceElement {
             return standardDamage.stream()
                     .filter(d -> d >= 0.5)
                     .mapToDouble(Double::doubleValue).sum() > 0;
+        }
+        
+        public boolean hasDamage() {
+        	return hasStandardDamage()
+        			|| specialDamage.keySet().stream().anyMatch(dc -> hasDamageClass(dc));
+        }
+        
+        public boolean hasDamageRounded() {
+        	return hasStandardDamageRounded()
+        			|| specialDamage.keySet().stream().anyMatch(dc -> hasDamageClassRounded(dc));
         }
         
         public boolean hasDamageClass(int damageClass) {

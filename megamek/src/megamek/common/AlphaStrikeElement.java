@@ -163,6 +163,13 @@ public class AlphaStrikeElement extends BattleForceElement {
     //TODO: Override calculatePointValue(Entity en)
     
     public String getASDamageString(int loc) {
+    	return getASDamageString(loc, true);
+    }
+    
+    public String getASDamageString(int loc, boolean showIfNoDamage) {
+    	if (!weaponLocations[loc].hasDamage()) {
+    		return "";
+    	}
         StringBuilder str = new StringBuilder(locationNames[loc]);
         if (locationNames[loc].length() > 0) {
             str.append("(");
@@ -209,8 +216,8 @@ public class AlphaStrikeElement extends BattleForceElement {
         StringJoiner sj = new StringJoiner(", ");
         for (int loc = 0; loc < weaponLocations.length; loc++) {
             StringBuilder str = new StringBuilder();
-            String damStr = getASDamageString(loc);
-            if (!damStr.startsWith("(0/0/0)")) {
+            String damStr = getASDamageString(loc, false);
+            if (damStr.length() > 0) {
                 str.append(damStr);
                 sj.add(str.toString());
             }

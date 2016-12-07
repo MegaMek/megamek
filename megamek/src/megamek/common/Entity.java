@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +60,6 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.ASEWMissileWeapon;
 import megamek.common.weapons.ASMissileWeapon;
-import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.BayWeapon;
@@ -76,13 +74,9 @@ import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISAAAMissileWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISLAAMissileWeapon;
-import megamek.common.weapons.ISLAC5;
-import megamek.common.weapons.ISSnubNosePPC;
-import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.SCLBayWeapon;
 import megamek.common.weapons.SpaceBombAttack;
 import megamek.common.weapons.TSEMPWeapon;
-import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 
@@ -697,18 +691,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected String endColumn = "</TD>";
 
     protected String nl = "<BR>";
-
-    // Max range modifer is 6
-    protected double[] battleForceMinRangeModifier = new double[]{1, .92,
-                                                                  .83, .75, .66, .58, .50};
-    // When getting the to hit mod add 4 got it and make sure the max is 8 since
-    // the range is -4 to 8
-    protected double[] battleForceToHitModifier = new double[]{1.20, 1.15,
-                                                               1.10, 1.05, 1, .95, .9, .85, .8};
-    public static final int BATTLEFORCESHORTRANGE = 0;
-    public static final int BATTLEFORCEMEDIUMRANGE = 4;
-    public static final int BATTLEFORCELONGRANGE = 16;
-    public static final int BATTLEFORCEEXTREMERANGE = 24;
 
     // for how many rounds has blueshield been active?
     private int blueShieldRounds = 0;
@@ -12014,16 +11996,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
 
     public int getBattleForcePoints() {
-        return 0;
-    }
-
-    public long getBattleForceMovementPoints() {
-        int baseBFMove = getWalkMP();
-        return baseBFMove;
-    }
-
-    public long getBattleForceJumpPoints() {
-        return 0;
+    	double bv = calculateBattleValue(true, true);
+    	int points = (int) Math.round(bv / 100);
+    	return Math.max(1, points);
     }
 
     /**
@@ -12031,110 +12006,151 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * string.
      */
     public String getMovementModeAsBattleForceString() {
-        switch (getMovementMode()) {
-            case NONE:
-            case BIPED:
-            case BIPED_SWIM:
-            case QUAD:
-            case QUAD_SWIM:
-                return "";
-            case TRACKED:
-                return "t";
-            case WHEELED:
-                return "w";
-            case HOVER:
-                return "h";
-            case VTOL:
-                return "v";
-            case NAVAL:
-            case HYDROFOIL:
-                return "n";
-            case SUBMARINE:
-            case INF_UMU:
-                return "s";
-            case INF_LEG:
-                return "f";
-            case INF_MOTORIZED:
-                return "m";
-            case INF_JUMP:
-                return "j";
-            case WIGE:
-                return "g";
-            case AERODYNE:
-                return "a";
-            case SPHEROID:
-                return "p";
-            default:
-                return "ERROR";
-        }
+    	switch (getMovementMode()) {
+    	case NONE:
+    	case BIPED:
+    	case BIPED_SWIM:
+    	case QUAD:
+    	case QUAD_SWIM:
+    		return "";
+    	case TRACKED:
+    		return "t";
+    	case WHEELED:
+    		return "w";
+    	case HOVER:
+    		return "h";
+    	case VTOL:
+    		return "v";
+    	case NAVAL:
+    	case HYDROFOIL:
+    		return "n";
+    	case SUBMARINE:
+    	case INF_UMU:
+    		return "s";
+    	case INF_LEG:
+    		return "f";
+    	case INF_MOTORIZED:
+    		return "m";
+    	case INF_JUMP:
+    		return "j";
+    	case WIGE:
+    		return "g";
+    	case AERODYNE:
+    		return "a";
+    	case SPHEROID:
+    		return "p";
+    	default:
+    		return "ERROR";
+    	}
     }
 
     /**
-     * Returns the Battle Force Movement string this is used in a battle force
-     * game
-     *
+     * Certain unit types can increase this with MASC, supercharger, or jet booster.
+     * AlphaStrike needs the fraction retained because it doubles the movement for ground units,
+     * while BattleForce rounds this to the nearest integer.
+     */
+    public double getBaseBattleForceMovement() {
+    	return getOriginalWalkMP();
+    }
+
+    /**
+     * Handles base, jump, and underwater movement.
+     * 
      * @return
      */
-    public String getBattleForceMovement() {
-        StringBuilder result = new StringBuilder();
+    public void setBattleForceMovement(Map<String,Integer> movement) {
+    	int baseMove = (int)Math.round(getBaseBattleForceMovement());
+    	int jumpMove = getOriginalJumpMP();
+    	if (jumpMove == baseMove && getMovementModeAsBattleForceString().length() == 0) {
+    		movement.put("j", baseMove);
+    	} else {
+    		movement.put(getMovementModeAsBattleForceString(), baseMove);
+    		if (jumpMove >= baseMove) {
+    			movement.put("j", jumpMove);
+    		} else if (jumpMove > 0) {
+    			movement.put("j", (int)Math.round(jumpMove * 0.66));
+    		}
+    	}
+    	int umu = getAllUMUCount();
+    	if (umu > 0) {
+    		movement.put("s", umu);
+    	}
+    }
 
-        long jumpPoints = getBattleForceJumpPoints();
-        long walkPoints = getBattleForceMovementPoints();
-
-        result.append(walkPoints);
-        result.append(getMovementModeAsBattleForceString());
-
-        if (jumpPoints == walkPoints) {
-            result.append("j");
-        } else if (jumpPoints > 0) {
-            result.append("/");
-            result.append(jumpPoints);
-            result.append("j");
-        }
-
-        return result.toString();
+    /**
+     * Doubles base movement. Aero overrides this.
+     */
+    public void setAlphaStrikeMovement(Map<String,Integer> movement) {
+    	int baseMove = (int)Math.round(getBaseBattleForceMovement() * 2);
+    	int jumpMove = getOriginalJumpMP();
+    	if (jumpMove == baseMove) {
+    		movement.put("j", baseMove);
+    	} else {
+    		movement.put(getMovementModeAsBattleForceString(), baseMove);
+    		if (jumpMove > 0) {
+    			movement.put("j", (int)Math.round(jumpMove * 2));
+    		}
+    	}
+    	int umu = getAllUMUCount();
+    	if (umu > 0) {
+    		movement.put("s", umu * 2);
+    	}
     }
 
     public int getBattleForceArmorPoints() {
-        double armorPoints = 0;
+    	return (int)Math.round(getBattleForceArmorPointsRaw());
+    }
 
-        for (int loc = 0; loc < locations(); loc++) {
-            double armorMod = 1;
-            switch (getArmorType(loc)) {
-                case EquipmentType.T_ARMOR_COMMERCIAL:
-                    armorMod = .5;
-                    break;
-                case EquipmentType.T_ARMOR_INDUSTRIAL:
-                case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
-                    armorMod = getBARRating(0) / 10;
-                    break;
-                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-                    armorMod = 1.2;
-                    break;
-                case EquipmentType.T_ARMOR_HARDENED:
-                    armorMod = 1.5;
-                    break;
-                case EquipmentType.T_ARMOR_REFLECTIVE:
-                case EquipmentType.T_ARMOR_REACTIVE:
-                    armorMod = .75;
-                    break;
-            }
-            armorPoints += Math.ceil(getArmor(loc) * armorMod);
+    /**
+     * Calculates the intermediate value for armor points (retaining fractional amounts)
+     * and adds any special abilities conferred by armor.
+     * 
+     * @param spas  BattleForce special abilities and their values. Can be null.
+     * @return      The armor value of this entity
+     */
+    public double getBattleForceArmorPointsRaw() {
+    	double armorPoints = 0;
 
-        }
-        if (this.hasModularArmor()) {
-            // Modular armor is always "regular" armor
-            for (Mounted mount : this.getEquipment()) {
-                if (!mount.isDestroyed()
-                    && (mount.getType() instanceof MiscType)
-                    && ((MiscType) mount.getType())
-                        .hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                    armorPoints += 10;
-                }
-            }
-        }
+    	for (int loc = 0; loc < locations(); loc++) {
+    		double armorMod = 1;
+    		switch (getArmorType(loc)) {
+    		case EquipmentType.T_ARMOR_COMMERCIAL:
+    			armorMod = .5;
+    			break;
+    		case EquipmentType.T_ARMOR_INDUSTRIAL:
+    		case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
+    			armorMod = getBARRating(0) / 10;
+    			break;
+    		case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+    			armorMod = 1.2;
+    			break;
+    		case EquipmentType.T_ARMOR_HARDENED:
+    			armorMod = 1.5;
+    			break;
+    		case EquipmentType.T_ARMOR_REFLECTIVE:
+    		case EquipmentType.T_ARMOR_REACTIVE:
+    			armorMod = .75;
+    			break;
+    		}
+    		armorPoints += Math.ceil(getArmor(loc) * armorMod);
 
-        return (int) Math.round(armorPoints / 30);
+    	}
+    	if (this.hasModularArmor()) {
+    		// Modular armor is always "regular" armor
+    		for (Mounted mount : this.getEquipment()) {
+    			if (!mount.isDestroyed()
+    					&& (mount.getType() instanceof MiscType)
+    					&& ((MiscType) mount.getType())
+    					.hasFlag(MiscType.F_MODULAR_ARMOR)) {
+    				armorPoints += 10;
+    			}
+    		}
+    	}
+
+    	if (isCapitalScale()) {
+    		return (int)Math.round(armorPoints * 0.33);
+    	}
+    	return (int) Math.round(armorPoints / 30);
     }
 
     /**
@@ -12143,7 +12159,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public String getBattleForceDamageThresholdString() {
-        return "";
+    	return "";
     }
 
     /**
@@ -12152,500 +12168,344 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public int getBattleForceStructurePoints() {
-        return 0;
+    	return 0;
     }
 
     /**
-     * @param range
+     * Some units have separate damage values for various locations (turrets, large craft firing arcs)
      * @return
      */
-    public int getBattleForceStandardWeaponsDamage(int range) {
-        return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA, false,
-                                                   false);
+    public int getNumBattleForceWeaponsLocations() {
+    	return 1;
+    }
+
+    public int getNumAlphaStrikeWeaponsLocations() {
+    	return getNumBattleForceWeaponsLocations();
     }
 
     /**
-     * @param range
-     * @param ammoType
-     * @return
+     * @param index - indicates which set of damage values is being calculated
+     * @param location - one of the entity's LOC_* constants
+     * @return - the damage multiplier for this location; 0 for exclusion
      */
-    public int getBattleForceStandardWeaponsDamage(int range, int ammoType) {
-        return getBattleForceStandardWeaponsDamage(range, ammoType, false,
-                                                   false);
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+    	return 1.0; 
     }
 
     /**
-     * @param range
-     * @param ignoreHeat
-     * @param ignoreSpecialAbilities
-     * @return
+     * Weapon calculations are the same for BF and AS except for turrets, which are not separated
+     * in AS, and warships, which have only four arcs in AS.
      */
-    public int getBattleForceStandardWeaponsDamage(int range,
-                                                   boolean ignoreHeat, boolean ignoreSpecialAbilities) {
-        return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA,
-                                                   ignoreHeat, ignoreSpecialAbilities);
+    public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
+    	return getBattleForceLocationMultiplier(index, location, rearMounted);
+    }
+
+    public boolean isBattleForceTurretLocation(int index) {
+    	return false;
+    }
+
+    public boolean isBattleForceRearLocation(int index) {
+    	return false;
     }
 
     /**
-     * @param range
-     * @param ammoType
-     * @param ignoreHeat           if set to true then heat modifier is not used on damage
-     * @param ignoreSpecialAbility calculate special attacks into total damage if set to true
+     * Units with separate weapon locations (turrets or firing arcs) return the name of the location
+     * @param index
      * @return
      */
-    public int getBattleForceStandardWeaponsDamage(int range, int ammoType,
-                                                   boolean ignoreHeat, boolean ignoreSpecialAbility) {
-        double totalDamage = 0;
-        double frontArcWeaponsTotalDamage = 0;
-        double rearArcWeaponsTotalDamage = 0;
-        double totalHeat = 0;
-        boolean hasArtemis = false;
-        boolean hasTC = hasTargComp();
-        double baseDamage = 0;
-
-        TreeSet<String> weaponsUsed = new TreeSet<String>();
-
-        ArrayList<Mounted> weaponsList = getWeaponList();
-
-        for (int pos = 0; pos < weaponList.size(); pos++) {
-            double damageModifier = 1;
-            double weaponCount = 1;
-            double minRangeDamageModifier = 1;
-            hasArtemis = false;
-            Mounted mount = weaponsList.get(pos);
-            if ((mount == null) || mount.isRearMounted()
-                || weaponsUsed.contains(mount.getName())) {
-                continue;
-            }
-
-            WeaponType weapon = (WeaponType) mount.getType();
-
-            if ((weapon.getLongRange() < range) && !(weapon instanceof ISLAC5)
-                && !(weapon instanceof ATMWeapon)
-                && !(weapon instanceof MMLWeapon)) {
-                continue;
-            }
-
-            if ((ammoType != AmmoType.T_NA)
-                && (weapon.getAmmoType() != ammoType)) {
-                continue;
-            }
-
-            if ((weapon.getAmmoType() == AmmoType.T_INARC)
-                || (weapon.getAmmoType() == AmmoType.T_NARC)) {
-                continue;
-            }
-
-            if (weapon.hasFlag(WeaponType.F_ARTILLERY)) {
-                // Each Artillery weapon is separately accounted for
-                continue;
-            }
-
-            // Check ammo weapons first since they had a hidden modifier
-            if ((weapon.getAmmoType() != AmmoType.T_NA)
-                && !weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                weaponsUsed.add(weapon.getName());
-                for (int nextPos = pos + 1; nextPos < weaponList.size(); nextPos++) {
-                    Mounted nextWeapon = weaponList.get(nextPos);
-
-                    if ((nextWeapon == null) || nextWeapon.isRearMounted()) {
-                        continue;
-                    }
-
-                    if (nextWeapon.getType().equals(weapon)) {
-                        weaponCount++;
-                    }
-
-                }
-                int ammoCount = 0;
-                // Check if they have enough ammo for all the guns to last at
-                // least 10 rounds
-                for (Mounted ammo : getAmmo()) {
-
-                    AmmoType at = (AmmoType) ammo.getType();
-                    if ((at.getAmmoType() == weapon.getAmmoType())
-                        && (at.getRackSize() == weapon.getRackSize())) {
-                        // RACs are always fired on 6 shot so that means you
-                        // need 6 times the ammo to avoid the ammo damage
-                        // modifier
-                        if (at.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                            ammoCount += at.getShots() / 6;
-                        } else {
-                            ammoCount += at.getShots();
-                        }
-                    }
-                }
-
-                if ((ammoCount / weaponCount) < 10) {
-                    damageModifier *= .75;
-                }
-            }
-
-            if (weapon.hasFlag(WeaponType.F_MISSILE)) {
-                baseDamage = Compute.calculateClusterHitTableAmount(7,
-                                                                    weapon.getRackSize());
-                baseDamage *= weaponCount;
-            } else {
-                baseDamage = weapon.getDamage() * weaponCount;
-            }
-
-            if (range == Entity.BATTLEFORCESHORTRANGE) {
-                int minRange = Math.min(6,
-                                        Math.max(0, weapon.getMinimumRange()));
-                minRangeDamageModifier *= battleForceMinRangeModifier[minRange];
-            }
-            int toHitMod = weapon.getToHitModifier() + 4;
-
-            switch (weapon.getAmmoType()) {
-                case AmmoType.T_AC_LBX:
-                case AmmoType.T_AC_LBX_THB:
-                    baseDamage = Compute.calculateClusterHitTableAmount(7,
-                                                                        weapon.getRackSize()) * weaponCount;
-                    toHitMod--;
-                    break;
-                case AmmoType.T_MRM:
-                    Mounted mLinker = mount.getLinkedBy();
-                    if (((mLinker != null)
-                         && (mLinker.getType() instanceof MiscType)
-                         && !mLinker.isDestroyed() && !mLinker.isMissing()
-                         && !mLinker.isBreached() && mLinker.getType()
-                                                            .hasFlag(MiscType.F_APOLLO))) {
-                        toHitMod--;
-                        baseDamage = Compute.calculateClusterHitTableAmount(6,
-                                                                            weapon.getRackSize()) * weaponCount;
-                    }
-                    break;
-                case AmmoType.T_LRM:
-                    mLinker = mount.getLinkedBy();
-                    if (((mLinker != null)
-                         && (mLinker.getType() instanceof MiscType)
-                         && !mLinker.isDestroyed() && !mLinker.isMissing()
-                         && !mLinker.isBreached() && mLinker.getType()
-                                                            .hasFlag(MiscType.F_ARTEMIS))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(9,
-                                                                            weapon.getRackSize()) * weaponCount;
-                        hasArtemis = true;
-                    } else if (((mLinker != null)
-                                && (mLinker.getType() instanceof MiscType)
-                                && !mLinker.isDestroyed() && !mLinker.isMissing()
-                                && !mLinker.isBreached() && mLinker.getType()
-                                                                   .hasFlag(MiscType.F_ARTEMIS_V))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(10,
-                                                                            weapon.getRackSize()) * weaponCount;
-                        hasArtemis = true;
-                    }
-                    break;
-                case AmmoType.T_SRM:
-                    mLinker = mount.getLinkedBy();
-                    if (((mLinker != null)
-                         && (mLinker.getType() instanceof MiscType)
-                         && !mLinker.isDestroyed() && !mLinker.isMissing()
-                         && !mLinker.isBreached() && mLinker.getType()
-                                                            .hasFlag(MiscType.F_ARTEMIS))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(9,
-                                                                            weapon.getRackSize()) * 2 * weaponCount;
-                        hasArtemis = true;
-                    } else if (((mLinker != null)
-                                && (mLinker.getType() instanceof MiscType)
-                                && !mLinker.isDestroyed() && !mLinker.isMissing()
-                                && !mLinker.isBreached() && mLinker.getType()
-                                                                   .hasFlag(MiscType.F_ARTEMIS_V))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(10,
-                                                                            weapon.getRackSize()) * 2 * weaponCount;
-                        hasArtemis = true;
-                    } else {
-                        baseDamage = Compute.calculateClusterHitTableAmount(7,
-                                                                            weapon.getRackSize()) * 2 * weaponCount;
-                    }
-                    break;
-                case AmmoType.T_ATM:
-                    minRangeDamageModifier = 1;
-                    switch (range) {
-                        case Entity.BATTLEFORCESHORTRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(9,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount * 3;
-                            break;
-                        case Entity.BATTLEFORCEMEDIUMRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(9,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount * 2;
-                            break;
-                        case Entity.BATTLEFORCELONGRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(9,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount;
-                            break;
-                    }
-                    break;
-                case AmmoType.T_AC_ULTRA:
-                case AmmoType.T_AC_ULTRA_THB:
-                    damageModifier *= 1.5;
-                    break;
-                case AmmoType.T_HAG:
-                    switch (range) {
-                        case Entity.BATTLEFORCESHORTRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(9,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount;
-                            break;
-                        case Entity.BATTLEFORCELONGRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(5,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount;
-                            break;
-                        case Entity.BATTLEFORCEMEDIUMRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(7,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount;
-                            break;
-                    }
-                    break;
-                case AmmoType.T_SRM_STREAK:
-                    baseDamage = weapon.getRackSize() * 2 * weaponCount;
-                    break;
-                case AmmoType.T_AC_ROTARY:
-                    baseDamage = Compute.calculateClusterHitTableAmount(7,
-                                                                        weapon.getRackSize()) * weaponCount * 5;
-                    break;
-
-            }
-
-            if (weapon instanceof ISSnubNosePPC) {
-                switch (range) {
-                    case Entity.BATTLEFORCESHORTRANGE:
-                        baseDamage = 10;
-                        break;
-                    case Entity.BATTLEFORCELONGRANGE:
-                        baseDamage = 0;
-                        break;
-                    case Entity.BATTLEFORCEMEDIUMRANGE:
-                        baseDamage = 5;
-                        break;
-                }
-            }
-
-            if (weapon instanceof VariableSpeedPulseLaserWeapon) {
-                switch (range) {
-                    case Entity.BATTLEFORCESHORTRANGE:
-                        toHitMod = 1;
-                        break;
-                    case Entity.BATTLEFORCEMEDIUMRANGE:
-                        toHitMod = 2;
-                        break;
-                    case Entity.BATTLEFORCELONGRANGE:
-                        toHitMod = 3;
-                        break;
-                }
-            }
-
-            damageModifier *= battleForceToHitModifier[toHitMod];
-
-            // For those entities that has a capital weapon but
-            if (weapon.isCapital()) {
-                damageModifier *= 10;
-            }
-
-            if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                damageModifier *= .1;
-            }
-
-            // Targetting Computer
-            if (hasTC && weapon.hasFlag(WeaponType.F_DIRECT_FIRE)
-                && (weapon.getAmmoType() != AmmoType.T_AC_LBX)
-                && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
-                damageModifier *= 1.10;
-            }
-
-            if ((weapon.getAmmoType() == AmmoType.T_LRM)
-                || (weapon.getAmmoType() == AmmoType.T_AC)
-                || (weapon.getAmmoType() == AmmoType.T_LAC)
-                || (weapon.getAmmoType() == AmmoType.T_SRM)) {
-                double damage = baseDamage * damageModifier;
-
-                // TODO if damage is greater than 10 then we do not add it to
-                // the
-                // standard damage it will be used in special weapons
-                if (((damage < 10) && !ignoreSpecialAbility)
-                    || (ignoreSpecialAbility && !hasArtemis)
-                    || (!ignoreSpecialAbility && hasArtemis)) {
-
-                    if (range == Entity.BATTLEFORCESHORTRANGE) {
-                        damage *= minRangeDamageModifier;
-                    }
-                    frontArcWeaponsTotalDamage += damage;
-                }
-            } else if (weapon.hasFlag(WeaponType.F_PPC)) {
-                Mounted mLinker = mount.getLinkedBy();
-                if (range == Entity.BATTLEFORCESHORTRANGE) {
-                    baseDamage *= minRangeDamageModifier;
-                }
-                // PPC Capacitors?
-                if (((mLinker != null)
-                     && (mLinker.getType() instanceof MiscType)
-                     && !mLinker.isDestroyed() && !mLinker.isMissing()
-                     && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_PPC_CAPACITOR))) {
-                    frontArcWeaponsTotalDamage += ((baseDamage + 5) * .5)
-                                                  * damageModifier;
-                } else {
-                    frontArcWeaponsTotalDamage += baseDamage * damageModifier;
-                }
-            } else if (weapon.getAmmoType() == AmmoType.T_MML) {
-                double ammoDamage = 1;
-
-                Mounted mLinker = mount.getLinkedBy();
-                if (((mLinker != null)
-                     && (mLinker.getType() instanceof MiscType)
-                     && !mLinker.isDestroyed() && !mLinker.isMissing()
-                     && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_ARTEMIS))) {
-                    baseDamage = Compute.calculateClusterHitTableAmount(9,
-                                                                        weapon.getRackSize()) * weaponCount;
-                    hasArtemis = true;
-                } else if (((mLinker != null)
-                            && (mLinker.getType() instanceof MiscType)
-                            && !mLinker.isDestroyed() && !mLinker.isMissing()
-                            && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_ARTEMIS_V))) {
-                    baseDamage = Compute.calculateClusterHitTableAmount(10,
-                                                                        weapon.getRackSize()) * weaponCount;
-                    hasArtemis = true;
-                }
-
-                switch (range) {
-                    case Entity.BATTLEFORCESHORTRANGE:
-                        ammoDamage = 2;
-                        break;
-                    case Entity.BATTLEFORCELONGRANGE:
-                        ammoDamage = 1;
-                        break;
-                    case Entity.BATTLEFORCEMEDIUMRANGE:
-                        ammoDamage = 1;
-                        baseDamage = Math.round((baseDamage * 3) / 2);
-                        break;
-                }
-
-                double damage = baseDamage * damageModifier;
-                // if damage is greater than 10 then we do not add it to the
-                // standard damage it will be used in special weapons
-                if (((damage < 10) && !ignoreSpecialAbility)
-                    || (ignoreSpecialAbility && !hasArtemis && (damage >= 10))
-                    || (!ignoreSpecialAbility && hasArtemis)) {
-
-                    frontArcWeaponsTotalDamage += damage * ammoDamage;
-                }
-            } else {
-                if (range == Entity.BATTLEFORCESHORTRANGE) {
-                    baseDamage *= minRangeDamageModifier;
-                }
-                frontArcWeaponsTotalDamage += baseDamage * damageModifier;
-            }
-        }
-
-        totalDamage = Math.max(frontArcWeaponsTotalDamage,
-                               rearArcWeaponsTotalDamage);
-
-        totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
-
-        if ((totalHeat > getHeatCapacity()) && !ignoreHeat) {
-            totalDamage = Math.ceil((totalDamage * getHeatCapacity())
-                                    / totalHeat);
-        }
-
-        if (ignoreSpecialAbility && (totalDamage < 10)) {
-            totalDamage = 0;
-        } else if ((ammoType != AmmoType.T_NA)) {
-            totalDamage = Math.round(totalDamage / 10);
-        } else {
-            totalDamage = Math.ceil(totalDamage / 10);
-        }
-        return (int) totalDamage;
+    public String getBattleForceLocationName(int index) {
+    	if (isBattleForceTurretLocation(index)) {
+    		return "TUR";
+    	}
+    	return "";
     }
 
+    public String getAlphaStrikeLocationName(int index) {
+    	return getBattleForceLocationName(index);
+    }
+
+    public boolean useForAlphaStrikePointCalc(int loc) {
+    	return loc == 0 || isBattleForceTurretLocation(loc);
+    }
+
+    /**
+     * Only used by Mechs and ASFs, which require different approaches to determining rear mountings
+     * @param allowRear - Use rear-mounted weapons instead of forward
+     * @return - total heat generated by firing all weapons
+     */
     public int getBattleForceTotalHeatGeneration(boolean allowRear) {
-        int totalHeat = 0;
-
-        // finish the max heat calculations
-        if (this.getJumpMP() > 0) {
-            totalHeat += getJumpHeat(getJumpMP());
-        } else if ((this instanceof Mech) && !((Mech) this).isIndustrial() && hasEngine()) {
-            totalHeat += getEngine().getRunHeat(this);
-        }
-
-        for (Mounted mount : getWeaponList()) {
-            WeaponType weapon = (WeaponType) mount.getType();
-            if (weapon.hasFlag(WeaponType.F_ONESHOT)
-                || (allowRear && !mount.isRearMounted())
-                || (!allowRear && mount.isRearMounted())) {
-                continue;
-            }
-            totalHeat += weapon.getHeat();
-        }
-
-        if ((this instanceof Mech) && hasWorkingMisc(MiscType.F_STEALTH, -1)) {
-            totalHeat += 10;
-        }
-
-        return totalHeat;
+    	return 0;
     }
 
-    public String getBattleForceOverHeatValue() {
-
-        int standardDamageValue = 0;
-        int damageValueNoHeat = 0;
-
-        int totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
-
-        if (getHeatCapacity() >= totalHeat) {
-            return "None";
-        }
-
-        standardDamageValue = getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, false, true);
-
-        if (standardDamageValue <= 0) {
-            standardDamageValue = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, false, true);
-            damageValueNoHeat = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, true, true);
-        } else {
-            damageValueNoHeat = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCEMEDIUMRANGE, true, true);
-        }
-
-        if (damageValueNoHeat > standardDamageValue) {
-            return Integer.toString(Math.min(4, damageValueNoHeat
-                                                - standardDamageValue));
-        }
-        return "None";
+    /**
+     * Used by small craft, dropships, jumpships, and warships to compute heat for a specific firing arc
+     * 
+     * @param location
+     * @return
+     */
+    public int getBattleForceTotalHeatGeneration(int location) {
+    	return 0;
     }
 
-    public String getBattleForceSpecialAbilites() {
-        return "None";
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+    	for (Mounted m : getEquipment()) {
+    		if (!(m.getType() instanceof MiscType)) {
+    			continue;
+    		}
+    		if (m.getType().hasFlag(MiscType.F_BAP)) {
+    			specialAbilities.put(BattleForceSPA.RCN, null);
+    			if (m.getType().hasFlag(MiscType.F_BLOODHOUND)) {
+    				specialAbilities.put(BattleForceSPA.BH, null);                        
+    			} else if (m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)) {
+    				specialAbilities.put(BattleForceSPA.LPRB, null);                        
+    			} else if (m.getType().hasFlag(MiscType.F_WATCHDOG)) {
+    				specialAbilities.put(BattleForceSPA.WAT, null);                        
+    				specialAbilities.put(BattleForceSPA.LPRB, null);                        
+    				specialAbilities.put(BattleForceSPA.ECM, null);                        
+    			} else {
+    				specialAbilities.put(BattleForceSPA.PRB, null);
+    			}
+    			if (m.getType().hasFlag(MiscType.F_NOVA)) {
+    				specialAbilities.put(BattleForceSPA.NOVA, null);
+    				specialAbilities.put(BattleForceSPA.ECM, null);
+    				specialAbilities.put(BattleForceSPA.MHQ, 3); // count half-tons
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_ECM)) {
+    			if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+    				specialAbilities.put(BattleForceSPA.AECM, null);
+    			} else if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+    				specialAbilities.put(BattleForceSPA.LECM, null);
+    			} else {
+    				specialAbilities.put(BattleForceSPA.ECM, null);
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_BOOBY_TRAP)) {
+    			specialAbilities.put(BattleForceSPA.BT, null);
+    		} else if (m.getType().hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+    				|| m.getType().hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+    				|| m.getType().hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {
+    			specialAbilities.put(BattleForceSPA.BRID, null);
+    		} else if (m.getType().hasFlag(MiscType.F_C3S)) {
+    			if (m.getType().hasFlag(MiscType.F_C3SBS)) {
+    				specialAbilities.put(BattleForceSPA.C3BSS, null);
+    				specialAbilities.merge(BattleForceSPA.MHQ, 4, Integer::sum);
+    			} else if (m.getType().hasFlag(MiscType.F_C3EM)) {
+    				specialAbilities.merge(BattleForceSPA.C3EM, 1, Integer::sum);
+    				specialAbilities.merge(BattleForceSPA.MHQ, 4, Integer::sum);
+    			} else {
+    				specialAbilities.put(BattleForceSPA.C3S, null);
+    				specialAbilities.merge(BattleForceSPA.MHQ, 2, Integer::sum);
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_C3I)) {
+    			if ((getEntityType() & ETYPE_AERO) == ETYPE_AERO) {
+    				specialAbilities.put(BattleForceSPA.NC3, null);
+    			} else {
+    				specialAbilities.put(BattleForceSPA.C3I, null);
+    				if (m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)) {
+    					specialAbilities.merge(BattleForceSPA.MHQ, 4, Integer::sum);                            
+    				} else {
+    					specialAbilities.merge(BattleForceSPA.MHQ, 5, Integer::sum);                            
+    				}
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_CASE)) {
+    			specialAbilities.put(BattleForceSPA.CASE, null);
+    		} else if (m.getType().hasFlag(MiscType.F_CASEII)) {
+    			specialAbilities.put(BattleForceSPA.CASEII, null);
+    		} else if (m.getType().hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+    			specialAbilities.put(BattleForceSPA.DRO, null);
+    		} else if (m.getType().hasFlag(MiscType.F_DRONE_EXTRA)) {
+    			specialAbilities.merge(BattleForceSPA.DCC, 1, Integer::sum);
+    		} else if (m.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
+    			specialAbilities.put(BattleForceSPA.ES, null);
+    		} else if (m.getType().hasFlag(MiscType.F_ECM)) {
+    			specialAbilities.put(BattleForceSPA.ECM, null);
+    		} else if (m.getType().hasFlag(MiscType.F_BULLDOZER)) {
+    			specialAbilities.put(BattleForceSPA.ENG, null);
+    		} else if (m.getType().hasFlag(MiscType.F_CLUB)) {
+    			specialAbilities.put(BattleForceSPA.MEL, null);
+    			if ((m.getType().getSubType() &
+    					(MiscType.S_BACKHOE | MiscType.S_PILE_DRIVER
+    							| MiscType.S_MINING_DRILL | MiscType.S_ROCK_CUTTER
+    							| MiscType.S_WRECKING_BALL)) != 0) {
+    				specialAbilities.put(BattleForceSPA.ENG, null);
+    			} else if ((m.getType().getSubType() &
+    					(MiscType.S_DUAL_SAW | MiscType.S_CHAINSAW
+    							| MiscType.S_BUZZSAW)) != 0) {
+    				specialAbilities.put(BattleForceSPA.SAW, null);
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
+    			specialAbilities.put(BattleForceSPA.FR, null);
+    		} else if (m.getType().hasFlag(MiscType.F_MOBILE_HPG)) {
+    			specialAbilities.put(BattleForceSPA.HPG, null);
+    		} else if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+    			specialAbilities.merge(BattleForceSPA.MHQ, (int)m.getType().getTonnage(this) * 2, 
+    					Integer::sum);
+    			if (m.getType().getTonnage(this) >= getWeight() / 20.0) {
+    				specialAbilities.put(BattleForceSPA.RCN, null);
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_SENSOR_DISPENSER)) {
+    			specialAbilities.merge(BattleForceSPA.RSD, 1, Integer::sum);
+    			specialAbilities.put(BattleForceSPA.RCN, null);
+    		} else if (m.getType().hasFlag(MiscType.F_LOOKDOWN_RADAR)
+    				|| m.getType().hasFlag(MiscType.F_RECON_CAMERA)
+    				|| m.getType().hasFlag(MiscType.F_HIRES_IMAGER)
+    				|| m.getType().hasFlag(MiscType.F_HYPERSPECTRAL_IMAGER)
+    				|| m.getType().hasFlag(MiscType.F_INFRARED_IMAGER)) {
+    		} else if (m.getType().hasFlag(MiscType.F_SEARCHLIGHT)) {
+    			specialAbilities.put(BattleForceSPA.SRCH, null);
+    		} else if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+    			specialAbilities.put(BattleForceSPA.RHS, null);
+    		} else if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+    			specialAbilities.put(BattleForceSPA.ECS, null);
+    		} else if (m.getType().hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
+    			specialAbilities.put(BattleForceSPA.DJ, null);
+    		} else if (m.getType().hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)) {
+    			specialAbilities.put(BattleForceSPA.HJ, null);
+    		}                
+    	}
+
+    	if (isOmni()) {
+    		specialAbilities.put(BattleForceSPA.OMNI, null);
+    	}
+
+    	//TODO: Variable Range targeting is not implemented
+
+    	if (!hasPatchworkArmor()) {
+    		switch (getArmorType(0)) {
+    		case EquipmentType.T_ARMOR_COMMERCIAL:
+    		case EquipmentType.T_ARMOR_INDUSTRIAL:
+    		case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
+    			specialAbilities.put(BattleForceSPA.BAR, null);
+    			break;
+    		case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+    			specialAbilities.put(BattleForceSPA.CR, null);
+    			break;
+    		case EquipmentType.T_ARMOR_STEALTH:
+    		case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
+    			specialAbilities.put(BattleForceSPA.STL, null);
+    			specialAbilities.put(BattleForceSPA.ECM, null);
+    			break;
+    		case EquipmentType.T_ARMOR_BA_STEALTH:
+    		case EquipmentType.T_ARMOR_BA_STEALTH_BASIC:
+    		case EquipmentType.T_ARMOR_BA_STEALTH_IMP:
+    		case EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE:
+    			specialAbilities.put(BattleForceSPA.STL, null);
+    			specialAbilities.put(BattleForceSPA.LECM, null);
+    			break;
+    		case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+    			specialAbilities.put(BattleForceSPA.ABA, null);
+    			break;
+    		case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
+    			specialAbilities.put(BattleForceSPA.BRA, null);
+    			break;
+    		case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
+    			specialAbilities.put(BattleForceSPA.FR, null);
+    			break;
+    		case EquipmentType.T_ARMOR_IMPACT_RESISTANT:
+    			specialAbilities.put(BattleForceSPA.IRA, null);
+    			break;
+    		case EquipmentType.T_ARMOR_REACTIVE:
+    			specialAbilities.put(BattleForceSPA.RCA, null);
+    			break;
+    		case EquipmentType.T_ARMOR_REFLECTIVE:
+    			specialAbilities.put(BattleForceSPA.RFA, null);
+    			break;
+    		}                
+    	}
+
+    	if (getAmmo().size() > 0) {
+    		if (isClan()) {
+    			specialAbilities.put(BattleForceSPA.CASE, null);
+    		}
+    	} else {
+    		specialAbilities.put(BattleForceSPA.ENE, null);
+    	}
+
+    	if (getAmmo().stream().map(m -> (AmmoType)m.getType())
+    			.anyMatch(at -> at.hasFlag(AmmoType.F_TELE_MISSILE))) {
+    		specialAbilities.put(BattleForceSPA.TELE, null);                
+    	}
+
+    	if (hasEngine()) {
+    		if (getEngine().getEngineType() == Engine.STEAM
+    				&& getEngine().getEngineType() == Engine.FUEL_CELL) {
+    			specialAbilities.put(BattleForceSPA.EE, null);
+    		} else if (getEngine().getEngineType() == Engine.STEAM) {
+    			specialAbilities.put(BattleForceSPA.FC, null);
+    		} else {
+    			specialAbilities.put(BattleForceSPA.EEE, null);
+    		}
+    	}
+
+    	for (Transporter t : getTransports()) {
+    		if (t instanceof ASFBay) {
+    			specialAbilities.merge(BattleForceSPA.AT, (int)((ASFBay)t).getCapacity(), Integer::sum);                
+    			specialAbilities.merge(BattleForceSPA.ATxD, ((ASFBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof CargoBay) {
+    			specialAbilities.merge(BattleForceSPA.CT, (int)((CargoBay)t).getCapacity(), Integer::sum);                
+    			specialAbilities.merge(BattleForceSPA.CTxD, ((CargoBay)t).getDoors(), Integer::sum);
+    		} else if (t instanceof DockingCollar) {
+    			specialAbilities.merge(BattleForceSPA.DT, 1, Integer::sum);                
+    		} else if (t instanceof InfantryBay) {
+    			// We do not record number of doors for infantry
+    			specialAbilities.merge(BattleForceSPA.IT, (int)((InfantryBay)t).getCapacity(), Integer::sum);                
+    		} else if (t instanceof MechBay) {
+    			specialAbilities.merge(BattleForceSPA.MT, (int)((MechBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.MTxD, ((MechBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof ProtomechBay) {
+    			specialAbilities.merge(BattleForceSPA.PT, (int)((ProtomechBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.PTxD, ((ProtomechBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof SmallCraftBay) {
+    			specialAbilities.merge(BattleForceSPA.ST, (int)((SmallCraftBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.STxD, ((SmallCraftBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof LightVehicleBay) {
+    			specialAbilities.merge(BattleForceSPA.VTM, (int)((LightVehicleBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.VTMxD, ((LightVehicleBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof HeavyVehicleBay) {
+    			specialAbilities.merge(BattleForceSPA.VTH, (int)((HeavyVehicleBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.VTHxD, ((HeavyVehicleBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		}
+    	}
+
+    	topLoop: for (int location = 0; location < locations(); location++) {
+    		for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+    			CriticalSlot crit = getCritical(location, slot);
+    			if (null != crit) {
+    				if (crit.isArmored()) {
+    					specialAbilities.put(BattleForceSPA.ARM, null);
+    					break topLoop;
+    				} else if (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+    					Mounted mount = crit.getMount();
+    					if (mount.isArmored()) {
+    						specialAbilities.put(BattleForceSPA.ARM, null);
+    						break topLoop;
+    					}
+    				}
+    			}
+    		}
+    	}
     }
 
     public int getBattleForceSize() {
-        // the default BF Size is for ground Combat elements. Other types will
-        // need to override this
-        // The tables are on page 356 of StartOps
-        if (getWeight() < 40) {
-            return 1;
-        }
-        if (getWeight() < 60) {
-            return 2;
-        }
-        if (getWeight() < 80) {
-            return 3;
-        }
+    	// the default BF Size is for ground Combat elements. Other types will
+    	// need to override this
+    	// The tables are on page 356 of StartOps
+    	if (getWeight() < 40) {
+    		return 1;
+    	}
+    	if (getWeight() < 60) {
+    		return 2;
+    	}
+    	if (getWeight() < 80) {
+    		return 3;
+    	}
 
-        return 4;
+    	return 4;
     }
 
     @Override

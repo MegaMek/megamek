@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
@@ -1672,6 +1673,12 @@ public class Infantry extends Entity {
     }
 
     @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        moves.put(getMovementModeAsBattleForceString(),
+                Math.max(getWalkMP(), getJumpMP()) * 2);
+    }
+    
+    @Override
     public int getBattleForceSize() {
         //The tables are on page 356 of StartOps
         return 1;
@@ -1680,7 +1687,7 @@ public class Infantry extends Entity {
     @Override
     public int getBattleForceArmorPoints() {
         // Infantry armor points is # of men / 15
-        return (int) Math.ceil(getArmor(0)/15.0);
+        return (int) Math.ceil(getInternal(0)/15.0);
     }
 
     @Override
@@ -1690,7 +1697,61 @@ public class Infantry extends Entity {
     public int getBattleForceStructurePoints() {
         return 1;
     }
-
+    
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        if (hasFieldGun()) {
+            return 2;
+        }
+        return 1;
+    }
+    
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        if (index == location) {
+            return 1.0;
+        }
+        return 0;
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        if (index == 0) {
+            return "";
+        }
+        return LOCATION_ABBRS[index];
+    }
+    
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.CAR, (int)Math.ceil(getWeight()));
+        if (getMovementMode().equals(EntityMovementMode.INF_UMU)) {
+            specialAbilities.put(BattleForceSPA.UMU, null);
+        }
+        if (hasSpecialization(FIRE_ENGINEERS)) {
+            specialAbilities.put(BattleForceSPA.FF, null);
+        }
+        if (hasSpecialization(MINE_ENGINEERS)) {
+            specialAbilities.put(BattleForceSPA.MSW, null);
+        }
+        if (hasSpecialization(MOUNTAIN_TROOPS)) {
+            specialAbilities.put(BattleForceSPA.MTN, null);
+        }
+        if (hasSpecialization(PARATROOPS)) {
+            specialAbilities.put(BattleForceSPA.PARA, null);
+        }
+        if (hasSpecialization(SCUBA)) {
+            specialAbilities.put(BattleForceSPA.UMU, null);
+        }
+        if (hasSpecialization(TRENCH_ENGINEERS)) {
+            specialAbilities.put(BattleForceSPA.TRN, null);
+        }
+        if (getCrew().getOptions().booleanOption("tsm_implant")) {
+            specialAbilities.put(BattleForceSPA.TSI, null);
+        }
+    }
+    
     @Override
     public int getEngineHits() {
         return 0;

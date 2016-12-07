@@ -2,7 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.41.28
 
-v0.41.27
+v0.41.27 (2016-12-07 03:00 UTC)
 + Feature: Can save board image with units (renders the same as seen on screen)
 + Feature: PhaseDisplay buttons can now use tooltip text defined in i18n files
 + Bug: Manually targeting doesn't update next target id

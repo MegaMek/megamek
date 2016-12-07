@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.28
+
 v0.41.27
 + Feature: Can save board image with units (renders the same as seen on screen)
 + Feature: PhaseDisplay buttons can now use tooltip text defined in i18n files

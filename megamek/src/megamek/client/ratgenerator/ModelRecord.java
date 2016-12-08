@@ -24,6 +24,7 @@ import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
 import megamek.common.MiscType;
+import megamek.common.UnitRole;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
 
@@ -53,7 +54,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private boolean starLeague;
 	private int weightClass;
 	private EntityMovementMode movementMode;
-	private FormationType.UnitRole unitRole = FormationType.UnitRole.UNDETERMINED;
+	private UnitRole unitRole = UnitRole.UNDETERMINED;
 	private EnumSet<MissionRole> roles;
 	private ArrayList<String> deployedWith;
 	private ArrayList<String> requiredUnits;
@@ -221,13 +222,13 @@ public class ModelRecord extends AbstractUnitRecord {
 		return starLeague;
 	}
 	
-	public FormationType.UnitRole getUnitRole() {
+	public UnitRole getUnitRole() {
 	    return unitRole;
 	}
 	
-	public void setUnitRole (FormationType.UnitRole role) {
+	public void setUnitRole (UnitRole role) {
 	    if (role == null) {
-	        unitRole = FormationType.UnitRole.UNDETERMINED;
+	        unitRole = UnitRole.UNDETERMINED;
 	    } else {
 	        unitRole = role;
 	    }

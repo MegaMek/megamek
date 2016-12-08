@@ -44,6 +44,10 @@ troopspace:1.0
 1
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
 11
 7
@@ -68,6 +72,7 @@ IS Machine Gun Ammo - Half
 <Front Equipment>
 BASearchlight
 BASearchlight
+Tank Sprayer
 </Front Equipment>
 
 <Right Equipment>
@@ -77,6 +82,7 @@ BASearchlight
 </Left Equipment>
 
 <Rear Equipment>
+Tank Sprayer
 </Rear Equipment>
 
 <Turret Equipment>
@@ -85,7 +91,7 @@ BASearchlight
 </Turret Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Succession Wars
 </source>
 
 <transporters>
@@ -96,4 +102,3 @@ liquidcargobay:.955:1
 <tonnage>
 17.0
 </tonnage>
-

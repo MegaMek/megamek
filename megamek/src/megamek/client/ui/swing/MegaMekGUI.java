@@ -75,6 +75,7 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.MegaMekFile;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
@@ -137,16 +138,16 @@ public class MegaMekGUI implements IMegaMekGUI {
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<Image>();
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
                         .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32)
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32)
                         .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48)
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48)
                         .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
                         .toString()));
         frame.setIconImages(iconList);
         CommonMenuBar menuBar = new CommonMenuBar();
@@ -232,7 +233,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         // initialize splash image
         Image imgSplash = frame.getToolkit()
                 .getImage(
-                        new File(Configuration.miscImagesDir(),
+                        new MegaMekFile(Configuration.miscImagesDir(),
                                 FILENAME_MEGAMEK_SPLASH).toString());
 
         // wait for splash image to load completely

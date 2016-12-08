@@ -48,4 +48,9 @@ public class CapitalGaussBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_CAPITAL_GAUSS;
         this.capital = true;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL;
+    }
 }

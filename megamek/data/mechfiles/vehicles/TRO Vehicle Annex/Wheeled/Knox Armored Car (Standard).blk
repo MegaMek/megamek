@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
 3
 3
@@ -83,7 +87,7 @@ cargobay:1.5:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Succession Wars
 </source>
 
 <tonnage>

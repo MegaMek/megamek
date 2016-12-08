@@ -38,7 +38,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -140,10 +139,10 @@ import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
+import megamek.common.util.MegaMekFile;
 
-public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
-        ItemListener, ListSelectionListener, MouseListener,
-        IMapSettingsObserver {
+public class ChatLounge extends AbstractPhaseDisplay
+        implements ActionListener, ItemListener, ListSelectionListener, MouseListener, IMapSettingsObserver {
     /**
      *
      */
@@ -224,7 +223,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     // keep track of portrait images
     private DirectoryItems portraits;
-    
+
     private boolean mscLoaded = false;
     private boolean rngLoaded = false;
 
@@ -252,13 +251,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         // Create a tabbed panel to hold our components.
         panTabs = new JTabbedPane();
         Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
-                GUIPreferences.getInstance().getInt(
-                        "AdvancedChatLoungeTabFontSize")); //$NON-NLS-1$
+                GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize")); //$NON-NLS-1$
         panTabs.setFont(tabPanelFont);
 
         try {
-            portraits = new DirectoryItems(Configuration.portraitImagesDir(),
-                    "", //$NON-NLS-1$
+            portraits = new DirectoryItems(Configuration.portraitImagesDir(), "", //$NON-NLS-1$
                     ImageFileFactory.getInstance());
         } catch (Exception e) {
             portraits = null;
@@ -272,15 +269,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         lblMapSummary = new JLabel("");
         lblGameYear = new JLabel("");
-        lblGameYear.setToolTipText(Messages
-                .getString("ChatLounge.GameYearLabelToolTip")); //$NON-NLS-1$
+        lblGameYear.setToolTipText(Messages.getString("ChatLounge.GameYearLabelToolTip")); //$NON-NLS-1$
 
         lblTechLevel = new JLabel("");
-        lblTechLevel.setToolTipText(Messages
-                .getString("ChatLounge.TechLevelLabelToolTip")); //$NON-NLS-1$
+        lblTechLevel.setToolTipText(Messages.getString("ChatLounge.TechLevelLabelToolTip")); //$NON-NLS-1$
 
-        butCompact = new JToggleButton(
-                Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
+        butCompact = new JToggleButton(Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
         butCompact.addActionListener(this);
 
         butDone.setText(Messages.getString("ChatLounge.butDone")); //$NON-NLS-1$
@@ -291,8 +285,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             exp.printStackTrace();
         }
         if (font == null) {
-            System.err
-                    .println("Couldn't find the new font for the 'Done' button."); //$NON-NLS-1$
+            System.err.println("Couldn't find the new font for the 'Done' button."); //$NON-NLS-1$
         } else {
             butDone.setFont(font);
         }
@@ -332,12 +325,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         tableEntities.setModel(mekModel);
         tableEntities.setRowHeight(80);
         tableEntities.setIntercellSpacing(new Dimension(0, 0));
-        tableEntities
-                .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        tableEntities.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         TableColumn column = null;
         for (int i = 0; i < MekTableModel.N_COL; i++) {
-            tableEntities.getColumnModel().getColumn(i)
-                    .setCellRenderer(mekModel.getRenderer());
+            tableEntities.getColumnModel().getColumn(i).setCellRenderer(mekModel.getRenderer());
             column = tableEntities.getColumnModel().getColumn(i);
             if ((i == MekTableModel.COL_UNIT) || (i == MekTableModel.COL_PILOT)) {
                 column.setPreferredWidth(170);
@@ -351,8 +342,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         tableEntities.addKeyListener(new MekTableKeyAdapter());
         tableEntities.getSelectionModel().addListSelectionListener(this);
         scrEntities = new JScrollPane(tableEntities);
-        scrEntities
-                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrEntities.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
     }
 
@@ -401,8 +391,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butSkills.addActionListener(this);
         butNames.addActionListener(this);
 
-        butDeleteAll = new JButton(
-                Messages.getString("ChatLounge.butDeleteAll")); //$NON-NLS-1$
+        butDeleteAll = new JButton(Messages.getString("ChatLounge.butDeleteAll")); //$NON-NLS-1$
         butDeleteAll.setActionCommand("delete_all"); //$NON-NLS-1$
         butDeleteAll.addActionListener(this);
         butDeleteAll.setEnabled(false);
@@ -478,25 +467,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (player == null) {
                     return null;
                 }
-                int mines = player.getNbrMFConventional()
-                        + player.getNbrMFActive() + player.getNbrMFInferno()
+                int mines = player.getNbrMFConventional() + player.getNbrMFActive() + player.getNbrMFInferno()
                         + player.getNbrMFVibra();
                 if (realColIndex == PlayerTableModel.COL_PLAYER) {
                     return Messages.getString("ChatLounge.tipPlayer",
-                            new Object[] { getValueAt(rowIndex, colIndex),
-                                    player.getConstantInitBonus(), mines });
+                            new Object[] { getValueAt(rowIndex, colIndex), player.getConstantInitBonus(), mines });
                 } else if (realColIndex == PlayerTableModel.COL_TON) {
                     return ((Double) getValueAt(rowIndex, colIndex)).toString();
                 } else if (realColIndex == PlayerTableModel.COL_COST) {
-                    return Messages.getString(
-                            "ChatLounge.tipCost",
-                            new Object[] { (Integer) getValueAt(rowIndex,
-                                    colIndex) });
+                    return Messages.getString("ChatLounge.tipCost",
+                            new Object[] { (Integer) getValueAt(rowIndex, colIndex) });
                 } else if (realColIndex == PlayerTableModel.COL_START) {
                     return (String) getValueAt(rowIndex, colIndex);
                 } else {
-                    return Integer.toString((Integer) getValueAt(rowIndex,
-                            colIndex));
+                    return Integer.toString((Integer) getValueAt(rowIndex, colIndex));
                 }
             }
         };
@@ -523,19 +507,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         tablePlayers.addMouseListener(new PlayerTableMouseAdapter());
 
         scrPlayers = new JScrollPane(tablePlayers);
-        scrPlayers
-                .setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrPlayers.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         panPlayerInfo = new JPanel();
-        panPlayerInfo.setBorder(BorderFactory
-                .createTitledBorder("Player Setup"));
+        panPlayerInfo.setBorder(BorderFactory.createTitledBorder("Player Setup"));
 
         butAddBot = new JButton(Messages.getString("ChatLounge.butAddBot")); //$NON-NLS-1$
         butAddBot.setActionCommand("add_bot"); //$NON-NLS-1$
         butAddBot.addActionListener(this);
 
-        butRemoveBot = new JButton(
-                Messages.getString("ChatLounge.butRemoveBot")); //$NON-NLS-1$
+        butRemoveBot = new JButton(Messages.getString("ChatLounge.butRemoveBot")); //$NON-NLS-1$
         butRemoveBot.setEnabled(false);
         butRemoveBot.setActionCommand("remove_bot"); //$NON-NLS-1$
         butRemoveBot.addActionListener(this);
@@ -558,8 +539,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         camoDialog = new CamoChoiceDialog(clientgui.getFrame(), butCamo);
         refreshCamos();
 
-        butChangeStart = new JButton(
-                Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
+        butChangeStart = new JButton(Messages.getString("ChatLounge.butChangeStart")); //$NON-NLS-1$
         butChangeStart.addActionListener(this);
 
         // layout
@@ -723,26 +703,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         mapSettings = MapSettings.getInstance(clientgui.getClient().getMapSettings());
 
-        randomMapDialog = new RandomMapDialog(clientgui.frame, this,
-                clientgui.getClient(), mapSettings); // new
-                                                     // RandomMapDialog(clientgui.frame,
-                                                     // this,
+        randomMapDialog = new RandomMapDialog(clientgui.frame, this, clientgui.getClient(), mapSettings); // new
+                                                                                                          // RandomMapDialog(clientgui.frame,
+                                                                                                          // this,
         // clientgui.getClient(), mapSettings);
 
-        butConditions = new JButton(
-                Messages.getString("ChatLounge.butConditions")); //$NON-NLS-1$
+        butConditions = new JButton(Messages.getString("ChatLounge.butConditions")); //$NON-NLS-1$
         butConditions.addActionListener(this);
 
-        butRandomMap = new JButton(
-                Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
+        butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
         butRandomMap.addActionListener(this);
 
-        chkIncludeGround = new JCheckBox(
-                Messages.getString("ChatLounge.IncludeGround")); //$NON-NLS-1$
+        chkIncludeGround = new JCheckBox(Messages.getString("ChatLounge.IncludeGround")); //$NON-NLS-1$
         chkIncludeGround.addActionListener(this);
 
-        chkIncludeSpace = new JCheckBox(
-                Messages.getString("ChatLounge.IncludeSpace")); //$NON-NLS-1$
+        chkIncludeSpace = new JCheckBox(Messages.getString("ChatLounge.IncludeSpace")); //$NON-NLS-1$
         chkIncludeSpace.addActionListener(this);
 
         setupGroundMap();
@@ -807,8 +782,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private void setupGroundMap() {
 
         panGroundMap = new JPanel();
-        panGroundMap.setBorder(BorderFactory
-                .createTitledBorder("Planetary Map"));
+        panGroundMap.setBorder(BorderFactory.createTitledBorder("Planetary Map"));
 
         panMapButtons = new JPanel();
 
@@ -821,32 +795,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         comboMapSizes = new JComboBox<Comparable>();
         setupMapSizes();
 
-        buttonBoardPreview = new JButton(
-                Messages.getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
+        buttonBoardPreview = new JButton(Messages.getString("BoardSelectionDialog.ViewGameBoard")); //$NON-NLS-1$
         buttonBoardPreview.addActionListener(this);
-        buttonBoardPreview.setToolTipText(Messages
-                .getString("BoardSelectionDialog.ViewGameBoardTooltip"));//$NON-NLS-1$
+        buttonBoardPreview.setToolTipText(Messages.getString("BoardSelectionDialog.ViewGameBoardTooltip"));//$NON-NLS-1$
 
         butChange = new JButton("<<"); //$NON-NLS-1$
         butChange.addActionListener(this);
 
-        labBoardsSelected = new JLabel(
-                Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); //$NON-NLS-1$
-        labBoardsAvailable = new JLabel(
-                Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
+        labBoardsSelected = new JLabel(Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); //$NON-NLS-1$
+        labBoardsAvailable = new JLabel(Messages.getString("BoardSelectionDialog.mapsAvailable"), //$NON-NLS-1$
+                SwingConstants.CENTER);
 
         lisBoardsSelected = new JList<String>(new DefaultListModel<String>());
         lisBoardsSelected.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         lisBoardsAvailable = new JList<String>(new DefaultListModel<String>());
         refreshBoardsSelected();
         refreshBoardsAvailable();
-        lisBoardsAvailable
-                .setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        lisBoardsAvailable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         lisBoardsAvailable.addMouseListener(this);
         lisBoardsAvailable.addListSelectionListener(this);
 
-        chkRotateBoard = new JCheckBox(
-                Messages.getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
+        chkRotateBoard = new JCheckBox(Messages.getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
         chkRotateBoard.addActionListener(this);
 
         // layout
@@ -1017,16 +986,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             miniMap.setSize(160, 200);
             miniMap.setZoom(2);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this,
-                    Messages.getString("BoardEditor.CouldNotInitialiseMinimap")
-                            + e, Messages.getString("BoardEditor.FatalError"),
-                    JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane.showMessageDialog(this, Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e,
+                    Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); // $NON-NLS-1$
+                                                                                              // //$NON-NLS-2$
         }
         mapPreviewPanel.add(miniMap);
 
         // setup the board preview window.
-        gameBoardPreviewW = new JDialog(clientgui.frame,
-                Messages.getString("BoardSelectionDialog.ViewGameBoard"), false); //$NON-NLS-1$
+        gameBoardPreviewW = new JDialog(clientgui.frame, Messages.getString("BoardSelectionDialog.ViewGameBoard"), //$NON-NLS-1$
+                false);
 
         gameBoardPreviewW.setLocationRelativeTo(clientgui.frame);
 
@@ -1034,13 +1002,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         try {
             gameBoardMap = new MiniMap(gameBoardPreviewW, null);
         } catch (IOException e) {
-            JOptionPane
-                    .showMessageDialog(
-                            this,
-                            Messages.getString("BoardEditor.CouldNotInitialiseMinimap")
-                                    + e,
-                            Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
-            //$NON-NLS-2$
+            JOptionPane.showMessageDialog(this, Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e,
+                    Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            // $NON-NLS-2$
             // this.dispose();
         }
         gameBoardPreviewW.add(gameBoardMap);
@@ -1096,10 +1060,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Set up the map chooser panel
      */
     private void setupMapChoice() {
-        comboMapType.addItem(MapSettings
-                .getMediumName(MapSettings.MEDIUM_GROUND));
-        comboMapType.addItem(MapSettings
-                .getMediumName(MapSettings.MEDIUM_ATMOSPHERE));
+        comboMapType.addItem(MapSettings.getMediumName(MapSettings.MEDIUM_GROUND));
+        comboMapType.addItem(MapSettings.getMediumName(MapSettings.MEDIUM_ATMOSPHERE));
         comboMapType.addActionListener(this);
         refreshMapChoice();
     }
@@ -1146,11 +1108,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     private void refreshBoardsAvailable() {
         int selectedRow = lisBoardsAvailable.getSelectedIndex();
-        ((DefaultListModel<String>) lisBoardsAvailable.getModel())
-                .removeAllElements();
+        ((DefaultListModel<String>) lisBoardsAvailable.getModel()).removeAllElements();
         for (String s : mapSettings.getBoardsAvailableVector()) {
-            ((DefaultListModel<String>) lisBoardsAvailable.getModel())
-                    .addElement(s);
+            ((DefaultListModel<String>) lisBoardsAvailable.getModel()).addElement(s);
         }
         if (resetAvailBoardSelection) {
             lisBoardsAvailable.setSelectedIndex(0);
@@ -1162,12 +1122,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     private void refreshBoardsSelected() {
         int selectedRow = lisBoardsSelected.getSelectedIndex();
-        ((DefaultListModel<String>) lisBoardsSelected.getModel())
-                .removeAllElements();
+        ((DefaultListModel<String>) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
         for (Iterator<String> i = mapSettings.getBoardsSelected(); i.hasNext();) {
-            ((DefaultListModel<String>) lisBoardsSelected.getModel())
-                    .addElement(index++ + ": " + i.next()); //$NON-NLS-1$
+            ((DefaultListModel<String>) lisBoardsSelected.getModel()).addElement(index++ + ": " + i.next()); //$NON-NLS-1$
         }
         lisBoardsSelected.setSelectedIndex(selectedRow);
         if (resetSelectedBoards) {
@@ -1185,13 +1143,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private void refreshMapButtons() {
         panMapButtons.removeAll();
 
-        panMapButtons.setLayout(new GridLayout(mapSettings.getMapHeight(),
-                mapSettings.getMapWidth()));
+        panMapButtons.setLayout(new GridLayout(mapSettings.getMapHeight(), mapSettings.getMapWidth()));
 
         for (int i = 0; i < mapSettings.getMapHeight(); i++) {
             for (int j = 0; j < mapSettings.getMapWidth(); j++) {
-                JButton button = new JButton(Integer.toString((i * mapSettings
-                        .getMapWidth()) + j));
+                JButton button = new JButton(Integer.toString((i * mapSettings.getMapWidth()) + j));
                 button.addActionListener(this);
                 panMapButtons.add(button);
             }
@@ -1199,8 +1155,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         scrMapButtons.validate();
 
-        labBoardsAvailable.setText(mapSettings.getBoardWidth() + "x"
-                + mapSettings.getBoardHeight() + " "
+        labBoardsAvailable.setText(mapSettings.getBoardWidth() + "x" + mapSettings.getBoardHeight() + " "
                 + Messages.getString("BoardSelectionDialog.mapsAvailable"));
         comboMapSizes.removeActionListener(this);
         int items = comboMapSizes.getItemCount();
@@ -1209,8 +1164,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         for (int i = 0; i < (items - 1); i++) {
             BoardDimensions size = (BoardDimensions) comboMapSizes.getItemAt(i);
 
-            if ((size.width() == mapSettings.getBoardWidth())
-                    && (size.height() == mapSettings.getBoardHeight())) {
+            if ((size.width() == mapSettings.getBoardWidth()) && (size.height() == mapSettings.getBoardHeight())) {
                 comboMapSizes.setSelectedIndex(i);
                 mapSizeSelected = true;
             }
@@ -1227,11 +1181,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         String boardName = lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
             IBoard board = new Board(16, 17);
-            board.load(new File(Configuration.boardsDir(), boardName + ".board"));
+            board.load(new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile());
             if (chkRotateBoard.isSelected()) {
                 BoardUtilities.flip(board, true, true);
             }
-            miniMap.setBoard(board);
+            if (board.isValid())
+                miniMap.setBoard(board);
         }
     }
 
@@ -1239,8 +1194,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         MapSettings temp = mapSettings;
         temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
         temp.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
-        IBoard[] sheetBoards = new IBoard[temp.getMapWidth()
-                * temp.getMapHeight()];
+        IBoard[] sheetBoards = new IBoard[temp.getMapWidth() * temp.getMapHeight()];
         List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (temp.getMapWidth() * temp.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
@@ -1253,20 +1207,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 }
                 name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
             }
-            if (name.startsWith(MapSettings.BOARD_GENERATED)
-                    || (temp.getMedium() == MapSettings.MEDIUM_SPACE)) {
+            if (name.startsWith(MapSettings.BOARD_GENERATED) || (temp.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(temp);
             } else {
-                sheetBoards[i].load(new File(Configuration.boardsDir(), name
-                        + ".board"));
+                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
+                        + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
             rotateBoard.add(isRotated);
         }
 
-        IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(),
-                temp.getBoardHeight(), temp.getMapWidth(), temp.getMapHeight(),
-                sheetBoards, rotateBoard, temp.getMedium());
+        IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(), temp.getBoardHeight(), temp.getMapWidth(),
+                temp.getMapHeight(), sheetBoards, rotateBoard, temp.getMedium());
         gameBoardMap.setBoard(newBoard);
         gameBoardPreviewW.setVisible(true);
 
@@ -1303,12 +1255,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 // entity.getOwner() does not work properly because teams are
                 // not updated for
                 // entities when the user switches teams
-                final IPlayer p_a = clientgui.getClient().getGame()
-                        .getPlayer(a.getOwnerId());// a.getOwner();
-                final IPlayer p_b = clientgui.getClient().getGame()
-                        .getPlayer(b.getOwnerId());// b.getOwner();
-                final IPlayer localPlayer = clientgui.getClient()
-                        .getLocalPlayer();
+                final IPlayer p_a = clientgui.getClient().getGame().getPlayer(a.getOwnerId());// a.getOwner();
+                final IPlayer p_b = clientgui.getClient().getGame().getPlayer(b.getOwnerId());// b.getOwner();
+                final IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
                 final int t_a = p_a.getTeam();
                 final int t_b = p_b.getTeam();
                 final int tr_a = a.getTransportId();
@@ -1317,11 +1266,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     return -1;
                 } else if (!p_a.equals(localPlayer) && p_b.equals(localPlayer)) {
                     return 1;
-                } else if ((t_a == localPlayer.getTeam())
-                        && (t_b != localPlayer.getTeam())) {
+                } else if ((t_a == localPlayer.getTeam()) && (t_b != localPlayer.getTeam())) {
                     return -1;
-                } else if ((t_b == localPlayer.getTeam())
-                        && (t_a != localPlayer.getTeam())) {
+                } else if ((t_b == localPlayer.getTeam()) && (t_a != localPlayer.getTeam())) {
                     return 1;
                 } else if (t_a != t_b) {
                     return t_a - t_b;
@@ -1362,46 +1309,37 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         for (Entity entity : allEntities) {
             // Remember if the local player has units.
-            if (!localUnits
-                    && entity.getOwner().equals(
-                            clientgui.getClient().getLocalPlayer())) {
+            if (!localUnits && entity.getOwner().equals(clientgui.getClient().getLocalPlayer())) {
                 localUnits = true;
             }
 
-            if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("pilot_advantages")) { //$NON-NLS-1$
+            if (!clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) { // $NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.LVL3_ADVANTAGES);
             }
 
-            if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("edge")) { //$NON-NLS-1$
+            if (!clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.EDGE)) { // $NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.EDGE_ADVANTAGES);
             }
 
-            if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("manei_domini")) { //$NON-NLS-1$
+            if (!clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { // $NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
             }
 
             if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("stratops_partialrepairs")) { //$NON-NLS-1$
+                    .booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) { // $NON-NLS-1$
                 entity.clearPartialRepairs();
             }
             // Handle the "Blind Drop" option.
-            if (!entity.getOwner().equals(
-                    clientgui.getClient().getLocalPlayer())
-                    && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("blind_drop") //$NON-NLS-1$
+            if (!entity.getOwner().equals(clientgui.getClient().getLocalPlayer())
+                    && clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP) // $NON-NLS-1$
                     && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("real_blind_drop")) { //$NON-NLS-1$
+                            .booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) { // $NON-NLS-1$
 
                 mekModel.addUnit(entity);
-            } else if (entity.getOwner().equals(
-                    clientgui.getClient().getLocalPlayer())
-                    || (!clientgui.getClient().getGame().getOptions()
-                            .booleanOption("blind_drop") //$NON-NLS-1$
-                    && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("real_blind_drop"))) { //$NON-NLS-1$
+            } else if (entity.getOwner().equals(clientgui.getClient().getLocalPlayer())
+                    || (!clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP) // $NON-NLS-1$
+                            && !clientgui.getClient().getGame().getOptions()
+                                    .booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP))) { // $NON-NLS-1$
                 mekModel.addUnit(entity);
             }
         }
@@ -1423,8 +1361,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
         value += " (" + pilot.getGunnery() + "/" + pilot.getPiloting() + ")";
         if (pilot.countOptions() > 0) {
-            value += " (" + pilot.countOptions()
-                    + Messages.getString("ChatLounge.abilities") + ")";
+            value += " (" + pilot.countOptions() + Messages.getString("ChatLounge.abilities") + ")";
         }
 
         return value;
@@ -1438,29 +1375,25 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         String value = "";
         if (blindDrop) {
-            value += "<b>" + Messages.getString("ChatLounge.Unknown")
-                    + "</b><br>";
+            value += "<b>" + Messages.getString("ChatLounge.Unknown") + "</b><br>";
         } else {
             value += "<b>" + pilot.getDesc() + "</b><br>";
         }
         value += "" + pilot.getGunnery() + "/" + pilot.getPiloting();
         if (crewAdvCount > 0) {
-            value += ", " + crewAdvCount
-                    + Messages.getString("ChatLounge.advs");
+            value += ", " + crewAdvCount + Messages.getString("ChatLounge.advs");
         }
         value += "<br>";
         if (implants > 0) {
-            value += "<i>" + Messages.getString("ChatLounge.md") + "</i>, "
-                    + implants + Messages.getString("ChatLounge.implants")
-                    + "<br>";
+            value += "<i>" + Messages.getString("ChatLounge.md") + "</i>, " + implants
+                    + Messages.getString("ChatLounge.implants") + "<br>";
         }
 
         return value;
 
     }
 
-    public static String formatPilotTooltip(Crew pilot, boolean command,
-            boolean init, boolean tough) {
+    public static String formatPilotTooltip(Crew pilot, boolean command, boolean init, boolean tough) {
 
         String value = "<html>";
         value += "<b>" + pilot.getDesc() + "</b><br>";
@@ -1468,35 +1401,27 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             value += "<i>" + pilot.getNickname() + "</i><br>";
         }
         if (pilot.getHits() > 0) {
-            value += "<font color='red'>"
-                    + Messages.getString("ChatLounge.Hits") + pilot.getHits()
-                    + "</font><br>";
+            value += "<font color='red'>" + Messages.getString("ChatLounge.Hits") + pilot.getHits() + "</font><br>";
         }
         value += "" + pilot.getGunnery() + "/" + pilot.getPiloting() + "<br>";
         if (tough) {
-            value += Messages.getString("ChatLounge.Tough")
-                    + pilot.getToughness() + "<br>";
+            value += Messages.getString("ChatLounge.Tough") + pilot.getToughness() + "<br>";
         }
         if (command) {
-            value += Messages.getString("ChatLounge.Command")
-                    + pilot.getCommandBonus() + "<br>";
+            value += Messages.getString("ChatLounge.Command") + pilot.getCommandBonus() + "<br>";
         }
         if (init) {
-            value += Messages.getString("ChatLounge.Initiative")
-                    + pilot.getInitBonus() + "<br>";
+            value += Messages.getString("ChatLounge.Initiative") + pilot.getInitBonus() + "<br>";
         }
         value += "<br>";
-        for (Enumeration<IOptionGroup> advGroups = pilot.getOptions()
-                .getGroups(); advGroups.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> advGroups = pilot.getOptions().getGroups(); advGroups.hasMoreElements();) {
             IOptionGroup advGroup = advGroups.nextElement();
             if (pilot.countOptions(advGroup.getKey()) > 0) {
                 value += "<b>" + advGroup.getDisplayableName() + "</b><br>";
-                for (Enumeration<IOption> advs = advGroup.getOptions(); advs
-                        .hasMoreElements();) {
+                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     IOption adv = advs.nextElement();
                     if (adv.booleanValue()) {
-                        value += "  " + adv.getDisplayableNameWithValue()
-                                + "<br>";
+                        value += "  " + adv.getDisplayableNameWithValue() + "<br>";
                     }
                 }
             }
@@ -1505,37 +1430,43 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         return value;
 
     }
-    
+
     private static StringBuffer tooltipString;
     private final static boolean BR = true;
     private final static boolean NOBR = false;
-    
+
     /**
      * Adds a resource string to the entity tooltip
      * 
-     * @param ttSName The resource string name. "BoardView1.Tooltip." will be added in front, so
-     * "Pilot" will retrieve BoardView1.Tooltip.Pilot
-     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here. 
-     * @param ttO a list of Objects to insert into the {x} places in the resource.
+     * @param ttSName
+     *            The resource string name. "BoardView1.Tooltip." will be added
+     *            in front, so "Pilot" will retrieve BoardView1.Tooltip.Pilot
+     * @param startBR
+     *            = true will start the string with a &lt;BR&gt;; The constants
+     *            BR and NOBR can be used here.
+     * @param ttO
+     *            a list of Objects to insert into the {x} places in the
+     *            resource.
      */
     private static void addToTT(String ttSName, boolean startBR, Object... ttO) {
         if (startBR == BR)
             tooltipString.append("<BR>");
         if (ttO != null) {
-            tooltipString.append(Messages.getString("BoardView1.Tooltip."
-                    + ttSName, ttO));
+            tooltipString.append(Messages.getString("BoardView1.Tooltip." + ttSName, ttO));
         } else {
-            tooltipString.append(Messages.getString("BoardView1.Tooltip."
-                    + ttSName));
+            tooltipString.append(Messages.getString("BoardView1.Tooltip." + ttSName));
         }
     }
-    
+
     /**
      * Adds a resource string to the entity tooltip
      * 
-     * @param ttSName The resource string name. "BoardView1.Tooltip." will be added in front, so
-     * "Pilot" will retrieve BoardView1.Tooltip.Pilot
-     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here. 
+     * @param ttSName
+     *            The resource string name. "BoardView1.Tooltip." will be added
+     *            in front, so "Pilot" will retrieve BoardView1.Tooltip.Pilot
+     * @param startBR
+     *            = true will start the string with a &lt;BR&gt;; The constants
+     *            BR and NOBR can be used here.
      */
     private static void addToTT(String ttSName, boolean startBR) {
         addToTT(ttSName, startBR, (Object[]) null);
@@ -1544,78 +1475,69 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     public static String formatUnitTooltip(Entity entity) {
 
         GunEmplacement thisGunEmp = null;
-        if (entity instanceof GunEmplacement) thisGunEmp = (GunEmplacement) entity;
-        
+        if (entity instanceof GunEmplacement)
+            thisGunEmp = (GunEmplacement) entity;
+
         tooltipString = new StringBuffer();
         tooltipString.append("<HTML>");
 
         // Unit Chassis and Player
-        addToTT("Unit", NOBR,
-                Integer.toHexString(PlayerColors.getColorRGB(
-                        entity.getOwner().getColorIndex())), 
-                entity.getChassis(), 
-                entity.getOwner().getName());
-        
+        addToTT("Unit", NOBR, Integer.toHexString(PlayerColors.getColorRGB(entity.getOwner().getColorIndex())),
+                entity.getChassis(), entity.getOwner().getName());
+
         // Pilot Info
         // Nickname > Name > "Pilot"
         String pnameStr = "Pilot";
 
-        if ((entity.getCrew().getName() != null)
-                && !entity.getCrew().getName().equals("")) 
+        if ((entity.getCrew().getName() != null) && !entity.getCrew().getName().equals(""))
             pnameStr = entity.getCrew().getName();
-        
-        if ((entity.getCrew().getNickname() != null)
-                && !entity.getCrew().getNickname().equals("")) 
+
+        if ((entity.getCrew().getNickname() != null) && !entity.getCrew().getNickname().equals(""))
             pnameStr = "'" + entity.getCrew().getNickname() + "'";
 
-        addToTT("Pilot", BR,
-                pnameStr, 
-                entity.getCrew().getGunnery(), 
-                entity.getCrew().getPiloting());
+        addToTT("Pilot", BR, pnameStr, entity.getCrew().getGunnery(), entity.getCrew().getPiloting());
 
         // Pilot Status
         if (!entity.getCrew().getStatusDesc().equals(""))
-            addToTT("PilotStatus", NOBR, 
-                    entity.getCrew().getStatusDesc());
-        
+            addToTT("PilotStatus", NOBR, entity.getCrew().getStatusDesc());
+
         // Pilot Advantages
-        int numAdv = entity.getCrew().countOptions(
-                PilotOptions.LVL3_ADVANTAGES);
+        int numAdv = entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
         if (numAdv == 1)
             addToTT("Adv1", NOBR, numAdv);
-        else if (numAdv > 1) 
+        else if (numAdv > 1)
             addToTT("Advs", NOBR, numAdv);
-        
+
         // Pilot Manei Domini
-        if ((entity.getCrew().countOptions(
-                PilotOptions.MD_ADVANTAGES) > 0)) 
+        if ((entity.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0))
             addToTT("MD", NOBR);
-        
+
         // Unit movement ability
         if (thisGunEmp == null) {
             addToTT("Movement", BR, entity.getWalkMP(), entity.getRunMPasString());
-            if (entity.getJumpMP() > 0) tooltipString.append("/" + entity.getJumpMP());
+            if (entity.getJumpMP() > 0)
+                tooltipString.append("/" + entity.getJumpMP());
         }
-        
+
         // Armor and Internals
-        addToTT("ArmorInternals", BR, entity.getTotalArmor()
-                + ((entity.getTotalArmor() != entity.getTotalOArmor())?"/" + entity.getTotalOArmor():""),
-                entity.getTotalInternal() +
-                ((entity.getTotalInternal() != entity.getTotalOInternal())?"/" + entity.getTotalOInternal():""));
+        addToTT("ArmorInternals", BR,
+                entity.getTotalArmor()
+                        + ((entity.getTotalArmor() != entity.getTotalOArmor()) ? "/" + entity.getTotalOArmor() : ""),
+                entity.getTotalInternal() + ((entity.getTotalInternal() != entity.getTotalOInternal())
+                        ? "/" + entity.getTotalOInternal() : ""));
 
         // Weapon List
-        if (GUIPreferences.getInstance()
-                .getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
+        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
 
             ArrayList<Mounted> weapons = entity.getWeaponList();
-            HashMap<String, Integer> wpNames = new HashMap<String,Integer>();
+            HashMap<String, Integer> wpNames = new HashMap<String, Integer>();
 
             // Gather names, counts, Clan/IS
             // When clan then the number will be stored as negative
-            for (Mounted curWp: weapons) {
+            for (Mounted curWp : weapons) {
                 String weapDesc = curWp.getDesc();
                 // Append ranges
-                WeaponType wtype = (WeaponType)curWp.getType();
+                WeaponType wtype = (WeaponType) curWp.getType();
                 int ranges[];
                 if (entity instanceof Aero) {
                     ranges = wtype.getATRanges();
@@ -1623,16 +1545,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     ranges = wtype.getRanges(curWp);
                 }
                 String rangeString = "(";
-                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
+                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA)
                         && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
                     rangeString += ranges[RangeType.RANGE_MINIMUM] + "/";
                 } else {
                     rangeString += "-/";
                 }
                 int maxRange = RangeType.RANGE_LONG;
-                
-                if ((entity.getGame() != null) && entity.getGame().getOptions().booleanOption(
-                        OptionsConstants.AC_TAC_OPS_RANGE)) {
+
+                if ((entity.getGame() != null)
+                        && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
                     maxRange = RangeType.RANGE_EXTREME;
                 }
                 for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
@@ -1641,18 +1563,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         rangeString += "/";
                     }
                 }
-                
+
                 weapDesc += rangeString + ")";
                 if (wpNames.containsKey(weapDesc)) {
                     int number = wpNames.get(weapDesc);
-                    if (number > 0) 
+                    if (number > 0)
                         wpNames.put(weapDesc, number + 1);
-                    else 
+                    else
                         wpNames.put(weapDesc, number - 1);
                 } else {
-                    WeaponType wpT = ((WeaponType)curWp.getType());
+                    WeaponType wpT = ((WeaponType) curWp.getType());
 
-                    if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear()))) 
+                    if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear())))
                         wpNames.put(weapDesc, -1);
                     else
                         wpNames.put(weapDesc, 1);
@@ -1663,32 +1585,35 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             tooltipString.append("<FONT SIZE=\"-2\">");
 
             for (Entry<String, Integer> entry : wpNames.entrySet()) {
-                // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
+                // Check if weapon is destroyed, text gray and strikethrough if
+                // so, remove the "x "/"*"
                 // Also remove "+", means currently selected for firing
                 boolean wpDest = false;
                 String nameStr = entry.getKey();
-                if (entry.getKey().startsWith("x ")) { 
+                if (entry.getKey().startsWith("x ")) {
                     nameStr = entry.getKey().substring(2, entry.getKey().length());
                     wpDest = true;
                 }
 
-                if (entry.getKey().startsWith("*")) { 
+                if (entry.getKey().startsWith("*")) {
                     nameStr = entry.getKey().substring(1, entry.getKey().length());
                     wpDest = true;
                 }
 
-                if (entry.getKey().startsWith("+")) { 
+                if (entry.getKey().startsWith("+")) {
                     nameStr = entry.getKey().substring(1, entry.getKey().length());
                     nameStr = nameStr.concat(" <I>(Firing)</I>");
                 }
 
-                // normal coloring 
+                // normal coloring
                 tooltipString.append("<FONT COLOR=#8080FF>");
                 // but: color gray and strikethrough when weapon destroyed
-                if (wpDest) tooltipString.append("<FONT COLOR=#a0a0a0><S>");
+                if (wpDest)
+                    tooltipString.append("<FONT COLOR=#a0a0a0><S>");
 
                 String clanStr = "";
-                if (entry.getValue() < 0) clanStr = Messages.getString("BoardView1.Tooltip.Clan");
+                if (entry.getValue() < 0)
+                    clanStr = Messages.getString("BoardView1.Tooltip.Clan");
 
                 // when more than 5 weapons are present, they will be grouped
                 // and listed with a multiplier
@@ -1701,23 +1626,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                 }
                 // Weapon destroyed? End strikethrough
-                if (wpDest) tooltipString.append("</S>");
-                tooltipString.append("</FONT>"); 
+                if (wpDest)
+                    tooltipString.append("</S>");
+                tooltipString.append("</FONT>");
             }
             tooltipString.append("</FONT>");
         }
-        
+
         // Add StratOps quirks, if activated
         if ((entity.getGame() != null)
-                && entity.getGame().getOptions()
-                        .booleanOption("stratops_quirks")) {
-            for (Enumeration<IOptionGroup> advGroups = entity.getQuirks()
-                    .getGroups(); advGroups.hasMoreElements();) {
+                && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
+            for (Enumeration<IOptionGroup> advGroups = entity.getQuirks().getGroups(); advGroups.hasMoreElements();) {
                 IOptionGroup advGroup = advGroups.nextElement();
                 if (entity.countQuirks(advGroup.getKey()) > 0) {
                     tooltipString.append("<BR><i>" + advGroup.getDisplayableName() + ":</i>");
-                    for (Enumeration<IOption> advs = advGroup.getOptions(); advs
-                            .hasMoreElements();) {
+                    for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                         IOption adv = advs.nextElement();
                         if (adv.booleanValue()) {
                             tooltipString.append("<BR>&nbsp;" + adv.getDisplayableNameWithValue());
@@ -1726,36 +1649,32 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 }
             }
             for (Mounted weapon : entity.getWeaponList()) {
-                for (Enumeration<IOptionGroup> advGroups = weapon.getQuirks()
-                        .getGroups(); advGroups.hasMoreElements();) {
+                for (Enumeration<IOptionGroup> advGroups = weapon.getQuirks().getGroups(); advGroups
+                        .hasMoreElements();) {
                     IOptionGroup advGroup = advGroups.nextElement();
                     if (weapon.countQuirks() > 0) {
                         tooltipString.append("<BR><i>" + weapon.getDesc() + ":</i>");
-                        for (Enumeration<IOption> advs = advGroup.getOptions(); advs
-                                .hasMoreElements();) {
+                        for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                             IOption adv = advs.nextElement();
                             if (adv.booleanValue()) {
-                                tooltipString.append("<BR>&nbsp;"
-                                        + adv.getDisplayableNameWithValue());
+                                tooltipString.append("<BR>&nbsp;" + adv.getDisplayableNameWithValue());
                             }
                         }
                     }
                 }
             }
         }
-        
+
         // Add partial repairs, if activated
-        for (Enumeration<IOptionGroup> advGroups = entity.getPartialRepairs()
-                .getGroups(); advGroups.hasMoreElements();) {
+        for (Enumeration<IOptionGroup> advGroups = entity.getPartialRepairs().getGroups(); advGroups
+                .hasMoreElements();) {
             IOptionGroup advGroup = advGroups.nextElement();
             if (entity.countPartialRepairs() > 0) {
                 tooltipString.append("<BR><i>" + advGroup.getDisplayableName() + ":</i><br>");
-                for (Enumeration<IOption> advs = advGroup.getOptions(); advs
-                        .hasMoreElements();) {
+                for (Enumeration<IOption> advs = advGroup.getOptions(); advs.hasMoreElements();) {
                     IOption adv = advs.nextElement();
                     if (adv.booleanValue()) {
-                        tooltipString.append("&nbsp;" + adv.getDisplayableNameWithValue()
-                                + "<br>");
+                        tooltipString.append("&nbsp;" + adv.getDisplayableNameWithValue() + "<br>");
                     }
                 }
             }
@@ -1804,8 +1723,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             } else if (!entity.C3MasterIs(entity)) {
                 strTreeSet = ">"; //$NON-NLS-1$
                 if ((entity.getC3Master().getC3Master() != null)
-                        && !entity.getC3Master().C3MasterIs(
-                                entity.getC3Master())) {
+                        && !entity.getC3Master().C3MasterIs(entity.getC3Master())) {
                     strTreeSet = ">>"; //$NON-NLS-1$
                 }
                 strTreeView = " -> " + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
@@ -1822,7 +1740,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (entity.isHidden()) {
             value += " (" + Messages.getString("ChatLounge.hidden") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
-        
+
         if (entity.isOffBoard()) {
             value += " (" + Messages.getString("ChatLounge.deploysOffBoard") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } else if (entity.getDeployRound() > 0) {
@@ -1830,10 +1748,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     + entity.getDeployRound();
             if (entity.getStartingPos(false) != Board.START_NONE) {
                 value += Messages.getString("ChatLounge.deploysAfterZone") //$NON-NLS-1$
-                        + IStartingPositions.START_LOCATION_NAMES[entity
-                                .getStartingPos(false)];
+                        + IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)];
             }
-             //$NON-NLS-2$
+            // $NON-NLS-2$
             value += ")"; //$NON-NLS-1$
         }
         return value;
@@ -1863,8 +1780,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (entity.calculateFreeC3Nodes() >= 5) {
                     c3network += Messages.getString("ChatLounge.C3iNone");
                 } else {
-                    c3network += Messages.getString("ChatLounge.C3iNetwork")
-                            + entity.getC3NetId();
+                    c3network += Messages.getString("ChatLounge.C3iNetwork") + entity.getC3NetId();
                     if (entity.calculateFreeC3Nodes() > 0) {
                         c3network += Messages.getString("ChatLounge.C3iNodes",
                                 new Object[] { entity.calculateFreeC3Nodes() });
@@ -1886,15 +1802,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     // an independent master might also be a slave to a company
                     // master
                     if (entity.getC3Master() != null) {
-                        c3network += "<br>"
-                                + Messages.getString("ChatLounge.C3Slave")
+                        c3network += "<br>" + Messages.getString("ChatLounge.C3Slave")
                                 + entity.getC3Master().getDisplayName();
-                        //$NON-NLS-1$
+                        // $NON-NLS-1$
                     }
                 } else if (entity.getC3Master() != null) {
-                    c3network += Messages.getString("ChatLounge.C3Slave")
-                            + entity.getC3Master().getDisplayName();
-                    //$NON-NLS-1$
+                    c3network += Messages.getString("ChatLounge.C3Slave") + entity.getC3Master().getDisplayName();
+                    // $NON-NLS-1$
                 } else {
                     c3network += Messages.getString("ChatLounge.C3None");
                 }
@@ -1905,29 +1819,26 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             int partRepCount = entity.countPartialRepairs();
 
             value += "<b>" + entity.getShortName() + "</b><br>";
-            value += "" + Math.round(entity.getWeight())
-                    + Messages.getString("ChatLounge.Tons") + "<br>";
+            value += "" + Math.round(entity.getWeight()) + Messages.getString("ChatLounge.Tons") + "<br>";
             if (entity.getTransportId() != Entity.NONE) {
-                Entity loader = entity.getGame().getEntity(
-                        entity.getTransportId());
+                Entity loader = entity.getGame().getEntity(entity.getTransportId());
                 value += "<i>Carried by " + loader.getShortName() + "</i><br>";
             }
             if (c3network.length() > 0) {
                 value += c3network + "<br>";
             }
             if ((posQuirkCount > 0) | (negQuirkCount > 0)) {
-                value += Messages.getString("ChatLounge.Quirks") + "+"
-                        + posQuirkCount + "/" + "-" + negQuirkCount + "<br>";
+                value += Messages.getString("ChatLounge.Quirks") + "+" + posQuirkCount + "/" + "-" + negQuirkCount
+                        + "<br>";
             }
             if ((partRepCount > 0)) {
-                value += Messages.getString("ChatLounge.PartialRepairs")
-                        + " + " + partRepCount + "<br>";
+                value += Messages.getString("ChatLounge.PartialRepairs") + " + " + partRepCount + "<br>";
             }
 
         }
 
         if (entity.isHidden()) {
-            value += Messages.getString("ChatLounge.hidden") + "<br>"; //$NON-NLS-1$ ; //$NON-NLS-1$
+            value += Messages.getString("ChatLounge.hidden") + "<br>"; // ; //$NON-NLS-1$
         }
 
         if (entity.isOffBoard()) {
@@ -1936,8 +1847,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             value += Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound(); //$NON-NLS-1$
             if (entity.getStartingPos(false) != Board.START_NONE) {
                 value += Messages.getString("ChatLounge.deploysAfterZone") //$NON-NLS-1$
-                        + IStartingPositions.START_LOCATION_NAMES[entity
-                                .getStartingPos(false)];
+                        + IStartingPositions.START_LOCATION_NAMES[entity.getStartingPos(false)];
             }
         }
         if (!entity.isDesignValid()) {
@@ -1951,8 +1861,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * formatPilotHTML, formatUnitTooltip, and formatPilotTooltip. It is however
      * used by other programs so it remains.
      */
-    public static String formatUnit(Entity entity, boolean blindDrop,
-            boolean rpgSkills) {
+    public static String formatUnit(Entity entity, boolean blindDrop, boolean rpgSkills) {
         String value;
 
         // Reset the tree strings.
@@ -1975,18 +1884,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             } else if (!entity.C3MasterIs(entity)) {
                 strTreeSet = ">"; //$NON-NLS-1$
                 if ((entity.getC3Master().getC3Master() != null)
-                        && !entity.getC3Master().C3MasterIs(
-                                entity.getC3Master())) {
+                        && !entity.getC3Master().C3MasterIs(entity.getC3Master())) {
                     strTreeSet = ">>"; //$NON-NLS-1$
                 }
                 strTreeView = " -> " + entity.getC3Master().getDisplayName(); //$NON-NLS-1$
             }
         }
 
-        int crewAdvCount = entity.getCrew().countOptions(
-                PilotOptions.LVL3_ADVANTAGES);
-        boolean isManeiDomini = entity.getCrew().countOptions(
-                PilotOptions.MD_ADVANTAGES) > 0;
+        int crewAdvCount = entity.getCrew().countOptions(PilotOptions.LVL3_ADVANTAGES);
+        boolean isManeiDomini = entity.getCrew().countOptions(PilotOptions.MD_ADVANTAGES) > 0;
         int posQuirkCount = entity.countQuirks(Quirks.POS_QUIRKS);
         int negQuirkCount = entity.countQuirks(Quirks.NEG_QUIRKS);
 
@@ -2012,50 +1918,39 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             Integer piloting = new Integer(entity.getCrew().getPiloting());
             String advantages = (crewAdvCount > 0 ? " <" + crewAdvCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.advs") : ""); //$NON-NLS-1$
-            String maneiDomini = (isManeiDomini ? Messages
-                    .getString("ChatLounge.md") : ""); //$NON-NLS-1$ //$NON-NLS-2$
+            String maneiDomini = (isManeiDomini ? Messages.getString("ChatLounge.md") : ""); //$NON-NLS-1$ //$NON-NLS-2$
             String posQuirks = (posQuirkCount > 0 ? " <" + posQuirkCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.pquirk") : ""); //$NON-NLS-1$ //$NON-NLS-2$
             String negQuirks = (negQuirkCount > 0 ? " <" + negQuirkCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.nquirk") : ""); //$NON-NLS-1$
-            String hidden = ((entity.isHidden()) ? Messages
-                    .getString("ChatLounge.hidden") : ""); //$NON-NLS-1$
-            String offBoard = ((entity.isOffBoard()) ? Messages
-                    .getString("ChatLounge.deploysOffBoard") : ""); //$NON-NLS-1$
-            String deployRound = ((entity.getDeployRound() > 0) ? Messages
-                    .getString("ChatLounge.deploysAfterRound") //$NON-NLS-1$
+            String hidden = ((entity.isHidden()) ? Messages.getString("ChatLounge.hidden") : ""); //$NON-NLS-1$
+            String offBoard = ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""); //$NON-NLS-1$
+            String deployRound = ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") //$NON-NLS-1$
                     + entity.getDeployRound() : ""); //$NON-NLS-1$
             value = Messages.getString("ChatLounge.EntityListEntry1", //$NON-NLS-1$
-                    new Object[] { entity.getOwner().getName(), gunnery,
-                            piloting, advantages, maneiDomini, unitClass,
+                    new Object[] { entity.getOwner().getName(), gunnery, piloting, advantages, maneiDomini, unitClass,
                             posQuirks, negQuirks, offBoard, deployRound, hidden });
         } else {
             Integer piloting = new Integer(entity.getCrew().getPiloting());
             String advantages = (crewAdvCount > 0 ? " <" + crewAdvCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.advs") : ""); //$NON-NLS-1$ //$NON-NLS-2$
-            String maneiDomini = (isManeiDomini ? Messages
-                    .getString("ChatLounge.md") : ""); //$NON-NLS-1$ //$NON-NLS-2$
+            String maneiDomini = (isManeiDomini ? Messages.getString("ChatLounge.md") : ""); //$NON-NLS-1$ //$NON-NLS-2$
             String posQuirks = (posQuirkCount > 0 ? " <" + posQuirkCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.pquirk") : ""); //$NON-NLS-1$ //$NON-NLS-2$
             String negQuirks = (negQuirkCount > 0 ? " <" + negQuirkCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.nquirk") : ""); //$NON-NLS-1$
             Integer battleValue = new Integer(entity.calculateBattleValue());
-            String hidden = ((entity.isHidden()) ? Messages
-                    .getString("ChatLounge.hidden") : ""); //$NON-NLS-1$
-            String offBoard = ((entity.isOffBoard()) ? Messages
-                    .getString("ChatLounge.deploysOffBoard") : ""); //$NON-NLS-1$ //$NON-NLS-2$
-            String deployRound = ((entity.getDeployRound() > 0) ? Messages
-                    .getString("ChatLounge.deploysAfterRound") //$NON-NLS-1$
+            String hidden = ((entity.isHidden()) ? Messages.getString("ChatLounge.hidden") : ""); //$NON-NLS-1$
+            String offBoard = ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""); //$NON-NLS-1$ //$NON-NLS-2$
+            String deployRound = ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") //$NON-NLS-1$
                     + entity.getDeployRound() : ""); //$NON-NLS-1$
             String valid = (entity.isDesignValid() ? "" : Messages //$NON-NLS-1$
                     .getString("ChatLounge.invalidDesign")); //$NON-NLS-1$
             value = strTreeSet
-                    + Messages.getString(
-                            "ChatLounge.EntityListEntry2", new Object[] {//$NON-NLS-1$
-                            entity.getDisplayName(), gunnery, piloting,
-                                    advantages, maneiDomini, posQuirks,
-                                    negQuirks, battleValue, strTreeView,
-                                    offBoard, deployRound, hidden, valid });
+                    + Messages.getString("ChatLounge.EntityListEntry2", //$NON-NLS-1$
+                            new Object[] { entity.getDisplayName(), gunnery, piloting, advantages, maneiDomini,
+                                    posQuirks, negQuirks, battleValue, strTreeView, offBoard, deployRound, hidden,
+                                    valid });
         }
         return value;
     }
@@ -2065,8 +1960,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      */
     private void refreshPlayerInfo() {
         playerModel.clearData();
-        for (Enumeration<IPlayer> i = clientgui.getClient().getPlayers(); i
-                .hasMoreElements();) {
+        for (Enumeration<IPlayer> i = clientgui.getClient().getPlayers(); i.hasMoreElements();) {
             final IPlayer player = i.nextElement();
             if (player == null) {
                 continue;
@@ -2089,8 +1983,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             choTeam.addItem(IPlayer.teamNames[i]);
         }
         if (clientgui.getClient().getLocalPlayer() != null) {
-            choTeam.setSelectedIndex(clientgui.getClient().getLocalPlayer()
-                    .getTeam());
+            choTeam.setSelectedIndex(clientgui.getClient().getLocalPlayer().getTeam());
         } else {
             choTeam.setSelectedIndex(0);
         }
@@ -2100,8 +1993,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Highlight the team the player is playing on.
      */
     private void refreshTeams() {
-        choTeam.setSelectedIndex(clientgui.getClient().getLocalPlayer()
-                .getTeam());
+        choTeam.setSelectedIndex(clientgui.getClient().getLocalPlayer().getTeam());
     }
 
     /**
@@ -2110,9 +2002,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * condition.
      */
     private void refreshDoneButton(boolean done) {
-        butDone.setText(done ? Messages.getString("ChatLounge.notDone")
-                : Messages.getString("ChatLounge.imDone"));
-        //$NON-NLS-1$ //$NON-NLS-2$
+        butDone.setText(done ? Messages.getString("ChatLounge.notDone") : Messages.getString("ChatLounge.imDone"));
+        // $NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void refreshDoneButton() {
@@ -2129,12 +2020,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             c.sendPlayerInfo();
 
             // WIP on getting entities to be able to be loaded by teammates
-            for (Entity unit : c.getGame().getPlayerEntities(
-                    c.getLocalPlayer(), false)) {
+            for (Entity unit : c.getGame().getPlayerEntities(c.getLocalPlayer(), false)) {
                 // If unit has empty bays it needs to be updated in order for
                 // other entities to be able to load into it.
-                if ((unit.getTransports().size() > 0)
-                        && (unit.getLoadedUnits().isEmpty())
+                if ((unit.getTransports().size() > 0) && (unit.getLoadedUnits().isEmpty())
                         && (unit.getTransportId() == Entity.NONE)) {
                     c.sendUpdateEntity(unit);
                 }
@@ -2156,10 +2045,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     continue;
                 }
 
-                if ((unit.getTransportId() != Entity.NONE)
-                        && (c.getGame().getEntity(unit.getTransportId())
-                                .getOwner().getTeam() != unit.getOwner()
-                                .getTeam())) {
+                if ((unit.getTransportId() != Entity.NONE) && (c.getGame().getEntity(unit.getTransportId()).getOwner()
+                        .getTeam() != unit.getOwner().getTeam())) {
                     unloader(unit);
                 }
             }
@@ -2209,10 +2096,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
             // We can't load all of the squadrons bombs
             if (numLoadedBombs > fighter.getMaxBombPoints()) {
-                JOptionPane.showMessageDialog(clientgui.frame,
-                        Messages.getString("FighterSquadron.bomberror"),
-                        Messages.getString("FighterSquadron.error"),
-                        JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.bomberror"),
+                        Messages.getString("FighterSquadron.error"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
@@ -2234,8 +2119,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (c == null) {
             c = clientgui.getClient();
         }
-        Entity unloader = clientgui.getClient().getGame()
-                .getEntity(unloadee.getTransportId());
+        Entity unloader = clientgui.getClient().getGame().getEntity(unloadee.getTransportId());
         if (null == unloader) {
             return;
         }
@@ -2315,8 +2199,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
         // unload this unit from any other units it might be loaded onto
         if (entity.getTransportId() != Entity.NONE) {
-            Entity loader = clientgui.getClient().getGame()
-                    .getEntity(entity.getTransportId());
+            Entity loader = clientgui.getClient().getGame().getEntity(entity.getTransportId());
             if (null != loader) {
                 loader.unload(entity);
                 entity.setTransportId(Entity.NONE);
@@ -2355,16 +2238,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (editable) {
             client = clientgui.getBots().get(ownerName);
         } else {
-            editable |= ownerId == clientgui.getClient().getLocalPlayer()
-                    .getId();
+            editable |= ownerId == clientgui.getClient().getLocalPlayer().getId();
             client = clientgui.getClient();
         }
 
-        CustomMechDialog cmd = new CustomMechDialog(clientgui, client,
-                entities, editable);
-        cmd.setSize(new Dimension(GUIPreferences.getInstance()
-                .getCustomUnitWidth(), GUIPreferences.getInstance()
-                .getCustomUnitHeight()));
+        CustomMechDialog cmd = new CustomMechDialog(clientgui, client, entities, editable);
+        cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
+                GUIPreferences.getInstance().getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits")); //$NON-NLS-1$
         cmd.setVisible(true);
         GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
@@ -2389,8 +2269,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
         }
         if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
-            Entity nextEnt = cmd
-                    .getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
+            Entity nextEnt = cmd.getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
             customizeMech(nextEnt);
         }
     }
@@ -2409,16 +2288,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (editable) {
             c = clientgui.getBots().get(entity.getOwner().getName());
         } else {
-            editable |= entity.getOwnerId() == clientgui.getClient()
-                    .getLocalPlayer().getId();
+            editable |= entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId();
             c = clientgui.getClient();
         }
         // When we customize a single entity's C3 network setting,
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
         ArrayList<Entity> c3members = new ArrayList<Entity>();
-        Iterator<Entity> playerUnits = c.getGame()
-                .getPlayerEntities(c.getLocalPlayer(), false).iterator();
+        Iterator<Entity> playerUnits = c.getGame().getPlayerEntities(c.getLocalPlayer(), false).iterator();
         while (playerUnits.hasNext()) {
             Entity unit = playerUnits.next();
             if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
@@ -2431,11 +2308,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             // display dialog
             List<Entity> entities = new ArrayList<>();
             entities.add(entity);
-            CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entities,
-                    editable);
-            cmd.setSize(new Dimension(GUIPreferences.getInstance()
-                    .getCustomUnitWidth(), GUIPreferences.getInstance()
-                    .getCustomUnitHeight()));
+            CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entities, editable);
+            cmd.setSize(new Dimension(GUIPreferences.getInstance().getCustomUnitWidth(),
+                    GUIPreferences.getInstance().getCustomUnitHeight()));
             cmd.refreshOptions();
             cmd.refreshQuirks();
             cmd.refreshPartReps();
@@ -2444,10 +2319,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 cmd.setSelectedTab(cmdSelectedTab);
             }
             cmd.setVisible(true);
-            GUIPreferences.getInstance().setCustomUnitHeight(
-                    cmd.getSize().height);
-            GUIPreferences.getInstance()
-                    .setCustomUnitWidth(cmd.getSize().width);
+            GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
+            GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
             cmdSelectedTab = cmd.getSelectedTab();
             if (editable && cmd.isOkay()) {
                 // send changes
@@ -2467,8 +2340,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 }
 
                 // Do we need to update the members of our C3 network?
-                if (((c3master != null) && !c3master.equals(entity
-                        .getC3Master()))
+                if (((c3master != null) && !c3master.equals(entity.getC3Master()))
                         || ((c3master == null) && (entity.getC3Master() != null))) {
                     for (Entity unit : c3members) {
                         c.sendUpdateEntity(unit);
@@ -2494,8 +2366,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (editable) {
             c = clientgui.getBots().get(entity.getOwner().getName());
         } else {
-            editable |= entity.getOwnerId() == clientgui.getClient()
-                    .getLocalPlayer().getId();
+            editable |= entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId();
             c = clientgui.getClient();
         }
 
@@ -2525,14 +2396,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (editable) {
             c = clientgui.getBots().get(entity.getOwner().getName());
         } else {
-            editable |= entity.getOwnerId() == clientgui.getClient()
-                    .getLocalPlayer().getId();
+            editable |= entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId();
             c = clientgui.getClient();
         }
 
         // display dialog
-        UnitEditorDialog med = new UnitEditorDialog(clientgui.getFrame(),
-                entity);
+        UnitEditorDialog med = new UnitEditorDialog(clientgui.getFrame(), entity);
         // med.setPlayer(c.getLocalPlayer());
         med.setVisible(true);
         c.sendUpdateEntity(entity);
@@ -2554,8 +2423,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Pop up the view mech dialog
      */
     private void mechReadout(Entity entity) {
-        final JDialog dialog = new JDialog(clientgui.frame,
-                Messages.getString("ChatLounge.quickView"), false); //$NON-NLS-1$
+        final JDialog dialog = new JDialog(clientgui.frame, Messages.getString("ChatLounge.quickView"), false); //$NON-NLS-1$
         dialog.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -2620,14 +2488,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     public void loadFS(Vector<Integer> fighterIds) {
-        String name = JOptionPane.showInputDialog(clientgui.frame,
-                "Choose a squadron designation");
+        String name = JOptionPane.showInputDialog(clientgui.frame, "Choose a squadron designation");
         if ((name == null) || (name.trim().length() == 0)) {
             name = "Flying Circus";
         }
         FighterSquadron fs = new FighterSquadron(name);
-        fs.setOwner(clientgui.getClient().getGame()
-                .getEntity(fighterIds.firstElement()).getOwner());
+        fs.setOwner(clientgui.getClient().getGame().getEntity(fighterIds.firstElement()).getOwner());
         clientgui.getClient().sendAddSquadron(fs, fighterIds);
     }
 
@@ -2636,13 +2502,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     public void loadRandomSkills() {
-        clientgui.getRandomSkillDialog().showDialog(
-                clientgui.getClient().getGame().getEntitiesVector());
+        clientgui.getRandomSkillDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
     }
 
     public void loadRandomNames() {
-        clientgui.getRandomNameDialog().showDialog(
-                clientgui.getClient().getGame().getEntitiesVector());
+        clientgui.getRandomNameDialog().showDialog(clientgui.getClient().getGame().getEntitiesVector());
     }
 
     /**
@@ -2652,13 +2516,22 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         int[] selected = lisBoardsSelected.getSelectedIndices();
         for (final int newVar : selected) {
             String name = board;
-            if (!MapSettings.BOARD_RANDOM.equals(name)
-                    && !MapSettings.BOARD_SURPRISE.equals(name)
+            if (!MapSettings.BOARD_RANDOM.equals(name) && !MapSettings.BOARD_SURPRISE.equals(name)
                     && chkRotateBoard.isSelected()) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
-            ((DefaultListModel<String>) lisBoardsSelected.getModel())
-                    .setElementAt(newVar + ": " + name, newVar); //$NON-NLS-1$
+
+            // Validate the map
+            IBoard b = new Board(16, 17);
+            if (!MapSettings.BOARD_GENERATED.equals(board) && !MapSettings.BOARD_RANDOM.equals(board)
+                    && !MapSettings.BOARD_SURPRISE.equals(board)) {
+                b.load(new MegaMekFile(Configuration.boardsDir(), board + ".board").getFile());
+                if (!b.isValid()) {
+                    JOptionPane.showMessageDialog(this, "The Selected board is invalid, please select another.");
+                    return;
+                }
+            }
+            ((DefaultListModel<String>) lisBoardsSelected.getModel()).setElementAt(newVar + ": " + name, newVar); //$NON-NLS-1$
             mapSettings.getBoardsSelectedVector().set(newVar, name);
         }
         lisBoardsSelected.setSelectedIndices(selected);
@@ -2788,8 +2661,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             // Build a Vector of this player's entities.
             Client c = getPlayerSelected();
             if (c == null) {
-                clientgui.doAlertDialog(
-                        Messages.getString("ChatLounge.ImproperCommand"),
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                         Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
@@ -2800,8 +2672,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 clientgui.getGameOptionsDialog().setEditable(true);
             }
             // Display the game options dialog.
-            clientgui.getGameOptionsDialog().update(
-                    clientgui.getClient().getGame().getOptions());
+            clientgui.getGameOptionsDialog().update(clientgui.getClient().getGame().getOptions());
             clientgui.getGameOptionsDialog().setVisible(true);
         } else if (ev.getSource().equals(butCompact)) {
             if (butCompact.isSelected()) {
@@ -2814,8 +2685,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             clientgui.getStartingPositionDialog().update();
             Client c = getPlayerSelected();
             if (c == null) {
-                clientgui.doAlertDialog(
-                        Messages.getString("ChatLounge.ImproperCommand"),
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                         Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
@@ -2826,8 +2696,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             // list of entities with a list from a file.
             Client c = getPlayerSelected();
             if (c == null) {
-                clientgui.doAlertDialog(
-                        Messages.getString("ChatLounge.ImproperCommand"),
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                         Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
@@ -2837,14 +2706,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             // list of entities to a file.
             Client c = getPlayerSelected();
             if (c == null) {
-                clientgui.doAlertDialog(
-                        Messages.getString("ChatLounge.ImproperCommand"),
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                         Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
-            clientgui.saveListFile(
-                    c.getGame().getPlayerEntities(c.getLocalPlayer(), false), c
-                            .getLocalPlayer().getName());
+            clientgui.saveListFile(c.getGame().getPlayerEntities(c.getLocalPlayer(), false),
+                    c.getLocalPlayer().getName());
         } else if (ev.getSource().equals(butAddBot)) {
             BotConfigDialog bcd = new BotConfigDialog(clientgui.frame);
             bcd.setVisible(true);
@@ -2852,20 +2719,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 return; // user didn't click 'ok', add no bot
             }
             if (clientgui.getBots().containsKey(bcd.getBotName())) {
-                clientgui
-                        .doAlertDialog(
-                                Messages.getString("ChatLounge.AlertExistsBot.title"),
-                                Messages.getString("ChatLounge.AlertExistsBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertExistsBot.title"),
+                        Messages.getString("ChatLounge.AlertExistsBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
-                BotClient c = bcd.getSelectedBot(clientgui.getClient()
-                        .getHost(), clientgui.getClient().getPort());
+                BotClient c = bcd.getSelectedBot(clientgui.getClient().getHost(), clientgui.getClient().getPort());
                 c.setClientGUI(clientgui);
                 c.getGame().addGameListener(new BotGUI(c));
                 try {
                     c.connect();
                 } catch (Exception e) {
-                    clientgui.doAlertDialog(
-                            Messages.getString("ChatLounge.AlertBot.title"),
+                    clientgui.doAlertDialog(Messages.getString("ChatLounge.AlertBot.title"),
                             Messages.getString("ChatLounge.AlertBot.message")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 clientgui.getBots().put(bcd.getBotName(), c);
@@ -2873,45 +2736,37 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         } else if (ev.getSource().equals(butRemoveBot)) {
             Client c = getPlayerSelected();
             if ((c == null) || c.equals(clientgui.getClient())) {
-                clientgui.doAlertDialog(
-                        Messages.getString("ChatLounge.ImproperCommand"),
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"),
                         Messages.getString("ChatLounge.SelectBo")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             c.die();
             clientgui.getBots().remove(c.getName());
         } else if (ev.getSource() == butConditions) {
-            clientgui.getPlanetaryConditionsDialog().update(
-                    clientgui.getClient().getGame().getPlanetaryConditions());
+            clientgui.getPlanetaryConditionsDialog().update(clientgui.getClient().getGame().getPlanetaryConditions());
             clientgui.getPlanetaryConditionsDialog().setVisible(true);
         } else if (ev.getSource() == butRandomMap) {
             randomMapDialog.setVisible(true);
         } else if (ev.getSource().equals(butChange)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
                 changeMap(lisBoardsAvailable.getSelectedValue());
-                lisBoardsSelected.setSelectedIndex(lisBoardsSelected
-                        .getSelectedIndex() + 1);
+                lisBoardsSelected.setSelectedIndex(lisBoardsSelected.getSelectedIndex() + 1);
             }
         } else if (ev.getSource().equals(buttonBoardPreview)) {
             previewGameBoard();
-        } else if (ev.getSource().equals(butMapSize)
-                || ev.getSource().equals(butSpaceSize)) {
-            MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui,
-                    mapSettings);
+        } else if (ev.getSource().equals(butMapSize) || ev.getSource().equals(butSpaceSize)) {
+            MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui, mapSettings);
             mdd.setVisible(true);
         } else if (ev.getSource().equals(comboMapSizes)) {
             if ((comboMapSizes.getSelectedItem() != null)
-                    && !comboMapSizes.getSelectedItem().equals(
-                            Messages.getString("ChatLounge.CustomMapSize"))) {
-                BoardDimensions size = (BoardDimensions) comboMapSizes
-                        .getSelectedItem();
+                    && !comboMapSizes.getSelectedItem().equals(Messages.getString("ChatLounge.CustomMapSize"))) {
+                BoardDimensions size = (BoardDimensions) comboMapSizes.getSelectedItem();
                 mapSettings.setBoardSize(size.width(), size.height());
                 resetAvailBoardSelection = true;
                 resetSelectedBoards = true;
                 clientgui.getClient().sendMapSettings(mapSettings);
             }
-        } else if (ev.getSource().equals(chkRotateBoard)
-                && (lisBoardsAvailable.getSelectedIndex() != -1)) {
+        } else if (ev.getSource().equals(chkRotateBoard) && (lisBoardsAvailable.getSelectedIndex() != -1)) {
             previewMapsheet();
         } else if (ev.getSource().equals(comboMapType)) {
             mapSettings.setMedium(comboMapType.getSelectedIndex());
@@ -2940,12 +2795,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     public void mouseClicked(MouseEvent arg0) {
-        if ((arg0.getClickCount() == 1)
-                && arg0.getSource().equals(lisBoardsAvailable)) {
+        if ((arg0.getClickCount() == 1) && arg0.getSource().equals(lisBoardsAvailable)) {
             previewMapsheet();
         }
-        if ((arg0.getClickCount() == 2)
-                && arg0.getSource().equals(lisBoardsAvailable)) {
+        if ((arg0.getClickCount() == 2) && arg0.getSource().equals(lisBoardsAvailable)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
                 changeMap(lisBoardsAvailable.getSelectedValue());
             }
@@ -2987,8 +2840,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     public void refreshMapSummaryLabel() {
         String txt = Messages.getString("ChatLounge.MapSummary"); //$NON-NLS-1$
         txt = txt + " " //$NON-NLS-1$
-                + (mapSettings.getBoardWidth() * mapSettings.getMapWidth())
-                + " x " //$NON-NLS-1$
+                + (mapSettings.getBoardWidth() * mapSettings.getMapWidth()) + " x " //$NON-NLS-1$
                 + (mapSettings.getBoardHeight() * mapSettings.getMapHeight());
         if (chkIncludeGround.isSelected()) {
             txt = txt + " " + (String) comboMapType.getSelectedItem();
@@ -2999,8 +2851,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         StringBuilder selectedMaps = new StringBuilder();
         selectedMaps.append("<html>"); //$NON-NLS-1$
-        selectedMaps.append(Messages
-                .getString("ChatLounge.MapSummarySelectedMaps"));
+        selectedMaps.append(Messages.getString("ChatLounge.MapSummarySelectedMaps"));
         selectedMaps.append("<br>"); //$NON-NLS-1$
         ListModel<String> model = lisBoardsSelected.getModel();
         for (int i = 0; i < model.getSize(); i++) {
@@ -3015,23 +2866,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     public void refreshGameYearLabel() {
         String txt = Messages.getString("ChatLounge.GameYear"); //$NON-NLS-1$
-        txt = txt
-                + " " //$NON-NLS-1$
-                + clientgui.getClient().getGame().getOptions()
-                        .intOption("year"); //$NON-NLS-1$
+        txt = txt + " " //$NON-NLS-1$
+                + clientgui.getClient().getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR); // $NON-NLS-1$
         lblGameYear.setText(txt);
     }
 
     public void refreshTechLevelLabel() {
         String tlString;
-        IOption tlOpt = clientgui.getClient().getGame().getOptions()
-                .getOption("techlevel");
+        IOption tlOpt = clientgui.getClient().getGame().getOptions().getOption("techlevel");
         if (tlOpt != null) {
             tlString = tlOpt.stringValue();
 
         } else {
-            tlString = TechConstants
-                    .getLevelDisplayableName(TechConstants.T_TECH_UNKNOWN);
+            tlString = TechConstants.getLevelDisplayableName(TechConstants.T_TECH_UNKNOWN);
         }
         String txt = Messages.getString("ChatLounge.TechLevel"); //$NON-NLS-1$
         txt = txt + " " + tlString; //$NON-NLS-1$
@@ -3044,42 +2891,37 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         final IGame game = client.getGame();
         final GameOptions gOpts = game.getOptions();
         // enforce exclusive deployment zones in double blind
-        if (gOpts.booleanOption("double_blind") //$NON-NLS-1$
-                && gOpts.booleanOption("exclusive_db_deployment")) { //$NON-NLS-1$
+        if (gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) // $NON-NLS-1$
+                && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT)) { // $NON-NLS-1$
             int i = client.getLocalPlayer().getStartingPos();
             if (i == 0) {
-                clientgui.doAlertDialog(
-                        Messages.getString("ChatLounge.ExclusiveDeploy.title"), //$NON-NLS-1$
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ExclusiveDeploy.title"), //$NON-NLS-1$
                         Messages.getString("ChatLounge.ExclusiveDeploy.msg")); //$NON-NLS-1$
                 return;
             }
-            for (Enumeration<IPlayer> e = client.getGame()
-                    .getPlayers(); e.hasMoreElements();) {
+            for (Enumeration<IPlayer> e = client.getGame().getPlayers(); e.hasMoreElements();) {
                 IPlayer player = e.nextElement();
                 if (player.getStartingPos() == 0) {
                     continue;
                 }
                 // CTR and EDG don't overlap
-                if (((player.getStartingPos() == 9) && (i == 10))
-                        || ((player.getStartingPos() == 10) && (i == 9))) {
+                if (((player.getStartingPos() == 9) && (i == 10)) || ((player.getStartingPos() == 10) && (i == 9))) {
                     continue;
                 }
 
                 // check for overlapping starting directions
-                if (((player.getStartingPos() == i)
-                        || ((player.getStartingPos() + 1) == i) || ((player
-                        .getStartingPos() - 1) == i))
+                if (((player.getStartingPos() == i) || ((player.getStartingPos() + 1) == i)
+                        || ((player.getStartingPos() - 1) == i))
                         && (player.getId() != client.getLocalPlayer().getId())) {
-                    clientgui.doAlertDialog(
-                            Messages.getString("ChatLounge.OverlapDeploy.title"), //$NON-NLS-1$
+                    clientgui.doAlertDialog(Messages.getString("ChatLounge.OverlapDeploy.title"), //$NON-NLS-1$
                             Messages.getString("ChatLounge.OverlapDeploy.msg")); //$NON-NLS-1$
                     return;
                 }
             }
         }
-        
+
         // Make sure player has a commander if Commander killed victory is on
-        if (gOpts.booleanOption("commander_killed")) {
+        if (gOpts.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
             ArrayList<String> players = new ArrayList<String>();
             if ((game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1)
                     && (game.getEntitiesOwnedBy(client.getLocalPlayer()) > 0)) {
@@ -3089,7 +2931,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if ((game.getLiveCommandersOwnedBy(bc.getLocalPlayer()) < 1)
                         && (game.getEntitiesOwnedBy(bc.getLocalPlayer()) > 0)) {
                     players.add(bc.getLocalPlayer().getName());
-                } 
+                }
             }
             if (players.size() > 0) {
                 String title = Messages.getString("ChatLounge.noCmdr.title"); //$NON-NLS-1$
@@ -3100,7 +2942,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 clientgui.doAlertDialog(title, msg);
                 return;
             }
-            
+
         }
 
         boolean done = !client.getLocalPlayer().isDone();
@@ -3115,8 +2957,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if ((tablePlayers == null) || (tablePlayers.getSelectedRow() == -1)) {
             return clientgui.getClient();
         }
-        String name = (String) tablePlayers.getValueAt(
-                tablePlayers.getSelectedRow(), 0);
+        String name = (String) tablePlayers.getValueAt(tablePlayers.getSelectedRow(), 0);
         BotClient c = (BotClient) clientgui.getBots().get(name);
         if ((c == null) && clientgui.getClient().getName().equals(name)) {
             return clientgui.getClient();
@@ -3133,8 +2974,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     /*
-     *  This is required because the ChatLounge adds the listener to the
-     *  MechSummaryCache that must be removed explicitly.
+     * This is required because the ChatLounge adds the listener to the
+     * MechSummaryCache that must be removed explicitly.
      */
     public void die() {
         MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
@@ -3174,9 +3015,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             Client c = getPlayerSelected();
             if (c == null) {
 
-                tablePlayers.removeRowSelectionInterval(
-                        tablePlayers.getSelectedRow(),
-                        tablePlayers.getSelectedRow());
+                tablePlayers.removeRowSelectionInterval(tablePlayers.getSelectedRow(), tablePlayers.getSelectedRow());
                 return;
             }
             if (c instanceof BotClient) {
@@ -3187,16 +3026,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             butRemoveBot.setEnabled(false);
             Client c = getPlayerSelected();
             if (c == null) {
-                tablePlayers.removeRowSelectionInterval(
-                        tablePlayers.getSelectedRow(),
-                        tablePlayers.getSelectedRow());
+                tablePlayers.removeRowSelectionInterval(tablePlayers.getSelectedRow(), tablePlayers.getSelectedRow());
                 return;
             }
             if (c instanceof BotClient) {
                 butRemoveBot.setEnabled(true);
             }
-            boolean tf = (!c.getGame()
-                    .getPlayerEntities(c.getLocalPlayer(), false).isEmpty());
+            boolean tf = (!c.getGame().getPlayerEntities(c.getLocalPlayer(), false).isEmpty());
             butDeleteAll.setEnabled(tf);
             butSaveList.setEnabled(tf);
             refreshCamos();
@@ -3254,7 +3090,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             int cost = 0;
             double ton = 0;
             for (Entity entity : clientgui.getClient().getEntitiesVector()) {
-                 if (entity.getOwner().equals(player)) {
+                if (entity.getOwner().equals(player)) {
                     bv += entity.calculateBattleValue();
                     cost += entity.getCost(false);
                     ton += entity.getWeight();
@@ -3297,10 +3133,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         public Object getValueAt(int row, int col) {
             IPlayer player = getPlayerAt(row);
-            boolean blindDrop = !player.equals(clientgui.getClient()
-                    .getLocalPlayer())
-                    && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("real_blind_drop");
+            boolean blindDrop = !player.equals(clientgui.getClient().getLocalPlayer()) && clientgui.getClient()
+                    .getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP);
             if (col == COL_BV) {
                 int bv = Math.round(bvs.get(row));
                 if (blindDrop) {
@@ -3310,8 +3144,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             } else if (col == COL_PLAYER) {
                 return player.getName();
             } else if (col == COL_START) {
-                return IStartingPositions.START_LOCATION_NAMES[player
-                        .getStartingPos()];
+                return IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()];
             } else if (col == COL_TON) {
                 double ton = tons.get(row);
                 if (blindDrop) {
@@ -3334,8 +3167,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
     }
 
-    public class PlayerTableMouseAdapter extends MouseInputAdapter implements
-            ActionListener {
+    public class PlayerTableMouseAdapter extends MouseInputAdapter implements ActionListener {
 
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -3343,8 +3175,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 int row = tablePlayers.rowAtPoint(e.getPoint());
                 IPlayer player = playerModel.getPlayerAt(row);
                 if (player != null) {
-                    boolean isOwner = player.equals(clientgui.getClient()
-                            .getLocalPlayer());
+                    boolean isOwner = player.equals(clientgui.getClient().getLocalPlayer());
                     boolean isBot = clientgui.getBots().get(player.getName()) != null;
                     if ((isOwner || isBot)) {
                         customizePlayer();
@@ -3367,8 +3198,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             JPopupMenu popup = new JPopupMenu();
             int row = tablePlayers.rowAtPoint(e.getPoint());
             IPlayer player = playerModel.getPlayerAt(row);
-            boolean isOwner = player.equals(clientgui.getClient()
-                    .getLocalPlayer());
+            boolean isOwner = player.equals(clientgui.getClient().getLocalPlayer());
             boolean isBot = clientgui.getBots().get(player.getName()) != null;
             if (e.isPopupTrigger()) {
                 JMenuItem menuItem = null;
@@ -3383,8 +3213,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
 
         public void actionPerformed(ActionEvent action) {
-            StringTokenizer st = new StringTokenizer(action.getActionCommand(),
-                    "|");
+            StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
             String command = st.nextToken();
             if (command.equalsIgnoreCase("CONFIGURE")) {
                 customizePlayer();
@@ -3458,10 +3287,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         public Object getValueAt(int row, int col) {
             boolean compact = butCompact.isSelected();
             Entity entity = getEntityAt(row);
-            boolean blindDrop = !entity.getOwner().equals(
-                    clientgui.getClient().getLocalPlayer())
-                    && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("blind_drop");
+            boolean blindDrop = !entity.getOwner().equals(clientgui.getClient().getLocalPlayer())
+                    && clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP);
             String value = "";
             if (col == COL_BV) {
                 value += entity.calculateBattleValue();
@@ -3469,10 +3296,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (compact) {
                     value += entity.getOwner().getName();
                 } else {
-                    value += entity.getOwner().getName()
-                            + "<br>Team "
-                            + clientgui.getClient().getGame()
-                                    .getPlayer(entity.getOwnerId()).getTeam();
+                    value += entity.getOwner().getName() + "<br>Team "
+                            + clientgui.getClient().getGame().getPlayer(entity.getOwnerId()).getTeam();
                 }
             } else if (col == COL_PILOT) {
                 if (compact) {
@@ -3505,19 +3330,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             private static final String FILENAME_UNKNOWN_UNIT = "unknown_unit.gif";
             private static final long serialVersionUID = -9154596036677641620L;
 
-            public Component getTableCellRendererComponent(JTable table,
-                    Object value, boolean isSelected, boolean hasFocus,
-                    int row, int column) {
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
                 Component c = this;
                 setText(getValueAt(row, column).toString(), isSelected);
                 Entity entity = getEntityAt(row);
                 if (null == entity) {
                     return null;
                 }
-                boolean isOwner = entity.getOwner().equals(
-                        clientgui.getClient().getLocalPlayer());
-                boolean blindDrop = clientgui.getClient().getGame()
-                        .getOptions().booleanOption("blind_drop");
+                boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
+                boolean blindDrop = clientgui.getClient().getGame().getOptions()
+                        .booleanOption(OptionsConstants.BASE_BLIND_DROP);
                 boolean compact = butCompact.isSelected();
                 if (!isOwner && blindDrop) {
                     if (column == COL_UNIT) {
@@ -3525,7 +3348,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             clearImage();
                         } else {
                             Image image = getToolkit().getImage(
-                                    new File(Configuration.miscImagesDir(),
+                                    new MegaMekFile(Configuration.miscImagesDir(),
                                             FILENAME_UNKNOWN_UNIT).toString());
                             image = image.getScaledInstance(-1, 72,
                                     Image.SCALE_DEFAULT);
@@ -3536,7 +3359,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             clearImage();
                         } else {
                             Image image = getToolkit().getImage(
-                                    new File(Configuration.portraitImagesDir(),
+                                    new MegaMekFile(Configuration.portraitImagesDir(),
                                             FILENAME_PORTRAIT_DEFAULT)
                                             .toString());
                             image = image.getScaledInstance(-1, 50,
@@ -3559,14 +3382,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         } else {
                             setPortrait(entity.getCrew());
                         }
-                        setToolTipText(formatPilotTooltip(
-                                entity.getCrew(),
+                        setToolTipText(formatPilotTooltip(entity.getCrew(),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("command_init"),
+                                        .booleanOption(OptionsConstants.RPG_COMMAND_INIT),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("individual_initiative"),
+                                        .booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("toughness")));
+                                        .booleanOption(OptionsConstants.RPG_TOUGHNESS)));
                     }
                 }
                 if (isSelected) {
@@ -3614,8 +3436,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                     // make sure no images are longer than 72 pixels
                     if (null != portrait) {
-                        portrait = portrait.getScaledInstance(-1, 50,
-                                Image.SCALE_SMOOTH);
+                        portrait = portrait.getScaledInstance(-1, 50, Image.SCALE_SMOOTH);
                         setImage(portrait);
                     }
                 } catch (Exception err) {
@@ -3639,8 +3460,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 entities.add(mekModel.getEntityAt(rows[i]));
             }
             int code = e.getKeyCode();
-            if ((code == KeyEvent.VK_DELETE)
-                    || (code == KeyEvent.VK_BACK_SPACE)) {
+            if ((code == KeyEvent.VK_DELETE) || (code == KeyEvent.VK_BACK_SPACE)) {
                 e.consume();
                 for (Entity entity : entities) {
                     delete(entity);
@@ -3659,12 +3479,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
     }
 
-    public class MekTableMouseAdapter extends MouseInputAdapter implements
-            ActionListener {
+    public class MekTableMouseAdapter extends MouseInputAdapter implements ActionListener {
 
         public void actionPerformed(ActionEvent action) {
-            StringTokenizer st = new StringTokenizer(action.getActionCommand(),
-                    "|");
+            StringTokenizer st = new StringTokenizer(action.getActionCommand(), "|");
             String command = st.nextToken();
             int[] rows = tableEntities.getSelectedRows();
             int row = tableEntities.getSelectedRow();
@@ -3704,8 +3522,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     // unload this unit from any other units it might be loaded
                     // onto
                     if (entity.getTransportId() != Entity.NONE) {
-                        Entity loader = clientgui.getClient().getGame()
-                                .getEntity(entity.getTransportId());
+                        Entity loader = clientgui.getClient().getGame().getEntity(entity.getTransportId());
                         if (null != loader) {
                             loader.unload(entity);
                             entity.setTransportId(Entity.NONE);
@@ -3721,8 +3538,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     c = clientgui.getClient();
                 }
                 for (Entity e : entities) {
-                    int[] skills = c.getRandomSkillsGenerator()
-                            .getRandomSkills(e, true);
+                    int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
                     e.getCrew().setGunnery(skills[0]);
                     e.getCrew().setPiloting(skills[1]);
                     c.sendUpdateEntity(e);
@@ -3737,8 +3553,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     c.sendUpdateEntity(e);
                 }
             } else if (command.equalsIgnoreCase("LOAD")) {
-                StringTokenizer stLoad = new StringTokenizer(st.nextToken(),
-                        ":");
+                StringTokenizer stLoad = new StringTokenizer(st.nextToken(), ":");
                 int id = Integer.parseInt(stLoad.nextToken());
                 int bayNumber = Integer.parseInt(stLoad.nextToken());
                 Entity loadingEntity = clientgui.getClient().getEntity(id);
@@ -3750,14 +3565,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     Bay bay = loadingEntity.getBayById(bayNumber);
                     capacity = bay.getUnused();
                     hasEnoughCargoCapacity = entities.size() <= capacity;
-                    errorMessage = Messages.getString("LoadingBay.baytoomany") + //$NON-NLS-2$
+                    errorMessage = Messages.getString("LoadingBay.baytoomany") + // $NON-NLS-2$
                             " " + (int) capacity + ".";
                 } else {
                     HashMap<Long, Double> capacities, counts;
                     capacities = new HashMap<Long, Double>();
                     counts = new HashMap<Long, Double>();
-                    HashMap<Transporter, Double> potentialLoad = 
-                            new HashMap<Transporter, Double>();
+                    HashMap<Transporter, Double> potentialLoad = new HashMap<Transporter, Double>();
                     // Get the counts and capacities for all present types
                     for (Entity e : entities) {
                         long entityType = e.getEntityType();
@@ -3773,21 +3587,20 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                 // This is a super hack... When getting
                                 // capacities, troopspace gives unused space in
                                 // terms of tons, and BattleArmorHandles gives
-                                // it in terms of unit count.  If I call
+                                // it in terms of unit count. If I call
                                 // getUnused, it sums these together, and is
-                                // meaningless, so we'll go through all 
+                                // meaningless, so we'll go through all
                                 // transporters....
                                 boolean hasTroopSpace = false;
-                                for (Transporter t: loadingEntity.getTransports()) {
+                                for (Transporter t : loadingEntity.getTransports()) {
                                     double loadWeight = e.getWeight();
                                     if (potentialLoad.containsKey(t)) {
                                         loadWeight += potentialLoad.get(t);
                                     }
-                                    if (!(t instanceof BattleArmorHandlesTank)
-                                            && t.canLoad(e) 
+                                    if (!(t instanceof BattleArmorHandlesTank) && t.canLoad(e)
                                             && (loadWeight <= t.getUnused())) {
                                         hasTroopSpace = true;
-                                        potentialLoad.put(t, loadWeight);                                        
+                                        potentialLoad.put(t, loadWeight);
                                         break;
                                     }
                                 }
@@ -3848,11 +3661,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             } else {
                                 messageName = "LoadingBay.nonbaytoomany";
                             }
-                            errorMessage = Messages.getString(
-                                    messageName,
-                                    new Object[] { currCount,
-                                            Entity.getEntityTypeName(typeId),
-                                            currCapacity });
+                            errorMessage = Messages.getString(messageName,
+                                    new Object[] { currCount, Entity.getEntityTypeName(typeId), currCapacity });
                         }
                     }
                 }
@@ -3861,9 +3671,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         loader(e, id, bayNumber);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(clientgui.frame,
-                            errorMessage,
-                            Messages.getString("LoadingBay.error"),//$NON-NLS-2$
+                    JOptionPane.showMessageDialog(clientgui.frame, errorMessage, Messages.getString("LoadingBay.error"), // $NON-NLS-2$
                             JOptionPane.ERROR_MESSAGE);
                 }
             } else if (command.equalsIgnoreCase("UNLOAD")) {
@@ -3886,15 +3694,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     fighters.add(e.getId());
                 }
                 if ((!clientgui.getClient().getGame().getOptions()
-                        .booleanOption("allow_large_squadrons") && (fighters
-                        .size() > FighterSquadron.MAX_SIZE))
+                        .booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
+                        && (fighters.size() > FighterSquadron.MAX_SIZE))
                         || (clientgui.getClient().getGame().getOptions()
-                                .booleanOption("allow_large_squadrons") && (fighters
-                                .size() > FighterSquadron.ALTERNATE_MAX_SIZE))) {
-                    JOptionPane.showMessageDialog(clientgui.frame,
-                            Messages.getString("FighterSquadron.toomany"),
-                            Messages.getString("FighterSquadron.error"),
-                            JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                                .booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS)
+                                && (fighters.size() > FighterSquadron.ALTERNATE_MAX_SIZE))) {
+                    JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.toomany"),
+                            Messages.getString("FighterSquadron.error"), JOptionPane.ERROR_MESSAGE); // $NON-NLS-1$
+                                                                                                     // //$NON-NLS-2$
                 } else {
                     loadFS(fighters);
                 }
@@ -3911,12 +3718,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 for (Entity e : entities) {
                     QuirksHandler.addCustomQuirk(e, false);
                 }
-            }  else if (command.equalsIgnoreCase("SAVE_QUIRKS_MODEL")) {
+            } else if (command.equalsIgnoreCase("SAVE_QUIRKS_MODEL")) {
                 for (Entity e : entities) {
                     QuirksHandler.addCustomQuirk(e, true);
                 }
-            } else if (command.equalsIgnoreCase("RAPIDFIREMG_OFF")
-                    || command.equalsIgnoreCase("RAPIDFIREMG_ON")) {
+            } else if (command.equalsIgnoreCase("RAPIDFIREMG_OFF") || command.equalsIgnoreCase("RAPIDFIREMG_ON")) {
                 boolean rapidFire = command.equalsIgnoreCase("RAPIDFIREMG_ON");
                 for (Entity e : entities) {
                     for (Mounted m : e.getWeaponList()) {
@@ -3927,19 +3733,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         m.setRapidfire(rapidFire);
                     }
                 }
-            } else if (command.equalsIgnoreCase("HOTLOAD_OFF")
-                    || command.equalsIgnoreCase("HOTLOAD_ON")) {
+            } else if (command.equalsIgnoreCase("HOTLOAD_OFF") || command.equalsIgnoreCase("HOTLOAD_ON")) {
                 boolean hotLoad = command.equalsIgnoreCase("HOTLOAD_ON");
                 for (Entity e : entities) {
                     for (Mounted m : e.getWeaponList()) {
                         WeaponType wtype = (WeaponType) m.getType();
-                        if (!wtype.hasFlag(WeaponType.F_MISSILE)
-                                || (wtype.getAmmoType() != AmmoType.T_LRM)) {
+                        if (!wtype.hasFlag(WeaponType.F_MISSILE) || (wtype.getAmmoType() != AmmoType.T_LRM)) {
                             continue;
                         }
                         m.setHotLoad(hotLoad);
                     }
-                    for (Mounted m :e.getAmmo()) {
+                    for (Mounted m : e.getAmmo()) {
                         AmmoType atype = (AmmoType) m.getType();
                         if (atype.getAmmoType() != AmmoType.T_LRM) {
                             continue;
@@ -3948,15 +3752,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         // Set the mode too, so vehicles can switch back
                         int numModes = m.getType().getModesCount();
                         for (int i = 0; i < numModes; i++) {
-                            if (m.getType().getMode(i).getName()
-                                    .equals("HotLoad")) {
+                            if (m.getType().getMode(i).getName().equals("HotLoad")) {
                                 m.setMode(i);
                             }
                         }
                     }
                 }
-            } else if (command.equalsIgnoreCase("SEARCHLIGHT_OFF")
-                    || command.equalsIgnoreCase("SEARCHLIGHT_ON")) {
+            } else if (command.equalsIgnoreCase("SEARCHLIGHT_OFF") || command.equalsIgnoreCase("SEARCHLIGHT_ON")) {
                 boolean searchLight = command.equalsIgnoreCase("SEARCHLIGHT_ON");
                 for (Entity e : entities) {
                     if (!e.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT)) {
@@ -3965,9 +3767,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                 }
             }
-            
-            
-            
 
         }
 
@@ -3977,10 +3776,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 int row = tableEntities.rowAtPoint(e.getPoint());
                 Entity entity = mekModel.getEntityAt(row);
                 if (entity != null) {
-                    boolean isOwner = entity.getOwner().equals(
-                            clientgui.getClient().getLocalPlayer());
-                    boolean isBot = clientgui.getBots().get(
-                            entity.getOwner().getName()) != null;
+                    boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
+                    boolean isBot = clientgui.getBots().get(entity.getOwner().getName()) != null;
                     if ((isOwner || isBot)) {
                         customizeMech(entity);
                     }
@@ -4015,20 +3812,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (null == entity) {
                 return;
             }
-            boolean isOwner = entity.getOwner().equals(
-                    clientgui.getClient().getLocalPlayer());
-            boolean isBot = clientgui.getBots()
-                    .get(entity.getOwner().getName()) != null;
+            boolean isOwner = entity.getOwner().equals(clientgui.getClient().getLocalPlayer());
+            boolean isBot = clientgui.getBots().get(entity.getOwner().getName()) != null;
             boolean blindDrop = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("blind_drop");
+                    .booleanOption(OptionsConstants.BASE_BLIND_DROP);
             boolean isQuirksEnabled = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("stratops_quirks");
+                    .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
             boolean isRapidFireMG = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("tacops_burst");
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
             boolean isHotLoad = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("tacops_hotload");
-            boolean isSearchlight = clientgui.getClient().getGame()
-                    .getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
+            boolean isSearchlight = clientgui.getClient().getGame().getPlanetaryConditions()
+                    .getLight() > PlanetaryConditions.L_DUSK;
             boolean allLoaded = true;
             boolean allUnloaded = true;
             boolean allCapFighter = true;
@@ -4050,8 +3845,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 } else {
                     allUnloaded = false;
                 }
-                if (!en.isCapitalFighter(true)
-                        || (en instanceof FighterSquadron)) {
+                if (!en.isCapitalFighter(true) || (en instanceof FighterSquadron)) {
                     allCapFighter = false;
                 }
                 if ((prevOwnerId != -1) && (en.getOwnerId() != prevOwnerId)) {
@@ -4067,9 +3861,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (!(en instanceof BattleArmor)) {
                     allBattleArmor = false;
                 }
-                if ((prevEntity != null)
-                        && !en.getClass().equals(prevEntity.getClass())
-                        && !allInfantry) {
+                if ((prevEntity != null) && !en.getClass().equals(prevEntity.getClass()) && !allInfantry) {
                     allSameEntityType = false;
                 }
                 if (isRapidFireMG || isHotLoad) {
@@ -4077,16 +3869,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         EquipmentType etype = m.getType();
                         if (etype.hasFlag(WeaponType.F_MG)) {
                             hasMGs |= true;
-                            hasRapidFireMG |= m.isRapidfire();    
+                            hasRapidFireMG |= m.isRapidfire();
                         }
                         if (etype.hasFlag(WeaponType.F_MISSILE)) {
                             hasLRMS |= ((WeaponType) etype).getAmmoType() == AmmoType.T_LRM;
-                            hasHotLoad |= m.isHotLoaded();                            
+                            hasHotLoad |= m.isHotLoaded();
                         }
                     }
                 }
-                boolean hasSearchlightQuirk = isQuirksEnabled
-                        && en.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT);
+                boolean hasSearchlightQuirk = isQuirksEnabled && en.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT);
                 if (!hasSearchlightQuirk) {
                     hasSearchlight |= en.hasExternaSpotlight();
                 }
@@ -4152,8 +3943,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 // Change Owner Menu Item
                 menu = new JMenu(Messages.getString("ChatLounge.ChangeOwner"));
                 menu.setEnabled(isOwner || isBot);
-                Enumeration<IPlayer> players = clientgui.getClient()
-                        .getPlayers();
+                Enumeration<IPlayer> players = clientgui.getClient().getPlayers();
                 while (players.hasMoreElements() && (isOwner || isBot)) {
                     IPlayer p = players.nextElement();
                     //
@@ -4185,18 +3975,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             allHaveMagClamp = false;
                         }
                     }
-                    for (Entity loader : clientgui.getClient().getGame()
-                            .getEntitiesVector()) {
+                    for (Entity loader : clientgui.getClient().getGame().getEntitiesVector()) {
                         // TODO don't allow capital fighters to load one another
                         // at the moment
-                        if (loader.isCapitalFighter()
-                                && !(loader instanceof FighterSquadron)) {
+                        if (loader.isCapitalFighter() && !(loader instanceof FighterSquadron)) {
                             continue;
                         }
                         boolean loadable = true;
                         for (Entity en : entities) {
-                            if (!loader.canLoad(en, false)
-                                    || (loader.getId() == en.getId())) {
+                            if (!loader.canLoad(en, false) || (loader.getId() == en.getId())) {
                                 loadable = false;
                                 break;
                             }
@@ -4204,66 +3991,49 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         if (loadable) {
                             canLoad = true;
                             menuItem = new JMenuItem(loader.getShortName());
-                            menuItem.setActionCommand("LOAD|" + loader.getId()
-                                    + ":-1");
+                            menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
                             menuItem.addActionListener(this);
-                            menuItem.setEnabled((isOwner || isBot)
-                                    && allUnloaded);
+                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                             menuLoadAll.add(menuItem);
                             JMenu subMenu = new JMenu(loader.getShortName());
-                            if ((loader instanceof FighterSquadron)
-                                    && allCapFighter) {
-                                menuItem = new JMenuItem("Join "
-                                        + loader.getShortName());
-                                menuItem.setActionCommand("LOAD|"
-                                        + loader.getId() + ":-1");
+                            if ((loader instanceof FighterSquadron) && allCapFighter) {
+                                menuItem = new JMenuItem("Join " + loader.getShortName());
+                                menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
                                 menuItem.addActionListener(this);
-                                menuItem.setEnabled((isOwner || isBot)
-                                        && allUnloaded);
+                                menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                                 menuSquadrons.add(menuItem);
-                            } else if ((loader instanceof Jumpship)
-                                    && allDropships) {
+                            } else if ((loader instanceof Jumpship) && allDropships) {
                                 int freeCollars = 0;
                                 for (Transporter t : loader.getTransports()) {
                                     if (t instanceof DockingCollar) {
                                         freeCollars += t.getUnused();
                                     }
                                 }
-                                menuItem = new JMenuItem(loader.getShortName()
-                                        + " (Free Collars: " + freeCollars
-                                        + ")");
-                                menuItem.setActionCommand("LOAD|"
-                                        + loader.getId() + ":-1");
+                                menuItem = new JMenuItem(
+                                        loader.getShortName() + " (Free Collars: " + freeCollars + ")");
+                                menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
                                 menuItem.addActionListener(this);
-                                menuItem.setEnabled((isOwner || isBot)
-                                        && allUnloaded);
+                                menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                                 menuDocking.add(menuItem);
-                            } else if (allBattleArmor && allHaveMagClamp
-                                    && !loader.isOmni()
-                                    // Only load magclamps if applicable
+                            } else if (allBattleArmor && allHaveMagClamp && !loader.isOmni()
+                            // Only load magclamps if applicable
                                     && loader.hasUnloadedClampMount()
                                     // Only choose MagClamps as last option
                                     && (loader.getUnused(entities.get(0)) < 2)) {
                                 for (Transporter t : loader.getTransports()) {
-                                    if ((t instanceof ClampMountMech)
-                                            || (t instanceof ClampMountTank)) {
-                                        menuItem = new JMenuItem("Onto "
-                                                + loader.getShortName());
-                                        menuItem.setActionCommand("LOAD|"
-                                                + loader.getId() + ":-1");
+                                    if ((t instanceof ClampMountMech) || (t instanceof ClampMountTank)) {
+                                        menuItem = new JMenuItem("Onto " + loader.getShortName());
+                                        menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
                                         menuItem.addActionListener(this);
-                                        menuItem.setEnabled((isOwner || isBot)
-                                                && allUnloaded);
+                                        menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                                         menuClamp.add(menuItem);
                                     }
                                 }
                             } else if (allInfantry) {
                                 menuItem = new JMenuItem(loader.getShortName());
-                                menuItem.setActionCommand("LOAD|"
-                                        + loader.getId() + ":-1");
+                                menuItem.setActionCommand("LOAD|" + loader.getId() + ":-1");
                                 menuItem.addActionListener(this);
-                                menuItem.setEnabled((isOwner || isBot)
-                                        && allUnloaded);
+                                menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                                 menuMounting.add(menuItem);
                             }
                             Entity en = entities.firstElement();
@@ -4272,30 +4042,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                     if (t.canLoad(en)) {
                                         if (t instanceof Bay) {
                                             Bay bay = (Bay) t;
-                                            menuItem = new JMenuItem(
-                                                    "Into Bay #"
-                                                            + bay.getBayNumber()
-                                                            + " (Free "
-                                                            + "Slots: "
-                                                            + (int) loader
-                                                                    .getBayById(
-                                                                            bay.getBayNumber())
-                                                                    .getUnused()
-                                                            + ")");
-                                            menuItem.setActionCommand("LOAD|"
-                                                    + loader.getId() + ":"
-                                                    + bay.getBayNumber());
+                                            menuItem = new JMenuItem("Into Bay #" + bay.getBayNumber() + " (Free "
+                                                    + "Slots: "
+                                                    + (int) loader.getBayById(bay.getBayNumber()).getUnused() + ")");
+                                            menuItem.setActionCommand(
+                                                    "LOAD|" + loader.getId() + ":" + bay.getBayNumber());
                                             /*
                                              * } else { menuItem = new
                                              * JMenuItem(
-                                             * t.getClass().getName()+"Transporter"
-                                             * );
+                                             * t.getClass().getName()+
+                                             * "Transporter" );
                                              * menuItem.setActionCommand("LOAD|"
                                              * + loader.getId() + ":-1"); }
                                              */
                                             menuItem.addActionListener(this);
-                                            menuItem.setEnabled((isOwner || isBot)
-                                                    && allUnloaded);
+                                            menuItem.setEnabled((isOwner || isBot) && allUnloaded);
                                             subMenu.add(menuItem);
                                         }
                                     }
@@ -4312,38 +4073,29 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             popup.add(menu);
                         }
                         if (menuDocking.getMenuComponentCount() > 0) {
-                            menuDocking.setEnabled((isOwner || isBot)
-                                    && allUnloaded);
+                            menuDocking.setEnabled((isOwner || isBot) && allUnloaded);
                             popup.add(menuDocking);
                         }
                         if (menuSquadrons.getMenuComponentCount() > 0) {
-                            menuSquadrons.setEnabled((isOwner || isBot)
-                                    && allUnloaded);
+                            menuSquadrons.setEnabled((isOwner || isBot) && allUnloaded);
                             popup.add(menuSquadrons);
                         }
                         if (menuMounting.getMenuComponentCount() > 0) {
-                            menuMounting.setEnabled((isOwner || isBot)
-                                    && allUnloaded);
+                            menuMounting.setEnabled((isOwner || isBot) && allUnloaded);
                             popup.add(menuMounting);
                         }
                         if (menuClamp.getMenuComponentCount() > 0) {
-                            menuClamp.setEnabled((isOwner || isBot)
-                                    && allUnloaded);
+                            menuClamp.setEnabled((isOwner || isBot) && allUnloaded);
                             popup.add(menuClamp);
                         }
-                        boolean hasMounting = menuMounting
-                                .getMenuComponentCount() > 0;
-                        boolean hasSquadrons = menuSquadrons
-                                .getMenuComponentCount() > 0;
-                        boolean hasDocking = menuDocking
-                                .getMenuComponentCount() > 0;
+                        boolean hasMounting = menuMounting.getMenuComponentCount() > 0;
+                        boolean hasSquadrons = menuSquadrons.getMenuComponentCount() > 0;
+                        boolean hasDocking = menuDocking.getMenuComponentCount() > 0;
                         boolean hasLoad = menu.getMenuComponentCount() > 0;
                         boolean hasClamp = menuClamp.getMenuComponentCount() > 0;
                         if ((menuLoadAll.getMenuComponentCount() > 0)
-                                && !(hasMounting || hasSquadrons || hasDocking
-                                        || hasLoad || hasClamp)) {
-                            menuLoadAll.setEnabled((isOwner || isBot)
-                                    && allUnloaded);
+                                && !(hasMounting || hasSquadrons || hasDocking || hasLoad || hasClamp)) {
+                            menuLoadAll.setEnabled((isOwner || isBot) && allUnloaded);
                             popup.add(menuLoadAll);
                         }
                     }
@@ -4363,11 +4115,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     JMenu subMenu = new JMenu("Unload All From...");
                     for (Bay bay : entity.getTransportBays()) {
                         if (bay.getLoadedUnits().size() > 0) {
-                            menuItem = new JMenuItem("Bay # "
-                                    + bay.getBayNumber() + " ("
-                                    + bay.getLoadedUnits().size() + " units)");
-                            menuItem.setActionCommand("UNLOADALLFROMBAY|"
-                                    + bay.getBayNumber());
+                            menuItem = new JMenuItem(
+                                    "Bay # " + bay.getBayNumber() + " (" + bay.getLoadedUnits().size() + " units)");
+                            menuItem.setActionCommand("UNLOADALLFROMBAY|" + bay.getBayNumber());
                             menuItem.addActionListener(this);
                             menuItem.setEnabled((isOwner || isBot));
                             subMenu.add(menuItem);
@@ -4388,14 +4138,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 if (oneSelected) {
                     menu = new JMenu("Swap pilots with");
                     boolean canSwap = false;
-                    for (Entity swapper : clientgui.getClient().getGame()
-                            .getEntitiesVector()) {
+                    for (Entity swapper : clientgui.getClient().getGame().getEntitiesVector()) {
                         if (swapper.isCapitalFighter()) {
                             continue;
                         }
                         // only swap your own pilots and with the same unit type
-                        if ((swapper.getOwnerId() == entity.getOwnerId())
-                                && (swapper.getId() != entity.getId())
+                        if ((swapper.getOwnerId() == entity.getOwnerId()) && (swapper.getId() != entity.getId())
                                 && (UnitType.determineUnitTypeCode(swapper) == UnitType
                                         .determineUnitTypeCode(entity))) {
                             canSwap = true;
@@ -4417,12 +4165,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
                     if (isRapidFireMG && hasMGs) {
                         if (hasRapidFireMG) {
-                            menuItem = new JMenuItem(
-                                    Messages.getString("ChatLounge.RapidFireToggleOff"));
+                            menuItem = new JMenuItem(Messages.getString("ChatLounge.RapidFireToggleOff"));
                             menuItem.setActionCommand("RAPIDFIREMG_OFF");
                         } else {
-                            menuItem = new JMenuItem(
-                                    Messages.getString("ChatLounge.RapidFireToggleOn"));
+                            menuItem = new JMenuItem(Messages.getString("ChatLounge.RapidFireToggleOn"));
                             menuItem.setActionCommand("RAPIDFIREMG_ON");
                         }
                         menuItem.addActionListener(this);
@@ -4431,12 +4177,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                     if (isHotLoad && hasLRMS) {
                         if (hasHotLoad) {
-                            menuItem = new JMenuItem(
-                                    Messages.getString("ChatLounge.HotLoadToggleOff"));
+                            menuItem = new JMenuItem(Messages.getString("ChatLounge.HotLoadToggleOff"));
                             menuItem.setActionCommand("HOTLOAD_OFF");
                         } else {
-                            menuItem = new JMenuItem(
-                                    Messages.getString("ChatLounge.HotLoadToggleOn"));
+                            menuItem = new JMenuItem(Messages.getString("ChatLounge.HotLoadToggleOn"));
                             menuItem.setActionCommand("HOTLOAD_ON");
                         }
                         menuItem.addActionListener(this);
@@ -4445,12 +4189,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                     if (isSearchlight) {
                         if (hasSearchlight) {
-                            menuItem = new JMenuItem(
-                                    Messages.getString("ChatLounge.SearchlightToggleOff"));
+                            menuItem = new JMenuItem(Messages.getString("ChatLounge.SearchlightToggleOff"));
                             menuItem.setActionCommand("SEARCHLIGHT_OFF");
                         } else {
-                            menuItem = new JMenuItem(
-                                    Messages.getString("ChatLounge.SearchlightToggleOn"));
+                            menuItem = new JMenuItem(Messages.getString("ChatLounge.SearchlightToggleOn"));
                             menuItem.setActionCommand("SEARCHLIGHT_ON");
                         }
                         menuItem.addActionListener(this);
@@ -4466,8 +4208,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
                 boolean hasQuirks = true;
                 for (Entity ent : entities) {
-                    hasQuirks &= (ent.countQuirks() > 0)
-                            || (ent.countWeaponQuirks() > 0);
+                    hasQuirks &= (ent.countQuirks() > 0) || (ent.countWeaponQuirks() > 0);
                 }
                 if (isQuirksEnabled && hasQuirks) {
                     menuItem = new JMenuItem("Save Quirks for Chassis");
@@ -4537,8 +4278,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (isSelected) {
                 color = "white";
             }
-            lblImage.setText("<html><font size='2' color='" + color + "'>" + s
-                    + "</font></html>");
+            lblImage.setText("<html><font size='2' color='" + color + "'>" + s + "</font></html>");
         }
 
         public void clearImage() {

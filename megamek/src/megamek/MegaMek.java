@@ -37,7 +37,9 @@ import megamek.client.TimerSingleton;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.swing.ButtonOrderPreferences;
 import megamek.common.Aero;
+import megamek.common.AlphaStrikeElement;
 import megamek.common.BattleArmor;
+import megamek.common.BattleForceElement;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -50,6 +52,7 @@ import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
+import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
@@ -63,7 +66,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.41.26-git"; //$NON-NLS-1$
+    public static String VERSION = "0.41.27-git"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator
@@ -408,6 +411,7 @@ public class MegaMek {
         private static final String OPTION_UNIT_EXPORT = "export"; //$NON-NLS-1$
         private static final String OPTION_OFFICAL_UNIT_LIST = "oul"; //$NON-NLS-1$
         private static final String OPTION_UNIT_BATTLEFORCE_CONVERSION = "bfc"; //$NON-NLS-1$
+        private static final String OPTION_UNIT_ALPHASTRIKE_CONVERSION = "asc"; //$NON-NLS-1$
         private static final String OPTION_DATADIR = "data"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
@@ -500,6 +504,13 @@ public class MegaMek {
                             OPTION_UNIT_BATTLEFORCE_CONVERSION)) {
                 nextToken();
                 processUnitBattleForceConverter();
+            }
+
+            if ((getToken() == TOK_OPTION)
+                    && getTokenValue().equals(
+                            OPTION_UNIT_ALPHASTRIKE_CONVERSION)) {
+                nextToken();
+                processUnitAlphaStrikeConverter();
             }
 
             if ((getToken() == TOK_OPTION)
@@ -604,8 +615,8 @@ public class MegaMek {
                         System.err
                                 .println("Validating Entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                         EntityVerifier entityVerifier = EntityVerifier.getInstance(
-                                new File(Configuration.unitsDir(),
-                                        EntityVerifier.CONFIG_FILENAME));
+                                new MegaMekFile(Configuration.unitsDir(),
+                                        EntityVerifier.CONFIG_FILENAME).getFile());
                         MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(
                                 mechView.getMechReadout());
@@ -684,51 +695,60 @@ public class MegaMek {
                     w.newLine();
                     w.write("This file can be regenerated with java -jar MegaMek.jar -bfc filename");
                     w.newLine();
-                    w.write("Element\tSize\tMP\tArmor\tStructure\tS\tM\tL\tOV\tPoint Cost\tAbilites");
+                    w.write("Element\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilites");
                     w.newLine();
 
                     MechSummary[] units = MechSummaryCache.getInstance()
                             .getAllMechs();
                     for (MechSummary unit : units) {
-                        if (!unit.getUnitType().equalsIgnoreCase("mek")) {
-                            continue;
-                        }
                         Entity entity = new MechFileParser(
                                 unit.getSourceFile(), unit.getEntryName())
                                 .getEntity();
-
-                        w.write(unit.getName());
-                        w.write("\t");
-                        w.write(Integer.toString(entity.getBattleForceSize()));
-                        w.write("\t");
-                        w.write(entity.getBattleForceMovement());
-                        w.write("\t");
-                        w.write(Integer.toString(entity
-                                .getBattleForceArmorPoints()));
-                        w.write("\t");
-                        w.write(Integer.toString(entity
-                                .getBattleForceStructurePoints()));
-                        w.write("\t");
-                        // Most Aero units and some ground units have multiple
-                        // facings.
-                        // Also, each facing potentially has Capital, Capital
-                        // Missile, and Sub Capital brackets as well.
-                        w.write(Integer.toString(entity
-                                .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCESHORTRANGE)));
-                        w.write("\t");
-                        w.write(Integer.toString(entity
-                                .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCEMEDIUMRANGE)));
-                        w.write("\t");
-                        w.write(Integer.toString(entity
-                                .getBattleForceStandardWeaponsDamage(Entity.BATTLEFORCELONGRANGE)));
-                        w.write("\t");
-                        w.write(entity.getBattleForceOverHeatValue());
-                        w.write("\t");
-                        w.write(Integer.toString(entity.getBattleForcePoints()));
-                        w.write("\t");
-                        w.write(entity.getBattleForceSpecialAbilites());
-                        w.newLine();
+                        
+                        BattleForceElement bfe = new BattleForceElement(entity);
+                        bfe.writeCsv(w);
                     }
+                    w.close();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            System.exit(0);
+
+        }
+
+        private void processUnitAlphaStrikeConverter() {
+
+            String filename;
+            if (getToken() == TOK_LITERAL) {
+                filename = getTokenValue();
+                nextToken();
+
+                if (!new File("./docs").exists()) {
+                    new File("./docs").mkdir();
+                }
+
+                try {
+                    File file = new File("./docs/" + filename);
+                    BufferedWriter w = new BufferedWriter(new FileWriter(file));
+                    w.write("Megamek Unit AlphaStrike Converter");
+                    w.newLine();
+                    w.write("This file can be regenerated with java -jar MegaMek.jar -asc filename");
+                    w.newLine();
+                    w.write("Element\tType\tSize\tMP\tArmor\tStructure\tS/M/L\tOV\tPoint Cost\tAbilites");
+                    w.newLine();
+
+                    MechSummary[] units = MechSummaryCache.getInstance()
+                            .getAllMechs();
+                    for (MechSummary unit : units) {
+                        Entity entity = new MechFileParser(
+                                unit.getSourceFile(), unit.getEntryName())
+                                .getEntity();
+                        
+                        AlphaStrikeElement ase = new AlphaStrikeElement(entity);
+                        ase.writeCsv(w);
+                   }
                     w.close();
                 } catch (Exception ex) {
                     ex.printStackTrace();

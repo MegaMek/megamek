@@ -8,6 +8,7 @@ import java.util.Iterator;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IHex;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -47,7 +48,7 @@ public class ShowTileCommand extends ServerCommand {
                     // if we are not playing in double blind mode also list the
                     // units in this tile.
                     if (!server.getGame().getOptions().booleanOption(
-                            "double_blind")) {
+                            OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
                         Iterator<Entity> entList = server.getGame()
                                                          .getEntities(coord);
                         if (entList.hasNext()) {

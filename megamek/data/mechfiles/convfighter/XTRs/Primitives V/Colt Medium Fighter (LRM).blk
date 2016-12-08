@@ -1,0 +1,103 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Colt Medium Fighter
+</Name>
+
+<Model>
+(LRM)
+</Model>
+
+<Tonnage>
+40
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+12
+12
+12
+8
+</Armor>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+
+<barrating>
+5
+</barrating>
+
+<Nose Equipment>
+ISLRM5
+ISLRM5
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Body Equipment>
+Advanced Fire Control
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+ISLRM5 Ammo
+</Body Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<transporters>
+</transporters>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 5
+</type>
+
+<year>
+2354
+</year>
+
+<source>
+XTRO Primitives IV - Age of War
+</source>
+
+<engine_type>				
+1
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

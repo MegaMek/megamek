@@ -69,8 +69,10 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
+import megamek.common.util.MegaMekFile;
 
 public class ScenarioLoader {
     private static final String COMMENT_MARK = "#"; //$NON-NLS-1$
@@ -135,7 +137,7 @@ public class ScenarioLoader {
     // TODO: legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(IGame game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
-        final int year = game.getOptions().intOption("year"); //$NON-NLS-1$
+        final int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR); //$NON-NLS-1$
         final EquipmentType currentAmmoType = mounted.getType();
         final Mounted currentWeapon = mounted.getLinkedBy();
         final EquipmentType currentWeaponType = (null != currentWeapon) ? currentWeapon.getType() : null;
@@ -157,7 +159,7 @@ public class ScenarioLoader {
                 TechConstants.getGameTechLevel(game, e.isClan())));
             return null;
         }
-        if(e.isClan() && !game.getOptions().booleanOption("clan_ignore_eq_limits")) { //$NON-NLS-1$
+        if(e.isClan() && !game.getOptions().booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)) { //$NON-NLS-1$
             // Check for clan weapon restrictions
             final long muniType = ((AmmoType) newAmmoType).getMunitionType() & ~AmmoType.M_INCENDIARY_LRM;
             if((muniType == AmmoType.M_SEMIGUIDED)
@@ -179,7 +181,7 @@ public class ScenarioLoader {
             }
         }
         if(AmmoType.canDeliverMinefield((AmmoType) newAmmoType)
-            && !game.getOptions().booleanOption("minefields")) { //$NON-NLS-1$
+            && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) { //$NON-NLS-1$
             System.out.println(String.format("Minefield-creating ammo type %s forbidden by game rules", //$NON-NLS-1$
                 newAmmoType.getName()));
             return null;
@@ -403,7 +405,7 @@ public class ScenarioLoader {
         if (optionFile == null) {
             g.getOptions().loadOptions();
         } else {
-            g.getOptions().loadOptions(new File(scenarioFile.getParentFile(), optionFile), true);
+            g.getOptions().loadOptions(new MegaMekFile(scenarioFile.getParentFile(), optionFile).getFile(), true);
         }
 
         // set wind
@@ -872,12 +874,12 @@ public class ScenarioLoader {
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
                 }
-                File fBoard = new File(Configuration.boardsDir(), sBoardFile);
+                File fBoard = new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile();
                 if (!fBoard.exists()) {
                     throw new ScenarioLoaderException("nonexistantBoard", board); //$NON-NLS-1$
                 }
                 ba[n] = new Board();
-                ba[n].load(new File(Configuration.boardsDir(), sBoardFile));
+                ba[n].load(new MegaMekFile(Configuration.boardsDir(), sBoardFile).getFile());
                 if(cf > 0) {
                     ba[n].setBridgeCF(cf);
                 }

@@ -1,6 +1,6 @@
 Default Keyboard Commands. 
 These can be edited under
-VIEW-CLIENT SETTINGS-KEY BINDS
+VIEW->CLIENT SETTINGS->KEY BINDS
 
 SCROLLING
 Scroll Map North----- W
@@ -17,20 +17,25 @@ Torso Twist Right----- Shift-D
 Toggle Walking/Jump----- J
 
 COMBAT AND TARGETTING
-Previous Unit----- Z
-Next Unit----- C
+Next Target----- C
+Previous Target----- Z
+Next Valid Target ----- Shift-C
+Previous Valid Target -----Shift-Z
+Next Target (No Allies) ----- Ctrl-C
+Previous Target (No Allies) ----- Ctrl-Z
+Next Valid Target (No Allies) ----- Ctrl-Shift-C
+Previous Valid Target (No Allies) -----Ctrl-Shift-Z
+Previous Weapon Mode----- Shift-Tab
+Next Weapon Mode----- Tab
 Previous Weapon----- Q
 Next Weapon----- E
 Fire selected Weapon----- F
-Previous Target----- Shift-Q
-Next Target----- Shift-E
-Previous Weapon Mode----- Shift-Z
-Next Weapon Mode----- Shift-C
+Previous Unit----- Shift-Q
+Next Unit----- Shift-E
 
 GENERAL COMMANDS
 Toggle Chat----- Enter
 Toggle Chat Command ----- /
-(opens chat box with /)
 Undo----- Backspace
 Cancel----- Escape
 Done---- Ctrl-Enter

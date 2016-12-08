@@ -33,7 +33,8 @@ VTOL
 </motion_type>
 
 <transporters>
-troopspace:15.0
+troopspace:15
+standardseats:15:200
 cargobay:3:1
 </transporters>
 
@@ -44,6 +45,10 @@ cargobay:3:1
 <engine_type>
 6
 </engine_type>
+
+<fuel>
+3
+</fuel>
 
 <armor>
 0
@@ -80,10 +85,9 @@ cargobay:3:1
 </Rotor Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Jihad
 </source>
 
 <tonnage>
 50.0
 </tonnage>
-

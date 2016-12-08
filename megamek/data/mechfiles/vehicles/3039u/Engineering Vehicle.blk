@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Engineering Vehicle
@@ -24,29 +24,21 @@ Engineering Vehicle
 2570
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 2
 </type>
-
-<tonnage>
-40.0
-</tonnage>
 
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-1
-</engine_type>
-
 <cruiseMP>
 6
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 8
@@ -75,3 +67,12 @@ Lift Hoist
 <Turret Equipment>
 Backhoe
 </Turret Equipment>
+
+<source>
+TRO 3039 - Age of War
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+

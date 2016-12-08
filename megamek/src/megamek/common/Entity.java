@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +60,6 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.ASEWMissileWeapon;
 import megamek.common.weapons.ASMissileWeapon;
-import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.BayWeapon;
@@ -76,13 +74,9 @@ import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISAAAMissileWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISLAAMissileWeapon;
-import megamek.common.weapons.ISLAC5;
-import megamek.common.weapons.ISSnubNosePPC;
-import megamek.common.weapons.MMLWeapon;
 import megamek.common.weapons.SCLBayWeapon;
 import megamek.common.weapons.SpaceBombAttack;
 import megamek.common.weapons.TSEMPWeapon;
-import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 
@@ -638,8 +632,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean canon;
 
     private int assaultDropInProgress = 0;
-    private boolean climbMode = false; // save climb mode from turn to turn for
-    // convenience
+    private boolean climbMode = GUIPreferences.getInstance()
+            .getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE);
 
     protected int lastTarget = Entity.NONE;
     protected String lastTargetDisplayName = "";
@@ -697,18 +691,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected String endColumn = "</TD>";
 
     protected String nl = "<BR>";
-
-    // Max range modifer is 6
-    protected double[] battleForceMinRangeModifier = new double[]{1, .92,
-                                                                  .83, .75, .66, .58, .50};
-    // When getting the to hit mod add 4 got it and make sure the max is 8 since
-    // the range is -4 to 8
-    protected double[] battleForceToHitModifier = new double[]{1.20, 1.15,
-                                                               1.10, 1.05, 1, .95, .9, .85, .8};
-    public static final int BATTLEFORCESHORTRANGE = 0;
-    public static final int BATTLEFORCEMEDIUMRANGE = 4;
-    public static final int BATTLEFORCELONGRANGE = 16;
-    public static final int BATTLEFORCEEXTREMERANGE = 24;
 
     // for how many rounds has blueshield been active?
     private int blueShieldRounds = 0;
@@ -2093,7 +2075,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                  || (wtype.getAmmoType() == AmmoType.T_LAC))
                 && mounted.isJammed()
                 && !mounted.isDestroyed()
-                && game.getOptions().booleanOption("unjam_uac")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
                 return true;
             }
         }
@@ -2169,7 +2151,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getHeatMPReduction() {
         int minus;
 
-        if ((game != null) && game.getOptions().booleanOption("tacops_heat")) {
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
             if (heat < 30) {
                 minus = (heat / 5);
             } else if (heat >= 49) {
@@ -2312,8 +2294,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Returns this entity's original jumping mp.
      */
     public int getOriginalJumpMP() {
+    	return getOriginalJumpMP(false);
+    }
+    
+    public int getOriginalJumpMP(boolean ignoreModularArmor) {
 
-        if (hasModularArmor()) {
+        if (!ignoreModularArmor && hasModularArmor()) {
             return Math.max(0, jumpMP - 1);
         }
 
@@ -2939,7 +2925,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (heat >= 24) {
             mod++;
         }
-        boolean mtHeat = game.getOptions().booleanOption("tacops_heat");
+        boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
         if (mtHeat && (heat >= 33)) {
             mod++;
         }
@@ -2950,7 +2936,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod++;
         }
         if ((mod > 0) && (getCrew() != null)
-            && getCrew().getOptions().booleanOption("some_like_it_hot")) {
+                && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SOME_LIKE_IT_HOT)) {
             mod--;
         }
 
@@ -4364,7 +4350,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if (!isShutDown()) {
@@ -4394,10 +4380,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveAngelECM() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
-        if (game.getOptions().booleanOption("tacops_angel_ecm")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM)
             && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -4419,7 +4405,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveNovaECM() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if (!isShutDown()) {
@@ -4488,11 +4474,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveECCM() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
-        if ((game.getOptions().booleanOption("tacops_eccm") || game
-                .getOptions().booleanOption("stratops_ecm")) && !isShutDown()) {
+        if ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM) || game
+                .getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
                 // TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same
@@ -4520,8 +4506,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveAngelECCM() {
-        if (game.getOptions().booleanOption("tacops_angel_ecm")
-            && game.getOptions().booleanOption("tacops_eccm")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM)
+            && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
             && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -4547,7 +4533,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getECMRange() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return Entity.NONE;
         }
         // If we have stealth up and running, there's no bubble.
@@ -4610,7 +4596,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                getPosition(), getPosition())) {
                             return false;
                         }
-                        return true;
+                        return true;  
                     }
                     return !checkECM
                            || (game == null)
@@ -4619,13 +4605,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+       
         // check for Manei Domini implants
-        if (((crew.getOptions().booleanOption("cyber_eye_im") || crew
-                .getOptions().booleanOption("mm_eye_im"))
-             && (this instanceof Infantry) && !(this instanceof BattleArmor))
-            || (crew.getOptions().booleanOption("mm_eye_im") && (crew
-                                                                         .getOptions().booleanOption("vdni") || crew
-                                                                         .getOptions().booleanOption("bvdni")))) {
+        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO)
+        	|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)	
+        	|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
+        		&& (this instanceof Infantry) && !(this instanceof BattleArmor))
+            || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
+            		&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
+			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) 
+               
+        {
             return !checkECM
                    || !ComputeECM.isAffectedByECM(this, getPosition(),
                                                   getPosition());
@@ -4637,10 +4627,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                   getPosition());
         }
         // check for SPA
-        if (crew.getOptions().booleanOption("eagle_eyes")) {
-            return !checkECM
-                   || !ComputeECM.isAffectedByECM(this, getPosition(),
-                                                  getPosition());
+        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
+            return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
         return false;
@@ -4658,13 +4646,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         int cyberBonus = 0;
-        if (((crew.getOptions().booleanOption("cyber_eye_im") || crew
-                .getOptions().booleanOption("mm_eye_im"))
-                && (this instanceof Infantry) && !(this instanceof BattleArmor))
-                || (crew.getOptions().booleanOption("mm_eye_im") && (crew
-                        .getOptions().booleanOption("vdni") || crew
-                        .getOptions().booleanOption("bvdni")))) {
-            cyberBonus = 1;
+        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_AUDIO) 
+        		|| crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS))
+        		|| crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)
+                	&& (this instanceof Infantry) && !(this instanceof BattleArmor))        		
+                || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS) 
+                	&& (crew.getOptions().booleanOption(OptionsConstants.MD_VDNI) 
+    			|| crew.getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) {
+            cyberBonus = 2;
         }
 
         // check for quirks
@@ -4677,7 +4666,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check for SPA
         int spaBonus = 0;
-        if (crew.getOptions().booleanOption("eagle_eyes")) {
+        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
             spaBonus = 1;
         }
 
@@ -4959,8 +4948,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         if ((this instanceof Infantry) && (null != crew)
-            && crew.getOptions().booleanOption("mm_eye_im")
-            && crew.getOptions().booleanOption("boost_comm_implant")) {
+            && crew.getOptions().booleanOption(OptionsConstants.MD_MM_IMPLANTS)
+            && crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
             return true;
         }
         return false;
@@ -5620,6 +5609,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         setMadePointblankShot(false);
 
         setSelfDestructedThisTurn(false);
+
+        setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
     }
 
     /**
@@ -5895,12 +5886,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean useGeometricMeanBV() {
         return useGeometricBV || ((game != null)
-                                  && game.getOptions().booleanOption("geometric_mean_bv"));
+                                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV));
     }
 
     public boolean useReducedOverheatModifierBV() {
         return (useReducedOverheatModifierBV || ((game != null)
-                                                && game.getOptions().booleanOption("reduced_overheat_modifier_bv")));
+                                                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)));
     }
 
     /**
@@ -6127,7 +6118,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_fatigue")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
             && crew.isPilotingFatigued()) {
             roll.addModifier(1, "fatigue");
         }
@@ -6173,19 +6164,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
-        if ((weatherMod != 0)
-            && !game.getBoard().inSpace()
-            && ((null == crew) || !crew.getOptions().booleanOption(
-                "allweather"))) {
+        if ((weatherMod != 0) && !game.getBoard().inSpace()
+                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(weatherMod, conditions.getWeatherDisplayableName());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
-        if ((windMod != 0)
-            && !game.getBoard().inSpace()
-            && ((null == crew) || !crew.getOptions().booleanOption(
-                "allweather"))) {
+        if ((windMod != 0) && !game.getBoard().inSpace()
+                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(windMod, conditions.getWindDisplayableName());
         }
 
@@ -6504,12 +6491,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * roll for the piloting skill check.
      */
     public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex,
-            EntityMovementType overallMoveType, MoveStep prevStep,
+            EntityMovementType overallMoveType, MoveStep prevStep, MoveStep currStep,
             int prevFacing, int curFacing, Coords lastPos, Coords curPos,
             boolean isInfantry, int distance) {
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        addPilotingModifierForTerrain(roll, lastPos);
+        // If we aren't traveling along a road, apply terrain modifiers
+        if (!((prevStep == null || prevStep.isPavementStep()) && currStep.isPavementStep())) {
+            addPilotingModifierForTerrain(roll, lastPos);
+        }
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -6923,7 +6913,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = -1;
         }
 
-        if (getCrew().getOptions().booleanOption("maneuvering_ace")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE)) {
             mod--;
         }
 
@@ -8146,7 +8136,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return true, if the entity is active
      */
     public boolean canSpot() {
-        if (game.getOptions().booleanOption("pilots_cannot_spot")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT)
             && (this instanceof MechWarrior)) {
             return false;
         }
@@ -8349,7 +8339,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isVisibleToEnemy() {
         // If double blind isn't on, the unit is always visible
-        if ((game != null) && !game.getOptions().booleanOption("double_blind")) {
+        if ((game != null) && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
         }
         return visibleToEnemy;
@@ -8361,7 +8351,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isDetectedByEnemy() {
         // If double blind isn't on, the unit is always detected
-        if ((game != null) && !game.getOptions().booleanOption("double_blind")) {
+        if ((game != null) && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
         }
         return detectedByEnemy;
@@ -8392,7 +8382,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean hasSeenEntity(IPlayer p) {
         // No double blind - everyone sees everything
-        if ((game == null) || !game.getOptions().booleanOption("double_blind")) {
+        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
         }
         // Null players see nothing
@@ -8423,7 +8413,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
         // If team vision, see if any players on team can see
-        if (game.getOptions().booleanOption("team_vision")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
             for (IPlayer teammate : game.getPlayersVector()) {
                 if ((teammate.getTeam() == p.getTeam())
                         && entitySeenBy.contains(teammate)) {
@@ -8469,7 +8459,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasDetectedEntity(IPlayer p) {
         // No sensors - no one detects anything
         if ((game == null)
-                || !game.getOptions().booleanOption("tacops_sensors")) {
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             return false;
         }
         // Null players detect nothing
@@ -8495,7 +8485,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
         // If team vision, see if any players on team can see
-        if (game.getOptions().booleanOption("team_vision")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
             for (IPlayer teammate : game.getPlayersVector()) {
                 if ((teammate.getTeam() == p.getTeam())
                         && entityDetectedBy.contains(teammate)) {
@@ -8519,14 +8509,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean alliedUnit = 
                 !getOwner().isEnemyOf(spotter)
                 || (getOwner().getTeam() == spotter.getTeam() 
-                    && game.getOptions().booleanOption("team_vision"));
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION));
         
         boolean sensors = game.getOptions().booleanOption(
-                "tacops_sensors");
+                OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = game.getOptions().booleanOption(
-                "sensors_detect_all");
+                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = game.getOptions().booleanOption(
-                "double_blind");
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
         
         return sensors && doubleBlind && !alliedUnit && !sensorsDetectAll 
                 && !hasSeenEntity(spotter) && hasDetectedEntity(spotter);
@@ -8568,7 +8558,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isUsingManAce() {
-        return getCrew().getOptions().booleanOption("maneuvering_ace");
+        return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE);
     }
 
     public Enumeration<Entity> getKills() {
@@ -8690,7 +8680,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // check game options
-        if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_FIRING)) {
             return true;
         }
 
@@ -8727,7 +8717,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return false;
         }
         // check game options
-        if (!game.getOptions().booleanOption("skip_ineligable_movement")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT)) {
             return true;
         }
 
@@ -8737,7 +8727,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && getCrew().isActive() && !unloadedThisTurn && deployed;
         if (!isActive
             || (isImmobile() && !isManualShutdown() && !canUnjamRAC() &&
-                !game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT))) {
+                !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT))) {
             return false;
         }
 
@@ -8781,7 +8771,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isEligibleForPhysical() {
         boolean canHit = false;
-        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
         if ((this instanceof Infantry)
                 && hasWorkingMisc(MiscType.F_TOOLS,
@@ -8802,7 +8792,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // check game options
-        if (game.getOptions().booleanOption("no_clan_physical") && isClan()
+        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan()
             && !hasINarcPodsAttached() && (getSwarmAttackerId() == NONE)) {
             return false;
         }
@@ -8813,7 +8803,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
 
-        if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL)) {
             return true;
         }
 
@@ -8861,7 +8851,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // check if we can dodge and target can attack us,
             // then we are eligible.
             canHit |= ((this instanceof Mech) && !isProne()
-                       && getCrew().getOptions().booleanOption("dodge_maneuver") && Compute
+                       && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER) && Compute
                     .canPhysicalTarget(game, target.getId(), this));
         }
 
@@ -8902,7 +8892,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isEligibleForArtyAutoHitHexes() {
         return isEligibleForTargetingPhase()
                && (isOffBoard() || game.getOptions().booleanOption(
-                "on_map_predesignate"));
+                OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE));
     }
 
     public boolean isEligibleForTargetingPhase() {
@@ -9305,6 +9295,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getShortRangeModifier() {
         int mod = 0;
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_MEDIUM)) {
+            mod = 2;
+        }
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LONG)) {
+            mod = 4;
+        }
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
+            mod = 6;
+        }
+        if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
+            mod = mod / 2;
+        }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_S)) {
             mod--;
         }
@@ -9322,7 +9324,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getMediumRangeModifier() {
         int mod = 2;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_MEDIUM)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_M)) {
@@ -9336,7 +9341,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLongRangeModifier() {
         int mod = 4;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_LONG)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_L)) {
@@ -9356,7 +9364,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getExtremeRangeModifier() {
         int mod = 6;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_RANGE_MASTER).equals(Crew.RANGEMASTER_EXTREME)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) && (mod > 0)) {
             mod = mod / 2;
         }
         return mod;
@@ -9364,9 +9375,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLOSRangeModifier() {
         int mod = 8;
-        if (getCrew().getOptions().booleanOption("sniper")) {
-            mod = mod / 2;
-        }
         return mod;
     }
 
@@ -9683,12 +9691,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean hasEiCockpit() {
         return ((game != null) && game.getOptions().booleanOption(
-                "all_have_ei_cockpit"));
+                OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT));
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && getCrew().getOptions().booleanOption(
-                "ei_implant"));
+        return (hasEiCockpit() && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_EI_IMPLANT));
     }
 
     public boolean isLayingMines() {
@@ -9762,7 +9769,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         boolean targetIsTank = (this instanceof Tank)
                                || (game.getOptions().booleanOption(
-                "tacops_advanced_mech_hit_locations") && (this instanceof QuadMech));
+                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS) && (this instanceof QuadMech));
         if (targetIsTank) {
             if ((leftBetter == 1) && (fa == 150)) {
                 return ToHitData.SIDE_REAR;
@@ -10297,12 +10304,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // If we're using the unofficial option for single fighters staying
         // standard scale & we're not a member of a squadron... then false.
         if (!lounge && isFighter()
-            && game.getOptions().booleanOption("single_no_cap")
+            && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_SINGLE_NO_CAP)
             && !isPartOfFighterSquadron()) {
             return false;
         }
 
-        return game.getOptions().booleanOption("stratops_capital_fighter")
+        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)
                && isFighter();
     }
 
@@ -10741,15 +10748,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         for (Mounted mounted : getWeaponList()) {
             if ((mounted.getType() instanceof GaussWeapon)
-                && gameOpts.booleanOption("tacops_gauss_weapons")) {
+                && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS)) {
                 String[] modes = {"Powered Up", "Powered Down"};
                 ((WeaponType) mounted.getType()).setModes(modes);
                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
             } else if ((mounted.getType() instanceof ACWeapon)
-                       && gameOpts.booleanOption("tacops_rapid_ac")) {
+                       && gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
                 String[] modes = {"", "Rapid"};
                 ((WeaponType) mounted.getType()).setModes(modes);
-                if (gameOpts.booleanOption("kind_rapid_ac")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC)) {
                     mounted.setKindRapidFire(true);
                 }
             } else if (mounted.getType() instanceof ISBombastLaser) {
@@ -10770,14 +10777,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 modes.add("");
-                if (gameOpts.booleanOption("stratops_bracket_fire")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
                     modes.add("Bracket 80%");
                     modes.add("Bracket 60%");
                     modes.add("Bracket 40%");
                 }
                 if (((mounted.getType() instanceof CapitalLaserBayWeapon)
                      || (mounted.getType() instanceof SCLBayWeapon))
-                    && gameOpts.booleanOption("stratops_aaa_laser")) {
+                    && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER)) {
                     modes.add("AAA");
                     ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
                 }
@@ -10786,7 +10793,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                       .toArray(stringArray));
                 }
             } else if (mounted.getType().hasFlag(WeaponType.F_AMS)
-                       && !gameOpts.booleanOption("auto_ams")) {
+                       && !gameOpts.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 Enumeration<EquipmentMode> modeEnum = mounted.getType().getModes();
                 ArrayList<String> newModes = new ArrayList<>();
                 while (modeEnum.hasMoreElements()) {
@@ -10806,7 +10813,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_BAP)
                 && (this instanceof Aero)
-                && gameOpts.booleanOption("stratops_ecm")) {
+                && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 modes.add("Short");
@@ -10819,22 +10826,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 ArrayList<String> modes = new ArrayList<String>();
                 modes.add("ECM");
                 String[] stringArray = {};
-                if (gameOpts.booleanOption("tacops_eccm")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");
                     }
-                } else if (gameOpts.booleanOption("stratops_ecm")
+                } else if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
                            && (this instanceof Aero)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");
                     }
                 }
-                if (gameOpts.booleanOption("tacops_ghost_target")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET)) {
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & Ghost Targets");
-                        if (gameOpts.booleanOption("tacops_eccm")) {
+                        if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)) {
                             modes.add("ECCM & Ghost Targets");
                         }
                     } else {
@@ -10884,7 +10891,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (this instanceof Aero) {
             return 3;
         } else {
-            if (game.getOptions().booleanOption("tacops_skilled_evasion")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION)) {
                 int piloting = crew.getPiloting();
                 if (piloting < 2) {
                     return 3;
@@ -11082,7 +11089,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // E(C)CM operates differently in space (SO pg 110)
         if (game.getBoard().inSpace()) {
             // No ECM in space unless SO rule is on
-            if (!game.getOptions().booleanOption("stratops_ecm")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 return null;
             }
             int range = getECMRange();
@@ -11163,7 +11170,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // E(C)CM operates differently in space (SO pg 110)
         if (game.getBoard().inSpace()) {
             // No ECCM in space unless SO rule is on
-            if (!game.getOptions().booleanOption("stratops_ecm")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 return null;
             }
             int bapRange = getBAPRange();
@@ -11317,13 +11324,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * @return the initiative bonus this Entity grants for MD implants
      */
-    public int getMDIniBonus() {
-        if (crew.getOptions().booleanOption("comm_implant")
-            || crew.getOptions().booleanOption("boost_comm_implant")) {
-            return 1;
-        }
-        return 0;
-    }
+	/*
+	 * This has been removed in IO see pg 78
+	 * 
+	 * public int getMDIniBonus() { if
+	 * (crew.getOptions().booleanOption(OptionsConstants.MD_COMM_IMPLANT) ||
+	 * crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT))
+	 * { return 1; } return 0; }
+	 */
 
     /**
      * @return the initiative bonus this Entity grants for quirks
@@ -11710,7 +11718,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean hasQuirk(String name) {
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
         return quirks.booleanOption(name);
@@ -11740,7 +11748,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 
@@ -11764,7 +11772,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
         
@@ -11798,7 +11806,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 
@@ -11829,7 +11837,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         StringBuffer qrk = new StringBuffer();
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return qrk.toString();
         }
 
@@ -11884,7 +11892,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int range = getActiveSensor().getRangeByBracket();
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
-        if (game.getOptions().booleanOption("inclusive_sensor_range")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"
@@ -11988,16 +11996,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
 
     public int getBattleForcePoints() {
-        return 0;
-    }
-
-    public long getBattleForceMovementPoints() {
-        int baseBFMove = getWalkMP();
-        return baseBFMove;
-    }
-
-    public long getBattleForceJumpPoints() {
-        return 0;
+    	double bv = calculateBattleValue(true, true);
+    	int points = (int) Math.round(bv / 100);
+    	return Math.max(1, points);
     }
 
     /**
@@ -12005,110 +12006,151 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * string.
      */
     public String getMovementModeAsBattleForceString() {
-        switch (getMovementMode()) {
-            case NONE:
-            case BIPED:
-            case BIPED_SWIM:
-            case QUAD:
-            case QUAD_SWIM:
-                return "";
-            case TRACKED:
-                return "t";
-            case WHEELED:
-                return "w";
-            case HOVER:
-                return "h";
-            case VTOL:
-                return "v";
-            case NAVAL:
-            case HYDROFOIL:
-                return "n";
-            case SUBMARINE:
-            case INF_UMU:
-                return "s";
-            case INF_LEG:
-                return "f";
-            case INF_MOTORIZED:
-                return "m";
-            case INF_JUMP:
-                return "j";
-            case WIGE:
-                return "g";
-            case AERODYNE:
-                return "a";
-            case SPHEROID:
-                return "p";
-            default:
-                return "ERROR";
-        }
+    	switch (getMovementMode()) {
+    	case NONE:
+    	case BIPED:
+    	case BIPED_SWIM:
+    	case QUAD:
+    	case QUAD_SWIM:
+    		return "";
+    	case TRACKED:
+    		return "t";
+    	case WHEELED:
+    		return "w";
+    	case HOVER:
+    		return "h";
+    	case VTOL:
+    		return "v";
+    	case NAVAL:
+    	case HYDROFOIL:
+    		return "n";
+    	case SUBMARINE:
+    	case INF_UMU:
+    		return "s";
+    	case INF_LEG:
+    		return "f";
+    	case INF_MOTORIZED:
+    		return "m";
+    	case INF_JUMP:
+    		return "j";
+    	case WIGE:
+    		return "g";
+    	case AERODYNE:
+    		return "a";
+    	case SPHEROID:
+    		return "p";
+    	default:
+    		return "ERROR";
+    	}
     }
 
     /**
-     * Returns the Battle Force Movement string this is used in a battle force
-     * game
-     *
+     * Certain unit types can increase this with MASC, supercharger, or jet booster.
+     * AlphaStrike needs the fraction retained because it doubles the movement for ground units,
+     * while BattleForce rounds this to the nearest integer.
+     */
+    public double getBaseBattleForceMovement() {
+    	return getOriginalWalkMP();
+    }
+
+    /**
+     * Handles base, jump, and underwater movement.
+     * 
      * @return
      */
-    public String getBattleForceMovement() {
-        StringBuilder result = new StringBuilder();
+    public void setBattleForceMovement(Map<String,Integer> movement) {
+    	int baseMove = (int)Math.round(getBaseBattleForceMovement());
+    	int jumpMove = getOriginalJumpMP();
+    	if (jumpMove == baseMove && getMovementModeAsBattleForceString().length() == 0) {
+    		movement.put("j", baseMove);
+    	} else {
+    		movement.put(getMovementModeAsBattleForceString(), baseMove);
+    		if (jumpMove >= baseMove) {
+    			movement.put("j", jumpMove);
+    		} else if (jumpMove > 0) {
+    			movement.put("j", (int)Math.round(jumpMove * 0.66));
+    		}
+    	}
+    	int umu = getAllUMUCount();
+    	if (umu > 0) {
+    		movement.put("s", umu);
+    	}
+    }
 
-        long jumpPoints = getBattleForceJumpPoints();
-        long walkPoints = getBattleForceMovementPoints();
-
-        result.append(walkPoints);
-        result.append(getMovementModeAsBattleForceString());
-
-        if (jumpPoints == walkPoints) {
-            result.append("j");
-        } else if (jumpPoints > 0) {
-            result.append("/");
-            result.append(jumpPoints);
-            result.append("j");
-        }
-
-        return result.toString();
+    /**
+     * Doubles base movement. Aero overrides this.
+     */
+    public void setAlphaStrikeMovement(Map<String,Integer> movement) {
+    	int baseMove = (int)Math.round(getBaseBattleForceMovement() * 2);
+    	int jumpMove = getOriginalJumpMP();
+    	if (jumpMove == baseMove) {
+    		movement.put("j", baseMove);
+    	} else {
+    		movement.put(getMovementModeAsBattleForceString(), baseMove);
+    		if (jumpMove > 0) {
+    			movement.put("j", (int)Math.round(jumpMove * 2));
+    		}
+    	}
+    	int umu = getAllUMUCount();
+    	if (umu > 0) {
+    		movement.put("s", umu * 2);
+    	}
     }
 
     public int getBattleForceArmorPoints() {
-        double armorPoints = 0;
+    	return (int)Math.round(getBattleForceArmorPointsRaw());
+    }
 
-        for (int loc = 0; loc < locations(); loc++) {
-            double armorMod = 1;
-            switch (getArmorType(loc)) {
-                case EquipmentType.T_ARMOR_COMMERCIAL:
-                    armorMod = .5;
-                    break;
-                case EquipmentType.T_ARMOR_INDUSTRIAL:
-                case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
-                    armorMod = getBARRating(0) / 10;
-                    break;
-                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
-                    armorMod = 1.2;
-                    break;
-                case EquipmentType.T_ARMOR_HARDENED:
-                    armorMod = 1.5;
-                    break;
-                case EquipmentType.T_ARMOR_REFLECTIVE:
-                case EquipmentType.T_ARMOR_REACTIVE:
-                    armorMod = .75;
-                    break;
-            }
-            armorPoints += Math.ceil(getArmor(loc) * armorMod);
+    /**
+     * Calculates the intermediate value for armor points (retaining fractional amounts)
+     * and adds any special abilities conferred by armor.
+     * 
+     * @param spas  BattleForce special abilities and their values. Can be null.
+     * @return      The armor value of this entity
+     */
+    public double getBattleForceArmorPointsRaw() {
+    	double armorPoints = 0;
 
-        }
-        if (this.hasModularArmor()) {
-            // Modular armor is always "regular" armor
-            for (Mounted mount : this.getEquipment()) {
-                if (!mount.isDestroyed()
-                    && (mount.getType() instanceof MiscType)
-                    && ((MiscType) mount.getType())
-                        .hasFlag(MiscType.F_MODULAR_ARMOR)) {
-                    armorPoints += 10;
-                }
-            }
-        }
+    	for (int loc = 0; loc < locations(); loc++) {
+    		double armorMod = 1;
+    		switch (getArmorType(loc)) {
+    		case EquipmentType.T_ARMOR_COMMERCIAL:
+    			armorMod = .5;
+    			break;
+    		case EquipmentType.T_ARMOR_INDUSTRIAL:
+    		case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
+    			armorMod = getBARRating(0) / 10;
+    			break;
+    		case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+    			armorMod = 1.2;
+    			break;
+    		case EquipmentType.T_ARMOR_HARDENED:
+    			armorMod = 1.5;
+    			break;
+    		case EquipmentType.T_ARMOR_REFLECTIVE:
+    		case EquipmentType.T_ARMOR_REACTIVE:
+    			armorMod = .75;
+    			break;
+    		}
+    		armorPoints += Math.ceil(getArmor(loc) * armorMod);
 
-        return (int) Math.round(armorPoints / 30);
+    	}
+    	if (this.hasModularArmor()) {
+    		// Modular armor is always "regular" armor
+    		for (Mounted mount : this.getEquipment()) {
+    			if (!mount.isDestroyed()
+    					&& (mount.getType() instanceof MiscType)
+    					&& ((MiscType) mount.getType())
+    					.hasFlag(MiscType.F_MODULAR_ARMOR)) {
+    				armorPoints += 10;
+    			}
+    		}
+    	}
+
+    	if (isCapitalScale()) {
+    		return (int)Math.round(armorPoints * 0.33);
+    	}
+    	return (int) Math.round(armorPoints / 30);
     }
 
     /**
@@ -12117,7 +12159,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public String getBattleForceDamageThresholdString() {
-        return "";
+    	return "";
     }
 
     /**
@@ -12126,500 +12168,344 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return
      */
     public int getBattleForceStructurePoints() {
-        return 0;
+    	return 0;
     }
 
     /**
-     * @param range
+     * Some units have separate damage values for various locations (turrets, large craft firing arcs)
      * @return
      */
-    public int getBattleForceStandardWeaponsDamage(int range) {
-        return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA, false,
-                                                   false);
+    public int getNumBattleForceWeaponsLocations() {
+    	return 1;
+    }
+
+    public int getNumAlphaStrikeWeaponsLocations() {
+    	return getNumBattleForceWeaponsLocations();
     }
 
     /**
-     * @param range
-     * @param ammoType
-     * @return
+     * @param index - indicates which set of damage values is being calculated
+     * @param location - one of the entity's LOC_* constants
+     * @return - the damage multiplier for this location; 0 for exclusion
      */
-    public int getBattleForceStandardWeaponsDamage(int range, int ammoType) {
-        return getBattleForceStandardWeaponsDamage(range, ammoType, false,
-                                                   false);
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+    	return 1.0; 
     }
 
     /**
-     * @param range
-     * @param ignoreHeat
-     * @param ignoreSpecialAbilities
-     * @return
+     * Weapon calculations are the same for BF and AS except for turrets, which are not separated
+     * in AS, and warships, which have only four arcs in AS.
      */
-    public int getBattleForceStandardWeaponsDamage(int range,
-                                                   boolean ignoreHeat, boolean ignoreSpecialAbilities) {
-        return getBattleForceStandardWeaponsDamage(range, AmmoType.T_NA,
-                                                   ignoreHeat, ignoreSpecialAbilities);
+    public double getAlphaStrikeLocationMultiplier(int index, int location, boolean rearMounted) {
+    	return getBattleForceLocationMultiplier(index, location, rearMounted);
+    }
+
+    public boolean isBattleForceTurretLocation(int index) {
+    	return false;
+    }
+
+    public boolean isBattleForceRearLocation(int index) {
+    	return false;
     }
 
     /**
-     * @param range
-     * @param ammoType
-     * @param ignoreHeat           if set to true then heat modifier is not used on damage
-     * @param ignoreSpecialAbility calculate special attacks into total damage if set to true
+     * Units with separate weapon locations (turrets or firing arcs) return the name of the location
+     * @param index
      * @return
      */
-    public int getBattleForceStandardWeaponsDamage(int range, int ammoType,
-                                                   boolean ignoreHeat, boolean ignoreSpecialAbility) {
-        double totalDamage = 0;
-        double frontArcWeaponsTotalDamage = 0;
-        double rearArcWeaponsTotalDamage = 0;
-        double totalHeat = 0;
-        boolean hasArtemis = false;
-        boolean hasTC = hasTargComp();
-        double baseDamage = 0;
-
-        TreeSet<String> weaponsUsed = new TreeSet<String>();
-
-        ArrayList<Mounted> weaponsList = getWeaponList();
-
-        for (int pos = 0; pos < weaponList.size(); pos++) {
-            double damageModifier = 1;
-            double weaponCount = 1;
-            double minRangeDamageModifier = 1;
-            hasArtemis = false;
-            Mounted mount = weaponsList.get(pos);
-            if ((mount == null) || mount.isRearMounted()
-                || weaponsUsed.contains(mount.getName())) {
-                continue;
-            }
-
-            WeaponType weapon = (WeaponType) mount.getType();
-
-            if ((weapon.getLongRange() < range) && !(weapon instanceof ISLAC5)
-                && !(weapon instanceof ATMWeapon)
-                && !(weapon instanceof MMLWeapon)) {
-                continue;
-            }
-
-            if ((ammoType != AmmoType.T_NA)
-                && (weapon.getAmmoType() != ammoType)) {
-                continue;
-            }
-
-            if ((weapon.getAmmoType() == AmmoType.T_INARC)
-                || (weapon.getAmmoType() == AmmoType.T_NARC)) {
-                continue;
-            }
-
-            if (weapon.hasFlag(WeaponType.F_ARTILLERY)) {
-                // Each Artillery weapon is separately accounted for
-                continue;
-            }
-
-            // Check ammo weapons first since they had a hidden modifier
-            if ((weapon.getAmmoType() != AmmoType.T_NA)
-                && !weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                weaponsUsed.add(weapon.getName());
-                for (int nextPos = pos + 1; nextPos < weaponList.size(); nextPos++) {
-                    Mounted nextWeapon = weaponList.get(nextPos);
-
-                    if ((nextWeapon == null) || nextWeapon.isRearMounted()) {
-                        continue;
-                    }
-
-                    if (nextWeapon.getType().equals(weapon)) {
-                        weaponCount++;
-                    }
-
-                }
-                int ammoCount = 0;
-                // Check if they have enough ammo for all the guns to last at
-                // least 10 rounds
-                for (Mounted ammo : getAmmo()) {
-
-                    AmmoType at = (AmmoType) ammo.getType();
-                    if ((at.getAmmoType() == weapon.getAmmoType())
-                        && (at.getRackSize() == weapon.getRackSize())) {
-                        // RACs are always fired on 6 shot so that means you
-                        // need 6 times the ammo to avoid the ammo damage
-                        // modifier
-                        if (at.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                            ammoCount += at.getShots() / 6;
-                        } else {
-                            ammoCount += at.getShots();
-                        }
-                    }
-                }
-
-                if ((ammoCount / weaponCount) < 10) {
-                    damageModifier *= .75;
-                }
-            }
-
-            if (weapon.hasFlag(WeaponType.F_MISSILE)) {
-                baseDamage = Compute.calculateClusterHitTableAmount(7,
-                                                                    weapon.getRackSize());
-                baseDamage *= weaponCount;
-            } else {
-                baseDamage = weapon.getDamage() * weaponCount;
-            }
-
-            if (range == Entity.BATTLEFORCESHORTRANGE) {
-                int minRange = Math.min(6,
-                                        Math.max(0, weapon.getMinimumRange()));
-                minRangeDamageModifier *= battleForceMinRangeModifier[minRange];
-            }
-            int toHitMod = weapon.getToHitModifier() + 4;
-
-            switch (weapon.getAmmoType()) {
-                case AmmoType.T_AC_LBX:
-                case AmmoType.T_AC_LBX_THB:
-                    baseDamage = Compute.calculateClusterHitTableAmount(7,
-                                                                        weapon.getRackSize()) * weaponCount;
-                    toHitMod--;
-                    break;
-                case AmmoType.T_MRM:
-                    Mounted mLinker = mount.getLinkedBy();
-                    if (((mLinker != null)
-                         && (mLinker.getType() instanceof MiscType)
-                         && !mLinker.isDestroyed() && !mLinker.isMissing()
-                         && !mLinker.isBreached() && mLinker.getType()
-                                                            .hasFlag(MiscType.F_APOLLO))) {
-                        toHitMod--;
-                        baseDamage = Compute.calculateClusterHitTableAmount(6,
-                                                                            weapon.getRackSize()) * weaponCount;
-                    }
-                    break;
-                case AmmoType.T_LRM:
-                    mLinker = mount.getLinkedBy();
-                    if (((mLinker != null)
-                         && (mLinker.getType() instanceof MiscType)
-                         && !mLinker.isDestroyed() && !mLinker.isMissing()
-                         && !mLinker.isBreached() && mLinker.getType()
-                                                            .hasFlag(MiscType.F_ARTEMIS))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(9,
-                                                                            weapon.getRackSize()) * weaponCount;
-                        hasArtemis = true;
-                    } else if (((mLinker != null)
-                                && (mLinker.getType() instanceof MiscType)
-                                && !mLinker.isDestroyed() && !mLinker.isMissing()
-                                && !mLinker.isBreached() && mLinker.getType()
-                                                                   .hasFlag(MiscType.F_ARTEMIS_V))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(10,
-                                                                            weapon.getRackSize()) * weaponCount;
-                        hasArtemis = true;
-                    }
-                    break;
-                case AmmoType.T_SRM:
-                    mLinker = mount.getLinkedBy();
-                    if (((mLinker != null)
-                         && (mLinker.getType() instanceof MiscType)
-                         && !mLinker.isDestroyed() && !mLinker.isMissing()
-                         && !mLinker.isBreached() && mLinker.getType()
-                                                            .hasFlag(MiscType.F_ARTEMIS))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(9,
-                                                                            weapon.getRackSize()) * 2 * weaponCount;
-                        hasArtemis = true;
-                    } else if (((mLinker != null)
-                                && (mLinker.getType() instanceof MiscType)
-                                && !mLinker.isDestroyed() && !mLinker.isMissing()
-                                && !mLinker.isBreached() && mLinker.getType()
-                                                                   .hasFlag(MiscType.F_ARTEMIS_V))) {
-                        baseDamage = Compute.calculateClusterHitTableAmount(10,
-                                                                            weapon.getRackSize()) * 2 * weaponCount;
-                        hasArtemis = true;
-                    } else {
-                        baseDamage = Compute.calculateClusterHitTableAmount(7,
-                                                                            weapon.getRackSize()) * 2 * weaponCount;
-                    }
-                    break;
-                case AmmoType.T_ATM:
-                    minRangeDamageModifier = 1;
-                    switch (range) {
-                        case Entity.BATTLEFORCESHORTRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(9,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount * 3;
-                            break;
-                        case Entity.BATTLEFORCEMEDIUMRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(9,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount * 2;
-                            break;
-                        case Entity.BATTLEFORCELONGRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(9,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount;
-                            break;
-                    }
-                    break;
-                case AmmoType.T_AC_ULTRA:
-                case AmmoType.T_AC_ULTRA_THB:
-                    damageModifier *= 1.5;
-                    break;
-                case AmmoType.T_HAG:
-                    switch (range) {
-                        case Entity.BATTLEFORCESHORTRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(9,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount;
-                            break;
-                        case Entity.BATTLEFORCELONGRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(5,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount;
-                            break;
-                        case Entity.BATTLEFORCEMEDIUMRANGE:
-                            baseDamage = Compute
-                                                 .calculateClusterHitTableAmount(7,
-                                                                                 weapon.getRackSize())
-                                         * weaponCount;
-                            break;
-                    }
-                    break;
-                case AmmoType.T_SRM_STREAK:
-                    baseDamage = weapon.getRackSize() * 2 * weaponCount;
-                    break;
-                case AmmoType.T_AC_ROTARY:
-                    baseDamage = Compute.calculateClusterHitTableAmount(7,
-                                                                        weapon.getRackSize()) * weaponCount * 5;
-                    break;
-
-            }
-
-            if (weapon instanceof ISSnubNosePPC) {
-                switch (range) {
-                    case Entity.BATTLEFORCESHORTRANGE:
-                        baseDamage = 10;
-                        break;
-                    case Entity.BATTLEFORCELONGRANGE:
-                        baseDamage = 0;
-                        break;
-                    case Entity.BATTLEFORCEMEDIUMRANGE:
-                        baseDamage = 5;
-                        break;
-                }
-            }
-
-            if (weapon instanceof VariableSpeedPulseLaserWeapon) {
-                switch (range) {
-                    case Entity.BATTLEFORCESHORTRANGE:
-                        toHitMod = 1;
-                        break;
-                    case Entity.BATTLEFORCEMEDIUMRANGE:
-                        toHitMod = 2;
-                        break;
-                    case Entity.BATTLEFORCELONGRANGE:
-                        toHitMod = 3;
-                        break;
-                }
-            }
-
-            damageModifier *= battleForceToHitModifier[toHitMod];
-
-            // For those entities that has a capital weapon but
-            if (weapon.isCapital()) {
-                damageModifier *= 10;
-            }
-
-            if (weapon.hasFlag(WeaponType.F_ONESHOT)) {
-                damageModifier *= .1;
-            }
-
-            // Targetting Computer
-            if (hasTC && weapon.hasFlag(WeaponType.F_DIRECT_FIRE)
-                && (weapon.getAmmoType() != AmmoType.T_AC_LBX)
-                && (weapon.getAmmoType() != AmmoType.T_AC_LBX_THB)) {
-                damageModifier *= 1.10;
-            }
-
-            if ((weapon.getAmmoType() == AmmoType.T_LRM)
-                || (weapon.getAmmoType() == AmmoType.T_AC)
-                || (weapon.getAmmoType() == AmmoType.T_LAC)
-                || (weapon.getAmmoType() == AmmoType.T_SRM)) {
-                double damage = baseDamage * damageModifier;
-
-                // TODO if damage is greater than 10 then we do not add it to
-                // the
-                // standard damage it will be used in special weapons
-                if (((damage < 10) && !ignoreSpecialAbility)
-                    || (ignoreSpecialAbility && !hasArtemis)
-                    || (!ignoreSpecialAbility && hasArtemis)) {
-
-                    if (range == Entity.BATTLEFORCESHORTRANGE) {
-                        damage *= minRangeDamageModifier;
-                    }
-                    frontArcWeaponsTotalDamage += damage;
-                }
-            } else if (weapon.hasFlag(WeaponType.F_PPC)) {
-                Mounted mLinker = mount.getLinkedBy();
-                if (range == Entity.BATTLEFORCESHORTRANGE) {
-                    baseDamage *= minRangeDamageModifier;
-                }
-                // PPC Capacitors?
-                if (((mLinker != null)
-                     && (mLinker.getType() instanceof MiscType)
-                     && !mLinker.isDestroyed() && !mLinker.isMissing()
-                     && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_PPC_CAPACITOR))) {
-                    frontArcWeaponsTotalDamage += ((baseDamage + 5) * .5)
-                                                  * damageModifier;
-                } else {
-                    frontArcWeaponsTotalDamage += baseDamage * damageModifier;
-                }
-            } else if (weapon.getAmmoType() == AmmoType.T_MML) {
-                double ammoDamage = 1;
-
-                Mounted mLinker = mount.getLinkedBy();
-                if (((mLinker != null)
-                     && (mLinker.getType() instanceof MiscType)
-                     && !mLinker.isDestroyed() && !mLinker.isMissing()
-                     && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_ARTEMIS))) {
-                    baseDamage = Compute.calculateClusterHitTableAmount(9,
-                                                                        weapon.getRackSize()) * weaponCount;
-                    hasArtemis = true;
-                } else if (((mLinker != null)
-                            && (mLinker.getType() instanceof MiscType)
-                            && !mLinker.isDestroyed() && !mLinker.isMissing()
-                            && !mLinker.isBreached() && mLinker.getType().hasFlag(
-                        MiscType.F_ARTEMIS_V))) {
-                    baseDamage = Compute.calculateClusterHitTableAmount(10,
-                                                                        weapon.getRackSize()) * weaponCount;
-                    hasArtemis = true;
-                }
-
-                switch (range) {
-                    case Entity.BATTLEFORCESHORTRANGE:
-                        ammoDamage = 2;
-                        break;
-                    case Entity.BATTLEFORCELONGRANGE:
-                        ammoDamage = 1;
-                        break;
-                    case Entity.BATTLEFORCEMEDIUMRANGE:
-                        ammoDamage = 1;
-                        baseDamage = Math.round((baseDamage * 3) / 2);
-                        break;
-                }
-
-                double damage = baseDamage * damageModifier;
-                // if damage is greater than 10 then we do not add it to the
-                // standard damage it will be used in special weapons
-                if (((damage < 10) && !ignoreSpecialAbility)
-                    || (ignoreSpecialAbility && !hasArtemis && (damage >= 10))
-                    || (!ignoreSpecialAbility && hasArtemis)) {
-
-                    frontArcWeaponsTotalDamage += damage * ammoDamage;
-                }
-            } else {
-                if (range == Entity.BATTLEFORCESHORTRANGE) {
-                    baseDamage *= minRangeDamageModifier;
-                }
-                frontArcWeaponsTotalDamage += baseDamage * damageModifier;
-            }
-        }
-
-        totalDamage = Math.max(frontArcWeaponsTotalDamage,
-                               rearArcWeaponsTotalDamage);
-
-        totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
-
-        if ((totalHeat > getHeatCapacity()) && !ignoreHeat) {
-            totalDamage = Math.ceil((totalDamage * getHeatCapacity())
-                                    / totalHeat);
-        }
-
-        if (ignoreSpecialAbility && (totalDamage < 10)) {
-            totalDamage = 0;
-        } else if ((ammoType != AmmoType.T_NA)) {
-            totalDamage = Math.round(totalDamage / 10);
-        } else {
-            totalDamage = Math.ceil(totalDamage / 10);
-        }
-        return (int) totalDamage;
+    public String getBattleForceLocationName(int index) {
+    	if (isBattleForceTurretLocation(index)) {
+    		return "TUR";
+    	}
+    	return "";
     }
 
+    public String getAlphaStrikeLocationName(int index) {
+    	return getBattleForceLocationName(index);
+    }
+
+    public boolean useForAlphaStrikePointCalc(int loc) {
+    	return loc == 0 || isBattleForceTurretLocation(loc);
+    }
+
+    /**
+     * Only used by Mechs and ASFs, which require different approaches to determining rear mountings
+     * @param allowRear - Use rear-mounted weapons instead of forward
+     * @return - total heat generated by firing all weapons
+     */
     public int getBattleForceTotalHeatGeneration(boolean allowRear) {
-        int totalHeat = 0;
-
-        // finish the max heat calculations
-        if (this.getJumpMP() > 0) {
-            totalHeat += getJumpHeat(getJumpMP());
-        } else if ((this instanceof Mech) && !((Mech) this).isIndustrial() && hasEngine()) {
-            totalHeat += getEngine().getRunHeat(this);
-        }
-
-        for (Mounted mount : getWeaponList()) {
-            WeaponType weapon = (WeaponType) mount.getType();
-            if (weapon.hasFlag(WeaponType.F_ONESHOT)
-                || (allowRear && !mount.isRearMounted())
-                || (!allowRear && mount.isRearMounted())) {
-                continue;
-            }
-            totalHeat += weapon.getHeat();
-        }
-
-        if ((this instanceof Mech) && hasWorkingMisc(MiscType.F_STEALTH, -1)) {
-            totalHeat += 10;
-        }
-
-        return totalHeat;
+    	return 0;
     }
 
-    public String getBattleForceOverHeatValue() {
-
-        int standardDamageValue = 0;
-        int damageValueNoHeat = 0;
-
-        int totalHeat = getBattleForceTotalHeatGeneration(false) - 4;
-
-        if (getHeatCapacity() >= totalHeat) {
-            return "None";
-        }
-
-        standardDamageValue = getBattleForceStandardWeaponsDamage(
-                Entity.BATTLEFORCEMEDIUMRANGE, false, true);
-
-        if (standardDamageValue <= 0) {
-            standardDamageValue = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, false, true);
-            damageValueNoHeat = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCESHORTRANGE, true, true);
-        } else {
-            damageValueNoHeat = getBattleForceStandardWeaponsDamage(
-                    Entity.BATTLEFORCEMEDIUMRANGE, true, true);
-        }
-
-        if (damageValueNoHeat > standardDamageValue) {
-            return Integer.toString(Math.min(4, damageValueNoHeat
-                                                - standardDamageValue));
-        }
-        return "None";
+    /**
+     * Used by small craft, dropships, jumpships, and warships to compute heat for a specific firing arc
+     * 
+     * @param location
+     * @return
+     */
+    public int getBattleForceTotalHeatGeneration(int location) {
+    	return 0;
     }
 
-    public String getBattleForceSpecialAbilites() {
-        return "None";
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+    	for (Mounted m : getEquipment()) {
+    		if (!(m.getType() instanceof MiscType)) {
+    			continue;
+    		}
+    		if (m.getType().hasFlag(MiscType.F_BAP)) {
+    			specialAbilities.put(BattleForceSPA.RCN, null);
+    			if (m.getType().hasFlag(MiscType.F_BLOODHOUND)) {
+    				specialAbilities.put(BattleForceSPA.BH, null);                        
+    			} else if (m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)) {
+    				specialAbilities.put(BattleForceSPA.LPRB, null);                        
+    			} else if (m.getType().hasFlag(MiscType.F_WATCHDOG)) {
+    				specialAbilities.put(BattleForceSPA.WAT, null);                        
+    				specialAbilities.put(BattleForceSPA.LPRB, null);                        
+    				specialAbilities.put(BattleForceSPA.ECM, null);                        
+    			} else {
+    				specialAbilities.put(BattleForceSPA.PRB, null);
+    			}
+    			if (m.getType().hasFlag(MiscType.F_NOVA)) {
+    				specialAbilities.put(BattleForceSPA.NOVA, null);
+    				specialAbilities.put(BattleForceSPA.ECM, null);
+    				specialAbilities.put(BattleForceSPA.MHQ, 3); // count half-tons
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_ECM)) {
+    			if (m.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+    				specialAbilities.put(BattleForceSPA.AECM, null);
+    			} else if (m.getType().hasFlag(MiscType.F_SINGLE_HEX_ECM)) {
+    				specialAbilities.put(BattleForceSPA.LECM, null);
+    			} else {
+    				specialAbilities.put(BattleForceSPA.ECM, null);
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_BOOBY_TRAP)) {
+    			specialAbilities.put(BattleForceSPA.BT, null);
+    		} else if (m.getType().hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+    				|| m.getType().hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+    				|| m.getType().hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)) {
+    			specialAbilities.put(BattleForceSPA.BRID, null);
+    		} else if (m.getType().hasFlag(MiscType.F_C3S)) {
+    			if (m.getType().hasFlag(MiscType.F_C3SBS)) {
+    				specialAbilities.put(BattleForceSPA.C3BSS, null);
+    				specialAbilities.merge(BattleForceSPA.MHQ, 4, Integer::sum);
+    			} else if (m.getType().hasFlag(MiscType.F_C3EM)) {
+    				specialAbilities.merge(BattleForceSPA.C3EM, 1, Integer::sum);
+    				specialAbilities.merge(BattleForceSPA.MHQ, 4, Integer::sum);
+    			} else {
+    				specialAbilities.put(BattleForceSPA.C3S, null);
+    				specialAbilities.merge(BattleForceSPA.MHQ, 2, Integer::sum);
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_C3I)) {
+    			if ((getEntityType() & ETYPE_AERO) == ETYPE_AERO) {
+    				specialAbilities.put(BattleForceSPA.NC3, null);
+    			} else {
+    				specialAbilities.put(BattleForceSPA.C3I, null);
+    				if (m.getType().hasFlag(MiscType.F_BA_EQUIPMENT)) {
+    					specialAbilities.merge(BattleForceSPA.MHQ, 4, Integer::sum);                            
+    				} else {
+    					specialAbilities.merge(BattleForceSPA.MHQ, 5, Integer::sum);                            
+    				}
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_CASE)) {
+    			specialAbilities.put(BattleForceSPA.CASE, null);
+    		} else if (m.getType().hasFlag(MiscType.F_CASEII)) {
+    			specialAbilities.put(BattleForceSPA.CASEII, null);
+    		} else if (m.getType().hasFlag(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+    			specialAbilities.put(BattleForceSPA.DRO, null);
+    		} else if (m.getType().hasFlag(MiscType.F_DRONE_EXTRA)) {
+    			specialAbilities.merge(BattleForceSPA.DCC, 1, Integer::sum);
+    		} else if (m.getType().hasFlag(MiscType.F_EJECTION_SEAT)) {
+    			specialAbilities.put(BattleForceSPA.ES, null);
+    		} else if (m.getType().hasFlag(MiscType.F_ECM)) {
+    			specialAbilities.put(BattleForceSPA.ECM, null);
+    		} else if (m.getType().hasFlag(MiscType.F_BULLDOZER)) {
+    			specialAbilities.put(BattleForceSPA.ENG, null);
+    		} else if (m.getType().hasFlag(MiscType.F_CLUB)) {
+    			specialAbilities.put(BattleForceSPA.MEL, null);
+    			if ((m.getType().getSubType() &
+    					(MiscType.S_BACKHOE | MiscType.S_PILE_DRIVER
+    							| MiscType.S_MINING_DRILL | MiscType.S_ROCK_CUTTER
+    							| MiscType.S_WRECKING_BALL)) != 0) {
+    				specialAbilities.put(BattleForceSPA.ENG, null);
+    			} else if ((m.getType().getSubType() &
+    					(MiscType.S_DUAL_SAW | MiscType.S_CHAINSAW
+    							| MiscType.S_BUZZSAW)) != 0) {
+    				specialAbilities.put(BattleForceSPA.SAW, null);
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_FIRE_RESISTANT)) {
+    			specialAbilities.put(BattleForceSPA.FR, null);
+    		} else if (m.getType().hasFlag(MiscType.F_MOBILE_HPG)) {
+    			specialAbilities.put(BattleForceSPA.HPG, null);
+    		} else if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)) {
+    			specialAbilities.merge(BattleForceSPA.MHQ, (int)m.getType().getTonnage(this) * 2, 
+    					Integer::sum);
+    			if (m.getType().getTonnage(this) >= getWeight() / 20.0) {
+    				specialAbilities.put(BattleForceSPA.RCN, null);
+    			}
+    		} else if (m.getType().hasFlag(MiscType.F_SENSOR_DISPENSER)) {
+    			specialAbilities.merge(BattleForceSPA.RSD, 1, Integer::sum);
+    			specialAbilities.put(BattleForceSPA.RCN, null);
+    		} else if (m.getType().hasFlag(MiscType.F_LOOKDOWN_RADAR)
+    				|| m.getType().hasFlag(MiscType.F_RECON_CAMERA)
+    				|| m.getType().hasFlag(MiscType.F_HIRES_IMAGER)
+    				|| m.getType().hasFlag(MiscType.F_HYPERSPECTRAL_IMAGER)
+    				|| m.getType().hasFlag(MiscType.F_INFRARED_IMAGER)) {
+    		} else if (m.getType().hasFlag(MiscType.F_SEARCHLIGHT)) {
+    			specialAbilities.put(BattleForceSPA.SRCH, null);
+    		} else if (m.getType().hasFlag(MiscType.F_RADICAL_HEATSINK)) {
+    			specialAbilities.put(BattleForceSPA.RHS, null);
+    		} else if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+    			specialAbilities.put(BattleForceSPA.ECS, null);
+    		} else if (m.getType().hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
+    			specialAbilities.put(BattleForceSPA.DJ, null);
+    		} else if (m.getType().hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)) {
+    			specialAbilities.put(BattleForceSPA.HJ, null);
+    		}                
+    	}
+
+    	if (isOmni()) {
+    		specialAbilities.put(BattleForceSPA.OMNI, null);
+    	}
+
+    	//TODO: Variable Range targeting is not implemented
+
+    	if (!hasPatchworkArmor()) {
+    		switch (getArmorType(0)) {
+    		case EquipmentType.T_ARMOR_COMMERCIAL:
+    		case EquipmentType.T_ARMOR_INDUSTRIAL:
+    		case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
+    			specialAbilities.put(BattleForceSPA.BAR, null);
+    			break;
+    		case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+    			specialAbilities.put(BattleForceSPA.CR, null);
+    			break;
+    		case EquipmentType.T_ARMOR_STEALTH:
+    		case EquipmentType.T_ARMOR_STEALTH_VEHICLE:
+    			specialAbilities.put(BattleForceSPA.STL, null);
+    			specialAbilities.put(BattleForceSPA.ECM, null);
+    			break;
+    		case EquipmentType.T_ARMOR_BA_STEALTH:
+    		case EquipmentType.T_ARMOR_BA_STEALTH_BASIC:
+    		case EquipmentType.T_ARMOR_BA_STEALTH_IMP:
+    		case EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE:
+    			specialAbilities.put(BattleForceSPA.STL, null);
+    			specialAbilities.put(BattleForceSPA.LECM, null);
+    			break;
+    		case EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION:
+    			specialAbilities.put(BattleForceSPA.ABA, null);
+    			break;
+    		case EquipmentType.T_ARMOR_BALLISTIC_REINFORCED:
+    			specialAbilities.put(BattleForceSPA.BRA, null);
+    			break;
+    		case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
+    			specialAbilities.put(BattleForceSPA.FR, null);
+    			break;
+    		case EquipmentType.T_ARMOR_IMPACT_RESISTANT:
+    			specialAbilities.put(BattleForceSPA.IRA, null);
+    			break;
+    		case EquipmentType.T_ARMOR_REACTIVE:
+    			specialAbilities.put(BattleForceSPA.RCA, null);
+    			break;
+    		case EquipmentType.T_ARMOR_REFLECTIVE:
+    			specialAbilities.put(BattleForceSPA.RFA, null);
+    			break;
+    		}                
+    	}
+
+    	if (getAmmo().size() > 0) {
+    		if (isClan()) {
+    			specialAbilities.put(BattleForceSPA.CASE, null);
+    		}
+    	} else {
+    		specialAbilities.put(BattleForceSPA.ENE, null);
+    	}
+
+    	if (getAmmo().stream().map(m -> (AmmoType)m.getType())
+    			.anyMatch(at -> at.hasFlag(AmmoType.F_TELE_MISSILE))) {
+    		specialAbilities.put(BattleForceSPA.TELE, null);                
+    	}
+
+    	if (hasEngine()) {
+    		if (getEngine().getEngineType() == Engine.STEAM
+    				&& getEngine().getEngineType() == Engine.FUEL_CELL) {
+    			specialAbilities.put(BattleForceSPA.EE, null);
+    		} else if (getEngine().getEngineType() == Engine.STEAM) {
+    			specialAbilities.put(BattleForceSPA.FC, null);
+    		} else {
+    			specialAbilities.put(BattleForceSPA.EEE, null);
+    		}
+    	}
+
+    	for (Transporter t : getTransports()) {
+    		if (t instanceof ASFBay) {
+    			specialAbilities.merge(BattleForceSPA.AT, (int)((ASFBay)t).getCapacity(), Integer::sum);                
+    			specialAbilities.merge(BattleForceSPA.ATxD, ((ASFBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof CargoBay) {
+    			specialAbilities.merge(BattleForceSPA.CT, (int)((CargoBay)t).getCapacity(), Integer::sum);                
+    			specialAbilities.merge(BattleForceSPA.CTxD, ((CargoBay)t).getDoors(), Integer::sum);
+    		} else if (t instanceof DockingCollar) {
+    			specialAbilities.merge(BattleForceSPA.DT, 1, Integer::sum);                
+    		} else if (t instanceof InfantryBay) {
+    			// We do not record number of doors for infantry
+    			specialAbilities.merge(BattleForceSPA.IT, (int)((InfantryBay)t).getCapacity(), Integer::sum);                
+    		} else if (t instanceof MechBay) {
+    			specialAbilities.merge(BattleForceSPA.MT, (int)((MechBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.MTxD, ((MechBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof ProtomechBay) {
+    			specialAbilities.merge(BattleForceSPA.PT, (int)((ProtomechBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.PTxD, ((ProtomechBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof SmallCraftBay) {
+    			specialAbilities.merge(BattleForceSPA.ST, (int)((SmallCraftBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.STxD, ((SmallCraftBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof LightVehicleBay) {
+    			specialAbilities.merge(BattleForceSPA.VTM, (int)((LightVehicleBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.VTMxD, ((LightVehicleBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		} else if (t instanceof HeavyVehicleBay) {
+    			specialAbilities.merge(BattleForceSPA.VTH, (int)((HeavyVehicleBay)t).getCapacity(), Integer::sum);
+    			specialAbilities.merge(BattleForceSPA.VTHxD, ((HeavyVehicleBay)t).getDoors(), Integer::sum);
+    			specialAbilities.put(BattleForceSPA.MFB, null);
+    		}
+    	}
+
+    	topLoop: for (int location = 0; location < locations(); location++) {
+    		for (int slot = 0; slot < getNumberOfCriticals(location); slot++) {
+    			CriticalSlot crit = getCritical(location, slot);
+    			if (null != crit) {
+    				if (crit.isArmored()) {
+    					specialAbilities.put(BattleForceSPA.ARM, null);
+    					break topLoop;
+    				} else if (crit.getType() == CriticalSlot.TYPE_EQUIPMENT) {
+    					Mounted mount = crit.getMount();
+    					if (mount.isArmored()) {
+    						specialAbilities.put(BattleForceSPA.ARM, null);
+    						break topLoop;
+    					}
+    				}
+    			}
+    		}
+    	}
     }
 
     public int getBattleForceSize() {
-        // the default BF Size is for ground Combat elements. Other types will
-        // need to override this
-        // The tables are on page 356 of StartOps
-        if (getWeight() < 40) {
-            return 1;
-        }
-        if (getWeight() < 60) {
-            return 2;
-        }
-        if (getWeight() < 80) {
-            return 3;
-        }
+    	// the default BF Size is for ground Combat elements. Other types will
+    	// need to override this
+    	// The tables are on page 356 of StartOps
+    	if (getWeight() < 40) {
+    		return 1;
+    	}
+    	if (getWeight() < 60) {
+    		return 2;
+    	}
+    	if (getWeight() < 80) {
+    		return 3;
+    	}
 
-        return 4;
+    	return 4;
     }
 
     @Override
@@ -12937,9 +12823,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getMASCTarget() {
-        if (game.getOptions().booleanOption("alternate_masc_enhanced")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
             return ALTERNATE_MASC_FAILURE_ENHANCED[nMASCLevel];
-        } else if (game.getOptions().booleanOption("alternate_masc")) {
+        } else if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
             return ALTERNATE_MASC_FAILURE[nMASCLevel];
         } else {
             return MASC_FAILURE[nMASCLevel];
@@ -13630,7 +13516,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 setDestroyed(true);
             }
         }
-
+        setIsJumpingNow(false);
     }
 
     /**
@@ -13650,7 +13536,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getTechLevelYear() {
         if (game != null) {
-            return game.getOptions().intOption("year");
+            return game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         }
         return year;
     }
@@ -13799,7 +13685,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getAllowedPhysicalAttacks() {
-        if ((null != crew) && crew.getOptions().booleanOption("melee_master")) {
+        if ((null != crew) && crew.getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER)) {
             return 2;
         }
         return 1;
@@ -13828,7 +13714,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             WeaponType type = (WeaponType) weapon.getType();
             int range = (game.getOptions().booleanOption(
-                    OptionsConstants.AC_TAC_OPS_RANGE) ? type.getExtremeRange()
+                    OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ? type.getExtremeRange()
                     : type.getLongRange());
             if (range > maxRange) {
                 maxRange = range;

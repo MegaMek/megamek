@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,7 @@ import megamek.common.EquipmentType;
 import megamek.common.GameTurn;
 import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -64,7 +66,6 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
-import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.event.GameCFREvent;
@@ -91,7 +92,7 @@ public abstract class BotClient extends Client {
      * This is used to ensure keep the ClientGUI synchronized with changes to
      * this BotClient (particularly the bot's name).
      */
-    ClientGUI clientgui = null;
+    private ClientGUI clientgui = null;
 
     public class CalculateBotTurn implements Runnable {
         public void run() {
@@ -272,7 +273,7 @@ public abstract class BotClient extends Client {
                      */
                     // if the game is not double blind and I can't see anyone
                     // else on the board I should kill myself.
-                    if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
+                    if (!(game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) //$NON-NLS-1$
                         && ((game.getEntitiesOwnedBy(getLocalPlayer())
                              - game.getNoOfEntities()) == 0)) {
                         die();
@@ -367,7 +368,7 @@ public abstract class BotClient extends Client {
         return unMoved.get(Compute.randomInt(unMoved.size()));
     }
 
-    synchronized protected void calculateMyTurn() {
+    private synchronized void calculateMyTurn() {
         try {
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 MovePath mp;
@@ -395,7 +396,7 @@ public abstract class BotClient extends Client {
                 } else {
                     // Send a "no attack" to clear the game turn, if any.
                     sendAttackData(game.getFirstEntityNum(getMyTurn()),
-                                   new Vector<EntityAction>(0));
+                                   new Vector<>(0));
                 }
             } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
                 calculateDeployment();
@@ -415,12 +416,31 @@ public abstract class BotClient extends Client {
                 // Send a "no attack" to clear the game turn, if any.
                 // TODO: Fix for real arty stuff
                 sendAttackData(game.getFirstEntityNum(getMyTurn()),
-                               new Vector<EntityAction>(0));
+                               new Vector<>(0));
                 sendDone(true);
             }
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }
+
+    public double getMassOfAllInBuilding(final IGame game, final Coords coords) {
+        double mass = 0;
+
+        // Add the mass of anyone else standing in/on this building.
+        final IHex hex = game.getBoard().getHex(coords);
+        final int buildingElevation = hex.terrainLevel(Terrains.BLDG_ELEV);
+        final int bridgeElevation = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+        Iterator<Entity> crowd = game.getEntities(coords);
+        while (crowd.hasNext()) {
+            Entity e = crowd.next();
+
+            if (buildingElevation >= e.getElevation() || bridgeElevation >= e.getElevation()) {
+                mass += e.getWeight();
+            }
+        }
+
+        return mass;
     }
 
     /**
@@ -438,6 +458,16 @@ public abstract class BotClient extends Client {
             if (violation != null) {
                 continue;
             }
+
+            // Make sure we don't overload any buildings in this hex.
+            Building building = game.getBoard().getBuildingAt(dest);
+            if (null != building) {
+                double mass = getMassOfAllInBuilding(game, dest) + deployedUnit.getWeight();
+                if (mass > building.getCurrentCF(dest)) {
+                    continue;
+                }
+            }
+
             return dest;
         }
 
@@ -956,7 +986,7 @@ public abstract class BotClient extends Client {
         }
     }
 
-    public String getRandomBotMessage() {
+    private String getRandomBotMessage() {
         String message = "";
 
         try {
@@ -1014,7 +1044,7 @@ public abstract class BotClient extends Client {
         setName((String) (inP.getObject(0)));
     }
 
-    public ClientGUI getClientGUI() {
+    private ClientGUI getClientGUI() {
         return clientgui;
     }
 

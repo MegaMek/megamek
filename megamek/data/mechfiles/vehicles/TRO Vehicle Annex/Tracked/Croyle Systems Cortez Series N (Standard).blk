@@ -63,7 +63,8 @@ cargobay:8.92:1
 
 <Body Equipment>
 AmphibiousChassis
-Enviromental Sealed Chassis
+Basic Fire Control
+Environmental Sealed Chassis
 </Body Equipment>
 
 <Front Equipment>
@@ -71,6 +72,8 @@ BeagleActiveProbe
 BASearchlight
 BASearchlight
 BASearchlight
+Manipulator
+Manipulator
 </Front Equipment>
 
 <Right Equipment>
@@ -99,10 +102,9 @@ Searchlight
 </Turret Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Star League
 </source>
 
 <tonnage>
 75.0
 </tonnage>
-

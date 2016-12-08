@@ -15,7 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import megamek.common.Building.BasementType;
@@ -32,21 +32,17 @@ public class Hex implements IHex, Serializable {
     private static final long serialVersionUID = 82483704768044698L;
     private int level;
     /**
-     * An array to store the terrain types present in this hex.  The array
-     * allows for constant access to the terrain type given a terrain id.
-     */
-    private ITerrain[] terrains;
-    /**
-     * A HashMap analog to <code>terrains</code>.  It contains the exact
-     *  same terrain types as <code>terrains</code>, however it allows an
-     *  efficient way to access all present terrains.
+     * A HashMap to <code>terrains</code>. It contains the exact same terrain
+     * types that the old <code>terrains</code> did, however it allows an
+     * efficient way to access all present terrains.
      *
      */
-    private HashSet<Integer> hsTerrains;
+    private HashMap<Integer, ITerrain> terrains = new HashMap<Integer, ITerrain>(1);
     private String theme;
     private String originalTheme;
     private int fireTurn;
     private Coords coords;
+
     /** Constructs clear, plain hex at level 0. */
     public Hex() {
         this(0);
@@ -54,27 +50,20 @@ public class Hex implements IHex, Serializable {
 
     /** Constructs clean, plain hex at specified level. */
     public Hex(int level) {
-        this(level, new ITerrain[Terrains.SIZE], null, new Coords(0,0));
+        this(level, new ITerrain[Terrains.SIZE], null, new Coords(0, 0));
     }
 
     public Hex(int level, ITerrain[] terrains, String theme) {
-        this(level, terrains, theme, new Coords(0,0));
+        this(level, terrains, theme, new Coords(0, 0));
     }
 
     /** Constructs hex with all parameters. */
     public Hex(int level, ITerrain[] terrains, String theme, Coords c) {
         this.level = level;
         coords = c;
-        this.terrains = terrains;
-        // Creates a HM with a capacity that is 25% larger than the number of
-        //  terrain types.  This should prevent us from every having to resize
-        hsTerrains = new HashSet<Integer>(
-                (int)((Terrains.SIZE * 1.25) + 0.5), 0.75f);
-
-        for (int i = 0; i < terrains.length; i++){
-            if (terrains[i] != null){
-                hsTerrains.add(i);
-            }
+        for (ITerrain t : terrains) {
+            if (t != null)
+                this.terrains.put(t.getType(), t);
         }
 
         if ((theme == null) || (theme.length() > 0)) {
@@ -86,16 +75,14 @@ public class Hex implements IHex, Serializable {
     }
 
     public Hex(int level, String terrain, String theme) {
-        this(level,terrain,theme,new Coords(0,0));
+        this(level, terrain, theme, new Coords(0, 0));
     }
 
     /** Contructs hex with string terrain info */
     public Hex(int level, String terrain, String theme, Coords c) {
         this(level, new ITerrain[Terrains.SIZE], theme, c);
-        for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st
-                .hasMoreTokens();) {
-            addTerrain(Terrains.getTerrainFactory().createTerrain(
-                    st.nextToken()));
+        for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st.hasMoreTokens();) {
+            addTerrain(Terrains.getTerrainFactory().createTerrain(st.nextToken()));
         }
     }
 
@@ -104,13 +91,8 @@ public class Hex implements IHex, Serializable {
      *
      * @see megamek.common.IHex#getTerrainTypes()
      */
-    public int[] getTerrainTypes(){
-        int []rv = new int[hsTerrains.size()];
-        int tdx = 0;
-        for (Integer i : hsTerrains){
-            rv[tdx++] = i;
-        }
-        return rv;
+    public int[] getTerrainTypes() {
+        return terrains.keySet().stream().mapToInt(Integer::intValue).toArray();
     }
 
     /*
@@ -148,7 +130,7 @@ public class Hex implements IHex, Serializable {
     public void setTheme(String theme) {
         this.theme = theme;
     }
-    
+
     /** Resets the theme to what was specified in the board file. */
     public void resetTheme() {
         setTheme(originalTheme);
@@ -160,8 +142,8 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#clearExits()
      */
     public void clearExits() {
-        for (Integer i : hsTerrains){
-            ITerrain t = terrains[i];
+        for (Integer i : terrains.keySet()) {
+            ITerrain t = terrains.get(i);
             if ((t != null) && !t.hasExitsSpecified()) {
                 t.setExits(0);
             }
@@ -183,7 +165,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#setExits(megamek.common.IHex, int, boolean)
      */
     public void setExits(IHex other, int direction, boolean roadsAutoExit) {
-        for (Integer i : hsTerrains){
+        for (Integer i : terrains.keySet()) {
             ITerrain cTerr = getTerrain(i);
             ITerrain oTerr;
 
@@ -200,26 +182,22 @@ public class Hex implements IHex, Serializable {
             cTerr.setExit(direction, cTerr.exitsTo(oTerr));
 
             // Roads exit into pavement, too.
-            if ((other != null) && roadsAutoExit
-                    && (cTerr.getType() == Terrains.ROAD)
+            if ((other != null) && roadsAutoExit && (cTerr.getType() == Terrains.ROAD)
                     && other.containsTerrain(Terrains.PAVEMENT)) {
                 cTerr.setExit(direction, true);
             }
 
-            //buildings must have the same building class
-            if((other != null) && (cTerr.getType() == Terrains.BUILDING)
-                    && (terrainLevel(Terrains.BLDG_CLASS) !=
-                        other.terrainLevel(Terrains.BLDG_CLASS))) {
+            // buildings must have the same building class
+            if ((other != null) && (cTerr.getType() == Terrains.BUILDING)
+                    && (terrainLevel(Terrains.BLDG_CLASS) != other.terrainLevel(Terrains.BLDG_CLASS))) {
                 cTerr.setExit(direction, false);
             }
 
-            //gun emplacements can only be single hex buildings
-            if((cTerr.getType() == Terrains.BUILDING)
-                    && (terrainLevel(Terrains.BLDG_CLASS) ==
-                        Building.GUN_EMPLACEMENT)) {
+            // gun emplacements can only be single hex buildings
+            if ((cTerr.getType() == Terrains.BUILDING)
+                    && (terrainLevel(Terrains.BLDG_CLASS) == Building.GUN_EMPLACEMENT)) {
                 cTerr.setExit(direction, false);
             }
-
 
         }
     }
@@ -245,29 +223,29 @@ public class Hex implements IHex, Serializable {
         }
         return result;
     }
-    
+
     /*
      * (non-Javadoc)
      *
      * @see megamek.common.IHex#containsExit(int)
      */
-    public boolean containsExit(int direction){
+    public boolean containsExit(int direction) {
         boolean rv = false;
-        for (Integer terrType : hsTerrains){
-            rv |= containsTerrainExit(terrType, direction);           
+        for (Integer terrType : terrains.keySet()) {
+            rv |= containsTerrainExit(terrType, direction);
         }
         return rv;
     }
-    
+
     /*
      * (non-Javadoc)
      *
      * @see megamek.common.IHex#hasExitableTerrain()
      */
-    public boolean hasExitableTerrain(){
+    public boolean hasExitableTerrain() {
         boolean rv = false;
-        for (Integer terrType : hsTerrains){
-            rv |= Terrains.exitableTerrain(terrType);           
+        for (Integer terrType : terrains.keySet()) {
+            rv |= Terrains.exitableTerrain(terrType);
         }
         return rv;
     }
@@ -280,7 +258,7 @@ public class Hex implements IHex, Serializable {
     public int ceiling() {
         return ceiling(false);
     }
-    
+
     public int ceiling(boolean inAtmosphere) {
         return level + maxTerrainFeatureElevation(inAtmosphere);
     }
@@ -288,8 +266,8 @@ public class Hex implements IHex, Serializable {
     public int maxTerrainFeatureElevation(boolean inAtmo) {
         int maxFeature = 0;
         int featureElev;
-        for (Integer terrainType : hsTerrains) {
-            featureElev = terrains[terrainType].getTerrainElevation(inAtmo);
+        for (Integer terrainType : terrains.keySet()) {
+            featureElev = terrains.get(terrainType).getTerrainElevation(inAtmo);
             if (featureElev > maxFeature) {
                 maxFeature = featureElev;
             }
@@ -345,14 +323,15 @@ public class Hex implements IHex, Serializable {
 
         return depth;
     }
-    
+
     /**
      * Returns true if this hex has a terrain with a non-zero terrain factor
+     * 
      * @return
      */
     public boolean hasTerrainfactor() {
-        for (int type : hsTerrains) {
-            if (terrains[type].getTerrainFactor() > 0) {
+        for (int type : terrains.keySet()) {
+            if (terrains.get(type).getTerrainFactor() > 0) {
                 return true;
             }
         }
@@ -387,9 +366,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#hasPavement()
      */
     public boolean hasPavement() {
-        return containsTerrain(Terrains.PAVEMENT)
-                || containsTerrain(Terrains.ROAD)
-                || containsTerrain(Terrains.BRIDGE);
+        return containsTerrain(Terrains.PAVEMENT) || containsTerrain(Terrains.ROAD) || containsTerrain(Terrains.BRIDGE);
     }
 
     /*
@@ -411,7 +388,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#getTerrain(int)
      */
     public ITerrain getTerrain(int type) {
-        return terrains[type];
+        return terrains.get(type);
     }
 
     /*
@@ -420,8 +397,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#addTerrain(megamek.common.Terrain)
      */
     public void addTerrain(ITerrain terrain) {
-        terrains[terrain.getType()] = terrain;
-        hsTerrains.add(terrain.getType());
+        terrains.put(terrain.getType(), terrain);
     }
 
     /*
@@ -430,8 +406,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#removeTerrain(int)
      */
     public void removeTerrain(int type) {
-        terrains[type] = null;
-        hsTerrains.remove(type);
+        terrains.remove(type);
     }
 
     /*
@@ -440,10 +415,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#removeAllTerrains()
      */
     public void removeAllTerrains() {
-        for (int i = 0; i < terrains.length; i++) {
-            terrains[i] = null;
-        }
-        hsTerrains.clear();
+        terrains.clear();
     }
 
     /*
@@ -453,9 +425,8 @@ public class Hex implements IHex, Serializable {
      */
     public int displayableTerrainsPresent() {
         int present = 0;
-        for (Integer i : hsTerrains){
-            if ((null != terrains[i]) &&
-                    (null != Terrains.getDisplayName(i,terrains[i].getLevel()))){
+        for (Integer i : terrains.keySet()) {
+            if ((null != Terrains.getDisplayName(i, terrains.get(i).getLevel()))) {
                 present++;
             }
         }
@@ -466,7 +437,7 @@ public class Hex implements IHex, Serializable {
      * report the number of terrains present for the tooltips.
      */
     public int terrainsPresent() {
-        return hsTerrains.size();
+        return terrains.size();
     }
 
     /*
@@ -475,30 +446,24 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#duplicate
      */
     public IHex duplicate() {
-        ITerrain[] tcopy = new ITerrain[terrains.length];
+        ITerrain[] tcopy = new ITerrain[Terrains.SIZE];
         ITerrainFactory f = Terrains.getTerrainFactory();
-        for (Integer i : hsTerrains){
-            if (terrains[i] != null) {
-                tcopy[i] = f.createTerrain(terrains[i]);
-            }
+        for (Integer i : terrains.keySet()) {
+            tcopy[i] = f.createTerrain(terrains.get(i));
         }
         return new Hex(level, tcopy, theme, coords);
     }
 
     public void terrainPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
-        for (Integer i : hsTerrains){
-            if (terrains[i] != null) {
-                terrains[i].pilotingModifier(moveMode, roll, enteringRubble);
-            }
+        for (Integer i : terrains.keySet()) {
+            terrains.get(i).pilotingModifier(moveMode, roll, enteringRubble);
         }
     }
 
     public int movementCost(Entity entity) {
         int rv = 0;
-        for (Integer i : hsTerrains){
-            if (terrains[i] != null) {
-                rv += terrains[i].movementCost(entity);
-            }
+        for (ITerrain terrain : terrains.values()) {
+            rv += terrain.movementCost(entity);
         }
         return rv;
     }
@@ -508,44 +473,42 @@ public class Hex implements IHex, Serializable {
         String temp;
         temp = "Level: " + getLevel();
         temp = temp + "  Features: ";
-        for (Integer i : hsTerrains) {
-            ITerrain terrain = terrains[i];
+        for (ITerrain terrain : terrains.values()) {
             if (terrain != null) {
                 switch (terrain.getType()) {
-                    case Terrains.WOODS:
-                        if (terrain.getLevel() == 2) {
-                            temp = temp + "Heavy Woods";
-                        } else if (terrain.getLevel() == 1) {
-                            temp = temp + "Light Woods";
-                        } else {
-                            temp = temp + "??? Woods";
-                        }
-                        break;
-                    case Terrains.WATER:
-                        temp = temp + "Water, depth: " + terrain.getLevel();
-                        break;
-                    case Terrains.ROAD:
-                        temp = temp + "Road";
-                        break;
-                    case Terrains.ROUGH:
-                        temp = temp + "Rough";
-                        break;
-                    case Terrains.RUBBLE:
-                        temp = temp + "Rubble";
-                        break;
-                    case Terrains.SWAMP:
-                        temp = temp + "Swamp";
-                        break;
-                    case Terrains.ARMS:
-                        temp = temp + "Arm";
-                        break;
-                    case Terrains.LEGS:
-                        temp = temp + "Leg";
-                        break;
-                    default:
-                        temp = temp + Terrains.getName(terrain.getType()) + "("
-                                + terrain.getLevel() + ", "
-                                + terrain.getTerrainFactor() + ")";
+                case Terrains.WOODS:
+                    if (terrain.getLevel() == 2) {
+                        temp = temp + "Heavy Woods";
+                    } else if (terrain.getLevel() == 1) {
+                        temp = temp + "Light Woods";
+                    } else {
+                        temp = temp + "??? Woods";
+                    }
+                    break;
+                case Terrains.WATER:
+                    temp = temp + "Water, depth: " + terrain.getLevel();
+                    break;
+                case Terrains.ROAD:
+                    temp = temp + "Road";
+                    break;
+                case Terrains.ROUGH:
+                    temp = temp + "Rough";
+                    break;
+                case Terrains.RUBBLE:
+                    temp = temp + "Rubble";
+                    break;
+                case Terrains.SWAMP:
+                    temp = temp + "Swamp";
+                    break;
+                case Terrains.ARMS:
+                    temp = temp + "Arm";
+                    break;
+                case Terrains.LEGS:
+                    temp = temp + "Leg";
+                    break;
+                default:
+                    temp = temp + Terrains.getName(terrain.getType()) + "(" + terrain.getLevel() + ", "
+                            + terrain.getTerrainFactor() + ")";
                 }
                 temp = temp + "; ";
             }
@@ -558,9 +521,9 @@ public class Hex implements IHex, Serializable {
      */
     public int getIgnitionModifier() {
         int mod = 0;
-        for (Integer i : hsTerrains){
-            if (terrains[i] != null) {
-                mod += terrains[i].ignitionModifier();
+        for (ITerrain terrain : terrains.values()) {
+            if (terrain != null) {
+                mod += terrain.ignitionModifier();
             }
         }
         return mod;
@@ -570,21 +533,16 @@ public class Hex implements IHex, Serializable {
      * Is this hex ignitable?
      */
     public boolean isIgnitable() {
-        return (containsTerrain(Terrains.WOODS)
-                || containsTerrain(Terrains.JUNGLE)
-                || containsTerrain(Terrains.BUILDING)
-                || containsTerrain(Terrains.FUEL_TANK)
-                || containsTerrain(Terrains.FIELDS)
-                || containsTerrain(Terrains.INDUSTRIAL));
+        return (containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE)
+                || containsTerrain(Terrains.BUILDING) || containsTerrain(Terrains.FUEL_TANK)
+                || containsTerrain(Terrains.FIELDS) || containsTerrain(Terrains.INDUSTRIAL));
 
     }
 
     public boolean isClearForTakeoff() {
-        for (Integer i : hsTerrains){
-            if(containsTerrain(i) && (i != Terrains.PAVEMENT) &&
-                    (i!=Terrains.ROAD)  && (i != Terrains.FLUFF) &&
-                    (i != Terrains.ARMS) && (i != Terrains.LEGS)
-                    && (i != Terrains.SNOW) && (i != Terrains.MUD)
+        for (Integer i : terrains.keySet()) {
+            if (containsTerrain(i) && (i != Terrains.PAVEMENT) && (i != Terrains.ROAD) && (i != Terrains.FLUFF)
+                    && (i != Terrains.ARMS) && (i != Terrains.LEGS) && (i != Terrains.SNOW) && (i != Terrains.MUD)
                     && (i != Terrains.SMOKE) && (i != Terrains.METAL_CONTENT)) {
                 return false;
             }
@@ -610,17 +568,14 @@ public class Hex implements IHex, Serializable {
 
     /**
      * get any modifiers to a bog-down roll in this hex. Takes the worst
-     * modifier.
-     * If there is no bog-down chance in this hex, then it returns
+     * modifier. If there is no bog-down chance in this hex, then it returns
      * TargetRoll.AUTOMATIC_SUCCESS
      */
-    public int getBogDownModifier(EntityMovementMode moveMode,
-            boolean largeVee) {
+    public int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee) {
         int mod = TargetRoll.AUTOMATIC_SUCCESS;
-        for (Integer i : hsTerrains){
-            if ((terrains[i] != null) &&
-                    (mod < terrains[i].getBogDownModifier(moveMode,largeVee))){
-                mod = terrains[i].getBogDownModifier(moveMode, largeVee);
+        for (ITerrain terrain : terrains.values()) {
+            if ((terrain != null) && (mod < terrain.getBogDownModifier(moveMode, largeVee))) {
+                mod = terrain.getBogDownModifier(moveMode, largeVee);
             }
         }
         return mod;
@@ -630,24 +585,24 @@ public class Hex implements IHex, Serializable {
      * get any modifiers to a an unstuck roll in this hex.
      */
     public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
-        for (Integer i : hsTerrains){
-            if (terrains[i] != null) {
-                terrains[i].getUnstuckModifier(elev, rollTarget);
-            }
+        for (ITerrain terrain : terrains.values()) {
+            terrain.getUnstuckModifier(elev, rollTarget);
         }
     }
 
-    /** The notional position of this {@code Hex}, as set upon creation.
+    /**
+     * The notional position of this {@code Hex}, as set upon creation.
      *
-     * @return the {@code Coords} object representing the coordinates this {@code
+     * @return the {@code Coords} object representing the coordinates this
+     *         {@code
      *      Hex} was created with. NOTE: this is only used so that a certain hex
-     *      will always use the same image to represent terrain. DO NOT USE FOR
-     *      OTHER PURPOSES
+     *         will always use the same image to represent terrain. DO NOT USE
+     *         FOR OTHER PURPOSES
      */
     public Coords getCoords() {
         return coords;
     }
-    
+
     public void setCoords(Coords c) {
         coords = c;
     }
@@ -656,8 +611,7 @@ public class Hex implements IHex, Serializable {
     public boolean isClearHex() {
         for (int t = 1; t <= Terrains.BLDG_BASE_COLLAPSED; t++) {
             // Ignore some terrain types
-            if ((t == Terrains.FLUFF) || (t == Terrains.ARMS)
-                    || (t == Terrains.LEGS)) {
+            if ((t == Terrains.FLUFF) || (t == Terrains.ARMS) || (t == Terrains.LEGS)) {
                 continue;
             }
             if (containsTerrain(t)) {
@@ -665,6 +619,140 @@ public class Hex implements IHex, Serializable {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean isValid(StringBuffer errBuff) {
+        boolean rv = true;
+
+        // Check individual terrains for validity
+        for (ITerrain terrain : terrains.values()) {
+            if (terrain == null) {
+                continue;
+            }
+            StringBuffer currBuff = new StringBuffer();
+            boolean isValid = terrain.isValid(currBuff);
+            if (!isValid && (errBuff == null)) {
+                return false;
+            } else if (!isValid) {
+                rv = false;
+                if (errBuff.length() > 0) {
+                    errBuff.append("\n");
+                }
+                errBuff.append(currBuff);
+            }
+        }
+        // Some terrains must be grouped, check for those.
+
+        // Rapids
+        if ((containsTerrain(Terrains.RAPIDS))) {
+            if (!containsTerrain(Terrains.WATER)) {
+                rv = false;
+                errBuff.append("Rapids must occurr within water!\n");
+            }
+            if (this.depth() >= 0) {
+                rv = false;
+                errBuff.append("Rapids must occurr in depth 1 or greater!\n");
+            }
+        }
+
+        // Buildings
+        if ((containsTerrain(Terrains.BUILDING)
+                && (!containsTerrain(Terrains.BLDG_CF) || !containsTerrain(Terrains.BLDG_ELEV)))
+                || (containsTerrain(Terrains.BLDG_CF)
+                        && (!containsTerrain(Terrains.BUILDING) || !containsTerrain(Terrains.BLDG_ELEV)))
+                || (containsTerrain(Terrains.BLDG_ELEV)
+                        && (!containsTerrain(Terrains.BLDG_CF) || !containsTerrain(Terrains.BUILDING)))) {
+            if (errBuff != null) {
+                StringBuilder missingType = new StringBuilder();
+                if (!containsTerrain(Terrains.BUILDING)) {
+                    missingType.append(Terrains.getName(Terrains.BUILDING));
+                }
+                if (!containsTerrain(Terrains.BLDG_CF)) {
+                    if (missingType.length() > 0) {
+                        missingType.append(", ");
+                    }
+                    missingType.append(Terrains.getName(Terrains.BLDG_CF));
+                }
+                if (!containsTerrain(Terrains.BLDG_ELEV)) {
+                    if (missingType.length() > 0) {
+                        missingType.append(", ");
+                    }
+                    missingType.append(Terrains.getName(Terrains.BLDG_ELEV));
+                }
+
+                errBuff.append("Incomplete building!  Missing terrain(s): " + missingType + "\n");
+            }
+            rv = false;
+        }
+
+        // Bridges
+        if ((containsTerrain(Terrains.BRIDGE)
+                && (!containsTerrain(Terrains.BRIDGE_CF) || !containsTerrain(Terrains.BRIDGE_ELEV)))
+                || (containsTerrain(Terrains.BRIDGE_CF)
+                        && (!containsTerrain(Terrains.BRIDGE) || !containsTerrain(Terrains.BRIDGE_ELEV)))
+                || (containsTerrain(Terrains.BRIDGE_ELEV)
+                        && (!containsTerrain(Terrains.BRIDGE_CF) || !containsTerrain(Terrains.BRIDGE)))) {
+            if (errBuff != null) {
+                StringBuilder missingType = new StringBuilder();
+                if (!containsTerrain(Terrains.BRIDGE)) {
+                    missingType.append(Terrains.getName(Terrains.BRIDGE));
+                }
+                if (!containsTerrain(Terrains.BRIDGE_CF)) {
+                    if (missingType.length() > 0) {
+                        missingType.append(", ");
+                    }
+                    missingType.append(Terrains.getName(Terrains.BRIDGE_CF));
+                }
+                if (!containsTerrain(Terrains.BRIDGE_ELEV)) {
+                    if (missingType.length() > 0) {
+                        missingType.append(", ");
+                    }
+                    missingType.append(Terrains.getName(Terrains.BRIDGE_ELEV));
+                }
+                errBuff.append("Incomplete bridge!  Missing terrain(s): " + missingType + "\n");
+            }
+            rv = false;
+        }
+
+        // Fuel Tank
+        boolean hasFuelTank = containsTerrain(Terrains.FUEL_TANK);
+        boolean hasFuelTankCF = containsTerrain(Terrains.FUEL_TANK_CF);
+        boolean hasFuelTankElev = containsTerrain(Terrains.FUEL_TANK_ELEV);
+        boolean hasFuelTankMag = containsTerrain(Terrains.FUEL_TANK_MAGN);
+        if ((hasFuelTank && (!hasFuelTankCF || !hasFuelTankElev || !hasFuelTankMag))
+                || (hasFuelTankCF && (!hasFuelTank || !hasFuelTankElev || !hasFuelTankMag))
+                || (hasFuelTankElev && (!hasFuelTank || !hasFuelTankCF || !hasFuelTankMag))
+                || (hasFuelTankMag && (!hasFuelTank || !hasFuelTankElev || !hasFuelTankCF))) {
+            if (errBuff != null) {
+                StringBuilder missingType = new StringBuilder();
+                if (!hasFuelTank) {
+                    missingType.append(Terrains.getName(Terrains.FUEL_TANK));
+                }
+                if (!hasFuelTankCF) {
+                    if (missingType.length() > 0) {
+                        missingType.append(", ");
+                    }
+                    missingType.append(Terrains.getName(Terrains.FUEL_TANK_CF));
+                }
+                if (!hasFuelTankElev) {
+                    if (missingType.length() > 0) {
+                        missingType.append(", ");
+                    }
+                    missingType.append(Terrains.getName(Terrains.FUEL_TANK_ELEV));
+                }
+                if (!hasFuelTankMag) {
+                    if (missingType.length() > 0) {
+                        missingType.append(", ");
+                    }
+                    missingType.append(Terrains.getName(Terrains.FUEL_TANK_MAGN));
+                }
+                errBuff.append("Incomplete fuel tank!  Missing terrain(s): " + missingType + "\n");
+            }
+            rv = false;
+        }
+
+        return rv;
     }
 
 }

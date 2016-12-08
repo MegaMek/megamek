@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.event.BoardListener;
 
 /**
@@ -52,8 +53,10 @@ public interface IBoard {
      *            the height dimension.
      * @param data
      *            new hex data appropriate for the board.
+     * @param errBuff
+     *            A buffer for storing error messages, if any.  This is allowed to be null.
      */
-    public abstract void newData(int width, int height, IHex[] data);
+    public abstract void newData(int width, int height, IHex[] data, @Nullable StringBuffer errBuff);
 
     /**
      * Creates a new data set for the board, with the specified dimensions;
@@ -92,8 +95,7 @@ public interface IBoard {
      */
     public abstract IHex getHexInDir(Coords c, int dir);
 
-    public abstract Enumeration<Coords> getHexesAtDistance(Coords coords,
-            int distance);
+    public abstract Enumeration<Coords> getHexesAtDistance(Coords coords, int distance);
 
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -219,8 +221,7 @@ public interface IBoard {
      *            negative number is passed, then an
      *            <code>IllegalArgumentException</code> will be thrown.
      */
-    public abstract void addInfernoTo(Coords coords,
-            InfernoTracker.Inferno round, int hits);
+    public abstract void addInfernoTo(Coords coords, InfernoTracker.Inferno round, int hits);
 
     /**
      * Extinguish inferno at the target hex.
@@ -297,17 +298,13 @@ public interface IBoard {
      * This returns special events that should be makred on hexes, such as
      * artilery fire.
      */
-    public abstract Collection<SpecialHexDisplay> getSpecialHexDisplay(
-            Coords coords);
+    public abstract Collection<SpecialHexDisplay> getSpecialHexDisplay(Coords coords);
 
-    public abstract void addSpecialHexDisplay(Coords coords,
-            SpecialHexDisplay shd);
+    public abstract void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd);
 
-    public abstract void removeSpecialHexDisplay(Coords coords,
-            SpecialHexDisplay shd);
+    public abstract void removeSpecialHexDisplay(Coords coords, SpecialHexDisplay shd);
 
-    public abstract void setSpecialHexDisplayTable(
-            Hashtable<Coords, Collection<SpecialHexDisplay>> shd);
+    public abstract void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd);
 
     public abstract Hashtable<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable();
 
@@ -519,8 +516,9 @@ public interface IBoard {
 
     public abstract void setNumBoardsHeight(int height);
 
-    public abstract void addBackgroundPath(String path, boolean flipVert,
-            boolean flipHorz);
+    public abstract void addBackgroundPath(String path, boolean flipVert, boolean flipHorz);
 
     public abstract boolean hasBoardBackground();
+
+    public abstract boolean isValid();
 }

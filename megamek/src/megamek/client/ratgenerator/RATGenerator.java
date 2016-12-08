@@ -41,6 +41,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
+import megamek.common.util.MegaMekFile;
 
 /**
  * Generates a random assignment table (RAT) dynamically based on a variety of criteria,
@@ -753,7 +754,7 @@ public class RATGenerator {
 	}
 	
 	private void loadFactions() {
-		File file = new File(Configuration.forceGeneratorDir(), "factions.xml");
+		File file = new MegaMekFile(Configuration.forceGeneratorDir(), "factions.xml").getFile();
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
@@ -796,7 +797,7 @@ public class RATGenerator {
 		}
 		chassisIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
 		modelIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
-		File file = new File(Configuration.forceGeneratorDir(), era + ".xml");
+		File file = new MegaMekFile(Configuration.forceGeneratorDir(), era + ".xml").getFile();
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);

@@ -48,4 +48,9 @@ public class CapitalPPCBayWeapon extends BayWeapon {
         this.atClass = CLASS_CAPITAL_PPC;
         this.capital = true;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL;
+    }
 }

@@ -29,16 +29,8 @@ IS Level 2
 </type>
 
 <motion_type>
-Hover
+Tracked
 </motion_type>
-
-<transporters>
-2ndclassquarters:7:1
-2ndclassquarters:7:1
-2ndclassquarters:7:1
-2ndclassquarters:7:1
-cargobay:2:1
-</transporters>
 
 <cruiseMP>
 4
@@ -94,10 +86,17 @@ Hitch
 </Rear Equipment>
 
 <transporters>
+2ndclassquarters:7:1
+2ndclassquarters:7:1
+2ndclassquarters:7:1
+2ndclassquarters:7:1
 cargobay:2:1
 </transporters>
+
+<source>
+TRO VAr - Succession Wars
+</source>
 
 <tonnage>
 200.0
 </tonnage>
-

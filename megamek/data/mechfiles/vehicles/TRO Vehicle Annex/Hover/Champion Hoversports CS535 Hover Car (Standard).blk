@@ -37,8 +37,12 @@ Hover
 </cruiseMP>
 
 <engine_type>
-0
+1
 </engine_type>
+
+<fuel>
+.1
+</fuel>
 
 <armor>
 1
@@ -54,7 +58,6 @@ Hover
 <structural_tech_rating>
 4
 </structural_tech_rating>
-
 
 <Body Equipment>
 UltraLightChassisMod
@@ -78,14 +81,9 @@ standardseats:.150:2
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Civil War
 </source>
 
 <tonnage>
 3.0
 </tonnage>
-
-<range>
-1000
-</range>
-

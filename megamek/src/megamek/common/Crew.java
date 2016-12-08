@@ -84,6 +84,12 @@ public class Crew implements Serializable {
     private String portraitCategory = ROOT_PORTRAIT;
     private String portraitFileName = PORTRAIT_NONE;
 
+    //SPA RangeMaster range bands
+    public static final String RANGEMASTER_NONE = "None";
+    public static final String RANGEMASTER_MEDIUM = "Medium";
+    public static final String RANGEMASTER_LONG = "Long";
+    public static final String RANGEMASTER_EXTREME = "Extreme";
+
     public static final String SPECIAL_NONE = "None";
     public static final String SPECIAL_LASER = "Laser";
     public static final String SPECIAL_BALLISTIC = "Ballistic";
@@ -585,13 +591,13 @@ public class Crew implements Serializable {
 
         // get highest level
         int level = 1;
-        if (options.booleanOption("pain_shunt")) {
+        if (options.booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             level = 2;
         }
-        if (options.booleanOption("vdni")) {
+        if (options.booleanOption(OptionsConstants.MD_VDNI)) {
             level = 3;
         }
-        if (options.booleanOption("bvdni")) {
+        if (options.booleanOption(OptionsConstants.MD_BVDNI)) {
             level = 5;
         }
 
@@ -615,14 +621,14 @@ public class Crew implements Serializable {
     }
 
     public static double getBVSkillMultiplier(int gunnery, int piloting, IGame game) {
-        if ((game != null) && game.getOptions().booleanOption("alternate_pilot_bv_mod")) {
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD)) {
             return alternateBvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
         }
         return bvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
     }
 
     public int modifyPhysicalDamagaForMeleeSpecialist() {
-        if (!getOptions().booleanOption("melee_specialist")) {
+        if (!getOptions().booleanOption(OptionsConstants.PILOT_MELEE_SPECIALIST)) {
             return 0;
         }
 
@@ -630,11 +636,11 @@ public class Crew implements Serializable {
     }
 
     public boolean hasEdgeRemaining() {
-        return (getOptions().intOption("edge") > 0);
+        return (getOptions().intOption(OptionsConstants.EDGE) > 0);
     }
 
     public void decreaseEdge() {
-        IOption edgeOption = getOptions().getOption("edge");
+        IOption edgeOption = getOptions().getOption(OptionsConstants.EDGE);
         edgeOption.setValue((Integer) edgeOption.getValue() - 1);
     }
 

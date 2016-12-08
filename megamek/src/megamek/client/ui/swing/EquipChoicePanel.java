@@ -18,7 +18,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +61,7 @@ import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -190,9 +190,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             // Conditional Ejections
-            if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    "conditional_ejection")
-                    && hasEjectSeat) { //$NON-NLS-1$
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                    && hasEjectSeat) { // $NON-NLS-1$
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(mech.isCondEjectAmmo());
@@ -236,8 +235,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             //  pick legal combinations of manipulators
             BattleArmor ba = (BattleArmor) entity;
             EntityVerifier verifier = EntityVerifier.getInstance(
-                    new File(Configuration.unitsDir(),
-                            EntityVerifier.CONFIG_FILENAME));
+                    new MegaMekFile(Configuration.unitsDir(),
+                            EntityVerifier.CONFIG_FILENAME).getFile());
             TestBattleArmor testBA = new TestBattleArmor(ba, 
                     verifier.baOption, null);
             double maxTrooperWeight = 0;
@@ -271,7 +270,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // set up Santa Annas if using nukes
         if (((entity instanceof Dropship) || (entity instanceof Jumpship))
                 && clientgui.getClient().getGame().getOptions().booleanOption(
-                        "at2_nukes")) { //$NON-NLS-1$
+                        OptionsConstants.ADVAERORULES_AT2_NUKES)) { //$NON-NLS-1$
             setupSantaAnna();
             add(panSantaAnna,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -286,7 +285,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
         // Set up rapidfire mg
         if (clientgui.getClient().getGame().getOptions().booleanOption(
-                "tacops_burst")) { //$NON-NLS-1$
+                OptionsConstants.ADVCOMBAT_TACOPS_BURST)) { //$NON-NLS-1$
             setupRapidfireMGs();
             add(panRapidfireMGs,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -423,7 +422,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES, client
                 .getGame().getOptions().stringOption("techlevel")); //$NON-NLS-1$
         boolean allowNukes = client.getGame().getOptions()
-                .booleanOption("at2_nukes"); //$NON-NLS-1$
+                .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES); //$NON-NLS-1$
         m_bombs = new BombChoicePanel((Aero) entity, allowNukes,
                 techlvl >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
@@ -470,7 +469,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             AmmoType at = (AmmoType) m.getType();
             // Santa Annas?
             if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    "at2_nukes")
+                    OptionsConstants.ADVAERORULES_AT2_NUKES)
                     && ((at.getAmmoType() == AmmoType.T_KILLER_WHALE) || ((at
                             .getAmmoType() == AmmoType.T_AR10) && at
                             .hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {
@@ -615,7 +614,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         panMunitions.setLayout(gbl);
         IGame game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
-        int gameYear = gameOpts.intOption("year");
+        int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
         boolean isClan = entity.isClan();
 
         for (Mounted m : entity.getAmmo()) {
@@ -653,7 +652,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 // to be combined to other munition types.
                 long muniType = atCheck.getMunitionType();
                 muniType &= ~AmmoType.M_INCENDIARY_LRM;
-                if (!gameOpts.booleanOption("clan_ignore_eq_limits") //$NON-NLS-1$
+                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS) //$NON-NLS-1$
                         && entity.isClan()
                         && ((muniType == AmmoType.M_SEMIGUIDED)
                                 || (muniType == AmmoType.M_SWARM_I)
@@ -671,7 +670,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     bTechMatch = false;
                 }
 
-                if (!gameOpts.booleanOption("minefields") && //$NON-NLS-1$
+                if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) && //$NON-NLS-1$
                         AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }
@@ -704,9 +703,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
             if ((vTypes.size() < 1)
                     && !client.getGame().getOptions()
-                            .booleanOption("lobby_ammo_dump")
+                            .booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)
                     && !client.getGame().getOptions()
-                            .booleanOption("tacops_hotload")) { //$NON-NLS-1$
+                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) { //$NON-NLS-1$
                 continue;
             }
             MunitionChoicePanel mcp;
@@ -1091,17 +1090,17 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(m_num_shots, GBC.eol());
                 chHotLoad.setSelected(m_mounted.isHotLoaded());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        "lobby_ammo_dump")) { //$NON-NLS-1$
+                        OptionsConstants.BASE_LOBBY_AMMO_DUMP)) { //$NON-NLS-1$
                     add(labDump, GBC.std());
                     add(chDump, GBC.eol());
                     if (clientgui.getClient().getGame().getOptions().booleanOption(
-                            "tacops_hotload")
+                            OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
                             && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                         add(labHotLoad, GBC.std());
                         add(chHotLoad, GBC.eol());
                     }
                 } else if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        "tacops_hotload")
+                        OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
                         && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                     add(labHotLoad, GBC.std());
                     add(chHotLoad, GBC.eol());
@@ -1121,7 +1120,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     m_mounted.setShotsLeft(0);
                 }
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        "tacops_hotload")) {
+                        OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
                     if (chHotLoad.isSelected() != m_mounted.isHotLoaded()) {
                         m_mounted.setHotLoad(chHotLoad.isSelected());
                         // Set the mode too, so vehicles can switch back

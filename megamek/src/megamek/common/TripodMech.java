@@ -133,7 +133,7 @@ public class TripodMech extends Mech {
                         hipHits++;
                         if ((game == null)
                             || !game.getOptions().booleanOption(
-                                "tacops_leg_damage")) {
+                                OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                             continue;
                         }
                     }
@@ -150,7 +150,7 @@ public class TripodMech extends Mech {
         } else {
             if (hipHits > 0) {
                 if ((game != null)
-                    && game.getOptions().booleanOption("tacops_leg_damage")) {
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                     wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
                 } else {
                     wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
@@ -171,7 +171,7 @@ public class TripodMech extends Mech {
         if (!ignoreheat) {
             // factor in heat
             if ((game != null)
-                && game.getOptions().booleanOption("tacops_heat")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 if (heat < 30) {
                     wmp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -290,7 +290,7 @@ public class TripodMech extends Mech {
                                     Mech.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc)
                                         + " Hip Actuator destroyed");
-                    if (!game.getOptions().booleanOption("tacops_leg_damage")) {
+                    if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         continue;
                     }
                 }
@@ -859,7 +859,7 @@ public class TripodMech extends Mech {
     @Override
     public boolean canGoHullDown() {
         // check the option
-        boolean retVal = game.getOptions().booleanOption("tacops_hull_down");
+        boolean retVal = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         if (!retVal) {
             return false;
         }
@@ -900,7 +900,7 @@ public class TripodMech extends Mech {
             return;
         }
 
-        if (game.getOptions().booleanOption("tacops_attempting_stand")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND)) {
             int[] locsToCheck = new int[2];
 
             locsToCheck[0] = Mech.LOC_RARM;
@@ -1010,8 +1010,8 @@ public class TripodMech extends Mech {
                 switch (roll) {
                     case 2:
                         if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption("edge_when_tac"))
-                            && !game.getOptions().booleanOption("no_tac")) {
+                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                            && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1059,8 +1059,8 @@ public class TripodMech extends Mech {
                 switch (roll) {
                     case 2:
                         if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption("edge_when_tac"))
-                            && !game.getOptions().booleanOption("no_tac")) {
+                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                            && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1087,13 +1087,13 @@ public class TripodMech extends Mech {
                         return new HitData(Mech.LOC_LT);
                     case 8:
                         if (game.getOptions().booleanOption(
-                                "tacops_advanced_mech_hit_locations")) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)) {
                             return new HitData(Mech.LOC_CT, true);
                         }
                         return new HitData(Mech.LOC_CT);
                     case 9:
                         if (game.getOptions().booleanOption(
-                                "tacops_advanced_mech_hit_locations")) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)) {
                             return new HitData(Mech.LOC_RT, true);
                         }
                         return new HitData(Mech.LOC_RT);
@@ -1116,8 +1116,8 @@ public class TripodMech extends Mech {
                 switch (roll) {
                     case 2:
                         if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption("edge_when_tac"))
-                            && !game.getOptions().booleanOption("no_tac")) {
+                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                            && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                                              aimedLocation, aimingMode, cover);
@@ -1144,13 +1144,13 @@ public class TripodMech extends Mech {
                         return new HitData(Mech.LOC_RT);
                     case 8:
                         if (game.getOptions().booleanOption(
-                                "tacops_advanced_mech_hit_locations")) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)) {
                             return new HitData(Mech.LOC_CT, true);
                         }
                         return new HitData(Mech.LOC_CT);
                     case 9:
                         if (game.getOptions().booleanOption(
-                                "tacops_advanced_mech_hit_locations")) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)) {
                             return new HitData(Mech.LOC_LT, true);
                         }
                         return new HitData(Mech.LOC_LT);
@@ -1171,15 +1171,15 @@ public class TripodMech extends Mech {
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
                 if (game.getOptions().booleanOption(
-                        "tacops_advanced_mech_hit_locations")
+                        OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)
                     && isProne()) {
                     switch (roll) {
                         case 2:
                             if ((getCrew().hasEdgeRemaining() && getCrew()
                                     .getOptions()
-                                    .booleanOption("edge_when_tac"))
+                                    .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(
-                                    "no_tac")) {
+                                    OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
                                                                  aimedLocation, aimingMode, cover);
@@ -1228,9 +1228,9 @@ public class TripodMech extends Mech {
                         case 2:
                             if ((getCrew().hasEdgeRemaining() && getCrew()
                                     .getOptions()
-                                    .booleanOption("edge_when_tac"))
+                                    .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(
-                                    "no_tac")) {
+                                    OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
                                                                  aimedLocation, aimingMode, cover);

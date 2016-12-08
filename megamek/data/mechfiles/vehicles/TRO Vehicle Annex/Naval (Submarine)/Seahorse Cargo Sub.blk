@@ -1,5 +1,4 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
@@ -7,10 +6,6 @@
 <UnitType>
 SupportTank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Seahorse Cargo Sub
@@ -25,7 +20,7 @@ Seahorse Cargo Sub
 </year>
 
 <source>
-TRO VAr
+TRO VAr - Star League
 </source>
 
 <type>
@@ -43,11 +38,16 @@ Submarine
 <transporters>
 cargobay:84.55:3
 troopspace:.45
+standardseats:.45:6
 </transporters>
 
 <engine_type>
 1
 </engine_type>
+
+<fuel>
+26.5
+</fuel>
 
 <cruiseMP>
 4
@@ -90,6 +90,3 @@ ISLRT10
 
 <Rear Equipment>
 </Rear Equipment>
-
-
-

@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Maxim Heavy Hover Transport
@@ -24,33 +24,25 @@ Maxim Heavy Hover Transport
 2875
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-50.0
-</tonnage>
 
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
-TroopSpace: 3
+troopspace:3.0
 </transporters>
-
-<engine_type>
-1
-</engine_type>
 
 <cruiseMP>
 8
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 20
@@ -91,4 +83,12 @@ Machine Gun
 Machine Gun
 SRM 6
 </Turret Equipment>
+
+<source>
+TRO 3039 - Succession Wars
+</source>
+
+<tonnage>
+50.0
+</tonnage>
 

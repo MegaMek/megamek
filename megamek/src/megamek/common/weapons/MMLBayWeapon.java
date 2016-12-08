@@ -47,4 +47,9 @@ public class MMLBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.atClass = CLASS_MML;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_MML;
+    }
 }

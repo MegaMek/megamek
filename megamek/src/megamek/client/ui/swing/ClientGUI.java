@@ -107,6 +107,7 @@ import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
+import megamek.common.util.MegaMekFile;
 import megamek.common.util.StringUtil;
 
 public class ClientGUI extends JPanel implements WindowListener, BoardViewListener, ActionListener, ComponentListener {
@@ -347,16 +348,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<Image>();
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()
         ));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()
         ));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()
         ));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()
+                new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()
         ));
         frame.setIconImages(iconList);
     }
@@ -741,13 +742,15 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             ignoreHotKeys = false;
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             ignoreHotKeys = true;
-            boardSaveAsImage();
+            boardSaveAsImage(true);
             ignoreHotKeys = false;
-        }
-        if ("replacePlayer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+        } else if ("fileBoardSaveAsImageUnits".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
+            boardSaveAsImage(false);
+            ignoreHotKeys = false;
+        } else if ("replacePlayer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             replacePlayer();
-        }
-        if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
+        } else if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
             toggleDisplay();
         } else if (event.getActionCommand().equals(VIEW_MINI_MAP)) {
             toggleMap();
@@ -2152,9 +2155,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Saves the board in PNG image format.
      */
-    private void boardSaveImage() {
+    private void boardSaveImage(boolean ignoreUnits) {
         if (curfileBoardImage == null) {
-            boardSaveAsImage();
+            boardSaveAsImage(ignoreUnits);
             return;
         }
         JDialog waitD = new JDialog(frame, Messages
@@ -2172,7 +2175,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
         try {
-            ImageIO.write(bv.getEntireBoardImage(), "png", curfileBoardImage);
+            ImageIO.write(bv.getEntireBoardImage(ignoreUnits), "png", curfileBoardImage);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -2226,7 +2229,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Opens a file dialog box to select a file to save as; saves the board to
      * the file as an image. Useful for printing boards.
      */
-    private void boardSaveAsImage() {
+    private void boardSaveAsImage(boolean ignoreUnits) {
         JFileChooser fc = new JFileChooser(".");
         fc
                 .setLocation(frame.getLocation().x + 150,
@@ -2261,7 +2264,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 return;
             }
         }
-        boardSaveImage();
+        boardSaveImage(ignoreUnits);
     }
 
     public void hexMoused(BoardViewEvent b) {

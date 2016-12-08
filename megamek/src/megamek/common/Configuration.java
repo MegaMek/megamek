@@ -39,6 +39,9 @@ public final class Configuration {
     // **************************************************************************
     // Directories normally at the top of the game hierarchy.
 
+    /** The default directory for user data */
+    private static final String DEFAULT_USER_DATA_DIR = "userdata";
+    
     /** The default configuration directory. */
     private static final String DEFAULT_DIR_NAME_CONFIG = "mmconf";
 
@@ -67,6 +70,9 @@ public final class Configuration {
 
     /** The default images directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_IMAGES = "images";
+
+    /** The default file that maps image filenames to locations withn an image atlas. */
+    private static final String DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP = "images/imgFileAtlasMap.xml";
 
     /** The default board backgrounds directory name (under the images directory). */
     private static final String DEFAULT_DIR_NAME_BOARD_BACKGROUNDS = "board_backgrounds";
@@ -112,6 +118,20 @@ public final class Configuration {
 
     // **************************************************************************
     // Static methods for accessing and modifying configuration data.
+
+    /**
+     * Return the configured userdata directory.
+     * 
+     * @return {@link File} containing the path to the userdata directory.
+     */
+    public static File userdataDir() {
+        lock.readLock().lock();
+        try {
+            return userdata_dir;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
 
     /**
      * Return the configured configuration file directory.
@@ -333,6 +353,36 @@ public final class Configuration {
     public static void setImagesDir(final File images_dir_path) {
         lock.writeLock().lock();
         images_dir = images_dir_path;
+        lock.writeLock().unlock();
+    }
+
+    /**
+     * Return the configured file that maps an image file to a location within
+     * an image atlas, if set, otherwise return the default path, relative to
+     * the configured data directory.
+     * 
+     * @return {@link File} containing the path to the image file to atlas loc file.
+     */
+    public static File imageFileAtlasMapFile() {
+        lock.readLock().lock();
+        try {
+            return (imgFileAtlasMapFile != null) ? imgFileAtlasMapFile : new File(dataDir(),
+                    DEFAULT_FILE_NAME_IMG_FILE_ATLAS_MAP);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Set the  image file to atlas loc file to an arbitrary location (<b>not</b> relative to
+     * the data directory).
+     *
+     * @param images_dir_path
+     *            The path to the images directory.
+     */
+    public static void setImageFileAtlasMapFile(final File imgFileAtlasMapFilePath) {
+        lock.writeLock().lock();
+        imgFileAtlasMapFile = imgFileAtlasMapFilePath;
         lock.writeLock().unlock();
     }
 
@@ -560,6 +610,9 @@ public final class Configuration {
     private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     /** The configured configuration directory. */
+    private static File userdata_dir = new File(DEFAULT_USER_DATA_DIR);
+
+    /** The configured configuration directory. */
     private static File config_dir = new File(DEFAULT_DIR_NAME_CONFIG);
 
     /** The configured data directory. */
@@ -581,6 +634,9 @@ public final class Configuration {
     /** The configured images directory. */
     private static File images_dir = null;
 
+    /** The path to the imgFileAtlasMapFile. */
+    private static File imgFileAtlasMapFile = null;
+    
     /** The configured images directory. */
     private static File board_backgrounds_dir = null;
 

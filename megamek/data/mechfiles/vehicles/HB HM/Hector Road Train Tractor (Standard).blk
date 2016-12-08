@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+18
+</fuel>
+
 <armor>
 9
 8
@@ -89,11 +93,9 @@ cargobay:12:1
 </transporters>
 
 <source>
-HB HM
+HB:House Marik - Age of War
 </source>
 
 <tonnage>
 160.0
 </tonnage>
-
-

@@ -18,11 +18,13 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -108,10 +110,25 @@ public abstract class ACWeapon extends AmmoWeapon {
         if (options == null) {
             return dmg;
         }
-        if (options.getOption("increased_ac_dmg").booleanValue()) {
+        if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG).booleanValue()) {
             dmg++;
         }
         return dmg;
     }
 
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = getRackSize();
+            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage / 10.0;
+    }
+
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_AC;
+    }
 }

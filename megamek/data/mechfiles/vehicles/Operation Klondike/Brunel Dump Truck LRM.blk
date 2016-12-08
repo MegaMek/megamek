@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+LargeSupportTank
+</UnitType>
+
+<Name>
+Brunel Dump Truck
+</Name>
+
+<Model>
+(LRM)
+</Model>
+
+<year>
+2801
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<fuel>
+4
+</fuel>
+
+<armor_type>
+0
+</armor_type>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<armor_tech_rating>
+2
+</armor_tech_rating>
+
+<armor>
+21
+21
+21
+28
+28
+33
+</armor>
+
+<Body Equipment>
+ISOffRoadChassis
+</Body Equipment>
+
+<Front Equipment>
+ISMachine Gun
+ISMachine Gun
+IS Ammo MG - Full
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+Basic Fire Control
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+</Rear Equipment>
+
+<tonnage>
+150.0
+</tonnage>
+
+<source>
+H:Operation Klondike - Succession Wars
+</source>
+
+<history>
+Armor is based on fluff.  No Record Sheet available.
+</history>

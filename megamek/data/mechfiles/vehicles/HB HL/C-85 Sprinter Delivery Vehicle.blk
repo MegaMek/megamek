@@ -40,6 +40,10 @@ Wheeled
 11
 </engine_type>
 
+<fuel
+.244
+</fuel>
+
 <armor>
 2
 2
@@ -75,10 +79,9 @@ cargobay:.81:1
 </transporters>
 
 <source>
-HB HD
+HB:House Liao - Civil War
 </source>
 
 <tonnage>
 2.5
 </tonnage>
-

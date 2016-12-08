@@ -28,6 +28,7 @@ import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
@@ -54,7 +55,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
-        twoRollsUltra = game.getOptions().booleanOption("uac_tworolls")
+        twoRollsUltra = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS)
                 && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
                         .getAmmoType() == AmmoType.T_AC_ULTRA_THB));
     }
@@ -182,19 +183,25 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         double toReturn = wtype.getDamage();
         // infantry get hit by all shots
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = 0;
-            for (int i = 0; i < howManyShots; i++) {
-                toReturn += Compute.directBlowInfantryDamage(wtype.getDamage(),
+            if (howManyShots > 1) { // Is this a cluser attack?
+                // Compute maximum damage potential for cluster weapons
+                toReturn = howManyShots * wtype.getDamage();
+                toReturn = Compute.directBlowInfantryDamage(toReturn,
+                        bDirect ? toHit.getMoS() / 3 : 0,
+                        WeaponType.WEAPON_CLUSTER_BALLISTIC, // treat as cluster
+                        ((Infantry) target).isMechanized(),
+                        toHit.getThruBldg() != null, ae.getId(),
+                        calcDmgPerHitReport);
+            } else { // No - only one shot fired
+                toReturn = Compute.directBlowInfantryDamage(wtype.getDamage(),
                         bDirect ? toHit.getMoS() / 3 : 0,
                         wtype.getInfantryDamageClass(),
                         ((Infantry) target).isMechanized(),
-                        toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
+                        toHit.getThruBldg() != null, ae.getId(),
+                        calcDmgPerHitReport);
             }
-            // plus 1 for cluster
-            toReturn++;
-
-            // Cluster bonuses or penalties can't apply to "two rolls" UACs, so
-            // if we have one, modify the damage per hit directly.
+        // Cluster bonuses or penalties can't apply to "two rolls" UACs, so
+        // if we have one, modify the damage per hit directly.
         } else if (bDirect && (howManyShots == 1 || twoRollsUltra)) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -203,12 +210,12 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
         if (game.getOptions().booleanOption(
-                OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .5);
         }
@@ -217,7 +224,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected boolean usesClusterTable() {
-        return !game.getOptions().booleanOption("uac_tworolls");
+        return !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UAC_TWOROLLS);
     }
 
     @Override

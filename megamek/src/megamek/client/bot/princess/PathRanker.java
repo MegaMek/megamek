@@ -34,6 +34,7 @@ import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
@@ -50,7 +51,7 @@ public abstract class PathRanker {
      * Gives the "utility" of a path; a number representing how good it is.
      * Rankers that extend this class should override this function
      */
-    public RankedPath rankPath(MovePath path, IGame game) {
+    RankedPath rankPath(MovePath path, IGame game) {
         double fallTolerance = getOwner().getBehaviorSettings().getFallShameIndex() / 10d;
         Entity me = path.getEntity();
         int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(), game);
@@ -65,9 +66,9 @@ public abstract class PathRanker {
     abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
                                List<Entity> enemies, Coords friendsCoords);
 
-    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
-                                           double fallTollerance, int startingHomeDistance,
-                                           List<Entity> enemies, List<Entity> friends) {
+    ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
+                                    double fallTollerance, int startingHomeDistance,
+                                    List<Entity> enemies, List<Entity> friends) {
         final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
@@ -192,7 +193,7 @@ public abstract class PathRanker {
         return returnPaths;
     }
 
-    public RankedPath getBestPath(List<RankedPath> ps) {
+    RankedPath getBestPath(List<RankedPath> ps) {
         final String METHOD_NAME = "getBestPath(ArrayList<Rankedpath>)";
         getOwner().methodBegin(PathRanker.class, METHOD_NAME);
 
@@ -369,38 +370,46 @@ public abstract class PathRanker {
      * @param game The {@link IGame} being played.
      * @return True if there is a building in our path that might collapse.
      */
-    protected boolean willBuildingCollapse(MovePath path, IGame game) {
+    private boolean willBuildingCollapse(MovePath path, IGame game) {
         // If we're jumping onto a building, make sure it can support our weight.
         if (path.isJumping()) {
-            Coords finalCoords = path.getFinalCoords();
-            Building building = game.getBoard().getBuildingAt(finalCoords);
+            final Coords finalCoords = path.getFinalCoords();
+            final Building building = game.getBoard().getBuildingAt(finalCoords);
             if (building == null) {
                 return false;
             }
 
             // Give ourselves a 10-ton margin of error in case someone shoots at the building.
             double mass = path.getEntity().getWeight() + 10;
+
+            // Add the mass of anyone else standing in/on this building.
+            mass += owner.getMassOfAllInBuilding(game, finalCoords);
+
             return (mass > building.getCurrentCF(finalCoords));
         }
 
         // If we're not jumping, check each building to see if it will collapse if it has a basement.
-        double mass = path.getEntity().getWeight() + 10;
-        Enumeration<MoveStep> steps = path.getSteps();
+        final double mass = path.getEntity().getWeight() + 10;
+        final Enumeration<MoveStep> steps = path.getSteps();
         while (steps.hasMoreElements()) {
-            MoveStep step = steps.nextElement();
-            Building building = game.getBoard().getBuildingAt(step.getPosition());
+            final MoveStep step = steps.nextElement();
+            final Building building = game.getBoard().getBuildingAt(step.getPosition());
             if (building == null) {
                 continue;
             }
 
-            if (mass > building.getCurrentCF(step.getPosition())) {
+            // Add the mass of anyone else standing in/on this building.
+            double fullMass = mass + owner.getMassOfAllInBuilding(game, step.getPosition());
+
+            if (fullMass > building.getCurrentCF(step.getPosition())) {
                 return true;
             }
         }
         return false;
     }
 
-    public Coords calcAllyCenter(int myId, List<Entity> friends, IGame game) {
+    @Nullable
+    Coords calcAllyCenter(int myId, List<Entity> friends, IGame game) {
         if ((friends == null) || friends.isEmpty()) {
             return null;
         }
@@ -437,8 +446,8 @@ public abstract class PathRanker {
         Coords center = new Coords(xCenter, yCenter);
 
         if (!game.getBoard().contains(center)) {
-            getOwner().log(getClass(), "calcAllyCenter(int, List<Entity>, IGame)", LogLevel.ERROR, "Center of ally group " +
-                                                                                              center.toFriendlyString() + " not within board boundaries.");
+            getOwner().log(getClass(), "calcAllyCenter(int, List<Entity>, IGame)", LogLevel.ERROR,
+                           "Center of ally group " + center.toFriendlyString() + " not within board boundaries.");
             return null;
         }
 

@@ -17,7 +17,7 @@ Mobile Long Tom Artillery Support Carriage
 </Name>
 
 <Model>
-LT-MOB-25	
+LT-MOB-25
 </Model>
 
 <year>
@@ -31,9 +31,6 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
-
-<transporters>
-</transporters>
 
 <cruiseMP>
 0
@@ -49,15 +46,6 @@ Tracked
 16
 16
 </armor>
-
-<barrating>
-10
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
-
 
 <Body Equipment>
 Communications Equipment (3 ton)
@@ -78,19 +66,14 @@ Hitch
 </Rear Equipment>
 
 <source>
-RS 3039 Unabriged
+TRO 3039 - Star League
 </source>
 
 <tonnage>
 10.0
 </tonnage>
 
-<hasnocontrolsystems>
-</hasnocontrolsystems>
+<hasNoControlSystems>
+1
+</hasNoControlSystems>
 
-<History>
-This unit is not a playable as trailers are not coded for MM. Use Mobile Long Tom Artillery (Unofficial) (+ Carriage) to be playable.
-Included for completeness and future when trailers are supported.
-</History>
-
-##Errata here - http://bg.battletech.com/forums/index.php/topic,3797.msg799558.html#msg799558

@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -80,5 +81,20 @@ public abstract class SRMWeapon extends MissileWeapon {
         }
         return new SRMHandler(toHit, waa, game, server);
 
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        return super.getBattleForceDamage(range, fcs) * 2;
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, int baSquadSize) {
+        return super.getBattleForceDamage(range, baSquadSize) * 2;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_SRM;
     }
 }

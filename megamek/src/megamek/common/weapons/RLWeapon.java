@@ -56,4 +56,9 @@ public abstract class RLWeapon extends MissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new RLHandler(toHit, waa, game, server);
     }
+    
+    @Override
+    public boolean hasIndirectFire() {
+        return true;
+    }
 }

@@ -40,6 +40,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 public class SharedUtility {
@@ -148,30 +149,25 @@ public class SharedUtility {
             }
 
             // check for leap
-            if (!lastPos.equals(curPos)
-                    && (moveType != EntityMovementType.MOVE_JUMP)
-                    && (entity instanceof Mech)
-                    && game.getOptions().booleanOption("tacops_leaping")) {
-                int leapDistance = (lastElevation + game.getBoard()
-                        .getHex(lastPos).getLevel())
+            if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mech)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
+                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(),
-                            2 * leapDistance, "leaping (leg damage)"));
+                    rollTarget.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(),
-                            leapDistance, "leaping (fall)"));
+                    rollTarget.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }
             }
 
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
-                    prevStep, prevFacing, curFacing, lastPos, curPos,
+                    prevStep, step, prevFacing, curFacing, lastPos, curPos,
                     isInfantry, distance - 1);
             checkNag(rollTarget, nagReport, psrList);
 
@@ -376,7 +372,7 @@ public class SharedUtility {
             
             if (step.getType() == MoveStepType.UNLOAD) {
                 Targetable targ = step.getTarget(game);
-                if (game.getOptions().booleanOption("tacops_ziplines")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
                         && (entity instanceof VTOL)
                         && (md.getFinalElevation() > 0)
                         && (targ instanceof Infantry)
@@ -422,7 +418,7 @@ public class SharedUtility {
             // jumped into water?
             IHex hex = game.getBoard().getHex(curPos);
             // check for jumping into heavy woods
-            if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
                         hex);
                 checkNag(rollTarget, nagReport, psrList);
@@ -605,7 +601,7 @@ public class SharedUtility {
                 }
                 if (!game.getBoard().contains(md.getLastStep().getPosition())) {
                     md.removeLastStep();
-                    if(game.getOptions().booleanOption("return_flyover")) {
+                    if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
                         md.addStep(MoveStepType.RETURN);
                     } else {
                         md.addStep(MoveStepType.OFF);
@@ -728,7 +724,7 @@ public class SharedUtility {
             }
 
             if(!game.getBoard().contains(c)) {
-                if(game.getOptions().booleanOption("return_flyover")) {
+                if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
                     md.addStep(MoveStepType.RETURN);
                 } else {
                     md.addStep(MoveStepType.OFF);

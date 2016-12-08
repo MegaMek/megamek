@@ -14,8 +14,11 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.Compute;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -51,5 +54,24 @@ public abstract class MRMWeapon extends MissileWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new MRMHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range, Mounted fcs) {
+        double damage = 0;
+        if (range > getLongRange()) {
+            return damage;
+        }
+        if (fcs != null && fcs.getType() instanceof MiscType
+                && ((MiscType)fcs.getType()).hasFlag(MiscType.F_APOLLO)) {
+            damage = Compute.calculateClusterHitTableAmount(6, getRackSize());
+        } else {
+            damage = Compute.calculateClusterHitTableAmount(7, getRackSize());
+            damage *= 0.95; // +1 to hit            
+        }
+        if (range == 0 && getMinimumRange() > 0) {
+            damage = adjustBattleForceDamageForMinRange(damage);
+        }
+        return damage / 10.0;
     }
 }

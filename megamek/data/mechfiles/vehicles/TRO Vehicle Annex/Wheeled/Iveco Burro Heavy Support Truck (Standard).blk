@@ -1,0 +1,93 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Iveco Burro Heavy Support Truck
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2430
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+2
+2
+2
+1
+</armor>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+ISOffRoadChassis
+Tractor
+Armored Chassis
+</Body Equipment>
+
+<Front Equipment>
+Manipulator
+BASearchlight
+BASearchlight
+</Front Equipment>
+
+<Right Equipment>
+BASearchlight
+</Right Equipment>
+
+<Left Equipment>
+BASearchlight
+</Left Equipment>
+
+<Rear Equipment>
+BASearchlight
+</Rear Equipment>
+
+<transporters>
+cargobay:.739:1
+standardseats:.225:1
+</transporters>
+
+<source>
+TRO VAr - Age of War
+</source>
+
+<tonnage>
+2.5
+</tonnage>

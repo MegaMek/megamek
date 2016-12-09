@@ -2363,8 +2363,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (hex != null) {
                         drawOrthograph(c, g);
                         if (!saveBoardImage) {
-                            drawIsometricWreckSpritesForHex(c, g,
-                                    isometricWreckSprites);
+                            if (GUIPreferences.getInstance().getShowWrecks()) {
+                                drawIsometricWreckSpritesForHex(c, g,
+                                        isometricWreckSprites);
+                            }
                             drawIsometricSpritesForHex(c, g, isometricSprites);
                         }
                     }

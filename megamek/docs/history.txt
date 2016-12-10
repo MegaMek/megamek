@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.41.28
 + Issue #437: Issues with tooltip foreground colors
 + Issue #438: "Show Wrecks" graphics option ignored in isometric mode
++ Bug: Natural Aptitude Pilot/Gunnery restored.
 
 v0.41.27 (2016-12-07 03:00 UTC)
 + Feature: Can save board image with units (renders the same as seen on screen)

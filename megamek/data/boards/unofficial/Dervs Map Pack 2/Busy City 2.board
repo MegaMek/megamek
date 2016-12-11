@@ -849,7 +849,10 @@ hex 0625 0 "water:2:18" "grass"
 hex 0725 0 "water:2:18" "grass"
 hex 0825 0 "pavement:3;road:1:18" "grass"
 hex 0925 0 "pavement:3;road:1:18" "grass"
+
 hex 1025 1 "pavement:1:18;building:4:0;bldg_cf:100:18;bldg_elev:1:18;bldg_basement:0" "grass"
+hex 0826 0 "pavement:3;building:2:30;bldg_cf:75;bldg_elev:3;bldg_basement:1" "grass"
+
 hex 1125 0 "pavement:3;road:1:9" "grass"
 hex 1225 0 "pavement:2:18;building:4:12;bldg_cf:100:18;bldg_elev:3:18;bldg_basement:1" "grass"
 hex 1325 0 "pavement:3;road:1:36" "grass"

@@ -48,4 +48,9 @@ public class CapitalLaserBayWeapon extends BayWeapon {
         this.atClass = CLASS_CAPITAL_LASER;
         this.capital = true;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL;
+    }
 }

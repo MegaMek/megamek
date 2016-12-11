@@ -52,4 +52,9 @@ public class CapitalMDBayWeapon extends AmmoBayWeapon {
         techLevel.put(2715, techLevel.get(3071));
         this.techLevel.put(2715, TechConstants.T_IS_EXPERIMENTAL);
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL;
+    }
 }

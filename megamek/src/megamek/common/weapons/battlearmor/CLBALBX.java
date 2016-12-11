@@ -14,6 +14,8 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
+import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -60,4 +62,32 @@ public class CLBALBX extends Weapon {
         return new BALBXHandler(toHit, waa, game, server);
     }
 
+    /**
+     * non-squad size version for AlphaStrike base damage
+     */
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = Compute.calculateClusterHitTableAmount(7, getDamage());
+            damage *= 1.05; // -1 to hit
+            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage / 10.0;
+    }
+
+    @Override
+    public double getBattleForceDamage(int range, int baSquadSize) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = Compute.calculateClusterHitTableAmount(7, getDamage() * baSquadSize);
+            damage *= 1.05; // -1 to hit
+            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage / 10.0;
+    }
 }

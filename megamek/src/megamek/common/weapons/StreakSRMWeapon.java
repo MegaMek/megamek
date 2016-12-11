@@ -52,4 +52,17 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
         return new StreakHandler(toHit, waa, game, server);
     }
 
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = getRackSize() * 2;
+        }
+        return damage / 10.0;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_STANDARD;
+    }
 }

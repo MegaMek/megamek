@@ -47,4 +47,9 @@ public class LBXBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.atClass = CLASS_LBX_AC;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_FLAK;
+    }
 }

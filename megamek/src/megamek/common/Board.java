@@ -783,10 +783,10 @@ public class Board implements Serializable, IBoard {
      * Loads this board from an InputStream
      */
     public void load(InputStream is) {
-        load(is, null);
+        load(is, null, false);
     }
-        
-    public void load(InputStream is, StringBuffer errBuff) {
+
+    public void load(InputStream is, StringBuffer errBuff, boolean continueLoadOnError) {
         int nw = 0, nh = 0, di = 0;
         IHex[] nd = new IHex[0];
         resetStoredElevation();
@@ -873,8 +873,11 @@ public class Board implements Serializable, IBoard {
         // check data integrity
         if (isValid(nd, nw, nh, errBuff) && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
             newData(nw, nh, nd, errBuff);
+        } else if (continueLoadOnError && ((nw > 1) || (nh > 1) || (di == (nw * nh)))) {
+            System.err.println("Error reading board, data invalid.");
+            newData(nw, nh, nd, errBuff);
         } else if (errBuff == null){
-            System.err.println("board data invalid");
+            System.err.println("Error reading board, data invalid.");
         }
 
     }

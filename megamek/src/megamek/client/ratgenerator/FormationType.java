@@ -3,6 +3,7 @@
  */
 package megamek.client.ratgenerator;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -10,6 +11,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.IntSummaryStatistics;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -456,6 +458,32 @@ public class FormationType {
             return retVal;
         }
         
+        List<int[]> combinations = findCombinations(cUnits);
+        List<MechSummary> list = new ArrayList<>();
+        while (combinations.size() > 0) {
+        	int index = Compute.randomInt(combinations.size());
+        	int[] combo = combinations.get(index);
+        	for (int i = 0; i < combo.length; i++) {
+        		if (combo[i] > 0) {
+        			Predicate<MechSummary> test = mainCriteria;
+        			int mask = 1 << (otherCriteria.size() - 1);
+        			for (Constraint c : otherCriteria) {
+        				if ((i & mask) != 0) {
+        					test = test.and(c.criterion);
+        				}
+        				mask >>= 1;
+        			}
+        			list.addAll(tables.get(0).generateUnits(combo[i]));
+        		}
+        	}
+        	if (list.size() < cUnits) {
+        		combinations.remove(index);
+        	} else {
+        		return list;
+        	}
+        }
+        
+        
         /* General case:
          * For each constraint, find all permutations of the multiset [0,1] with cardinality
          * k = total formation size and multiplicity(1) = minimum number
@@ -619,6 +647,78 @@ public class FormationType {
             }
         }
         return retVal;
+    }
+
+    /**
+     * Finds all unique distributions of constraints among the units that fulfills the minimum
+     * number for each constraint. The array indices indicate a combination of constraints, with the
+     * highest order bit being the first constraint in the list, and the value at that index being
+     * the number of units that must meet the constraint.
+     */
+    private List<int[]> findCombinations(int numUnits) {
+    	/* This list is remade with each additional constraint, building on the previous values */
+    	List<int[]> frequencies = new ArrayList<>();
+
+    	for (Constraint c : otherCriteria) {
+    		int req = c.getMinimum(numUnits);
+    		/* If this is the first pass, we simply need to initialize the frequencies list */
+    		if (frequencies.isEmpty()) {
+    			int[] freq = new int[2];
+    			freq[0] = numUnits - req;
+    			freq[1] = req;
+    			frequencies.add(freq);
+    		} else {
+    			/* Create a new list to hold the values built off the previous one */
+    			List<int[]> newFrequencies = new ArrayList<>();
+    			/* Iterate through all the values from the previous pass and extend them */
+    			for (int[] freq : frequencies) {
+    				/* For each position, note how many total slots there are in later positions */
+    				int[] remaining = new int[freq.length];
+    				int rem = 0;
+    				for (int i = freq.length - 1; i >= 0; i--) {
+    					rem += freq[i];
+    					remaining[i] = rem;
+    				}
+    				int index = 0;
+    				int toAllocate = req;
+    				int[] current = new int[freq.length];
+    				outer: while (remaining[index] >= toAllocate) {
+    					current[index] = Math.min(freq[index], toAllocate);
+    					toAllocate -= current[index];
+    					index++;
+    					if (index == freq.length) {
+    						int[] result = new int[current.length * 2];
+    						for (int i = 0; i < current.length; i++) {
+    							result[i << 1] = freq[i] - current[i];
+    							result[(i << 1) + 1] = current[i];
+    						}
+    						newFrequencies.add(result);
+    						index--;
+    						/* Keep backing up until we find one we can decrease or we reach the beginning.
+    						 * We can decrease if the current value is > 0 and the remaining slots are
+    						 * big enough to hold toAllocate + 1.
+    						 */
+    						while (index >= 0) {
+    							if (current[index] == 0 || index + 1 == current.length
+    									|| remaining[index + 1] <= toAllocate
+    									) {
+        							toAllocate += current[index];
+        							index--;    								
+    							} else {
+    								current[index]--;
+    								toAllocate++;
+    								index++;
+    								continue outer;
+    							}
+    						}
+    						break outer;
+    					}
+    				}
+    			}
+	    		frequencies = newFrequencies;
+    		}
+    	}
+    	return frequencies;
     }
     
     public static void createFormationTypes() {

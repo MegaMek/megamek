@@ -29,7 +29,7 @@ Bombast Laser Turret
 </Model>
 
 <Year>
-3109
+3085
 </Year>
 
 <Type>
@@ -43,6 +43,6 @@ IS Level 3
 </Turret>
 
 <Guns Equipment>
-ISTSEMP
-ISTSEMP
+IS Bombast Laser
+IS Bombast Laser
 </Guns Equipment>

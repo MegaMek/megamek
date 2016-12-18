@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.29-git
+
 v0.41.28 (2016-12-18 17:35 UTC)
 + Issue #437: Issues with tooltip foreground colors
 + Issue #438: "Show Wrecks" graphics option ignored in isometric mode

@@ -3,15 +3,14 @@
  */
 package megamek.client.ratgenerator;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.IntSummaryStatistics;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -458,23 +457,80 @@ public class FormationType {
             return retVal;
         }
         
+        /* Prepare array that determines which UnitTable to use for each position in the formation */
+        int[] unitTableIndex = new int[cUnits];
+        int pos = 0;
+        for (int i = 0; i < numUnits.size(); i++) {
+            for (int j = 0; j < numUnits.get(i); j++) {
+                unitTableIndex[pos] = i;
+                pos++;
+            }
+        }
+        
         List<int[]> combinations = findCombinations(cUnits);
         List<MechSummary> list = new ArrayList<>();
         while (combinations.size() > 0) {
+        	list.clear();
         	int index = Compute.randomInt(combinations.size());
         	int[] combo = combinations.get(index);
-        	for (int i = 0; i < combo.length; i++) {
-        		if (combo[i] > 0) {
-        			Predicate<MechSummary> test = mainCriteria;
-        			int mask = 1 << (otherCriteria.size() - 1);
-        			for (Constraint c : otherCriteria) {
-        				if ((i & mask) != 0) {
-        					test = test.and(c.criterion);
-        				}
-        				mask >>= 1;
-        			}
-        			list.addAll(tables.get(0).generateUnits(combo[i]));
+        	if (groupingCriteria != null && groupingCriteria.appliesTo(params.get(0).getUnitType())) {
+        		List<int[][]> groups = findGroups(combo);
+        		while (groups.size() > 0) {
+        			list.clear();
+	        		int gIndex = Compute.randomInt(groups.size());
+	        		int[] workingCombo = new int[combo.length];
+	        		System.arraycopy(combo, 0, workingCombo, 0, combo.length);
+	        		for (int[] g : groups.get(gIndex)) {
+	        			MechSummary base = null;
+	        			for (int i = 0; i < combo.length; i++) {
+	        				if (g[i] > 0) {
+	        					final Predicate<MechSummary> filter = getFilterFromIndex(i);
+		        				for (int j = 0; j < g[i]; j++) {
+			        				if (base == null) {
+			        					base = tables.get(0).generateUnit(ms -> filter.test(ms));
+			        					if (base != null) {
+			        						list.add(base);
+			        					}
+			        				} else {
+			        					final MechSummary b = base;
+			        					MechSummary unit = tables.get(0).generateUnit(ms -> filter.test(ms)
+			        							&& groupingCriteria.matches(ms, b));
+			        					if (unit != null) {
+			        						list.add(unit);
+			        					}
+			        				}
+			        				workingCombo[i]--;
+		        				}
+	        				}
+	        			}
+	        		}
+	        		for (int i = 0; i < workingCombo.length; i++) {
+	        			if (workingCombo[i] > 0) {
+	        				final Predicate<MechSummary> filter = getFilterFromIndex(i);
+	        				for (int j = 0; j < workingCombo[i]; j++) {
+	        					MechSummary unit = tables.get(0).generateUnit(ms -> filter.test(ms));
+	        					if (unit != null) {
+	        						list.add(unit);
+	        					}
+	        				}
+	        			}
+	        		}
+	        		if (list.size() < cUnits) {
+	        			groups.remove(gIndex);
+	        		} else {
+	        			return list;
+	        		}
         		}
+        	} else {
+	        	for (int i = 0; i < combo.length; i++) {
+	        		if (combo[i] > 0) {
+	        			final Predicate<MechSummary>filter = getFilterFromIndex(i);
+	        			for (int j = 0; j < combo[i]; j++) {
+	        				MechSummary unit = tables.get(unitTableIndex[list.size()]).generateUnit(ms -> filter.test(ms));
+	        				list.add(unit);
+	        			}
+	        		}
+	        	}
         	}
         	if (list.size() < cUnits) {
         		combinations.remove(index);
@@ -519,16 +575,6 @@ public class FormationType {
         }
         List<Integer> possibilities = IntStream.range(0, totalCombos).mapToObj(Integer::valueOf)
                 .collect(Collectors.toList());
-        
-        /* Prepare array that determines which UnitTable to use for each position in the formation */
-        int[] unitTableIndex = new int[cUnits];
-        int pos = 0;
-        for (int i = 0; i < numUnits.size(); i++) {
-            for (int j = 0; j < numUnits.get(i); j++) {
-                unitTableIndex[pos] = i;
-                pos++;
-            }
-        }
         
         /* Prepare an array for use with grouping constraints; a null at the unit's index indicates
          * it is not part of a group. Any other value gives its position within the group, which
@@ -627,6 +673,18 @@ public class FormationType {
         return new ArrayList<>();
     }
     
+    private Predicate<MechSummary> getFilterFromIndex(int index) {
+    	Predicate<MechSummary> retVal = mainCriteria;
+    	int mask = 1 << (otherCriteria.size() - 1);
+    	for (Constraint c : otherCriteria) {
+    		if ((index & mask) != 0) {
+    			retVal = retVal.and(c.criterion);
+    		}
+    		mask >>= 1;
+    	}
+    	return retVal;
+    }
+    
     /**
      * Attempts to build unit entirely on ideal role. Returns null if unsuccessful.
      */
@@ -719,6 +777,90 @@ public class FormationType {
     		}
     	}
     	return frequencies;
+    }
+    
+    private List<int[][]> findGroups(int[] combination) {
+    	int size = groupingCriteria.getGroupSize();
+    	int numUnits = Arrays.stream(combination).sum();
+    	int numGroups = Math.min(groupingCriteria.getNumGroups(), numUnits / size);
+    	List<int[][]> list = new ArrayList<>();
+    	int[][] initialVal = new int[1][combination.length];
+    	list.add(initialVal);
+    	
+    	/* Compute distribution for each group sequentially, building on previously calculated
+    	 * distributions for each successive group. */
+    	for (int group = 0; group < numGroups; group++) {
+    		/* Create a new list that we will fill out by copying the current values and adding
+    		 * the next group calculated during this iteration. */
+    		List<int[][]> newList = new ArrayList<>();
+    		/* Cycle through all previous combinations and add all combinations for current group */
+    		for (int[][] prev : list) {
+    			/* Initialize array with the number of units at each position that have already been
+    			 * assigned to groups. */
+    			int[] total = new int[combination.length];
+    			for (int g = 0; g < prev.length; g++) {
+    				for (int p = 0; p < prev[g].length; p++) {
+    					total[p] += prev[g][p];
+    				}
+    			}
+    			/* Find the starting position for the current group. We don't want to start earlier
+    			 * that the first position that has been assigned to a group; that will be a permutation
+    			 * of a result that has already been calculated. */
+
+    			int startPos = -1;
+    			for (int i = 0; i < total.length; i++) {
+    				if (total[i] > 0) {
+    					startPos = i;
+    					break;
+    				}
+    			}
+    			startPos = Math.max(0, startPos);
+    			
+    			/* Create an array to track attempted distribution of the current group */
+    			int[] dist = new int[combination.length];
+    			dist[startPos] = size;
+    			/* Shift values through the array until they are all in the final position */
+    			while (dist[dist.length - 1] <= size) {
+    				/* Test whether there is room for the current distribution, and if so add it to
+    				 * the list */
+    				boolean hasRoom = true;
+    				for (int i = 0; i < dist.length; i++) {
+    					if (total[i] + dist[i] > combination[i]) {
+    						hasRoom = false;
+    						break;
+    					}
+    				}
+    				if (hasRoom) {
+    					int[][] newVal = new int[group + 1][];
+    					for (int j = 0; j < group; j++) {
+    						newVal[j] = prev[j];
+    					}
+    					newVal[group] = new int[dist.length];
+    					System.arraycopy(dist, 0, newVal[group], 0, dist.length);
+    					newList.add(newVal);
+    				}
+    				/* Shift the values in the current distribution. Find the value > 0 closest to the
+    				 * end (not counting the final position), decrease it by 1, and set the value in
+    				 * the next position to 1 plus whatever was in the tail position (which becomes 0
+    				 * prior to incrementing */
+    				if (dist[dist.length - 1] == size) {
+    					break;
+    				}
+    				int tail = dist[dist.length - 1];
+    				dist[dist.length - 1] = 0;
+    				for (int i = dist.length - 2; i >= 0; i--) {
+    					if (dist[i] > 0) {
+    						dist[i]--;
+    						dist[i + 1] = tail + 1;
+    						break;
+    					}
+    				}
+    			}
+	    	}
+    		/* Replace the old list with one from this iteration */
+        	list = newList;
+    	}
+    	return list;
     }
     
     public static void createFormationTypes() {

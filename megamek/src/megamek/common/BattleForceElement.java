@@ -152,8 +152,36 @@ public class BattleForceElement {
         return structure;
     }
     
+    public double getDamage(int loc, int rangeIndex, int damageClass) {
+    	return weaponLocations[loc].getDamage(damageClass, rangeIndex);
+    }
+    
+    public double getDamage(int rangeIndex) {
+    	return weaponLocations[0].getDamage(rangeIndex);
+    }
+    
+    public double getDamage(int rangeIndex, int damageClass) {
+    	return getDamage(0, rangeIndex, damageClass);
+    }
+    
+    public double getIndirectFire() {
+    	return getIndirectFire(0);
+    }
+    
+    public double getIndirectFire(int loc) {
+    	return weaponLocations[loc].getIF();
+    }
+    
     public String getLocationName(int loc) {
         return locationNames[loc];
+    }
+    
+    public Integer getSPA(BattleForceSPA spa) {
+    	return specialAbilities.get(spa);
+    }
+    
+    public boolean hasSPA(BattleForceSPA spa) {
+    	return specialAbilities.containsKey(spa);
     }
 
     public int getFinalPoints() {

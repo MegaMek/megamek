@@ -157,11 +157,19 @@ public class BattleForceElement {
     }
     
     public double getDamage(int rangeIndex) {
-    	return getDamage(0, rangeIndex, WeaponType.BFCLASS_STANDARD);
+    	return weaponLocations[0].getDamage(rangeIndex);
     }
     
     public double getDamage(int rangeIndex, int damageClass) {
     	return getDamage(0, rangeIndex, damageClass);
+    }
+    
+    public double getIndirectFire() {
+    	return getIndirectFire(0);
+    }
+    
+    public double getIndirectFire(int loc) {
+    	return weaponLocations[loc].getIF();
     }
     
     public String getLocationName(int loc) {

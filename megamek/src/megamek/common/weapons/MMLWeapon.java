@@ -119,9 +119,6 @@ public abstract class MMLWeapon extends MissileWeapon {
     
     @Override
     public double getBattleForceDamage(int range, Mounted fcs) {
-        if (range > getLongRange()) {
-            return 0;
-        }
         int clusterRoll = 7;
         if (fcs != null && fcs.getType() instanceof MiscType) {
             if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS)) {

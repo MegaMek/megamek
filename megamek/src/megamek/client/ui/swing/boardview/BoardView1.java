@@ -4981,6 +4981,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         tileManager.clearHex(hex);
         tileManager.waitForHex(hex);
         clearShadowMap();
+        // Maybe have to set the hexes' theme
+        if (selectedTheme != null) {
+            if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
+                hex.setTheme("");
+                game.getBoard().setHex(b.getCoords(), hex);
+            } else if (!selectedTheme.equals(hex.getTheme())) {
+                hex.setTheme(selectedTheme);
+                game.getBoard().setHex(b.getCoords(), hex);
+            }
+        }
         repaint();
     }
 

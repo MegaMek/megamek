@@ -2303,28 +2303,6 @@ Tortoise II (aSRM)|
 Tortoise II (SRM)|
 Fenrir Battle Armor 'Longshot'|
 Gray Death Strike Armor (Prototype)|
-Laser Turret ML|
-Turret ER Large Laser|
-AC Turret (Dual) AC5|
-AC Turret AC10|
-SRM Turret SRM4|
-LRM Turret (Dual) LRM5|
-Turret Calliope|
-Turret SRM|
-LRM Turret (Dual) LRM10|
-AC Turret (Dual) AC2|
-SRM Turret SRM2|
-Turret LRM|
-Turret Gauss Rifle|
-SRM Turret (Dual) SRM4|
-AC Turret (Dual) UAC5|
-AC Turret AC5|
-Turret Streak SRM|
-AC Turret (Dual) RAC5|
-LRM Turret LRM5|
-Laser Turret LL|
-Laser Turret (Dual) ML|
-LRM Turret LRM20|
 ER PPC Turret (Single)|
 Enhanced PPC Turret (Dual)|
 ER PPC w Capacitor Turret (Dual)|
@@ -2372,42 +2350,42 @@ Sniper Artillery Cannon Turret (Single)|
 'Mech Mortar/1 Battery (Single)|
 Thumper Artillery Cannon Turret (Single)|
 Thumper Artillery Turret (Dual)|
-SRM6 Turret (Single)|
-SRM2 Turret (Dual)|
-SRM6 Turret (Triple)|
-SRM2 Turret (Triple)|
-SRM6 Turret (Quad)|
-SRM4 Turret (Single)|
-SRM4 Turret (Quad)|
-SRM2 Turret (Quad)|
-SRM4 Turret (Triple)|
-SRM2 Turret (w/ Artemis V) (Triple)|
-SRM6 Turret (w/ Artemis V) (Single)|
-SRM2 Turret (w/ Artemis V) (Quad)|
-SRM4 Turret (w/ Artemis V) (Triple)|
-SRM6 Turret (w/ Artemis V) (Triple)|
-SRM2 Turret (w/ Artemis V) (Dual)|
-SRM6 Turret (w/ Artemis V) (Dual)|
-SRM6 Turret (w/ Artemis V) (Quad)|
-SRM4 Turret (w/ Artemis V) (Dual)|
-SRM2 Turret (w/ Artemis V) (Single)|
-SRM4 Turret (w/ Artemis V) (Single)|
-SRM4 Turret (w/ Artemis V) (Quad)|
-SRM6 Turret (w/ Artemis IV) (Dual)|
-SRM4 Turret (w/ Artemis IV) (Single)|
-SRM6 Turret (w/ Artemis IV) (Single)|
-SRM4 Turret (w/ Artemis IV) (Triple)|
-SRM6 Turret (w/ Artemis IV) (Quad)|
-SRM4 Turret (w/ Artemis IV) (Dual)|
-SRM2 Turret (w/ Artemis IV) (Dual)|
-SRM4 Turret (w/ Artemis IV) (Quad)|
-SRM2 Turret (w/ Artemis IV) (Single)|
-SRM2 Turret (w/ Artemis IV) (Triple)|
-SRM6 Turret (w/ Artemis IV) (Triple)|
-SRM2 Turret (w/ Artemis IV) (Quad)|
-SRM6 Turret (Dual)|
-SRM2 Turret (Single)|
-SRM4 Turret (Dual)|
+SRM/6 Turret (Single)|
+SRM/2 Turret (Dual)|
+SRM/6 Turret (Triple)|
+SRM/2 Turret (Triple)|
+SRM/6 Turret (Quad)|
+SRM/4 Turret (Single)|
+SRM/4 Turret (Quad)|
+SRM/2 Turret (Quad)|
+SRM/4 Turret (Triple)|
+SRM/2 Turret (w/ Artemis V) (Triple)|
+SRM/6 Turret (w/ Artemis V) (Single)|
+SRM/2 Turret (w/ Artemis V) (Quad)|
+SRM/4 Turret (w/ Artemis V) (Triple)|
+SRM/6 Turret (w/ Artemis V) (Triple)|
+SRM/2 Turret (w/ Artemis V) (Dual)|
+SRM/6 Turret (w/ Artemis V) (Dual)|
+SRM/6 Turret (w/ Artemis V) (Quad)|
+SRM/4 Turret (w/ Artemis V) (Dual)|
+SRM/2 Turret (w/ Artemis V) (Single)|
+SRM/4 Turret (w/ Artemis V) (Single)|
+SRM/4 Turret (w/ Artemis V) (Quad)|
+SRM/6 Turret (w/ Artemis IV) (Dual)|
+SRM/4 Turret (w/ Artemis IV) (Single)|
+SRM/6 Turret (w/ Artemis IV) (Single)|
+SRM/4 Turret (w/ Artemis IV) (Triple)|
+SRM/6 Turret (w/ Artemis IV) (Quad)|
+SRM/4 Turret (w/ Artemis IV) (Dual)|
+SRM/2 Turret (w/ Artemis IV) (Dual)|
+SRM/4 Turret (w/ Artemis IV) (Quad)|
+SRM/2 Turret (w/ Artemis IV) (Single)|
+SRM/2 Turret (w/ Artemis IV) (Triple)|
+SRM/6 Turret (w/ Artemis IV) (Triple)|
+SRM/2 Turret (w/ Artemis IV) (Quad)|
+SRM/6 Turret (Dual)|
+SRM/2 Turret (Single)|
+SRM/4 Turret (Dual)|
 ATM/12 Turret (Triple)|
 ATM/3 Turret (Triple)|
 ATM/9 Turret (Single)|
@@ -2420,18 +2398,18 @@ ATM/6 Turret (Single)|
 ATM/12 Turret (Dual)|
 ATM/9 Turret (Triple)|
 ATM/12 Turret (Single)|
-Streak SRM6 Turret (Triple)|
-Streak SRM2 Turret (Single)|
-Streak SRM2 Turret (Triple)|
-Streak SRM2 Turret (Quad)|
-Streak SRM6 Turret (Dual)|
-Streak SRM6 Turret (Quad)|
-Streak SRM6 Turret (Single)|
-Streak SRM4 Turret (Single)|
-Streak SRM4 Turret (Dual)|
-Streak SRM4 Turret (Quad)|
-Streak SRM4 Turret (Triple)|
-Streak SRM2 Turret (Dual)|
+Streak SRM/6 Turret (Triple)|
+Streak SRM/2 Turret (Single)|
+Streak SRM/2 Turret (Triple)|
+Streak SRM/2 Turret (Quad)|
+Streak SRM/6 Turret (Dual)|
+Streak SRM/6 Turret (Quad)|
+Streak SRM/6 Turret (Single)|
+Streak SRM/4 Turret (Single)|
+Streak SRM/4 Turret (Dual)|
+Streak SRM/4 Turret (Quad)|
+Streak SRM/4 Turret (Triple)|
+Streak SRM/2 Turret (Dual)|
 ECM Suite Bunker|
 Active Probe Bunker|
 AMS Turret (Single)|
@@ -2621,38 +2599,38 @@ LRM/20 Turret (Quad)|
 LRM/15 Turret (Dual)|
 LRM/5 Turret (Dual)|
 LRM/20 Turret (Dual)|
-LRM/15 Turret (w/ Artemis V) (Dual)|
-LRM/5 Turret (w/ Artemis V) (Dual)|
-LRM/5 Turret (w/ Artemis V) (Quad)|
-LRM/20 Turret (w/ Artemis V) (Dual)|
-LRM/10 Turret (w/ Artemis V) (Single)|
-LRM/20 Turret (w/ Artemis V) (Single)|
-LRM/15 Turret (w/ Artemis V) (Single)|
-LRM/15 Turret (w/ Artemis V) (Quad)|
-LRM/20 Turret (w/ Artemis V) (Triple)|
 LRM/5 Turret (w/ Artemis V) (Triple)|
+LRM/10 Turret (w/ Artemis V) (Single)|
+LRM/15 Turret (w/ Artemis V) (Single)|
+LRM/10 Turret (w/ Artemis V) (Dual)|
+LRM/5 Turret (w/ Artemis V) (Dual)|
+LRM/15 Turret (w/ Artemis V) (Triple)|
+LRM/15 Turret (w/ Artemis V) (Dual)|
+LRM/10 Turret (w/ Artemis V) (Quad)|
+LRM/20 Turret (w/ Artemis V) (Single)|
 LRM/5 Turret (w/ Artemis V) (Single)|
 LRM/10 Turret (w/ Artemis V) (Triple)|
-LRM/10 Turret (w/ Artemis V) (Dual)|
+LRM/20 Turret (w/ Artemis V) (Dual)|
+LRM/15 Turret (w/ Artemis V) (Quad)|
+LRM/5 Turret (w/ Artemis V) (Quad)|
+LRM/20 Turret (w/ Artemis V) (Triple)|
 LRM/20 Turret (w/ Artemis V) (Quad)|
-LRM/15 Turret (w/ Artemis V) (Triple)|
-LRM/10 Turret (w/ Artemis V) (Quad)|
-LRM/20 Turret (w/ Artemis IV) (Triple)|
 LRM/10 Turret (w/ Artemis IV) (Triple)|
-LRM/10 Turret (w/ Artemis IV) (Dual)|
-LRM/20 Turret (w/ Artemis IV) (Dual)|
+LRM/15 Turret (w/ Artemis IV) (Dual)|
+LRM/10 Turret (w/ Artemis IV) (Single)|
+LRM/15 Turret (w/ Artemis IV) (Single)|
+LRM/20 Turret (w/ Artemis IV) (Triple)|
+LRM/5 Turret (w/ Artemis IV) (Single)|
+LRM/5 Turret (w/ Artemis IV) (Dual)|
+LRM/5 Turret (w/ Artemis IV) (Triple)|
+LRM/20 Turret (w/ Artemis IV) (Single)|
+LRM/10 Turret (w/ Artemis IV) (Quad)|
 LRM/5 Turret (w/ Artemis IV) (Quad)|
 LRM/20 Turret (w/ Artemis IV) (Quad)|
 LRM/15 Turret (w/ Artemis IV) (Quad)|
-LRM/15 Turret (w/ Artemis IV) (Dual)|
-LRM/5 Turret (w/ Artemis IV) (Triple)|
-LRM/15 Turret (w/ Artemis IV) (Single)|
-LRM/5 Turret (w/ Artemis IV) (Single)|
+LRM/10 Turret (w/ Artemis IV) (Dual)|
+LRM/20 Turret (w/ Artemis IV) (Dual)|
 LRM/15 Turret (w/ Artemis IV) (Triple)|
-LRM/5 Turret (w/ Artemis IV) (Dual)|
-LRM/10 Turret (w/ Artemis IV) (Single)|
-LRM/20 Turret (w/ Artemis IV) (Single)|
-LRM/10 Turret (w/ Artemis IV) (Quad)|
 ProtoMech AC/2 Turret (Dual)|
 ProtoMech AC/8 Turret (Triple)|
 ProtoMech AC/2 Turret (Single)|
@@ -2696,15 +2674,6 @@ UAC/2 Turret (Single)|
 UAC/10 Turret (Dual)|
 UAC/10 Turret (Single)|
 UAC/2 Turret (Triple)|
-Laser Turret (Dual) LL|
-LRM Turret LRM10|
-Laser Bay LL|
-MG Turret Single|
-SRM Turret (Dual) SRM2|
-Laser Bay MLx2|
-Laser Bay ML|
-SRM Turret (Dual) SRM6|
-SRM Turret SRM6|
 Rocket Launcher/4 Turret (Single)|
 Rocket Launcher/5 Turret (Single)|
 Rocket Launcher/1 Turret (Single)|
@@ -2730,13 +2699,13 @@ MRM 30 Turret (Triple)|
 MRM 20 Turret w/ Apollo FCS (Single)|
 MRM 20 Turret (Dual)|
 MRM 40 Turret w/ Apollo FCS (Single)|
-MRM 20 Turret (Single)|
 MRM 10 Turret (Dual)|
 MRM 40 Turret (Single)|
 MRM 30 Turret w/ Apollo FCS (Single)|
 MRM 20 Turret w/ Apollo FCS (Triple)|
 MRM 10 Turret w/ Apollo FCS (Dual)|
 MRM 20 Turret w/ Apollo FCS (Dual)|
+MRM 20 Turret (Single)|
 Thunderbolt 20 Turret (Dual)|
 Thunderbolt 15 Turret (Dual)|
 Thunderbolt 5 Turret (Dual)|
@@ -2833,42 +2802,42 @@ Sniper Artillery Cannon Turret (Single)|
 Thumper Artillery Cannon Turret (Single)|
 Cruise Missile/50 Launcher (Triple)|
 Thumper Artillery Turret (Dual)|
-SRM6 Turret (Single)|
-SRM6 Turret (w/ Artemis IV) (Triple)|
-SRM2 Turret (Dual)|
-SRM6 Turret (Triple)|
-SRM2 Turret (Triple)|
-SRM6 Turret (w/ Artemis IV) (Quad)|
-SRM6 Turret (Quad)|
-SRM4 Turret (Single)|
-SRM4 Turret (Quad)|
-SRM6 Turret (w/ Artemis IV) (Single)|
-SRM4 Turret (w/ Artemis IV) (Dual)|
-SRM4 Turret (w/ Artemis IV) (Triple)|
-SRM2 Turret (Quad)|
-SRM4 Turret (Triple)|
-SRM2 Turret (w/ Artemis IV) (Quad)|
-SRM2 Turret (w/ Artemis IV) (Triple)|
-SRM2 Turret (w/ Artemis IV) (Single)|
-SRM2 Turret (w/ Artemis IV) (Dual)|
-SRM4 Turret (w/ Artemis IV) (Quad)|
-SRM6 Turret (Dual)|
-SRM4 Turret (w/ Artemis IV) (Single)|
-SRM2 Turret (Single)|
-SRM4 Turret (Dual)|
-SRM6 Turret (w/ Artemis IV) (Dual)|
-Streak SRM6 Turret (Dual)|
-Streak SRM2 Turret (Quad)|
-Streak SRM2 Turret (Dual)|
-Streak SRM2 Turret (Single)|
-Streak SRM6 Turret (Single)|
-Streak SRM4 Turret (Dual)|
-Streak SRM4 Turret (Triple)|
-Streak SRM2 Turret (Triple)|
-Streak SRM4 Turret (Single)|
-Streak SRM4 Turret (Quad)|
-Streak SRM6 Turret (Triple)|
-Streak SRM6 Turret (Quad)|
+SRM/6 Turret (Single)|
+SRM/6 Turret (w/ Artemis IV) (Triple)|
+SRM/2 Turret (Dual)|
+SRM/6 Turret (Triple)|
+SRM/2 Turret (Triple)|
+SRM/6 Turret (w/ Artemis IV) (Quad)|
+SRM/6 Turret (Quad)|
+SRM/4 Turret (Single)|
+SRM/4 Turret (Quad)|
+SRM/6 Turret (w/ Artemis IV) (Single)|
+SRM/4 Turret (w/ Artemis IV) (Dual)|
+SRM/4 Turret (w/ Artemis IV) (Triple)|
+SRM/2 Turret (Quad)|
+SRM/4 Turret (Triple)|
+SRM/2 Turret (w/ Artemis IV) (Quad)|
+SRM/2 Turret (w/ Artemis IV) (Triple)|
+SRM/2 Turret (w/ Artemis IV) (Single)|
+SRM/2 Turret (w/ Artemis IV) (Dual)|
+SRM/4 Turret (w/ Artemis IV) (Quad)|
+SRM/6 Turret (Dual)|
+SRM/4 Turret (w/ Artemis IV) (Single)|
+SRM/2 Turret (Single)|
+SRM/4 Turret (Dual)|
+SRM/6 Turret (w/ Artemis IV) (Dual)|
+Streak SRM/6 Turret (Dual)|
+Streak SRM/2 Turret (Quad)|
+Streak SRM/2 Turret (Dual)|
+Streak SRM/2 Turret (Single)|
+Streak SRM/6 Turret (Single)|
+Streak SRM/4 Turret (Dual)|
+Streak SRM/4 Turret (Triple)|
+Streak SRM/2 Turret (Triple)|
+Streak SRM/4 Turret (Single)|
+Streak SRM/4 Turret (Quad)|
+Streak SRM/6 Turret (Triple)|
+Streak SRM/6 Turret (Quad)|
 Calliope Turret (Standard)|
 C3 Command Bunker (Triple)|
 ECM Turret (Guardian)|
@@ -3041,25 +3010,27 @@ MML/5 Turret (Single)|
 MML/9 Turret (Dual)|
 MML/3 Turret (Triple)|
 MML/9 Turret (Single)|
-LRM/20 Turret (w/ Artemis IV) (Triple)|
+LRM/10 Turret (w/ Artemis IV) (Triple)|
 LRM/20 Turret (Triple)|
 LRM/10 Turret (Quad)|
+LRM/15 Turret (w/ Artemis IV) (Dual)|
+LRM/10 Turret (w/ Artemis IV) (Single)|
+LRM/15 Turret (w/ Artemis IV) (Single)|
 LRM/20 Turret (Single)|
+LRM/20 Turret (w/ Artemis IV) (Triple)|
 LRM/5 Turret (Single)|
-LRM/10 Turret (w/ Artemis IV) (Triple)|
-LRM/10 Turret (w/ Artemis IV) (Dual)|
-LRM/20 Turret (w/ Artemis IV) (Dual)|
-LRM/5 Turret (w/ Artemis IV) (Quad)|
+LRM/5 Turret (w/ Artemis IV) (Single)|
 LRM/10 Turret (Triple)|
+LRM/5 Turret (w/ Artemis IV) (Dual)|
+LRM/5 Turret (w/ Artemis IV) (Triple)|
 LRM/15 Turret (Single)|
-LRM/20 Turret (w/ Artemis IV) (Quad)|
 LRM/15 Turret (Quad)|
+LRM/20 Turret (w/ Artemis IV) (Single)|
+LRM/10 Turret (w/ Artemis IV) (Quad)|
 LRM/5 Turret (Quad)|
 LRM/10 Turret (Single)|
 LRM/5 Turret (Triple)|
-LRM/15 Turret (w/ Artemis IV) (Quad)|
 LRM/15 Turret (Triple)|
-LRM/15 Turret (w/ Artemis IV) (Dual)|
 LRM/10 Turret (Dual)|
 Enhanced LRM/20 Turret (Quad)|
 Enhanced LRM/5 Turret (Quad)|
@@ -3077,7 +3048,9 @@ Enhanced LRM/20 Turret (Triple)|
 Enhanced LRM/15 Turret (Quad)|
 Enhanced LRM/10 Turret (Single)|
 Enhanced LRM/5 Turret (Single)|
-LRM/5 Turret (w/ Artemis IV) (Triple)|
+LRM/5 Turret (w/ Artemis IV) (Quad)|
+LRM/20 Turret (w/ Artemis IV) (Quad)|
+LRM/15 Turret (w/ Artemis IV) (Quad)|
 Extended LRM/15 Turret (Quad)|
 Extended LRM/5 Turret (Dual)|
 Extended LRM/5 Turret (Single)|
@@ -3094,15 +3067,11 @@ Extended LRM/20 Turret (Dual)|
 Extended LRM/20 Turret (Single)|
 Extended LRM/15 Turret (Triple)|
 Extended LRM/15 Turret (Single)|
-LRM/15 Turret (w/ Artemis IV) (Single)|
-LRM/5 Turret (w/ Artemis IV) (Single)|
 LRM/20 Turret (Quad)|
-LRM/15 Turret (w/ Artemis IV) (Triple)|
+LRM/10 Turret (w/ Artemis IV) (Dual)|
 LRM/15 Turret (Dual)|
-LRM/5 Turret (w/ Artemis IV) (Dual)|
-LRM/10 Turret (w/ Artemis IV) (Single)|
-LRM/20 Turret (w/ Artemis IV) (Single)|
-LRM/10 Turret (w/ Artemis IV) (Quad)|
+LRM/20 Turret (w/ Artemis IV) (Dual)|
+LRM/15 Turret (w/ Artemis IV) (Triple)|
 LRM/5 Turret (Dual)|
 LRM/20 Turret (Dual)|
 Light AC/5 Turret (Single)|
@@ -3172,29 +3141,6 @@ UAC/5 Turret (Triple)|
 UAC/5 Turret (Dual)|
 UAC/10 Turret (Single)|
 UAC/5 Turret (Single)|
-MG Turret Dual|
-LRM Turret LRM15|
-Laser Bay LLx2|
-AC Turret AC2|
-Laser Turret SL|
-Laser Bay SL|
-Static (ML)|
-Artillery Turret Thumper|
-Artillery Turret Sniper|
-LRM Turret (Dual) LRM20|
-AC Turret (Dual) AC10|
-Artillery Turret Long Tom|
-Artillery Turret Thumper (Dual)|
-Turret ER Large Laser|
-Laser Turret (Dual) SL|
-Turret Cruise Missile|
-Turret ER PPC|
-Turret (ML)|
-Laser Bay (Dual) SL|
-Turret ER PPC|
-LRM Turret (Dual) LRM15|
-MG Turret Quad|
-Gauss Turret (Dual) Gauss|
 Drake SDS Control Station (Standard)|
 Snowden Mining Station Mk I|
 Snowden Mining Station (Standard)|

@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.29-git
++ Issue #441: Fled units not being saved at the end of the game
 
 v0.41.28 (2016-12-18 17:35 UTC)
 + Issue #437: Issues with tooltip foreground colors

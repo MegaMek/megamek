@@ -33,6 +33,7 @@ public class MULParser {
     private static final String SURVIVORS = "survivors";
     private static final String ALLIES = "allies";
     private static final String SALVAGE = "salvage";
+    private static final String RETREATED = "retreated";
     private static final String DEVASTATED = "devastated";
     private static final String UNIT = "unit";
     private static final String ENTITY = "entity";
@@ -189,6 +190,11 @@ public class MULParser {
     Vector<Entity> allies;
     
     /**
+     * Stores all of the enemy retreated entities read in. 
+     */
+    Vector<Entity> retreated;
+    
+    /**
      * Stores all the salvage entities read in 
      */
     Vector<Entity> salvage;
@@ -219,6 +225,7 @@ public class MULParser {
         survivors = new Vector<Entity>();
         allies = new Vector<Entity>();
         salvage = new Vector<Entity>();
+        retreated = new Vector<Entity>();
         devastated = new Vector<Entity>();
         kills = new Hashtable<String, String>();
         pilots = new Vector<Crew>();
@@ -238,6 +245,7 @@ public class MULParser {
         survivors.removeAllElements();
         allies.removeAllElements();
         salvage.removeAllElements();
+        retreated.removeAllElements();
         devastated.removeAllElements();
         pilots.removeAllElements();
         kills.clear();
@@ -307,6 +315,8 @@ public class MULParser {
                     parseUnit((Element)currNode, allies);
                 } else if (nodeName.equalsIgnoreCase(SALVAGE)){
                     parseUnit((Element)currNode, salvage);
+                } else if (nodeName.equalsIgnoreCase(RETREATED)){
+                    parseUnit((Element)currNode, retreated);
                 } else if (nodeName.equalsIgnoreCase(DEVASTATED)){
                     parseUnit((Element)currNode, devastated);
                 } else if (nodeName.equalsIgnoreCase(KILLS)){
@@ -2033,6 +2043,15 @@ public class MULParser {
      */
     public Vector<Entity> getSalvage(){
         return salvage;
+    }
+    
+    /**
+     * Returns a list of all of the enemy retreated entities parsed from the input, should be
+     * called after <code>parse</code>.
+     * @return
+     */
+    public Vector<Entity> getRetreated(){
+        return retreated;
     }
     
     /**

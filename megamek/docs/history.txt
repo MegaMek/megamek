@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
 v0.41.29-git
++ Issue #441: Fled units not being saved at the end of the game
++ Data/Feature: Turret Project Part 3 - Major additions to the number and 
+	types of turret. Sprites still in progress.
 
 v0.41.28 (2016-12-18 17:35 UTC)
 + Issue #437: Issues with tooltip foreground colors

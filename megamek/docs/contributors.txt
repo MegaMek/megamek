@@ -238,6 +238,10 @@
       Wikimedia Commons, licensed under CC Attribution-Share Alike 2.5 Generic (http://creativecommons.org/licenses/by-sa/2.5/deed.en)
         data/images/widgets/hyades.jpg
       UI Materials licensed from EVILSYSTEM (http://www.evilsystem.eu/terms/).
+	- BigField (https://www.flickr.com/photos/wheatfields/557982013)
+	Attribution-NonCommercial-ShareAlike 2.0 Generic (CC BY-NC-SA 2.0)
+	data/images/hexes/largeTextures/BigField.jpg
+	Applied gimp make seemless filter, arrayed image into 4x4 tiles then shrunk to 800x600.
 	- BigMagma (https://sftextures.com/2015/05/27/lava-texture-with-small-red-stones/)
 	Attribution-ShareAlike 4.0 International License
 	data/images/hexes/largeTextures/BigMagma.jpg

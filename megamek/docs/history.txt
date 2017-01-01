@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.43.0-git
+
 v0.42.0 (2017-01-01 14:00 UTC)
 + Issue #441: Fled units not being saved at the end of the game
 + Data/Feature: Turret Project Part 3 - Major additions to the number and 

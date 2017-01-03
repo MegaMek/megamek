@@ -470,73 +470,125 @@ public class FormationType {
         List<int[]> combinations = findCombinations(cUnits);
         List<MechSummary> list = new ArrayList<>();
         while (combinations.size() > 0) {
-        	list.clear();
         	int index = Compute.randomInt(combinations.size());
-        	int[] combo = combinations.get(index);
-        	if (groupingCriteria != null && groupingCriteria.appliesTo(params.get(0).getUnitType())) {
-        		List<int[][]> groups = findGroups(combo);
-        		while (groups.size() > 0) {
-        			list.clear();
-	        		int gIndex = Compute.randomInt(groups.size());
-	        		int[] workingCombo = new int[combo.length];
-	        		System.arraycopy(combo, 0, workingCombo, 0, combo.length);
-	        		for (int[] g : groups.get(gIndex)) {
-	        			MechSummary base = null;
-	        			for (int i = 0; i < combo.length; i++) {
-	        				if (g[i] > 0) {
-	        					final Predicate<MechSummary> filter = getFilterFromIndex(i);
-		        				for (int j = 0; j < g[i]; j++) {
-			        				if (base == null) {
-			        					base = tables.get(0).generateUnit(ms -> filter.test(ms));
-			        					if (base != null) {
-			        						list.add(base);
-			        					}
-			        				} else {
-			        					final MechSummary b = base;
-			        					MechSummary unit = tables.get(0).generateUnit(ms -> filter.test(ms)
-			        							&& groupingCriteria.matches(ms, b));
-			        					if (unit != null) {
-			        						list.add(unit);
-			        					}
-			        				}
-			        				workingCombo[i]--;
-		        				}
-	        				}
-	        			}
-	        		}
-	        		for (int i = 0; i < workingCombo.length; i++) {
-	        			if (workingCombo[i] > 0) {
-	        				final Predicate<MechSummary> filter = getFilterFromIndex(i);
-	        				for (int j = 0; j < workingCombo[i]; j++) {
-	        					MechSummary unit = tables.get(0).generateUnit(ms -> filter.test(ms));
-	        					if (unit != null) {
-	        						list.add(unit);
+        	int[] baseCombo = combinations.get(index);
+        	
+    		int[] unitsPerGroup = new int[params.size()];
+    		for (int i = 0; i < numUnits.size(); i++) {
+    			unitsPerGroup[i] = numUnits.get(i);
+    		}
+    		List<int[]> unitTypeGroupings = findGroups(baseCombo, unitsPerGroup);
+    		while (unitTypeGroupings.size() > 0) {
+            	list.clear();
+    			int utIndex = Compute.randomInt(unitTypeGroupings.size());
+    			int[] combo = unitTypeGroupings.get(utIndex);
+    			
+	        	if (groupingCriteria != null
+	        			&& params.stream().anyMatch(p -> groupingCriteria.appliesTo(p.getUnitType()))) {
+	        		/* Create a temporary array that only includes units that have a grouping criteria */
+	        		int[] groupedUnits = new int[combo.length];
+	        		for (int p = 0; p < params.size(); p++) {
+	        			if (groupingCriteria.appliesTo(params.get(p).getUnitType())) {
+	        				for (int i = 0; i < combo.length; i++) {
+	        					if ((i & (1 << (p + otherCriteria.size()))) != 0) {
+	        						groupedUnits[i] += combo[i];
 	        					}
 	        				}
 	        			}
 	        		}
-	        		if (list.size() < cUnits) {
-	        			groups.remove(gIndex);
-	        		} else {
-	        			return list;
+	        		List<int[][]> groups = findMatchedGroups(groupedUnits);
+	        		
+	        		while (groups.size() > 0) {
+		        		int gIndex = Compute.randomInt(groups.size());
+	        			list.clear();
+		        		int[] workingCombo = new int[combo.length];
+		        		System.arraycopy(combo, 0, workingCombo, 0, combo.length);
+		        		for (int[] g : groups.get(gIndex)) {
+		        			MechSummary base = null;
+		        			for (int i = 0; i < combo.length; i++) {
+		        				if (g[i] > 0) {
+			        				// Decode unit type
+			        				int tableIndex = 0;
+			        				if (params.size() > 0) {
+			        					int tmp = i >> otherCriteria.size();
+	                					while (tmp != 0 && (tmp & 1) == 0) {
+	                						tableIndex++;
+	                						tmp >>= 1;
+	                					}
+			        				}
+		        					final Predicate<MechSummary> filter = getFilterFromIndex(i);
+			        				for (int j = 0; j < g[i]; j++) {
+				        				if (base == null) {
+				        					base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+				        					if (base != null) {
+				        						list.add(base);
+				        					}
+				        				} else {
+				        					final MechSummary b = base;
+				        					MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
+				        							&& groupingCriteria.matches(ms, b));
+				        					if (unit != null) {
+				        						list.add(unit);
+				        					}
+				        				}
+				        				workingCombo[i]--;
+			        				}
+		        				}
+		        			}
+		        		}
+		        		for (int i = 0; i < workingCombo.length; i++) {
+		        			if (workingCombo[i] > 0) {
+		        				// Decode unit type
+		        				int tableIndex = 0;
+		        				if (params.size() > 0) {
+		        					int tmp = i >> otherCriteria.size();
+	            					while (tmp != 0 && (tmp & 1) == 0) {
+	            						tableIndex++;
+	            						tmp >>= 1;
+	            					}
+		        				}
+		        				final Predicate<MechSummary> filter = getFilterFromIndex(i);
+		        				for (int j = 0; j < workingCombo[i]; j++) {
+		        					MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+		        					if (unit != null) {
+		        						list.add(unit);
+		        					}
+		        				}
+		        			}
+		        		}
+		        		if (list.size() < cUnits) {
+		        			groups.remove(gIndex);
+		        		} else {
+		        			return list;
+		        		}
 	        		}
-        		}
-        	} else {
-	        	for (int i = 0; i < combo.length; i++) {
-	        		if (combo[i] > 0) {
-	        			final Predicate<MechSummary>filter = getFilterFromIndex(i);
-	        			for (int j = 0; j < combo[i]; j++) {
-	        				MechSummary unit = tables.get(unitTableIndex[list.size()]).generateUnit(ms -> filter.test(ms));
-	        				list.add(unit);
-	        			}
-	        		}
+	        	} else {
+		        	for (int i = 0; i < combo.length; i++) {
+		        		if (combo[i] > 0) {
+	        				// Decode unit type
+	        				int tableIndex = 0;
+	        				if (params.size() > 0) {
+	        					int tmp = i >> otherCriteria.size();
+	        					while (tmp != 0 && (tmp & 1) == 0) {
+	        						tableIndex++;
+	        						tmp >>= 1;
+	        					}
+	        				}
+		        			final Predicate<MechSummary>filter = getFilterFromIndex(i);
+		        			for (int j = 0; j < combo[i]; j++) {
+		        				MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+		        				list.add(unit);
+		        			}
+		        		}
+		        	}
 	        	}
-        	}
-        	if (list.size() < cUnits) {
-        		combinations.remove(index);
-        	} else {
-        		return list;
-        	}
+	        	if (list.size() < cUnits) {
+	        		unitTypeGroupings.remove(utIndex);
+	        	} else {
+	        		return list;
+	        	}
+    		}
+    		combinations.remove(index);
         }
         
         
@@ -777,9 +829,119 @@ public class FormationType {
     		}
     	}
     	return frequencies;
+    }    
+    
+    /**
+     * Finds all possible ways to distribute criteria beyond the general formation criteria in
+     * which the groups are mutually exclusive; that is, a unit can only qualify for one
+     * of the criteria in the set. This is used for mixed unit types and C3 networks. While a single
+     * unit could fulfill the requirements for speed and weight class, it could not function
+     * as both a C3 slave and a C3 master or be both a Mek and a Tank.
+     *  
+     * @param combination	The current criteria distribution as generated by <code>findCombinations</code>
+     * @param itemsPerGroup	Array with length equal to number of groups and each value indicates
+     * 						the number of units in that group.
+     * @return	An array the same format as <code>combination</code> in which higher order bits
+     * 			in the index indicate a group. For example: in a formation with two criteria, 
+	 *			<code>combination.length</code> == 2^2. If there are three additional groups,
+	 *			the return value will be 2 ^ (2+3). The value at index 11 (== 01011) will be the
+	 *			number of units that are in the second group and fulfill both formation criteria.
+     */
+    private List<int[]> findGroups(int[] combination, int[] itemsPerGroup) {
+    	List<int[][]> list = new ArrayList<>();
+    	int[][] initialVal = new int[1][combination.length];
+    	list.add(initialVal);
+    	
+    	/* Compute distribution for each group sequentially, building on previously calculated
+    	 * distributions for each successive group. */
+    	for (int group = 0; group < itemsPerGroup.length; group++) {
+    		/* Create a new list that we will fill out by copying the current values and adding
+    		 * the next group calculated during this iteration. */
+    		List<int[][]> newList = new ArrayList<>();
+    		/* Cycle through all previous combinations and add all combinations for current group */
+    		for (int[][] prev : list) {
+    			/* Initialize array with the number of units at each position that have already been
+    			 * assigned to groups. */
+    			int[] total = new int[combination.length];
+    			for (int g = 0; g < prev.length; g++) {
+    				for (int p = 0; p < prev[g].length; p++) {
+    					total[p] += prev[g][p];
+    				}
+    			}
+    			/* Create an array to track attempted distribution of the current group */
+    			int[] dist = new int[combination.length];
+    			dist[0] = itemsPerGroup[group];
+    			/* Shift values through the array until they are all in the final position */
+    			while (dist[dist.length - 1] <= itemsPerGroup[group]) {
+    				/* Test whether there is room for the current distribution, and if so add it to
+    				 * the list */
+    				boolean hasRoom = true;
+    				for (int i = 0; i < dist.length; i++) {
+    					if (total[i] + dist[i] > combination[i]) {
+    						hasRoom = false;
+    						break;
+    					}
+    				}
+    				if (hasRoom) {
+    					int[][] newVal = new int[group + 1][];
+    					for (int j = 0; j < group; j++) {
+    						newVal[j] = prev[j];
+    					}
+    					newVal[group] = new int[dist.length];
+    					System.arraycopy(dist, 0, newVal[group], 0, dist.length);
+    					newList.add(newVal);
+    				}
+    				/* Shift the values in the current distribution. Find the value > 0 closest to the
+    				 * end (not counting the final position), decrease it by 1, and set the value in
+    				 * the next position to 1 plus whatever was in the tail position (which becomes 0
+    				 * prior to incrementing */
+    				if (dist[dist.length - 1] == itemsPerGroup[group]) {
+    					break;
+    				}
+    				int tail = dist[dist.length - 1];
+    				dist[dist.length - 1] = 0;
+    				for (int i = dist.length - 2; i >= 0; i--) {
+    					if (dist[i] > 0) {
+    						dist[i]--;
+    						dist[i + 1] = tail + 1;
+    						break;
+    					}
+    				}
+    			}
+	    	}
+    		/* Replace the old list with one from this iteration */
+        	list = newList;
+    	}
+    	/* Use generated distributions to produce a new combination list */
+    	List<int[]> retVal = new ArrayList<>();
+    	int oldComboBits = Integer.highestOneBit(combination.length - 1);
+    	int newComboSize = 1 << (oldComboBits + itemsPerGroup.length);
+    	for (int[][] val : list) {
+    		int[] newVal = new int[newComboSize];
+    		System.arraycopy(combination, 0, newVal, 0, combination.length);
+    		for (int g = 0; g < val.length; g++) {
+    			for (int i = 0; i < val[g].length; i++) {
+    				if (val[g][i] > 0) {
+    					newVal[(1 << (g + oldComboBits)) + i] = val[g][i];
+    					newVal[i] -= val[g][i];
+    				}
+    			}
+    		}
+    		retVal.add(newVal);
+    	}
+    	return retVal;
     }
     
-    private List<int[][]> findGroups(int[] combination) {
+    /**
+     * Special case version of <code>findGroups</code> for matched units (such as paired ASFs).
+     * Because each group has identical criteria the number of possible results can be reduced.
+     *  
+     * @param combination	The current criteria distribution as generated by <code>findCombinations</code>
+     * @return	A list of possible groupings. Each entry is a two dimensional array of size
+     * 			[numGroups][combination.length]. The entry for each group is an array of the
+     * 			same format as <code>combination</code>. 
+     */
+    private List<int[][]> findMatchedGroups(int[] combination) {
     	int size = groupingCriteria.getGroupSize();
     	int numUnits = Arrays.stream(combination).sum();
     	int numGroups = Math.min(groupingCriteria.getNumGroups(), numUnits / size);
@@ -862,7 +1024,7 @@ public class FormationType {
     	}
     	return list;
     }
-    
+
     public static void createFormationTypes() {
         allFormationTypes = new HashMap<>();
         createAntiMekLance();

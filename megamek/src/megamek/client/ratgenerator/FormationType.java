@@ -424,16 +424,6 @@ public class FormationType {
             return retVal;
         }
         
-        /* Prepare array that determines which UnitTable to use for each position in the formation */
-        int[] unitTableIndex = new int[cUnits];
-        int pos = 0;
-        for (int i = 0; i < numUnits.size(); i++) {
-            for (int j = 0; j < numUnits.get(i); j++) {
-                unitTableIndex[pos] = i;
-                pos++;
-            }
-        }
-        
         /* If a network is indicated, we decide which units are part of the network (usually
          * all, but not necessarily) and which combination to use, then assign one of them
          * to the master role if any. A company command lance has two configuration options:
@@ -474,6 +464,29 @@ public class FormationType {
         if (numNetworked > networkEligible) {
         	numNetworked = networkEligible;
         }
+        
+        /* General case:
+         * Select randomly from all unique combinations of the various criteria. Each combination
+         * is represented by an int[] in which the various criteria are encoded as the indices
+         * and the value at each index is the number of units that must fulfill those criteria.
+         * The lowest order bits map to otherCriteria, one bit for each constraint. These are built
+         * by shifting left for each new one added, so the one at index 0 is the leftmost bit of this
+         * section. A 1 indicates that the number of units at that index must meet the constraint, while
+         * a 0 means the constraint is not tested, and a unit may or may not fulfill it.
+         * Example: if otherCriteria.size() == 3, then the value of combinations[6] is the number of
+         * units that must meet the first two constraints (110), while combinations[7] must meet all
+         * three and combinations[0] need not meet any.
+         * 
+         * The next three bits indicate C3 network requirements. The lowest order is the number that
+         * must have a C3 slave, C3i, NC3, or Nova, depending on the value of networkMask. The middle bit
+         * is the number of required C3 masters, and the highest bit is the number of dual-C3M units.
+         * Note that only one of these three bits can be set; while a unit can have a C3M and a C3S,
+         * only one can fulfill its role in the network.
+         * 
+         *  The highest order section is the unit type. Each element of the params list has one
+         *  bit, beginning with the lowest order bit at index 0. As with networks, only one 
+         *  bit in this section can be set.
+         */
         
         do {
 	        List<int[]> combinations = findCombinations(cUnits);
@@ -633,132 +646,6 @@ public class FormationType {
 	        numNetworked--;
         } while (numNetworked >= 0);        
         
-        /* General case:
-         * For each constraint, find all permutations of the multiset [0,1] with cardinality
-         * k = total formation size and multiplicity(1) = minimum number
-         * of units to fulfill the constraint. This is stored as a k-bit number in which 1 indicates
-         * the unit at that index must fit the criterion and a 0 indicates no requirement.
-         * 
-         * The total number of ways to meet all requirements is equal to the product of the number
-         * of permutations of all constraints. We can randomly select a number then decode it to
-         * get the actual bitmaps for each constraint. 
-         */
-        
-        /* First group all possible values of k bits into lists keyed to the number of
-         * bits that are set.
-         */
-        Map<Integer,List<Integer>> bitCountMask = IntStream.range(0, 1 << cUnits)
-                .mapToObj(Integer::valueOf)
-                .collect(Collectors.groupingBy(Integer::bitCount));
-        
-        /* Calculate how many different possible combinations we can make and construct a list
-         * of all values from 0 to total - 1. If a conforming unit cannot be constructed from
-         * a chosen value, it can be removed from the list.
-         */
-        int totalCombos = otherCriteria.stream()
-            .map(c -> bitCountMask.get(c.getMinimum(cUnits)).size())
-            .reduce(1, (a, b) -> a * b);
-        totalCombos *= bitCountMask.get(numNetworked).size();
-        /* If this is a company command unit, the number of master configurations is equal
-         * to the number combos with one double-master unit plus the number of combos with two
-         * units that each have a single master.
-         */
-        if (numMasters > 0) {
-            totalCombos *= bitCountMask.get(numMasters).size() + bitCountMask.get(altNumMasters).size();
-        }
-        List<Integer> possibilities = IntStream.range(0, totalCombos).mapToObj(Integer::valueOf)
-                .collect(Collectors.toList());
-        
-        /* Prepare an array for use with grouping constraints; a null at the unit's index indicates
-         * it is not part of a group. Any other value gives its position within the group, which
-         * can be used to find the first member of the group for comparison.
-         */
-        Integer[] gcIndex = new Integer[cUnits];
-        if (groupingCriteria != null && groupingCriteria.appliesTo(params.get(0).getUnitType())) {
-            int groupSize = Math.min(groupingCriteria.groupSize, numUnits.get(0));
-            int numGroups = 0;
-            if (groupSize > 0) {
-                numGroups = Math.min(groupingCriteria.numGroups, numUnits.get(0) / groupSize);
-            }
-            for (int g = 0; g < numGroups; g++) {
-                for (int i = 0; i < groupSize; i++) {
-                    gcIndex[g * groupSize + i] = i;
-                }
-            }
-        }
-        
-        List<MechSummary> retVal = new ArrayList<>();
-        List<Predicate<MechSummary>> filter = new ArrayList<>();
-        while (!possibilities.isEmpty()) {
-            retVal.clear();
-            int index = Compute.randomInt(possibilities.size());
-            int value = possibilities.get(index);
-            
-            /* Decode the value and get the bitmask for each constraint */
-            int[] bitmasks = new int[otherCriteria.size()];
-            for (int i = 0; i < otherCriteria.size(); i++) {
-                int min = otherCriteria.get(i).getMinimum(cUnits);
-                int cBitmaps = bitCountMask.get(min).size();
-                bitmasks[i] = bitCountMask.get(min).get(value % cBitmaps);
-                value /= cBitmaps;
-            }
-            int networkBitMask = 0;
-            int networkMasterBitMask = 0;
-            int useMasterType = masterType;
-            if (numNetworked > 0) {
-                int count = bitCountMask.get(numNetworked).size();
-                networkBitMask = bitCountMask.get(numNetworked).get(value % count);
-                value /= count;
-                count = bitCountMask.get(numMasters).size() + bitCountMask.get(altNumMasters).size();
-                int i = value % count;
-                if (i < bitCountMask.get(numMasters).size()) {
-                    networkMasterBitMask = bitCountMask.get(numMasters).get(i);
-                } else {
-                    networkMasterBitMask = bitCountMask.get(altNumMasters).get(i - bitCountMask.get(numMasters).size());
-                    useMasterType &= ~ModelRecord.NETWORK_COMPANY_COMMAND;
-                }
-            }
-
-            boolean completed = true;
-            for (int i = 0; i < cUnits; i++) {
-                filter.clear();
-                filter.add(mainCriteria);
-                for (int j = 0; j < otherCriteria.size(); j++) {
-                    if ((bitmasks[j] & 1) != 0) {
-                        filter.add(otherCriteria.get(j).criterion);
-                    }
-                }
-                if (gcIndex[i] != null) {
-                    filter.add(groupingCriteria.criterion);
-                    if (gcIndex[i] > 0) {
-                        final MechSummary base = retVal.get(i - gcIndex[i]);
-                        filter.add(ms -> groupingCriteria.groupConstraint.apply(base, ms));
-                    }
-                }
-                if ((networkBitMask & 1) != 0) {
-                    int mask = (networkMasterBitMask & 1) == 0? slaveType : useMasterType;
-                    filter.add(ms -> (getNetworkMask(ms) & mask) == mask);
-                }
-                MechSummary unit = tables.get(unitTableIndex[i])
-                        .generateUnit(ms -> filter.stream().allMatch(f -> f.test(ms)));
-                if (unit == null) {
-                    completed = false;
-                    break;
-                } else {
-                    retVal.add(unit);
-                    for (int j = 0; j < bitmasks.length; j++) {
-                        bitmasks[j] >>= 1;
-                    }
-                    networkBitMask >>= 1;
-                    networkMasterBitMask >>= 1;
-                }
-            }
-            if (completed) {
-                return retVal;
-            } else {
-                possibilities.remove(index);
-            }
-        }
         List<MechSummary> onRole = tryIdealRole(params, numUnits);
         if (onRole != null) {
             return onRole;

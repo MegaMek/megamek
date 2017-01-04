@@ -970,6 +970,117 @@ public class FormationType {
     	}
     	return list;
     }
+    
+    /**
+     * Tests whether a list of units qualifies for the formation type. Note that unit roles are
+     * not available for all units.
+     * @param units	A list of units to test
+     * @return		Whether the list of units meets the qualifications for this formation.
+     */
+    public boolean qualifies(List<MechSummary> units) {
+    	if (units.stream().anyMatch(ms -> !isAllowedUnitType(ModelRecord.parseUnitType(ms.getUnitType())))) {
+    		return false;
+    	}
+    	if (!idealRole.equals(UnitRole.UNDETERMINED)) {
+    		if (units.stream().allMatch(ms -> idealRole.equals(getUnitRole(ms)))) {
+    			return true;
+    		}
+    	}
+    	for (MechSummary ms : units) {
+    		if (!mainCriteria.test(ms)
+    				|| ms.getWeightClass() < minWeightClass
+    				|| ms.getWeightClass() > maxWeightClass) {
+    			return false;
+    		}
+    	}
+		for (Constraint c : otherCriteria) {
+			long matches = units.stream().filter(ms -> c.matches(ms)).count();
+			if (matches < c.getMinimum(units.size())) {
+				return false;
+			}
+		}
+		return true;    	
+    }
+    
+    /**
+     * Tests whether a list of units qualifies for the formation type. Note that unit roles are
+     * not available for all units.
+     * @param units	A list of units to test
+     * @return		Whether the list of units meets the qualifications for this formation.
+     */
+    public String qualificationReport(List<MechSummary> units) {
+    	List<MechSummary> wrongUnits = new ArrayList<>();
+    	List<MechSummary> ideal = new ArrayList<>();
+    	List<MechSummary> weight = new ArrayList<>();
+    	List<MechSummary> main = new ArrayList<>();
+    	List<List<MechSummary>> other = new ArrayList<>();
+    	for (int i = 0; i < otherCriteria.size(); i++) {
+    		other.add(new ArrayList<>());
+    	}
+    			
+    	for (MechSummary ms : units) {
+    		if (!isAllowedUnitType(ModelRecord.parseUnitType(ms.getUnitType()))) {
+    			wrongUnits.add(ms);
+    		}
+    		if (!idealRole.equals(UnitRole.UNDETERMINED)
+    				&& idealRole.equals(getUnitRole(ms))) {
+    			ideal.add(ms);
+    		}
+    		if (ms.getWeightClass() >= minWeightClass
+    				&& ms.getWeightClass() <= maxWeightClass) {
+    			weight.add(ms);
+    		}
+    		if (mainCriteria.test(ms)) {
+    			main.add(ms);
+    		}
+    		for (int i = 0; i < otherCriteria.size(); i++) {
+    			if (otherCriteria.get(i).matches(ms)) {
+    				other.get(i).add(ms);
+    			}
+    		}
+    	}
+    	StringBuilder sb = new StringBuilder();
+    	if (wrongUnits.size() > 0) {
+    		sb.append("Wrong unit type:\n\t");
+    		sb.append(wrongUnits.stream().map(ms -> ms.getName()).collect(Collectors.joining("\n\t")))
+    			.append("\n");
+    	}
+    	sb.append("Unit Roles:\n\t");
+    	sb.append(units.stream().map(ms -> ms.getName() + ": " + getUnitRole(ms))
+    		.collect(Collectors.joining("\n\t"))).append("\n");
+    	if (!idealRole.equals(UnitRole.UNDETERMINED)) {
+    		sb.append("Ideal role: ").append(idealRole.toString()).append("\n");
+    	}
+    	sb.append("Weight class ").append(EntityWeightClass.getClassName(minWeightClass))
+    		.append("-").append(EntityWeightClass.getClassName(maxWeightClass)).append("\n");
+    	if (weight.size() > 0) {
+    		sb.append("\t").append(weight.stream().map(ms -> ms.getName() + ": "
+    				+ EntityWeightClass.getClassName(ms.getWeightClass()))
+    				.collect(Collectors.joining("\n\t"))).append("\n");
+    	} else {
+    		sb.append("\tNone\n");
+    	}
+    	if (mainDescription != null) {
+        	sb.append(mainDescription).append(" (").append(units.size()).append(")\n");
+        	if (main.size() > 0) {
+        		sb.append("\t").append(main.stream().map(ms -> ms.getName())
+        				.collect(Collectors.joining("\n\t"))).append("\n");
+        	} else {
+        		sb.append("\tNone\n");
+        	}
+    	}
+    	for (int i = 0; i < otherCriteria.size(); i++) {
+    		sb.append(otherCriteria.get(i).description).append(" (")
+    			.append(otherCriteria.get(i).getMinimum(units.size())).append(")\n");
+        	if (other.get(i).size() > 0) {
+        		sb.append("\t").append(other.get(i).stream().map(ms -> ms.getName())
+        				.collect(Collectors.joining("\n\t"))).append("\n");
+        	} else {
+        		sb.append("\tNone\n");
+        	}
+    	}
+    	return sb.toString();
+    }
 
     public static void createFormationTypes() {
         allFormationTypes = new HashMap<>();

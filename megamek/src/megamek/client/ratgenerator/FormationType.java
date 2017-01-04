@@ -444,6 +444,7 @@ public class FormationType {
         int altNumMasters = 0;
         int masterType = ModelRecord.NETWORK_NONE;
         int slaveType = ModelRecord.NETWORK_NONE;
+        int validNetworkUnits = FLAG_MEK | FLAG_VEHICLE | FLAG_BATTLE_ARMOR;
         
         if ((networkMask & ModelRecord.NETWORK_C3_MASTER) != 0) {
             numNetworked = 4;
@@ -457,165 +458,180 @@ public class FormationType {
             numNetworked = 6;
             numMasters = 0;
             slaveType = ModelRecord.NETWORK_C3I;
+            /* This mask is also used for naval C3 */
+            validNetworkUnits |= FLAG_SMALL_CRAFT | FLAG_DROPSHIP;
         } else if ((networkMask & ModelRecord.NETWORK_NOVA) != 0) {
             numNetworked = 3;
             numMasters = 0;
             slaveType = ModelRecord.NETWORK_NOVA;
         }
-        
-        List<int[]> combinations = findCombinations(cUnits);
-        List<MechSummary> list = new ArrayList<>();
-        final int POS_C3S = 0;
-        final int POS_C3M = 1;
-        final int POS_C3MM = 2;
-        final int POS_C3_NUM = 3;
-        while (combinations.size() > 0) {
-        	int index = Compute.randomInt(combinations.size());
-        	int[] baseCombo = combinations.get(index);
-
-        	int[] networkGroups = new int[POS_C3_NUM];
-        	networkGroups[POS_C3S] = numNetworked - numMasters;
-        	if ((networkMask & ModelRecord.NETWORK_COMPANY_COMMAND) == 0) {
-        		networkGroups[POS_C3M] = numMasters;
-        	} else {
-        		networkGroups[POS_C3MM] = numMasters;
+        int networkEligible = 0;
+        for (int i = 0; i < params.size(); i++) {
+        	if ((validNetworkUnits & (1 << params.get(i).getUnitType())) != 0) {
+        		networkEligible += numUnits.get(i);
         	}
-        	List<int[]> networkGroupings = findGroups(baseCombo, networkGroups);
-        	if (altNumMasters > 0) {
-        		networkGroups[POS_C3S] = numNetworked - altNumMasters;
-        		networkGroups[POS_C3M] = altNumMasters;
-        		networkGroups[POS_C3MM] = 0;
-            	networkGroupings.addAll(findGroups(baseCombo, networkGroups));
-        	}
-        	while (networkGroupings.size() > 0) {
-        		list.clear();
-        		int networkIndex = Compute.randomInt(networkGroupings.size());
-        		int[] combo = networkGroupings.get(networkIndex);
-
-        		int[] unitsPerGroup = new int[params.size()];
-        		for (int i = 0; i < numUnits.size(); i++) {
-        			unitsPerGroup[i] = numUnits.get(i);
-        		}
-        		List<int[]> unitTypeGroupings = findGroups(combo, unitsPerGroup);
-        		while (unitTypeGroupings.size() > 0) {
-        			list.clear();
-        			int utIndex = Compute.randomInt(unitTypeGroupings.size());
-        			combo = unitTypeGroupings.get(utIndex);
-
-        			if (groupingCriteria != null
-        					&& params.stream().anyMatch(p -> groupingCriteria.appliesTo(p.getUnitType()))) {
-        				/* Create a temporary array that only includes units that have a grouping criterion */
-        				int[] groupedUnits = new int[combo.length];
-        				for (int p = 0; p < params.size(); p++) {
-        					if (groupingCriteria.appliesTo(params.get(p).getUnitType())) {
-        						for (int i = 0; i < combo.length; i++) {
-        							if ((i & (1 << (p + otherCriteria.size() + POS_C3_NUM))) != 0) {
-    									groupedUnits[i] += combo[i];
-    								}
-    							}
-    						}
-    					}
-    					List<int[][]> groups = findMatchedGroups(groupedUnits);
-
-    					while (groups.size() > 0) {
-    						int gIndex = Compute.randomInt(groups.size());
-    						list.clear();
-    						int[] workingCombo = new int[combo.length];
-    						System.arraycopy(combo, 0, workingCombo, 0, combo.length);
-    						for (int[] g : groups.get(gIndex)) {
-    							MechSummary base = null;
-    							for (int i = 0; i < combo.length; i++) {
-    								if (g[i] > 0) {
-    									// Decode unit type
-    									int tableIndex = 0;
-    									if (params.size() > 0) {
-    										int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-    										while (tmp != 0 && (tmp & 1) == 0) {
-    											tableIndex++;
-    											tmp >>= 1;
-    										}
-    									}
-    									final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
-    									for (int j = 0; j < g[i]; j++) {
-    										if (base == null) {
-    											base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
-    											if (base != null) {
-    												list.add(base);
-    											}
-    										} else {
-    											final MechSummary b = base;
-    											MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
-    													&& groupingCriteria.matches(ms, b));
-    											if (unit != null) {
-    												list.add(unit);
-    											}
-    										}
-    										workingCombo[i]--;
-    									}
-    								}
-    							}
-    						}
-    						for (int i = 0; i < workingCombo.length; i++) {
-    							if (workingCombo[i] > 0) {
-    								// Decode unit type
-    								int tableIndex = 0;
-    								if (params.size() > 0) {
-										int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-        								while (tmp != 0 && (tmp & 1) == 0) {
-        									tableIndex++;
-        									tmp >>= 1;
-        								}
-    								}
-    								final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
-    								for (int j = 0; j < workingCombo[i]; j++) {
-    									MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
-    									if (unit != null) {
-    										list.add(unit);
-    									}
-    								}
-    							}
-    						}
-    						if (list.size() < cUnits) {
-    							groups.remove(gIndex);
-    						} else {
-    							return list;
-    						}
-    					}
-    				} else {
-    					for (int i = 0; i < combo.length; i++) {
-    						if (combo[i] > 0) {
-    							// Decode unit type
-    							int tableIndex = 0;
-    							if (params.size() > 0) {
-									int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-    								while (tmp != 0 && (tmp & 1) == 0) {
-    									tableIndex++;
-    									tmp >>= 1;
-    								}
-    							}
-    							final Predicate<MechSummary>filter = getFilterFromIndex(i, slaveType, masterType);
-    							for (int j = 0; j < combo[i]; j++) {
-    								MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
-    								list.add(unit);
-    							}
-    						}
-    					}
-    				}
-        			if (list.size() < cUnits) {
-        				unitTypeGroupings.remove(utIndex);
-        			} else {
-        				return list;
-        			}
-    			}
-				if (list.size() < cUnits) {
-					networkGroupings.remove(networkIndex);
-				} else {
-					return list;
-				}
-    		}
-    		combinations.remove(index);
+        }
+        if (numNetworked > networkEligible) {
+        	numNetworked = networkEligible;
         }
         
+        do {
+	        List<int[]> combinations = findCombinations(cUnits);
+	        List<MechSummary> list = new ArrayList<>();
+	        final int POS_C3S = 0;
+	        final int POS_C3M = 1;
+	        final int POS_C3MM = 2;
+	        final int POS_C3_NUM = 3;
+	        while (combinations.size() > 0) {
+	        	int index = Compute.randomInt(combinations.size());
+	        	int[] baseCombo = combinations.get(index);
+	
+	        	int[] networkGroups = new int[POS_C3_NUM];
+	        	networkGroups[POS_C3S] = Math.max(0, numNetworked - numMasters);
+	        	if ((networkMask & ModelRecord.NETWORK_COMPANY_COMMAND) == 0) {
+	        		networkGroups[POS_C3M] = Math.max(0, numMasters);
+	        	} else {
+	        		networkGroups[POS_C3MM] = Math.max(0, numMasters);
+	        	}
+	        	List<int[]> networkGroupings = findGroups(baseCombo, networkGroups);
+	        	if (altNumMasters > 0) {
+	        		networkGroups[POS_C3S] = Math.max(0, numNetworked - altNumMasters);
+	        		networkGroups[POS_C3M] = Math.max(0, altNumMasters);
+	        		networkGroups[POS_C3MM] = 0;
+	            	networkGroupings.addAll(findGroups(baseCombo, networkGroups));
+	        	}
+	        	while (networkGroupings.size() > 0) {
+	        		list.clear();
+	        		int networkIndex = Compute.randomInt(networkGroupings.size());
+	        		int[] combo = networkGroupings.get(networkIndex);
+	
+	        		int[] unitsPerGroup = new int[params.size()];
+	        		for (int i = 0; i < numUnits.size(); i++) {
+	        			unitsPerGroup[i] = numUnits.get(i);
+	        		}
+	        		List<int[]> unitTypeGroupings = findGroups(combo, unitsPerGroup);
+	        		while (unitTypeGroupings.size() > 0) {
+	        			list.clear();
+	        			int utIndex = Compute.randomInt(unitTypeGroupings.size());
+	        			combo = unitTypeGroupings.get(utIndex);
+	
+	        			if (groupingCriteria != null
+	        					&& params.stream().anyMatch(p -> groupingCriteria.appliesTo(p.getUnitType()))) {
+	        				/* Create a temporary array that only includes units that have a grouping criterion */
+	        				int[] groupedUnits = new int[combo.length];
+	        				for (int p = 0; p < params.size(); p++) {
+	        					if (groupingCriteria.appliesTo(params.get(p).getUnitType())) {
+	        						for (int i = 0; i < combo.length; i++) {
+	        							if ((i & (1 << (p + otherCriteria.size() + POS_C3_NUM))) != 0) {
+	    									groupedUnits[i] += combo[i];
+	    								}
+	    							}
+	    						}
+	    					}
+	    					List<int[][]> groups = findMatchedGroups(groupedUnits);
+	
+	    					while (groups.size() > 0) {
+	    						int gIndex = Compute.randomInt(groups.size());
+	    						list.clear();
+	    						int[] workingCombo = new int[combo.length];
+	    						System.arraycopy(combo, 0, workingCombo, 0, combo.length);
+	    						for (int[] g : groups.get(gIndex)) {
+	    							MechSummary base = null;
+	    							for (int i = 0; i < combo.length; i++) {
+	    								if (g[i] > 0) {
+	    									// Decode unit type
+	    									int tableIndex = 0;
+	    									if (params.size() > 0) {
+	    										int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
+	    										while (tmp != 0 && (tmp & 1) == 0) {
+	    											tableIndex++;
+	    											tmp >>= 1;
+	    										}
+	    									}
+	    									final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
+	    									for (int j = 0; j < g[i]; j++) {
+	    										if (base == null) {
+	    											base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+	    											if (base != null) {
+	    												list.add(base);
+	    											}
+	    										} else {
+	    											final MechSummary b = base;
+	    											MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
+	    													&& groupingCriteria.matches(ms, b));
+	    											if (unit != null) {
+	    												list.add(unit);
+	    											}
+	    										}
+	    										workingCombo[i]--;
+	    									}
+	    								}
+	    							}
+	    						}
+	    						for (int i = 0; i < workingCombo.length; i++) {
+	    							if (workingCombo[i] > 0) {
+	    								// Decode unit type
+	    								int tableIndex = 0;
+	    								if (params.size() > 0) {
+											int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
+	        								while (tmp != 0 && (tmp & 1) == 0) {
+	        									tableIndex++;
+	        									tmp >>= 1;
+	        								}
+	    								}
+	    								final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
+	    								for (int j = 0; j < workingCombo[i]; j++) {
+	    									MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+	    									if (unit != null) {
+	    										list.add(unit);
+	    									}
+	    								}
+	    							}
+	    						}
+	    						if (list.size() < cUnits) {
+	    							groups.remove(gIndex);
+	    						} else {
+	    							return list;
+	    						}
+	    					}
+	    				} else {
+	    					for (int i = 0; i < combo.length; i++) {
+	    						if (combo[i] > 0) {
+	    							// Decode unit type
+	    							int tableIndex = 0;
+	    							if (params.size() > 0) {
+										int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
+	    								while (tmp != 0 && (tmp & 1) == 0) {
+	    									tableIndex++;
+	    									tmp >>= 1;
+	    								}
+	    							}
+	    							final Predicate<MechSummary>filter = getFilterFromIndex(i, slaveType, masterType);
+	    							for (int j = 0; j < combo[i]; j++) {
+	    								MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+	    								if (unit != null) {
+	    									list.add(unit);
+	    								}
+	    							}
+	    						}
+	    					}
+	    				}
+	        			if (list.size() < cUnits) {
+	        				unitTypeGroupings.remove(utIndex);
+	        			} else {
+	        				return list;
+	        			}
+	    			}
+					if (list.size() < cUnits) {
+						networkGroupings.remove(networkIndex);
+					} else {
+						return list;
+					}
+	    		}
+	    		combinations.remove(index);
+	        }
+	        numNetworked--;
+        } while (numNetworked >= 0);        
         
         /* General case:
          * For each constraint, find all permutations of the multiset [0,1] with cardinality

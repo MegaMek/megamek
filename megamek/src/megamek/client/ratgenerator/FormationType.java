@@ -489,7 +489,18 @@ public class FormationType {
          */
         
         do {
-	        List<int[]> combinations = findCombinations(cUnits);
+	        List<int[]> combinations;
+	        /* We can get here with an empty otherCriteria if there is a groupingConstraint,
+	         * which is the case with the Order formation.
+	         */
+	        if (otherCriteria.isEmpty()) {
+	        	int[] combo = new int[1];
+	        	combo[0] = cUnits;
+	        	combinations = new ArrayList<>();
+	        	combinations.add(combo);
+	        } else {
+	        	combinations = findCombinations(cUnits);
+	        }
 	        List<MechSummary> list = new ArrayList<>();
 	        final int POS_C3S = 0;
 	        final int POS_C3M = 1;
@@ -888,8 +899,8 @@ public class FormationType {
      * 			same format as <code>combination</code>. 
      */
     private List<int[][]> findMatchedGroups(int[] combination) {
-    	int size = groupingCriteria.getGroupSize();
     	int numUnits = Arrays.stream(combination).sum();
+    	int size = Math.min(numUnits, groupingCriteria.getGroupSize());
     	int numGroups = Math.min(groupingCriteria.getNumGroups(), numUnits / size);
     	List<int[][]> list = new ArrayList<>();
     	int[][] initialVal = new int[1][combination.length];

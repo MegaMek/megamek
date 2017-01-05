@@ -1010,6 +1010,34 @@ public class FormationType {
 				return false;
 			}
 		}
+		if (groupingCriteria != null) {
+			/* First group by chassis, then test whether each group fulfills the requirement.
+			 * If not, regroup by name. */
+			List<MechSummary> groupedUnits = units.stream()
+					.filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
+					.collect(Collectors.toList());
+			Map<String,List<MechSummary>> groups = groupedUnits.stream()
+					.collect(Collectors.groupingBy(ms -> ms.getChassis()));
+			GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
+				for (int i = 0; i < group.size() - 1; i++) {
+					for (int j = i + 1; j < group.size(); j++) {
+						if (!groupingCriteria.matches(group.get(i), group.get(j))) {
+							groups = groupedUnits.stream()
+									.collect(Collectors.groupingBy(ms -> ms.getName()));
+							break GROUP_LOOP;
+						}
+					}
+				}
+			}
+			int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+	    	int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
+	    	/* Allow for the possibility that two or more groups may be identical */
+	    	int groupCount = 0;
+	    	for (List<MechSummary> g : groups.values()) {
+	    		groupCount += g.size() / groupSize;
+	    	}
+	    	return groupCount >= numGroups;
+		}
 		return true;    	
     }
     
@@ -1107,6 +1135,52 @@ public class FormationType {
         	} else {
         		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
         	}
+    	}
+    	if (groupingCriteria != null) {
+			List<MechSummary> groupedUnits = units.stream()
+					.filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
+					.collect(Collectors.toList());
+			Map<String,List<MechSummary>> groups = groupedUnits.stream()
+					.collect(Collectors.groupingBy(ms -> ms.getChassis()));
+			GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
+				for (int i = 0; i < group.size() - 1; i++) {
+					for (int j = i + 1; j < group.size(); j++) {
+						if (!groupingCriteria.matches(group.get(i), group.get(j))) {
+							groups = groupedUnits.stream()
+									.collect(Collectors.groupingBy(ms -> ms.getName()));
+							break GROUP_LOOP;
+						}
+					}
+				}
+			}
+			int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+	    	int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
+	    	/* Allow for the possibility that two or more groups may be identical */
+	    	int groupCount = 0;
+	    	for (List<MechSummary> g : groups.values()) {
+	    		groupCount += g.size() / groupSize;
+	    	}
+	    	if (groupCount < numGroups) {
+	    		sb.append("<font color='red'>");
+	    	}
+	    	sb.append(groupingCriteria.getDescription()).append(" (").append(numGroups)
+	    		.append("x").append(groupSize).append(")");
+	    	if (groupCount < numGroups) {
+	    		sb.append("</font>");
+	    	}
+	    	sb.append("<br/>\n");
+	    	if (groupCount > 0) {
+		    	for (String groupName : groups.keySet()) {
+		    		int size = groups.get(groupName).size();
+		    		while (size >= groupSize) {
+		    			sb.append("&nbsp;&nbsp;&nbsp;").append(groupName)
+		    				.append(" (").append(groupSize).append(")<br/>\n");
+		    			size -= groupSize;
+		    		}
+		    	}
+        	} else {
+        		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
+	    	}
     	}
     	sb.append("</html>");
     	return sb.toString();

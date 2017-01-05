@@ -1039,46 +1039,65 @@ public class FormationType {
     			}
     		}
     	}
-    	StringBuilder sb = new StringBuilder();
+    	StringBuilder sb = new StringBuilder("<html>");
     	if (wrongUnits.size() > 0) {
-    		sb.append("Wrong unit type:\n\t");
+    		sb.append("<font color='red'>Wrong unit type:</font>\n\t");
     		sb.append(wrongUnits.stream().map(ms -> ms.getName()).collect(Collectors.joining("\n\t")))
-    			.append("\n");
+    			.append("<br/><br/>\n");
     	}
-    	sb.append("Unit Roles:\n\t");
+    	sb.append("Unit Roles:<br/>\n&nbsp;&nbsp;&nbsp;");
     	sb.append(units.stream().map(ms -> ms.getName() + ": " + getUnitRole(ms))
-    		.collect(Collectors.joining("\n\t"))).append("\n");
+    		.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
     	if (!idealRole.equals(UnitRole.UNDETERMINED)) {
-    		sb.append("Ideal role: ").append(idealRole.toString()).append("\n");
+    		sb.append("Ideal role: ").append(idealRole.toString()).append("<br/><br/>\n");
+    	}
+    	if (weight.size() < units.size()) {
+    		sb.append("<font color='red'>");
     	}
     	sb.append("Weight class ").append(EntityWeightClass.getClassName(minWeightClass))
-    		.append("-").append(EntityWeightClass.getClassName(maxWeightClass)).append("\n");
+    		.append("-").append(EntityWeightClass.getClassName(maxWeightClass)).append("<br/>\n");
+    	if (weight.size() < units.size()) {
+    		sb.append("</font>");
+    	}
     	if (weight.size() > 0) {
-    		sb.append("\t").append(weight.stream().map(ms -> ms.getName() + ": "
+    		sb.append("&nbsp;&nbsp;&nbsp;").append(weight.stream().map(ms -> ms.getName() + ": "
     				+ EntityWeightClass.getClassName(ms.getWeightClass()))
-    				.collect(Collectors.joining("\n\t"))).append("\n");
+    				.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
     	} else {
-    		sb.append("\tNone\n");
+    		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
     	}
     	if (mainDescription != null) {
-        	sb.append(mainDescription).append(" (").append(units.size()).append(")\n");
+        	if (main.size() < units.size()) {
+        		sb.append("<font color='red'>");
+        	}
+        	sb.append(mainDescription).append(" (").append(units.size()).append(")<br/>\n");
+        	if (main.size() < units.size()) {
+        		sb.append("</font>");
+        	}
         	if (main.size() > 0) {
-        		sb.append("\t").append(main.stream().map(ms -> ms.getName())
-        				.collect(Collectors.joining("\n\t"))).append("\n");
+        		sb.append("&nbsp;&nbsp;&nbsp;").append("\t").append(main.stream().map(ms -> ms.getName())
+        				.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
         	} else {
-        		sb.append("\tNone\n");
+        		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
         	}
     	}
     	for (int i = 0; i < otherCriteria.size(); i++) {
+        	if (other.get(i).size() < otherCriteria.get(i).getMinimum(units.size())) {
+        		sb.append("<font color='red'>");
+        	}
     		sb.append(otherCriteria.get(i).description).append(" (")
-    			.append(otherCriteria.get(i).getMinimum(units.size())).append(")\n");
+    			.append(otherCriteria.get(i).getMinimum(units.size())).append(")<br/>\n");
+        	if (other.get(i).size() < units.size()) {
+        		sb.append("</font>");
+        	}
         	if (other.get(i).size() > 0) {
-        		sb.append("\t").append(other.get(i).stream().map(ms -> ms.getName())
-        				.collect(Collectors.joining("\n\t"))).append("\n");
+        		sb.append("&nbsp;&nbsp;&nbsp;").append(other.get(i).stream().map(ms -> ms.getName())
+        				.collect(Collectors.joining("<br/>\n&nbsp;&nbsp;&nbsp;"))).append("<br/><br/>\n");
         	} else {
-        		sb.append("\tNone\n");
+        		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
         	}
     	}
+    	sb.append("</html>");
     	return sb.toString();
     }
 

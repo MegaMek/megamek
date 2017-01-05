@@ -20,7 +20,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
 import javax.swing.RowFilter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
@@ -57,7 +59,8 @@ public class AnalyzeFormationDialog extends JDialog {
     private List<JCheckBox> otherCriteriaChecks = new ArrayList<>();
     private List<FormationType.Constraint> allConstraints = new ArrayList<>();
     
-    public AnalyzeFormationDialog(JFrame frame, FormationType ft, List<UnitTable.Parameters> params,
+    public AnalyzeFormationDialog(JFrame frame, List<MechSummary> generatedUnits,
+    		FormationType ft, List<UnitTable.Parameters> params,
             int numUnits, int networkMask) {
         super(frame, Messages.getString("AnalyzeFormationDialog.title"), true);
         formationType = ft;
@@ -66,7 +69,7 @@ public class AnalyzeFormationDialog extends JDialog {
         
         getContentPane().setLayout(new BorderLayout());
         
-        JPanel mainPanel = new JPanel(new GridBagLayout());
+        JPanel panAvailable = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         
         //Add to a set to avoid duplicates, but dump into a list so the table can have an ordered collection
@@ -90,7 +93,7 @@ public class AnalyzeFormationDialog extends JDialog {
         gbc.gridwidth = 3;
         gbc.weightx = 0;
         gbc.weighty = 0;
-        mainPanel.add(new JLabel(Messages.getString("AnalyzeFormationDialog.formation") + ft.getName()),
+        panAvailable.add(new JLabel(Messages.getString("AnalyzeFormationDialog.formation") + ft.getName()),
                 gbc);
         
         gbc.gridy++;
@@ -101,34 +104,34 @@ public class AnalyzeFormationDialog extends JDialog {
             sb.append("-").append(EntityWeightClass.getClassName(Math.min(ft.getMaxWeightClass(),
                     EntityWeightClass.WEIGHT_ASSAULT)));
         }
-        mainPanel.add(new JLabel(sb.toString()), gbc);
+        panAvailable.add(new JLabel(sb.toString()), gbc);
         
         gbc.gridwidth = 1;
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.anchor = GridBagConstraints.CENTER;
-        mainPanel.add(new JLabel(Messages.getString("AnalyzeFormationDialog.required")), gbc);
+        panAvailable.add(new JLabel(Messages.getString("AnalyzeFormationDialog.required")), gbc);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        mainPanel.add(new JLabel(Messages.getString("AnalyzeFormationDialog.constraint")), gbc);
+        panAvailable.add(new JLabel(Messages.getString("AnalyzeFormationDialog.constraint")), gbc);
         gbc.gridx = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        mainPanel.add(new JLabel(Messages.getString("AnalyzeFormationDialog.available")), gbc);
+        panAvailable.add(new JLabel(Messages.getString("AnalyzeFormationDialog.available")), gbc);
 
         gbc.gridy++;
         gbc.gridx = 0;
         gbc.anchor = GridBagConstraints.CENTER;
-        mainPanel.add(new JLabel(Messages.getString("AnalyzeFormationDialog.all")), gbc);
+        panAvailable.add(new JLabel(Messages.getString("AnalyzeFormationDialog.all")), gbc);
         gbc.gridx = 1;
         gbc.anchor = GridBagConstraints.WEST;
         if (ft.getMainDescription() != null) {
-            mainPanel.add(new JLabel(ft.getMainDescription()), gbc);
+            panAvailable.add(new JLabel(ft.getMainDescription()), gbc);
         } else {
-            mainPanel.add(new JLabel("-"), gbc);
+            panAvailable.add(new JLabel("-"), gbc);
         }
         gbc.gridx = 2;
         gbc.anchor = GridBagConstraints.CENTER;
-        mainPanel.add(new JLabel(String.valueOf(units.size())), gbc);
+        panAvailable.add(new JLabel(String.valueOf(units.size())), gbc);
         
         allConstraints.forEach(c -> {
             JCheckBox chk = new JCheckBox(c.getDescription());
@@ -137,13 +140,13 @@ public class AnalyzeFormationDialog extends JDialog {
             gbc.gridy++;
             gbc.gridx = 0;
             gbc.anchor = GridBagConstraints.CENTER;
-            mainPanel.add(new JLabel(String.valueOf(c.getMinimum(numUnits))), gbc);
+            panAvailable.add(new JLabel(String.valueOf(c.getMinimum(numUnits))), gbc);
             gbc.gridx = 1;
             gbc.anchor = GridBagConstraints.WEST;
-            mainPanel.add(chk, gbc);
+            panAvailable.add(chk, gbc);
             gbc.gridx = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            mainPanel.add(new JLabel(String.valueOf(units.stream()
+            panAvailable.add(new JLabel(String.valueOf(units.stream()
                     .filter(ms -> c.matches(ms)).count())), gbc);
         });
         
@@ -152,7 +155,7 @@ public class AnalyzeFormationDialog extends JDialog {
             gbc.gridy++;
             gbc.gridx = 0;
             gbc.anchor = GridBagConstraints.CENTER;
-            mainPanel.add(new JLabel(String.valueOf(ft.getGroupingCriteria().getMinimum(numUnits))), gbc);
+            panAvailable.add(new JLabel(String.valueOf(ft.getGroupingCriteria().getMinimum(numUnits))), gbc);
             gbc.gridx = 1;
             gbc.anchor = GridBagConstraints.WEST;
             if (ft.getGroupingCriteria().hasGeneralCriteria()) {
@@ -161,23 +164,23 @@ public class AnalyzeFormationDialog extends JDialog {
                         Math.min(numUnits, ft.getGroupingCriteria().getGroupSize())));
                 otherCriteriaChecks.add(chk);
                 chk.addChangeListener(ev -> filter());
-                mainPanel.add(chk, gbc);
+                panAvailable.add(chk, gbc);
             } else {
-                mainPanel.add(new JLabel(String.format(Messages.getString("AnalyzeFormationDialog.groups.format"),
+                panAvailable.add(new JLabel(String.format(Messages.getString("AnalyzeFormationDialog.groups.format"),
                         ft.getGroupingCriteria().getDescription(),
                         Math.min(numUnits, ft.getGroupingCriteria().getGroupSize()))),
                         gbc);
             }
             gbc.gridx = 2;
             gbc.anchor = GridBagConstraints.CENTER;
-            mainPanel.add(new JLabel(String.valueOf(units.stream()
+            panAvailable.add(new JLabel(String.valueOf(units.stream()
                     .filter(ms -> ft.getGroupingCriteria().matches(ms)).count())), gbc);
         }
         
         gbc.gridx = 0;
         gbc.gridy++;
         gbc.weighty = 1.0;
-        mainPanel.add(new JLabel(""), gbc);
+        panAvailable.add(new JLabel(""), gbc);
         
         UnitTableModel model = new UnitTableModel();
         tblUnits = new JTable(model);
@@ -197,9 +200,20 @@ public class AnalyzeFormationDialog extends JDialog {
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        mainPanel.add(new JScrollPane(tblUnits), gbc);
+        panAvailable.add(new JScrollPane(tblUnits), gbc);
         
-        getContentPane().add(mainPanel, BorderLayout.CENTER);
+        if (generatedUnits == null || generatedUnits.isEmpty()) {
+        	getContentPane().add(panAvailable, BorderLayout.CENTER);
+        } else {
+        	JTabbedPane panTabs = new JTabbedPane();
+        	JTextPane txtReport = new JTextPane();
+        	txtReport.setContentType("text/html");
+        	txtReport.setText(ft.qualificationReport(generatedUnits));
+        	panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Current"),
+        			new JScrollPane(txtReport));
+        	panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Available"), panAvailable);
+        	getContentPane().add(panTabs, BorderLayout.CENTER);
+        }
         
         JButton btnOk = new JButton(Messages.getString("Okay"));
         btnOk.addActionListener(ev -> setVisible(false));

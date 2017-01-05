@@ -1225,7 +1225,9 @@ class ForceGenerationOptionsPanel extends JPanel implements ActionListener, Focu
                 numUnits += numOtherUnits();
             }
             AnalyzeFormationDialog afd = new AnalyzeFormationDialog(null,
-                    FormationType.getFormationType(getFormation()), params, numUnits, getNetwork());
+            		generatedUnits,
+                    FormationType.getFormationType(getFormation()),
+                    params, numUnits, getNetwork());
             afd.setVisible(true);
         }
         

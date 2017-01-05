@@ -703,6 +703,7 @@ WindowListener, TreeSelectionListener {
                         System.err.println("Could not find formation type " + m_pFormationOptions.getStringOption("formationType"));
                     }                      
                     unitsModel.setData(unitList);
+                    m_pFormationOptions.updateGeneratedUnits(unitList);
                 } else {
                     RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
                     p.advancedSearchFilter=searchFilter;

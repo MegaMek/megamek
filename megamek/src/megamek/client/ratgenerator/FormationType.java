@@ -4,13 +4,13 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.IntSummaryStatistics;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -467,8 +467,8 @@ public class FormationType {
         
         /* General case:
          * Select randomly from all unique combinations of the various criteria. Each combination
-         * is represented by an int[] in which the various criteria are encoded as the indices
-         * and the value at each index is the number of units that must fulfill those criteria.
+         * is represented by a Map<Integer,Integer in which the various criteria are encoded as the keys
+         * and the value mapped to the index is the number of units that must fulfill those criteria.
          * The lowest order bits map to otherCriteria, one bit for each constraint. These are built
          * by shifting left for each new one added, so the one at index 0 is the leftmost bit of this
          * section. A 1 indicates that the number of units at that index must meet the constraint, while
@@ -489,13 +489,13 @@ public class FormationType {
          */
         
         do {
-	        List<int[]> combinations;
+	        List<Map<Integer,Integer>> combinations;
 	        /* We can get here with an empty otherCriteria if there is a groupingConstraint,
 	         * which is the case with the Order formation.
 	         */
 	        if (otherCriteria.isEmpty()) {
-	        	int[] combo = new int[1];
-	        	combo[0] = cUnits;
+	        	Map<Integer,Integer> combo = new HashMap<>();
+	        	combo.put(0, cUnits);
 	        	combinations = new ArrayList<>();
 	        	combinations.add(combo);
 	        } else {
@@ -508,7 +508,7 @@ public class FormationType {
 	        final int POS_C3_NUM = 3;
 	        while (combinations.size() > 0) {
 	        	int index = Compute.randomInt(combinations.size());
-	        	int[] baseCombo = combinations.get(index);
+	        	Map<Integer,Integer> baseCombo = combinations.get(index);
 	
 	        	int[] networkGroups = new int[POS_C3_NUM];
 	        	networkGroups[POS_C3S] = Math.max(0, numNetworked - numMasters);
@@ -517,23 +517,25 @@ public class FormationType {
 	        	} else {
 	        		networkGroups[POS_C3MM] = Math.max(0, numMasters);
 	        	}
-	        	List<int[]> networkGroupings = findGroups(baseCombo, networkGroups);
+	        	List<Map<Integer,Integer>> networkGroupings = findGroups(baseCombo, networkGroups,
+	        			otherCriteria.size());
 	        	if (altNumMasters > 0) {
 	        		networkGroups[POS_C3S] = Math.max(0, numNetworked - altNumMasters);
 	        		networkGroups[POS_C3M] = Math.max(0, altNumMasters);
 	        		networkGroups[POS_C3MM] = 0;
-	            	networkGroupings.addAll(findGroups(baseCombo, networkGroups));
+	            	networkGroupings.addAll(findGroups(baseCombo, networkGroups, otherCriteria.size()));
 	        	}
 	        	while (networkGroupings.size() > 0) {
 	        		list.clear();
 	        		int networkIndex = Compute.randomInt(networkGroupings.size());
-	        		int[] combo = networkGroupings.get(networkIndex);
+	        		Map<Integer,Integer> combo = networkGroupings.get(networkIndex);
 	
 	        		int[] unitsPerGroup = new int[params.size()];
 	        		for (int i = 0; i < numUnits.size(); i++) {
 	        			unitsPerGroup[i] = numUnits.get(i);
 	        		}
-	        		List<int[]> unitTypeGroupings = findGroups(combo, unitsPerGroup);
+	        		List<Map<Integer,Integer>> unitTypeGroupings = findGroups(combo, unitsPerGroup,
+	        				otherCriteria.size() + POS_C3_NUM);
 	        		while (unitTypeGroupings.size() > 0) {
 	        			list.clear();
 	        			int utIndex = Compute.randomInt(unitTypeGroupings.size());
@@ -541,28 +543,27 @@ public class FormationType {
 	
 	        			if (groupingCriteria != null
 	        					&& params.stream().anyMatch(p -> groupingCriteria.appliesTo(p.getUnitType()))) {
-	        				/* Create a temporary array that only includes units that have a grouping criterion */
-	        				int[] groupedUnits = new int[combo.length];
+	        				/* Create a temporary map that only includes units that have a grouping criterion */
+	        				Map<Integer,Integer> groupedUnits = new LinkedHashMap<>();
 	        				for (int p = 0; p < params.size(); p++) {
 	        					if (groupingCriteria.appliesTo(params.get(p).getUnitType())) {
-	        						for (int i = 0; i < combo.length; i++) {
+	        						for (Integer i : combo.keySet()) {
 	        							if ((i & (1 << (p + otherCriteria.size() + POS_C3_NUM))) != 0) {
-	    									groupedUnits[i] += combo[i];
-	    								}
-	    							}
+	        								groupedUnits.merge(i, combo.get(i), Integer::sum);
+	        							}
+	        						}
 	    						}
 	    					}
-	    					List<int[][]> groups = findMatchedGroups(groupedUnits);
+	    					List<List<Map<Integer,Integer>>> groups = findMatchedGroups(groupedUnits);
 	
 	    					while (groups.size() > 0) {
 	    						int gIndex = Compute.randomInt(groups.size());
 	    						list.clear();
-	    						int[] workingCombo = new int[combo.length];
-	    						System.arraycopy(combo, 0, workingCombo, 0, combo.length);
-	    						for (int[] g : groups.get(gIndex)) {
+	    						Map<Integer,Integer> workingCombo = new HashMap<>(combo);
+	    						for (Map<Integer,Integer> g : groups.get(gIndex)) {
 	    							MechSummary base = null;
-	    							for (int i = 0; i < combo.length; i++) {
-	    								if (g[i] > 0) {
+	    							for (int i : combo.keySet()) {
+	    								if (g.containsKey(i)) {
 	    									// Decode unit type
 	    									int tableIndex = 0;
 	    									if (params.size() > 0) {
@@ -573,7 +574,7 @@ public class FormationType {
 	    										}
 	    									}
 	    									final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
-	    									for (int j = 0; j < g[i]; j++) {
+	    									for (int j = 0; j < g.get(i); j++) {
 	    										if (base == null) {
 	    											base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
 	    											if (base != null) {
@@ -587,13 +588,13 @@ public class FormationType {
 	    												list.add(unit);
 	    											}
 	    										}
-	    										workingCombo[i]--;
+	    										workingCombo.merge(i, -1, Integer::sum);
 	    									}
 	    								}
 	    							}
 	    						}
-	    						for (int i = 0; i < workingCombo.length; i++) {
-	    							if (workingCombo[i] > 0) {
+	    						for (int i : workingCombo.keySet()) {
+	    							if (workingCombo.get(i) > 0) {
 	    								// Decode unit type
 	    								int tableIndex = 0;
 	    								if (params.size() > 0) {
@@ -604,7 +605,7 @@ public class FormationType {
 	        								}
 	    								}
 	    								final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
-	    								for (int j = 0; j < workingCombo[i]; j++) {
+	    								for (int j = 0; j < workingCombo.get(i); j++) {
 	    									MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
 	    									if (unit != null) {
 	    										list.add(unit);
@@ -619,25 +620,23 @@ public class FormationType {
 	    						}
 	    					}
 	    				} else {
-	    					for (int i = 0; i < combo.length; i++) {
-	    						if (combo[i] > 0) {
-	    							// Decode unit type
-	    							int tableIndex = 0;
-	    							if (params.size() > 0) {
-										int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-	    								while (tmp != 0 && (tmp & 1) == 0) {
-	    									tableIndex++;
-	    									tmp >>= 1;
-	    								}
-	    							}
-	    							final Predicate<MechSummary>filter = getFilterFromIndex(i, slaveType, masterType);
-	    							for (int j = 0; j < combo[i]; j++) {
-	    								MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
-	    								if (unit != null) {
-	    									list.add(unit);
-	    								}
-	    							}
-	    						}
+	    					for (int i : combo.keySet()) {
+    							// Decode unit type
+    							int tableIndex = 0;
+    							if (params.size() > 0) {
+									int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
+    								while (tmp != 0 && (tmp & 1) == 0) {
+    									tableIndex++;
+    									tmp >>= 1;
+    								}
+    							}
+    							final Predicate<MechSummary>filter = getFilterFromIndex(i, slaveType, masterType);
+    							for (int j = 0; j < combo.get(i); j++) {
+    								MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+    								if (unit != null) {
+    									list.add(unit);
+    								}
+    							}
 	    					}
 	    				}
 	        			if (list.size() < cUnits) {
@@ -713,46 +712,54 @@ public class FormationType {
 
     /**
      * Finds all unique distributions of constraints among the units that fulfills the minimum
-     * number for each constraint. The array indices indicate a combination of constraints, with the
-     * highest order bit being the first constraint in the list, and the value at that index being
+     * number for each constraint. The map keys indicate a combination of constraints, with the
+     * highest order bit being the first constraint in the list, and the value mapped to that key being
      * the number of units that must meet the constraint.
      */
-    private List<int[]> findCombinations(int numUnits) {
+    private List<Map<Integer,Integer>> findCombinations(int numUnits) {
     	/* This list is remade with each additional constraint, building on the previous values */
-    	List<int[]> frequencies = new ArrayList<>();
+    	List<Map<Integer,Integer>> frequencies = new ArrayList<>();
 
     	for (Constraint c : otherCriteria) {
     		int req = c.getMinimum(numUnits);
     		/* If this is the first pass, we simply need to initialize the frequencies list */
     		if (frequencies.isEmpty()) {
-    			int[] freq = new int[2];
-    			freq[0] = numUnits - req;
-    			freq[1] = req;
+    			Map<Integer,Integer> freq = new LinkedHashMap<>();
+    			freq.put(0, numUnits - req);
+    			freq.put(1, req);
     			frequencies.add(freq);
     		} else {
     			/* Create a new list to hold the values built off the previous one */
-    			List<int[]> newFrequencies = new ArrayList<>();
+    			List<Map<Integer,Integer>> newFrequencies = new ArrayList<>();
     			/* Iterate through all the values from the previous pass and extend them */
-    			for (int[] freq : frequencies) {
+    			for (Map<Integer,Integer> freq : frequencies) {
+    				/* We need to be able to access the keys by position */
+    				List<Integer> keyList = new ArrayList<>(freq.keySet());
     				/* For each position, note how many total slots there are in later positions */
-    				int[] remaining = new int[freq.length];
+    				int[] remaining = new int[freq.size()];
     				int rem = 0;
-    				for (int i = freq.length - 1; i >= 0; i--) {
-    					rem += freq[i];
+    				for (int i = keyList.size() - 1; i >= 0; i--) {
+    					rem += freq.get(keyList.get(i));
     					remaining[i] = rem;
     				}
     				int index = 0;
     				int toAllocate = req;
-    				int[] current = new int[freq.length];
+    				/* current holds the number of units at each index of the previous iteration
+    				 * that will meet the current constraint */
+    				int[] current = new int[keyList.size()];
     				outer: while (remaining[index] >= toAllocate) {
-    					current[index] = Math.min(freq[index], toAllocate);
+    					current[index] = Math.min(freq.get(keyList.get(index)), toAllocate);
     					toAllocate -= current[index];
     					index++;
-    					if (index == freq.length) {
-    						int[] result = new int[current.length * 2];
+    					if (index == keyList.size()) {
+    						Map<Integer,Integer> result = new LinkedHashMap<>();
     						for (int i = 0; i < current.length; i++) {
-    							result[i << 1] = freq[i] - current[i];
-    							result[(i << 1) + 1] = current[i];
+    							if (freq.get(keyList.get(i)) > current[i]) {
+    								result.put(keyList.get(i) << 1, freq.get(keyList.get(i)) - current[i]);
+    							}
+    							if (current[i] > 0) {
+    								result.put((keyList.get(i) << 1) + 1, current[i]);
+    							}
     						}
     						newFrequencies.add(result);
     						index--;
@@ -793,15 +800,17 @@ public class FormationType {
      * @param combination	The current criteria distribution as generated by <code>findCombinations</code>
      * @param itemsPerGroup	Array with length equal to number of groups and each value indicates
      * 						the number of units in that group.
-     * @return	An array the same format as <code>combination</code> in which higher order bits
-     * 			in the index indicate a group. For example: in a formation with two criteria, 
+     * @return	A map the same format as <code>combination</code> in which higher order bits
+     * 			in the key indicate a group. For example: in a formation with two criteria, 
 	 *			<code>combination.length</code> == 2^2. If there are three additional groups,
-	 *			the return value will be 2 ^ (2+3). The value at index 11 (== 01011) will be the
+	 *			the return value will be 2 ^ (2+3). The value mapped to 11 (== 01011) will be the
 	 *			number of units that are in the second group and fulfill both formation criteria.
      */
-    private List<int[]> findGroups(int[] combination, int[] itemsPerGroup) {
+    private List<Map<Integer,Integer>> findGroups(Map<Integer,Integer> combination, int[] itemsPerGroup, int indexBits) {
+    	List<Integer> keyList = new ArrayList<>(combination.keySet());
+    	
     	List<int[][]> list = new ArrayList<>();
-    	int[][] initialVal = new int[1][combination.length];
+    	int[][] initialVal = new int[1][keyList.size()];
     	list.add(initialVal);
     	
     	/* Compute distribution for each group sequentially, building on previously calculated
@@ -814,14 +823,14 @@ public class FormationType {
     		for (int[][] prev : list) {
     			/* Initialize array with the number of units at each position that have already been
     			 * assigned to groups. */
-    			int[] total = new int[combination.length];
+    			int[] total = new int[keyList.size()];
     			for (int g = 0; g < prev.length; g++) {
     				for (int p = 0; p < prev[g].length; p++) {
     					total[p] += prev[g][p];
     				}
     			}
     			/* Create an array to track attempted distribution of the current group */
-    			int[] dist = new int[combination.length];
+    			int[] dist = new int[keyList.size()];
     			dist[0] = itemsPerGroup[group];
     			/* Shift values through the array until they are all in the final position */
     			while (dist[dist.length - 1] <= itemsPerGroup[group]) {
@@ -829,7 +838,7 @@ public class FormationType {
     				 * the list */
     				boolean hasRoom = true;
     				for (int i = 0; i < dist.length; i++) {
-    					if (total[i] + dist[i] > combination[i]) {
+    					if (total[i] + dist[i] > combination.get(keyList.get(i))) {
     						hasRoom = false;
     						break;
     					}
@@ -865,22 +874,17 @@ public class FormationType {
         	list = newList;
     	}
     	/* Use generated distributions to produce a new combination list */
-    	List<int[]> retVal = new ArrayList<>();
-    	int oldComboBits = 0;
-    	int tmp = combination.length - 1;
-    	while (tmp > 0) {
-    		oldComboBits++;
-    		tmp >>= 1;
-    	}
-    	int newComboSize = 1 << (oldComboBits + itemsPerGroup.length);
+    	List<Map<Integer,Integer>> retVal = new ArrayList<>();
     	for (int[][] val : list) {
-    		int[] newVal = new int[newComboSize];
-    		System.arraycopy(combination, 0, newVal, 0, combination.length);
+    		Map<Integer,Integer> newVal = new LinkedHashMap<>(combination);
     		for (int g = 0; g < val.length; g++) {
     			for (int i = 0; i < val[g].length; i++) {
     				if (val[g][i] > 0) {
-    					newVal[(1 << (g + oldComboBits)) + i] = val[g][i];
-    					newVal[i] -= val[g][i];
+    					newVal.put((1 << (g + indexBits)) + keyList.get(i), val[g][i]);
+    					newVal.merge(keyList.get(i), - val[g][i], Integer::sum);
+    					if (newVal.get(keyList.get(i)) <= 0) {
+    						newVal.remove(keyList.get(i));
+    					}
     				}
     			}
     		}
@@ -894,16 +898,17 @@ public class FormationType {
      * Because each group has identical criteria the number of possible results can be reduced.
      *  
      * @param combination	The current criteria distribution as generated by <code>findCombinations</code>
-     * @return	A list of possible groupings. Each entry is a two dimensional array of size
-     * 			[numGroups][combination.length]. The entry for each group is an array of the
-     * 			same format as <code>combination</code>. 
+     * @return	A list of possible groupings. Each entry is a list of size() equal to numGroups.
+     * 			The entry for each group is a map of the same format as <code>combination</code>. 
      */
-    private List<int[][]> findMatchedGroups(int[] combination) {
-    	int numUnits = Arrays.stream(combination).sum();
+    private List<List<Map<Integer,Integer>>> findMatchedGroups(Map<Integer,Integer> combination) {
+    	int numUnits = combination.values().stream().mapToInt(Integer::intValue).sum();
     	int size = Math.min(numUnits, groupingCriteria.getGroupSize());
     	int numGroups = Math.min(groupingCriteria.getNumGroups(), numUnits / size);
+    	List<Integer> keyList = new ArrayList<>(combination.keySet());
+    	
     	List<int[][]> list = new ArrayList<>();
-    	int[][] initialVal = new int[1][combination.length];
+    	int[][] initialVal = new int[1][keyList.size()];
     	list.add(initialVal);
     	
     	/* Compute distribution for each group sequentially, building on previously calculated
@@ -916,7 +921,7 @@ public class FormationType {
     		for (int[][] prev : list) {
     			/* Initialize array with the number of units at each position that have already been
     			 * assigned to groups. */
-    			int[] total = new int[combination.length];
+    			int[] total = new int[keyList.size()];
     			for (int g = 0; g < prev.length; g++) {
     				for (int p = 0; p < prev[g].length; p++) {
     					total[p] += prev[g][p];
@@ -936,7 +941,7 @@ public class FormationType {
     			startPos = Math.max(0, startPos);
     			
     			/* Create an array to track attempted distribution of the current group */
-    			int[] dist = new int[combination.length];
+    			int[] dist = new int[keyList.size()];
     			dist[startPos] = size;
     			/* Shift values through the array until they are all in the final position */
     			while (dist[dist.length - 1] <= size) {
@@ -944,7 +949,7 @@ public class FormationType {
     				 * the list */
     				boolean hasRoom = true;
     				for (int i = 0; i < dist.length; i++) {
-    					if (total[i] + dist[i] > combination[i]) {
+    					if (total[i] + dist[i] > combination.get(keyList.get(i))) {
     						hasRoom = false;
     						break;
     					}
@@ -979,7 +984,20 @@ public class FormationType {
     		/* Replace the old list with one from this iteration */
         	list = newList;
     	}
-    	return list;
+    	List<List<Map<Integer,Integer>>> retVal = new ArrayList<>();
+    	for (int[][] grouping : list) {
+    		List<Map<Integer,Integer>> newGrouping = new ArrayList<>();
+    		for (int g = 0; g < grouping.length; g++) {
+    			Map<Integer,Integer> map = new HashMap<>();
+    			for (int p = 0; p < grouping[g].length; p++) {
+    				map.put(keyList.get(p), grouping[g][p]);
+    			}
+    			newGrouping.add(map);
+    		}
+    		retVal.add(newGrouping);
+    	}
+    	
+    	return retVal;
     }
     
     /**
@@ -1016,27 +1034,29 @@ public class FormationType {
 			List<MechSummary> groupedUnits = units.stream()
 					.filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
 					.collect(Collectors.toList());
-			Map<String,List<MechSummary>> groups = groupedUnits.stream()
-					.collect(Collectors.groupingBy(ms -> ms.getChassis()));
-			GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
-				for (int i = 0; i < group.size() - 1; i++) {
-					for (int j = i + 1; j < group.size(); j++) {
-						if (!groupingCriteria.matches(group.get(i), group.get(j))) {
-							groups = groupedUnits.stream()
-									.collect(Collectors.groupingBy(ms -> ms.getName()));
-							break GROUP_LOOP;
+			if (groupedUnits.size() > 0) {
+				Map<String,List<MechSummary>> groups = groupedUnits.stream()
+						.collect(Collectors.groupingBy(ms -> ms.getChassis()));
+				GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
+					for (int i = 0; i < group.size() - 1; i++) {
+						for (int j = i + 1; j < group.size(); j++) {
+							if (!groupingCriteria.matches(group.get(i), group.get(j))) {
+								groups = groupedUnits.stream()
+										.collect(Collectors.groupingBy(ms -> ms.getName()));
+								break GROUP_LOOP;
+							}
 						}
 					}
 				}
+				int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+		    	int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
+		    	/* Allow for the possibility that two or more groups may be identical */
+		    	int groupCount = 0;
+		    	for (List<MechSummary> g : groups.values()) {
+		    		groupCount += g.size() / groupSize;
+		    	}
+		    	return groupCount >= numGroups;
 			}
-			int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
-	    	int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
-	    	/* Allow for the possibility that two or more groups may be identical */
-	    	int groupCount = 0;
-	    	for (List<MechSummary> g : groups.values()) {
-	    		groupCount += g.size() / groupSize;
-	    	}
-	    	return groupCount >= numGroups;
 		}
 		return true;    	
     }
@@ -1140,47 +1160,49 @@ public class FormationType {
 			List<MechSummary> groupedUnits = units.stream()
 					.filter(ms -> groupingCriteria.appliesTo(ModelRecord.parseUnitType(ms.getUnitType())))
 					.collect(Collectors.toList());
-			Map<String,List<MechSummary>> groups = groupedUnits.stream()
-					.collect(Collectors.groupingBy(ms -> ms.getChassis()));
-			GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
-				for (int i = 0; i < group.size() - 1; i++) {
-					for (int j = i + 1; j < group.size(); j++) {
-						if (!groupingCriteria.matches(group.get(i), group.get(j))) {
-							groups = groupedUnits.stream()
-									.collect(Collectors.groupingBy(ms -> ms.getName()));
-							break GROUP_LOOP;
+			if (groupedUnits.size() > 0) {
+				Map<String,List<MechSummary>> groups = groupedUnits.stream()
+						.collect(Collectors.groupingBy(ms -> ms.getChassis()));
+				GROUP_LOOP: for (List<MechSummary> group : groups.values()) {
+					for (int i = 0; i < group.size() - 1; i++) {
+						for (int j = i + 1; j < group.size(); j++) {
+							if (!groupingCriteria.matches(group.get(i), group.get(j))) {
+								groups = groupedUnits.stream()
+										.collect(Collectors.groupingBy(ms -> ms.getName()));
+								break GROUP_LOOP;
+							}
 						}
 					}
 				}
-			}
-			int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
-	    	int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
-	    	/* Allow for the possibility that two or more groups may be identical */
-	    	int groupCount = 0;
-	    	for (List<MechSummary> g : groups.values()) {
-	    		groupCount += g.size() / groupSize;
-	    	}
-	    	if (groupCount < numGroups) {
-	    		sb.append("<font color='red'>");
-	    	}
-	    	sb.append(groupingCriteria.getDescription()).append(" (").append(numGroups)
-	    		.append("x").append(groupSize).append(")");
-	    	if (groupCount < numGroups) {
-	    		sb.append("</font>");
-	    	}
-	    	sb.append("<br/>\n");
-	    	if (groupCount > 0) {
-		    	for (String groupName : groups.keySet()) {
-		    		int size = groups.get(groupName).size();
-		    		while (size >= groupSize) {
-		    			sb.append("&nbsp;&nbsp;&nbsp;").append(groupName)
-		    				.append(" (").append(groupSize).append(")<br/>\n");
-		    			size -= groupSize;
-		    		}
+				int groupSize = Math.min(groupingCriteria.getGroupSize(), groupedUnits.size());
+		    	int numGroups = Math.min(groupingCriteria.getNumGroups(), groupedUnits.size() / groupSize);
+		    	/* Allow for the possibility that two or more groups may be identical */
+		    	int groupCount = 0;
+		    	for (List<MechSummary> g : groups.values()) {
+		    		groupCount += g.size() / groupSize;
 		    	}
-        	} else {
-        		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
-	    	}
+		    	if (groupCount < numGroups) {
+		    		sb.append("<font color='red'>");
+		    	}
+		    	sb.append(groupingCriteria.getDescription()).append(" (").append(numGroups)
+		    		.append("x").append(groupSize).append(")");
+		    	if (groupCount < numGroups) {
+		    		sb.append("</font>");
+		    	}
+		    	sb.append("<br/>\n");
+		    	if (groupCount > 0) {
+			    	for (String groupName : groups.keySet()) {
+			    		int size = groups.get(groupName).size();
+			    		while (size >= groupSize) {
+			    			sb.append("&nbsp;&nbsp;&nbsp;").append(groupName)
+			    				.append(" (").append(groupSize).append(")<br/>\n");
+			    			size -= groupSize;
+			    		}
+			    	}
+	        	} else {
+	        		sb.append("&nbsp;&nbsp;&nbsp;None<br/><br/>\n");
+		    	}
+			}
     	}
     	sb.append("</html>");
     	return sb.toString();

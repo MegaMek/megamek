@@ -1060,12 +1060,20 @@ public class FormationType {
     			return false;
     		}
     	}
-		for (Constraint c : otherCriteria) {
+    	for (int i = 0; i < otherCriteria.size(); i++) {
+    		final Constraint c = otherCriteria.get(i);
+    		if (c.isPairedWithPrevious()) {
+    			continue;
+    		}
 			long matches = units.stream().filter(ms -> c.matches(ms)).count();
 			if (matches < c.getMinimum(units.size())) {
-				return false;
+				if (c.isPairedWithNext() && i + 1 < otherCriteria.size()) {
+					i++;
+				} else {
+					return false;
+				}
 			}
-		}
+    	}
 		if (groupingCriteria != null) {
 			/* First group by chassis, then test whether each group fulfills the requirement.
 			 * If not, regroup by name. */
@@ -1179,12 +1187,28 @@ public class FormationType {
         	}
     	}
     	for (int i = 0; i < otherCriteria.size(); i++) {
-        	if (other.get(i).size() < otherCriteria.get(i).getMinimum(units.size())) {
+    		boolean isShort = false;
+    		if (other.get(i).size() < otherCriteria.get(i).getMinimum(units.size())) {
+    			if (otherCriteria.get(i).isPairedWithNext()) {
+    				isShort = i + 1 < otherCriteria.size()
+    						&& other.get(i + 1).size() < otherCriteria.get(i + 1).getMinimum(units.size());
+    			} else if (otherCriteria.get(i).isPairedWithPrevious()) {
+    				isShort = i - 1 > 0
+    						&& other.get(i - 1).size() < otherCriteria.get(i - 1).getMinimum(units.size());
+    			} else {
+    				isShort = true;
+    			}
+    		}
+        	if (isShort) {
         		sb.append("<font color='red'>");
         	}
+        	if (otherCriteria.get(i).isPairedWithPrevious()) {
+        		sb.append("<b>or</b> ");
+        	}
     		sb.append(otherCriteria.get(i).description).append(" (")
-    			.append(otherCriteria.get(i).getMinimum(units.size())).append(")<br/>\n");
-        	if (other.get(i).size() < units.size()) {
+    			.append(otherCriteria.get(i).getMinimum(units.size())).append(")");
+    		sb.append("<br />\n");
+        	if (isShort) {
         		sb.append("</font>");
         	}
         	if (other.get(i).size() > 0) {
@@ -1309,9 +1333,11 @@ public class FormationType {
         ft.otherCriteria.add(new CountConstraint(3,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
                 "Heavy+"));
-        ft.otherCriteria.add(new CountConstraint(1, ms -> getUnitRole(ms).equals(UnitRole.JUGGERNAUT),
-                "Juggernaut"));
-        Constraint c = new CountConstraint(2, ms -> getUnitRole(ms).equals(UnitRole.SNIPER),
+        Constraint c = new CountConstraint(1, ms -> getUnitRole(ms).equals(UnitRole.JUGGERNAUT),
+                "Juggernaut");
+        c.setPairedWithNext(true);
+        ft.otherCriteria.add(c);
+        c = new CountConstraint(2, ms -> getUnitRole(ms).equals(UnitRole.SNIPER),
         		"Sniper");
         c.setPairedWithPrevious(true);
         ft.otherCriteria.add(c);
@@ -1866,6 +1892,7 @@ public class FormationType {
     public static abstract class Constraint {
         Predicate<MechSummary> criterion;
         String description;
+        boolean pairedWithNext;
         boolean pairedWithPrevious;
         
         protected Constraint(Predicate<MechSummary> criterion, String description) {
@@ -1884,8 +1911,8 @@ public class FormationType {
         
         /* In cases where a constraint has multiple possible fulfillments requiring different
          * numbers of units (e.g. Assault requires one juggernaut or two snipers), they must
-         * be assigned to separate Constraints consecutively in the list with the first one
-         * marked as paired. 
+         * be assigned to separate Constraints consecutively in the list and marked with the
+         * appropriate flag.
          */
         public boolean isPairedWithPrevious() {
         	return pairedWithPrevious;
@@ -1893,6 +1920,14 @@ public class FormationType {
         
         public void setPairedWithPrevious(boolean paired) {
         	pairedWithPrevious = paired;
+        }
+
+        public boolean isPairedWithNext() {
+        	return pairedWithNext;
+        }
+        
+        public void setPairedWithNext(boolean paired) {
+        	pairedWithNext = paired;
         }
     }
     

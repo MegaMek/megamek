@@ -559,39 +559,66 @@ public class FormationType {
 	    					while (groups.size() > 0) {
 	    						int gIndex = Compute.randomInt(groups.size());
 	    						list.clear();
+    							List<MechSummary> found = new ArrayList<>();
 	    						Map<Integer,Integer> workingCombo = new HashMap<>(combo);
 	    						for (Map<Integer,Integer> g : groups.get(gIndex)) {
-	    							MechSummary base = null;
-	    							for (int i : combo.keySet()) {
-	    								if (g.containsKey(i)) {
-	    									// Decode unit type
-	    									int tableIndex = 0;
-	    									if (params.size() > 0) {
-	    										int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
-	    										while (tmp != 0 && (tmp & 1) == 0) {
-	    											tableIndex++;
-	    											tmp >>= 1;
-	    										}
-	    									}
-	    									final Predicate<MechSummary> filter = getFilterFromIndex(i, slaveType, masterType);
-	    									for (int j = 0; j < g.get(i); j++) {
-	    										if (base == null) {
-	    											base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
-	    											if (base != null) {
-	    												list.add(base);
-	    											}
-	    										} else {
-	    											final MechSummary b = base;
-	    											MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
-	    													&& groupingCriteria.matches(ms, b));
-	    											if (unit != null) {
-	    												list.add(unit);
-	    											}
-	    										}
-	    										workingCombo.merge(i, -1, Integer::sum);
-	    									}
-	    								}
+	    							/* The first unit selected may lead to a dead end, if the constraints
+	    							 * for the other group members cannot be met in a unit that matches the
+	    							 * base. To deal with this we make a second attempt if necessary
+	    							 * subjecting all members of the group to all constraints assigned
+	    							 * to any group member. */
+	    							int extraCriteria = 0;
+	    							int attempts = 0;
+	    							while (attempts < 2) {
+	    								found.clear();
+		    							MechSummary base = null;
+		    							for (int i : combo.keySet()) {
+		    								if (g.containsKey(i)) {
+		    									// Decode unit type
+		    									int tableIndex = 0;
+		    									if (params.size() > 0) {
+		    										int tmp = i >> (otherCriteria.size() + POS_C3_NUM);
+		    										while (tmp != 0 && (tmp & 1) == 0) {
+		    											tableIndex++;
+		    											tmp >>= 1;
+		    										}
+		    									}
+		    									final Predicate<MechSummary> filter = getFilterFromIndex(i | extraCriteria,
+		    											slaveType, masterType);
+		    									for (int j = 0; j < g.get(i); j++) {
+		    										if (base == null) {
+		    											base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
+		    											if (base != null) {
+		    												found.add(base);
+		    											}
+		    										} else {
+		    											final MechSummary b = base;
+		    											MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
+		    													&& groupingCriteria.matches(ms, b));
+		    											if (unit != null) {
+		    												found.add(unit);
+		    											}
+		    										}
+		    									}
+		    								}
+		    							}
+		    							if (found.size() < g.values().stream().mapToInt(Integer::intValue).sum()) {
+		    								found.clear();
+		    								base = null;
+		    								int mask = (1 << otherCriteria.size()) - 1;
+		    								extraCriteria = 0;
+		    								for (int k : g.keySet()) {
+		    									extraCriteria |= k & mask;
+		    								}
+		    								attempts++;
+		    							} else {
+		    								break;
+		    							}
 	    							}
+		    						list.addAll(found);
+		    						for (Integer k : g.keySet()) {
+		    							workingCombo.merge(k, -g.get(k), Integer::sum);
+		    						}
 	    						}
 	    						for (int i : workingCombo.keySet()) {
 	    							if (workingCombo.get(i) > 0) {

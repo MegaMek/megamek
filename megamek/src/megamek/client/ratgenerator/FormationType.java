@@ -779,13 +779,24 @@ public class FormationType {
     					toAllocate -= current[index];
     					index++;
     					if (index == keyList.size()) {
+    						if (c.isPairedWithPrevious()) {
+    							Map<Integer,Integer> prevValues = new LinkedHashMap<>();
+    							for (int i : freq.keySet()) {
+    								prevValues.put(i << 1, freq.get(i));
+    							}
+    							newFrequencies.add(prevValues);
+    						}
     						Map<Integer,Integer> result = new LinkedHashMap<>();
     						for (int i = 0; i < current.length; i++) {
+    							int key = keyList.get(i);
+    							if (c.isPairedWithPrevious()) {
+    								key &= ~1;
+    							}
     							if (freq.get(keyList.get(i)) > current[i]) {
-    								result.put(keyList.get(i) << 1, freq.get(keyList.get(i)) - current[i]);
+    								result.merge(key << 1, freq.get(keyList.get(i)) - current[i], Integer::sum);
     							}
     							if (current[i] > 0) {
-    								result.put((keyList.get(i) << 1) + 1, current[i]);
+    								result.merge((key << 1) + 1, current[i], Integer::sum);
     							}
     						}
     						newFrequencies.add(result);
@@ -1298,11 +1309,12 @@ public class FormationType {
         ft.otherCriteria.add(new CountConstraint(3,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
                 "Heavy+"));
-        //FIXME: The actual requirement is one juggernaut or two snipers; there needs to be
-        // a way to combine constraints with ||.
-        ft.otherCriteria.add(new CountConstraint(2,
-                ms -> EnumSet.of(UnitRole.JUGGERNAUT, UnitRole.SNIPER).contains(getUnitRole(ms)),
-                "Juggernaut or Sniper"));
+        ft.otherCriteria.add(new CountConstraint(1, ms -> getUnitRole(ms).equals(UnitRole.JUGGERNAUT),
+                "Juggernaut"));
+        Constraint c = new CountConstraint(2, ms -> getUnitRole(ms).equals(UnitRole.SNIPER),
+        		"Sniper");
+        c.setPairedWithPrevious(true);
+        ft.otherCriteria.add(c);
         ft.reportMetrics.put("Armor", ms -> ms.getTotalArmor());
         ft.reportMetrics.put("Damage @ 7", ms -> getDamageAtRange(ms, 7));
         allFormationTypes.put(ft.name, ft);
@@ -1854,6 +1866,7 @@ public class FormationType {
     public static abstract class Constraint {
         Predicate<MechSummary> criterion;
         String description;
+        boolean pairedWithPrevious;
         
         protected Constraint(Predicate<MechSummary> criterion, String description) {
             this.criterion = criterion;
@@ -1861,11 +1874,25 @@ public class FormationType {
         }
         
         public abstract int getMinimum(int unitSize);
+        
         public String getDescription() {
             return description;
         }
         public boolean matches(MechSummary ms) {
             return criterion.test(ms);
+        }
+        
+        /* In cases where a constraint has multiple possible fulfillments requiring different
+         * numbers of units (e.g. Assault requires one juggernaut or two snipers), they must
+         * be assigned to separate Constraints consecutively in the list with the first one
+         * marked as paired. 
+         */
+        public boolean isPairedWithPrevious() {
+        	return pairedWithPrevious;
+        }
+        
+        public void setPairedWithPrevious(boolean paired) {
+        	pairedWithPrevious = paired;
         }
     }
     

@@ -267,7 +267,7 @@ public class FormationType {
             throw new IllegalArgumentException("Formation parameter list and numUnit list must have the same number of elements.");
         }
         
-        List<Integer> wcs = IntStream.range(minWeightClass,
+        List<Integer> wcs = IntStream.rangeClosed(minWeightClass,
                 Math.min(maxWeightClass, EntityWeightClass.WEIGHT_SUPER_HEAVY))
                 .mapToObj(Integer::valueOf)
                 .collect(Collectors.toList());

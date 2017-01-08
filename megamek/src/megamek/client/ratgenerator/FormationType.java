@@ -1159,8 +1159,11 @@ public class FormationType {
     	if (weight.size() < units.size()) {
     		sb.append("<font color='red'>");
     	}
-    	sb.append("Weight class ").append(EntityWeightClass.getClassName(minWeightClass))
-    		.append("-").append(EntityWeightClass.getClassName(maxWeightClass)).append("<br/>\n");
+    	sb.append("Weight class ")
+    		.append(EntityWeightClass.getClassName(Math.max(minWeightClass, EntityWeightClass.WEIGHT_LIGHT)))
+    		.append("-")
+    		.append(EntityWeightClass.getClassName(Math.min(maxWeightClass, EntityWeightClass.WEIGHT_ASSAULT)))
+    		.append("<br/>\n");
     	if (weight.size() < units.size()) {
     		sb.append("</font>");
     	}
@@ -1707,7 +1710,7 @@ public class FormationType {
                 "Sniper, Missile Boat"));
         ft.otherCriteria.add(new MaxCountConstraint(1,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_ASSAULT,
-                "< Assault"));
+                "Not assault"));
         allFormationTypes.put(ft.name, ft);        
     }
 

@@ -209,10 +209,18 @@ public class AnalyzeFormationDialog extends JDialog {
         	JTextPane txtReport = new JTextPane();
         	txtReport.setContentType("text/html");
         	txtReport.setText(ft.qualificationReport(generatedUnits));
+        	JScrollPane scroll = new JScrollPane(txtReport);
         	panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Current"),
-        			new JScrollPane(txtReport));
+        			scroll);
         	panTabs.add(Messages.getString("AnalyzeFormationDialog.tab.Available"), panAvailable);
         	getContentPane().add(panTabs, BorderLayout.CENTER);
+            
+            getContentPane().setPreferredSize(panAvailable.getPreferredSize());
+            javax.swing.SwingUtilities.invokeLater(new Runnable() {
+               public void run() { 
+                   scroll.getVerticalScrollBar().setValue(0);
+               }
+            });
         }
         
         JButton btnOk = new JButton(Messages.getString("Okay"));

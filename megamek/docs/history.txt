@@ -4,6 +4,7 @@ v0.43.0-git
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for
 	BA SRM4(OS) and BA LBX
 + Issue #467: Princess bot NPEs in physical attacks phase
++ Issue #427: Firing weapons split across arm/torso while prone
 
 v0.42.0 (2017-01-01 14:00 UTC)
 + Issue #441: Fled units not being saved at the end of the game

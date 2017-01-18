@@ -3453,7 +3453,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            if ((spotter == null) && !(wtype instanceof MekMortarWeapon) && !(wtype instanceof ArtilleryCannonWeapon)) {
+            if ((spotter == null) && !(wtype instanceof MekMortarWeapon) && !(wtype instanceof ArtilleryCannonWeapon)
+                    && !ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
                 return "No available spotter";
             }
         }

@@ -15,7 +15,7 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import megamek.common.AmmoType;
@@ -53,7 +53,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private boolean starLeague;
 	private int weightClass;
 	private EntityMovementMode movementMode;
-	private HashSet<MissionRole> roles;
+	private EnumSet<MissionRole> roles;
 	private ArrayList<String> deployedWith;
 	private ArrayList<String> requiredUnits;
 	private ArrayList<String> excludedFactions;
@@ -69,7 +69,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
 	public ModelRecord(String chassis, String model) {
 		super(chassis);
-		roles = new HashSet<MissionRole>();
+		roles = EnumSet.noneOf(MissionRole.class);
 		deployedWith = new ArrayList<String>();
 		requiredUnits = new ArrayList<String>();
 		excludedFactions = new ArrayList<String>();
@@ -272,7 +272,12 @@ public class ModelRecord extends AbstractUnitRecord {
 		String[] fields = str.split(",");
 		for (String role : fields) {
 			MissionRole mr = MissionRole.parseRole(role);
-			roles.add(mr);
+			if (mr != null) {
+				roles.add(mr);
+			} else {
+				System.err.println("Could not parse mission role for "
+						+ getChassis() + " " + getModel() + ": " + role);
+			}
 		}
 	}
 	

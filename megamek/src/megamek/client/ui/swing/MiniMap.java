@@ -79,6 +79,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
+import megamek.common.MechWarrior;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.Targetable;
@@ -96,6 +97,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Displays all the mapsheets in a scaled-down size. TBD refactorings: -make a
@@ -1141,11 +1143,11 @@ public class MiniMap extends JPanel {
 
     private void paintUnit(Graphics g, Entity entity) {
         boolean sensors = m_game.getOptions().booleanOption(
-                "tacops_sensors");
+                OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = m_game.getOptions().booleanOption(
-                "sensors_detect_all");
+                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = m_game.getOptions().booleanOption(
-                "double_blind");
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(m_bview.getLocalPlayer());
         boolean hasDetected = entity.hasDetectedEntity(m_bview.getLocalPlayer());
         
@@ -1337,6 +1339,9 @@ public class MiniMap extends JPanel {
                     GlyphVector gv = font.createGlyphVector(fontContext, s);
                     g2.fill(gv.getOutline((int)STRAT_CX-stringWidth/2,(float)SYMBOLSIZE.getHeight()/3.0f));
                 }
+            } else if (entity instanceof MechWarrior) {
+                g2.setColor(Color.black);
+                g2.fillOval(0 - 25, 0 - 25, 50, 50);
             }
             // Draw the unit icon in black
             g2.draw(form);
@@ -1344,23 +1349,43 @@ public class MiniMap extends JPanel {
             g2.setTransform(svTransform);
             
         } else {
+            // Drawn a circle for MechWarriors
+            if (entity instanceof MechWarrior) {
+                // Draw a slight dark border
+                int radius = unitSize - 3;
+                int dia = radius * 2;
+                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
+                g.setColor(new Color(100,100,100,200));
+                g.drawOval(baseX - radius, baseY - radius, dia, dia);
 
-            // Draw a slight dark border to set off the icon from the background
-            ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
-            g.setColor(new Color(100,100,100,200));
-            g.drawPolygon(xPoints, yPoints, xPoints.length);
-            
-            // Fill the icon according to the player color
-            Color pColor = new Color(
-                    PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
-            g.setColor(pColor);
-            g.fillPolygon(xPoints, yPoints, xPoints.length);
-            
-            // Draw a white border to better show the player color
-            // maybe useful later: if (!entity.isSelectableThisTurn()) {
-            ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
-            g.setColor(Color.WHITE);
-            g.drawPolygon(xPoints, yPoints, xPoints.length);
+                // Fill the icon according to player color
+                Color pColor = new Color(
+                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
+                g.setColor(pColor);
+                g.fillOval(baseX - radius, baseY - radius, dia, dia);
+
+                // Draw a white border to better show the player color
+                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
+                g.setColor(Color.WHITE);
+                g.drawOval(baseX - radius, baseY - radius, dia, dia);
+            } else {
+                // Draw a slight dark border to set off the icon from the background
+                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
+                g.setColor(new Color(100,100,100,200));
+                g.drawPolygon(xPoints, yPoints, xPoints.length);
+
+                // Fill the icon according to the player color
+                Color pColor = new Color(
+                        PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
+                g.setColor(pColor);
+                g.fillPolygon(xPoints, yPoints, xPoints.length);
+
+                // Draw a white border to better show the player color
+                // maybe useful later: if (!entity.isSelectableThisTurn()) {
+                ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
+                g.setColor(Color.WHITE);
+                g.drawPolygon(xPoints, yPoints, xPoints.length);
+            }
 
         }
         
@@ -1507,27 +1532,29 @@ public class MiniMap extends JPanel {
         }
 
         int terrain = 0;
-        for (int j = m_terrainColors.length - 1; j >= 0; j--) {
-            if ((x.getTerrain(j) != null) && (m_terrainColors[j] != null)) {
-                if ((j == Terrains.ROAD) || (j == Terrains.BRIDGE)) {
-                    continue;
+        // Check for Smoke and Fire - this overrides any other colors
+        if (x.containsTerrain(Terrains.SMOKE) && x.containsTerrain(Terrains.FIRE)) {
+            terrColor = SMOKE_AND_FIRE;
+        // Check for Fire - this overrides any other colors
+        } else if (x.containsTerrain(Terrains.FIRE)) {
+            terrColor = m_terrainColors[Terrains.FIRE];
+        } else { // Otherwise, color based on terrains - higher valued terrains take color precedence
+            for (int j = m_terrainColors.length - 1; j >= 0; j--) {
+                if ((x.getTerrain(j) != null) && (m_terrainColors[j] != null)) {
+                    if ((j == Terrains.ROAD) || (j == Terrains.BRIDGE)) {
+                        continue;
+                    }
+                    terrColor = m_terrainColors[j];
+                    terrain = j;
+                    // make heavy woods darker
+                    if (((j == Terrains.WOODS) || (j == Terrains.JUNGLE)) && (x.getTerrain(j).getLevel() == 2)) {
+                        terrColor = HEAVY_WOODS;
+                    }
+                    if (((j == Terrains.WOODS) || (j == Terrains.JUNGLE)) && (x.getTerrain(j).getLevel() > 2)) {
+                        terrColor = ULTRA_HEAVY_WOODS;
+                    }
+                    break;
                 }
-                terrColor = m_terrainColors[j];
-                terrain = j;
-                // make heavy woods darker
-                if (((j == Terrains.WOODS) || (j == Terrains.JUNGLE))
-                    && (x.getTerrain(j).getLevel() == 2)) {
-                    terrColor = HEAVY_WOODS;
-                }
-                if (((j == Terrains.WOODS) || (j == Terrains.JUNGLE))
-                    && (x.getTerrain(j).getLevel() > 2)) {
-                    terrColor = ULTRA_HEAVY_WOODS;
-                }
-                // contains both smoke and fire
-                if ((j == Terrains.SMOKE) && (x.getTerrain(Terrains.FIRE) != null)) {
-                    terrColor = SMOKE_AND_FIRE;
-                }
-                break;
             }
         }
         int level = 0;

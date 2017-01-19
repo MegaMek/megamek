@@ -51,10 +51,6 @@ Armored Chassis
 ISOffRoad
 </Body Equipment>
 
-<transporters>
-cargobay:17:1
-</transporters>
-
 <type>
 IS Level 2
 </type>
@@ -64,7 +60,7 @@ IS Level 2
 </year>
 
 <source>
-TRO 3085
+TRO 3085 - Jihad
 </source>
 
 <internal_type>

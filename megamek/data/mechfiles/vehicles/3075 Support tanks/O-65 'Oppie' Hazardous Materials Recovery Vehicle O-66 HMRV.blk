@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 LargeSupportTank
 </UnitType>
+
 <Name>
 O-65 'Oppie' Hazardous Materials Recovery Vehicle
 </Name>
@@ -75,7 +78,7 @@ Searchlight
 
 <Body Equipment>
 Paramedic Equipment
-Enviromental Sealed Chassis
+Environmental Sealed Chassis
 Tractor
 </Body Equipment>
 
@@ -106,3 +109,7 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+<source>
+TRO 3075 - Succession Wars
+</source>

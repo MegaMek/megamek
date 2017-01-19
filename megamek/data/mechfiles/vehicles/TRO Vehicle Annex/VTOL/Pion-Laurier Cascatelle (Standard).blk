@@ -40,6 +40,10 @@ VTOL
 1
 </engine_type>
 
+<fuel>
+3
+</fuel>
+
 <armor>
 21
 15
@@ -80,13 +84,13 @@ Cargo Container (10 tons)
 <transporters>
 cargobay:.1:1
 troopspace:.9
+standardseats:.9:12
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Civil War
 </source>
 
 <tonnage>
 60.0
 </tonnage>
-

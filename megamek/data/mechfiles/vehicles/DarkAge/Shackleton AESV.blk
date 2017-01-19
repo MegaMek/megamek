@@ -61,7 +61,7 @@ Wheeled
 
 <Body Equipment>
 Armored Chassis
-Enviromental Sealed Chassis
+Environmental Sealed Chassis
 ISOffRoadChassis
 ISArmoredMotiveSystem
 Communications Equipment (1 ton)
@@ -85,10 +85,9 @@ BeagleActiveProbe
 </Rear Equipment>
 
 <source>
-Intersteller Players 3
+Intersteller Players 3 - Early Republic
 </source>
 
 <tonnage>
 50.0
 </tonnage>
-

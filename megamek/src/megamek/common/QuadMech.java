@@ -18,6 +18,7 @@ package megamek.common;
 
 import java.io.PrintWriter;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
 public class QuadMech extends Mech {
@@ -89,7 +90,7 @@ public class QuadMech extends Mech {
                 if (!isLocationBad(i)) {
                     if (legHasHipCrit(i)) {
                         hipHits++;
-                        if ((game == null) || !game.getOptions().booleanOption("tacops_leg_damage")) {
+                        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                             continue;
                         }
                     }
@@ -111,7 +112,7 @@ public class QuadMech extends Mech {
         }
         if (wmp > 0) {
             if (hipHits > 0) {
-                if ((game != null) && game.getOptions().booleanOption("tacops_leg_damage")) {
+                if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                     wmp = wmp - (2 * hipHits);
                 } else {
                     for (int i = 0; i < hipHits; i++) {
@@ -128,7 +129,7 @@ public class QuadMech extends Mech {
 
         if (!ignoreheat) {
             // factor in heat
-            if ((game != null) && game.getOptions().booleanOption("tacops_heat")) {
+            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 if (heat < 30) {
                     wmp -= (heat / 5);
                 } else if (heat >= 49) {
@@ -309,7 +310,7 @@ public class QuadMech extends Mech {
                 // check for damaged hip actuators
                 if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                    if (!game.getOptions().booleanOption("tacops_leg_damage")) {
+                    if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         continue;
                     }
                 }
@@ -381,8 +382,7 @@ public class QuadMech extends Mech {
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
         int roll = -1;
 
-        if ((aimedLocation != LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+        if ((aimedLocation != LOC_NONE) && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
             roll = Compute.d6(2);
 
             if ((5 < roll) && (roll < 9)) {
@@ -390,7 +390,7 @@ public class QuadMech extends Mech {
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_advanced_mech_hit_locations")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)) {
             if ((table == ToHitData.HIT_NORMAL) || (table == ToHitData.HIT_PARTIAL_COVER)) {
                 roll = Compute.d6(2);
                 try {
@@ -409,7 +409,9 @@ public class QuadMech extends Mech {
                     // normal front hits
                     switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                        if ((getCrew().hasEdgeRemaining()
+                                && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_CT, cover, false));
@@ -433,7 +435,8 @@ public class QuadMech extends Mech {
                     case 11:
                         return new HitData(Mech.LOC_RLEG);
                     case 12:
-                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit"))) {
+                        if ((getCrew().hasEdgeRemaining()
+                                && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, cover, aimingMode);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, cover, false));
@@ -444,7 +447,9 @@ public class QuadMech extends Mech {
                 } else if (side == ToHitData.SIDE_REAR) {
                     switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                        if ((getCrew().hasEdgeRemaining()
+                                && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_CT, cover, true));
@@ -468,7 +473,8 @@ public class QuadMech extends Mech {
                     case 11:
                         return new HitData(Mech.LOC_RARM, true);
                     case 12:
-                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit"))) {
+                        if ((getCrew().hasEdgeRemaining()
+                                && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, cover, true));
@@ -479,7 +485,9 @@ public class QuadMech extends Mech {
                 } else if (side == ToHitData.SIDE_LEFT) {
                     switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                        if ((getCrew().hasEdgeRemaining()
+                                && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_LT, cover, false));
@@ -503,7 +511,8 @@ public class QuadMech extends Mech {
                     case 11:
                         return new HitData(Mech.LOC_RLEG);
                     case 12:
-                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit"))) {
+                        if ((getCrew().hasEdgeRemaining()
+                                && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, cover, false));
@@ -514,7 +523,9 @@ public class QuadMech extends Mech {
                 } else if (side == ToHitData.SIDE_RIGHT) {
                     switch (roll) {
                     case 2:
-                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_tac")) && !game.getOptions().booleanOption("no_tac")) {
+                        if ((getCrew().hasEdgeRemaining()
+                                && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
+                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_RT, cover, false));
@@ -538,7 +549,8 @@ public class QuadMech extends Mech {
                     case 11:
                         return new HitData(Mech.LOC_LLEG);
                     case 12:
-                        if ((getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit"))) {
+                        if ((getCrew().hasEdgeRemaining()
+                                && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT))) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                             result.setUndoneLocation(tac(table, side, Mech.LOC_HEAD, cover, false));
@@ -577,7 +589,8 @@ public class QuadMech extends Mech {
                 case 5:
                     return new HitData(Mech.LOC_RARM);
                 case 6:
-                    if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                    if (getCrew().hasEdgeRemaining()
+                            && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
@@ -598,7 +611,8 @@ public class QuadMech extends Mech {
                 case 5:
                     return new HitData(Mech.LOC_RLEG, true);
                 case 6:
-                    if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                    if (getCrew().hasEdgeRemaining()
+                            && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
@@ -618,7 +632,8 @@ public class QuadMech extends Mech {
                 case 5:
                     return new HitData(Mech.LOC_LLEG);
                 case 6:
-                    if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                    if (getCrew().hasEdgeRemaining()
+                            && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
@@ -638,7 +653,8 @@ public class QuadMech extends Mech {
                 case 5:
                     return new HitData(Mech.LOC_RLEG);
                 case 6:
-                    if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                    if (getCrew().hasEdgeRemaining()
+                            && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                         getCrew().decreaseEdge();
                         HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
@@ -706,7 +722,8 @@ public class QuadMech extends Mech {
             // Swarm attack locations.
             switch (roll) {
             case 2:
-                if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                if (getCrew().hasEdgeRemaining()
+                        && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                     getCrew().decreaseEdge();
                     HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                     result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
@@ -732,7 +749,8 @@ public class QuadMech extends Mech {
             case 11:
                 return new HitData(Mech.LOC_LT, false, effects);
             case 12:
-                if (getCrew().hasEdgeRemaining() && getCrew().getOptions().booleanOption("edge_when_headhit")) {
+                if (getCrew().hasEdgeRemaining()
+                        && getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_HEADHIT)) {
                     getCrew().decreaseEdge();
                     HitData result = rollHitLocation(table, side, aimedLocation, aimingMode, cover);
                     result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, effects));
@@ -847,7 +865,7 @@ public class QuadMech extends Mech {
     @Override
     public boolean canGoHullDown() {
         // check the option
-        boolean retVal = game.getOptions().booleanOption("tacops_hull_down");
+        boolean retVal = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         if (!retVal) {
             return false;
         }

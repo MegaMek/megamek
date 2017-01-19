@@ -79,13 +79,13 @@ ISGuardianECMSuite
 <transporters>
 cargobay:.55:1
 troopspace:.45
+standardseats:.45:6
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Star League
 </source>
 
 <tonnage>
 15.0
 </tonnage>
-

@@ -424,10 +424,8 @@ public class MiscType extends EquipmentType {
             .valueOf(1).shiftLeft(193);
     public static final BigInteger F_EMERGENCY_COOLANT_SYSTEM = BigInteger
             .valueOf(1).shiftLeft(194);
-
     public static final BigInteger F_BLOODHOUND = BigInteger.valueOf(1)
             .shiftLeft(195);
-
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1750,7 +1748,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createConvertibleModification());
         EquipmentType.addType(MiscType.createISDuneBuggyChassis());
         EquipmentType.addType(MiscType.createCLDuneBuggyChassis());
-        EquipmentType.addType(MiscType.createEnviromentalSealedChassis());
+        EquipmentType.addType(MiscType.createEnvironmentalSealedChassis());
         EquipmentType.addType(MiscType.createHydroFoilChassisModification());
         EquipmentType.addType(MiscType.createMonocycleModification());
         EquipmentType.addType(MiscType.createISOffRoadChassis());
@@ -2810,7 +2808,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
-        misc.name = "MRM Apollo FCS";
+        misc.name = "Apollo MRM FCS";
         misc.setInternalName("ISApollo");
         misc.addLookupName("IS MRM Apollo Fire Control System");
         misc.addLookupName("IS MRM Apollo FCS");
@@ -3351,11 +3349,11 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createEnviromentalSealedChassis() {
+    public static MiscType createEnvironmentalSealedChassis() {
         MiscType misc = new MiscType();
 
-        misc.name = "Enviromental Sealed Chassis";
-        misc.setInternalName("Enviromental Sealed Chassis");
+        misc.name = "Environmental Sealed Chassis";
+        misc.setInternalName("Environmental Sealed Chassis");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
@@ -9893,7 +9891,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createExternalStoresHardpoint() {
         MiscType misc = new MiscType();
-        misc.tonnage = 0.2f;
+        misc.tonnage = 0.2;
         misc.cost = 5000;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "External Stores Hardpoint";
@@ -10329,7 +10327,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.1f;
+        misc.tonnage = 0.1;
         misc.techRating = RATING_A;
         misc.cost = 100;
         misc.introDate = 1950;
@@ -10346,7 +10344,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.2f;
+        misc.tonnage = 0.2;
         misc.techRating = RATING_A;
         misc.cost = 200;
         misc.introDate = 1950;
@@ -10363,7 +10361,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.3f;
+        misc.tonnage = 0.3;
         misc.techRating = RATING_A;
         misc.cost = 300;
         misc.introDate = 1950;
@@ -10380,7 +10378,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.4f;
+        misc.tonnage = 0.4;
         misc.techRating = RATING_A;
         misc.cost = 400;
         misc.introDate = 1950;
@@ -10397,7 +10395,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tankslots = 1;
         misc.criticals = 1;
-        misc.tonnage = 0.5f;
+        misc.tonnage = 0.5;
         misc.techRating = RATING_A;
         misc.cost = 500;
         misc.introDate = 1950;

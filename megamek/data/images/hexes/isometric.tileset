@@ -28,51 +28,58 @@
 # ground (base sets)
 # swamp
 # rough
+# rubble
 # woods
 # water
-# road
-# ice / rapids
+# rapids / ice
+# bridges / roads / rail / maglev
 # building
-# bridge
+# fluff / fuel tanks
 # fire
 # smoke
 # elevator
 
 include "StandardIncludes/StandardThemes.tileinc"
 
-include "StandardIncludes/StandardFluff.tileinc"
-include "StandardIncludes/StandardFuelTanks.tileinc"
-
-include "StandardIncludes/BuildingsNonSClassArmor.tileinc"
-include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
-include "StandardIncludes/BuildingsSClassArmor.tileinc"
-include "StandardIncludes/BuildingsSClassNoArmor.tileinc"
-
-include "StandardIncludes/StandardRailMaglev.tileinc"
-include "StandardIncludes/StandardElevator.tileinc"
-include "StandardIncludes/StandardLimbs.tileinc"
 include "StandardIncludes/StandardSpace.tileinc"
 
+super * "water:0" "" "transparent/blue_water_1.png"
 
 super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png"
 #levels 2 and 3 of swamp are for quicksand
 super * "swamp:2" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
 super * "swamp:3" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
 
+super * "fortified:1" "" "boring/sandbags.gif"
+
 super * "rough:1" "" "transparent/rough_0.png;transparent/rough_1.png;transparent/rough_2.png"
 super * "rough:2" "" "transparent/ultra_rough.png"
 
-super * "woods:1" "jungle" "isometric/trees/light_jungle1.png;isometric/trees/light_jungle2.png;isometric/trees/light_jungle3.png;isometric/trees/light_jungle4.png"
-super * "woods:2" "jungle" "isometric/trees/heavy_jungle1.png;isometric/trees/heavy_jungle2.png;isometric/trees/heavy_jungle3.png"
-super * "woods:3" "jungle" "isometric/trees/ultra_heavy_jungle1.png"
+super * "rubble:1" "" "boring/rubble_light.gif"
+super * "rubble:2" "" "boring/rubble_medium.gif"
+super * "rubble:3" "" "boring/rubble_heavy.gif"
+super * "rubble:4" "" "boring/rubble_hardened.gif"
+#level 5 is wall rubble
+super * "rubble:5" "" "boring/rubble_light.gif"
+super * "rubble:6" "" "boring/rubble_ultra.gif"
+
+include "StandardIncludes/StandardLimbs.tileinc"
+
+super * "water:1" "" "transparent/blue_water_1.png"
+
+super * "woods:1" "tropical" "isometric/trees/light_jungle1.png;isometric/trees/light_jungle2.png;isometric/trees/light_jungle3.png;isometric/trees/light_jungle4.png"
+super * "woods:2" "tropical" "isometric/trees/heavy_jungle1.png;isometric/trees/heavy_jungle2.png;isometric/trees/heavy_jungle3.png"
+super * "woods:3" "tropical" "isometric/trees/ultra_heavy_jungle1.png"
 
 super * "woods:1;fluff:12" "" "boring/orchard.png"
 super * "woods:1" "" "isometric/trees/lf0.gif;isometric/trees/lf1.gif;isometric/trees/lf2.gif;isometric/trees/lf3.gif;isometric/trees/lf4.gif"
 super * "woods:2" "" "isometric/trees/hf0.gif;isometric/trees/hf1.gif;isometric/trees/hf3.gif"
 super * "woods:3" "" "isometric/trees/uhf.gif"
 
-super * "water:0" "" "transparent/blue_water_1.png"
-super * "water:1" "" "transparent/blue_water_1.png"
+super * "jungle:1" "" "isometric/trees/light_jungle1.png;isometric/trees/light_jungle2.png;isometric/trees/light_jungle3.png;isometric/trees/light_jungle4.png"
+super * "jungle:2" "" "isometric/trees/heavy_jungle1.png;isometric/trees/heavy_jungle2.png;isometric/trees/heavy_jungle3.png"
+super * "jungle:3" "" "isometric/trees/ultra_heavy_jungle1.png"
+
 super * "water:2" "" "transparent/blue_water_2.png"
 super * "water:3" "" "transparent/blue_water_3.png"
 super * "water:4" "" "transparent/blue_water_4.png"
@@ -83,22 +90,17 @@ super * "rapids:2" "" "transparent/rapids.png"
 
 super * "ice:1" "" "transparent/ice.png"
 
-super * "geyser:1" "" "boring/geyservent.gif"
-# geyser 2 is rendered with smoke
-super * "geyser:3" "" "boring/geyservent.gif"
-
-super * "fortified:1" "" "boring/sandbags.gif"
-
-super * "rubble:1" "" "boring/rubble_light.gif"
-super * "rubble:2" "" "boring/rubble_medium.gif"
-super * "rubble:3" "" "boring/rubble_heavy.gif"
-super * "rubble:4" "" "boring/rubble_hardened.gif"
-#level 5 is wall rubble
-super * "rubble:5" "" "boring/rubble_light.gif"
-super * "rubble:6" "" "boring/rubble_ultra.gif"
-
 include "StandardIncludes/BasicBridges.tileinc"
 include "StandardIncludes/BasicRoads.tileinc"
+include "StandardIncludes/StandardRailMaglev.tileinc"
+
+include "StandardIncludes/BuildingsNonSClassArmor.tileinc"
+include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
+include "StandardIncludes/BuildingsSClassArmor.tileinc"
+include "StandardIncludes/BuildingsSClassNoArmor.tileinc"
+
+include "StandardIncludes/StandardFluff.tileinc"
+include "StandardIncludes/StandardFuelTanks.tileinc"
 
 super * "heavy_industrial:*" "" "transparent/heavy_industrial_zone.gif"
 
@@ -114,7 +116,11 @@ super * "smoke:5" "" "transparent/chaff.gif"
 
 super * "screen:*" "" "boring/screen.gif"
 
+super * "geyser:1" "" "boring/geyservent.gif"
 super * "geyser:2" "" "transparent/geysererupt.png"
+super * "geyser:3" "" "boring/geyservent.gif"
+
+include "StandardIncludes/StandardElevator.tileinc"
 
 base 0 "" "" "boring/beige_plains_0.gif"
 base 1 "" "" "boring/beige_plains_1.gif"
@@ -131,22 +137,35 @@ base -1 "" "" "boring/beige_sinkhole_1.gif"
 base -2 "" "" "boring/beige_sinkhole_2.gif"
 base -3 "" "" "boring/beige_sinkhole_3.gif"
 
-base 0 "space:1" "" "boring/space.gif"
+base 0 "bldg_basement_type:*" "" "boring/grey_pavement_0.gif"
+base 1 "bldg_basement_type:*" "" "boring/grey_pavement_1.gif"
+base 2 "bldg_basement_type:*" "" "boring/grey_pavement_2.gif"
+base 3 "bldg_basement_type:*" "" "boring/grey_pavement_3.gif"
+base 4 "bldg_basement_type:*" "" "boring/grey_pavement_4.gif"
+base 5 "bldg_basement_type:*" "" "boring/grey_pavement_5.gif"
+base 6 "bldg_basement_type:*" "" "boring/grey_pavement_6.gif"
+base 7 "bldg_basement_type:*" "" "boring/grey_pavement_7.gif"
+base 8 "bldg_basement_type:*" "" "boring/grey_pavement_8.gif"
+base 9 "bldg_basement_type:*" "" "boring/grey_pavement_8.gif"
+base 10 "bldg_basement_type:*" "" "boring/grey_pavement_8.gif"
+base -1 "bldg_basement_type:*" "" "boring/grey_pavement_0.gif"
+base -2 "bldg_basement_type:*" "" "boring/grey_pavement_0.gif"
+base -3 "bldg_basement_type:*" "" "boring/grey_pavement_0.gif"
 
 base 0 "pavement:1" "" "boring/grey_pavement_0.gif"
 base 1 "pavement:1" "" "boring/grey_pavement_1.gif"
 base 2 "pavement:1" "" "boring/grey_pavement_2.gif"
-base 3 "pavement:1" "" "boring/grey_pavement_2.gif"
-base 4 "pavement:1" "" "boring/grey_pavement_3.gif"
-base 5 "pavement:1" "" "boring/grey_pavement_3.gif"
-base 6 "pavement:1" "" "boring/grey_pavement_4.gif"
-base 7 "pavement:1" "" "boring/grey_pavement_4.gif"
-base 8 "pavement:1" "" "boring/grey_pavement_4.gif"
-base 9 "pavement:1" "" "boring/grey_pavement_4.gif"
-base 10 "pavement:1" "" "boring/grey_pavement_5.gif"
-base 20 "pavement:1" "" "boring/grey_pavement_6.gif"
-base 30 "pavement:1" "" "boring/grey_pavement_7.gif"
-base 40 "pavement:1" "" "boring/grey_pavement_8.gif"
+base 3 "pavement:1" "" "boring/grey_pavement_3.gif"
+base 4 "pavement:1" "" "boring/grey_pavement_4.gif"
+base 5 "pavement:1" "" "boring/grey_pavement_5.gif"
+base 6 "pavement:1" "" "boring/grey_pavement_6.gif"
+base 7 "pavement:1" "" "boring/grey_pavement_7.gif"
+base 8 "pavement:1" "" "boring/grey_pavement_8.gif"
+base 9 "pavement:1" "" "boring/grey_pavement_8.gif"
+base 10 "pavement:1" "" "boring/grey_pavement_8.gif"
+base -1 "pavement:1" "" "boring/grey_pavement_0.gif"
+base -2 "pavement:1" "" "boring/grey_pavement_0.gif"
+base -3 "pavement:1" "" "boring/grey_pavement_0.gif"
 
 base * "planted_fields:1" "" "boring/fields.gif"
 base * "planted_fields:2" "" "boring/vineyard.png"

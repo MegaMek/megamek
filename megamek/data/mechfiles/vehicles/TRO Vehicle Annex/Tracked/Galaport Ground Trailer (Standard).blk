@@ -60,7 +60,7 @@ Tracked
 <Body Equipment>
 Tractor
 Trailer
-Enviromental Sealed Chassis
+Environmental Sealed Chassis
 </Body Equipment>
 
 <Front Equipment>
@@ -86,10 +86,9 @@ cargobay:88:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <tonnage>
 200.0
 </tonnage>
-

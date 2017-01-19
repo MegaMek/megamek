@@ -29,6 +29,7 @@ import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -72,7 +73,7 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
             }
             // pain shunted infantry get half damage
             if (((Entity) target).getCrew().getOptions()
-                    .booleanOption("pain_shunt")) {
+                    .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn /= 2;
             }
             if (bGlancing) {

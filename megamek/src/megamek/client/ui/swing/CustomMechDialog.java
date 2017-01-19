@@ -77,6 +77,7 @@ import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
@@ -336,9 +337,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         boolean multipleEntities = entities.size() > 1;
         boolean quirksEnabled = clientgui.getClient().getGame().getOptions()
-                .booleanOption("stratops_quirks");
+                .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
         boolean partialRepairsEnabled = clientgui.getClient().getGame()
-                .getOptions().booleanOption("stratops_partialrepairs");
+                .getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS);
         final Entity entity = entities.get(0);
         boolean isAero = true;
         boolean isInfantry = true;
@@ -346,6 +347,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isProtomech = true;
         boolean isTank = true;
         boolean isVTOL = true;
+        boolean eligibleForOffBoard = true;
+        
         for (Entity e : entities) {
             isAero &= e instanceof Aero;
             isInfantry &= e instanceof Infantry;
@@ -353,6 +356,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isTank &= e instanceof Tank;
             isProtomech &= e instanceof Protomech;
             isVTOL &= e instanceof VTOL;
+            boolean entityEligibleForOffBoard = false;
+            for (Mounted mounted : e.getWeaponList()) {
+                WeaponType wtype = (WeaponType) mounted.getType();
+                if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+                    entityEligibleForOffBoard = true;
+                }
+            }
+            eligibleForOffBoard &= entityEligibleForOffBoard;
         }
 
         // set up the panels
@@ -444,7 +455,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panPilot.add(labNick, GBC.std());
         panPilot.add(fldNick, GBC.eop());
 
-        if (client.getGame().getOptions().booleanOption("rpg_gunnery")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
 
             panPilot.add(labGunneryL, GBC.std());
             panPilot.add(fldGunneryL, GBC.eol());
@@ -463,37 +474,37 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panPilot.add(labPiloting, GBC.std());
         panPilot.add(fldPiloting, GBC.eop());
 
-        if (client.getGame().getOptions().booleanOption("artillery_skill")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             panPilot.add(labArtillery, GBC.std());
             panPilot.add(fldArtillery, GBC.eop());
         }
 
-        if (client.getGame().getOptions().booleanOption("tacops_fatigue")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)) {
             labFatigue.setToolTipText(Messages
                     .getString("CustomMechDialog.labFatigueToolTip"));
             panPilot.add(labFatigue, GBC.std());
             panPilot.add(fldFatigue, GBC.eop());
         }
 
-        if (client.getGame().getOptions().booleanOption("toughness")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
             panPilot.add(labTough, GBC.std());
             panPilot.add(fldTough, GBC.eop());
         }
 
         if (client.getGame().getOptions()
-                .booleanOption("individual_initiative")) {
+                .booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             panPilot.add(labInit, GBC.std());
             panPilot.add(fldInit, GBC.eop());
         }
 
-        if (client.getGame().getOptions().booleanOption("command_init")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
             panPilot.add(labCommandInit, GBC.std());
             panPilot.add(fldCommandInit, GBC.eop());
         }
 
         // Set up commanders for commander killed victory condition
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("commander_killed")) { //$NON-NLS-1$
+                .booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) { //$NON-NLS-1$
             panPilot.add(labCommander, GBC.std());
             panPilot.add(chCommander, GBC.eol());
             chCommander.setSelected(entity.isCommander());
@@ -540,24 +551,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("pilot_advantages") //$NON-NLS-1$
+                .booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES) //$NON-NLS-1$
                 || clientgui.getClient().getGame().getOptions()
-                        .booleanOption("edge") //$NON-NLS-1$
+                        .booleanOption(OptionsConstants.EDGE) //$NON-NLS-1$
                 || clientgui.getClient().getGame().getOptions()
-                        .booleanOption("manei_domini")) { //$NON-NLS-1$
+                        .booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { //$NON-NLS-1$
 
             panPilot.add(panOptions, GBC.eop());
         }
 
         // **DEPLOYMENT TAB**//
-        boolean eligibleForOffBoard = false;
-        for (Mounted mounted : entity.getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
-                eligibleForOffBoard = true;
-            }
-        }
-
         if (isAero) {
             panDeploy.add(labStartVelocity, GBC.std());
             panDeploy.add(fldStartVelocity, GBC.eol());
@@ -581,7 +584,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panDeploy.add(labDeploymentZone, GBC.std());
         panDeploy.add(choDeploymentZone, GBC.eol());
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("begin_shutdown")
+                .booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN)
                 && !(entity instanceof Infantry)
                 && !(entity instanceof GunEmplacement)) {
             panDeploy.add(labDeployShutdown, GBC.std());
@@ -605,7 +608,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         refreshDeployment();
 
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("hidden_units")) {
+                .booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             panDeploy.add(labHidden, GBC.std());
             panDeploy.add(chHidden, GBC.eol());
             chHidden.setSelected(entity.isHidden());
@@ -789,19 +792,19 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES)
                     && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("pilot_advantages")) {
+                            .booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) {
                 continue;
             }
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.EDGE_ADVANTAGES)
                     && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("edge")) {
+                            .booleanOption(OptionsConstants.EDGE)) {
                 continue;
             }
 
             if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES)
                     && !clientgui.getClient().getGame().getOptions()
-                            .booleanOption("manei_domini")) {
+                            .booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) {
                 continue;
             }
 
@@ -818,18 +821,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
                 // a bunch of stuf should get disabled for conv infantry
                 if ((((entity instanceof Infantry) && !(entity instanceof BattleArmor)))
-                        && (option.getName().equals("vdni") || option.getName()
-                                .equals("bvdni"))) {
+                        && (option.getName().equals(OptionsConstants.MD_VDNI) || option.getName()
+                                .equals(OptionsConstants.MD_BVDNI))) {
                     continue;
                 }
 
                 // a bunch of stuff should get disabled for all but conventional
                 // infantry
                 if (!((entity instanceof Infantry) && !(entity instanceof BattleArmor))
-                        && (option.getName().equals("grappler")
-                                || option.getName().equals("pl_masc")
-                                || option.getName().equals("cyber_eye_im") || option
-                                .getName().equals("cyber_eye_tele"))) {
+                        && (option.getName().equals(OptionsConstants.MD_PL_ENHANCED)
+                                || option.getName().equals(OptionsConstants.MD_PL_MASC)
+                                || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO) || option
+                                .getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {
                     continue;
                 }
 
@@ -896,13 +899,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panOptions.add(groupLabel);
     }
 
-    private void addOption(IOption option, GridBagLayout gridbag,
-            GridBagConstraints c, boolean editable) {
+    private void addOption(IOption option, GridBagLayout gridbag, GridBagConstraints c, boolean editable) {
         Entity entity = entities.get(0);
-        DialogOptionComponent optionComp = new DialogOptionComponent(this,
-                option, editable);
+        DialogOptionComponent optionComp = new DialogOptionComponent(this, option, editable);
 
-        if ("weapon_specialist".equals(option.getName())) { //$NON-NLS-1$
+        if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) { // $NON-NLS-1$
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
             TreeSet<String> uniqueWeapons = new TreeSet<String>();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
@@ -915,11 +916,20 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             optionComp.setSelected(option.stringValue());
         }
 
-        if ("specialist".equals(option.getName())) { //$NON-NLS-1$
+        if (OptionsConstants.GUNNERY_SPECIALIST               
+                .equals(option.getName())) { //$NON-NLS-1$
             optionComp.addValue(Crew.SPECIAL_NONE);
             optionComp.addValue(Crew.SPECIAL_LASER);
             optionComp.addValue(Crew.SPECIAL_BALLISTIC);
             optionComp.addValue(Crew.SPECIAL_MISSILE);
+            optionComp.setSelected(option.stringValue());
+        }
+
+        if (OptionsConstants.GUNNERY_RANGE_MASTER.equals(option.getName())) { //$NON-NLS-1$
+            optionComp.addValue(Crew.RANGEMASTER_NONE);
+            optionComp.addValue(Crew.RANGEMASTER_MEDIUM);
+            optionComp.addValue(Crew.RANGEMASTER_LONG);
+            optionComp.addValue(Crew.RANGEMASTER_EXTREME);
             optionComp.setSelected(option.stringValue());
         }
 
@@ -1209,7 +1219,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (entities.size() == 1) {
             Entity entity = entities.get(0);
 
-            if (client.getGame().getOptions().booleanOption("rpg_gunnery")) {
+            if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
                 entity.setCrew(new Crew(name, Compute.getFullCrewSize(entity),
                         gunneryL, gunneryM, gunneryB, piloting));
             } else {
@@ -1246,14 +1256,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             if (entity instanceof BattleArmor) {
                 // have to reset internals because of dermal armor option
-                if (entity.getCrew().getOptions().booleanOption("dermal_armor")) {
+                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                     ((BattleArmor) entity).setInternal(2);
                 } else {
                     ((BattleArmor) entity).setInternal(1);
                 }
             } else if (entity instanceof Infantry) {
                 // need to reset armor on conventional infantry
-                if (entity.getCrew().getOptions().booleanOption("dermal_armor")) {
+                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                     entity.initializeArmor(
                             entity.getOInternal(Infantry.LOC_INFANTRY),
                             Infantry.LOC_INFANTRY);
@@ -1323,7 +1333,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Should the entity begin the game shutdown?
             if (chDeployShutdown.isSelected()
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("begin_shutdown")) {
+                            .booleanOption(OptionsConstants.RPG_BEGIN_SHUTDOWN)) {
                 entity.performManualShutdown();
             } else { // We need to else this in case someone turned the option
                      // on, set their units, and then turned the option off.
@@ -1409,8 +1419,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     public Entity getNextEntity(boolean forward) {
         IGame game = client.getGame();
-        boolean bd = game.getOptions().booleanOption("blind_drop"); //$NON-NLS-1$
-        boolean rbd = game.getOptions().booleanOption("real_blind_drop"); //$NON-NLS-1$
+        boolean bd = game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP); //$NON-NLS-1$
+        boolean rbd = game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP); //$NON-NLS-1$
         IPlayer p = client.getLocalPlayer();
 
         Entity nextOne;

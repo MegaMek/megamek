@@ -40,6 +40,10 @@ Tracked
 1
 </engine_type>
 
+<fuel>
+1.5
+</fuel>
+
 <armor>
 7
 6
@@ -57,7 +61,7 @@ Tracked
 </structural_tech_rating>
 
 <Body Equipment>
-AmphibiousChassis
+Armored Chassis
 IS Ammo MG - Full
 MASH core component
 MASH Operation Theater
@@ -82,7 +86,7 @@ Machine Gun
 </Turret Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <tonnage>
@@ -92,5 +96,3 @@ TRO VAr
 <history>
 NO RS included stats based on Fluff.
 </history>
-
-

@@ -46,6 +46,7 @@ import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.OffBoardDirection;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 
 /**
  * The starting position dialog allows the player to select a starting position.
@@ -186,8 +187,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         final GameOptions gOpts = client.getGame().getOptions();
         for (int i = 0; i < 11; i++) {
             if (ev.getSource().equals(butStartPos[i])) {
-                if (gOpts.booleanOption("double_blind") //$NON-NLS-1$
-                        && gOpts.booleanOption("exclusive_db_deployment")) { //$NON-NLS-1$
+                if (gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
+                        && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT)) { //$NON-NLS-1$
                     if (i == 0) {
                         clientgui.doAlertDialog(
                                 Messages.getString("ChatLounge.ExclusiveDeploy.title"), //$NON-NLS-1$
@@ -219,7 +220,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                         }
                     }
                 }
-                if (gOpts.booleanOption("deep_deployment")
+                if (gOpts.booleanOption(OptionsConstants.BASE_DEEP_DEPLOYMENT)
                         && (i > 0) && (i <= 9)) {
                     i += 10;
                 }
@@ -229,7 +230,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                 // set all the player's offboard arty units to be behind the
                 // newly
                 // selected home edge.
-                if (gOpts.booleanOption("set_arty_player_homeedge")) { //$NON-NLS-1$
+                if (gOpts.booleanOption(OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE)) { //$NON-NLS-1$
                     OffBoardDirection direction = OffBoardDirection.NONE;
                     switch (i) {
                         case 0:

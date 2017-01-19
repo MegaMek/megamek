@@ -23,6 +23,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Report;
 import megamek.common.Terrains;
+import megamek.common.options.OptionsConstants;
 
 public class SmokeProcessor extends DynamicTerrainProcessor {
 
@@ -101,7 +102,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
             server.removeSmokeTerrain(cloud);
             // Dissipate the cloud, this gets handled in FireProcessor if 
             //  TO start fires is on
-            if (!game.getOptions().booleanOption("tacops_start_fire")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
                 if ((cloud.getDuration() > 0)
                         && ((cloud.getDuration() - 1) > 0)) {
                     cloud.setDuration(cloud.getDuration() - 1);

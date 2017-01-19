@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+.02
+</fuel>
+
 <armor>
 1
 1
@@ -76,6 +80,7 @@ BASearchlight
 
 <Right Equipment>
 Ladder (20m)
+Manipulator
 BASearchlight
 </Right Equipment>
 
@@ -87,11 +92,12 @@ BASearchlight
 </Rear Equipment>
 
 <transporters>
+cargobay:.128:1
 standardseats:.3:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <tonnage>

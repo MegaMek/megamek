@@ -40,6 +40,10 @@ Tracked
 1
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
 4
 3
@@ -76,12 +80,10 @@ Searchlight
 cargobay:.5:1
 </transporters>
 
-
 <source>
-TRO VAr
+TRO VAr - Age of War
 </source>
 
 <tonnage>
 8.0
 </tonnage>
-

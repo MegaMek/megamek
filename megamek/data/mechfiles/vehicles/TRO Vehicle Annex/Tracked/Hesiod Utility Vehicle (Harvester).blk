@@ -44,6 +44,10 @@ cargobay:.5:1
 1
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
 5
 5
@@ -74,7 +78,7 @@ Combine
 </Rear Equipment>
 
 <source>
-TRO Var
+TRO VAr - Clan Invasion
 </source>
 
 <tonnage>
@@ -87,4 +91,3 @@ TRO Var
 
 <omni>
 </omni>
-

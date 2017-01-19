@@ -43,6 +43,7 @@ public class CLBALBX extends Weapon {
         longRange = 8;
         extremeRange = 10;
         tonnage = 0.4f;
+        criticals = 2;
         toHitModifier = -1;
         ammoType = AmmoType.T_NA;
         bv = 20;

@@ -50,6 +50,7 @@ Wheeled
 <Body Equipment>
 IS Ammo AC/20
 IS Ammo AC/20
+BeagleActiveProbe
 </Body Equipment>
 
 <Front Equipment>
@@ -66,7 +67,7 @@ Autocannon/20
 </Rear Equipment>
 
 <source>
-RS 3039 Unabriged
+TRO 3039 - Succession Wars
 </source>
 
 <tonnage>

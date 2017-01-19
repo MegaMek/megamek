@@ -1,0 +1,86 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+UTR-588 Recovery Vehicle
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2439
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+50
+50
+50
+34
+</armor>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<barrating>
+6
+</barrating>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Lift Hoist
+Lift Hoist
+</Rear Equipment>
+
+<transporters>
+cargobay:40:1
+</transporters>
+
+<source>
+XTRO Primitives V - Age of War
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

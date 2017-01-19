@@ -28,21 +28,17 @@ Saladin Assault Hover Tank
 IS Level 1
 </type>
 
-<tonnage>
-35.0
-</tonnage>
-
 <motion_type>
 Hover
 </motion_type>
 
-<engine_type>
-1
-</engine_type>
-
 <cruiseMP>
 8
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 18
@@ -70,6 +66,10 @@ Autocannon/20
 </Rear Equipment>
 
 <source>
-RS 3039 Unabriged
+TRO 3039 - Succession Wars
 </source>
+
+<tonnage>
+35.0
+</tonnage>
 

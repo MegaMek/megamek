@@ -51,6 +51,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.WeaponType;
+import megamek.common.options.OptionsConstants;
 
 /**
  * This class shows the critical hits and systems for a mech
@@ -833,7 +834,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()
-                        && (client.getGame().getOptions().intOption("dumping_from_round") 
+                        && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) 
                                 <= client.getGame().getRoundCount())
                         && !carryingBAsOnBack && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);
@@ -868,8 +869,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                     }// if the maxtech eccm option is not set then the ECM
                      // should not show anything.
                     if (m.getType().hasFlag(MiscType.F_ECM)
-                            && !(client.getGame().getOptions().booleanOption("tacops_eccm")
-                                    || client.getGame().getOptions().booleanOption("tacops_ghost_target"))) {
+                            && !(client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
+                                    || client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET))) {
                         return;
                     }
                     for (Enumeration<EquipmentMode> e = m.getType()

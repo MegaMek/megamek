@@ -272,7 +272,7 @@ public class MoveOption extends MovePath {
         }
         if ((last.getType() != MoveStepType.FORWARDS)
                 || (isClan
-                    && getGame().getOptions().booleanOption("no_clan_physical") && (getEntity()
+                    && getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && (getEntity()
                         .getSwarmAttackerId() == Entity.NONE))) {
             return false;
         }

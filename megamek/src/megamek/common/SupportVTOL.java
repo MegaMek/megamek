@@ -25,6 +25,7 @@ public class SupportVTOL extends VTOL {
      */
     private static final long serialVersionUID = 2771230410747098997L;
     private int[] barRating;
+    private double fuelTonnage = 0;
 
     public SupportVTOL() {
         super();
@@ -113,6 +114,16 @@ public class SupportVTOL extends VTOL {
         } else {
             return 0.3;
         }
+    }
+
+    //FUEL CAPACITY TM 128
+    @Override
+    public double getFuelTonnage() {
+        return fuelTonnage;
+    }
+
+    public void setFuelTonnage(double fuel) {
+        fuelTonnage = fuel;
     }
 
     @Override

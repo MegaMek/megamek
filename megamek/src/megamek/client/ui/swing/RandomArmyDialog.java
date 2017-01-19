@@ -85,6 +85,7 @@ import megamek.common.TechConstants;
 import megamek.common.IGame.Phase;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
@@ -216,7 +217,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         rg.registerListener(this);
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
-                m_client.getGame().getOptions().intOption("year"));
+                m_client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
         
         GUIPreferences guip = GUIPreferences.getInstance();
         // set defaults
@@ -230,7 +231,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         m_tInfantry.setText(guip.getRATNumInf());
         m_chkPad.setSelected(guip.getRATPadBV());
         m_chkCanon.setSelected(m_client.getGame().getOptions().booleanOption(
-        "canon_only"));
+        OptionsConstants.ALLOWED_CANON_ONLY));
         updateTechChoice();
 
         // construct the buttons panel
@@ -1115,17 +1116,17 @@ WindowListener, TreeSelectionListener, FocusListener {
     };
     
     private void generateRAT() {
-    	FactionRecord fRec = (FactionRecord)m_chSubfaction.getSelectedItem();
-    	if (fRec == null) {
-    		fRec = (FactionRecord)m_chFaction.getSelectedItem();
+    	FactionRecord fRec = (FactionRecord)(m_chSubfaction.getSelectedItem() == null?
+    			m_chFaction.getSelectedItem() : m_chSubfaction.getSelectedItem());
+    	if (fRec != null) {
+			UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
+			generatedRAT = UnitTable.findTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
+					ratGenYear, (String)m_chRating.getSelectedItem(),
+					panOptions.getSelectedWeights(),
+					panOptions.getNetworkMask(), panOptions.getMotiveTypes(),
+					panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
+			ratModel.refreshData();
     	}
-		UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
-		generatedRAT = new UnitTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
-				ratGenYear, (String)m_chRating.getSelectedItem(),
-				panOptions.getSelectedWeights(),
-				panOptions.getNetworkMask(), panOptions.getMotiveTypes(),
-				panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
-		ratModel.refreshData();
     }
 
     @Override

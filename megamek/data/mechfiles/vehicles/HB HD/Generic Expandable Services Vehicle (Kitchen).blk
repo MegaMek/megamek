@@ -40,11 +40,15 @@ Wheeled
 6
 </engine_type>
 
+<fuel>
+3.5
+</fuel>
+
 <armor>
 15
 10
 10
-10
+15
 </armor>
 
 <barrating>
@@ -80,7 +84,7 @@ refrigeratedcargobay:2:1
 </transporters>
 
 <source>
-HB HD
+HB:House Davion - Civil War
 </source>
 
 <tonnage>
@@ -89,4 +93,3 @@ HB HD
 
 <omni>
 </omni>
-

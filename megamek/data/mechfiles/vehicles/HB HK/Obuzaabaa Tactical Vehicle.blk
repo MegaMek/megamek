@@ -21,7 +21,7 @@ Obuzaabaa Tactical Vehicle
 </Model>
 
 <year>
-3050
+2970
 </year>
 
 <type>
@@ -44,6 +44,10 @@ cargobay:4.5:1
 <engine_type>
 6
 </engine_type>
+
+<fuel>
+1
+</fuel>
 
 <armor>
 12
@@ -78,10 +82,9 @@ Communications Equipment (2 ton)
 </Rear Equipment>
 
 <source>
-HB HK
+HB:House Kurita - Succession Wars
 </source>
 
 <tonnage>
 25.0
 </tonnage>
-

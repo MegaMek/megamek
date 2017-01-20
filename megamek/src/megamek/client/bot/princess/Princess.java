@@ -570,6 +570,7 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {
+        	initialize();
             // get the first entity that can act this turn
             Entity attacker = game.getFirstEntity(getMyTurn());
 

@@ -1740,9 +1740,10 @@ public class Compute {
             }
 
             // front leg-mounted weapons have addidional trouble
-            if ((weapon.getLocation() == Mech.LOC_RARM)
-                || (weapon.getLocation() == Mech.LOC_LARM)) {
-                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM
+            if ((weapon.getLocation() == Mech.LOC_RARM) || (weapon.getSecondLocation() == Mech.LOC_RARM)
+                || (weapon.getLocation() == Mech.LOC_LARM || (weapon.getSecondLocation() == Mech.LOC_LARM))) {
+                int otherArm = (weapon.getLocation() == Mech.LOC_RARM
+                		|| weapon.getSecondLocation() == Mech.LOC_RARM)? Mech.LOC_LARM
                                                                      : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker,
@@ -1781,15 +1782,16 @@ public class Compute {
             }
 
             // arm-mounted weapons have addidional trouble
-            if ((weapon.getLocation() == Mech.LOC_RARM)
-                || (weapon.getLocation() == Mech.LOC_LARM)) {
-                if (l3ProneFiringArm == weapon.getLocation()) {
+            if ((weapon.getLocation() == Mech.LOC_RARM) || (weapon.getSecondLocation() == Mech.LOC_RARM)
+                || (weapon.getLocation() == Mech.LOC_LARM) || (weapon.getSecondLocation() == Mech.LOC_LARM)) {
+                if (l3ProneFiringArm == weapon.getLocation() || l3ProneFiringArm == weapon.getSecondLocation()) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
                                          "Prone and propping up with this arm.");
                 }
 
-                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM
-                                                                     : Mech.LOC_RARM;
+                int otherArm = (weapon.getLocation() == Mech.LOC_RARM
+                		|| weapon.getSecondLocation() == Mech.LOC_RARM)? Mech.LOC_LARM
+                														: Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker,
                                                    otherArm)) {

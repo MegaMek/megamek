@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -930,41 +931,50 @@ public class Infantry extends Entity {
         //Squad Cost with just the weapons.
         cost = (primarySquad * pweaponCost) + (secondSquad * sweaponCost);
         
-        
-        //add in infantry armor cost
-        if(damageDivisor > 1) {
-            if(isArmorEncumbering()) {
-                armorcost += 1600;
-            } else {
-                armorcost += 4300;
-            }
-        }
-        int nSneak = 0;
-        if(hasSneakCamo()) {
-            nSneak++;
-        }
-        if(hasSneakECM()) {
-            nSneak++;
-        }
-        if(hasSneakIR()) {
-            nSneak++;
-        }
-
-        if(hasDEST()) {
-            armorcost += 50000;
-        }
-        else if(nSneak == 1) {
-            armorcost += 7000;
-        }
-        else if(nSneak == 2) {
-            armorcost += 21000;
-        }
-        else if(nSneak == 3) {
-            armorcost += 28000;
-        }
-
-        if(hasSpaceSuit()) {
-            armorcost += 5000;
+        /* Check whether the unit has an armor kit. If not, calculate value for custom
+         * armor settings.
+         */
+        Optional<Mounted> armor = getEquipment().stream()
+        		.filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+        		.findFirst();
+        if (armor.isPresent()) {
+        	armorcost = armor.get().getType().getCost(this, false, LOC_INFANTRY);
+        } else {
+	        //add in infantry armor cost
+	        if(damageDivisor > 1) {
+	            if(isArmorEncumbering()) {
+	                armorcost += 1600;
+	            } else {
+	                armorcost += 4300;
+	            }
+	        }
+	        int nSneak = 0;
+	        if(hasSneakCamo()) {
+	            nSneak++;
+	        }
+	        if(hasSneakECM()) {
+	            nSneak++;
+	        }
+	        if(hasSneakIR()) {
+	            nSneak++;
+	        }
+	
+	        if(hasDEST()) {
+	            armorcost += 50000;
+	        }
+	        else if(nSneak == 1) {
+	            armorcost += 7000;
+	        }
+	        else if(nSneak == 2) {
+	            armorcost += 21000;
+	        }
+	        else if(nSneak == 3) {
+	            armorcost += 28000;
+	        }
+	
+	        if(hasSpaceSuit()) {
+	            armorcost += 5000;
+	        }
         }
         
         //Cost of armor on a per man basis added
@@ -1028,6 +1038,14 @@ public class Infantry extends Entity {
             cost += secondW.getCost(this, false, -1) * secondn;
         }
         cost = cost / squadsize;
+
+        Optional<Mounted> armor = getEquipment().stream()
+        		.filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+        		.findFirst();
+        if (armor.isPresent()) {
+        	cost += armor.get().getType().getCost(this, false, LOC_INFANTRY);
+        }
+        
         //Add in motive type costs
         switch (getMovementMode()){
             case INF_UMU:

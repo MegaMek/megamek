@@ -37,7 +37,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Box;
@@ -258,7 +260,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> targetingPhaseCommands;
     
     private JComboBox<String> tileSetChoice;
-    private File[] tileSets;
+    private List<File> tileSets;
 
     /**
      * A Map that maps command strings to a JTextField for updating the modifier
@@ -755,16 +757,25 @@ public class CommonSettingsDialog extends ClientDialog implements
         entityOwnerColor.setSelected(gs.getEntityOwnerLabelColor());
 
 
-        File dir = new File("data" + File.separator + "images" + File.separator
-                + "hexes" + File.separator);
-        tileSets = dir.listFiles(new FilenameFilter() {
+        File dir = Configuration.hexesDir();
+        tileSets = new ArrayList<>(Arrays.asList(dir.listFiles(new FilenameFilter() {
+            public boolean accept(File direc, String name) {
+                return name.endsWith(".tileset");
+            }
+        })));
+        dir = new File(Configuration.userdataDir(),
+                Configuration.hexesDir().toString());
+        File[] userDataTilesets = dir.listFiles(new FilenameFilter() {
             public boolean accept(File direc, String name) {
                 return name.endsWith(".tileset");
             }
         });
+        if (userDataTilesets != null) {
+            tileSets.addAll(Arrays.asList(userDataTilesets));
+        }
         tileSetChoice.removeAllItems();
-        for (int i = 0; i < tileSets.length; i++) {
-            String name = tileSets[i].getName();
+        for (int i = 0; (tileSets != null) && i < tileSets.size(); i++) {
+            String name = tileSets.get(i).getName();
             tileSetChoice.addItem(name.substring(0, name.length() - 8));
             if (name.equals(cs.getMapTileset())) {
                 tileSetChoice.setSelectedIndex(i);
@@ -772,18 +783,25 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         skinFiles.removeAllItems();
-        String[] xmlFiles = 
-            Configuration.skinsDir().list(new FilenameFilter() {
-                public boolean accept(File directory, String fileName) {
-                    return fileName.endsWith(".xml");
-                } 
-            });
-        if (xmlFiles != null) {
-            Arrays.sort(xmlFiles);
-            for (String file : xmlFiles) {
-                if (SkinXMLHandler.validSkinSpecFile(file)) {
-                    skinFiles.addItem(file);
-                }
+        List<String> xmlFiles = new ArrayList<>(Arrays
+                .asList(Configuration.skinsDir().list(new FilenameFilter() {
+                    public boolean accept(File directory, String fileName) {
+                        return fileName.endsWith(".xml");
+                    }
+                })));
+        String[] files = new File(Configuration.userdataDir(), Configuration.skinsDir().toString())
+                .list(new FilenameFilter() {
+                    public boolean accept(File directory, String fileName) {
+                        return fileName.endsWith(".xml");
+                    }
+                });
+        if (files != null) {
+            xmlFiles.addAll(Arrays.asList(files));
+        }
+        Collections.sort(xmlFiles);
+        for (String file : xmlFiles) {
+            if (SkinXMLHandler.validSkinSpecFile(file)) {
+                skinFiles.addItem(file);
             }
         }
         // Select the default file first
@@ -911,11 +929,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
-            if (!cs.getMapTileset().equals(tileSets[tileSetChoice.getSelectedIndex()]) &&
+            if (!cs.getMapTileset().equals(tileSets.get(tileSetChoice.getSelectedIndex())) &&
                     (clientgui != null) && (clientgui.bv != null))  {
                 clientgui.bv.clearShadowMap();
             }
-            cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
+            cs.setMapTileset(tileSets.get(tileSetChoice.getSelectedIndex())
                     .getName());
         }
 

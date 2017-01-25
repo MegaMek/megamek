@@ -33,4 +33,9 @@ public abstract class SubCapitalMissileWeapon extends AmmoWeapon {
         subCapital = true;
         flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL_MISSILE;
+    }
 }

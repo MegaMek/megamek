@@ -218,6 +218,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
+import megamek.common.util.MegaMekFile;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -3467,8 +3468,8 @@ public class Server implements Runnable {
                     || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
-                sheetBoards[i].load(new File(Configuration.boardsDir(), name
-                        + ".board"));
+                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
+                        + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
             rotateBoard.add(isRotated);
@@ -27745,9 +27746,9 @@ public class Server implements Runnable {
 
         String fileList[] = boardDir.list();
         for (String filename : fileList) {
-            File filepath = new File(boardDir, filename);
+            File filepath = new MegaMekFile(boardDir, filename).getFile();
             if (filepath.isDirectory()) {
-                scanForBoardsInDir(new File(boardDir, filename), basePath
+                scanForBoardsInDir(new MegaMekFile(boardDir, filename).getFile(), basePath
                         .concat(File.separator).concat(filename), dimensions,
                         boards);
             } else {
@@ -27818,6 +27819,10 @@ public class Server implements Runnable {
         if (boards_dir.isDirectory()) {
             getBoardSizesInDir(boards_dir, board_sizes);
         }
+        boards_dir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
+        if (boards_dir.isDirectory()) {
+            getBoardSizesInDir(boards_dir, board_sizes);
+        }
 
         return board_sizes;
     }
@@ -27843,6 +27848,11 @@ public class Server implements Runnable {
         ArrayList<String> tempList = new ArrayList<String>();
         Comparator<String> sortComp = StringUtil.stringComparator();
         scanForBoardsInDir(boardDir, "", dimensions, tempList);
+        // Check boards in userData dir
+        boardDir = new File(Configuration.userdataDir(), Configuration.boardsDir().toString());
+        if (boardDir.isDirectory()) {
+            scanForBoardsInDir(boardDir, "", dimensions, tempList);
+        }
         // if there are any boards, add these:
         if (tempList.size() > 0) {
             boards.add(MapSettings.BOARD_RANDOM);
@@ -28515,9 +28525,9 @@ public class Server implements Runnable {
 
             // Verify the entity's design
             if (Server.entityVerifier == null) {
-                Server.entityVerifier = EntityVerifier.getInstance(new File(
+                Server.entityVerifier = EntityVerifier.getInstance(new MegaMekFile(
                         Configuration.unitsDir(),
-                        EntityVerifier.CONFIG_FILENAME));
+                        EntityVerifier.CONFIG_FILENAME).getFile());
             }
 
             // Create a TestEntity instance for supported unit types

@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -76,5 +77,13 @@ public class CLPlasmaCannon extends AmmoWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new PlasmaCannonHandler(toHit, waa, game, server);
+    }
+
+    @Override
+    public int getBattleForceHeatDamage(int range) {
+        if (range <= BattleForceElement.LONG_RANGE) {
+            return 7;
+        }
+        return 0;
     }
 }

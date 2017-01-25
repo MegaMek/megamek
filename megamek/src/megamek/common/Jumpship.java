@@ -1090,8 +1090,8 @@ public class Jumpship extends Aero {
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
 
-        // accumulate some more thrust
-        // We assume that thrust will be accumulated. If this is proven wrong by
+        // accumulate some more 
+        // We assume that  will be accumulated. If this is proven wrong by
         // the movement
         // then we make the proper adjustments in server#processMovement
         // until I hear from Welshman, I am assuming that you cannot "hold back"
@@ -1168,6 +1168,11 @@ public class Jumpship extends Aero {
     public boolean usesWeaponBays() {
         return true;
     }
+    
+    @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        moves.put("k", (int)(getStationKeepingThrust() * 10));
+    }
 
     @Override
     public int getBattleForceSize() {
@@ -1185,7 +1190,68 @@ public class Jumpship extends Aero {
     public int getBattleForceStructurePoints() {
         return 1;
     }
+    
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 4;
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        // Remove leading F from FLS and FRS
+        String retVal = getLocationAbbrs()[index];
+        if (retVal.substring(0, 1).equals("F")) {
+            return retVal.substring(1);
+        }
+        return retVal;
+    }
 
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        switch (index) {
+        case LOC_NOSE:
+            if (location == LOC_NOSE) {
+                return 1.0;
+            }
+            if (isSpheroid() && (location == LOC_FLS || location == LOC_FRS)
+                    && !rearMounted) {
+                return 0.5;
+            }
+            break;
+        case LOC_FRS:
+            if (location == LOC_FRS || location == LOC_ARS) {
+                return 0.5;
+            }
+            break;
+        case LOC_FLS:
+            if (location == LOC_FLS || location == LOC_ALS) {
+                return 0.5;
+            }
+            break;
+        case LOC_AFT:
+            if (location == LOC_AFT) {
+                return 1.0;
+            }
+            if (location == LOC_ALS || location == LOC_ARS) {
+                return 0.5;
+            }
+            break;
+        }
+        return 0;
+    }
+    
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.KF, null);
+        if (hasLF()) {
+            specialAbilities.put(BattleForceSPA.LF, null);
+        }        
+        if (getNCrew() >= 60) {
+            specialAbilities.put(BattleForceSPA.CRW, (int)Math.round(getNCrew() / 120.0));
+        }
+    }
+    
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;

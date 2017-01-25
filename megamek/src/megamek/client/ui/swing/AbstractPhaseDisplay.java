@@ -55,6 +55,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
+import megamek.common.util.MegaMekFile;
 
 public abstract class AbstractPhaseDisplay extends JPanel implements 
         BoardViewListener, GameListener, Distractable {
@@ -86,8 +87,8 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
 
         try {
             if (pdSkinSpec.backgrounds.size() > 0){
-                File file = new File(Configuration.widgetsDir(), 
-                        pdSkinSpec.backgrounds.get(0));
+                File file = new MegaMekFile(Configuration.widgetsDir(), 
+                        pdSkinSpec.backgrounds.get(0)).getFile();
                 URI imgURL = file.toURI();
                 if (!file.exists()){
                     System.err.println("PhaseDisplay Error: icon doesn't exist: "

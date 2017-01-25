@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
@@ -55,5 +56,16 @@ public abstract class ATMWeapon extends MissileWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new ATMHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = super.getBattleForceDamage(range);
+        if (range < BattleForceElement.MEDIUM_RANGE) {
+            damage *= 3;
+        } else if (range < BattleForceElement.LONG_RANGE) {
+            damage *= 2;
+        }
+        return damage;
     }
 }

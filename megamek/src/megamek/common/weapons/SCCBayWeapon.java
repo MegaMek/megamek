@@ -49,4 +49,9 @@ public class SCCBayWeapon extends AmmoBayWeapon {
         this.capital = true;
         this.subCapital = true;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_SUBCAPITAL;
+    }
 }

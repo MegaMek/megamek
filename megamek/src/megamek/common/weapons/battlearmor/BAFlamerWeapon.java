@@ -18,6 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleForceElement;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -55,5 +56,12 @@ public abstract class BAFlamerWeapon extends Weapon {
             return new FlamerHeatHandler(toHit, waa, game, server);
         }
         return new FlamerHandler(toHit, waa, game, server);
+    }
+
+    public int getBattleForceHeatDamage(int range) {
+        if (range < BattleForceElement.MEDIUM_RANGE) {
+            return getDamage();
+        }
+        return 0;
     }
 }

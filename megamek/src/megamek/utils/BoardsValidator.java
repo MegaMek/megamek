@@ -13,7 +13,7 @@
  *  for more details.
  */
 
-package megamek.test;
+package megamek.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -76,7 +76,7 @@ public class BoardsValidator {
         java.io.InputStream is = new FileInputStream(boardFile);
         StringBuffer errBuff = new StringBuffer();
         Board b = new Board();
-        b.load(is, errBuff);
+        b.load(is, errBuff, false);
         if (errBuff.length() > 0) {
             System.out.println("Found Invalid Board! Board: " + boardFile);
             System.out.println(errBuff);

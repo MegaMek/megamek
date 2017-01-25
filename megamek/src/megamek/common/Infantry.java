@@ -1253,14 +1253,24 @@ public class Infantry extends Entity {
         return 0;
     }
     
+    public EquipmentType getArmorKit() {
+    	Optional<Mounted> kit = getEquipment().stream()
+    			.filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+    			.findFirst();
+    	if (kit.isPresent()) {
+    		return kit.get().getType();
+    	} else {
+    		return null;
+    	}
+    }
+    
     public void setArmorKit(EquipmentType armorKit) {
-    	List<EquipmentType> toRemove = getEquipment().stream()
-    			.map(Mounted::getType)
-    			.filter(e -> e.hasFlag(MiscType.F_ARMOR_KIT))
+    	List<Mounted> toRemove = getEquipment().stream()
+    			.filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
     			.collect(Collectors.toList());
     	getEquipment().removeAll(toRemove);
     	getMisc().removeAll(toRemove);
-    	if (armorKit == null || armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
+    	if (armorKit != null && armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
     		try {
     			addEquipment(armorKit, LOC_INFANTRY);
     		} catch (LocationFullException ex) {

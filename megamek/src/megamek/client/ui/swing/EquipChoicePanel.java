@@ -21,6 +21,7 @@ import java.awt.event.ItemListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -1310,6 +1311,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     Messages.getString("CustomMechDialog.labSneakECM"));
             JLabel labSpec = new JLabel(
                     Messages.getString("CustomMechDialog.labInfSpec"));
+            private JComboBox<String> cbArmorKit = new JComboBox<>();
             private JTextField fldDivisor = new JTextField(3);
             JCheckBox chEncumber = new JCheckBox();
             JCheckBox chSpaceSuit = new JCheckBox();
@@ -1319,6 +1321,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             JCheckBox chSneakECM = new JCheckBox();
             List<JCheckBox> chSpecs = new ArrayList<>(
                     Infantry.NUM_SPECIALIZATIONS);
+            
+            List<EquipmentType> armorKits = new ArrayList<>();
 
             InfantryArmorPanel() {
                 for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
@@ -1328,10 +1332,19 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     newSpec.setToolTipText(Infantry.getSpecializationTooltip(spec));
                     chSpecs.add(newSpec);
                 }
+                
+                for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
+                	final EquipmentType et = e.nextElement();
+                	if (et.hasFlag(MiscType.F_ARMOR_KIT)) {
+                		armorKits.add(et);
+                	}
+                }
+                Collections.sort(armorKits, (et1, et2) -> et1.getName().compareTo(et2.getName()));
 
                 GridBagLayout g = new GridBagLayout();
                 setLayout(g);
-                add(labArmor, GBC.eol());
+                add(labArmor, GBC.std());
+                add(cbArmorKit, GBC.eol());
                 add(labDivisor, GBC.std());
                 add(fldDivisor, GBC.eol());
                 add(labEncumber, GBC.std());
@@ -1355,6 +1368,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             public void initialize() {
                 inf = (Infantry) entity;
+                cbArmorKit.addItem(Messages.getString("CustomMechDialog.Custom"));
+                armorKits.forEach(k -> cbArmorKit.addItem(k.getName()));
+                EquipmentType kit = inf.getArmorKit();
+                if (kit == null) {
+                	cbArmorKit.setSelectedIndex(0);
+                } else {
+                	cbArmorKit.setSelectedIndex(armorKits.indexOf(kit) + 1);
+                }
                 fldDivisor.setText(Double.toString(inf.getDamageDivisor()));
                 chEncumber.setSelected(inf.isArmorEncumbering());
                 chSpaceSuit.setSelected(inf.hasSpaceSuit());
@@ -1362,42 +1383,60 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 chSneakCamo.setSelected(inf.hasSneakCamo());
                 chSneakIR.setSelected(inf.hasSneakIR());
                 chSneakECM.setSelected(inf.hasSneakECM());
-                if (chDEST.isSelected()) {
-                    chSneakCamo.setEnabled(false);
-                    chSneakIR.setEnabled(false);
-                    chSneakECM.setEnabled(false);
-                }
-                chDEST.addItemListener(new ItemListener() {
-                    public void itemStateChanged(ItemEvent event) {
-                        if (event.getStateChange() == ItemEvent.SELECTED) {
-                            chSneakCamo.setSelected(false);
-                            chSneakCamo.setEnabled(false);
-                            chSneakIR.setSelected(false);
-                            chSneakIR.setEnabled(false);
-                            chSneakECM.setSelected(false);
-                            chSneakECM.setEnabled(false);
-                        } else if (event.getStateChange() == ItemEvent.DESELECTED) {
-                            chSneakCamo.setEnabled(true);
-                            chSneakIR.setEnabled(true);
-                            chSneakECM.setEnabled(true);
-                        }
-                    }
+                armorStateChanged();
+                cbArmorKit.addActionListener(e -> {
+	                armorStateChanged();
+                	updateArmorValues();
                 });
+                chDEST.addItemListener(e -> armorStateChanged());
 
                 for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
                     int spec = 1 << i;
                     chSpecs.get(i).setSelected(inf.hasSpecialization(spec));
                 }
             }
+            
+            public void armorStateChanged() {
+            	fldDivisor.setEnabled(cbArmorKit.getSelectedIndex() == 0);
+            	chEncumber.setEnabled(cbArmorKit.getSelectedIndex() == 0);
+            	chSpaceSuit.setEnabled(cbArmorKit.getSelectedIndex() == 0);
+            	chDEST.setEnabled(cbArmorKit.getSelectedIndex() == 0);
+            	chSneakCamo.setEnabled(cbArmorKit.getSelectedIndex() == 0
+            			&& !chDEST.isSelected());
+            	chSneakIR.setEnabled(cbArmorKit.getSelectedIndex() == 0
+            			&& !chDEST.isSelected());
+            	chSneakECM.setEnabled(cbArmorKit.getSelectedIndex() == 0
+            			&& !chDEST.isSelected());
+            }
+
+            public void updateArmorValues() {
+            	if (cbArmorKit.getSelectedIndex() > 0) {
+            		EquipmentType kit = armorKits.get(cbArmorKit.getSelectedIndex() - 1);
+            		fldDivisor.setText(Double.toString(((MiscType)kit).getDamageDivisor()));
+            		chEncumber.setSelected((kit.getSubType() & MiscType.S_ENCUMBERING) != 0);
+            		chSpaceSuit.setSelected((kit.getSubType() & MiscType.S_SPACE_SUIT) != 0);
+            		chDEST.setSelected((kit.getSubType() & MiscType.S_DEST) != 0);
+            		chSneakCamo.setSelected((kit.getSubType() & MiscType.S_SNEAK_CAMO) != 0);
+            		chSneakIR.setSelected((kit.getSubType() & MiscType.S_SNEAK_IR) != 0);
+            		chSneakECM.setSelected((kit.getSubType() & MiscType.S_SNEAK_ECM) != 0);
+            	}
+            }
 
             public void applyChoice() {
-                inf.setDamageDivisor(Double.valueOf(fldDivisor.getText()));
-                inf.setArmorEncumbering(chEncumber.isSelected());
-                inf.setSpaceSuit(chSpaceSuit.isSelected());
-                inf.setDEST(chDEST.isSelected());
-                inf.setSneakCamo(chSneakCamo.isSelected());
-                inf.setSneakIR(chSneakIR.isSelected());
-                inf.setSneakECM(chSneakECM.isSelected());
+            	if (cbArmorKit.getSelectedIndex() > 0) {
+            		inf.setArmorKit(armorKits.get(cbArmorKit.getSelectedIndex() - 1));
+            	} else {
+            		inf.setArmorKit(null);
+	                inf.setDamageDivisor(Double.valueOf(fldDivisor.getText()));
+	                inf.setArmorEncumbering(chEncumber.isSelected());
+	                inf.setSpaceSuit(chSpaceSuit.isSelected());
+	                inf.setDEST(chDEST.isSelected());
+	                if (!chDEST.isSelected()) {
+		                inf.setSneakCamo(chSneakCamo.isSelected());
+		                inf.setSneakIR(chSneakIR.isSelected());
+		                inf.setSneakECM(chSneakECM.isSelected());
+	                }
+            	}
                 int spec = 0;
                 for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
                     if (chSpecs.get(i).isSelected()) {
@@ -1409,13 +1448,18 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             @Override
             public void setEnabled(boolean enabled) {
-                fldDivisor.setEnabled(enabled);
-                chEncumber.setEnabled(enabled);
-                chSpaceSuit.setEnabled(enabled);
-                chDEST.setEnabled(enabled);
-                chSneakCamo.setEnabled(enabled);
-                chSneakIR.setEnabled(enabled);
-                chSneakECM.setEnabled(enabled);
+            	cbArmorKit.setEnabled(enabled);
+            	if (enabled) {
+            		armorStateChanged();
+            	} else {
+	                fldDivisor.setEnabled(enabled);
+	                chEncumber.setEnabled(enabled);
+	                chSpaceSuit.setEnabled(enabled);
+	                chDEST.setEnabled(enabled);
+	                chSneakCamo.setEnabled(enabled);
+	                chSneakIR.setEnabled(enabled);
+	                chSneakECM.setEnabled(enabled);
+            	}
                 for (JCheckBox spec : chSpecs) {
                     spec.setEnabled(enabled);
                 }

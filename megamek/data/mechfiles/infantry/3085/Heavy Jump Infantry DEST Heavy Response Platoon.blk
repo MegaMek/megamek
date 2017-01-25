@@ -30,6 +30,9 @@ Infantry Semi-Portable PPC
 <secondn>
 1
 </secondn>
+<armorKit>
+DESTSuit
+</armorKit>
 <type>
 IS Level 3
 </type>
@@ -42,6 +45,3 @@ TRO 3085
 <motion_type>
 Jump
 </motion_type>
-
-<dest>
-</dest>

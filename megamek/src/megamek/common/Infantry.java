@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
@@ -105,6 +106,7 @@ public class Infantry extends Entity {
     /**
      * Infantry armor
      */
+
     private double damageDivisor = 1.0;
     private boolean encumbering = false;
     private boolean spaceSuit = false;
@@ -1232,7 +1234,30 @@ public class Infantry extends Entity {
     public int getTotalCommGearTons() {
         return 0;
     }
-
+    
+    public void setArmorKit(EquipmentType armorKit) {
+    	if (armorKit.hasFlag(MiscType.F_ARMOR_KIT)) {
+    		List<EquipmentType> toRemove = getEquipment().stream()
+    				.map(Mounted::getType)
+    				.filter(e -> e.hasFlag(MiscType.F_ARMOR_KIT))
+    				.collect(Collectors.toList());
+    		getEquipment().removeAll(toRemove);
+    		getMisc().removeAll(toRemove);
+    		try {
+    			addEquipment(armorKit, LOC_INFANTRY);
+    		} catch (LocationFullException ex) {
+    			ex.printStackTrace();
+    		}
+    		damageDivisor = ((MiscType)armorKit).getDamageDivisor();
+    		encumbering = (armorKit.getSubType() & MiscType.S_ENCUMBERING) != 0;
+    		spaceSuit = (armorKit.getSubType() & MiscType.S_SPACE_SUIT) != 0;
+    		dest = (armorKit.getSubType() & MiscType.S_DEST) != 0;
+    		sneak_camo = (armorKit.getSubType() & MiscType.S_SNEAK_CAMO) != 0;
+    		sneak_ir = (armorKit.getSubType() & MiscType.S_SNEAK_IR) != 0;
+    		sneak_ecm = (armorKit.getSubType() & MiscType.S_SNEAK_ECM) != 0;
+    	}
+    }
+    
     public double getDamageDivisor() {
         return damageDivisor;
     }

@@ -30,9 +30,9 @@ InfantryBearhunter
 <secondn>
 1
 </secondn>
-<InfantryArmor>
-2
-</InfantryArmor>
+<armorKit>
+ClanKit
+</armorKit>
 <type>
 Clan Level 3
 </type>

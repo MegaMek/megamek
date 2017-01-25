@@ -31,6 +31,7 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.Infantry;
 import megamek.common.LocationFullException;
+import megamek.common.MiscType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -127,6 +128,15 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             } catch (LocationFullException ex) {
                 throw new EntityLoadingException(ex.getMessage());
             }
+        }
+        
+        if (dataFile.exists("armorKit")) {
+            String kitName = dataFile.getDataAsString("armorKit")[0];
+            EquipmentType kit = EquipmentType.get(kitName);
+            if ((null == kit) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
+                throw new EntityLoadingException(kitName + " is not an infantry armor kit");
+            }
+            t.setArmorKit(kit);
         }
 
         if (dataFile.exists("dest")) {

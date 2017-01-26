@@ -120,6 +120,13 @@ public class Infantry extends Entity {
      * Stores which infantry specializations are active.
      */
     private int infSpecs = 0;
+    
+    /**
+     * For mechanized VTOL infantry, stores whether the platoon are microlite troops,
+     * which need to enter a hex every turn to remain in flight.
+     */
+    
+    private boolean microlite = false;
 
     /**
      * The location for infantry equipment.
@@ -324,6 +331,8 @@ public class Infantry extends Entity {
                 && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
                 && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
+            mp = Math.max(mp - 1, 0);
+        } else if (movementMode.equals(EntityMovementMode.VTOL) && getSecondaryN() > 0) {
             mp = Math.max(mp - 1, 0);
         }
         if (gravity) {
@@ -1008,6 +1017,9 @@ public class Infantry extends Entity {
             case TRACKED:
                 multiplier *= 3.2;
                 break;
+            case VTOL:
+                multiplier *= hasMicrolite()? 4 : 4.5;
+                break;
             default:
                 break;
         }
@@ -1236,12 +1248,10 @@ public class Infantry extends Entity {
     }
 
     public boolean isMechanized() {
-        if ((getMovementMode() == EntityMovementMode.WHEELED) ||
+        return (getMovementMode() == EntityMovementMode.WHEELED) ||
                 (getMovementMode() == EntityMovementMode.HOVER) ||
-                (getMovementMode() == EntityMovementMode.TRACKED)) {
-            return true;
-        }
-        return false;
+                (getMovementMode() == EntityMovementMode.TRACKED) ||
+                (getMovementMode() == EntityMovementMode.VTOL);
     }
 
     /*
@@ -1511,6 +1521,14 @@ public class Infantry extends Entity {
     public boolean isStealthy() {
        return  dest || sneak_camo || sneak_ir || sneak_ecm;
     }
+    
+    public boolean hasMicrolite() {
+    	return microlite;
+    }
+    
+    public void setMicrolite(boolean microlite) {
+    	this.microlite = microlite;
+    }
 
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryW = w;
@@ -1597,6 +1615,14 @@ public class Infantry extends Entity {
                 case WHEELED:
                     setOriginalWalkMP(4);
                     break;
+                case VTOL:
+                	if (hasMicrolite()) {
+                    	setOriginalJumpMP(6);
+                	} else {
+                		setOriginalJumpMP(5);
+                	}
+                	setOriginalWalkMP(1);
+                	break;
                 case INF_JUMP:
                     //fall through to get the original Walk MP is deliberate
                     setOriginalJumpMP(3);
@@ -1626,6 +1652,9 @@ public class Infantry extends Entity {
             case WHEELED:
                 ton = men * 1;
                 break;
+            case VTOL:
+            	ton = men * (hasMicrolite()? 1.4 : 1.9);
+            	break;
             case INF_JUMP:
                 ton = men * 0.165;
                 break;

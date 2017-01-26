@@ -82,6 +82,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
+        t.setMicrolite(sMotion.equalsIgnoreCase("microlite"));
         EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
         if (nMotion == EntityMovementMode.NONE) {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);

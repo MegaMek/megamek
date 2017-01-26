@@ -1017,6 +1017,9 @@ public class Infantry extends Entity {
             case TRACKED:
                 multiplier *= 3.2;
                 break;
+            case VTOL:
+                multiplier *= hasMicrolite()? 4 : 4.5;
+                break;
             default:
                 break;
         }
@@ -1245,12 +1248,10 @@ public class Infantry extends Entity {
     }
 
     public boolean isMechanized() {
-        if ((getMovementMode() == EntityMovementMode.WHEELED) ||
+        return (getMovementMode() == EntityMovementMode.WHEELED) ||
                 (getMovementMode() == EntityMovementMode.HOVER) ||
-                (getMovementMode() == EntityMovementMode.TRACKED)) {
-            return true;
-        }
-        return false;
+                (getMovementMode() == EntityMovementMode.TRACKED) ||
+                (getMovementMode() == EntityMovementMode.VTOL);
     }
 
     /*
@@ -1651,6 +1652,9 @@ public class Infantry extends Entity {
             case WHEELED:
                 ton = men * 1;
                 break;
+            case VTOL:
+            	ton = men * (hasMicrolite()? 1.4 : 1.9);
+            	break;
             case INF_JUMP:
                 ton = men * 0.165;
                 break;

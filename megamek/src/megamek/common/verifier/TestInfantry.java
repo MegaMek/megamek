@@ -20,6 +20,7 @@
 package megamek.common.verifier;
 
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
 
 
@@ -104,12 +105,59 @@ public class TestInfantry extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff) {
-        return false;
+        return correctEntity(buff, getEntity().getTechLevel());
     }
 
     @Override
     public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
-        return false;
+    	Infantry inf = (Infantry)getEntity();
+    	boolean correct = true;
+    	if (skip()) {
+    		return true;
+    	}
+    	
+    	if (inf.getSecondaryN() > 2) {
+            buff.append("Number of secondary weapons exceeds maximum of 2").append("\n\n");
+            correct = false;
+    	}
+    	if (inf.getMovementMode() == EntityMovementMode.VTOL) {
+    		if (inf.getSecondaryN() > 1) {
+                buff.append("Number of secondary weapons exceeds maximum of 1").append("\n\n");
+                correct = false;
+    		} else if (inf.hasMicrolite() && inf.getSecondaryN() > 0) {
+                buff.append("Microlite VTOL units cannot use secondary weapons.").append("\n\n");
+                correct = false;
+    		}
+    	}
+    	
+    	if (inf.getSecondaryWeapon().getCrew() * inf.getSecondaryN() > inf.getSquadSize()) {
+            buff.append("Secondary weapon crew requirement exceeds squad size.").append("\n\n");
+            correct = false;
+    	}
+
+    	if (inf.getMovementMode() == EntityMovementMode.HOVER
+    			&& inf.getSquadSize() > 5) {
+            buff.append("Maximum squad size for Mechanized/Hover is 5.\n\n");
+            correct = false;
+    	} else if (inf.getMovementMode() == EntityMovementMode.TRACKED
+    			&& inf.getSquadSize() > 7) {
+            buff.append("Maximum squad size for Mechanized/Tracked is 7.\n\n");
+            correct = false;
+    	} else if (inf.getMovementMode() == EntityMovementMode.WHEELED
+    			&& inf.getSquadSize() > 6) {
+            buff.append("Maximum squad size for Mechanized/Wheeled is 6.\n\n");
+            correct = false;
+    	} else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
+    		if (inf.hasMicrolite() && inf.getSquadSize() != 2) {
+                buff.append("Microlite VTOL squad size is 2.\n\n");
+                correct = false;
+    		} else if (!inf.hasMicrolite() && inf.getSquadSize() != 4) {
+                buff.append("Micro-copter VTOL squad size is 4.\n\n");
+                correct = false;
+    		}
+    	}
+
+        return correct;
     }
 
     @Override

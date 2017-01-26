@@ -20,8 +20,6 @@
 
 package megamek.common;
 
-import java.util.Arrays;
-
 /**
  * Contains some constants representing equipment/unit tech levels
  *
@@ -236,8 +234,7 @@ public class TechConstants {
      */
     public static int getGameTechLevel(IGame game, boolean isClan) {
         // Get the integer simple level based on the string game option
-        int simpleTechLvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES, game
-                .getOptions().stringOption("techlevel")); //$NON-NLS-1$
+        int simpleTechLvl = getSimpleLevel(game);
         // Arrays.binarySearch could return -1 if string isn't found
         simpleTechLvl = Math.max(0, simpleTechLvl);
         // Convert to TL+tech type
@@ -272,7 +269,8 @@ public class TechConstants {
     public static boolean isLegal(int entityTechlevel, int equipmentTechlevel,
             boolean ignoreUnknown, boolean mixed) {
         // If it's allowed to all, ALWAYS return true.
-        if (equipmentTechlevel == T_ALLOWED_ALL) {
+        if (equipmentTechlevel == T_ALLOWED_ALL
+        		|| equipmentTechlevel == T_ALL) {
             return true;
         }
 

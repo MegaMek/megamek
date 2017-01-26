@@ -26,7 +26,7 @@ public enum EntityMovementMode {
     TRACKED ("tracked"),
     WHEELED ("wheeled"),
     HOVER ("hover"),
-    VTOL ("vtol", "microcopter"),
+    VTOL ("vtol", "microcopter", "micro-copter", "microlite"),
     NAVAL ("naval"),
     HYDROFOIL ("hydrofoil"),
     SUBMARINE ("submarine"),

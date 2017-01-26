@@ -120,6 +120,13 @@ public class Infantry extends Entity {
      * Stores which infantry specializations are active.
      */
     private int infSpecs = 0;
+    
+    /**
+     * For mechanized VTOL infantry, stores whether the platoon are microlite troops,
+     * which need to enter a hex every turn to remain in flight.
+     */
+    
+    private boolean microlite = false;
 
     /**
      * The location for infantry equipment.
@@ -1513,6 +1520,14 @@ public class Infantry extends Entity {
     public boolean isStealthy() {
        return  dest || sneak_camo || sneak_ir || sneak_ecm;
     }
+    
+    public boolean hasMicrolite() {
+    	return microlite;
+    }
+    
+    public void setMicrolite(boolean microlite) {
+    	this.microlite = microlite;
+    }
 
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryW = w;
@@ -1600,7 +1615,11 @@ public class Infantry extends Entity {
                     setOriginalWalkMP(4);
                     break;
                 case VTOL:
-                	setOriginalJumpMP(5);
+                	if (hasMicrolite()) {
+                    	setOriginalJumpMP(6);
+                	} else {
+                		setOriginalJumpMP(5);
+                	}
                 	setOriginalWalkMP(1);
                 	break;
                 case INF_JUMP:

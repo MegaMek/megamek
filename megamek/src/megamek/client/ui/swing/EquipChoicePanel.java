@@ -1333,14 +1333,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     chSpecs.add(newSpec);
                 }
                 
-                for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
-                	final EquipmentType et = e.nextElement();
-                	if (et.hasFlag(MiscType.F_ARMOR_KIT)) {
-                		armorKits.add(et);
-                	}
-                }
-                Collections.sort(armorKits, (et1, et2) -> et1.getName().compareTo(et2.getName()));
-
                 GridBagLayout g = new GridBagLayout();
                 setLayout(g);
                 add(labArmor, GBC.std());
@@ -1368,6 +1360,21 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
             public void initialize() {
                 inf = (Infantry) entity;
+                
+                int gameTechLevel = TechConstants.getGameTechLevel(client.getGame(),
+                		entity.isClan());
+                int year = client.getGame().getOptions().intOption("year");
+                for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
+                	final EquipmentType et = e.nextElement();
+                	if (et.hasFlag(MiscType.F_ARMOR_KIT)
+                			&& et.isAvailableIn(year)
+                			&& TechConstants.isLegal(gameTechLevel,
+                					et.getTechLevel(year), entity.isMixedTech())) {
+                		armorKits.add(et);
+                	}
+                }
+                Collections.sort(armorKits, (et1, et2) -> et1.getName().compareTo(et2.getName()));
+
                 cbArmorKit.addItem(Messages.getString("CustomMechDialog.Custom"));
                 armorKits.forEach(k -> cbArmorKit.addItem(k.getName()));
                 EquipmentType kit = inf.getArmorKit();

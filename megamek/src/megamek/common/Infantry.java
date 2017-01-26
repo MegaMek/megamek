@@ -325,6 +325,8 @@ public class Infantry extends Entity {
                 && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);
+        } else if (movementMode.equals(EntityMovementMode.VTOL) && getSecondaryN() > 0) {
+            mp = Math.max(mp - 1, 0);
         }
         if (gravity) {
             mp = applyGravityEffectsOnMP(mp);
@@ -1597,6 +1599,10 @@ public class Infantry extends Entity {
                 case WHEELED:
                     setOriginalWalkMP(4);
                     break;
+                case VTOL:
+                	setOriginalJumpMP(5);
+                	setOriginalWalkMP(1);
+                	break;
                 case INF_JUMP:
                     //fall through to get the original Walk MP is deliberate
                     setOriginalJumpMP(3);

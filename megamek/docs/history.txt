@@ -9,7 +9,7 @@ v0.43.0-git
 + Data: Sprite fixes and new Sprites.
 + Infantry armor kits.
 + Mechanized VTOL infantry.
-+ Infantry specialization: SCUBA. 
++ Infantry specializations: SCUBA, TAG. 
 
 v0.42.0 (2017-01-01 14:00 UTC)
 + Issue #441: Fled units not being saved at the end of the game

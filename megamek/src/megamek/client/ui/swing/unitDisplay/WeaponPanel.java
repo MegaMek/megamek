@@ -1413,7 +1413,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         wArcHeatR.setText(Integer.toString(entity.getHeatInArc(
                 mounted.getLocation(), mounted.isRearMounted())));
 
-        if (wtype instanceof InfantryWeapon) {
+        if (wtype instanceof InfantryWeapon && !wtype.hasFlag(WeaponType.F_TAG)) {
             wDamageTrooperL.setVisible(true);
             wDamageTrooperR.setVisible(true);
             InfantryWeapon inftype = (InfantryWeapon) wtype;

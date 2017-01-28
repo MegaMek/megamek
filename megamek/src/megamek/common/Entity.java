@@ -4277,7 +4277,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>boolean</code> if the entity has usable UMU crits.
      */
     public boolean hasUMU() {
-        if (!(this instanceof Mech) && !(this instanceof BattleArmor)) {
+        if (!(this instanceof Mech) && !(this instanceof Infantry)) {
             return false;
         }
 

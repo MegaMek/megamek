@@ -327,7 +327,8 @@ public class Infantry extends Entity {
     @Override
     public int getJumpMP(boolean gravity) {
         int mp = 0;
-        if (getMovementMode() != EntityMovementMode.INF_UMU) {
+        if (getMovementMode() != EntityMovementMode.INF_UMU
+        		&& getMovementMode() != EntityMovementMode.SUBMARINE) {
             mp = getOriginalJumpMP();
         }
         if ((getSecondaryN() > 1)

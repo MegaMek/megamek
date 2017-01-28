@@ -7,6 +7,9 @@ v0.43.0-git
 + Issue #427: Firing weapons split across arm/torso while prone
 + Data: Some unit fixes, and new maps from DancefloorLandmine
 + Data: Sprite fixes and new Sprites.
++ Infantry armor kits.
++ Mechanized VTOL infantry.
++ Infantry specialization: SCUBA. 
 
 v0.42.0 (2017-01-01 14:00 UTC)
 + Issue #441: Fled units not being saved at the end of the game

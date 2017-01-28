@@ -1222,7 +1222,9 @@ public class Compute {
         // to figure out range, so overwrite whatever we have at this point
         if (isWeaponInfantry) {
             mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist),
-                                                (InfantryWeapon) wtype);
+            		(InfantryWeapon) wtype,
+            		(ae instanceof Infantry)? ((Infantry)ae).getSecondaryWeapon() : null,
+            				weaponUnderwater);
 
             int rangeModifier = mods.getValue();
             if (rangeModifier == TargetRoll.AUTOMATIC_FAIL) {
@@ -1251,10 +1253,22 @@ public class Compute {
         return mods;
     }
 
-    public static ToHitData getInfantryRangeMods(int distance,
-                                                 InfantryWeapon wpn) {
+    /**
+     * Calculate the range modifiers for a conventional infantry attack.
+     * 
+     * @param distance - range to target
+     * @param wpn - the weapon used to calculate range -- secondary if 2/squad, otherwise primary
+     * @param secondary - the secondary weapon, if any. Range zero penalties apply even if primary is used for range
+     * @param underwater - underwater range is half, rounded down
+     * @return - all modifiers for range
+     */
+    public static ToHitData getInfantryRangeMods(int distance, InfantryWeapon wpn,
+    		InfantryWeapon secondary, boolean underwater) {
         ToHitData mods = new ToHitData();
         int range = wpn.getInfantryRange();
+        if (underwater) {
+        	range /= 2;
+        }
         int mod = 0;
 
         switch (range) {
@@ -1372,12 +1386,18 @@ public class Compute {
         }
 
         // a bunch of special conditions at range 0
+        // penalties due to point blank or encumbering apply for secondary weapon even if
+        // primary is used to determine range
         if (distance == 0) {
 
-            if (wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
+            if (wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)
+            		|| (secondary != null && secondary.hasFlag(WeaponType.F_INF_POINT_BLANK))) {
                 mods.addModifier(1, "point blank weapon");
             }
-            if (wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)) {
+            if (wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)
+            		|| (secondary != null
+            			&& (secondary.hasFlag(WeaponType.F_INF_ENCUMBER)
+            					|| secondary.getCrew() > 1))) {
                 mods.addModifier(1, "point blank support weapon");
             }
 

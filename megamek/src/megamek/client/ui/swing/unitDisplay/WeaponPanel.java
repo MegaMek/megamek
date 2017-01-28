@@ -1464,7 +1464,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             if (inftype.hasFlag(WeaponType.F_INF_BURST)) {
                 zeromods--;
             }
-            switch (inftype.getInfantryRange()) {
+            
+            int range = inftype.getInfantryRange();
+            if (entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET) {
+            	range /= 2;
+            }
+            switch (range) {
                 case 0:
                     wInfantryRange0L.setText("0");
                     wInfantryRange0R.setText("+" + zeromods);
@@ -1930,6 +1935,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             int iR = inftype.getInfantryRange();
             ranges[0] = 
                     new int[] { 0, iR, iR * 2, iR * 3, 0 };
+            ranges[1] =
+            		new int[] { 0, iR / 2, (iR / 2) * 2, (iR / 2) * 3, 0 }; 
         }
 
         // Artillery gets fixed ranges, 100 as an arbitrary

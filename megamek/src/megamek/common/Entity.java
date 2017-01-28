@@ -1743,6 +1743,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             	if (this instanceof Infantry && ((Infantry)this).hasSpecialization(Infantry.SCUBA)
             			&& hex.containsTerrain(Terrains.WATER)) {
             		minAlt = Math.max(hex.floor(), -2);
+            	} else {
+            		minAlt = hex.floor();
             	}
             	break;
             case SUBMARINE:            	
@@ -4292,10 +4294,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getActiveUMUCount() {
         int count = 0;
 
-        if ((this instanceof Infantry)
-            && (getMovementMode() == EntityMovementMode.INF_UMU)) {
-            // UMU MP for Infantry is stored in jumpMP
-            return jumpMP;
+        if (this instanceof Infantry) {
+            if ((getMovementMode() == EntityMovementMode.INF_UMU)
+            		|| (getMovementMode() == EntityMovementMode.SUBMARINE)) {
+	            // UMU MP for Infantry is stored in jumpMP
+	            return jumpMP;
+            }
         }
 
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {

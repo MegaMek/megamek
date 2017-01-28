@@ -330,9 +330,10 @@ public class Infantry extends Entity {
         if (getMovementMode() != EntityMovementMode.INF_UMU) {
             mp = getOriginalJumpMP();
         }
-        if((getSecondaryN() > 1)
+        if ((getSecondaryN() > 1)
                 && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
                 && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
+                && (getMovementMode() != EntityMovementMode.SUBMARINE)
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);
         } else if (movementMode.equals(EntityMovementMode.VTOL) && getSecondaryN() > 0) {
@@ -1257,6 +1258,7 @@ public class Infantry extends Entity {
         return (getMovementMode() == EntityMovementMode.WHEELED) ||
                 (getMovementMode() == EntityMovementMode.HOVER) ||
                 (getMovementMode() == EntityMovementMode.TRACKED) ||
+                (getMovementMode() == EntityMovementMode.SUBMARINE) ||
                 (getMovementMode() == EntityMovementMode.VTOL);
     }
 
@@ -1634,7 +1636,8 @@ public class Infantry extends Entity {
                     setOriginalWalkMP(4);
                     break;
                 case SUBMARINE:
-                    setOriginalWalkMP(3);
+                    setOriginalJumpMP(3);
+                    setOriginalWalkMP(0);
                 	setSpecializations(getSpecializations() | SCUBA);
                     break;
                 case VTOL:

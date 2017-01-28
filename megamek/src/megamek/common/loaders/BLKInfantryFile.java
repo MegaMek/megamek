@@ -87,7 +87,12 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         if (nMotion == EntityMovementMode.NONE) {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
-        t.setMovementMode(nMotion);
+        if (nMotion == EntityMovementMode.INF_UMU
+        		&& sMotion.toLowerCase().contains("motorized")) {
+        	t.setMotorizedScuba();
+        } else {
+        	t.setMovementMode(nMotion);
+        }
 
         // get primary and secondary weapons
         if (dataFile.exists("secondn")) {
@@ -147,6 +152,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             t.setSpecializations(Integer.valueOf(dataFile
                     .getDataAsString("specialization")[0]));
         }
+        
         if (dataFile.exists("encumberingarmor")) {
             t.setArmorEncumbering(true);
         }

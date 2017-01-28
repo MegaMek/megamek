@@ -326,7 +326,10 @@ public class Infantry extends Entity {
      */
     @Override
     public int getJumpMP(boolean gravity) {
-        int mp = getOriginalJumpMP();
+        int mp = 0;
+        if (getMovementMode() != EntityMovementMode.INF_UMU) {
+            mp = getOriginalJumpMP();
+        }
         if((getSecondaryN() > 1)
                 && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
                 && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
@@ -428,11 +431,12 @@ public class Infantry extends Entity {
                 return true;
             }
         }
-
+        
         if ((hex.terrainLevel(Terrains.WATER) > 0)
                 && !hex.containsTerrain(Terrains.ICE)) {
             if ((getMovementMode() == EntityMovementMode.HOVER)
                     || (getMovementMode() == EntityMovementMode.INF_UMU)
+                    || (getMovementMode() == EntityMovementMode.SUBMARINE)
                     || (getMovementMode() == EntityMovementMode.VTOL)) {
                 return false;
             }
@@ -1109,6 +1113,8 @@ public class Infantry extends Entity {
     public boolean doomedInSpace() {
         return true;
     }
+    
+    
     @Override
     public boolean canAssaultDrop() {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS);
@@ -1529,6 +1535,18 @@ public class Infantry extends Entity {
     public void setMicrolite(boolean microlite) {
     	this.microlite = microlite;
     }
+    
+    /**
+     * Used to check for standard or motorized SCUBA infantry, which have a maximum
+     * depth of 2.
+     * @return true if this is a conventional infantry unit with non-mechanized SCUBA specialization 
+     */
+    public boolean isNonMechSCUBA() {
+    	if (this instanceof BattleArmor) {
+    		return false;
+    	}
+    	return getMovementMode() == EntityMovementMode.INF_UMU;
+    }
 
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryW = w;
@@ -1615,6 +1633,10 @@ public class Infantry extends Entity {
                 case WHEELED:
                     setOriginalWalkMP(4);
                     break;
+                case SUBMARINE:
+                    setOriginalWalkMP(3);
+                	setSpecializations(getSpecializations() | SCUBA);
+                    break;
                 case VTOL:
                 	if (hasMicrolite()) {
                     	setOriginalJumpMP(6);
@@ -1622,6 +1644,11 @@ public class Infantry extends Entity {
                 		setOriginalJumpMP(5);
                 	}
                 	setOriginalWalkMP(1);
+                	break;
+                case INF_UMU:
+                	setOriginalJumpMP(1);
+                	setOriginalWalkMP(1);
+                	setSpecializations(getSpecializations() | SCUBA);
                 	break;
                 case INF_JUMP:
                     //fall through to get the original Walk MP is deliberate
@@ -1635,6 +1662,15 @@ public class Infantry extends Entity {
         }
     }
 
+    /**
+     * Standard and motorized SCUBA only differ in base movement, so they both use
+     * INF_UMU. If the motion_type contains the string "motorized",
+     * the movement is set here instead.
+     */
+    public void setMotorizedScuba() {
+    	setMovementMode(EntityMovementMode.INF_UMU);
+    	setOriginalJumpMP(2);
+    }
 
     public boolean canMakeAntiMekAttacks() {
         return !isMechanized();

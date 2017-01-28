@@ -32,6 +32,7 @@ import megamek.common.EquipmentType;
 import megamek.common.Infantry;
 import megamek.common.LocationFullException;
 import megamek.common.MiscType;
+import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -129,6 +130,15 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
                 throw new EntityLoadingException(ex.getMessage());
             }
         } else {
+            try {
+                t.addEquipment(ptype, Infantry.LOC_INFANTRY);
+            } catch (LocationFullException ex) {
+                throw new EntityLoadingException(ex.getMessage());
+            }
+        }
+        //TAG infantry have separate attacks for primary and secondary weapons.
+        if (null != stype && stype.hasFlag(WeaponType.F_TAG)) {
+        	t.setSpecializations(t.getSpecializations() | Infantry.TAG_TROOPS);
             try {
                 t.addEquipment(ptype, Infantry.LOC_INFANTRY);
             } catch (LocationFullException ex) {

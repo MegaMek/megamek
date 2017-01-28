@@ -434,6 +434,11 @@ public class Infantry extends Entity {
             }
         }
         
+        if (hex.terrainLevel(Terrains.WATER) <= 0
+        		&& getMovementMode() == EntityMovementMode.SUBMARINE) {
+        	return true;
+        }
+        
         if ((hex.terrainLevel(Terrains.WATER) > 0)
                 && !hex.containsTerrain(Terrains.ICE)) {
             if ((getMovementMode() == EntityMovementMode.HOVER)

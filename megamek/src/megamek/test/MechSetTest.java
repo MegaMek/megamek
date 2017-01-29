@@ -80,7 +80,11 @@ public class MechSetTest {
                 st.nextToken();
                 imageName = st.sval;
                 entryName = "entry: chassis " + name + " ";
-                testImageName(dir, imageName, entryName);
+                if (imageName == null) {
+                    System.out.println("Error with entry " + entryName + " : no image specified!");
+                } else {
+                    testImageName(dir, imageName, entryName);
+                }
             } else if ((st.ttype == StreamTokenizer.TT_WORD)
                     && st.sval.equalsIgnoreCase("exact")) { //$NON-NLS-1$
                 st.nextToken();

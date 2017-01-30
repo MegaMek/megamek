@@ -48,7 +48,7 @@ TRO 3085 - Civil War
 </squadn>
 
 <secondn>
-2
+4
 </secondn>
 
 <Primary>
@@ -66,4 +66,16 @@ Support Laser (Heavy)
 <armorKit>
 WobKit
 </armorKit>
+
+<augmentation>
+artificial_pain_shunt
+#prosthetic_arm_weapon(InfantryTKEnforcerAutopistol)
+#prosthetic_arm_magnet
+cyber_imp_audio
+cyber_imp_laser
+dermal_armor
+tsm_implant
+#explosive_suicide
+</augmentation>
+
 

@@ -217,7 +217,21 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         } else {
             t.setAntiMekSkill(Infantry.ANTI_MECH_SKILL_UNTRAINED);
         }
-
+        
+        /* Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the official
+         * unit description.
+         */
+        if (dataFile.exists("augmentation")) {
+        	String[] augmentations = dataFile.getDataAsString("augmentation");
+        	for (String aug : augmentations) {
+        		try {
+        			t.getCrew().getOptions().getOption(aug).setValue(true);
+        		} catch (NullPointerException ex) {
+        			throw new EntityLoadingException("Could not locate pilot option " + aug);
+        		}
+        	}
+        }
+        
         return t;
     }
 }

@@ -1311,7 +1311,7 @@ public class Infantry extends Entity {
     }
     
     public double getDamageDivisor() {
-        return damageDivisor;
+    	return damageDivisor;
     }
 
     public void setDamageDivisor(double d) {
@@ -1724,7 +1724,18 @@ public class Infantry extends Entity {
     }
     public String getArmorDesc() {
         StringBuffer sArmor = new StringBuffer();
-        sArmor.append(getDamageDivisor());
+        double divisor = getDamageDivisor();
+    	// TSM reduces divisor to 0.5 if no other armor is worn.
+    	if (getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+    		if (getArmorKit() == null) {
+    			divisor = 0.5;
+    		}
+    	}
+    	// Dermal armor adds one, cumulative with TSM (which gives a total of 1.5 if unarmored).
+    	if (getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+    		divisor++;
+    	}
+        sArmor.append(divisor);
         if(isArmorEncumbering()) {
             sArmor.append("E");
         }
@@ -1737,7 +1748,7 @@ public class Infantry extends Entity {
             sArmor.append(" (DEST) ");
         }
 
-        if(hasSneakCamo()) {
+        if(hasSneakCamo() || getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_CAMO_ARMOR)) {
             sArmor.append(" (Camo) ");
         }
 

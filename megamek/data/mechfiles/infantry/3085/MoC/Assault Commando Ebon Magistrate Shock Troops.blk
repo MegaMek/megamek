@@ -1,0 +1,65 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Assault Commando
+</Name>
+
+<Model>
+Ebon Magistrate Shock Troops
+</Model>
+
+<year>
+3145
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+TRO 3085
+</source>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+1
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Laser Rifle (Ebony Assault)
+</Primary>
+
+<Secondary>
+Plasma Rifle (Man-Portable)
+</Secondary>
+
+<antimek>
+8
+</antimek>
+

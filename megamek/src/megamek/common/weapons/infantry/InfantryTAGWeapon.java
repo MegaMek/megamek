@@ -41,7 +41,6 @@ public class InfantryTAGWeapon extends InfantryWeapon {
         		.andNot(F_TANK_WEAPON).andNot(F_BA_WEAPON).andNot(F_PROTO_WEAPON)
                 .or(F_TAG).or(F_NO_FIRES).or(F_INF_ENCUMBER);
 
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Infantry TAG";
         setInternalName("InfantryTAG");
         addLookupName("Infantry TAG");
@@ -51,12 +50,16 @@ public class InfantryTAGWeapon extends InfantryWeapon {
         longRange = 9;
         extremeRange = 12;
         cost = 40000;
-        introDate = 2600;
-        extinctDate = 2835;
-        reintroDate = 3037;
-        techLevel.put(2600, techLevel.get(3071));
-        availRating = new int[] { RATING_F, RATING_X, RATING_E };
-        techRating = RATING_E;
+    	introDate = 2585;
+    	extinctDate = 2835;
+    	reintroDate = 3037;
+    	techLevel.put(2585, TechConstants.T_IS_EXPERIMENTAL);
+    	techLevel.put(2600, TechConstants.T_IS_ADVANCED);
+    	techLevel.put(3037, TechConstants.T_IS_EXPERIMENTAL);
+    	techLevel.put(3047, TechConstants.T_IS_ADVANCED);
+    	availRating = new int[] { RATING_F,RATING_X ,RATING_E ,RATING_E};
+    	techRating = RATING_E;
+    	rulesRefs = "318, TO";;
 	}
 
     @Override

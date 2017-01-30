@@ -47,3 +47,7 @@ Tracked
 <history>
 Intro date is based on when the weapon becomes an Advanced weapon. Since MM can't make certain units unavailable when a weapon becomes extinct these units may become invalid.
 </history>
+
+<armorKit>
+GenericKit
+</armorKit>

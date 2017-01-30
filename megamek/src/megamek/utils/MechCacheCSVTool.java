@@ -14,7 +14,7 @@
  *  for more details.
  */
 
-package megamek.test;
+package megamek.utils;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;

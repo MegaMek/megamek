@@ -610,12 +610,15 @@ public class BoardEditor extends JComponent implements ItemListener,
         }
         curfile = fc.getSelectedFile();
         // load!
-        try {
-            InputStream is = new FileInputStream(fc.getSelectedFile());
+        try (InputStream is = new FileInputStream(fc.getSelectedFile())) {            
             // tell the board to load!
-            board.load(is);
-            // okay, done!
-            is.close();
+            StringBuffer errBuff = new StringBuffer();
+            board.load(is, errBuff, true);
+            if (errBuff.length() > 0) {
+                String msg = Messages.getString("BoardEditor.invalidBoard.message");
+                String title =  Messages.getString("BoardEditor.invalidBoard.title");
+                JOptionPane.showMessageDialog(this, msg, title, JOptionPane.INFORMATION_MESSAGE);
+            }
             menuBar.setBoard(true);
         } catch (IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$

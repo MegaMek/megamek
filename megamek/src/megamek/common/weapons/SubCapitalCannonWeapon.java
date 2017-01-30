@@ -36,4 +36,9 @@ public abstract class SubCapitalCannonWeapon extends AmmoWeapon {
         capital = true;
         subCapital = true;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_SUBCAPITAL;
+    }
 }

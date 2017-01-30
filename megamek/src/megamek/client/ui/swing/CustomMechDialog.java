@@ -31,7 +31,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -83,6 +82,7 @@ import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.MegaMekFile;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
@@ -1353,8 +1353,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         // Check validity of units after customization
         for (Entity entity : entities) {
-            EntityVerifier verifier = EntityVerifier.getInstance(new File(
-                    Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME));
+            EntityVerifier verifier = EntityVerifier.getInstance(new MegaMekFile(
+                    Configuration.unitsDir(), EntityVerifier.CONFIG_FILENAME).getFile());
             TestEntity testEntity = null;
             if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech) entity, verifier.mechOption,

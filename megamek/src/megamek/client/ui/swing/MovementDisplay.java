@@ -1321,7 +1321,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 return;
             }
         }
-
+        
         if (ce().isAirborne() && (ce() instanceof Aero)) {
             if (!clientgui.getClient().getGame().useVectorMove()
                 && !((Aero) ce()).isOutControlTotal()) {
@@ -1379,6 +1379,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             } else {
                 return;
             }
+        }
+
+        if ((ce() instanceof Infantry) && ((Infantry)ce()).hasMicrolite()
+        		&& (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
+        		&& !cmd.contains(MoveStepType.FORWARDS)
+        		&& cmd.getFinalElevation() > 0
+        		&& ce().getGame().getBoard().getHex(cmd.getFinalCoords())
+    				.terrainLevel(Terrains.BLDG_ELEV) < cmd.getFinalElevation()
+				&& ce().getGame().getBoard().getHex(cmd.getFinalCoords())
+        			.terrainLevel(Terrains.BRIDGE_ELEV) < cmd.getFinalElevation()) {
+            String title = Messages
+                    .getString("MovementDisplay.MicroliteMove.title"); //$NON-NLS-1$
+            String body = Messages
+                    .getString("MovementDisplay.MicroliteMove.message"); //$NON-NLS-1$
+            clientgui.doAlertDialog(title, body);
+            return;            	
         }
 
         disableButtons();

@@ -22,10 +22,14 @@ package megamek.common;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import megamek.client.ui.Messages;
+import megamek.common.options.IOption;
+import megamek.common.options.PilotOptions;
 import megamek.common.weapons.BayWeapon;
 
 /**
@@ -93,6 +97,22 @@ public class MechView {
                         sLoadout.append("<br>");
                     }
                 }
+            }
+            
+            ArrayList<String> augmentations = new ArrayList<>();
+            for (Enumeration<IOption> e = inf.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
+            		e.hasMoreElements();) {
+            	final IOption o = e.nextElement();
+            	if (o.booleanValue()) {
+            		augmentations.add(o.getDisplayableName());
+            	}
+            }
+            if (augmentations.size() > 0) {
+            	sLoadout.append("<b>Augmentations</b><br/>");
+            	for (String aug : augmentations) {
+            		sLoadout.append(aug).append("<br/>");
+            	}
+            	sLoadout.append("<br/>");
             }
         }
         // sBasic.append(getFluffImage(entity)).append("<br>");

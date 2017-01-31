@@ -14,6 +14,8 @@
 
 package megamek.common.loaders;
 
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.ASFBay;
@@ -64,6 +66,8 @@ import megamek.common.TroopSpace;
 import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
+import megamek.common.options.IOption;
+import megamek.common.options.PilotOptions;
 import megamek.common.util.BuildingBlock;
 
 public class BLKFile {
@@ -650,6 +654,10 @@ public class BLKFile {
                 blk.writeBlockData("antimek", (infantry.getAntiMekSkill() + ""));
             }
             
+            EquipmentType et = infantry.getArmorKit();
+            if (et != null) {
+            	blk.writeBlockData("armorKit", et.getInternalName());
+            }
             if (infantry.getDamageDivisor() != 1) {
                 blk.writeBlockData("armordivisor",
                         Double.toString(infantry.getDamageDivisor()));
@@ -671,6 +679,17 @@ public class BLKFile {
             }
             if (infantry.hasSneakECM()) {
                 blk.writeBlockData("sneakecm", "true");
+            }
+            ArrayList<String> augmentations = new ArrayList<>();
+            for (Enumeration<IOption> e = infantry.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
+            		e.hasMoreElements();) {
+            	final IOption o = e.nextElement();
+            	if (o.booleanValue()) {
+            		augmentations.add(o.getName());
+            	}
+            }
+            if (augmentations.size() > 0) {
+            	blk.writeBlockData("augmentations", augmentations.toArray(new String[augmentations.size()]));
             }
         } else {
             blk.writeBlockData("tonnage", t.getWeight());

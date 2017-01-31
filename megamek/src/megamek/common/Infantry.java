@@ -1680,6 +1680,17 @@ public class Infantry extends Entity {
     	setMovementMode(EntityMovementMode.INF_UMU);
     	setOriginalJumpMP(2);
     }
+    
+    @Override
+    public String getMovementModeAsString() {
+    	if (getMovementMode().equals(EntityMovementMode.VTOL)) {
+    		return hasMicrolite()? "Microlite" : "Microcopter";
+    	}
+    	if (getMovementMode() == EntityMovementMode.INF_UMU) {
+    		return getOriginalJumpMP() > 1? "Motorized SCUBA" : "SCUBA";
+    	}
+    	return super.getMovementModeAsString();
+    }
 
     public boolean canMakeAntiMekAttacks() {
         return !isMechanized();

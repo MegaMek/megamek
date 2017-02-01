@@ -936,6 +936,8 @@ public class MiscType extends EquipmentType {
                 costValue = (entity.hasEngine() ? entity.getEngine().getRating() * 10000 : 0);
             } else if (hasFlag(F_DRONE_OPERATING_SYSTEM)) {
                 costValue = (getTonnage(entity, loc) * 10000) + 5000;
+            } else if (hasFlag(F_INDUSTRIAL_TSM)) {
+                costValue = entity.getWeight() * 12000; 
             } else if (hasFlag(MiscType.F_MASC)) {
                 if (entity instanceof Protomech) {
                     costValue = Math.round((entity.hasEngine() ? entity.getEngine().getRating() : 0)
@@ -2602,6 +2604,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Industrial Triple Strength Myomer");
         misc.tonnage = 0;
         misc.criticals = 12;
+        misc.cost = COST_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_INDUSTRIAL_TSM).or(F_MECH_EQUIPMENT);

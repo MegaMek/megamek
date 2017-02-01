@@ -1753,8 +1753,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     minAlt++;
                 }
                 break;
-            case SUBMARINE:
             case INF_UMU:
+            	/* non-mechanized SCUBA infantry have a maximum depth of 2 */
+            	if (this instanceof Infantry && ((Infantry)this).hasSpecialization(Infantry.SCUBA)
+            			&& hex.containsTerrain(Terrains.WATER)) {
+            		minAlt = Math.max(hex.floor(), -2);
+            	} else {
+            		minAlt = hex.floor();
+            	}
+            	break;
+            case SUBMARINE:            	
             case BIPED_SWIM:
             case QUAD_SWIM:
                 minAlt = hex.floor();
@@ -1857,6 +1865,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 .containsTerrain(Terrains.WATER))
                    || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
                    || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
+        	if (this instanceof Infantry && ((Infantry)this).hasSpecialization(Infantry.SCUBA)
+        			&& getMovementMode() == EntityMovementMode.INF_UMU) {
+        		return assumedAlt >= Math.max(hex.floor(), -2)
+        				&& (assumedAlt <= hex.surface());        				
+        	}
             return ((assumedAlt >= hex.floor()) && (assumedAlt <= hex.surface()));
         } else if ((getMovementMode() == EntityMovementMode.HYDROFOIL)
                    || (getMovementMode() == EntityMovementMode.NAVAL)) {
@@ -4285,7 +4298,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return <code>boolean</code> if the entity has usable UMU crits.
      */
     public boolean hasUMU() {
-        if (!(this instanceof Mech) && !(this instanceof BattleArmor)) {
+        if (!(this instanceof Mech) && !(this instanceof Infantry)) {
             return false;
         }
 
@@ -4302,10 +4315,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getActiveUMUCount() {
         int count = 0;
 
-        if ((this instanceof BattleArmor)
-            && (getMovementMode() == EntityMovementMode.INF_UMU)) {
-            // UMU MP for BA is stored in jumpMP
-            return jumpMP;
+        if (this instanceof Infantry) {
+            if ((getMovementMode() == EntityMovementMode.INF_UMU)
+            		|| (getMovementMode() == EntityMovementMode.SUBMARINE)) {
+	            // UMU MP for Infantry is stored in jumpMP
+	            return jumpMP;
+            }
         }
 
         if (hasShield() && (getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)) {
@@ -4331,9 +4346,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getAllUMUCount() {
         int count = 0;
 
-        if ((this instanceof BattleArmor)
+        if ((this instanceof Infantry)
             && (getMovementMode() == EntityMovementMode.INF_UMU)) {
-            // UMU MP for BA is stored in jumpMP
+            // UMU MP for Infantry is stored in jumpMP
             return jumpMP;
         }
 

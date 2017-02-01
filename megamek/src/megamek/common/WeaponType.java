@@ -1377,6 +1377,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySMGRuganWeapon());
         EquipmentType.addType(new InfantrySMGWeapon());
         
+        //Infantry TAG
+        EquipmentType.addType(new InfantryTAGWeapon());
+        
         // Prosthetic Weapon from ATOW Companion
         EquipmentType.addType(new InfantryProstheticLaserWeapon());
         EquipmentType.addType(new InfantryProstheticBallisticWeapon());

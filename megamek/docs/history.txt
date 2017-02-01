@@ -8,6 +8,10 @@ v0.43.0-git
 + Data: Some unit fixes, and new maps from DancefloorLandmine
 + Data: Sprite fixes and new Sprites.
 + Data: More Sprite/Unit/Board Fixes
++ Infantry armor kits.
++ Mechanized VTOL infantry.
++ Infantry specializations: SCUBA, TAG.
++ Conventional infantry augmentations (e.g. Manei Domini) can be set in unit file. Note that not all options are implemented.
 
 v0.42.0 (2017-01-01 14:00 UTC)
 + Issue #441: Fled units not being saved at the end of the game

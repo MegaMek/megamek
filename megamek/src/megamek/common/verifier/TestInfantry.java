@@ -124,9 +124,6 @@ public class TestInfantry extends TestEntity {
     		if (inf.getSecondaryN() > 1) {
                 buff.append("Number of secondary weapons exceeds maximum of 1").append("\n\n");
                 correct = false;
-    		} else if (inf.hasMicrolite() && inf.getSecondaryN() > 0) {
-                buff.append("Microlite VTOL units cannot use secondary weapons.").append("\n\n");
-                correct = false;
     		}
     	}
     	
@@ -148,13 +145,7 @@ public class TestInfantry extends TestEntity {
             buff.append("Maximum squad size for Mechanized/Wheeled is 6.\n\n");
             correct = false;
     	} else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
-    		if (inf.hasMicrolite() && inf.getSquadSize() != 2) {
-                buff.append("Microlite VTOL squad size is 2.\n\n");
-                correct = false;
-    		} else if (!inf.hasMicrolite() && inf.getSquadSize() != 4) {
-                buff.append("Micro-copter VTOL squad size is 4.\n\n");
-                correct = false;
-    		}
+    		
     	}
 
         return correct;

@@ -689,7 +689,7 @@ public class BLKFile {
             	}
             }
             if (augmentations.size() > 0) {
-            	blk.writeBlockData("augmentations", augmentations.toArray(new String[augmentations.size()]));
+            	blk.writeBlockData("augmentation", augmentations.toArray(new String[augmentations.size()]));
             }
         } else {
             blk.writeBlockData("tonnage", t.getWeight());

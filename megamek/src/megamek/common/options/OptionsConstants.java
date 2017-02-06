@@ -207,7 +207,12 @@ public class OptionsConstants {
     public static final String MD_VDNI = "vdni"; // $NON-NLS$
     public static final String MD_BVDNI = "bvdni"; // $NON-NLS$
     public static final String MD_PL_ENHANCED = "pl_enhanced"; // $NON-NLS$
+    public static final String MD_PL_IENHANCED = "pl_ienhanced"; // $NON-NLS$
     public static final String MD_PL_MASC = "pl_masc"; // $NON-NLS$
+    public static final String MD_PL_EXTRA_LIMBS = "pl_extra_limbs"; // $NON-NLS$
+    public static final String MD_PL_TAIL = "pl_tail"; // $NON-NLS$
+    public static final String MD_PL_GLIDER = "pl_glider"; // $NON-NLS$
+    public static final String MD_PL_FLIGHT = "pl_flight"; // $NON-NLS$
     public static final String MD_CYBER_IMP_AUDIO = "cyber_imp_audio"; // $NON-NLS$
     public static final String MD_CYBER_IMP_VISUAL = "cyber_imp_visual"; // $NON-NLS$
     public static final String MD_CYBER_IMP_LASER = "cyber_imp_laser"; // $NON-NLS$
@@ -222,6 +227,9 @@ public class OptionsConstants {
     public static final String MD_GAS_EFFUSER_TOXIN = "gas_effuser_toxin"; // $NON-NLS$
     public static final String MD_DERMAL_CAMO_ARMOR = "dermal_camo_armor"; // $NON-NLS$   
     public static final String MD_TRIPLE_CORE_PROCESSOR = "triple_core_processor"; // $NON-NLS$    
+    public static final String MD_SUICIDE_IMPLANTS = "suicide_implants"; // $NON-NLS$  
+    public static final String MD_PROTO_DNI = "proto_dni"; // $NON-NLS$ 
+    
     
     //GAME OPTIONS TO BE MOVED.
     public static final String BASE_FRIENDLY_FIRE= "friendly_fire";  //$NON-NLS$

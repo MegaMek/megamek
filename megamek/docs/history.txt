@@ -13,6 +13,7 @@ v0.43.0-git
 + Infantry specializations: SCUBA, TAG.
 + Conventional infantry augmentations (e.g. Manei Domini) can be set in unit file. Note that not all options are implemented.
 + Random generation using formation building rules from Campaign Operations.
++ Adding some references to missing MD Infantry stuff. Names only not implemented for play.
 
 v0.42.0 (2017-01-01 14:00 UTC)
 + Issue #441: Fled units not being saved at the end of the game

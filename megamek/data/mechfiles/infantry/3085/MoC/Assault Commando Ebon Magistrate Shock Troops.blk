@@ -67,9 +67,9 @@ Plasma Rifle (Man-Portable)
 Magistracy of Canopus Infantry Kit
 </armorKit>
 
-<augmentations>
+<augmentation>
 cyber_imp_visual
 cyber_imp_laser
 dermal_armor
-</augmentations>
+</augmentation>
 

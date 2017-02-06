@@ -71,11 +71,11 @@ true
 true
 </sneakecm>
 
-<augmentations>
+<augmentation>
 boost_comm_implant
-cyber_imp_visual
+cyber_imp_audio
 cyber_imp_laser
 gas_effuser_pheromone
 gas_effuser_toxin
-</augmentations>
+</augmentation>
 

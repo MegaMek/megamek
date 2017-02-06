@@ -40,6 +40,7 @@ import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.UnitRole;
 import megamek.common.UnitType;
 import megamek.common.util.MegaMekFile;
 
@@ -423,7 +424,8 @@ public class RATGenerator {
 				//Find the totals of the weight for the generated table 
 				double totalMRWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 				//Find the sum of the weight distribution values for all weight classes in use.
-				int totalWCDWeights = weightClasses.stream().mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
+				int totalWCDWeights = weightClasses.stream().filter(wc -> wcdIndex[wc] < wcd.size())
+				        .mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
 				
 				if (totalWCDWeights > 0) {
 					//Group all the models of the generated table by weight class.
@@ -909,14 +911,17 @@ public class RATGenerator {
 			}
 		}
 		cr.addModel(mr);
-		if (wn.getAttributes().getNamedItem("mechanized") != null) {
-			mr.setMechanizedBA(Boolean.parseBoolean(wn.getAttributes().getNamedItem("mechanized").getTextContent()));
-		}
+        if (wn.getAttributes().getNamedItem("unitRole") != null) {
+            mr.setUnitRole(UnitRole.parseRole(wn.getAttributes().getNamedItem("unitRole").getTextContent()));
+        }
+        if (wn.getAttributes().getNamedItem("mechanized") != null) {
+            mr.setMechanizedBA(Boolean.parseBoolean(wn.getAttributes().getNamedItem("mechanized").getTextContent()));
+        }
 		
 		for (int k = 0; k < wn.getChildNodes().getLength(); k++) {
 			Node wn2 = wn.getChildNodes().item(k);
 			if (wn2.getNodeName().equalsIgnoreCase("roles") && newEntry) {
-				mr.setRoles(wn2.getTextContent().trim());
+				mr.addRoles(wn2.getTextContent().trim());
 			} else if (wn2.getNodeName().equalsIgnoreCase("deployedWith") && newEntry) {
 				mr.setRequiredUnits(wn2.getTextContent().trim());            							
 			} else if (wn2.getNodeName().equalsIgnoreCase("availability")) {
@@ -944,7 +949,8 @@ public class RATGenerator {
      */
     public void notifyListenersOfInitialization(){
         if (initialized){
-            for (ActionListener l : listeners){
+            // Possibility of adding a new listener during notification.
+            for (ActionListener l : new ArrayList<>(listeners)){
                 l.actionPerformed(new ActionEvent(
                         this,ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
             }

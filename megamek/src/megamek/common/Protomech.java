@@ -1985,6 +1985,11 @@ public class Protomech extends Entity {
     }
 
     @Override
+    public boolean doomedInExtremeTemp() {
+        return false;
+    }
+
+    @Override
     public boolean doomedInVacuum() {
         return false;
     }

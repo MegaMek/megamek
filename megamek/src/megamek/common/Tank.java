@@ -2594,6 +2594,11 @@ public class Tank extends Entity {
     }
 
     @Override
+    public boolean doomedInExtremeTemp() {
+        return false;
+    }
+
+    @Override
     public boolean doomedInVacuum() {
         for (Mounted m : getEquipment()) {
             if ((m.getType() instanceof MiscType)

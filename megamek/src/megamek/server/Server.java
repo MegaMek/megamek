@@ -19887,7 +19887,7 @@ public class Server implements Runnable {
                 // example...
                 continue;
             }
-            String reason = game.getPlanetaryConditions().whyDoomed(entity);
+            String reason = game.getPlanetaryConditions().whyDoomed(entity, game);
             if (null != reason) {
                 r = new Report(6015);
                 r.subject = entity.getId();
@@ -32479,6 +32479,7 @@ public class Server implements Runnable {
         }
 
         if ((game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)
+                || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_BLIZZARD)
                 || ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) && (game
                         .getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE))) {
             rollTarget.addModifier(3, "Really Bad Weather");

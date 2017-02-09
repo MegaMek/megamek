@@ -100,7 +100,8 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         debugTime("resolve weather 1", true);
 
         //first we need to increment the conditions
-        if(conditions.getWeather() == PlanetaryConditions.WE_MOD_SNOW 
+        if(conditions.getWeather() == PlanetaryConditions.WE_MOD_SNOW
+                || conditions.getWeather() == PlanetaryConditions.WE_SNOW_FLURRIES
                 && game.getBoard().onGround()) {
             modSnowTurn = modSnowTurn + 1;
             if(modSnowTurn == 9) {
@@ -111,8 +112,9 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                 ice = true;
             }
         }
-        if(conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW 
-                && game.getBoard().onGround()) {
+        if(((conditions.getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
+                || (conditions.getWeather() == PlanetaryConditions.WE_BLIZZARD)
+                && game.getBoard().onGround())) {
             heavySnowTurn = heavySnowTurn + 1;
             if(heavySnowTurn == 4) {
                 lightSnow = true;
@@ -134,7 +136,7 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
         if(conditions.getWeather() == PlanetaryConditions.WE_ICE_STORM 
                 && game.getBoard().onGround()) {
             iceTurn = iceTurn + 1;
-            if(iceTurn == 14) {
+            if(iceTurn == 9) {
                 ice = true;
             }
         }

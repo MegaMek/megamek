@@ -56,6 +56,26 @@ Laser Rifle (Mauser 1200 LSS)
 </antimek>
 
 <armorKit>
-ISSneakSuitCamoIRECM
+Sneak Suit (Camo/IR/ECM)
 </armorKit>
+
+<sneakcamo>
+true
+</sneakcamo>
+
+<sneakir>
+true
+</sneakir>
+
+<sneakecm>
+true
+</sneakecm>
+
+<augmentation>
+boost_comm_implant
+cyber_imp_audio
+cyber_imp_laser
+gas_effuser_pheromone
+gas_effuser_toxin
+</augmentation>
 

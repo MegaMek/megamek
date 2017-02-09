@@ -21,7 +21,7 @@ Ebon Magistrate Shock Troops
 </Model>
 
 <year>
-3145
+3060
 </year>
 
 <type>
@@ -36,7 +36,7 @@ Leg
 </Field Guns Equipment>
 
 <source>
-TRO 3085
+TR0 3085 - Clan Invasion
 </source>
 
 <squad_size>
@@ -48,7 +48,7 @@ TRO 3085
 </squadn>
 
 <secondn>
-2
+3
 </secondn>
 
 <Primary>
@@ -62,4 +62,14 @@ Plasma Rifle (Man-Portable)
 <antimek>
 8
 </antimek>
+
+<armorKit>
+Magistracy of Canopus Infantry Kit
+</armorKit>
+
+<augmentation>
+cyber_imp_visual
+cyber_imp_laser
+dermal_armor
+</augmentation>
 

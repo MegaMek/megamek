@@ -1100,6 +1100,13 @@ public class Infantry extends Entity {
         return cost;
     }
 
+    @Override
+    public boolean doomedInExtremeTemp() {
+        if (hasSpaceSuit() || isMechanized()) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public boolean doomedInVacuum() {

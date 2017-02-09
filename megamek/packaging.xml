@@ -44,6 +44,9 @@
 
 	<!-- This is the relative path to the 'data' directory -->
 	<property name="dataclasspath" value="." />
+	
+	<!-- Location of the list of atlased images -->
+	<property name="atlasedImages" value="${pkgdir}/atlasedImages.txt" />
 
 	<!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
 	<pathconvert pathsep=" " property="jarclasspath">

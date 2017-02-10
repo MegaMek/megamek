@@ -42,7 +42,7 @@
 	<property name="dataclasspath" value="." />
 
 	<!-- The file that lists all of the files that are now packaged into an image atlas, and can hence be deleted -->
-	<property name="atlasedImages" value="./atlasedImages.txt" />
+	<property name="atlasedImages" value="${localdir}/atlasedImages.txt" />
 
 	<!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
 	<pathconvert pathsep=" " property="jarclasspath">

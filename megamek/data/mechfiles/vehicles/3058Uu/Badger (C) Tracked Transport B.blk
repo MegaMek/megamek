@@ -29,12 +29,12 @@ B
 18
 </Armor>
 <Turret Equipment>
-CLMediumPulseLaser
-CLStreakSRM2
+CLMediumPulseLaser:OMNI
+CLStreakSRM2:OMNI
 </Turret Equipment>
 <Body Equipment>
-CLStreakSRM2 Ammo
-CLCASE
+CLStreakSRM2 Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 <transporters>
 TroopSpace:5

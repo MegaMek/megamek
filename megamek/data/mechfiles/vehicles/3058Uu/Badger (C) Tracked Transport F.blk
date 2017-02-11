@@ -29,15 +29,15 @@ F
 18
 </Armor>
 <Turret Equipment>
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
+CLAPGaussRifle:OMNI
+CLAPGaussRifle:OMNI
+CLAPGaussRifle:OMNI
+CLAPGaussRifle:OMNI
 </Turret Equipment>
 <Body Equipment>
-CLAPGaussRifle Ammo
-CLAPGaussRifle Ammo
-CLCASE
+CLAPGaussRifle Ammo:OMNI
+CLAPGaussRifle Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 <transporters>
 TroopSpace:5

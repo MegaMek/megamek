@@ -36,10 +36,6 @@ Hover
 troopspace:5.0
 </transporters>
 
-<transporters>
-
-</transporters>
-
 <cruiseMP>
 9
 </cruiseMP>
@@ -84,9 +80,9 @@ troopspace:5.0
 </Rear Equipment>
 
 <Turret Equipment>
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
 </Turret Equipment>
 
 <source>

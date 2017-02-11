@@ -29,13 +29,13 @@ E
 18
 </Armor>
 <Turret Equipment>
-CLATM3
-CLERSmallLaser
+CLATM3:OMNI
+CLERSmallLaser:OMNI
 </Turret Equipment>
 <Body Equipment>
-CLATM3 Ammo
-CLATM3 Ammo
-CLCASE
+CLATM3 Ammo:OMNI
+CLATM3 Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 <transporters>
 TroopSpace:5

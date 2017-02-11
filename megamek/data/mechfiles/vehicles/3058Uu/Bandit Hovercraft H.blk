@@ -29,11 +29,12 @@ H
 22
 </Armor>
 <Turret Equipment>
-ISERMediumLaser
-ISSRM2
+ISERMediumLaser:OMNI
+ISSRM2:OMNI
 </Turret Equipment>
 <transporters>
-TroopSpace:8
+TroopSpace:4
+TroopSpace:4:OMNI
 </transporters>
 <Body Equipment>
 ISSRM2 Ammo

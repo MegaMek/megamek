@@ -36,10 +36,6 @@ Hover
 troopspace:5.0
 </transporters>
 
-<transporters>
-
-</transporters>
-
 <cruiseMP>
 9
 </cruiseMP>
@@ -69,19 +65,19 @@ troopspace:5.0
 </armor>
 
 <Body Equipment>
-Clan Heavy Machine Gun Ammo - Full
-Clan Light Machine Gun Ammo - Half
-CLCASE
-CLActiveProbe
-CLECMSuite
+Clan Heavy Machine Gun Ammo - Full:OMNI
+Clan Light Machine Gun Ammo - Half:OMNI
+CLCASE:OMNI
+CLActiveProbe:OMNI
+CLECMSuite:OMNI
 </Body Equipment>
 
 <Front Equipment>
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHMGA
+CLHeavyMG:OMNI
+CLHeavyMG:OMNI
+CLHeavyMG:OMNI
+CLHeavyMG:OMNI
+CLHMGA:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -94,12 +90,12 @@ CLHMGA
 </Rear Equipment>
 
 <Turret Equipment>
-CLERMediumLaser
-CLLightMG
-CLLightMG
-CLLightMG
-CLLightMG
-CLLMGA
+CLERMediumLaser:OMNI
+CLLightMG:OMNI
+CLLightMG:OMNI
+CLLightMG:OMNI
+CLLightMG:OMNI
+CLLMGA:OMNI
 </Turret Equipment>
 
 <source>

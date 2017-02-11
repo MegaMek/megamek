@@ -36,10 +36,6 @@ Hover
 troopspace:5.0
 </transporters>
 
-<transporters>
-
-</transporters>
-
 <cruiseMP>
 9
 </cruiseMP>
@@ -69,13 +65,13 @@ troopspace:5.0
 </armor>
 
 <Body Equipment>
-Clan LB 2-X AC Ammo
-CLCASE
+Clan LB 2-X AC Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -88,7 +84,7 @@ CLERMediumLaser
 </Rear Equipment>
 
 <Turret Equipment>
-CLLBXAC2
+CLLBXAC2:OMNI
 </Turret Equipment>
 
 <source>

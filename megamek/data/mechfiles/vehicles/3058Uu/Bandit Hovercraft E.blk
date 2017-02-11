@@ -29,16 +29,16 @@ E
 22
 </Armor>
 <Turret Equipment>
-ISLRM10
+ISLRM10:OMNI
 </Turret Equipment>
 <Front Equipment>
-ISMediumLaser
+ISMediumLaser:OMNI
 </Front Equipment>
 <transporters>
 TroopSpace:4
 </transporters>
 <Body Equipment>
-ISLRM10 Ammo
+ISLRM10 Ammo:OMNI
 </Body Equipment>
 <type>
 IS Level 2

@@ -29,22 +29,22 @@ A
 18
 </Armor>
 <Turret Equipment>
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLMG
-CLMG
-CLMG
-CLMG
-CLMG
-CLMG
+CLERSmallLaser:OMNI
+CLERSmallLaser:OMNI
+CLERSmallLaser:OMNI
+CLMG:OMNI
+CLMG:OMNI
+CLMG:OMNI
+CLMG:OMNI
+CLMG:OMNI
+CLMG:OMNI
 </Turret Equipment>
 <transporters>
 TroopSpace:5
 </transporters>
 <Body Equipment>
-CLMG Ammo (200)
-CLCASE
+CLMG Ammo (200):OMNI
+CLCASE:OMNI
 </Body Equipment>
 <type>
 Clan

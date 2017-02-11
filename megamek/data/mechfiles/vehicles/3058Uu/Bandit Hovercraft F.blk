@@ -29,10 +29,10 @@ F
 22
 </Armor>
 <Turret Equipment>
-ISLargeLaser
+ISLargeLaser:OMNI
 </Turret Equipment>
 <Front Equipment>
-ISMediumLaser
+ISMediumLaser:OMNI
 </Front Equipment>
 <transporters>
 TroopSpace:4

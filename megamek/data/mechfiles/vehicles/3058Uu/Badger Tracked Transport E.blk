@@ -29,24 +29,24 @@ E
 18
 </Armor>
 <Turret Equipment>
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
+ISSmallLaser:OMNI
+ISSmallLaser:OMNI
+ISSmallLaser:OMNI
+ISSmallLaser:OMNI
+ISSmallLaser:OMNI
+ISSmallLaser:OMNI
 </Turret Equipment>
 <Front Equipment>
-ISSmallLaser
+ISSmallLaser:OMNI
 </Front Equipment>
 <Right Equipment>
-ISSmallLaser
+ISSmallLaser:OMNI
 </Right Equipment>
 <Left Equipment>
-ISSmallLaser
+ISSmallLaser:OMNI
 </Left Equipment>
 <Rear Equipment>
-ISSmallLaser
+ISSmallLaser:OMNI
 </Rear Equipment>
 <transporters>
 TroopSpace:4

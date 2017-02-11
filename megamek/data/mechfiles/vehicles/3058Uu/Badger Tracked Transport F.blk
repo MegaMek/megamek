@@ -29,10 +29,11 @@ F
 18
 </Armor>
 <Turret Equipment>
-ISERMediumLaser
+ISERMediumLaser:OMNI
 </Turret Equipment>
 <transporters>
-TroopSpace:8
+TroopSpace:4
+TroopSpace:4:OMNI
 </transporters>
 <type>
 IS Level 2
@@ -52,6 +53,8 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+<omni>
+</omni>
 <source>
 Clan Invasion
 </source>

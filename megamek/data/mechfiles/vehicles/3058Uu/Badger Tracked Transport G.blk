@@ -29,11 +29,11 @@ G
 18
 </Armor>
 <Turret Equipment>
-ISLightPPC
-ISSRM2
+ISLightPPC:OMNI
+ISSRM2:OMNI
 </Turret Equipment>
 <body equipment>
-ISSRM2 Ammo
+ISSRM2 Ammo:OMNI
 </body equipment>
 <transporters>
 TroopSpace:4
@@ -56,6 +56,8 @@ IS Level 2
 <motion_type>
 Tracked
 </motion_type>
+<omni>
+</omni>
 <source>
 Jihad
 </source>

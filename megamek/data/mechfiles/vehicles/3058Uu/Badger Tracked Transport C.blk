@@ -29,16 +29,16 @@ C
 18
 </Armor>
 <Turret Equipment>
-ISLRM5
+ISLRM5:OMNI
 </Turret Equipment>
 <Front Equipment>
-ISLRM5
+ISLRM5:OMNI
 </Front Equipment>
 <transporters>
 TroopSpace:4
 </transporters>
 <Body Equipment>
-ISLRM5 Ammo
+ISLRM5 Ammo:OMNI
 </Body Equipment>
 <type>
 IS Level 2

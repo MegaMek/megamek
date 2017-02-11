@@ -29,14 +29,14 @@ C
 22
 </Armor>
 <Turret Equipment>
-ISSRM6
-ISSRM6
+ISSRM6:OMNI
+ISSRM6:OMNI
 </Turret Equipment>
 <transporters>
 TroopSpace:4
 </transporters>
 <Body Equipment>
-ISSRM6 Ammo
+ISSRM6 Ammo:OMNI
 </Body Equipment>
 <type>
 IS Level 2

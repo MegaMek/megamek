@@ -29,18 +29,18 @@ A
 18
 </Armor>
 <Turret Equipment>
-ISSRM2
-ISSRM2
-ISSRM2
+ISSRM2:OMNI
+ISSRM2:OMNI
+ISSRM2:OMNI
 </Turret Equipment>
 <Front Equipment>
-ISSRM2
+ISSRM2:OMNI
 </Front Equipment>
 <transporters>
 TroopSpace:4
 </transporters>
 <Body Equipment>
-ISSRM2 Ammo
+ISSRM2 Ammo:OMNI
 </Body Equipment>
 <type>
 IS Level 2

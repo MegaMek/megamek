@@ -29,16 +29,16 @@ B
 18
 </Armor>
 <Turret Equipment>
-ISSRM4
+ISSRM4:OMNI
 </Turret Equipment>
 <Front Equipment>
-ISSRM4
+ISSRM4:OMNI
 </Front Equipment>
 <transporters>
 TroopSpace:4
 </transporters>
 <Body Equipment>
-ISSRM4 Ammo
+ISSRM4 Ammo:OMNI
 </Body Equipment>
 <type>
 IS Level 2

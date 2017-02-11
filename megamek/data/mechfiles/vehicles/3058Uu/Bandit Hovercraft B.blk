@@ -29,18 +29,18 @@ B
 22
 </Armor>
 <Turret Equipment>
-ISSRM4
-ISSRM4
+ISSRM4:OMNI
+ISSRM4:OMNI
 </Turret Equipment>
 <Front Equipment>
-ISSRM2
+ISSRM2:OMNI
 </Front Equipment>
 <transporters>
 TroopSpace:4
 </transporters>
 <Body Equipment>
-ISSRM4 Ammo
-ISSRM2 Ammo
+ISSRM4 Ammo:OMNI
+ISSRM2 Ammo:OMNI
 </Body Equipment>
 <type>
 IS Level 2

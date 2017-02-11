@@ -118,6 +118,9 @@ public class BLKFile {
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
                 }
+                boolean isOmniMounted = equipName.toUpperCase().endsWith(":OMNI");
+                equipName = equipName.replace(":OMNI", "");
+                
                 int facing = -1;
                 if (equipName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
@@ -156,6 +159,7 @@ public class BLKFile {
                         Mounted mount = t.addEquipment(etype, nLoc, false,
                                 BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted);
+                        mount.setOmniPodMounted(isOmniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
@@ -564,6 +568,9 @@ public class BLKFile {
             }
             if (m.isSquadSupportWeapon()){
                 name += ":SSWM";
+            }
+            if (m.isOmniPodMounted()) {
+            	name += ":OMNI";
             }
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY){
                 name += ":Body";

@@ -154,6 +154,10 @@ public class Aero extends Entity {
     private int heatSinksOriginal;
     private int heatSinks;
     private int heatType = HEAT_SINGLE;
+    
+    // Track how many heat sinks are pod-mounted for omnifighters; these are included in the total
+    // This is provided for campaign use; MM does not distribute damage between fixed and pod-mounted. 
+    private int podHeatSinks;
 
     // bombs
     public static final String SPACE_BOMB_ATTACK = "SpaceBombAttack";
@@ -584,6 +588,14 @@ public class Aero extends Entity {
 
     public void setHeatType(int hstype) {
         heatType = hstype;
+    }
+    
+    public int getPodHeatSinks() {
+    	return podHeatSinks;
+    }
+    
+    public void setPodHeatSinks(int hs) {
+    	podHeatSinks = hs;
     }
 
     public void setLeftThrustHits(int hits) {

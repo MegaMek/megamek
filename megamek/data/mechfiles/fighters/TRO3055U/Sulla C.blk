@@ -76,19 +76,19 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLMediumPulseLaser
+CLMediumPulseLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERPPC
+CLERPPC:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERPPC
+CLERPPC:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERSmallLaser
+CLERSmallLaser:OMNI
 </Aft Equipment>
 
 <source>

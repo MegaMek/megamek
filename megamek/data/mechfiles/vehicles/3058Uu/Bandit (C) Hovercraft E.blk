@@ -36,10 +36,6 @@ Hover
 troopspace:5.0
 </transporters>
 
-<transporters>
-
-</transporters>
-
 <cruiseMP>
 9
 </cruiseMP>
@@ -69,10 +65,10 @@ troopspace:5.0
 </armor>
 
 <Body Equipment>
-Clan Ammo ATM-9
-Clan Ammo ATM-9 ER
-Clan Ammo ATM-9 HE
-CLCASE
+Clan Ammo ATM-9:OMNI
+Clan Ammo ATM-9 ER:OMNI
+Clan Ammo ATM-9 HE:OMNI
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -88,7 +84,7 @@ CLCASE
 </Rear Equipment>
 
 <Turret Equipment>
-CLATM9
+CLATM9:OMNI
 </Turret Equipment>
 
 <source>

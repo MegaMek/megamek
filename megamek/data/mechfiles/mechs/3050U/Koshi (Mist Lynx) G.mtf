@@ -46,12 +46,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERSmallLaser
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHMGA
+CLERSmallLaser (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHMGA (omnipod)
 Endo Steel
 Ferro-Fibrous
 
@@ -60,12 +60,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERSmallLaser
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHMGA
+CLERSmallLaser (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHMGA (omnipod)
 Endo Steel
 Ferro-Fibrous
 
@@ -91,7 +91,7 @@ CLDouble Heat Sink
 Jump Jet
 Jump Jet
 Jump Jet
-CLHeavyMG Ammo (100)
+CLHeavyMG Ammo (100) (omnipod)
 Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous
@@ -130,7 +130,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 Endo Steel
 -Empty-
 -Empty-
@@ -144,7 +144,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 Endo Steel
 -Empty-
 -Empty-

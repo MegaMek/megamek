@@ -39,11 +39,11 @@ Weapons:3
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -53,13 +53,13 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
 -Empty-
 -Empty-
 Ferro-Fibrous
@@ -69,10 +69,10 @@ Engine
 Engine
 CLDouble Heat Sink
 CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
 -Empty-
 Endo-Steel
 Ferro-Fibrous
@@ -83,10 +83,10 @@ Engine
 Engine
 CLDouble Heat Sink
 CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLTargeting Computer
-CLTargeting Computer
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 -Empty-
 Endo-Steel
 Ferro-Fibrous

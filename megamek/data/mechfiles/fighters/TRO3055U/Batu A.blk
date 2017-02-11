@@ -44,6 +44,10 @@ Aerodyne
 11
 </heatsinks>
 
+<omnipodheatsinks>
+1
+</omnipodheatsinks>
+
 <sink_type>
 1
 </sink_type>
@@ -76,24 +80,24 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLNarcBeacon
-CLNarc Pods
-CLERPPC
-CLCASE
+CLNarcBeacon:OMNI
+CLNarc Pods:OMNI
+CLERPPC:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLSRM6
-CLSRM6
-Clan Ammo SRM-6
-CLCASE
+CLSRM6:OMNI
+CLSRM6:OMNI
+Clan Ammo SRM-6:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLSRM6
-CLSRM6
-Clan Ammo SRM-6
-CLCASE
+CLSRM6:OMNI
+CLSRM6:OMNI
+Clan Ammo SRM-6:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

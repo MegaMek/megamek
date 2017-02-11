@@ -172,6 +172,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * weapon mount?
      */
     private boolean isAPMMounted = false;
+    
+    /**
+     * Does this Mounted represent equipmented that is pod mounted in an omni unit?
+     */
+    private boolean omniPodMounted = false;
 
     // for Armored components
     private boolean armoredComponent = false;
@@ -1483,6 +1488,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setAPMMounted(boolean apmMounted) {
         isAPMMounted = apmMounted;
+    }
+    
+    public boolean isOmniPodMounted() {
+    	return omniPodMounted;
+    }
+    
+    public void setOmniPodMounted(boolean omniPodMounted) {
+    	this.omniPodMounted = omniPodMounted;
     }
 
     public boolean isWeaponGroup() {

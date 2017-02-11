@@ -29,17 +29,17 @@ I
 22
 </Armor>
 <Turret Equipment>
-ISLightPPC
-ISLightPPC
+ISLightPPC:OMNI
+ISLightPPC:OMNI
 </Turret Equipment>
 <Front equipment>
-ISLightMG
+ISLightMG:OMNI
 </Front equipment>
 <transporters>
 TroopSpace:4
 </transporters>
 <Body Equipment>
-ISLightMG Ammo (100)
+ISLightMG Ammo (100):OMNI
 </Body Equipment>
 <type>
 IS Level 2

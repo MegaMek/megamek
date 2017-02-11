@@ -29,21 +29,21 @@ Prime
 22
 </Armor>
 <Turret Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
+ISMediumLaser:OMNI
+ISMediumLaser:OMNI
+ISMediumLaser:OMNI
 </Turret Equipment>
 <Front Equipment>
-ISSRM2
-ISSRM2
-ISMachine Gun
+ISSRM2:OMNI
+ISSRM2:OMNI
+ISMachine Gun:OMNI
 </Front Equipment>
 <transporters>
 TroopSpace:4
 </transporters>
 <Body Equipment>
-ISSRM2 Ammo
-ISMG Ammo (100)
+ISSRM2 Ammo:OMNI
+ISMG Ammo (100):OMNI
 </Body Equipment>
 <type>
 IS Level 2

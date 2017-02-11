@@ -29,15 +29,15 @@ Prime
 18
 </Armor>
 <Turret Equipment>
-CLERMediumLaser
-CLStreakSRM4
+CLERMediumLaser:OMNI
+CLStreakSRM4:OMNI
 </Turret Equipment>
 <transporters>
 TroopSpace:5
 </transporters>
 <Body Equipment>
-CLStreakSRM4 Ammo
-CLCASE
+CLStreakSRM4 Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 <type>
 Clan

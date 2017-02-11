@@ -29,13 +29,13 @@ H
 18
 </Armor>
 <Turret Equipment>
-CLHeavyMediumLaser
-CLStreakSRM2
+CLHeavyMediumLaser:OMNI
+CLStreakSRM2:OMNI
 </Turret Equipment>
 <Body Equipment>
-CLTargeting Computer
-CLStreakSRM2 Ammo
-CLCASE
+CLTargeting Computer:OMNI
+CLStreakSRM2 Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 <transporters>
 TroopSpace:5

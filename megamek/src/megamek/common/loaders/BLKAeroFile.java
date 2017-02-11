@@ -85,6 +85,9 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         }
         a.setHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
         a.setOHeatSinks(dataFile.getDataAsInt("heatsinks")[0]);
+        if (dataFile.exists("omnipodheatsinks")) {
+        	a.setPodHeatSinks(dataFile.getDataAsInt("omnipodheatsinks")[0]);
+        }
         if (!dataFile.exists("sink_type")) {
             throw new EntityLoadingException("Could not find sink_type block.");
         }
@@ -223,6 +226,9 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                 rearMount = false;
                 String equipName = element.trim();
 
+                boolean omniMounted = equipName.contains(":OMNI");
+                equipName = equipName.replace(":OMNI", "");
+
                 if (equipName.startsWith("(R) ")) {
                     rearMount = true;
                     equipName = equipName.substring(4);
@@ -259,6 +265,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                 if (etype != null) {
                     try {
                         Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {

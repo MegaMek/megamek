@@ -29,12 +29,12 @@ C
 18
 </Armor>
 <Turret Equipment>
-CLLRM10
-CLERSmallLaser
+CLLRM10:OMNI
+CLERSmallLaser:OMNI
 </Turret Equipment>
 <Body Equipment>
-CLLRM10 Ammo
-CLCASE
+CLLRM10 Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 <transporters>
 TroopSpace:5

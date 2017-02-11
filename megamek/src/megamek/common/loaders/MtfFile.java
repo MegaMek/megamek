@@ -99,6 +99,7 @@ public class MtfFile implements IMechLoader {
 
     public static final String EMPTY = "-Empty-";
     public static final String ARMORED = "(armored)";
+    public static final String OMNIPOD = "(omnipod)";
 
     /**
      * Creates new MtfFile
@@ -554,13 +555,14 @@ public class MtfFile implements IMechLoader {
             boolean rearMounted = false;
             boolean isArmored = false;
             boolean isTurreted = false;
+            boolean isOmniPod = false;
 
             // Check for Armored Actuators
             if (critName.toLowerCase().trim().endsWith(ARMORED)) {
                 critName = critName.substring(0, critName.length() - ARMORED.length()).trim();
                 isArmored = true;
             }
-
+            
             if (critName.equalsIgnoreCase("Fusion Engine") || critName.equalsIgnoreCase("Engine")) {
                 mech.setCritical(loc, i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, true, isArmored));
                 continue;
@@ -584,6 +586,11 @@ public class MtfFile implements IMechLoader {
             if (mech.getCritical(loc, i) != null) {
                 continue;
             }
+
+            if (critName.toLowerCase().trim().endsWith(OMNIPOD)) {
+                critName = critName.substring(0, critName.length() - OMNIPOD.length()).trim();
+                isOmniPod = true;
+            }            
 
             if (critName.toUpperCase().endsWith("(T)")) {
                 isTurreted = true;
@@ -642,6 +649,7 @@ public class MtfFile implements IMechLoader {
                         m = mech.addEquipment(etype, loc, rearMounted,
                                               BattleArmor.MOUNT_LOC_NONE, isArmored,
                                               isTurreted);
+                        m.setOmniPodMounted(isOmniPod);
                         hSharedEquip.put(etype, m);
                     } else if (((etype instanceof WeaponType) && ((WeaponType) etype).isSplitable()) || ((etype instanceof MiscType) && etype.hasFlag(MiscType.F_SPLITABLE))) {
                         // do we already have this one in this or an outer
@@ -682,6 +690,7 @@ public class MtfFile implements IMechLoader {
                         }
                         m.setArmored(isArmored);
                         m.setMechTurretMounted(isTurreted);
+                        m.setOmniPodMounted(isOmniPod);
                         mech.addEquipment(m, loc, rearMounted);
                     } else {
                         Mounted mount = null;
@@ -689,6 +698,7 @@ public class MtfFile implements IMechLoader {
                             mount = mech.addEquipment(etype, loc, rearMounted,
                                                       BattleArmor.MOUNT_LOC_NONE, isArmored,
                                                       isTurreted);
+                            mount.setOmniPodMounted(isOmniPod);
                         } else {
                             if (etype instanceof AmmoType) {
                                 if (!(etype2 instanceof AmmoType) || (((AmmoType) etype).getAmmoType() != ((AmmoType) etype2).getAmmoType())) {
@@ -700,6 +710,7 @@ public class MtfFile implements IMechLoader {
                                 }
                             }
                             mount = mech.addEquipment(etype, etype2, loc);
+                            mount.setOmniPodMounted(isOmniPod);
                         }
                         // vehicular grenade launchers need to have their facing
                         // set

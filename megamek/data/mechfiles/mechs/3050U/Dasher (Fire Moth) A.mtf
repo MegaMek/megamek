@@ -41,8 +41,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLAntiMissileSystem
-CLAMS Ammo
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
 Endo Steel
 Ferro-Fibrous
 -Empty-
@@ -55,8 +55,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLTAG
-CLActiveProbe
+CLTAG (omnipod)
+CLActiveProbe (omnipod)
 Endo Steel
 Ferro-Fibrous
 -Empty-
@@ -83,8 +83,8 @@ Fusion Engine
 Fusion Engine
 CLDouble Heat Sink
 CLDouble Heat Sink
-CLStreakSRM4
-CLStreakSRM4 Ammo
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 Ammo (omnipod)
 Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous

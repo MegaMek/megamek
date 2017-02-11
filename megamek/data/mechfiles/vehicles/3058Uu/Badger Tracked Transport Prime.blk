@@ -29,18 +29,18 @@ Prime
 18
 </Armor>
 <Turret Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
+ISMediumLaser:OMNI
+ISMediumLaser:OMNI
+ISMediumLaser:OMNI
 </Turret Equipment>
 <Front Equipment>
-ISSRM2
+ISSRM2:OMNI
 </Front Equipment>
 <transporters>
 TroopSpace:4
 </transporters>
 <Body Equipment>
-ISSRM2 Ammo
+ISSRM2 Ammo:OMNI
 </Body Equipment>
 <type>
 IS Level 2

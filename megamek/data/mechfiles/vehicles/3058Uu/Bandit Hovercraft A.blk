@@ -29,7 +29,7 @@ A
 22
 </Armor>
 <Turret Equipment>
-ISPPC
+ISPPC:OMNI
 </Turret Equipment>
 <transporters>
 TroopSpace:4

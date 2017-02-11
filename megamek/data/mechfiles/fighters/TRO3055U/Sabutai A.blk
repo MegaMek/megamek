@@ -76,31 +76,31 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLLBXAC20
-Clan LB 20-X Cluster Ammo
-Clan LB 20-X Cluster Ammo
-Clan LB 20-X Cluster Ammo
-CLERSmallLaser
-CLCASE
+CLLBXAC20:OMNI
+Clan LB 20-X Cluster Ammo:OMNI
+Clan LB 20-X Cluster Ammo:OMNI
+Clan LB 20-X Cluster Ammo:OMNI
+CLERSmallLaser:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLUltraAC20
-Clan Ultra AC/20 Ammo
-CLERSmallLaser
-CLCASE
+CLUltraAC20:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+CLERSmallLaser:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLUltraAC20
-Clan Ultra AC/20 Ammo
-CLERSmallLaser
-CLCASE
+CLUltraAC20:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+CLERSmallLaser:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Aft Equipment>
 
 <source>

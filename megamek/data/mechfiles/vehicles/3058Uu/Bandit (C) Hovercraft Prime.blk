@@ -36,10 +36,6 @@ Hover
 troopspace:5.0
 </transporters>
 
-<transporters>
-
-</transporters>
-
 <cruiseMP>
 9
 </cruiseMP>
@@ -69,9 +65,9 @@ troopspace:5.0
 </armor>
 
 <Body Equipment>
-Clan Streak SRM 6 Ammo
-CLCASE
-Clan Streak SRM 6 Ammo
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE:OMNI
+Clan Streak SRM 6 Ammo:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -87,8 +83,8 @@ Clan Streak SRM 6 Ammo
 </Rear Equipment>
 
 <Turret Equipment>
-CLStreakSRM6
-CLStreakSRM6
+CLStreakSRM6:OMNI
+CLStreakSRM6:OMNI
 </Turret Equipment>
 
 <source>

@@ -29,15 +29,15 @@ D
 18
 </Armor>
 <Turret Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
+ISMediumLaser:OMNI
+ISMediumLaser:OMNI
+ISMediumLaser:OMNI
 </Turret Equipment>
 <Right Equipment>
-ISSmallLaser
+ISSmallLaser:OMNI
 </Right Equipment>
 <Left Equipment>
-ISSmallLaser
+ISSmallLaser:OMNI
 </Left Equipment>
 <transporters>
 TroopSpace:4

@@ -44,6 +44,10 @@ Aerodyne
 39
 </heatsinks>
 
+<omnipodheatsinks>
+24
+</omnipodheatsinks>
+
 <sink_type>
 1
 </sink_type>
@@ -76,21 +80,21 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLERSmallLaser
+CLHeavyLargeLaser:OMNI
+CLHeavyLargeLaser:OMNI
+CLHeavyLargeLaser:OMNI
+CLHeavyLargeLaser:OMNI
+CLERSmallLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

@@ -29,11 +29,11 @@ D
 18
 </Armor>
 <Turret Equipment>
-CLStreakSRM6
+CLStreakSRM6:OMNI
 </Turret Equipment>
 <Body Equipment>
-CLStreakSRM6 Ammo
-CLCASE
+CLStreakSRM6 Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 <transporters>
 TroopSpace:5

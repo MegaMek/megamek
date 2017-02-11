@@ -226,8 +226,8 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                 rearMount = false;
                 String equipName = element.trim();
 
-                boolean omniMounted = element.contains(":OMNI");
-                element = element.replace(":OMNI", "");
+                boolean omniMounted = equipName.contains(":OMNI");
+                equipName = equipName.replace(":OMNI", "");
 
                 if (equipName.startsWith("(R) ")) {
                     rearMount = true;
@@ -265,6 +265,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                 if (etype != null) {
                     try {
                         Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {
@@ -278,7 +279,6 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
                             } else {
                                 mount.setFacing(facing);
                             }
-                            mount.setOmniPodMounted(omniMounted);
                         }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());

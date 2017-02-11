@@ -373,6 +373,27 @@
 
     <target name="nix-release" depends="pkgdir-build, nix-package, pkgdir-clean" description="Build the project from local source and package it as Unix" />
 
-    <target name="src-release" depends="pkgdir-build, source-package, pkgdir-clean" description="Build the project from local source and package it as source-only" />
+    <target name="src-release" depends="pkgdir-build, prepackagePrep, source-package, pkgdir-clean" description="Build the project from local source and package it as source-only" />
+
+    <!-- Tasks to perform prior to packaing -->
+	<target name="prepackagePrep" depends="createImageAtlases, deleteAtlasedImages, unitfiles-zip, rat-zip"/>
+
+    <!-- Run CreateImageAtlases -->
+    <target name="createImageAtlases" description="Run the image atlas creator, which will package images in the units and hexes directories into atlases.">
+        <java  dir="${pkgdir}" classname="megamek.utils.CreateImageAtlases" fork="true">
+            <classpath>
+                <pathelement path="${pkgdir}/${builddir}" />
+                <fileset dir="${pkgdir}/${libdir}" includes="*.jar" />
+                <pathelement path="${pkgdir}/${propdir}" />
+            </classpath>
+        </java>
+    </target>
+
+	<!-- Delete images that were packaged into an atlas -->
+	<target name="deleteAtlasedImages" description="Deletes images that are known to be packaged into an atlas.">
+		<delete>
+			<fileset dir="${pkgdir}" includesfile="${atlasedImages}"/>
+		</delete>
+	</target>
 
 </project>

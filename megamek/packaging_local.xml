@@ -361,9 +361,9 @@
     <target name="createImageAtlases" description="Run the image atlas creator, which will package images in the units and hexes directories into atlases.">
         <java  dir="${localdir}" classname="megamek.utils.CreateImageAtlases" fork="true">
             <classpath>
-                <pathelement path="${builddir}" />
-                <fileset dir="${libdir}" includes="*.jar" />
-                <pathelement path="${propdir}" />
+                <pathelement path="${localdir}/${builddir}" />
+                <fileset dir="${localdir}/${libdir}" includes="*.jar" />
+                <pathelement path="${localdir}/${propdir}" />
             </classpath>
         </java>
     </target>

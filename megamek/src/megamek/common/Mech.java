@@ -6260,7 +6260,7 @@ public abstract class Mech extends Entity {
             return MtfFile.EMPTY;
         }
         int type = cs.getType();
-        int index = cs.getIndex();
+        int index = cs.getIndex();        
         String armoredText = "";
 
         if (cs.isArmored()) {
@@ -6320,6 +6320,9 @@ public abstract class Mech extends Entity {
             if (cs.getMount2() != null) {
                 toReturn.append("|").append(
                         cs.getMount2().getType().getInternalName());
+            }
+            if (m.isOmniPodMounted()) {
+            	toReturn.append(" ").append(MtfFile.OMNIPOD);
             }
             return toReturn.toString();
         } else {

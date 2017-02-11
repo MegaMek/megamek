@@ -76,8 +76,8 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLHeavyLargeLaser
-CLHeavySmallLaser
+CLHeavyLargeLaser:OMNI
+CLHeavySmallLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>

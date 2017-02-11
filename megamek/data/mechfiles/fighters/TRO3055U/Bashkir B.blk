@@ -76,19 +76,19 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERSmallLaser
+CLERSmallLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLLRM5
-Clan Ammo LRM-5
-CLCASE
+CLLRM5:OMNI
+Clan Ammo LRM-5:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLLRM5
-Clan Ammo LRM-5
-CLCASE
+CLLRM5:OMNI
+Clan Ammo LRM-5:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

@@ -76,24 +76,24 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLLargePulseLaser
-CLMediumPulseLaser
+CLLargePulseLaser:OMNI
+CLMediumPulseLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLLargePulseLaser
-CLMediumPulseLaser
+CLLargePulseLaser:OMNI
+CLMediumPulseLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLLargePulseLaser
-CLMediumPulseLaser
+CLLargePulseLaser:OMNI
+CLMediumPulseLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLSRM4
-Clan Ammo SRM-4
-CLCASE
+CLSRM4:OMNI
+Clan Ammo SRM-4:OMNI
+CLCASE:OMNI
 </Aft Equipment>
 
 <source>

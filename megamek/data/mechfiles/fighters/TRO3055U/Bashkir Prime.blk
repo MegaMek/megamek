@@ -44,6 +44,10 @@ Aerodyne
 11
 </heatsinks>
 
+<omnipodheatsinks>
+1
+</omnipodheatsinks>
+
 <sink_type>
 1
 </sink_type>
@@ -76,18 +80,18 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERSmallLaser
-CLStreakSRM2
-Clan Streak SRM 2 Ammo
-CLCASE
+CLERSmallLaser:OMNI
+CLStreakSRM2:OMNI
+Clan Streak SRM 2 Ammo:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERMediumLaser
+CLERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERMediumLaser
+CLERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

@@ -76,27 +76,27 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLHAG30
-HAG/30 Ammo
-HAG/30 Ammo
-HAG/30 Ammo
-CLCASE
+CLHAG30:OMNI
+HAG/30 Ammo:OMNI
+HAG/30 Ammo:OMNI
+HAG/30 Ammo:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLTargeting Computer
+CLTargeting Computer:OMNI
 </Aft Equipment>
 
 <source>

@@ -76,34 +76,34 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLCASE
+CLRotaryAC5:OMNI
+CLRotaryAC5 Ammo:OMNI
+CLRotaryAC5 Ammo:OMNI
+CLRotaryAC5 Ammo:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLImprovedMediumHeavyLaser
-CLCASE
+CLRotaryAC5:OMNI
+CLRotaryAC5 Ammo:OMNI
+CLRotaryAC5 Ammo:OMNI
+CLRotaryAC5 Ammo:OMNI
+CLImprovedMediumHeavyLaser:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLImprovedMediumHeavyLaser
-CLCASE
+CLRotaryAC5:OMNI
+CLRotaryAC5 Ammo:OMNI
+CLRotaryAC5 Ammo:OMNI
+CLRotaryAC5 Ammo:OMNI
+CLImprovedMediumHeavyLaser:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERMediumLaser
-WatchdogECMSuite
+CLERMediumLaser:OMNI
+WatchdogECMSuite:OMNI
 </Aft Equipment>
 
 <source>

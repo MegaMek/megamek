@@ -44,6 +44,10 @@ Aerodyne
 30
 </heatsinks>
 
+<omnipodheatsinks>
+10
+</omnipodheatsinks>
+
 <sink_type>
 1
 </sink_type>
@@ -76,35 +80,35 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLImprovedHeavyLargeLaser
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-CLCASE
+CLImprovedHeavyLargeLaser:OMNI
+Clan Coolant Pod:OMNI
+Clan Coolant Pod:OMNI
+Clan Coolant Pod:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-CLCASE
+CLImprovedHeavyLargeLaser:OMNI
+CLImprovedHeavyLargeLaser:OMNI
+Clan Coolant Pod:OMNI
+Clan Coolant Pod:OMNI
+Clan Coolant Pod:OMNI
+Clan Coolant Pod:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-CLCASE
+CLImprovedHeavyLargeLaser:OMNI
+CLImprovedHeavyLargeLaser:OMNI
+Clan Coolant Pod:OMNI
+Clan Coolant Pod:OMNI
+Clan Coolant Pod:OMNI
+Clan Coolant Pod:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-WatchdogECMSuite
+WatchdogECMSuite:OMNI
 </Aft Equipment>
 
 <source>

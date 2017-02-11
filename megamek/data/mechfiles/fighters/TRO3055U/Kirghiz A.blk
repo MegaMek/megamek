@@ -44,6 +44,10 @@ Aerodyne
 24
 </heatsinks>
 
+<omnipodheatsinks>
+4
+</omnipodheatsinks>
+
 <sink_type>
 1
 </sink_type>
@@ -68,29 +72,29 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERPPC
-CLERPPC
+CLERPPC:OMNI
+CLERPPC:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLLBXAC2
-Clan LB 2-X Cluster Ammo
-CLLargePulseLaser
-CLLargePulseLaser
-CLCASE
+CLLBXAC2:OMNI
+Clan LB 2-X Cluster Ammo:OMNI
+CLLargePulseLaser:OMNI
+CLLargePulseLaser:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLLBXAC2
-Clan LB 2-X Cluster Ammo
-CLLargePulseLaser
-CLLargePulseLaser
-CLCASE
+CLLBXAC2:OMNI
+Clan LB 2-X Cluster Ammo:OMNI
+CLLargePulseLaser:OMNI
+CLLargePulseLaser:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERSmallLaser
-CLERLargeLaser
+CLERSmallLaser:OMNI
+CLERLargeLaser:OMNI
 </Aft Equipment>
 
 <source>

@@ -76,23 +76,23 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLPlasmaCannon
-CLPlasmaCannonAmmo
+CLPlasmaCannon:OMNI
+CLPlasmaCannonAmmo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLPlasmaCannon
-CLPlasmaCannonAmmo
+CLPlasmaCannon:OMNI
+CLPlasmaCannonAmmo:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLPlasmaCannon
-CLPlasmaCannonAmmo
+CLPlasmaCannon:OMNI
+CLPlasmaCannonAmmo:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERSmallLaser
-CLTargeting Computer
+CLERSmallLaser:OMNI
+CLTargeting Computer:OMNI
 </Aft Equipment>
 
 <source>

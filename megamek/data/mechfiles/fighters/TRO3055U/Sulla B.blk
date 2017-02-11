@@ -79,21 +79,21 @@ Aerodyne
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLLRM20
-Clan Ammo LRM-20 (Clan) Artemis-capable
-CLArtemisIV
-CLCASE
+CLLRM20:OMNI
+Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
+CLArtemisIV:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLLRM20
-Clan Ammo LRM-20 (Clan) Artemis-capable
-CLArtemisIV
-CLCASE
+CLLRM20:OMNI
+Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
+CLArtemisIV:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERSmallLaser
+CLERSmallLaser:OMNI
 </Aft Equipment>
 
 <source>

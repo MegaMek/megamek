@@ -76,20 +76,20 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLUltraAC10
-Clan Ultra AC/10 Ammo
-CLCASE
+CLUltraAC10:OMNI
+Clan Ultra AC/10 Ammo:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLUltraAC10
-Clan Ultra AC/10 Ammo
-CLCASE
+CLUltraAC10:OMNI
+Clan Ultra AC/10 Ammo:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

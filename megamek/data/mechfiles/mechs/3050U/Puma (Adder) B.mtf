@@ -40,11 +40,11 @@ Weapons:5
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5 CL Ammo
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 CL Ammo (omnipod)
 Ferro-Fibrous
 -Empty-
 -Empty-
@@ -56,8 +56,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 Ferro-Fibrous
 -Empty-
 -Empty-
@@ -70,7 +70,7 @@ Fusion Engine
 Fusion Engine
 CLDouble Heat Sink
 CLDouble Heat Sink
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous
@@ -84,7 +84,7 @@ Fusion Engine
 Fusion Engine
 CLDouble Heat Sink
 CLDouble Heat Sink
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous

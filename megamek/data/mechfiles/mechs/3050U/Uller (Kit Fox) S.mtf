@@ -43,9 +43,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMediumPulseLaser
-CLStreakSRM4
-CLStreakSRM4 Ammo
+CLMediumPulseLaser (omnipod)
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 Ammo (omnipod)
 Endo Steel
 Ferro-Fibrous
 -Empty-
@@ -55,9 +55,9 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLSmallPulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
 Endo Steel
 Ferro-Fibrous
 -Empty-
@@ -73,8 +73,8 @@ CLDouble Heat Sink
 CLDouble Heat Sink
 CLDouble Heat Sink
 CLDouble Heat Sink
-Jump Jet
-CLMG
+Jump Jet (omnipod)
+CLMG (omnipod)
 Endo Steel
 Endo Steel
 Ferro-Fibrous
@@ -83,9 +83,9 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-CLMG
-CLMG Ammo (100)
+Jump Jet (omnipod)
+CLMG (omnipod)
+CLMG Ammo (100) (omnipod)
 Endo Steel
 Endo Steel
 Endo Steel
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

@@ -41,8 +41,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLATM3
-CLATM3
+CLATM3 (omnipod)
+CLATM3 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -53,13 +53,13 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERPPC
-CLERPPC
-CLERSmallLaser
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERSmallLaser (omnipod)
 -Empty-
 Endo-Steel
 Ferro-Fibrous
@@ -71,7 +71,7 @@ CLDouble Heat Sink
 CLDouble Heat Sink
 CLDouble Heat Sink
 CLDouble Heat Sink
-Jump Jet
+Jump Jet (omnipod)
 -Empty-
 Endo-Steel
 Endo-Steel
@@ -81,10 +81,10 @@ Ferro-Fibrous
 Right Torso:
 Engine
 Engine
-Jump Jet
-CLATM3 Ammo
-Clan Ammo ATM-3 ER
-Clan Ammo ATM-3 HE
+Jump Jet (omnipod)
+CLATM3 Ammo (omnipod)
+Clan Ammo ATM-3 ER (omnipod)
+Clan Ammo ATM-3 HE (omnipod)
 -Empty-
 Endo-Steel
 Endo-Steel
@@ -119,13 +119,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)

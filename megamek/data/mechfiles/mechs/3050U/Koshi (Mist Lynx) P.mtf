@@ -47,10 +47,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMicroLaser
-CLERMicroLaser
-CLMicroPulseLaser
-CLMicroPulseLaser
+CLERMicroLaser (omnipod)
+CLERMicroLaser (omnipod)
+CLMicroPulseLaser (omnipod)
+CLMicroPulseLaser (omnipod)
 -Empty-
 -Empty-
 Endo-Steel
@@ -61,10 +61,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMicroPulseLaser
-CLERMicroLaser
-CLERMicroLaser
-CLERLargeLaser
+CLMicroPulseLaser (omnipod)
+CLERMicroLaser (omnipod)
+CLERMicroLaser (omnipod)
+CLERLargeLaser (omnipod)
 -Empty-
 -Empty-
 Endo-Steel
@@ -92,8 +92,8 @@ CLDouble Heat Sink
 Jump Jet
 Jump Jet
 Jump Jet
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDouble Heat Sink (omnipod)
+CLDouble Heat Sink (omnipod)
 Endo-Steel
 Ferro-Fibrous
 Ferro-Fibrous

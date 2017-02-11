@@ -44,12 +44,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLTAG
-CLAntiMissileSystem
-CLAntiMissileSystem
-CLAMS Ammo
-CLAMS Ammo
-CLAMS Ammo
+CLTAG (omnipod)
+CLAntiMissileSystem (omnipod)
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+CLAMS Ammo (omnipod)
+CLAMS Ammo (omnipod)
 Endo Steel
 Ferro-Fibrous
 
@@ -58,10 +58,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLFlamer
-CLMG
-CLMG
-CLMG Ammo (100)
+CLFlamer (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG Ammo (100) (omnipod)
 Endo Steel
 Ferro-Fibrous
 -Empty-
@@ -128,7 +128,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
 Endo Steel
 -Empty-
 -Empty-
@@ -142,7 +142,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
 Endo Steel
 -Empty-
 -Empty-

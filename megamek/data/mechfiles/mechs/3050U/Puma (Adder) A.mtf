@@ -42,12 +42,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20 Ammo
-CLLRM20 Ammo
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 Ammo (omnipod)
+CLLRM20 Ammo (omnipod)
 Ferro-Fibrous
 -Empty-
 
@@ -56,12 +56,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM20 Ammo
-CLLRM20 Ammo
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
+CLLRM20 Ammo (omnipod)
+CLLRM20 Ammo (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
 Ferro-Fibrous
 -Empty-
 
@@ -70,7 +70,7 @@ Fusion Engine
 Fusion Engine
 CLDouble Heat Sink
 CLDouble Heat Sink
-CLSmallPulseLaser
+CLSmallPulseLaser (omnipod)
 Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous
@@ -84,7 +84,7 @@ Fusion Engine
 Fusion Engine
 CLDouble Heat Sink
 CLDouble Heat Sink
-CLSmallPulseLaser
+CLSmallPulseLaser (omnipod)
 Endo Steel
 Ferro-Fibrous
 Ferro-Fibrous

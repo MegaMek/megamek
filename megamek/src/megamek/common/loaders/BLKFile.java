@@ -739,6 +739,8 @@ public class BLKFile {
             // Walk the array of transporters.
             for (String transporter : transporters) {
                 transporter = transporter.toLowerCase();
+            	boolean isPod = transporter.endsWith(":omni");
+            	transporter = transporter.replace(":omni", "");
                 // for bays, we have to save the baynumber in each bay, because
                 // one conceputal bay can contain several different ones
                 // we default to bay 1
@@ -747,7 +749,7 @@ public class BLKFile {
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
                     Double fsize = new Double(transporter.substring(11));
-                    e.addTransporter(new TroopSpace(fsize));
+                    e.addTransporter(new TroopSpace(fsize), isPod);
                 } else if (transporter.startsWith("cargobay:", 0)) {
                     String numbers = transporter.substring(9);
                     String temp[] = numbers.split(":");

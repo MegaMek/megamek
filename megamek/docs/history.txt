@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.43.0-git
+v0.42.1-git
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for
 	BA SRM4(OS) and BA LBX
 + Issue #467: Princess bot NPEs in physical attacks phase

@@ -1,10 +1,21 @@
 VERSION HISTORY:
 ----------------
-v0.43.0-git
+v0.43.1-git
+
+v0.43.0 (2017-02-13 03:30 UTC)
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for
 	BA SRM4(OS) and BA LBX
 + Issue #467: Princess bot NPEs in physical attacks phase
 + Issue #427: Firing weapons split across arm/torso while prone
++ Data: Some unit fixes, and new maps from DancefloorLandmine
++ Data: Sprite fixes and new Sprites.
++ Data: More Sprite/Unit/Board Fixes
++ Infantry armor kits.
++ Mechanized VTOL infantry.
++ Infantry specializations: SCUBA, TAG.
++ Conventional infantry augmentations (e.g. Manei Domini) can be set in unit file. Note that not all options are implemented.
++ Random generation using formation building rules from Campaign Operations.
++ Adding some references to missing MD Infantry stuff. Names only not implemented for play.
 
 v0.42.0 (2017-01-01 14:00 UTC)
 + Issue #441: Fled units not being saved at the end of the game

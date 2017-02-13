@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.PPCWeapon;
 
@@ -2724,6 +2725,11 @@ public class Aero extends Entity {
     }
 
     @Override
+    public boolean doomedInExtremeTemp() {
+        return false;
+    }
+
+    @Override
     public boolean doomedInVacuum() {
         return false;
     }
@@ -4083,11 +4089,108 @@ public class Aero extends Entity {
     }
 
     @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        moves.put(getMovementModeAsBattleForceString(), getWalkMP());
+    }
+
+    @Override
     public int getBattleForceArmorPoints() {
-        if (isCapitalScale()) {
+        if (isCapitalFighter()) {
             return (int) Math.round(getCapArmor() / 3.0);
         }
         return super.getBattleForceArmorPoints();
+    }
+    
+    @Override
+    public String getBattleForceDamageThresholdString() {
+        return "-" + (int)Math.ceil(getBattleForceArmorPoints() / 10.0);
+    }
+    
+    @Override
+    public int getBattleForceStructurePoints() {
+        return (int) Math.ceil(getSI() * 0.50);
+    }
+    
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 2;
+    }
+
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        if ((index == 0 && location != LOC_AFT && !rearMounted)
+                || (index == 1 && (location == LOC_AFT || rearMounted))) {
+            return 1.0;            
+        }
+        return 0; 
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        if (index == 1) {
+            return "REAR";
+        }
+        return "";
+    }
+    
+    /**
+     * We need to check whether the weapon is mounted in LOC_AFT in addition to isRearMounted()
+     */
+    public int getBattleForceTotalHeatGeneration(boolean allowRear) {
+        int totalHeat = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+            if (weapon instanceof BayWeapon) {
+                for (int index : mount.getBayWeapons()) {
+                    totalHeat += ((WeaponType)(getEquipment(index).getType())).getHeat();
+                }
+            }
+            if (weapon.hasFlag(WeaponType.F_ONESHOT)
+                || (allowRear && !mount.isRearMounted() && mount.getLocation() != LOC_AFT)
+                || (!allowRear && (mount.isRearMounted() || mount.getLocation() == LOC_AFT))) {
+                continue;
+            }
+            totalHeat += weapon.getHeat();
+        }
+
+        return totalHeat;
+    }
+    
+    @Override
+    public int getBattleForceTotalHeatGeneration(int location) {
+        int totalHeat = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+            if (weapon.hasFlag(WeaponType.F_ONESHOT)
+                || getBattleForceLocationMultiplier(location, mount.getLocation(),
+                        mount.isRearMounted()) == 0) {
+                continue;
+            }
+            totalHeat += weapon.getHeat();
+        }
+
+        return totalHeat;        
+    }
+
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        for (Mounted m : getEquipment()) {
+            if (m.getType().hasFlag(MiscType.F_SPACE_MINE_DISPENSER)) {
+                specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
+            }
+        }
+        if ((getEntityType() & (ETYPE_SMALL_CRAFT | ETYPE_JUMPSHIP | ETYPE_FIXED_WING_SUPPORT)) == 0) {
+            specialAbilities.put(BattleForceSPA.BOMB, getWeightClass() + 1);            
+        }
+        if ((getEntityType() & (ETYPE_JUMPSHIP | ETYPE_CONV_FIGHTER)) == 0) {
+            specialAbilities.put(BattleForceSPA.SPC, null);
+        }
+        if (isVSTOL()) {
+            specialAbilities.put(BattleForceSPA.VSTOL, null);
+        }
     }
 
     /**
@@ -4097,11 +4200,6 @@ public class Aero extends Entity {
      */
     public boolean isPrimitive() {
         return (getCockpitType() == Aero.COCKPIT_PRIMITIVE);
-    }
-
-    @Override
-    public int getBattleForceStructurePoints() {
-        return (int) Math.ceil(getSI() * 0.50);
     }
 
     @Override

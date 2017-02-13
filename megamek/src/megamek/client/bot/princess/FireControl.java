@@ -35,8 +35,9 @@ import megamek.common.EquipmentType;
 import megamek.common.FixedWingSupport;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
-import megamek.common.IPlayer;
 import megamek.common.IHex;
+import megamek.common.ILocationExposureStatus;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
@@ -649,8 +650,9 @@ public class FireControl {
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
-    protected ToHitData getInfantryRangeMods(int distance, InfantryWeapon weapon) {
-        return Compute.getInfantryRangeMods(distance, weapon);
+    protected ToHitData getInfantryRangeMods(int distance, InfantryWeapon weapon,
+    		InfantryWeapon secondary, boolean underwater) {
+        return Compute.getInfantryRangeMods(distance, weapon, secondary, underwater);
     }
 
     /**
@@ -863,7 +865,9 @@ public class FireControl {
                 toHit.addModifier((weaponType.getMinimumRange() - distance) + 1, TH_MINIMUM_RANGE);
             }
         } else {
-            toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType()));
+            toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType(),
+            		isShooterInfantry?((Infantry)shooter).getSecondaryWeapon() : null,
+            				shooter.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET));
         }
 
         // let us not forget about heat

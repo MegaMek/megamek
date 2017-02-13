@@ -426,6 +426,14 @@ public interface IBoard {
     public abstract void load(InputStream is);
 
     /**
+     * 
+     * @param is
+     * @param errBuff
+     * @param continueLoadOnError
+     */
+    public abstract void load(InputStream is, @Nullable StringBuffer errBuff, boolean continueLoadOnError);
+
+    /**
      * Writes data for the board, as text to the OutputStream
      *
      * @param os

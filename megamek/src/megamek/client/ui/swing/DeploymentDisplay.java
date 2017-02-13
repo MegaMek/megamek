@@ -555,8 +555,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     }
                 } else {
                     // everything else goes to elevation 0, or on the floor of a
-                    // water hex
-                    ce().setElevation(deployhex.floor() - deployhex.surface());
+                    // water hex, except non-mechanized SCUBA infantry, which have a max depth of 2.
+                	if (deployhex.containsTerrain(Terrains.WATER)
+                			&& (ce() instanceof Infantry) && ((Infantry)ce()).isNonMechSCUBA()) {
+                		ce().setElevation(Math.max(deployhex.floor() - deployhex.surface(), -2));
+                	} else {
+                		ce().setElevation(deployhex.floor() - deployhex.surface());
+                	}
                 }
             }
             ce().setPosition(moveto);

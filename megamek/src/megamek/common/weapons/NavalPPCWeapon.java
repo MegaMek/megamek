@@ -31,4 +31,9 @@ public abstract class NavalPPCWeapon extends EnergyWeapon {
         this.atClass = CLASS_CAPITAL_PPC;
         this.capital = true;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL;
+    }
 }

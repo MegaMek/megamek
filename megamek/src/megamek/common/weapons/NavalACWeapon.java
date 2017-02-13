@@ -35,4 +35,9 @@ public abstract class NavalACWeapon extends AmmoWeapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC);
         capital = true;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL;
+    }
 }

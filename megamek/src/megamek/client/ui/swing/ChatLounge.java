@@ -38,7 +38,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -140,6 +139,7 @@ import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
+import megamek.common.util.MegaMekFile;
 
 public class ChatLounge extends AbstractPhaseDisplay
         implements ActionListener, ItemListener, ListSelectionListener, MouseListener, IMapSettingsObserver {
@@ -1181,7 +1181,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         String boardName = lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
             IBoard board = new Board(16, 17);
-            board.load(new File(Configuration.boardsDir(), boardName + ".board"));
+            board.load(new MegaMekFile(Configuration.boardsDir(), boardName + ".board").getFile());
             if (chkRotateBoard.isSelected()) {
                 BoardUtilities.flip(board, true, true);
             }
@@ -1210,7 +1210,8 @@ public class ChatLounge extends AbstractPhaseDisplay
             if (name.startsWith(MapSettings.BOARD_GENERATED) || (temp.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(temp);
             } else {
-                sheetBoards[i].load(new File(Configuration.boardsDir(), name + ".board"));
+                sheetBoards[i].load(new MegaMekFile(Configuration.boardsDir(), name
+                        + ".board").getFile());
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
             rotateBoard.add(isRotated);
@@ -2524,7 +2525,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             IBoard b = new Board(16, 17);
             if (!MapSettings.BOARD_GENERATED.equals(board) && !MapSettings.BOARD_RANDOM.equals(board)
                     && !MapSettings.BOARD_SURPRISE.equals(board)) {
-                b.load(new File(Configuration.boardsDir(), board + ".board"));
+                b.load(new MegaMekFile(Configuration.boardsDir(), board + ".board").getFile());
                 if (!b.isValid()) {
                     JOptionPane.showMessageDialog(this, "The Selected board is invalid, please select another.");
                     return;
@@ -3347,8 +3348,10 @@ public class ChatLounge extends AbstractPhaseDisplay
                             clearImage();
                         } else {
                             Image image = getToolkit().getImage(
-                                    new File(Configuration.miscImagesDir(), FILENAME_UNKNOWN_UNIT).toString());
-                            image = image.getScaledInstance(-1, 72, Image.SCALE_DEFAULT);
+                                    new MegaMekFile(Configuration.miscImagesDir(),
+                                            FILENAME_UNKNOWN_UNIT).toString());
+                            image = image.getScaledInstance(-1, 72,
+                                    Image.SCALE_DEFAULT);
                             setImage(image);
                         }
                     } else if (column == COL_PILOT) {
@@ -3356,8 +3359,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                             clearImage();
                         } else {
                             Image image = getToolkit().getImage(
-                                    new File(Configuration.portraitImagesDir(), FILENAME_PORTRAIT_DEFAULT).toString());
-                            image = image.getScaledInstance(-1, 50, Image.SCALE_DEFAULT);
+                                    new MegaMekFile(Configuration.portraitImagesDir(),
+                                            FILENAME_PORTRAIT_DEFAULT)
+                                            .toString());
+                            image = image.getScaledInstance(-1, 50,
+                                    Image.SCALE_DEFAULT);
                             setImage(image);
                         }
                     }

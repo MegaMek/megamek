@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -70,6 +69,7 @@ import megamek.common.WeaponComparatorNum;
 import megamek.common.WeaponComparatorRange;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.MegaMekFile;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -857,7 +857,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         Image tile = getToolkit()
                 .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
+                        new MegaMekFile(Configuration.widgetsDir(), udSpec
                                 .getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
@@ -865,28 +865,28 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getTopLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getBottomLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getLeftLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getRightLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -895,7 +895,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit()
                 .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
+                        new MegaMekFile(Configuration.widgetsDir(), udSpec
                                 .getTopLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -903,7 +903,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
+                new MegaMekFile(Configuration.widgetsDir(), udSpec
                         .getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -912,7 +912,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit()
                 .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
+                        new MegaMekFile(Configuration.widgetsDir(), udSpec
                                 .getTopRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -920,7 +920,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
+                new MegaMekFile(Configuration.widgetsDir(), udSpec
                         .getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -1413,7 +1413,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         wArcHeatR.setText(Integer.toString(entity.getHeatInArc(
                 mounted.getLocation(), mounted.isRearMounted())));
 
-        if (wtype instanceof InfantryWeapon) {
+        if (wtype instanceof InfantryWeapon && !wtype.hasFlag(WeaponType.F_TAG)) {
             wDamageTrooperL.setVisible(true);
             wDamageTrooperR.setVisible(true);
             InfantryWeapon inftype = (InfantryWeapon) wtype;
@@ -1464,7 +1464,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             if (inftype.hasFlag(WeaponType.F_INF_BURST)) {
                 zeromods--;
             }
-            switch (inftype.getInfantryRange()) {
+            
+            int range = inftype.getInfantryRange();
+            if (entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET) {
+            	range /= 2;
+            }
+            switch (range) {
                 case 0:
                     wInfantryRange0L.setText("0");
                     wInfantryRange0R.setText("+" + zeromods);
@@ -1930,6 +1935,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             int iR = inftype.getInfantryRange();
             ranges[0] = 
                     new int[] { 0, iR, iR * 2, iR * 3, 0 };
+            ranges[1] =
+            		new int[] { 0, iR / 2, (iR / 2) * 2, (iR / 2) * 3, 0 }; 
         }
 
         // Artillery gets fixed ranges, 100 as an arbitrary

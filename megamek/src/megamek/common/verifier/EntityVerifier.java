@@ -30,6 +30,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
+import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
@@ -58,6 +59,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     public TestXMLOption aeroOption = new TestXMLOption();
     @XmlElement(name = "ba")
     public TestXMLOption baOption = new TestXMLOption();
+    @XmlElement(name = "infantry")
+    public TestXMLOption infOption = new TestXMLOption();
     
     private boolean loadingVerbosity = false;
     private boolean failsOnly = false;
@@ -130,6 +133,9 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         } else if (entity instanceof BattleArmor){
             testEntity = new TestBattleArmor((BattleArmor) entity, baOption,
                     fileString);
+        } else if (entity instanceof Infantry){
+            testEntity = new TestInfantry((Infantry) entity, infOption,
+                    fileString);
         } else {
             System.err.println("UnknownType: " + entity.getDisplayName());
             System.err.println("Found in: " + fileString);
@@ -191,15 +197,18 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(aeroOption.printOptions());
         System.out.println("\nBattleArmor Options:");
         System.out.println(baOption.printOptions());
+        System.out.println("\nInfantry Options:");
+        System.out.println(infOption.printOptions());
 
         int failures = 0;
-        int failedMek, failedTank, failedAero, failedBA;
-        failedMek = failedTank = failedAero = failedBA = 0;
+        int failedMek, failedTank, failedAero, failedBA, failedInfantry;
+        failedMek = failedTank = failedAero = failedBA = failedInfantry = 0;
         for (int i = 0; i < ms.length; i++) {
             if (ms[i].getUnitType().equals("Mek")
                     || ms[i].getUnitType().equals("Tank")
                     || ms[i].getUnitType().equals("Aero")
-                    || ms[i].getUnitType().equals("BattleArmor")) {
+                    || ms[i].getUnitType().equals("BattleArmor")
+            		|| ms[i].getUnitType().equals("Infantry")) {
                 Entity entity = loadEntity(ms[i].getSourceFile(), ms[i]
                         .getEntryName());
                 if (entity == null) {
@@ -216,6 +225,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                         failedAero++;
                     } else if (ms[i].getUnitType().equals("BattleArmor")) {
                         failedBA++;
+                    } else if (ms[i].getUnitType().equals("Infantry")) {
+                        failedInfantry++;
                     }
                 }
             }
@@ -225,6 +236,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println("\t Failed Tanks: " + failedTank);
         System.out.println("\t Failed Aeros: " + failedAero);
         System.out.println("\t Failed BA: " + failedBA);
+        System.out.println("\t Failed Infantry: " + failedInfantry);
     }
 
     public static void main(String[] args) {

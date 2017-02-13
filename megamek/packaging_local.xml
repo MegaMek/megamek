@@ -33,7 +33,6 @@
 	<property name="localbuilddir" value="${localdir}/${builddir}" />
 
 	<property name="timestampfile" value="${logdir}/timestamp" />
-	<property name="TinyXMLsrc" value="TinyXML07-src.zip" />
 
 	<!-- Name of the target jarfile and the class containing the main-Method -->
 	<property name="jarfile" value="MegaMek.jar" />
@@ -41,6 +40,9 @@
 
 	<!-- This is the relative path to the 'data' directory -->
 	<property name="dataclasspath" value="." />
+
+	<!-- The file that lists all of the files that are now packaged into an image atlas, and can hence be deleted -->
+	<property name="atlasedImages" value="${localdir}/atlasedImages.txt" />
 
 	<!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
 	<pathconvert pathsep=" " property="jarclasspath">
@@ -342,14 +344,35 @@
 		<delete dir="${srcdist}" />
 	</target>
 
-    <target name="release" depends="localdev-build, unitfiles-zip, rat-zip, mac-package, nix-package, win-package, source-package, localdev-clean" description="Build the project from local sources and package it as Windows, Mac, Unix, and source-only" />
+    <target name="release" depends="localdev-build, prepackagePrep, mac-package, nix-package, win-package, source-package, localdev-clean" description="Build the project from local sources and package it as Windows, Mac, Unix, and source-only" />
 
-    <target name="mac-release" depends="localdev-build, mac-package, localdev-clean" description="Build the project from local source and package it as Mac" />
+    <target name="mac-release" depends="localdev-build, prepackagePrep, mac-package, localdev-clean" description="Build the project from local source and package it as Mac" />
 
-    <target name="win-release" depends="localdev-build, win-package, localdev-clean" description="Build the project from local source and package it as Windows" />
+    <target name="win-release" depends="localdev-build, prepackagePrep, win-package, localdev-clean" description="Build the project from local source and package it as Windows" />
 
-    <target name="nix-release" depends="localdev-build, nix-package, localdev-clean" description="Build the project from local source and package it as Unix" />
+    <target name="nix-release" depends="localdev-build, prepackagePrep, nix-package, localdev-clean" description="Build the project from local source and package it as Unix" />
 
-    <target name="src-release" depends="localdev-build, source-package, localdev-clean" description="Build the project from local source and package it as source-only" />
+    <target name="src-release" depends="localdev-build, prepackagePrep, source-package, localdev-clean" description="Build the project from local source and package it as source-only" />
+
+    <!-- Tasks to perform prior to packaing -->
+	<target name="prepackagePrep" depends="createImageAtlases, deleteAtlasedImages, unitfiles-zip, rat-zip"/>
+
+    <!-- Run CreateImageAtlases -->
+    <target name="createImageAtlases" description="Run the image atlas creator, which will package images in the units and hexes directories into atlases.">
+        <java  dir="${localdir}" classname="megamek.utils.CreateImageAtlases" fork="true">
+            <classpath>
+                <pathelement path="${localdir}/${builddir}" />
+                <fileset dir="${localdir}/${libdir}" includes="*.jar" />
+                <pathelement path="${localdir}/${propdir}" />
+            </classpath>
+        </java>
+    </target>
+
+	<!-- Delete images that were packaged into an atlas -->
+	<target name="deleteAtlasedImages" description="Deletes images that are known to be packaged into an atlas.">
+		<delete>
+			<fileset dir="${localdir}" includesfile="${atlasedImages}"/>
+		</delete>
+	</target>
 
 </project>

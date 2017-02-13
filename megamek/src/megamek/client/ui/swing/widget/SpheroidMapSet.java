@@ -20,7 +20,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Polygon;
-import java.io.File;
 import java.util.Vector;
 
 import javax.swing.JComponent;
@@ -31,6 +30,7 @@ import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.SmallCraft;
+import megamek.common.util.MegaMekFile;
 
 /**
  * Class which keeps set of all areas required to 
@@ -204,7 +204,7 @@ public class SpheroidMapSet implements DisplayMapSet{
 
         Image tile = comp.getToolkit()
                 .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
+                        new MegaMekFile(Configuration.widgetsDir(), udSpec
                                 .getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
@@ -212,28 +212,28 @@ public class SpheroidMapSet implements DisplayMapSet{
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getTopLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
                         .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getBottomLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
                         .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getLeftLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
                         .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getRightLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
                         .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
@@ -241,7 +241,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
                         .toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
@@ -249,7 +249,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
+                new MegaMekFile(Configuration.widgetsDir(), udSpec
                         .getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
@@ -258,7 +258,7 @@ public class SpheroidMapSet implements DisplayMapSet{
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit()
                 .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
+                        new MegaMekFile(Configuration.widgetsDir(), udSpec
                                 .getTopRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
@@ -266,7 +266,7 @@ public class SpheroidMapSet implements DisplayMapSet{
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
+                new MegaMekFile(Configuration.widgetsDir(), udSpec
                         .getBottomRightCorner()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));

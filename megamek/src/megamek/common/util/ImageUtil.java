@@ -28,10 +28,18 @@ import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import com.thoughtworks.xstream.XStream;
 
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
+import megamek.common.Configuration;
 import megamek.common.Coords;
 import sun.awt.image.ToolkitImage;
 
@@ -129,6 +137,7 @@ public final class ImageUtil {
     private static final List<ImageLoader> IMAGE_LOADERS;
     static {
         IMAGE_LOADERS = new ArrayList<>();
+        IMAGE_LOADERS.add(new AtlasImageLoader());
         IMAGE_LOADERS.add(new TileMapImageLoader());
         IMAGE_LOADERS.add(new AWTImageLoader());
     }
@@ -140,12 +149,12 @@ public final class ImageUtil {
         }
     }
     
-    public static Image loadImageFromFile(String fileName, Toolkit toolkit) {
+    public static Image loadImageFromFile(String fileName) {
         if(null == fileName) {
             return null;
         }
         for (ImageLoader loader : IMAGE_LOADERS) {
-            Image img = loader.loadImage(fileName, toolkit);
+            Image img = loader.loadImage(fileName);
             if (null != img) {
                 return img;
             }
@@ -155,19 +164,35 @@ public final class ImageUtil {
     
     private ImageUtil() {}
     
+    /**
+     * Interface that defines methods for an ImageLoader.
+     *
+     */
     public interface ImageLoader {
-        Image loadImage(String fileName, Toolkit toolkit);
+        
+        /**
+         * Given a string representation of a file, 
+         * @param fileName
+         * @param toolkit
+         * @return
+         */
+        Image loadImage(String fileName);
     }
-    
+
+    /**
+     * ImageLoader implementation that expects a path to an image file, and that file is loaded directly and the loaded
+     * image is returned.
+     *
+     */
     public static class AWTImageLoader implements ImageLoader {
         @Override
-        public Image loadImage(String fileName, Toolkit toolkit) {
+        public Image loadImage(String fileName) {
             File fin = new File(fileName);
             if (!fin.exists()) {
                 System.out.println("Trying to load image for a non-existant "
                         + "file! Path: " + fileName);
             }
-            ToolkitImage result = (ToolkitImage) toolkit.getImage(fileName);
+            ToolkitImage result = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(fileName);
             if(null == result) {
                 return null;
             }
@@ -192,8 +217,20 @@ public final class ImageUtil {
             return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
         }
     }
-    
+
+    /**
+     * ImageLoader that loads subregions from a larger atlas file.  The filename is assumed to have the format:
+     * <imageFile>(X,Y-Width,Height), where X,Y is the start of the image tile, and Width,Height are the size of the
+     * image tile.
+     */
     public static class TileMapImageLoader implements ImageLoader {
+        /**
+         * Given a String with the format "X,Y" split this into the X,Y components, and use those to greate a Coords
+         * object.
+         *
+         * @param c
+         * @return
+         */
         private Coords parseCoords(String c) {
             if(null == c || c.isEmpty()) {
                 return null;
@@ -211,8 +248,13 @@ public final class ImageUtil {
             }
         }
         
+        /**
+         * Given a string with the format <imageFile>(X,Y-W,H), load the image file and then use X,Y and W,H to find a
+         * subimage within the original image and return that subimage.
+         *
+         */
         @Override
-        public Image loadImage(String fileName, Toolkit toolkit) {
+        public Image loadImage(String fileName) {
             int tileStart = fileName.indexOf('(');
             int tileEnd = fileName.indexOf(')');
             if((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
@@ -229,7 +271,7 @@ public final class ImageUtil {
                 return null;
             }
             String baseName = fileName.substring(0, tileStart);
-            ToolkitImage base = (ToolkitImage) toolkit.getImage(baseName);
+            ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseName);
             if(null == base) {
                 return null;
             }
@@ -259,7 +301,46 @@ public final class ImageUtil {
             return result;
         }
     }
-    
+
+    /**
+     * ImageLoader that loads subregions from a larger atlas file, but is given
+     * filenames that are mapped into an atlas. When constructed, this class
+     * reads in a map that maps image files to an atlas image and offset
+     * location. When an image file is requested to be opened, it first looks to
+     * see if the map contains that file, and if it does returns an image from
+     * the corresponding key which includes an atlas and offset.
+     */
+    public static class AtlasImageLoader extends TileMapImageLoader {
+
+        Map<String, String> imgFileToAtlasMap;
+
+        @SuppressWarnings("unchecked")
+        public AtlasImageLoader() {
+            if (!Configuration.imageFileAtlasMapFile().exists()) {
+                imgFileToAtlasMap = null;
+                return;
+            }
+
+            try (InputStream is = new FileInputStream(Configuration.imageFileAtlasMapFile())) {
+                XStream xstream = new XStream();
+                imgFileToAtlasMap = (Map<String, String>) xstream.fromXML(is);
+            } catch (FileNotFoundException e) {
+                imgFileToAtlasMap = null;
+                e.printStackTrace();
+            } catch (IOException e) {
+                imgFileToAtlasMap = null;
+                e.printStackTrace();
+            }
+        }
+
+        public Image loadImage(String fileName) {
+            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(fileName)) {
+                return null;
+            }
+            return super.loadImage(imgFileToAtlasMap.get(fileName));
+        }
+    }
+
     private static class FinishedLoadingObserver implements ImageObserver {
         private static final int DONE
             = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS | ImageObserver.ALLBITS;

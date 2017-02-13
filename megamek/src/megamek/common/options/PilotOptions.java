@@ -130,12 +130,9 @@ public class PilotOptions extends AbstractOptions {
         //TODO - -1 bonus when spotting for LRMs and moving through mines.
         addOption(md, OptionsConstants.MD_BOOST_COMM_IMPLANT, false); // $NON-NLS-1$
         //TODO - -1 bonus when spotting for LRMs and moving through mines. 
-
         addOption(md, OptionsConstants.MD_CYBER_IMP_AUDIO, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_CYBER_IMP_VISUAL, false); //$NON-NLS-1$
-
         addOption(md, OptionsConstants.MD_CYBER_IMP_LASER, false); //$NON-NLS-1$
-  
         addOption(md, OptionsConstants.MD_MM_IMPLANTS, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_ENH_MM_IMPLANTS, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_FILTRATION, false); //$NON-NLS-1$
@@ -147,12 +144,18 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false); //$NON-NLS-1$  
         addOption(md, OptionsConstants.MD_VDNI, false); // $NON-NLS-1$
         addOption(md, OptionsConstants.MD_BVDNI, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PROTO_DNI, false); // $NON-NLS-1$
         //Prosthetic Limbs (not MD Exclusive)
         addOption(md, OptionsConstants.MD_PL_ENHANCED, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_IENHANCED, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_EXTRA_LIMBS, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_TAIL, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_PL_MASC, false); // NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_GLIDER, false); // NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_FLIGHT, false); // NON-NLS-1$
+        addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);// NON-NLS-1$ 
+        
         //TODO - Prototype DNI IO pg 83
-        //SUICIDE CHARGE IO pg 83
-
     }
 
     /*

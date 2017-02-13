@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import megamek.common.Compute;
 import megamek.common.Configuration;
+import megamek.common.util.MegaMekFile;
 
 /** 
  * This class sets up a random name generator that can then
@@ -130,7 +131,7 @@ public class RandomNameGenerator implements Serializable {
         }
 
         // READ IN MALE FIRST NAMES
-        File male_firstnames_path = new File(Configuration.namesDir(), FILENAME_FIRSTNAMES_MALE);
+        File male_firstnames_path = new MegaMekFile(Configuration.namesDir(), FILENAME_FIRSTNAMES_MALE).getFile();
         try(Scanner input = new Scanner(new FileInputStream(male_firstnames_path), "UTF-8")) { //$NON-NLS-1$
             int linen = 0;
             while (input.hasNextLine()) {
@@ -166,7 +167,7 @@ public class RandomNameGenerator implements Serializable {
         }
 
         // READ IN FEMALE FIRST NAMES
-        File female_firstnames_path = new File(Configuration.namesDir(), FILENAME_FIRSTNAMES_FEMALE);
+        File female_firstnames_path = new MegaMekFile(Configuration.namesDir(), FILENAME_FIRSTNAMES_FEMALE).getFile();
         try(Scanner input = new Scanner(new FileInputStream(female_firstnames_path), "UTF-8")) { //$NON-NLS-1$
             int linen = 0;
             while (input.hasNextLine()) {
@@ -202,7 +203,7 @@ public class RandomNameGenerator implements Serializable {
         }
 
         // READ IN SURNAMES
-        File surnames_path = new File(Configuration.namesDir(), FILENAME_SURNAMES);
+        File surnames_path = new MegaMekFile(Configuration.namesDir(), FILENAME_SURNAMES).getFile();
         try(Scanner input = new Scanner(new FileInputStream(surnames_path), "UTF-8")) { //$NON-NLS-1$
             int linen = 0;
             while (input.hasNextLine()) {
@@ -239,7 +240,7 @@ public class RandomNameGenerator implements Serializable {
 
         // READ IN FACTION FILES
         // all faction files should be in the faction directory
-        File factions_dir_path = new File(Configuration.namesDir(), DIR_NAME_FACTIONS);
+        File factions_dir_path = new MegaMekFile(Configuration.namesDir(), DIR_NAME_FACTIONS).getFile();
         String[] filenames = factions_dir_path.list();
         if (null == filenames) {
             return;
@@ -252,7 +253,7 @@ public class RandomNameGenerator implements Serializable {
             }
             factionLast.put(key, new Vector<String>());
             factionFirst.put(key, new HashMap<String, Vector<String>>());
-            File ff = new File(factions_dir_path, filename);
+            File ff = new MegaMekFile(factions_dir_path, filename).getFile();
             try(Scanner factionInput = new Scanner(new FileInputStream(ff), "UTF-8")) { //$NON-NLS-1$
                 Map<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
                 while (factionInput.hasNextLine()) {

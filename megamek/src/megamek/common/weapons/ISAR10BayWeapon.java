@@ -72,4 +72,9 @@ public class ISAR10BayWeapon extends AmmoBayWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new CapitalMissileBayHandler(toHit, waa, game, server);
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL_MISSILE;
+    }
 }

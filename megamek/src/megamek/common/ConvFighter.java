@@ -16,6 +16,8 @@
  */
 package megamek.common;
 
+import java.util.Map;
+
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -146,9 +148,14 @@ public class ConvFighter extends Aero {
         }
         return (getEngine().getRating() / (int) weight);
     }
-
-    public long getEntityType() {
+    
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.ATMO, null);
+    }
+    
+    public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_CONV_FIGHTER;
     }
-
 }

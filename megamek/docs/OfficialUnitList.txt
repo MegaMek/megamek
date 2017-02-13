@@ -501,7 +501,7 @@ Armored Personnel Carrier (Hover Sensors)|
 Mobile Long Tom Artillery Ammunition Carriage LT-MOB-25|
 Sea Skimmer Hydrofoil (SRM6)|
 Mobile Headquarters (LRM)|
-J. Edgar Light Hover Tank (Standard)|
+J-27 Ordnance Transport (Standard)|
 Demolisher Heavy Tank (Defensive)|
 Armored Personnel Carrier (Wheeled SRM)|
 Scorpion Light Tank (Standard)|
@@ -6689,7 +6689,7 @@ Argus AGS-5D|
 Razorback RZK-10T|
 Legacy LGC-04-WVR|
 Templar TLR1-OI|
-Chimera CMA-2k|
+Chimera CMA-2K|
 Akuma AKU-2X|
 Red Shift RDS-3A|
 Lao Hu LHU-4E|

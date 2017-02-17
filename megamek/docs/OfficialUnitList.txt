@@ -501,7 +501,7 @@ Armored Personnel Carrier (Hover Sensors)|
 Mobile Long Tom Artillery Ammunition Carriage LT-MOB-25|
 Sea Skimmer Hydrofoil (SRM6)|
 Mobile Headquarters (LRM)|
-J. Edgar Light Hover Tank (Standard)|
+J-27 Ordnance Transport (Standard)|
 Demolisher Heavy Tank (Defensive)|
 Armored Personnel Carrier (Wheeled SRM)|
 Scorpion Light Tank (Standard)|
@@ -1586,58 +1586,66 @@ Clan Field Artillery (Sniper)|
 Field Gunners (LAC5)|
 Motorized Platoon (Flechette)|
 Foot Platoon (Flechette)|
-Clan Mechanized Infantry Mimir/Watch Counter Insurgency Point|
-Riot Police Word of Blake Protectorate Militia Pacification Unit|
-SpecOps Paratrooper MI6 Extraction Team|
-Space Marine Com Guards Warship Fleet Marine|
-Firefighter Twenty-fourth Hellfire Firefighting Battalion, 84th Avalon LI, 17th Avalon Hussars|
-AA Mechanized Infantry Mechanized AA Infantry|
-Motorized Infantry Dark Caste Bandits|
-Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry|
-Jump Laser Infantry Principes III 103rd Jump Battalion|
-Clan Assault Infantry Ghost Bear Heavy Solahma Infantry|
-Clan Heavy Jump Infantry Heavy Infantry Point|
-Minesweepers Thirty-fifth Cluster Support Force, Red Chasseurs|
-Mechanized Assault XCT Word of Blake Militia NBC|
-AA Jump Infantry 292nd League Regulars|
-Foot Infantry Raventhir's Infantry Guard|
-Mechanized Field Artillery 71st Mechanized|
-Motorized MG Galatean Support Wheels|
-Heavy Infantry Heavy Urban Response Platoon|
-Anti-'Mech Jump Infantry Third Ueda Infantry|
-Pirate Lady Death's 'Pacification' Squads|
-XCT Marine Special Asteroid Support Forces|
+VTOL Infantry Hachiman Taro Enterprise Extraction Force|
 Hover Assault Infantry Johnston Industries Rapid Response Force|
-Xenoplanetary Infantry Eagle Corps Eyrie Defense Force|
-Foot Ballistic Rifle Hastati V|
-Motorized XCT Infantry Explorer Corps Hostile Environment|
-Combat Engineer Royal Engineers, 1st Lyran Royal Guards RCT|
-Clan Heavy Foot Infantry Ebon Keshik Point|
-Mountaineer 45th Cerulean Mountain Infantry, 2nd Davion Guards|
-Fast Recon Cavalry Point|
-Heavy Jump Infantry Royal Gurkha Battalion|
-Royal Engineers 1st Lyran Royal Guards RCT|
-SRM Foot Infantry Taurian Citizens' Militia|
-Anti-Infantry Unit Second Lyran Armored Infantry|
-Clan Anti-Infantry Clan Jade Falcon Police|
-Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
-Motorized Heavy Infantry Motstand/Mimir Troop|
-Scout Infantry The Battle Corps - Baker Street Irregulars|
 Heavy Support Infantry Irian Technologies SWAT Team|
-Recon Infantry Recon Battalion, 201st Pesht Assault Team, 3rd Proserpina Hussars|
-Clan Space Marine Clan Snow Raven Space Marines|
-Skaret Assassins JàrnFòlk|
-Clan Foot Infantry Ad Hoc Point|
-Ceremonial Guard Otomo Guard|
-Frogmen Blue Water Marine Response Teams (Frogmen)|
 Jump Support Infantry Star Corps Jump Assault Infantry|
-Commando CCAF Battlefield Infiltration Units|
-Missile Artillery Infantry Kommando Special Forces|
-Bridge-builder Engineers Take the Time III-chi, Forty-eighth Division|
-Sniper House Dai Da Chi Snipers|
+Riot Police Word of Blake Protectorate Militia Pacification Unit|
+Mechanized Assault XCT Word of Blake Militia NBC|
+Manei Domini Attack Squad 'Tau Zombie'|
+Manei Domini Recon Squad 'Tau Wraith'|
+Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry|
+TAG Spotter Infantry Stalwart Support - Spotter Infantry|
+Scout Infantry The Battle Corps - Baker Street Irregulars|
+Submersible Mechanized Infantry Kraken Unleashed - The Mermen|
+AA Mechanized Infantry Mechanized AA Infantry|
+Clan Heavy Jump Infantry Heavy Infantry Point|
+Fast Recon Cavalry Point|
+Clan Foot Infantry Ad Hoc Point|
+Motorized Infantry Dark Caste Bandits|
+Clan Heavy Foot Infantry Ebon Keshik Point|
+Clan Anti-Infantry Clan Jade Falcon Police|
+Clan Space Marine Clan Snow Raven Space Marines|
+SpecOps Paratrooper MI6 Extraction Team|
+Firefighter Twenty-fourth Hellfire Firefighting Battalion, 84th Avalon LI, 17th Avalon Hussars|
+Mountaineer 45th Cerulean Mountain Infantry, 2nd Davion Guards|
+Frogmen Blue Water Marine Response Teams (Frogmen)|
+Ceremonial Guard Caesar's Royal Guard, Marion Hegemony|
+Pirate Lady Death's 'Pacification' Squads|
+Skaret Assassins JàrnFòlk|
+Mechanized Field Artillery 71st Mechanized|
+Recon Infantry Recon Battalion, 201st Pesht Assault Team, 3rd Proserpina Hussars|
+Ceremonial Guard Otomo Guard|
 Heavy Jump Infantry DEST Heavy Response Platoon|
-Special Forces Stone's Trackers|
+Commando Battlefield Infiltration Units|
+Missile Artillery Infantry Kommando Special Forces|
+Sniper House Dai Da Chi Snipers|
+Space Marine Com Guards Warship Fleet Marine|
+Motorized XCT Infantry Explorer Corps Hostile Environment|
+Bridge-builder Engineers Take the Time III-chi, Forty-eighth Division|
+Minesweepers Thirty-fifth Cluster Support Force, Red Chasseurs|
+XCT Marine Special Asteroid Support Forces|
+SRM Foot Infantry Taurian Citizens' Militia|
 Field Gun Infantry (Motorized Batteries)|
+AA Jump Infantry 292nd League Regulars|
+Xenoplanetary Infantry Eagle Corps Eyrie Defense Force|
+Heavy Jump Infantry Royal Gurkha Battalion|
+Clan Mechanized Infantry Mimir/Watch Counter Insurgency Point|
+Clan Assault Infantry Ghost Bear Heavy Solahma Infantry|
+Anti-'Mech Jump Infantry Third Ueda Infantry|
+Motorized Heavy Infantry Motstand/Mimir Troop|
+Foot Infantry Raventhir's Infantry Guard|
+Assault Commando Ebon Magistrate Shock Troops|
+Field Medic Magistracy Medical Corp|
+Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
+Jump Laser Infantry Principes III 103rd Jump Battalion|
+Motorized MG Galatean Support Wheels|
+Foot Ballistic Rifle Hastati V|
+Special Forces Stone's Trackers|
+Heavy Infantry Heavy Urban Response Platoon|
+Combat Engineer Royal Engineers, 1st Lyran Royal Guards RCT|
+Royal Engineers 1st Lyran Royal Guards RCT|
+Anti-Infantry Unit Second Lyran Armored Infantry|
 HALO Paratrooper Lyran Paratrooper Corps|
 Hydra 2|
 Minotaur (Standard)|
@@ -6689,7 +6697,7 @@ Argus AGS-5D|
 Razorback RZK-10T|
 Legacy LGC-04-WVR|
 Templar TLR1-OI|
-Chimera CMA-2k|
+Chimera CMA-2K|
 Akuma AKU-2X|
 Red Shift RDS-3A|
 Lao Hu LHU-4E|

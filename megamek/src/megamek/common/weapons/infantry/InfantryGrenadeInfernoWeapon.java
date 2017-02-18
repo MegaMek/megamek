@@ -32,8 +32,11 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
 
     public InfantryGrenadeInfernoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Grenade (Inferno)";
+        //I can find no reference to a Thrown Inferno Grenade. Moving these to Unoffical. 
+        //Hammer Feb 2017
+        
         setInternalName(name);
         addLookupName("InfantryInfernoGrenade");
         addLookupName("Inferno Grenades");
@@ -45,8 +48,12 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
         setModes(modeStrings);
         infantryDamage = 0.19;
         infantryRange = 0;
-        introDate = 2380;
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
-        techRating = RATING_C;
+        //very hackish - using some data from Inferno Fuel.
+        introDate = 2385;
+        techLevel.put(2385,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_D,RATING_E,RATING_D,RATING_C};
+        techRating = RATING_D;
+        rulesRefs =" 272, TM";
+
     }
 }

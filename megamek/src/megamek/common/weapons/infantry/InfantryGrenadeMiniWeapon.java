@@ -32,7 +32,7 @@ public class InfantryGrenadeMiniWeapon extends InfantryWeapon {
 
     public InfantryGrenadeMiniWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Grenade (Mini) (Non-Inferno)";
         setInternalName(name);
         addLookupName("InfantryMiniGrenade");
@@ -43,7 +43,10 @@ public class InfantryGrenadeMiniWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
         infantryDamage = 0.27;
         infantryRange = 0;
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        introDate = 1950;
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
+        rulesRefs =" 272, TM";
     }
 }

@@ -32,7 +32,7 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
 
     public InfantryGrenadeMiniInfernoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Grenade (Mini) (Inferno)";
         setInternalName(name);
         addLookupName("InfantryMiniInfernoGrenade");
@@ -45,8 +45,11 @@ public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
         setModes(modeStrings);
         infantryDamage = 0.11;
         infantryRange = 0;
-        introDate = 2380;
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
+        //very hackish - using some data from Inferno Fuel.
+        introDate = 2385;
+        techLevel.put(2385,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_D,RATING_E,RATING_D,RATING_C};
+        techRating = RATING_D;
+        rulesRefs =" 272, TM";
     }
 }

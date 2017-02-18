@@ -23,31 +23,32 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryArchaicBasicCrossbowWeapon extends InfantryWeapon {
+public class InfantryArchaicISVibroAxeWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicBasicCrossbowWeapon() {
+    public InfantryArchaicISVibroAxeWeapon() {
         super();
 
-        name = "Crossbow (Basic/Heavy)";
+        name = "Blade (Vibro-axe)";
         setInternalName(name);
-        addLookupName("InfantryBasicCrossbow");
-        addLookupName("Crossbow");
+        addLookupName("InfantryVibroAxe");
+        addLookupName("Vibro Axe");
         ammoType = AmmoType.T_NA;
-        cost = 10;
-        bv = 0.01;
-        flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_ARCHAIC);
-        infantryDamage = 0.01;
+        cost = 150;
+        bv = 0.39;
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        infantryDamage = 0.42;
         infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_B};
-        techRating = RATING_A;
-        rulesRefs =" 272, TM";
-
+        introDate = 2430;
+        techLevel.put(2430, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2445, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2600, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_D ,RATING_D ,RATING_C};
+        techRating = RATING_E;
+        rulesRefs = "272, TM";
     }
 }

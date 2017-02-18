@@ -32,8 +32,8 @@ public class InfantryArchaicNunchakuWeapon extends InfantryWeapon {
 
     public InfantryArchaicNunchakuWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Nunchaku";
+
+        name = "Staff (Nunchaku/Pole Arm)";
         setInternalName(name);
         addLookupName("InfantryNunchaku");
         ammoType = AmmoType.T_NA;
@@ -43,8 +43,9 @@ public class InfantryArchaicNunchakuWeapon extends InfantryWeapon {
         infantryDamage = 0.02;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
         techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

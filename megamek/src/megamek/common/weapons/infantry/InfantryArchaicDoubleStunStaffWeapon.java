@@ -32,7 +32,7 @@ public class InfantryArchaicDoubleStunStaffWeapon extends InfantryWeapon {
 
     public InfantryArchaicDoubleStunStaffWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Staff (Stun Staff, Double-End)";
         setInternalName(name);
         addLookupName("InfantryDoubleStunStaff");
@@ -43,9 +43,10 @@ public class InfantryArchaicDoubleStunStaffWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.07;
         infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_C,RATING_A};
-        techRating = RATING_C;
+        introDate = 2100;
+        techLevel.put(2100,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_A,RATING_C,RATING_A,RATING_C};
+        techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

@@ -32,8 +32,9 @@ public class InfantryArchaicKatanaWeapon extends InfantryWeapon {
 
     public InfantryArchaicKatanaWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Katana";
+
+        name = "Katana (Unofficial)";
+        //IO Combines the Katana into Archaic Dao Weapon
         setInternalName(name);
         addLookupName("InfantryKatana");
         addLookupName("Blade (Katana)");
@@ -44,8 +45,9 @@ public class InfantryArchaicKatanaWeapon extends InfantryWeapon {
         infantryDamage = 0.07;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        techLevel.put(1950,TechConstants.T_IS_UNOFFICIAL);
+        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_A};
         techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

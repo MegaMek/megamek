@@ -32,8 +32,9 @@ public class InfantryArchaicYumiBowWeapon extends InfantryWeapon {
 
     public InfantryArchaicYumiBowWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Compound Yumi (Bow)";
+
+        name = "Compound Yumi (Bow) (Unofficial)";
+      //IO Combines this weapon into the Compound Bow
         setInternalName(name);
         addLookupName("InfantryYumiBow");
         addLookupName("Yumi Bow");
@@ -44,8 +45,9 @@ public class InfantryArchaicYumiBowWeapon extends InfantryWeapon {
         infantryDamage = 0.01;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_D};
+        techLevel.put(1950,TechConstants.T_IS_UNOFFICIAL);
+        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_A};
         techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

@@ -32,7 +32,7 @@ public class InfantryArchaicShockStaffWeapon extends InfantryWeapon {
 
     public InfantryArchaicShockStaffWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALL_IS);
+
         name = "Staff (Shock Staff)";
         setInternalName(name);
         addLookupName("InfantryShockStaff");
@@ -44,9 +44,12 @@ public class InfantryArchaicShockStaffWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING);
         infantryDamage = 0.21;
         infantryRange = 0;
-        introDate = 3067;
-        techLevel.put(3067,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        introDate = 3069;
+        techLevel.put(3069, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3072, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3130, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
         techRating = RATING_E;
+        rulesRefs = "272, TM";
     }
 }

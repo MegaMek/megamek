@@ -32,7 +32,7 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
 
     public InfantryArchaicCarbonReinforcedNailsWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Blade (Carbon-Reinforced Nails)";
         setInternalName(name);
         addLookupName("InfantryCarbonFingernails");
@@ -43,9 +43,11 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.02;
         infantryRange = 0;
-        introDate = 2990;
-        techLevel.put(2990,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_D,RATING_D};
+        introDate = 2975;
+        techLevel.put(2975,TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2990,TechConstants.T_IS_ADVANCED);
+        availRating = new int[]{RATING_X,RATING_D,RATING_D,RATING_E};
         techRating = RATING_D;
+        rulesRefs =" 272, TM";
     }
 }

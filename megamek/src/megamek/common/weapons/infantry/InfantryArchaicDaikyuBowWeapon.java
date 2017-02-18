@@ -32,7 +32,7 @@ public class InfantryArchaicDaikyuBowWeapon extends InfantryWeapon {
 
     public InfantryArchaicDaikyuBowWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Bow (Daikyu)";
         setInternalName(name);
         addLookupName("InfantryDaikyuBow");
@@ -44,8 +44,9 @@ public class InfantryArchaicDaikyuBowWeapon extends InfantryWeapon {
         infantryDamage = 0.01;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_D};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_C,RATING_D,RATING_D,RATING_C};
         techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

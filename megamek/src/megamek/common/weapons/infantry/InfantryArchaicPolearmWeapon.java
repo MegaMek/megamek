@@ -32,8 +32,9 @@ public class InfantryArchaicPolearmWeapon extends InfantryWeapon {
 
     public InfantryArchaicPolearmWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Staff (Pole Arm)";
+
+        name = "Staff (Pole Arm) (Unofficial)";
+        //IO Combines the Staff (Pole Arm) types into the Nunchaku Weapon
         setInternalName(name);
         addLookupName("InfantryPolearm");
         addLookupName("Polearm");
@@ -44,8 +45,9 @@ public class InfantryArchaicPolearmWeapon extends InfantryWeapon {
         infantryDamage = 0.04;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techLevel.put(1950,TechConstants.T_IS_UNOFFICIAL);
+        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
         techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

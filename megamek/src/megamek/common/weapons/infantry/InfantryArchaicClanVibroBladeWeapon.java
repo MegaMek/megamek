@@ -23,17 +23,17 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryArchaicVibroBladeWeapon extends InfantryWeapon {
+public class InfantryArchaicClanVibroBladeWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicVibroBladeWeapon() {
+    public InfantryArchaicClanVibroBladeWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Blade (Vibro-blade)";
+
+        name = "Blade (Vibro-blade) (Clan)";
         setInternalName(name);
         addLookupName("InfantryVibroBlade");
         addLookupName("Vibro Blade");
@@ -43,9 +43,10 @@ public class InfantryArchaicVibroBladeWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.21;
         infantryRange = 0;
-        introDate = 2400;
-        techLevel.put(2400,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_C,RATING_B};
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_B ,RATING_B};
         techRating = RATING_D;
+        rulesRefs = "272, TM";
     }
 }

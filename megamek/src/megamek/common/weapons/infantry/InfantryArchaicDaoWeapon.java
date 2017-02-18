@@ -32,8 +32,8 @@ public class InfantryArchaicDaoWeapon extends InfantryWeapon {
 
     public InfantryArchaicDaoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Blade (Dao)";
+
+        name = "Blade (Dao/Katana/No-Dachi/Sword/Wakizashi)";
         setInternalName(name);
         addLookupName("InfantryDaoSword");
         addLookupName("Dao");
@@ -44,8 +44,9 @@ public class InfantryArchaicDaoWeapon extends InfantryWeapon {
         infantryDamage = 0.04;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_C,RATING_C,RATING_C,RATING_C};
         techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

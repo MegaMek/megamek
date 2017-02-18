@@ -23,29 +23,31 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
+public class InfantryArchaicISVibroBladeWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicVibroAxeWeapon() {
+    public InfantryArchaicISVibroBladeWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Blade (Vibro-axe)";
+
+        name = "Blade (Vibro-blade)";
         setInternalName(name);
-        addLookupName("InfantryVibroAxe");
-        addLookupName("Vibro Axe");
+        addLookupName("InfantryVibroBlade");
+        addLookupName("Vibro Blade");
         ammoType = AmmoType.T_NA;
-        cost = 150;
-        bv = 0.39;
+        cost = 100;
+        bv = 0.19;
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.42;
+        infantryDamage = 0.21;
         infantryRange = 0;
-        introDate = 2445;
-        techLevel.put(2445,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_D};
-        techRating = RATING_E;
+        introDate = 2393;
+        techLevel.put(2393, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2400, TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_B,RATING_C ,RATING_B ,RATING_B};
+        techRating = RATING_D;
+        rulesRefs = "272, TM";
     }
 }

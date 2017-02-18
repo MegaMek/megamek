@@ -32,7 +32,7 @@ public class InfantryArchaicDaggerWeapon extends InfantryWeapon {
 
     public InfantryArchaicDaggerWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Blade (Dagger/Knife/Bayonet)";
         setInternalName(name);
         addLookupName("InfantryDagger");
@@ -46,8 +46,9 @@ public class InfantryArchaicDaggerWeapon extends InfantryWeapon {
         infantryDamage = 0.02;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_A};
         techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

@@ -32,8 +32,8 @@ public class InfantryArchaicBladeZweihanderSwordWeapon extends InfantryWeapon {
 
     public InfantryArchaicBladeZweihanderSwordWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Blade (Zweihander Sword)";
+
+        name = "Blade (Zweihänder Sword)";
         setInternalName(name);
         addLookupName("InfantryZweihanderSword");
         addLookupName("ZweihanderSword");
@@ -45,8 +45,9 @@ public class InfantryArchaicBladeZweihanderSwordWeapon extends InfantryWeapon {
         infantryDamage = 0.05;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_B};
         techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

@@ -32,7 +32,7 @@ public class InfantryArchaicVibroSwordWeapon extends InfantryWeapon {
 
     public InfantryArchaicVibroSwordWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Blade (Vibro-sword, I.S.)";
         setInternalName(name);
         addLookupName("InfantryVibroSword");
@@ -44,9 +44,12 @@ public class InfantryArchaicVibroSwordWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.32;
         infantryRange = 0;
-        introDate = 2440;
-        techLevel.put(2440,techLevel.get(3071));
-        availRating = new int[]{RATING_D,RATING_D,RATING_C};
+        introDate = 2430;
+        techLevel.put(2430, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2440, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2500, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_D,RATING_D ,RATING_C ,RATING_C};
         techRating = RATING_E;
+        rulesRefs = "272, TM";
     }
 }

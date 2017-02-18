@@ -32,7 +32,7 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
 
     public InfantryArchaicMonowireWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Whip (Monowire)";
         setInternalName(name);
         addLookupName("InfantryMonowire");
@@ -43,9 +43,10 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.35;
         infantryRange = 0;
-        introDate = 2200;
-        techLevel.put(2200,techLevel.get(3071));
-        availRating = new int[]{RATING_E,RATING_F,RATING_E};
+        introDate = 2100;
+        techLevel.put(2100,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_E,RATING_F,RATING_E,RATING_F};
         techRating = RATING_E;
+        rulesRefs =" 272, TM";
     }
 }

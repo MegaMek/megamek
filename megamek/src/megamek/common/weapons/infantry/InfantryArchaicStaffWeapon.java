@@ -32,8 +32,9 @@ public class InfantryArchaicStaffWeapon extends InfantryWeapon {
 
     public InfantryArchaicStaffWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Staff";
+
+        name = "Staff (Unofficial)";
+      //IO Combines this weapon into the Polearm Weapon
         setInternalName(name);
         addLookupName("InfantryStaff");
         ammoType = AmmoType.T_NA;
@@ -43,8 +44,9 @@ public class InfantryArchaicStaffWeapon extends InfantryWeapon {
         infantryDamage = 0.04;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techLevel.put(1950,TechConstants.T_IS_UNOFFICIAL);
+        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_A};
         techRating = RATING_A;
+        rulesRefs =" 272, TM";
     }
 }

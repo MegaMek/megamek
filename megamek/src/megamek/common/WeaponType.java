@@ -1165,7 +1165,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicMedusaWhipWeapon());
         EquipmentType.addType(new InfantryArchaicMiniStunstickWeapon());
         EquipmentType.addType(new InfantryArchaicMonowireWeapon());
-        EquipmentType.addType(new InfantryArchaicNeuralLashWeapon());
+        EquipmentType.addType(new InfantryArchaicISNeuralLashWeapon());
+        EquipmentType.addType(new InfantryArchaicClanNeuralLashWeapon());
         EquipmentType.addType(new InfantryArchaicNeuralWhipWeapon());
         EquipmentType.addType(new InfantryArchaicNoDachiWeapon());
         EquipmentType.addType(new InfantryArchaicNunchakuWeapon());
@@ -1176,8 +1177,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicStaffWeapon());
         EquipmentType.addType(new InfantryArchaicStunstickWeapon());
         EquipmentType.addType(new InfantryArchaicSwordWeapon());
-        EquipmentType.addType(new InfantryArchaicVibroAxeWeapon());
-        EquipmentType.addType(new InfantryArchaicVibroBladeWeapon());
+        EquipmentType.addType(new InfantryArchaicISVibroAxeWeapon());
+        EquipmentType.addType(new InfantryArchaicClanVibroAxeWeapon());
+        EquipmentType.addType(new InfantryArchaicISVibroBladeWeapon());
+        EquipmentType.addType(new InfantryArchaicClanVibroBladeWeapon());
         EquipmentType.addType(new InfantryArchaicVibroKatanaWeapon());
         EquipmentType.addType(new InfantryArchaicVibroSwordWeapon());
         EquipmentType.addType(new InfantryArchaicWakizashiWeapon());

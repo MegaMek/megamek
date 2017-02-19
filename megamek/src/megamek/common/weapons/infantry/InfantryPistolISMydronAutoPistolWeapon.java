@@ -23,29 +23,37 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryPistolNambuAutoPistolWeapon extends InfantryWeapon {
+public class InfantryPistolISMydronAutoPistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolNambuAutoPistolWeapon() {
+    public InfantryPistolISMydronAutoPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Auto-Pistol (Nambu)";
+
+        name = "Auto-Pistol (Mydron)";
         setInternalName(name);
-        addLookupName("InfantryNambuAutopistol");
-        addLookupName("Nambu Auto Pistol");
+        addLookupName("InfantryMydronAutopistol");
+        addLookupName("Mydron Auto Pistol");
         ammoType = AmmoType.T_NA;
-        cost = 75;
-        bv = 0.19;
+        cost = 100;
+        bv = 0.13;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.21;
+        infantryDamage = 0.14;
         infantryRange = 0;
-        introDate = 2540;
-        techLevel.put(2540,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_C,RATING_C};
+        introDate = 2602;
+        techLevel.put(2602, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2612, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2700, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }
+
+
+
+
+

@@ -23,32 +23,32 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
+public class InfantryPistolISMauserNeedlerPistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolSerrekAutoPistolWeapon() {
+    public InfantryPistolISMauserNeedlerPistolWeapon() {
         super();
 
-        name = "Auto-Pistol (Serrek 7875D)";
+        name = "Needler Pistol (M&G Flechette)";
         setInternalName(name);
-        addLookupName("InfantrySerrekAutopistol");
-        addLookupName("Serrek 7875D AutoPistol");
+        addLookupName("InfantryMauserneedlerpistol");
+        addLookupName("M&G Flechette Pistol");
         ammoType = AmmoType.T_NA;
-        cost = 185;
-        bv = 0.15;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.16;
+        cost = 100;
+        bv = 0.10;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
+        infantryDamage = 0.11;
         infantryRange = 0;
-        introDate = 2800;
-        techLevel.put(2800, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2810, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2900, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_C ,RATING_B ,RATING_B};
-        techRating = RATING_C;
+        introDate = 2345;
+        techLevel.put(2345, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2360, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2400, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_B,RATING_B ,RATING_C ,RATING_C};
+        techRating = RATING_D;
         rulesRefs = "273, TM";
     }
 }

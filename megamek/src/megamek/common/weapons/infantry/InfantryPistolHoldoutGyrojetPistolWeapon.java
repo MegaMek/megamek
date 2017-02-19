@@ -55,7 +55,7 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolHoldoutGyrojetPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Gyrojet Pistol (Hold-Out)";
         setInternalName(name);
         addLookupName("InfantryHoldoutGyrojetpistol");
@@ -66,10 +66,11 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.04;
         infantryRange = 0;
-        introDate = 2630;
-        techLevel.put(2630,techLevel.get(3071));
-        availRating = new int[]{RATING_D,RATING_D,RATING_C};
+        introDate = 2100;
+        techLevel.put(2100,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_D,RATING_D,RATING_C,RATING_B};
         techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }
 

@@ -23,32 +23,30 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryPistolSerrekAutoPistolWeapon extends InfantryWeapon {
+public class InfantryPistolClanHoldoutNeedlerPistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolSerrekAutoPistolWeapon() {
+    public InfantryPistolClanHoldoutNeedlerPistolWeapon() {
         super();
 
-        name = "Auto-Pistol (Serrek 7875D)";
+        name = "Needler Pistol (Hold-Out) (Clan)";
         setInternalName(name);
-        addLookupName("InfantrySerrekAutopistol");
-        addLookupName("Serrek 7875D AutoPistol");
+        addLookupName("InfantryHoldoutNeedlerpistol");
+        addLookupName("Holdout Needler Pistol");
         ammoType = AmmoType.T_NA;
-        cost = 185;
-        bv = 0.15;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.16;
+        cost = 20;
+        bv = 0.10;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
+        infantryDamage = 0.11;
         infantryRange = 0;
-        introDate = 2800;
-        techLevel.put(2800, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2810, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2900, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_C ,RATING_B ,RATING_B};
-        techRating = RATING_C;
-        rulesRefs = "273, TM";
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_C,RATING_C ,RATING_C ,RATING_C};
+        techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

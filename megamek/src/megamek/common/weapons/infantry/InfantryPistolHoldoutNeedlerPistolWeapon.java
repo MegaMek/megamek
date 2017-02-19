@@ -32,7 +32,7 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolHoldoutNeedlerPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Needler Pistol (Hold-Out)";
         setInternalName(name);
         addLookupName("InfantryHoldoutNeedlerpistol");
@@ -43,9 +43,12 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
         infantryDamage = 0.11;
         infantryRange = 0;
-        introDate = 2515;
-        techLevel.put(2515,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_B,RATING_B};
+        introDate = 2505;
+        techLevel.put(2505, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2515, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2570, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_B ,RATING_B ,RATING_A};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

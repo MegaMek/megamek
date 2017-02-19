@@ -32,8 +32,8 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolClanGaussPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Gauss Pistol";
+
+        name = "Gauss Pistol (Clan)";
         setInternalName(name);
         addLookupName("InfantryGausspistol");
         ammoType = AmmoType.T_NA;
@@ -42,9 +42,11 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.14;
         infantryRange = 0;
-        introDate = 2850;
-        techLevel.put(2850,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_D,RATING_D};
+        introDate = 2840;
+        techLevel.put(2840, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2850, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[]{RATING_X,RATING_D,RATING_D,RATING_C};
         techRating = RATING_F;
+        rulesRefs = "273, TM";;
     }
 }

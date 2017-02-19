@@ -32,7 +32,7 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolSunbeamLaserPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Laser Pistol (Sunbeam)";
         setInternalName(name);
         addLookupName("InfantrySunbeamLaserpistol");
@@ -43,9 +43,12 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.28;
         infantryRange = 1;
-        introDate = 3020;
-        techLevel.put(3020,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_D};
+        introDate = 3010;
+        techLevel.put(3010, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3020, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

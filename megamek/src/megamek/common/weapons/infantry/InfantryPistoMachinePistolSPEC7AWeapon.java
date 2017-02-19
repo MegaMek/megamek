@@ -32,7 +32,7 @@ public class InfantryPistoMachinePistolSPEC7AWeapon extends InfantryWeapon {
 
     public InfantryPistoMachinePistolSPEC7AWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "MP (H-T Spec-7a)";
         setInternalName(name);
         addLookupName("SPEC7A");
@@ -42,9 +42,10 @@ public class InfantryPistoMachinePistolSPEC7AWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.13;
         infantryRange = 0;
-        introDate = 3050;
-        techLevel.put(3050,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3053;
+        techLevel.put(1950,TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[]{RATING_X,RATING_X,RATING_D,RATING_D};
         techRating = RATING_D;
+        rulesRefs =" 177, HB:HK";
     }
 }

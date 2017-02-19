@@ -23,29 +23,29 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryPistolMydronAutoPistolWeapon extends InfantryWeapon {
+public class InfantryPistolClanGyrojetPistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolMydronAutoPistolWeapon() {
+    public InfantryPistolClanGyrojetPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Auto-Pistol (Mydron)";
+
+        name = "Gyrojet Pistol (Clan)";
         setInternalName(name);
-        addLookupName("InfantryMydronAutopistol");
-        addLookupName("Mydron Auto Pistol");
+        addLookupName("InfantryGyrojetpistol");
         ammoType = AmmoType.T_NA;
-        cost = 100;
-        bv = 0.13;
+        cost = 450;
+        bv = 0.04;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.14;
+        infantryDamage = 0.04;
         infantryRange = 0;
-        introDate = 2612;
-        techLevel.put(2612,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_B,RATING_B};
-        techRating = RATING_C;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_D ,RATING_C ,RATING_B};
+        techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

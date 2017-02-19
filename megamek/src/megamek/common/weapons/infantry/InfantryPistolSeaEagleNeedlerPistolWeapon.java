@@ -32,7 +32,7 @@ public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolSeaEagleNeedlerPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Needler Pistol (Sea Eagle)";
         setInternalName(name);
         addLookupName("InfantrySeaEagleNeedler");
@@ -43,9 +43,12 @@ public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.11;
         infantryRange = 0;
-        introDate = 3035;
-        techLevel.put(3035,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_D};
+        introDate = 3025;
+        techLevel.put(3025, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3035, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3052, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

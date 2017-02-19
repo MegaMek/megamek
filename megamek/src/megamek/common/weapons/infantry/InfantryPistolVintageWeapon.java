@@ -32,8 +32,8 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
 
     public InfantryPistolVintageWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Vintage Pistol";
+
+        name = "Auto-Pistol (Vintage)";
         setInternalName(name);
         addLookupName("InfantryPistolVintage");
         addLookupName("Vintage Pistol");
@@ -45,8 +45,9 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
         infantryDamage = 0.11;
         infantryRange = 1;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_D};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_C,RATING_D,RATING_D,RATING_E};
         techRating = RATING_C;
+        rulesRefs =" 273, TM";
     }
 }

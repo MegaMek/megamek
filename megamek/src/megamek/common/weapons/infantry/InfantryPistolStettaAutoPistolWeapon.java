@@ -32,7 +32,7 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolStettaAutoPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Auto-Pistol (Stetta)";
         setInternalName(name);
         addLookupName("InfantryStettaAutopistol");
@@ -43,9 +43,12 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 0;
-        introDate = 3010;
-        techLevel.put(3010,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_C};
+        introDate = 3000;
+        techLevel.put(3000, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3010, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_C ,RATING_B};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

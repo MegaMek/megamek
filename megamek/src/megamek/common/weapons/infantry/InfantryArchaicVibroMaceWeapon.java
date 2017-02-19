@@ -23,29 +23,32 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
+public class InfantryArchaicVibroMaceWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolBlazerPistolWeapon() {
+    public InfantryArchaicVibroMaceWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Laser Pistol (Blazer)";
+
+        name = "Club (Vibro-Mace)";
         setInternalName(name);
-        addLookupName("InfantryBlazerPistol");
-        addLookupName("Blazer Pistol");
+        addLookupName("InfantryVibroMace");
+        addLookupName("IS Vibro Mace");
         ammoType = AmmoType.T_NA;
-        cost = 3000;
-        bv = 0.79;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+        cost = 300;
+        bv = 0.24;
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.26;
-        infantryRange = 1;
-        introDate = 2295;
-        techLevel.put(2295,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
-        techRating = RATING_D;
+        infantryRange = 0;
+        introDate = 2995;
+        techLevel.put(2995, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3045, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3100, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_E};
+        techRating = RATING_E;
+        rulesRefs = "272, TM";
     }
 }

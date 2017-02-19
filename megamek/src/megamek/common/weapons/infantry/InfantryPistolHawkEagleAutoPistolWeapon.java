@@ -32,7 +32,7 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolHawkEagleAutoPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Auto-Pistol (Hawk Eagle)";
         setInternalName(name);
         addLookupName("InfantryHawkEagleAutopistol");
@@ -43,9 +43,12 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.27;
         infantryRange = 0;
-        introDate = 3035;
-        techLevel.put(3035,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_C};
+        introDate = 3025;
+        techLevel.put(3025, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3035, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_C ,RATING_C};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

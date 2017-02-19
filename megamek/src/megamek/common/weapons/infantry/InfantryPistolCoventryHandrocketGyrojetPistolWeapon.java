@@ -32,7 +32,7 @@ public class InfantryPistolCoventryHandrocketGyrojetPistolWeapon extends Infantr
 
     public InfantryPistolCoventryHandrocketGyrojetPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Gyrojet Pistol (Coventry Handrocket)";
         setInternalName(name);
         addLookupName("InfantryCoventryHandrocketGyrojetpistol");
@@ -43,9 +43,12 @@ public class InfantryPistolCoventryHandrocketGyrojetPistolWeapon extends Infantr
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.14;
         infantryRange = 1;
-        introDate = 3055;
-        techLevel.put(3055,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3045;
+        techLevel.put(3045, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3052, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[]{RATING_X,RATING_X,RATING_D,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

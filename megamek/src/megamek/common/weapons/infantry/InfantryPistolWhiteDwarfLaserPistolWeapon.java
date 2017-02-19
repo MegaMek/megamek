@@ -32,8 +32,8 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolWhiteDwarfLaserPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Laser Pistol (Intek White Dwarf )";
+
+        name = "Laser Pistol (Hold-Out [White Dwarf])";
         setInternalName(name);
         addLookupName("White Dwarf Holdout Laser Pistol");
         ammoType = AmmoType.T_NA;
@@ -42,9 +42,12 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.02;
         infantryRange = 0;
-        introDate = 3058;
-        techLevel.put(3058,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        introDate = 3051;
+        techLevel.put(3051, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3058, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3075, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_C ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

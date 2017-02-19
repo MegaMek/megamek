@@ -32,7 +32,7 @@ public class InfantryPistolNakjimaLaserPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolNakjimaLaserPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Laser Pistol (Nakjima)";
         setInternalName(name);
         addLookupName("InfantryNakjimalaserpistol");
@@ -43,9 +43,12 @@ public class InfantryPistolNakjimaLaserPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.18;
         infantryRange = 1;
-        introDate = 2880;
-        techLevel.put(2880,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_D,RATING_C};
+        introDate = 2870;
+        techLevel.put(2870, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2880, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3000, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_D ,RATING_C ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

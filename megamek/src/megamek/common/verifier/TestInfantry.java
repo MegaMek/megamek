@@ -146,9 +146,9 @@ public class TestInfantry extends TestEntity {
             correct = false;    		
     	}
 
-    	max = maxNumSquads(inf);
-    	if (inf.getSquadN() > max) {
-            buff.append("Maximum number of squads is " + max + "\n\n");
+    	max = maxUnitSize(inf);
+    	if (inf.getShootingStrength() > max) {
+            buff.append("Maximum platoon size is " + max + "\n\n");
             correct = false;    		
     	}
 
@@ -197,31 +197,35 @@ public class TestInfantry extends TestEntity {
     	}
     }
     
-    public static int maxNumSquads(Infantry inf) {
+    public static int maxUnitSize(Infantry inf) {
     	int max;
     	switch(inf.getMovementMode()) {
     	case INF_UMU:
-    		max = inf.getAllUMUCount() > 1? 2 : 4;
+    		if (inf.getAllUMUCount() > 1) {
+    			max = 12;
+    		} else {
+    			max = 30;
+    		}
     		break;
     	case HOVER:
-    	case WHEELED:
-    	case TRACKED:
-    	case VTOL:
     	case SUBMARINE:
-    		max = 4;
+    		max = 20;
+    		break;
+    	case WHEELED:
+    		max = 24;
+    		break;
+    	case TRACKED:
+    		max = 28;
+    		break;
+    	case VTOL:
+    		max = maxSquadSize(inf) * 4;
     		break;
     	default:
-    		max = 3;
+    		max = 30;
     		break;
     	}
     	if (inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS)) {
-    		max = Math.min(max, 2);
-    	}
-    	if (inf.hasSpecialization(Infantry.PARATROOPS)) {
-    		max = Math.min(max, 3);
-    	}
-    	if (inf.hasSpecialization(Infantry.MARINES)) {
-    		max = Math.min(max, 4);
+    		max = Math.min(max, 20);
     	}
     	return max;
     }

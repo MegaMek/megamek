@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -716,9 +717,22 @@ public class Infantry extends Entity {
      */
     @Override
     public int calculateBattleValue(boolean ignoreC3, boolean ignorePilot) {
-        double dbv;
+    	DecimalFormat df = new DecimalFormat("0.##");
+        bvText = new StringBuffer(
+                "<HTML><BODY><CENTER><b>Battle Value Calculations For ");
 
-        dbv = men * 1.5 * getDamageDivisor();
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append("<b>Defensive Battle Rating Calculation:</b>");
+        bvText.append(nl);
+
+        double dbr = 0; //defensive battle rating
+
+        dbr = men * 1.5 * getDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game)
                 .getValue();
 
@@ -747,9 +761,30 @@ public class Infantry extends Entity {
         if(hasSneakECM()) {
             tmmFactor += 0.1;
         }
-        dbv *= tmmFactor;
+        dbr *= tmmFactor;
+
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Number of Troopers x 1.5 x Target Movement Modifier x Damage Divisor");
+
+        bvText.append(endColumn + startColumn);
+        bvText.append(men);
+        bvText.append(" x 1.5 x ");
+        bvText.append(tmmFactor);
+        bvText.append(" x ");
+        bvText.append(getDamageDivisor());
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+
+        bvText.append("= ");
+        bvText.append(df.format(dbr));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
         // double weaponbv;
-        double obv;
+        double obr; //offensive battle rating
+        
         // adjust further for speed factor
         // this is a bit weird, because the formula gives
         // a different result than the table, because MASC/TSM
@@ -776,8 +811,15 @@ public class Infantry extends Entity {
         wbv = wbv * (men/squadsize);
         //if anti-mek then double this
         //TODO: need to factor archaic weapons out of this
-        if(isAntiMekTrained()) {
-            wbv *= 2;
+        double ambv = 0;
+        if(canMakeAntiMekAttacks()) {
+        	if (primaryW != null && !primaryW.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
+        		ambv += primaryW.getBV(this) * (squadsize - secondn);
+        	}
+        	if (secondW != null && !secondW.hasFlag(InfantryWeapon.F_INF_ARCHAIC)) {
+        		ambv += secondW.getBV(this) * (secondn);
+        	}
+            ambv *= men/squadsize;
         }
         //add in field gun BV
         for (Mounted mounted : getEquipment()) {
@@ -785,16 +827,169 @@ public class Infantry extends Entity {
                 wbv += mounted.getType().getBV(this);
             }
         }
-        obv = wbv * speedFactor;
+        obr = (wbv + ambv) * speedFactor;
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+
+        bvText.append("<b>Offensive Battle Rating Calculation:</b>");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Weapon BV:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        if (null != primaryW) {
+	        bvText.append(startRow);
+	        bvText.append(startColumn);
+	        bvText.append(primaryW.getName());
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+	        bvText.append((squadsize - secondn) * squadn);
+	        bvText.append(" x " );
+	        bvText.append(df.format(primaryW.getBV(this)));
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(df.format(primaryW.getBV(this) * (squadsize - secondn) * squadn));
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        if (null != secondW) {
+	        bvText.append(startRow);
+	        bvText.append(startColumn);
+	        bvText.append(secondW.getName());
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+	        bvText.append(secondn * squadn);
+	        bvText.append(" x " );
+	        bvText.append(df.format(secondW.getBV(this)));
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(df.format(secondW.getBV(this) * secondn * squadn));
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Weapon BV:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(df.format(wbv));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Anti-Mek BV:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(df.format(ambv));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Speed Factor:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(df.format(speedFactor));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Weapons BV x Speed Factor:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(df.format(wbv + ambv));
+        bvText.append(" x ");
+        bvText.append(df.format(speedFactor));
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(df.format(obr));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        
         int bv;
         if (useGeometricMeanBV()) {
-            bv = (int)Math.round(2 * Math.sqrt(obv * dbv));
+            bv = (int)Math.round(2 * Math.sqrt(obr * dbr));
             if (bv == 0) {
-                bv = (int)Math.round(dbv + obv);
+                bv = (int)Math.round(dbr + obr);
             }
+            bvText.append("SQRT(Defensive BR * Offensive BR) x 2:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
         } else {
-            bv = (int) Math.round(obv + dbv);
+            bv = (int) Math.round(obr + dbr);
+            bvText.append("Defensive BR + Offensive BR:");
+            bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(df.format(dbr));
+            bvText.append(" + ");
+            bvText.append(df.format(obr));
         }
+
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(bv);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Final BV:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(df.format(bv));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
+        
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {

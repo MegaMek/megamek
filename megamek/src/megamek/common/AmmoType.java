@@ -11812,7 +11812,8 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createISAPMortar2Ammo() {
         AmmoType ammo = new AmmoType();
-
+        
+        ammo.name = "Shaped Charge Mortar 2 Ammo";
         ammo.shortName = "Mortar SC 2";
         ammo.setInternalName("IS Ammo SC Mortar-2");
         ammo.addLookupName("ISArmorPiercingMortarAmmo2");

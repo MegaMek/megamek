@@ -33,7 +33,7 @@ public class InfantryArchaicBladeZweihanderSwordWeapon extends InfantryWeapon {
     public InfantryArchaicBladeZweihanderSwordWeapon() {
         super();
 
-        name = "Blade (Zweihänder Sword)";
+        name = "Blade (Zweihander Sword)";
         setInternalName(name);
         addLookupName("InfantryZweihanderSword");
         addLookupName("ZweihanderSword");

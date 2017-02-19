@@ -954,11 +954,9 @@ public class Infantry extends Entity {
         /* Check whether the unit has an armor kit. If not, calculate value for custom
          * armor settings.
          */
-        Optional<Mounted> armor = getEquipment().stream()
-        		.filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
-        		.findFirst();
-        if (armor.isPresent()) {
-        	armorcost = armor.get().getType().getCost(this, false, LOC_INFANTRY);
+        EquipmentType armor = getArmorKit();
+        if (armor != null) {
+        	armorcost = armor.getCost(this, false, LOC_INFANTRY);
         } else {
 	        //add in infantry armor cost
 	        if(damageDivisor > 1) {
@@ -1009,7 +1007,8 @@ public class Infantry extends Entity {
         //Add in motive type costs
         switch (getMovementMode()){
             case INF_UMU:
-                multiplier *= 2.0;
+            	multiplier *= getAllUMUCount() > 1? 2.5 : 2;
+            	break;
             case INF_LEG:
                 multiplier *= 1.0;
                 break;
@@ -1031,9 +1030,28 @@ public class Infantry extends Entity {
             case VTOL:
                 multiplier *= hasMicrolite()? 4 : 4.5;
                 break;
+            case SUBMARINE:
+            	/* No cost given in TacOps, using basic mechanized cost for now */ 
+                multiplier *= 3.2;
+            	break;
             default:
                 break;
         }
+        
+        //add in specialization costs
+        if (hasSpecialization(COMBAT_ENGINEERS)) {
+        	multiplier *= 5;
+        }
+        if (hasSpecialization(MARINES)) {
+        	multiplier *= 3;
+        }
+        if (hasSpecialization(MOUNTAIN_TROOPS)) {
+        	multiplier *= 2;
+        }
+        if (hasSpecialization(PARATROOPS)) {
+        	multiplier *= 3;
+        }
+        /* TODO: paramedics cost an addition x0.375 per paramedic */
 
         cost = cost * multiplier;
 
@@ -1062,17 +1080,18 @@ public class Infantry extends Entity {
         }
         cost = cost / squadsize;
 
-        Optional<Mounted> armor = getEquipment().stream()
-        		.filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
-        		.findFirst();
-        if (armor.isPresent()) {
-        	cost += armor.get().getType().getCost(this, false, LOC_INFANTRY);
+        EquipmentType armor = getArmorKit();
+        if (armor != null) {
+        	cost += armor.getCost(this, false, LOC_INFANTRY);
         }
         
         //Add in motive type costs
         switch (getMovementMode()){
             case INF_UMU:
-                cost += 17888 * 1;
+                cost += 17888;
+                if (getAllUMUCount() > 1) {
+                	cost += 17888 * 0.5;
+                }
                 break;
             case INF_LEG:
                 break;
@@ -1085,8 +1104,12 @@ public class Infantry extends Entity {
             case HOVER:
             case WHEELED:
             case TRACKED:
+            case SUBMARINE: //FIXME: there is no cost shown for mech. scuba in tac ops
                 cost += 17888 * 2.2;
                 break;
+            case VTOL:
+            	cost += 17888 * (hasMicrolite()? 3 : 3.5);
+            	break;
             default:
                 break;
         }

@@ -2372,6 +2372,7 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "Improved Autocannon/2 Ammo";
         ammo.shortName = "Improved Autocannon/2 Ammo";
+        ammo.setInternalName("CLIMPAmmoAC2");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_IMP;
@@ -13372,6 +13373,7 @@ public class AmmoType extends EquipmentType {
                 case AmmoType.T_AC:
                 case AmmoType.T_AC_PRIMITIVE:
                 case AmmoType.T_LAC:
+                case AmmoType.T_AC_IMP:
                     // Add the munition name to the beginning of the display
                     // name.
                     nameBuf = new StringBuffer(name);
@@ -13502,6 +13504,7 @@ public class AmmoType extends EquipmentType {
                     munition.setInternalName(internalName.toString());
                     break;                    
                 case AmmoType.T_LONG_TOM:
+                case AmmoType.T_LONG_TOM_PRIM:
                 case AmmoType.T_SNIPER:
                 case AmmoType.T_THUMPER:
                 case AmmoType.T_LONG_TOM_CANNON:

@@ -32,7 +32,7 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
 
     public InfantryRifleTKAssaultWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Rifle (TK Assault)";
         setInternalName(name);
         addLookupName("InfantryTKAssaultRifle");
@@ -43,9 +43,12 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.44;
         infantryRange = 1;
-        introDate = 2870;
-        techLevel.put(2870,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_C,RATING_A};
+        introDate = 2860;
+        techLevel.put(2860, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2870, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2925, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_A ,RATING_B};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

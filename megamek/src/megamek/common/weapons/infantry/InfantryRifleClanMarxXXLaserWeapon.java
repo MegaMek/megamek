@@ -23,31 +23,31 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleVintageWeapon extends InfantryWeapon {
+public class InfantryRifleClanMarxXXLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleVintageWeapon() {
+    public InfantryRifleClanMarxXXLaserWeapon() {
         super();
 
-        name = "Rifle (Vintage Assault)";
+        name = "Laser Rifle (Marx XX)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryVintageAssaultRifle");
-        addLookupName("Vintage Assault Rifle");
+        addLookupName("InfantryMarxXXLaser");
+        addLookupName("Marx XX Laser Rifle");
         ammoType = AmmoType.T_NA;
-        cost = 2000;
-        tonnage = 0.0045f;
-        bv = 0.0;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.17;
-        infantryRange = 1;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_C,RATING_D,RATING_D,RATING_E};
-        techRating = RATING_C;
+        cost = 1750;
+        bv = 1.86;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+        infantryDamage = 0.26;
+        infantryRange = 3;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_E ,RATING_D ,RATING_D};
+        techRating = RATING_D;
         rulesRefs =" 273, TM";
+        
     }
 }

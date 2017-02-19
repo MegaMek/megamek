@@ -32,7 +32,7 @@ public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
 
     public InfantryRifleZeusHeavyWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Rifle (Zeus Heavy)";
         setInternalName(name);
         addLookupName("InfantryZeusHeavyRifle");
@@ -44,8 +44,11 @@ public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
         infantryDamage = 0.22;
         infantryRange = 1;
         introDate = 2740;
-        techLevel.put(2740,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_B,RATING_B};
+        techLevel.put(2740, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2745, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2750, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

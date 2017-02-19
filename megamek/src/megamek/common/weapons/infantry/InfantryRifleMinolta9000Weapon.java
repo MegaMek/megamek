@@ -32,8 +32,8 @@ public class InfantryRifleMinolta9000Weapon extends InfantryWeapon {
 
     public InfantryRifleMinolta9000Weapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Rifle (Minolta 9000)";
+
+        name = "Rifle (Minolta 9000 Advanced Sniper System)";
         setInternalName(name);
         addLookupName("InfantryMinolta9000");
         addLookupName("Minolta 9000 Advanced Sniper System");
@@ -43,9 +43,12 @@ public class InfantryRifleMinolta9000Weapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.35;
         infantryRange = 2;
-        introDate = 3055;
-        techLevel.put(3055,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        introDate = 3047;
+        techLevel.put(3047, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3055, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3100, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

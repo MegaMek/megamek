@@ -23,31 +23,32 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleVintageWeapon extends InfantryWeapon {
+public class InfantryRifleISMGFlechetteNeedlerWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleVintageWeapon() {
+    public InfantryRifleISMGFlechetteNeedlerWeapon() {
         super();
 
-        name = "Rifle (Vintage Assault)";
+        name = "Needler Rifle (M&G Flechette)";
         setInternalName(name);
-        addLookupName("InfantryVintageAssaultRifle");
-        addLookupName("Vintage Assault Rifle");
+        addLookupName("InfantryMGFlechette");
+        addLookupName("M&G Flechette Rifle");
         ammoType = AmmoType.T_NA;
-        cost = 2000;
-        tonnage = 0.0045f;
-        bv = 0.0;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.17;
-        infantryRange = 1;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_C,RATING_D,RATING_D,RATING_E};
-        techRating = RATING_C;
-        rulesRefs =" 273, TM";
+        cost = 200;
+        bv = 0.10;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
+        infantryDamage = 0.11;
+        infantryRange = 0;
+        introDate = 2315;
+        techLevel.put(2315, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2325, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2350, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_C ,RATING_C ,RATING_B};
+        techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

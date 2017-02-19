@@ -23,29 +23,31 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleMagnaLaserWeapon extends InfantryWeapon {
+public class InfantryRifleISGyroslugRifleWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleMagnaLaserWeapon() {
+    public InfantryRifleISGyroslugRifleWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Laser Rifle (Magna)";
+
+        name = "Gyroslug Rifle";
         setInternalName(name);
-        addLookupName("InfantryMagnaLaser");
-        addLookupName("Magna Laser Rifle");
+        addLookupName("InfantryGyroslugRifle");
         ammoType = AmmoType.T_NA;
-        cost = 1500;
-        bv = 1.33;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.26;
-        infantryRange = 2;
-        introDate = 2465;
-        techLevel.put(2465,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        cost = 1000;
+        bv =  1.07;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.35;
+        infantryRange = 1;
+        introDate = 2515;
+        techLevel.put(2515, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2530, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2570, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_B,RATING_C ,RATING_C ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

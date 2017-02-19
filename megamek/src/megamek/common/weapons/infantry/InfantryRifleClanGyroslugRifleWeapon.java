@@ -23,31 +23,29 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleVintageWeapon extends InfantryWeapon {
+public class InfantryRifleClanGyroslugRifleWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleVintageWeapon() {
+    public InfantryRifleClanGyroslugRifleWeapon() {
         super();
 
-        name = "Rifle (Vintage Assault)";
+        name = "Gyroslug Rifle [Clan]";
         setInternalName(name);
-        addLookupName("InfantryVintageAssaultRifle");
-        addLookupName("Vintage Assault Rifle");
+        addLookupName("InfantryGyroslugRifle");
         ammoType = AmmoType.T_NA;
-        cost = 2000;
-        tonnage = 0.0045f;
-        bv = 0.0;
+        cost = 1000;
+        bv =  1.07;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.17;
+        infantryDamage = 0.35;
         infantryRange = 1;
         introDate = 1950;
         techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_C,RATING_D,RATING_D,RATING_E};
-        techRating = RATING_C;
+        availRating = new int[]{RATING_X,RATING_C,RATING_C,RATING_C};
+        techRating = RATING_D;
         rulesRefs =" 273, TM";
     }
 }

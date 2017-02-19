@@ -32,7 +32,7 @@ public class InfantryRifleBoltActionWeapon extends InfantryWeapon {
 
     public InfantryRifleBoltActionWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Rifle (Bolt-Action)";
         setInternalName(name);
         addLookupName("InfantryBoltActionRifle");
@@ -44,8 +44,9 @@ public class InfantryRifleBoltActionWeapon extends InfantryWeapon {
         infantryDamage = 0.14;
         infantryRange = 1;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_B};
         techRating = RATING_B;
+        rulesRefs =" 273, TM";
     }
 }

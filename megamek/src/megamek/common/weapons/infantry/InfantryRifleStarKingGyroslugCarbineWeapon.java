@@ -32,7 +32,7 @@ public class InfantryRifleStarKingGyroslugCarbineWeapon extends InfantryWeapon {
 
     public InfantryRifleStarKingGyroslugCarbineWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Gyroslug Carbine (Star King)";
         setInternalName(name);
         addLookupName("InfantryStarKing");
@@ -43,10 +43,12 @@ public class InfantryRifleStarKingGyroslugCarbineWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.35;
         infantryRange = 1;
-        introDate = 2789;
-        techLevel.put(2789,techLevel.get(3071));
-        extinctDate = 2925;
-        availRating = new int[]{RATING_X,RATING_C,RATING_D};
+        introDate = 2770;
+        techLevel.put(2770, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2789, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2825, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

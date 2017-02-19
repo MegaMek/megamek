@@ -32,7 +32,7 @@ public class InfantryRifleElephantGunWeapon extends InfantryWeapon {
 
     public InfantryRifleElephantGunWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Elephant Gun";
         setInternalName(name);
         addLookupName("InfantryElephantGun");
@@ -43,8 +43,9 @@ public class InfantryRifleElephantGunWeapon extends InfantryWeapon {
         infantryDamage = 0.11;
         infantryRange = 1;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_C,RATING_C};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_B,RATING_C,RATING_C,RATING_C};
         techRating = RATING_B;
+        rulesRefs =" 273, TM";
     }
 }

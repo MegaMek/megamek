@@ -23,29 +23,30 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleMarxXXLaserWeapon extends InfantryWeapon {
+public class InfantryRifleClanMagnaLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleMarxXXLaserWeapon() {
+    public InfantryRifleClanMagnaLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Laser Rifle (Marx XX)";
+
+        name = "Laser Rifle (Magna)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryMarxXXLaser");
-        addLookupName("Marx XX Laser Rifle");
+        addLookupName("InfantryMagnaLaser");
+        addLookupName("Magna Laser Rifle");
         ammoType = AmmoType.T_NA;
-        cost = 1750;
-        bv = 1.86;
+        cost = 1500;
+        bv = 1.33;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.26;
-        infantryRange = 3;
-        introDate = 2690;
-        techLevel.put(2690,techLevel.get(3071));
-        availRating = new int[]{RATING_D,RATING_E,RATING_D};
+        infantryRange = 2;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_D};
         techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

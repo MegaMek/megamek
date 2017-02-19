@@ -32,7 +32,7 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 
     public InfantryRifleMauserG150Weapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Rifle (M&G G-150)";
         setInternalName(name);
         addLookupName("InfantryM&GG150");
@@ -43,9 +43,13 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.32;
         infantryRange = 2;
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        //Tech Progression not in IO, below based on various Fluff
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3052, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3055, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_C ,RATING_C};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

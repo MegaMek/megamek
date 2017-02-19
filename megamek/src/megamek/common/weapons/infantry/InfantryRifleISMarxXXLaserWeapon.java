@@ -23,29 +23,32 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
+public class InfantryRifleISMarxXXLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleMauser960LaserWeapon() {
+    public InfantryRifleISMarxXXLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Laser Rifle (Mauser 960)";
+
+        name = "Laser Rifle (Marx XX)";
         setInternalName(name);
-        addLookupName("InfantryMauser960");
-        addLookupName("Mauser 960 Assault System");
+        addLookupName("InfantryMarxXXLaser");
+        addLookupName("Marx XX Laser Rifle");
         ammoType = AmmoType.T_NA;
-        cost = 8000;
-        bv = 4.75;
+        cost = 1750;
+        bv = 1.86;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.93;
-        infantryRange = 2;
-        introDate = 2700;
-        techLevel.put(2700,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_F,RATING_D};
-        techRating = RATING_E;
+        infantryDamage = 0.26;
+        infantryRange = 3;
+        introDate = 2680;
+        techLevel.put(2680, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2670, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2690, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_D,RATING_E ,RATING_D ,RATING_D};
+        techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

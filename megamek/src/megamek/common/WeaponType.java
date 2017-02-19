@@ -1252,7 +1252,8 @@ public class WeaponType extends EquipmentType {
 
         // Infantry Rifles
         EquipmentType.addType(new InfantryRifleAutoRifleWeapon());
-        EquipmentType.addType(new InfantryRifleBlazerRifleWeapon());
+        EquipmentType.addType(new InfantryRifleISBlazerRifleWeapon());
+        EquipmentType.addType(new InfantryRifleClanBlazerRifleWeapon());
         EquipmentType.addType(new InfantryRifleBoltActionSniperWeapon());
         EquipmentType.addType(new InfantryRifleBoltActionWeapon());
         EquipmentType.addType(new InfantryRifleClanERLaserWeapon());
@@ -1266,20 +1267,28 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryRifleFederatedBarrettM61ALaserInfernoWeapon());
         EquipmentType.addType(new InfantryRifleFederatedBarrettM61ALaserWeapon());
         EquipmentType.addType(new InfantryRifleFederatedLongWeapon());
-        EquipmentType.addType(new InfantryRifleGyrojetWeapon());
-        EquipmentType.addType(new InfantryRifleGyroslugCarbineWeapon());
-        EquipmentType.addType(new InfantryRifleGyroslugRifleWeapon());
-        EquipmentType.addType(new InfantryRifleHeavyGyrojetGunWeapon());
+        EquipmentType.addType(new InfantryRifleISGyrojetWeapon());
+        EquipmentType.addType(new InfantryRifleClanGyrojetWeapon());
+        EquipmentType.addType(new InfantryRifleISGyroslugCarbineWeapon());
+        EquipmentType.addType(new InfantryRifleClanGyroslugCarbineWeapon());
+        EquipmentType.addType(new InfantryRifleISGyroslugRifleWeapon());
+        EquipmentType.addType(new InfantryRifleClanGyroslugRifleWeapon());
+        EquipmentType.addType(new InfantryRifleISHeavyGyrojetGunWeapon());
+        EquipmentType.addType(new InfantryRifleClanHeavyGyrojetGunWeapon());
         EquipmentType.addType(new InfantryRifleImperatorAX22AssaultWeapon());
         EquipmentType.addType(new InfantryRifleIntekLaserWeapon());
-        EquipmentType.addType(new InfantryRifleMagnaLaserWeapon());
+        EquipmentType.addType(new InfantryRifleISMagnaLaserWeapon());
+        EquipmentType.addType(new InfantryRifleClanMagnaLaserWeapon());
         EquipmentType.addType(new InfantryRifleMakeshiftWeapon());
-        EquipmentType.addType(new InfantryRifleMarxXXLaserWeapon());
+        EquipmentType.addType(new InfantryRifleISMarxXXLaserWeapon());
+        EquipmentType.addType(new InfantryRifleClanMarxXXLaserWeapon());
         EquipmentType.addType(new InfantryRifleMauser1200LSSWeapon());
-        EquipmentType.addType(new InfantryRifleMauser960LaserWeapon());
+        EquipmentType.addType(new InfantryRifleISMauser960LaserWeapon());
+        EquipmentType.addType(new InfantryRifleClanMauser960LaserWeapon());
         EquipmentType.addType(new InfantryRifleMauserG150Weapon());
         EquipmentType.addType(new InfantryRifleMaxellPL10LaserWeapon());
-        EquipmentType.addType(new InfantryRifleMGFlechetteNeedlerWeapon());
+        EquipmentType.addType(new InfantryRifleISMGFlechetteNeedlerWeapon());
+        EquipmentType.addType(new InfantryRifleClanMGFlechetteNeedlerWeapon());
         EquipmentType.addType(new InfantryRifleMinolta9000Weapon());
         EquipmentType.addType(new InfantryRifleNeedlerWeapon());
         EquipmentType.addType(new InfantryRiflePulseLaserWeapon());

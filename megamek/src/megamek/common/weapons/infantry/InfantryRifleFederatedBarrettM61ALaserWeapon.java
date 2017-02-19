@@ -32,7 +32,7 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
 
     public InfantryRifleFederatedBarrettM61ALaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Laser Rifle (Federated-Barrett M61A)";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM61A");
@@ -43,9 +43,12 @@ public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.75;
         infantryRange = 2;
-        introDate = 3062;
-        techLevel.put(3062,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
-        techRating = RATING_D;
+        introDate = 3053;
+        techLevel.put(3053, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3062, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_C};
+        techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

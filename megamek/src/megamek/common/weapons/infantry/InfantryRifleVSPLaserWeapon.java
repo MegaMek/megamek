@@ -32,7 +32,7 @@ public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
 
     public InfantryRifleVSPLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Variable-Pulse Laser Rifle";
         setInternalName(name);
         addLookupName("InfantryVSPRifle");
@@ -44,9 +44,12 @@ public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.33;
         infantryRange = 1;
-        introDate = 3076;
-        techLevel.put(3076,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        introDate = 3075;
+        techLevel.put(3075, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3077, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

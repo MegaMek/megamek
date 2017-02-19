@@ -23,29 +23,32 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
+public class InfantryRifleISHeavyGyrojetGunWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleMGFlechetteNeedlerWeapon() {
+    public InfantryRifleISHeavyGyrojetGunWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Needler Rifle (M&G Flechette)";
+
+        name = "Gyrojet Gun (Heavy)";
         setInternalName(name);
-        addLookupName("InfantryMGFlechette");
-        addLookupName("M&G Flechette Rifle");
+        addLookupName("InfantryHeavyGyrojetGun");
+        addLookupName("Heavy Gyrojet Gun");
         ammoType = AmmoType.T_NA;
-        cost = 200;
-        bv = 0.10;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
-        infantryDamage = 0.11;
-        infantryRange = 0;
-        introDate = 2325;
-        techLevel.put(2325,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        cost = 2500;
+        bv = 1.07;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.21;
+        infantryRange = 2;
+        introDate = 2580;
+        techLevel.put(2580, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2590, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2600, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_D ,RATING_C ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

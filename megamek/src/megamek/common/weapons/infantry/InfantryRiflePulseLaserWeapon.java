@@ -32,7 +32,7 @@ public class InfantryRiflePulseLaserWeapon extends InfantryWeapon {
 
     public InfantryRiflePulseLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Pulse Laser Rifle (IS)";
         setInternalName(name);
         addLookupName("InfantryISPulseLaser");
@@ -43,9 +43,12 @@ public class InfantryRiflePulseLaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.25;
         infantryRange = 1;
-        introDate = 2680;
-        techLevel.put(2680,techLevel.get(3071));
-        availRating = new int[]{RATING_D,RATING_E,RATING_C};
+        introDate = 2673;
+        techLevel.put(2673, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2680, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2700, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_D,RATING_E ,RATING_C ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

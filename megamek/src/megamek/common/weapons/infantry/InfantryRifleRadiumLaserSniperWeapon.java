@@ -32,7 +32,7 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
 
     public InfantryRifleRadiumLaserSniperWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+
         name = "Rifle (Radium Sniper)";
         setInternalName(name);
         addLookupName("InfantryRadiumSniper");
@@ -43,12 +43,14 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.36;
         infantryRange = 3;
-        introDate = 2583;
-        techLevel.put(2583,techLevel.get(3071));
+        introDate = 2577;
         extinctDate = 2607;
         reintroDate = 3062;
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
-        availRating = new int[]{RATING_F,RATING_X,RATING_F};
+        techLevel.put(2577, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2583, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3062, TechConstants.T_IS_EXPERIMENTAL);
+        availRating = new int[] { RATING_F,RATING_X ,RATING_F ,RATING_F};
         techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

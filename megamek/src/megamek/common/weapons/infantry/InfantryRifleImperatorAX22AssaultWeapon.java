@@ -32,7 +32,7 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
 
     public InfantryRifleImperatorAX22AssaultWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Rifle (Imperator AX-22 Assault)";
         setInternalName(name);
         addLookupName("InfantryImperatorAX22");
@@ -43,9 +43,12 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.52;
         infantryRange = 1;
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_B};
+        introDate = 3047;
+        techLevel.put(3047, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_B ,RATING_B};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

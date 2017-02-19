@@ -32,7 +32,7 @@ public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
 
     public InfantryRifleEbonyAssaultLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
+
         name = "Laser Rifle (Ebony Assault)";
         setInternalName(name);
         addLookupName("InfantryEbonyAssaultLaser");
@@ -43,9 +43,11 @@ public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.21;
         infantryRange = 2;
-        introDate = 3063;
-        techLevel.put(3063,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        introDate = 3051;
+        techLevel.put(3051, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3063, TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_F;
+        rulesRefs = "273, TM";
     }
 }

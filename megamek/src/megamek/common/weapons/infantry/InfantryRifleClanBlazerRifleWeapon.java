@@ -23,17 +23,17 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleBlazerRifleWeapon extends InfantryWeapon {
+public class InfantryRifleClanBlazerRifleWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleBlazerRifleWeapon() {
+    public InfantryRifleClanBlazerRifleWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Laser Rifle (Blazer)";
+
+        name = "Laser Rifle (Blazer)[Clan]";
         setInternalName(name);
         addLookupName("InfantryBlazerRifle");
         addLookupName("Infantry Blazer Rifle");
@@ -43,9 +43,10 @@ public class InfantryRifleBlazerRifleWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.35;
         infantryRange = 2;
-        introDate = 2290;
-        techLevel.put(2290,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

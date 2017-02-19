@@ -23,29 +23,29 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
+public class InfantryRifleClanGyroslugCarbineWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleHeavyGyrojetGunWeapon() {
+    public InfantryRifleClanGyroslugCarbineWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Gyrojet Gun (Heavy)";
+
+        name = "Gyroslug Carbine [Clan]";
         setInternalName(name);
-        addLookupName("InfantryHeavyGyrojetGun");
-        addLookupName("Heavy Gyrojet Gun");
+        addLookupName("InfantryGyroslugCarbine");
         ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 1.07;
+        cost = 800;
+        bv = 0.86;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.21;
-        infantryRange = 2;
-        introDate = 2590;
-        techLevel.put(2590,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_C};
+        infantryDamage = 0.28;
+        infantryRange = 1;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_D ,RATING_C ,RATING_C};
         techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

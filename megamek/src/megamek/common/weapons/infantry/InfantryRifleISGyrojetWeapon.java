@@ -23,16 +23,16 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantryRifleGyrojetWeapon extends InfantryWeapon {
+public class InfantryRifleISGyrojetWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleGyrojetWeapon() {
+    public InfantryRifleISGyrojetWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Gyrojet Rifle";
         setInternalName(name);
         addLookupName("InfantryGyrojetRifle");
@@ -43,8 +43,11 @@ public class InfantryRifleGyrojetWeapon extends InfantryWeapon {
         infantryDamage = 0.35;
         infantryRange = 1;
         introDate = 2530;
-        techLevel.put(2530,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_C,RATING_C};
-        techRating = RATING_D;
+        techLevel.put(2530, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2540, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(2570, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_C,RATING_C ,RATING_B ,RATING_B};
+        techRating = RATING_F;
+        rulesRefs = "273, TM";
     }
 }

@@ -32,7 +32,7 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
 
     public InfantryRifleFederatedBarrettM42BWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Rifle (Federated-Barrett M42B)";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM42B");
@@ -43,9 +43,12 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST);
         infantryDamage = 1.02;
         infantryRange = 1;
-        introDate = 3064;
-        techLevel.put(3064,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3055;
+        techLevel.put(3055, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3064, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3095, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_C};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

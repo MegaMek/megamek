@@ -32,7 +32,7 @@ public class InfantryShotgunAutomaticWeapon extends InfantryWeapon {
 
     public InfantryShotgunAutomaticWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Auto-Shotgun";
         setInternalName(name);
         addLookupName("InfantryAutoShotgun");
@@ -43,9 +43,10 @@ public class InfantryShotgunAutomaticWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.23;
         infantryRange = 0;
-        introDate = 2100;
-        techLevel.put(2100,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_C};
-        techRating = RATING_C;
+        introDate = 1950;
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_A};
+        techRating = RATING_A;
+        rulesRefs =" 273, TM";
     }
 }

@@ -1395,8 +1395,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySMGGuntherMP20Weapon());
         EquipmentType.addType(new InfantrySMGImperator2894A1Weapon());
         EquipmentType.addType(new InfantrySMGKA23SubgunWeapon());
-        EquipmentType.addType(new InfantrySMGRorynexRM3XXIWeapon());
-        EquipmentType.addType(new InfantrySMGRuganWeapon());
+        EquipmentType.addType(new InfantrySMGISRorynexRM3XXIWeapon());
+        EquipmentType.addType(new InfantrySMGClanRorynexRM3XXIWeapon());
+        EquipmentType.addType(new InfantrySMGISRuganWeapon());
+        EquipmentType.addType(new InfantrySMGClanRuganWeapon());
         EquipmentType.addType(new InfantrySMGWeapon());
         
         //Infantry TAG

@@ -32,7 +32,7 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
 
     public InfantrySMGKA23SubgunWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "SMG (KA-23 Subgun)";
         setInternalName(name);
         addLookupName("InfantryKA23");
@@ -43,9 +43,12 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.22;
         infantryRange = 0;
-        introDate = 2895;
-        techLevel.put(2895,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_C,RATING_D};
+        introDate = 2885;
+        techLevel.put(2885, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2895, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2950, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_D};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

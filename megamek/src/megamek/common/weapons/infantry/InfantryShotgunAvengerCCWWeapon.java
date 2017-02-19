@@ -32,7 +32,7 @@ public class InfantryShotgunAvengerCCWWeapon extends InfantryWeapon {
 
     public InfantryShotgunAvengerCCWWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+
         name = "Shotgun (Avenger CCW)";
         setInternalName(name);
         addLookupName("InfantryAvengerCCW");
@@ -43,9 +43,11 @@ public class InfantryShotgunAvengerCCWWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.33;
         infantryRange = 0;
-        introDate = 3020;
-        techLevel.put(3020,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        introDate = 3014;
+        techLevel.put(3014, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3020, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[] { RATING_X,RATING_E ,RATING_C ,RATING_D};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

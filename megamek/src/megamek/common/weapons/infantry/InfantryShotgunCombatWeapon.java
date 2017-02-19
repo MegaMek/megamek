@@ -32,7 +32,7 @@ public class InfantryShotgunCombatWeapon extends InfantryWeapon {
 
     public InfantryShotgunCombatWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Shotgun (Combat)";
         setInternalName(name);
         addLookupName("InfantryCombatShotgun");
@@ -44,8 +44,9 @@ public class InfantryShotgunCombatWeapon extends InfantryWeapon {
         infantryDamage = 0.27;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_A};
+        techRating = RATING_A;
+        rulesRefs =" 273, TM";
     }
 }

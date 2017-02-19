@@ -43,12 +43,11 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.32;
         infantryRange = 2;
-        //Tech Progression not in IO, below based on various Fluff
-        introDate = 3050;
-        techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3052, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3055, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_C ,RATING_C};
+        introDate = 3053;
+        techLevel.put(3053, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3075, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_C ,RATING_B};
         techRating = RATING_C;
         rulesRefs = "273, TM";
     }

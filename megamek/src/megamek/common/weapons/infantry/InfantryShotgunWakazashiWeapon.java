@@ -43,8 +43,9 @@ public class InfantryShotgunWakazashiWeapon extends InfantryWeapon {
         infantryDamage = 0.23;
         infantryRange = 0;
         introDate = 2100;
-        techLevel.put(2100,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_C};
+        techLevel.put(2100,TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[]{RATING_C,RATING_C,RATING_C,RATING_C};
         techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

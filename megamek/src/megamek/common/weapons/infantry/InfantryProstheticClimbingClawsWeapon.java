@@ -32,19 +32,21 @@ public class InfantryProstheticClimbingClawsWeapon extends InfantryWeapon {
 
     public InfantryProstheticClimbingClawsWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Prosthetic Climbing Claws";
         setInternalName(name);
         addLookupName("ClimbingClawsProsthetic");
         ammoType = AmmoType.T_NA;
         cost = 1000;
         bv = 0.02;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC).or(F_INF_CLIMBINGCLAWS);
+        //TODO Add game rules IO pg 84
         infantryDamage = 0.02;
         infantryRange = 0;
+        //Rating and Dates not available below is compiled from various books
         introDate = 2375;
-        techLevel.put(2375,techLevel.get(3071));
-        availRating = new int[]{RATING_F,RATING_F,RATING_E};
+        techLevel.put(2375,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_F,RATING_E,RATING_D,RATING_D};
         techRating = RATING_D;
     }
 

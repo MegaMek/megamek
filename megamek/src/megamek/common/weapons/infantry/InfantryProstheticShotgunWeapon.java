@@ -32,7 +32,7 @@ public class InfantryProstheticShotgunWeapon extends InfantryWeapon {
 
     public InfantryProstheticShotgunWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Prosthetic Shotgun)";
         setInternalName(name);
         addLookupName("Prosthetic Shotgun");
@@ -42,9 +42,10 @@ public class InfantryProstheticShotgunWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.05;
         infantryRange = 0;
+        //Rating and Dates not available below is compiled from various books
         introDate = 2375;
-        techLevel.put(2375,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_E,RATING_D};
+        techLevel.put(2375,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_F,RATING_E,RATING_D,RATING_D};
         techRating = RATING_D;
     }
 }

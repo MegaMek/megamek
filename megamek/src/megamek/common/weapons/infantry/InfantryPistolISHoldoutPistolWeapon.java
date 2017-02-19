@@ -32,7 +32,7 @@ public class InfantryPistolISHoldoutPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolISHoldoutPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Pistol (Hold-Out)";
         setInternalName(name);
         addLookupName("InfantryHoldoutpistol");
@@ -44,8 +44,9 @@ public class InfantryPistolISHoldoutPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.03;
         infantryRange = 0;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_B};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_A,RATING_A,RATING_B,RATING_B};
         techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

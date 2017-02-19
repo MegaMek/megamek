@@ -32,7 +32,7 @@ public class InfantryProstheticShockerWeapon extends InfantryWeapon {
 
     public InfantryProstheticShockerWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Prosthetic Shocker";
         setInternalName(name);
         addLookupName("ProstheticShocker");
@@ -42,9 +42,10 @@ public class InfantryProstheticShockerWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.05;
         infantryRange = 0;
+        //Rating and Dates not available below is compiled from various books
         introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        techLevel.put(3060,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_F,RATING_E,RATING_D,RATING_D};
         techRating = RATING_D;
     }
 }

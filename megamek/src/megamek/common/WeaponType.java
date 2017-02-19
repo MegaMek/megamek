@@ -122,6 +122,7 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_INF_SUPPORT = BigInteger.valueOf(1).shiftLeft(53);
     public static final BigInteger F_INF_ENCUMBER = BigInteger.valueOf(1).shiftLeft(54);
     public static final BigInteger F_INF_ARCHAIC = BigInteger.valueOf(1).shiftLeft(55);
+    public static final BigInteger F_INF_CLIMBINGCLAWS = BigInteger.valueOf(1).shiftLeft(62);   //TODO Add game rules IO pg 84
 
     // C3 Master Booster System
     public static final BigInteger F_C3MBS = BigInteger.valueOf(1).shiftLeft(56);

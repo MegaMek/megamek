@@ -2132,41 +2132,60 @@ public class Infantry extends Entity {
 
     @Override
     public double getWeight() {
-        double ton;
+        double mult;
         switch (getMovementMode()) {
             case INF_MOTORIZED:
-                ton = men * 0.195;
+                mult = 0.195;
                 break;
             case HOVER:
             case TRACKED:
             case WHEELED:
-                ton = men * 1;
+                mult = 1.0;
                 break;
             case VTOL:
-            	ton = men * (hasMicrolite()? 1.4 : 1.9);
+            	mult = (hasMicrolite()? 1.4 : 1.9);
             	break;
             case INF_JUMP:
-                ton = men * 0.165;
+                mult = 0.165;
                 break;
+            case INF_UMU:
+            	if (getActiveUMUCount() > 1) {
+            		mult = 0.295; //motorized + 0.1 for motorized scuba
+            	} else {
+            		mult = 0.135; //foot + 0.05 for scuba
+            	}
+            	break;
+            case SUBMARINE:
+            	mult = 0.9;
+            	break;
             case INF_LEG:
             default:
-                ton = men * 0.085;
+                mult = 0.085;
         }
         
-        if(isAntiMekTrained()) {
-                ton += men * .015;
-                        
+        if (hasSpecialization(COMBAT_ENGINEERS)) {
+        	mult += 0.1;
         }
-
+        if (hasSpecialization(PARATROOPS)) {
+        	mult += 0.05;
+        }
+        if (hasSpecialization(PARAMEDICS)) {
+        	mult += 0.05;
+        }
+            
+        double ton = men * mult;
+        
         //add in field gun weight
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
                 ton += mounted.getType().getTonnage(this);
             }
         }
+        
         return TestEntity.round(ton, TestEntity.Ceil.QUARTERTON);
 
     }
+    
     public String getArmorDesc() {
         StringBuffer sArmor = new StringBuffer();
         double divisor = getDamageDivisor();

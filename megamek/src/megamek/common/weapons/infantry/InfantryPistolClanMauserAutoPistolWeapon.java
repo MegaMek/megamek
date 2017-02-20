@@ -33,7 +33,7 @@ public class InfantryPistolClanMauserAutoPistolWeapon extends InfantryWeapon {
     public InfantryPistolClanMauserAutoPistolWeapon() {
         super();
 
-        name = "Auto-Pistol (M&G)";
+        name = "Auto-Pistol (M&G)[Clan]";
         setInternalName(name);
         addLookupName("InfantryMauserAutopistol");
         addLookupName("M&G Auto Pistol");
@@ -45,7 +45,7 @@ public class InfantryPistolClanMauserAutoPistolWeapon extends InfantryWeapon {
         infantryRange = 0;
         introDate = 2807;
         techLevel.put(2807, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_C,RATING_B ,RATING_C ,RATING_B};
+        availRating = new int[] { RATING_X,RATING_B ,RATING_C ,RATING_B};
         techRating = RATING_C;
         rulesRefs = "273, TM";
     }

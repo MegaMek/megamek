@@ -33,7 +33,7 @@ public class InfantryPistolClanHoldoutNeedlerPistolWeapon extends InfantryWeapon
     public InfantryPistolClanHoldoutNeedlerPistolWeapon() {
         super();
 
-        name = "Needler Pistol (Hold-Out) (Clan)";
+        name = "Needler Pistol (Hold-Out) [Clan]";
         setInternalName(name);
         addLookupName("InfantryHoldoutNeedlerpistol");
         addLookupName("Holdout Needler Pistol");
@@ -45,7 +45,7 @@ public class InfantryPistolClanHoldoutNeedlerPistolWeapon extends InfantryWeapon
         infantryRange = 0;
         introDate = 2807;
         techLevel.put(2807, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_C,RATING_C ,RATING_C ,RATING_C};
+        availRating = new int[] { RATING_X,RATING_C ,RATING_C ,RATING_C};
         techRating = RATING_D;
         rulesRefs =" 273, TM";
     }

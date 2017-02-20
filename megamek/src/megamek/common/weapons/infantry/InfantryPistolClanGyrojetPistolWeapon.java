@@ -33,7 +33,7 @@ public class InfantryPistolClanGyrojetPistolWeapon extends InfantryWeapon {
     public InfantryPistolClanGyrojetPistolWeapon() {
         super();
 
-        name = "Gyrojet Pistol (Clan)";
+        name = "Gyrojet Pistol [Clan]";
         setInternalName(name);
         addLookupName("InfantryGyrojetpistol");
         ammoType = AmmoType.T_NA;

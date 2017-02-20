@@ -33,7 +33,7 @@ public class InfantryPistolClanHoldOutLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolClanHoldOutLaserPistolWeapon() {
         super();
 
-        name = "Laser Pistol (Hold-Out) (Clan)";
+        name = "Laser Pistol (Hold-Out) [Clan]";
         setInternalName(name);
         addLookupName("InfantryHoldoutLaserpistol");
         addLookupName("Holdout Laser Pistol");

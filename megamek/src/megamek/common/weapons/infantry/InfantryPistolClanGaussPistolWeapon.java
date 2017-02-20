@@ -33,7 +33,7 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
     public InfantryPistolClanGaussPistolWeapon() {
         super();
 
-        name = "Gauss Pistol (Clan)";
+        name = "Gauss Pistol [Clan]";
         setInternalName(name);
         addLookupName("InfantryGausspistol");
         ammoType = AmmoType.T_NA;

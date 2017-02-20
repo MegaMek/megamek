@@ -33,7 +33,7 @@ public class InfantryPistolClanMauserNeedlerPistolWeapon extends InfantryWeapon 
     public InfantryPistolClanMauserNeedlerPistolWeapon() {
         super();
 
-        name = "Needler Pistol (M&G Flechette) (Clan)";
+        name = "Needler Pistol (M&G Flechette) [Clan]";
         setInternalName(name);
         addLookupName("InfantryMauserneedlerpistol");
         addLookupName("M&G Flechette Pistol");
@@ -45,7 +45,7 @@ public class InfantryPistolClanMauserNeedlerPistolWeapon extends InfantryWeapon 
         infantryRange = 0;
         introDate = 2807;
         techLevel.put(2807, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_B,RATING_B ,RATING_C ,RATING_C};
+        availRating = new int[] { RATING_X,RATING_B ,RATING_C ,RATING_C};
         techRating = RATING_D;
         rulesRefs =" 273, TM";
     }

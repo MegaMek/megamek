@@ -42,10 +42,12 @@ public class InfantryRifleISMagnaLaserWeapon extends InfantryWeapon {
         bv = 1.33;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.26;
-        infantryRange = 2;
-        introDate = 2465;
-        techLevel.put(2465,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
-        techRating = RATING_D;
+        introDate = 2455;
+        techLevel.put(2455, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2465, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2500, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_D};
+        techRating = RATING_F;
+        rulesRefs = "273, TM";
     }
 }

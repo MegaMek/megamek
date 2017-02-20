@@ -2172,6 +2172,9 @@ public class Infantry extends Entity {
         if (hasSpecialization(PARAMEDICS)) {
         	mult += 0.05;
         }
+        if(isAntiMekTrained()){
+        	mult +=.015;
+        }
             
         double ton = men * mult;
         

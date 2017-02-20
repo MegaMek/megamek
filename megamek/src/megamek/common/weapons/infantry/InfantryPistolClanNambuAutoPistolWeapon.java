@@ -33,7 +33,7 @@ public class InfantryPistolClanNambuAutoPistolWeapon extends InfantryWeapon {
     public InfantryPistolClanNambuAutoPistolWeapon() {
         super();
 
-        name = "Auto-Pistol (Nambu)(Clan)";
+        name = "Auto-Pistol (Nambu)[Clan]";
         setInternalName(name);
         addLookupName("InfantryNambuAutopistol");
         addLookupName("Nambu Auto Pistol");

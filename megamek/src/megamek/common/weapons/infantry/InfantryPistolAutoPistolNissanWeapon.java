@@ -32,7 +32,7 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
 
     public InfantryPistolAutoPistolNissanWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Auto-Pistol (Nissan SG-12)";
         setInternalName(name);
         addLookupName("InfantryAutopistolNissan");
@@ -44,8 +44,11 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
         infantryDamage = 0.17;
         infantryRange = 1;
         introDate = 2600;
-        techLevel.put(2600,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techLevel.put(2600, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2620, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2630, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_B,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

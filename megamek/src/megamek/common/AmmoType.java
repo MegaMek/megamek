@@ -5795,10 +5795,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 5;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
@@ -5870,10 +5874,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 9;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
@@ -5945,10 +5953,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 12;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }

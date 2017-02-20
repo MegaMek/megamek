@@ -35,8 +35,8 @@ public class InfantryRifleClanMarxXXLaserWeapon extends InfantryWeapon {
 
         name = "Laser Rifle (Marx XX)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryMarxXXLaser");
-        addLookupName("Marx XX Laser Rifle");
+        addLookupName("CLInfantryMarxXXLaser");
+        addLookupName("Clan Marx XX Laser Rifle");
         ammoType = AmmoType.T_NA;
         cost = 1750;
         bv = 1.86;

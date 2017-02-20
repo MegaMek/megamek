@@ -35,8 +35,8 @@ public class InfantryPistolClanMauserNeedlerPistolWeapon extends InfantryWeapon 
 
         name = "Needler Pistol (M&G Flechette) [Clan]";
         setInternalName(name);
-        addLookupName("InfantryMauserneedlerpistol");
-        addLookupName("M&G Flechette Pistol");
+        addLookupName("CL InfantryMauserneedlerpistol");
+        addLookupName("Clan M&G Flechette Pistol");
         ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.10;

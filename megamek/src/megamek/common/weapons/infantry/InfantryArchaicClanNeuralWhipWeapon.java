@@ -33,7 +33,7 @@ public class InfantryArchaicClanNeuralWhipWeapon extends InfantryWeapon {
     public InfantryArchaicClanNeuralWhipWeapon() {
         super();
 
-        name = "Whip (Neural Whip, Clan)";
+        name = "Whip (Neural Whip) [Clan]";
         setInternalName(name);
         addLookupName("CLInfantryNeuralWhip");
         addLookupName("Clan Neural Whip");

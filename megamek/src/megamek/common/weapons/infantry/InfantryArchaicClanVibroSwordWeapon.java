@@ -33,7 +33,7 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
     public InfantryArchaicClanVibroSwordWeapon() {
         super();
 
-        name = "Blade (Vibro-sword, Clan)";
+        name = "Blade (Vibro-sword) [Clan]";
         setInternalName(name);
         addLookupName("InfantryClanVibroSword");
         addLookupName("Clan Vibro Sword");

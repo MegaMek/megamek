@@ -35,9 +35,9 @@ public class InfantrySupportClanPulseLaserWeapon extends InfantryWeapon {
 
         name = "Support Pulse Laser[Clan]";
         setInternalName(name);
-        addLookupName("InfantrySupportPulseLaser");
-        addLookupName("Infantry Support Pulse Laser");
-        addLookupName("InfantrySmallPulseLaser");
+        addLookupName("CLInfantrySupportPulseLaser");
+        addLookupName("Clan Infantry Support Pulse Laser");
+        addLookupName("ClanInfantrySmallPulseLaser");
         ammoType = AmmoType.T_NA;
         cost = 16000;
         bv = 5.81;

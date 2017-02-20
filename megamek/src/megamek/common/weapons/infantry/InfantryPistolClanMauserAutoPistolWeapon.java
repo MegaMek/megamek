@@ -35,8 +35,8 @@ public class InfantryPistolClanMauserAutoPistolWeapon extends InfantryWeapon {
 
         name = "Auto-Pistol (M&G)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryMauserAutopistol");
-        addLookupName("M&G Auto Pistol");
+        addLookupName("CLInfantryMauserAutopistol");
+        addLookupName("Clan M&G Auto Pistol");
         ammoType = AmmoType.T_NA;
         cost = 60;
         bv = 0.16;

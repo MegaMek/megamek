@@ -35,9 +35,9 @@ public class InfantrySupportClanHeavyLaserWeapon extends InfantryWeapon {
 
         name = "Support Laser (Heavy)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryHeavyLaser");
-        addLookupName("Infantry Heavy Laser");
-        addLookupName("InfantryMediumLaser");
+        addLookupName("CLInfantryHeavyLaser");
+        addLookupName("Clan Infantry Heavy Laser");
+        addLookupName("ClanInfantryMediumLaser");
         ammoType = AmmoType.T_NA;
         cost = 40000;
         bv = 17.35;

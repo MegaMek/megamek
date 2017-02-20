@@ -35,9 +35,9 @@ public class InfantrySupportClanPortablePPCWeapon extends InfantryWeapon {
 
         name = "Particle Cannon (Semi-Portable)[Clan]";
         setInternalName(name);
-        addLookupName("InfantrySemiPortablePPC");
-        addLookupName("InfantryManPackPPC");
-        addLookupName("Infantry Semi-Portable PPC");
+        addLookupName("CLInfantrySemiPortablePPC");
+        addLookupName("CLInfantryManPackPPC");
+        addLookupName("Clan Infantry Semi-Portable PPC");
         ammoType = AmmoType.T_NA;
         cost = 7000;
         bv = 3.68;

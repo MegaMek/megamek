@@ -35,8 +35,8 @@ public class InfantryPistolClanHoldoutNeedlerPistolWeapon extends InfantryWeapon
 
         name = "Needler Pistol (Hold-Out) [Clan]";
         setInternalName(name);
-        addLookupName("InfantryHoldoutNeedlerpistol");
-        addLookupName("Holdout Needler Pistol");
+        addLookupName("CLInfantryHoldoutNeedlerpistol");
+        addLookupName("Clan Holdout Needler Pistol");
         ammoType = AmmoType.T_NA;
         cost = 20;
         bv = 0.10;

@@ -36,8 +36,8 @@ public class InfantrySupportClanHeavySRMInfernoWeapon extends InfantryWeapon {
 
         name = "SRM Launcher (Hvy, One-Shot) - Inferno[Clan]";
         setInternalName(name);
-        addLookupName("InfantryHeavySRMInferno");
-        addLookupName("Infantry Heavy SRM Launcher (Inferno)");
+        addLookupName("CLInfantryHeavySRMInferno");
+        addLookupName("Clan Infantry Heavy SRM Launcher (Inferno)");
         ammoType = AmmoType.T_NA;
         cost = 3000;
         bv = 1.74;

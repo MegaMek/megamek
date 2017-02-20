@@ -35,7 +35,7 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
 
         name = "Gauss Pistol [Clan]";
         setInternalName(name);
-        addLookupName("InfantryGausspistol");
+        addLookupName("CLInfantryGausspistol");
         ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 0.13;

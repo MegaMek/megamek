@@ -35,8 +35,8 @@ public class InfantrySupportClanMk1LightAAWeapon extends InfantryWeapon {
 
         name = "AA Weapon (Mk. 1, Light)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryMk1LightAA");
-        addLookupName("Infantry Mk 1 Light AA Weapon");
+        addLookupName("CLInfantryMk1LightAA");
+        addLookupName("Clan Infantry Mk 1 Light AA Weapon");
         ammoType = AmmoType.T_NA;
         cost = 1000;
         bv = 0.70;

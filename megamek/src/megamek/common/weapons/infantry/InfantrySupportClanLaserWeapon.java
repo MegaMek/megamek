@@ -35,9 +35,9 @@ public class InfantrySupportClanLaserWeapon extends InfantryWeapon {
 
         name = "Support Laser [Clan]";
         setInternalName(name);
-        addLookupName("InfantrySupportLaser");
-        addLookupName("Infantry Support Laser");
-        addLookupName("InfantrySmallLaser");
+        addLookupName("CLInfantrySupportLaser");
+        addLookupName("Clan Infantry Support Laser");
+        addLookupName("CLInfantrySmallLaser");
         ammoType = AmmoType.T_NA;
         cost = 10000;
         bv = 6.02;

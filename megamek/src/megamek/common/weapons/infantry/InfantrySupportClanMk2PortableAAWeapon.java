@@ -35,8 +35,8 @@ public class InfantrySupportClanMk2PortableAAWeapon extends InfantryWeapon {
 
         name = "AA Weapon (Mk. 2, Man-Portable)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryMk2PortableAA");
-        addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
+        addLookupName("CLInfantryMk2PortableAA");
+        addLookupName("Clan Infantry Mk 2 Man-Portable AA Weapon");
         ammoType = AmmoType.T_NA;
         cost = 3500;
         bv = 4.14;

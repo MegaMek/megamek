@@ -35,7 +35,7 @@ public class InfantryPistolClanGyrojetPistolWeapon extends InfantryWeapon {
 
         name = "Gyrojet Pistol [Clan]";
         setInternalName(name);
-        addLookupName("InfantryGyrojetpistol");
+        addLookupName("CLInfantryGyrojetpistol");
         ammoType = AmmoType.T_NA;
         cost = 450;
         bv = 0.04;

@@ -35,8 +35,8 @@ public class InfantrySupportClanHeavySRMWeapon extends InfantryWeapon {
 
         name = "SRM Launcher (Hvy, One-Shot)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryHeavySRM");
-        addLookupName("Infantry Heavy SRM Launcher");
+        addLookupName("CLInfantryHeavySRM");
+        addLookupName("Clan Infantry Heavy SRM Launcher");
         ammoType = AmmoType.T_NA;
         cost = 3000;
         bv = 2.91;

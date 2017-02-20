@@ -35,9 +35,9 @@ public class InfantrySupportClanPortableAutocannonWeapon extends InfantryWeapon 
 
         name = "Autocannon (Semi-Portable)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryPortableAutocannon");
-        addLookupName("InfantrySemiPortableAutocannon");
-        addLookupName("Infantry Semi Portable Autocannon");
+        addLookupName("CLInfantryPortableAutocannon");
+        addLookupName("CLInfantrySemiPortableAutocannon");
+        addLookupName("Clan Infantry Semi Portable Autocannon");
         ammoType = AmmoType.T_NA;
         cost = 2000;
         bv = 2.35;

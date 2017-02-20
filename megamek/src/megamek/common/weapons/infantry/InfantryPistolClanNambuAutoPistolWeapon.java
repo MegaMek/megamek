@@ -35,8 +35,8 @@ public class InfantryPistolClanNambuAutoPistolWeapon extends InfantryWeapon {
 
         name = "Auto-Pistol (Nambu)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryNambuAutopistol");
-        addLookupName("Nambu Auto Pistol");
+        addLookupName("CLInfantryNambuAutopistol");
+        addLookupName("Clan Nambu Auto Pistol");
         ammoType = AmmoType.T_NA;
         cost = 75;
         bv = 0.19;

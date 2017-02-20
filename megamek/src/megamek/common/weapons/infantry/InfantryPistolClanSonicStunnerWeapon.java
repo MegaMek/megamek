@@ -33,9 +33,9 @@ public class InfantryPistolClanSonicStunnerWeapon extends InfantryWeapon {
     public InfantryPistolClanSonicStunnerWeapon() {
         super();
 
-        name = "Sonic Stunner (Clan)";
+        name = "Sonic Stunner [Clan]";
         setInternalName(name);
-        addLookupName("InfantrySonicStunnerpistol");
+        addLookupName("CLInfantrySonicStunnerpistol");
         ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.06;

@@ -33,10 +33,10 @@ public class InfantryPistolClanBlazerPistolWeapon extends InfantryWeapon {
     public InfantryPistolClanBlazerPistolWeapon() {
         super();
 
-        name = "Laser Pistol (Blazer) (Clan)";
+        name = "Laser Pistol (Blazer) [Clan]";
         setInternalName(name);
-        addLookupName("InfantryBlazerPistol");
-        addLookupName("Blazer Pistol");
+        addLookupName("CLInfantryBlazerPistol");
+        addLookupName("Clan Blazer Pistol");
         ammoType = AmmoType.T_NA;
         cost = 3000;
         bv = 0.79;

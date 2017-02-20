@@ -33,10 +33,10 @@ public class InfantryArchaicClanNeuralLashWeapon extends InfantryWeapon {
     public InfantryArchaicClanNeuralLashWeapon() {
         super();
 
-        name = "Whip (Neural Lash) (Clan)";
+        name = "Whip (Neural Lash) [Clan]";
         setInternalName(name);
-        addLookupName("InfantryNeuralLash");
-        addLookupName("Neural Lash");
+        addLookupName("CLInfantryNeuralLash");
+        addLookupName("Clan Neural Lash");
         ammoType = AmmoType.T_NA;
         cost = 750;
         bv = 0.08;

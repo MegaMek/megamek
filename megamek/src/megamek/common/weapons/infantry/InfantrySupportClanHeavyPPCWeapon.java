@@ -35,9 +35,9 @@ public class InfantrySupportClanHeavyPPCWeapon extends InfantryWeapon {
 
         name = "Particle Cannon (Support)[Clan]";
         setInternalName(name);
-        addLookupName("InfantrySupportPPC");
-        addLookupName("InfantryHeavyPPC");
-        addLookupName("Infantry Support PPC");
+        addLookupName("CLInfantrySupportPPC");
+        addLookupName("CLInfantryHeavyPPC");
+        addLookupName("Clan Infantry Support PPC");
         ammoType = AmmoType.T_NA;
         cost = 45000;
         bv = 11.32;

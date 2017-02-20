@@ -35,8 +35,8 @@ public class InfantryRifleClanBlazerRifleWeapon extends InfantryWeapon {
 
         name = "Laser Rifle (Blazer)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryBlazerRifle");
-        addLookupName("Infantry Blazer Rifle");
+        addLookupName("CLInfantryBlazerRifle");
+        addLookupName("Clan Infantry Blazer Rifle");
         ammoType = AmmoType.T_NA;
         cost = 2190;
         bv = 1.79;

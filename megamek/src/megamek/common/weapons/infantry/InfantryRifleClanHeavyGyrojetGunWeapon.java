@@ -35,8 +35,8 @@ public class InfantryRifleClanHeavyGyrojetGunWeapon extends InfantryWeapon {
 
         name = "Gyrojet Gun (Heavy)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryHeavyGyrojetGun");
-        addLookupName("Heavy Gyrojet Gun");
+        addLookupName("CLInfantryHeavyGyrojetGun");
+        addLookupName("Clan Heavy Gyrojet Gun");
         ammoType = AmmoType.T_NA;
         cost = 2500;
         bv = 1.07;

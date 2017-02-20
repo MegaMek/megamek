@@ -33,7 +33,7 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolClanPulseLaserPistolWeapon() {
         super();
 
-        name = "Pulse Laser Pistol (Clan)";
+        name = "Pulse Laser Pistol [Clan]";
         setInternalName(name);
         addLookupName("InfantryClanPulseLaserPistol");
         addLookupName("Clan Pulse Laser Pistol");

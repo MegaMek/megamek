@@ -35,8 +35,8 @@ public class InfantryPistolClanMydronAutoPistolWeapon extends InfantryWeapon {
 
         name = "Auto-Pistol (Mydron)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryMydronAutopistol");
-        addLookupName("Mydron Auto Pistol");
+        addLookupName("CLInfantryMydronAutopistol");
+        addLookupName("Clan Mydron Auto Pistol");
         ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.13;

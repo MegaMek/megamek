@@ -33,10 +33,10 @@ public class InfantryArchaicClanVibroBladeWeapon extends InfantryWeapon {
     public InfantryArchaicClanVibroBladeWeapon() {
         super();
 
-        name = "Blade (Vibro-blade) (Clan)";
+        name = "Blade (Vibro-blade) [Clan]";
         setInternalName(name);
-        addLookupName("InfantryVibroBlade");
-        addLookupName("Vibro Blade");
+        addLookupName("CLInfantryVibroBlade");
+        addLookupName("Clan Vibro Blade");
         ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.19;

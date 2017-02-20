@@ -35,8 +35,8 @@ public class InfantryPistolClanHoldOutLaserPistolWeapon extends InfantryWeapon {
 
         name = "Laser Pistol (Hold-Out) [Clan]";
         setInternalName(name);
-        addLookupName("InfantryHoldoutLaserpistol");
-        addLookupName("Holdout Laser Pistol");
+        addLookupName("CLInfantryHoldoutLaserpistol");
+        addLookupName("Clan Holdout Laser Pistol");
         ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.13;

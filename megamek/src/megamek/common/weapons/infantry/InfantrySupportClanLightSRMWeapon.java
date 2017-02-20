@@ -35,9 +35,9 @@ public class InfantrySupportClanLightSRMWeapon extends InfantryWeapon {
 
         name = "SRM Launcher (Light)[Clan]";
         setInternalName(name);
-        addLookupName("InfantrySRMLight");
-        addLookupName("InfantrySRM");
-        addLookupName("Light SRM Launcher");
+        addLookupName("CLInfantrySRMLight");
+        addLookupName("CLInfantrySRM");
+        addLookupName("Clan Light SRM Launcher");
         ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 2.91;

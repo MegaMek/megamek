@@ -35,8 +35,8 @@ public class InfantrySMGClanRorynexRM3XXIWeapon extends InfantryWeapon {
 
         name = "SMG (Rorynex RM-3/XXI)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryRorynexRM3XXI");
-        addLookupName("Rorynex RM-3/XXI");
+        addLookupName("ClInfantryRorynexRM3XXI");
+        addLookupName("Clan Rorynex RM-3/XXI");
         ammoType = AmmoType.T_NA;
         cost = 80;
         bv = 0.18;

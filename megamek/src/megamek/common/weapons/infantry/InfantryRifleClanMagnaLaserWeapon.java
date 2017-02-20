@@ -35,8 +35,8 @@ public class InfantryRifleClanMagnaLaserWeapon extends InfantryWeapon {
 
         name = "Laser Rifle (Magna)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryMagnaLaser");
-        addLookupName("Magna Laser Rifle");
+        addLookupName("CLInfantryMagnaLaser");
+        addLookupName("Clan Magna Laser Rifle");
         ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 1.33;

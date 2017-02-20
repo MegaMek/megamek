@@ -35,8 +35,8 @@ public class InfantrySMGClanRuganWeapon extends InfantryWeapon {
 
         name = "SMG (Rugan)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryRuganSMG");
-        addLookupName("Rugan SMG");
+        addLookupName("CLInfantryRuganSMG");
+        addLookupName("Clan Rugan SMG");
         ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.18;

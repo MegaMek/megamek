@@ -20,37 +20,38 @@ package megamek.common.weapons.infantry;
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
+
 /**
- * @author Ben Grills
+ * @author Klaus Mittag
  */
-public class InfantrySupportLightRecoillessRifleInfernoWeapon extends InfantryWeapon {
+public class InfantrySupportISHeavySRMInfernoWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 1563575288967582942L;
 
-    public InfantrySupportLightRecoillessRifleInfernoWeapon() {
+    public InfantrySupportISHeavySRMInfernoWeapon() {
         super();
 
-        name = "Recoilless Rifle (Light) - Inferno";
+        name = "SRM Launcher (Hvy, One-Shot) - Inferno";
         setInternalName(name);
-        addLookupName("InfantryInfernoLRR");
-        addLookupName("InfantryLightRecoillessRifleInferno");
-        addLookupName("Infantry Inferno Light Recoilless Rifle");
+        addLookupName("InfantryHeavySRMInferno");
+        addLookupName("Infantry Heavy SRM Launcher (Inferno)");
         ammoType = AmmoType.T_NA;
-        cost = 300;
-        bv = 0.97;
-        flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        cost = 3000;
+        bv = 1.74;
+        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
+        infantryDamage = 0.34;
+        infantryRange = 2;
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        infantryDamage = 0.19;
-        infantryRange = 2;
-        crew = 1;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_A};
+        introDate = 2361;
+        techLevel.put(2361, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2370, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2400, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_C;
-        rulesRefs =" 273, TM";
+        rulesRefs = "273, TM";
     }
 }

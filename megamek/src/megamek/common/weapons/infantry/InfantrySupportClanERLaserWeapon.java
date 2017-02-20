@@ -32,7 +32,7 @@ public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
 
     public InfantrySupportClanERLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+
         name = "Support Laser (ER, Clan)";
         setInternalName(name);
         addLookupName("InfantryClanERLaser");
@@ -45,9 +45,11 @@ public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
         infantryDamage = 1.05;
         infantryRange = 4;
         crew = 2;
-        introDate = 2825;
-        techLevel.put(2825,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_E,RATING_D};
+        introDate = 2819;
+        techLevel.put(2819, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2825, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[] { RATING_X,RATING_E ,RATING_D ,RATING_C};
         techRating = RATING_F;
+        rulesRefs = "273, TM";
     }
 }

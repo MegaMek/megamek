@@ -19,41 +19,34 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+
 /**
- * @author Sebastian Brocks
+ * @author Ben Grills
  */
-public class InfantrySupportPortableMGWeapon extends InfantryWeapon {
+public class InfantrySupportClanHeavySRMWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 3434311797513896108L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportPortableMGWeapon() {
+    public InfantrySupportClanHeavySRMWeapon() {
         super();
 
-        name = "Machine Gun (Portable)";
+        name = "SRM Launcher (Hvy, One-Shot)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryMGPortable");
-        addLookupName("Infantry MG Portable");
-        addLookupName("InfantryMG");
+        addLookupName("InfantryHeavySRM");
+        addLookupName("Infantry Heavy SRM Launcher");
         ammoType = AmmoType.T_NA;
-        cost = 1000;
-        bv = 1.99;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
-        infantryDamage = 0.65;
-        infantryRange = 1;
-        damage = 1;
-        minimumRange = 0;
-        shortRange = 1;
-        mediumRange = 2;
-        longRange = 3;
-        extremeRange = 4;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
+        cost = 3000;
+        bv = 2.91;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        infantryDamage = 0.57;
+        infantryRange = 2;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_C;
         rulesRefs =" 273, TM";
-
     }
 }

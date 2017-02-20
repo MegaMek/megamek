@@ -32,7 +32,7 @@ public class InfantrySupportHeavyMortarInfernoWeapon extends InfantryWeapon {
 
     public InfantrySupportHeavyMortarInfernoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Mortar (Heavy) - Inferno";
         setInternalName(name);
         addLookupName("InfantryHeavyMortarInferno");
@@ -47,8 +47,9 @@ public class InfantrySupportHeavyMortarInfernoWeapon extends InfantryWeapon {
         infantryRange = 3;
         crew = 3;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_C,RATING_B};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_C,RATING_C,RATING_C,RATING_C};
         techRating = RATING_B;
+        rulesRefs =" 273, TM";
     }
 }

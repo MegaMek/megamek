@@ -32,8 +32,8 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
 
     public InfantrySupportSnubNoseSupportPPCWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Snub-Nose Support PPC";
+
+        name = "Support PPC (Snub-Nose)";
         setInternalName(name);
         addLookupName("InfantrySnubNoseSupportPPC");
         addLookupName("SnubNoseSupportPPC");
@@ -44,9 +44,12 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
         infantryDamage = 1.58;
         infantryRange = 5;
         crew = 3;
-        introDate = 3082;
-        techLevel.put(3082,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
-        techRating = RATING_F;
+        introDate = 3070;
+        techLevel.put(3070, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3082, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
+        techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

@@ -32,8 +32,8 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 
     public InfantrySupportGungnirHeavyGaussWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Gungnir Heavy Support Gauss Rifle";
+
+        name = "Gauss Rifle (Gungnir Heavy)";
         setInternalName(name);
         addLookupName("InfantryGungnirHeavySupportGaussRifle");
         addLookupName("GungnirHeavySupportGaussRifle");
@@ -45,9 +45,11 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
         infantryDamage = 1.23;
         infantryRange = 3;
         crew = 3;
-        introDate = 3080;
-        techLevel.put(3080,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        introDate = 3069;
+        techLevel.put(3069, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3080, TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
         techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

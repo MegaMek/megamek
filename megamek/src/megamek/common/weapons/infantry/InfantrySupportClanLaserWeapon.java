@@ -19,41 +19,42 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+
 /**
- * @author Sebastian Brocks
+ * @author Ben Grills
  */
-public class InfantrySupportPortableMGWeapon extends InfantryWeapon {
+public class InfantrySupportClanLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 3434311797513896108L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportPortableMGWeapon() {
+    public InfantrySupportClanLaserWeapon() {
         super();
 
-        name = "Machine Gun (Portable)";
+        name = "Support Laser [Clan]";
         setInternalName(name);
-        addLookupName("InfantryMGPortable");
-        addLookupName("Infantry MG Portable");
-        addLookupName("InfantryMG");
+        addLookupName("InfantrySupportLaser");
+        addLookupName("Infantry Support Laser");
+        addLookupName("InfantrySmallLaser");
         ammoType = AmmoType.T_NA;
-        cost = 1000;
-        bv = 1.99;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
-        infantryDamage = 0.65;
-        infantryRange = 1;
+        cost = 10000;
+        bv = 6.02;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+        infantryDamage = 0.84;
+        infantryRange = 3;
+        crew = 2;
         damage = 1;
         minimumRange = 0;
-        shortRange = 1;
-        mediumRange = 2;
-        longRange = 3;
-        extremeRange = 4;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
+        shortRange = 3;
+        mediumRange = 6;
+        longRange = 9;
+        extremeRange = 12;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
+        techRating = RATING_D;
         rulesRefs =" 273, TM";
-
     }
 }

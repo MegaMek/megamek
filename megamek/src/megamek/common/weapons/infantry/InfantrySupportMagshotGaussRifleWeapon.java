@@ -32,7 +32,7 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
 
     public InfantrySupportMagshotGaussRifleWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Gauss Rifle (Magshot)";
         setInternalName(name);
         addLookupName("InfantryMagshot");
@@ -45,9 +45,12 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
         infantryDamage = 0.74;
         infantryRange = 2;
         crew = 2;
-        introDate = 3059;
-        techLevel.put(3059,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_E};
+        introDate = 3053;
+        techLevel.put(3053, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3059, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3065, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

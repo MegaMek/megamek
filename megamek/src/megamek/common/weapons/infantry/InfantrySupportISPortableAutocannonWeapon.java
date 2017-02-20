@@ -23,34 +23,34 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
+public class InfantrySupportISPortableAutocannonWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHellboreAssaultLaserWeapon() {
+    public InfantrySupportISPortableAutocannonWeapon() {
         super();
 
-        name = "Laser (Hellbore Assault)";
+        name = "Autocannon (Semi-Portable)";
         setInternalName(name);
-        addLookupName("InfantryHellbore");
-        addLookupName("InfantryHellboreAssaultLaser");
-        addLookupName("Infantry Hellbore Assault Laser");
+        addLookupName("InfantryPortableAutocannon");
+        addLookupName("InfantrySemiPortableAutocannon");
+        addLookupName("Infantry Semi Portable Autocannon");
         ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 3.22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.63;
-        infantryRange = 2;
-        crew = 1;
-        introDate = 3049;
-        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3058, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3062, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_E;
+        cost = 2000;
+        bv = 2.35;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        infantryDamage = 0.77;
+        infantryRange = 1;
+        crew = 2;
+        introDate = 2100;
+        techLevel.put(2100, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2255, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2300, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_D ,RATING_D ,RATING_C};
+        techRating = RATING_C;
         rulesRefs = "273, TM";
     }
 }

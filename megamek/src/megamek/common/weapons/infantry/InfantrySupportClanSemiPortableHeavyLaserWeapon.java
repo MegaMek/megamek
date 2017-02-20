@@ -32,7 +32,7 @@ public class InfantrySupportClanSemiPortableHeavyLaserWeapon extends InfantryWea
 
     public InfantrySupportClanSemiPortableHeavyLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+
         name = "Support Laser (Heavy, Semi-Portable)";
         setInternalName(name);
         addLookupName("InfantryClanSemiPortableHeavyLaser");
@@ -46,9 +46,11 @@ public class InfantrySupportClanSemiPortableHeavyLaserWeapon extends InfantryWea
         infantryDamage = 1.05;
         infantryRange = 3;
         crew = 3;
-        introDate = 3061;
-        techLevel.put(3061,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3061, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         techRating = RATING_F;
+        rulesRefs = "273, TM";
     }
 }

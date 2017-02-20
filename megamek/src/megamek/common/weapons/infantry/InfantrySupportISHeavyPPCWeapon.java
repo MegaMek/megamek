@@ -23,33 +23,33 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
+public class InfantrySupportISHeavyPPCWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHellboreAssaultLaserWeapon() {
+    public InfantrySupportISHeavyPPCWeapon() {
         super();
 
-        name = "Laser (Hellbore Assault)";
+        name = "Particle Cannon (Support)";
         setInternalName(name);
-        addLookupName("InfantryHellbore");
-        addLookupName("InfantryHellboreAssaultLaser");
-        addLookupName("Infantry Hellbore Assault Laser");
+        addLookupName("InfantrySupportPPC");
+        addLookupName("InfantryHeavyPPC");
+        addLookupName("Infantry Support PPC");
         ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 3.22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.63;
-        infantryRange = 2;
-        crew = 1;
-        introDate = 3049;
-        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3058, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3062, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
+        cost = 45000;
+        bv = 11.32;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
+        infantryDamage = 1.58;
+        infantryRange = 3;
+        crew = 5;
+        introDate = 2460;
+        techLevel.put(2460, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2470, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2500, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_D ,RATING_C ,RATING_D};
         techRating = RATING_E;
         rulesRefs = "273, TM";
     }

@@ -23,31 +23,37 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
+public class InfantrySupportClanMk2PortableAAWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHeavyPPCWeapon() {
+    public InfantrySupportClanMk2PortableAAWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Particle Cannon (Support)";
+
+        name = "AA Weapon (Mk. 2, Man-Portable)[Clan]";
         setInternalName(name);
-        addLookupName("InfantrySupportPPC");
-        addLookupName("InfantryHeavyPPC");
-        addLookupName("Infantry Support PPC");
+        addLookupName("InfantryMk2PortableAA");
+        addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
         ammoType = AmmoType.T_NA;
-        cost = 45000;
-        bv = 11.32;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
-        infantryDamage = 1.58;
-        infantryRange = 3;
-        crew = 5;
-        introDate = 2470;
-        techLevel.put(2470,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_C};
-        techRating = RATING_E;
+        cost = 3500;
+        bv = 4.14;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
+        infantryDamage = 0.81;
+        infantryRange = 2;
+        crew = 2;
+        damage = 1;
+        minimumRange = 0;
+        shortRange = 2;
+        mediumRange = 4;
+        longRange = 6;
+        extremeRange = 8;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_C,RATING_C ,RATING_C ,RATING_C};
+        techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

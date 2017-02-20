@@ -23,32 +23,40 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
+public class InfantrySupportISLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportMk1LightAAWeapon() {
+    public InfantrySupportISLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "AA Weapon (Mk. 1, Light)";
+
+        name = "Support Laser";
         setInternalName(name);
-        addLookupName("InfantryMk1LightAA");
-        addLookupName("Infantry Mk 1 Light AA Weapon");
+        addLookupName("InfantrySupportLaser");
+        addLookupName("Infantry Support Laser");
+        addLookupName("InfantrySmallLaser");
         ammoType = AmmoType.T_NA;
-        cost = 1000;
-        bv = 0.70;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
-        infantryDamage = 0.23;
-        infantryRange = 1;
-        crew = 1;
-        introDate = 2500;
-        techLevel.put(2500,techLevel.get(3071));
-        extinctDate = 2790;
-        reintroDate = 3056;
-        availRating = new int[]{RATING_E,RATING_F,RATING_D};
+        cost = 10000;
+        bv = 6.02;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+        infantryDamage = 0.84;
+        infantryRange = 3;
+        crew = 2;
+        damage = 1;
+        minimumRange = 0;
+        shortRange = 3;
+        mediumRange = 6;
+        longRange = 9;
+        extremeRange = 12;
+        introDate = 2372;
+        techLevel.put(2372, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2380, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2410, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

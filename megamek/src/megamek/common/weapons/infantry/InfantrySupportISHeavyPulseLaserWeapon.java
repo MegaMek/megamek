@@ -23,29 +23,34 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHeavySRMWeapon extends InfantryWeapon {
+public class InfantrySupportISHeavyPulseLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHeavySRMWeapon() {
+    public InfantrySupportISHeavyPulseLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "SRM Launcher (Hvy, One-Shot)";
+
+        name = "Support Pulse Laser (Heavy)";
         setInternalName(name);
-        addLookupName("InfantryHeavySRM");
-        addLookupName("Infantry Heavy SRM Launcher");
+        addLookupName("InfantryHeavyPulseLaser");
+        addLookupName("Infantry Heavy Pulse Laser");
+        addLookupName("InfantryMediumPulseLaser");
         ammoType = AmmoType.T_NA;
-        cost = 3000;
-        bv = 2.91;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 0.57;
-        infantryRange = 2;
-        introDate = 2370;
-        techLevel.put(2370,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
-        techRating = RATING_C;
+        cost = 60000;
+        bv = 9.58;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);
+        infantryDamage = 0.98;
+        infantryRange = 4;
+        crew = 4;
+        introDate = 2605;
+        techLevel.put(2605, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2615, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2675, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_E,RATING_F ,RATING_E ,RATING_D};
+        techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

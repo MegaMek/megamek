@@ -32,7 +32,7 @@ public class InfantrySupportVintageGatlingGunWeapon extends InfantryWeapon {
 
     public InfantrySupportVintageGatlingGunWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Vintage Gatling Gun";
         setInternalName(name);
         addLookupName("InfantryVintageGatlingGun");
@@ -46,8 +46,9 @@ public class InfantrySupportVintageGatlingGunWeapon extends InfantryWeapon {
         infantryRange = 2;
         crew = 4;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_E,RATING_E,RATING_F};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_E,RATING_E,RATING_F,RATING_F};
         techRating = RATING_B;
+        rulesRefs =" 273, TM";
     }
 }

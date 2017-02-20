@@ -32,7 +32,7 @@ public class InfantrySupportSemiPortableMachineGunWeapon extends InfantryWeapon 
 
     public InfantrySupportSemiPortableMachineGunWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Machine Gun (Semi-Portable)";
         setInternalName(name);
         addLookupName("InfantryMMG");
@@ -47,8 +47,9 @@ public class InfantrySupportSemiPortableMachineGunWeapon extends InfantryWeapon 
         infantryRange = 1;
         crew = 2;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
+        rulesRefs =" 273, TM";
     }
 }

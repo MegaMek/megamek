@@ -23,38 +23,37 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
+public class InfantrySupportISMk1LightAAWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportMk2PortableAAWeapon() {
+    public InfantrySupportISMk1LightAAWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "AA Weapon (Mk. 2, Man-Portable)";
+
+        name = "AA Weapon (Mk. 1, Light)";
         setInternalName(name);
-        addLookupName("InfantryMk2PortableAA");
-        addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
+        addLookupName("InfantryMk1LightAA");
+        addLookupName("Infantry Mk 1 Light AA Weapon");
         ammoType = AmmoType.T_NA;
-        cost = 3500;
-        bv = 4.14;
+        cost = 1000;
+        bv = 0.70;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
-        infantryDamage = 0.81;
-        infantryRange = 2;
-        crew = 2;
-        damage = 1;
-        minimumRange = 0;
-        shortRange = 2;
-        mediumRange = 4;
-        longRange = 6;
-        extremeRange = 8;
-        introDate = 2510;
-        techLevel.put(2510,techLevel.get(3071));
+        infantryDamage = 0.23;
+        infantryRange = 1;
+        crew = 1;
+        introDate = 2485;
         extinctDate = 2790;
-        reintroDate = 3058;
-        availRating = new int[]{RATING_E,RATING_F,RATING_D};
-        techRating = RATING_D;
+        reintroDate = 3056;
+        techLevel.put(2485, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2500, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2590, TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3056, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3066, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_D};
+        techRating = RATING_F;
+        rulesRefs = "273, TM";
     }
 }

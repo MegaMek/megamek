@@ -32,7 +32,7 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
 
     public InfantrySupportWireGuidedMissileWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Wire-Guided Missile Launcher";
         setInternalName(name);
         addLookupName("InfantryWireGuidedMissileLauncher");
@@ -46,9 +46,10 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
         infantryRange = 2;
         toHitModifier = -2;
         crew = 4;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_E,RATING_F,RATING_X};
+        introDate = 2100;
+        techLevel.put(2100,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_E,RATING_F,RATING_X,RATING_X};
         techRating = RATING_C;
+        rulesRefs =" 273, TM";
     }
 }

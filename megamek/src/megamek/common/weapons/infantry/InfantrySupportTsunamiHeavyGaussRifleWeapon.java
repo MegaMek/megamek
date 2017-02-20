@@ -32,7 +32,7 @@ public class InfantrySupportTsunamiHeavyGaussRifleWeapon extends InfantryWeapon 
 
     public InfantrySupportTsunamiHeavyGaussRifleWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Gauss Rifle (Tsunami Heavy)";
         setInternalName(name);
         addLookupName("InfantryTsunamiHeavyGaussRifle");
@@ -45,9 +45,12 @@ public class InfantrySupportTsunamiHeavyGaussRifleWeapon extends InfantryWeapon 
         infantryDamage = 0.63;
         infantryRange = 2;
         crew = 1;
-        introDate = 3056;
-        techLevel.put(3056,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3048;
+        techLevel.put(3048, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3056, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3068, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_E};
         techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

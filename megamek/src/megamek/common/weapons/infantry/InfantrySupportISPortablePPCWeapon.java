@@ -23,16 +23,16 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportPortablePPCWeapon extends InfantryWeapon {
+public class InfantrySupportISPortablePPCWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportPortablePPCWeapon() {
+    public InfantrySupportISPortablePPCWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Particle Cannon (Semi-Portable)";
         setInternalName(name);
         addLookupName("InfantrySemiPortablePPC");
@@ -45,9 +45,12 @@ public class InfantrySupportPortablePPCWeapon extends InfantryWeapon {
         infantryDamage = 0.72;
         infantryRange = 2;
         crew = 2;
-        introDate = 2436;
-        techLevel.put(2436,techLevel.get(3071));
-        availRating = new int[]{RATING_D,RATING_E,RATING_D};
+        introDate = 2425;
+        techLevel.put(2425, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2436, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2450, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_D,RATING_E ,RATING_D ,RATING_C};
         techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

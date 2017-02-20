@@ -32,7 +32,7 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
 
     public InfantrySupportClanSemiPortableERLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_CLAN_TW);
+
         name = "Support Laser (ER, Semi-Portable)";
         setInternalName(name);
         addLookupName("InfantryClanERMicroLaser");
@@ -45,9 +45,11 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
         infantryDamage = 0.70;
         infantryRange = 3;
         crew = 2;
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3051;
+        techLevel.put(3051, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_C ,RATING_D};
         techRating = RATING_F;
+        rulesRefs = "273, TM";
     }
 }

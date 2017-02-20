@@ -23,34 +23,33 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
+public class InfantrySupportISSemiPortableLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHellboreAssaultLaserWeapon() {
+    public InfantrySupportISSemiPortableLaserWeapon() {
         super();
 
-        name = "Laser (Hellbore Assault)";
+        name = "Support Laser (Semi-Portable)";
         setInternalName(name);
-        addLookupName("InfantryHellbore");
-        addLookupName("InfantryHellboreAssaultLaser");
-        addLookupName("Infantry Hellbore Assault Laser");
+        addLookupName("InfantrySemiPortableLaser");
+        addLookupName("Infantry Semi Portable Laser");
         ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 3.22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.63;
-        infantryRange = 2;
-        crew = 1;
-        introDate = 3049;
-        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3058, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3062, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_E;
+        cost = 5000;
+        bv = 4.37;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+        infantryDamage = 0.61;
+        infantryRange = 3;
+        crew = 2;
+        introDate = 2390;
+        techLevel.put(2390, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2400, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2450, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_D ,RATING_C ,RATING_C};
+        techRating = RATING_D;
         rulesRefs = "273, TM";
     }
 }

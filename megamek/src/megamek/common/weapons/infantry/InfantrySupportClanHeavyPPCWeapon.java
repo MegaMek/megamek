@@ -23,31 +23,32 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
+public class InfantrySupportClanHeavyPPCWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHeavyPulseLaserWeapon() {
+    public InfantrySupportClanHeavyPPCWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Support Pulse Laser (Heavy)";
+
+        name = "Particle Cannon (Support)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryHeavyPulseLaser");
-        addLookupName("Infantry Heavy Pulse Laser");
-        addLookupName("InfantryMediumPulseLaser");
+        addLookupName("InfantrySupportPPC");
+        addLookupName("InfantryHeavyPPC");
+        addLookupName("Infantry Support PPC");
         ammoType = AmmoType.T_NA;
-        cost = 60000;
-        bv = 9.58;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);
-        infantryDamage = 0.98;
-        infantryRange = 4;
-        crew = 4;
-        introDate = 2615;
-        techLevel.put(2615,techLevel.get(3071));
-        availRating = new int[]{RATING_E,RATING_F,RATING_E};
-        techRating = RATING_E;
+        cost = 45000;
+        bv = 11.32;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
+        infantryDamage = 1.58;
+        infantryRange = 3;
+        crew = 5;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_D ,RATING_C ,RATING_D};
+        techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

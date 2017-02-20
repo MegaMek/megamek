@@ -22,33 +22,35 @@ import megamek.common.TechConstants;
 
 
 /**
- * @author Sebastian Brocks
+ * @author Klaus Mittag
  */
-public class InfantrySupportLightSRMInfernoWeapon extends InfantryWeapon {
+public class InfantrySupportClanStandardSRMInfernoWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 7788576728727248931L;
+    private static final long serialVersionUID = -8624375390758959949L;
 
-    public InfantrySupportLightSRMInfernoWeapon() {
+    public InfantrySupportClanStandardSRMInfernoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "SRM Launcher (Light) - Inferno";
+
+        name = "SRM Launcher (Std, Two-Shot) - Inferno";
         setInternalName(name);
-        addLookupName("InfantrySRMLightInferno");
-        addLookupName("Light SRM (Inferno)");
+        addLookupName("ClanInfantryStandardSRMInferno");
+        addLookupName("ClanInfantry2ShotSRMInferno");
+        addLookupName("Clan Infantry Two-Shot SRM Launcher (Inferno)");
         ammoType = AmmoType.T_NA;
         cost = 1500;
-        bv = 1.74;
+        bv = 3.48;
         flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
-        infantryDamage = 0.34;
+        infantryDamage = 0.68;
         infantryRange = 2;
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        introDate = 2370;
-        techLevel.put(2370,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
-        techRating = RATING_C;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
+        techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

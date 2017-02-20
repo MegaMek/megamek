@@ -32,7 +32,7 @@ public class InfantrySupportAutoGrenadeLauncherInfernoWeapon extends InfantryWea
 
     public InfantrySupportAutoGrenadeLauncherInfernoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Grenade Launcher (Auto) - Inferno";
         setInternalName(name);
         addLookupName("InfantryAutoGLInferno");
@@ -45,8 +45,9 @@ public class InfantrySupportAutoGrenadeLauncherInfernoWeapon extends InfantryWea
         infantryRange = 1;
         crew = 1;
         introDate = 2100;
-        techLevel.put(2100,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techLevel.put(2100,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
+        rulesRefs =" 273, TM";
     }
 }

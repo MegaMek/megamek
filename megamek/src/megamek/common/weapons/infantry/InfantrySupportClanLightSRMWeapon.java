@@ -21,33 +21,33 @@ import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
- * @author Ben Grills
+ * @author Sebastian Brocks
  */
-public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
+public class InfantrySupportClanLightSRMWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -5311681183178942222L;
 
-    public InfantrySupportPortableAutocannonWeapon() {
+    public InfantrySupportClanLightSRMWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Autocannon (Semi-Portable)";
+
+        name = "SRM Launcher (Light)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryPortableAutocannon");
-        addLookupName("InfantrySemiPortableAutocannon");
-        addLookupName("Infantry Semi Portable Autocannon");
+        addLookupName("InfantrySRMLight");
+        addLookupName("InfantrySRM");
+        addLookupName("Light SRM Launcher");
         ammoType = AmmoType.T_NA;
-        cost = 2000;
-        bv = 2.35;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.77;
-        infantryRange = 1;
-        crew = 2;
-        introDate = 2255;
-        techLevel.put(2255,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_D};
+        cost = 1500;
+        bv = 2.91;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
+        infantryDamage = 0.57;
+        infantryRange = 2;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_C;
+        rulesRefs =" 273, TM";
     }
 }

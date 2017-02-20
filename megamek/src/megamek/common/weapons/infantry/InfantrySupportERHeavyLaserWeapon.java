@@ -32,7 +32,7 @@ public class InfantrySupportERHeavyLaserWeapon extends InfantryWeapon {
 
     public InfantrySupportERHeavyLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Support Laser (ER Heavy, IS)";
         setInternalName(name);
         addLookupName("InfantryERHeavyLaser");
@@ -51,9 +51,12 @@ public class InfantrySupportERHeavyLaserWeapon extends InfantryWeapon {
         mediumRange = 12;
         longRange = 18;
         extremeRange = 24;
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3049;
+        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3075, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

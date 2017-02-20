@@ -21,34 +21,35 @@ import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
- * @author Ben Grills
+ * @author Sebastian Brocks
  */
-public class InfantrySupportLAWWeapon extends InfantryWeapon {
+public class InfantrySupportISLightSRMWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -5311681183178942222L;
 
-    public InfantrySupportLAWWeapon() {
+    public InfantrySupportISLightSRMWeapon() {
         super();
 
-        name = "Rocket Launcher (LAW)";
+        name = "SRM Launcher (Light)";
         setInternalName(name);
-        addLookupName("InfantryLAW");
-        addLookupName("Infantry LAW");
-        addLookupName("InfantryLightAntitankWeapon");
+        addLookupName("InfantrySRMLight");
+        addLookupName("InfantrySRM");
+        addLookupName("Light SRM Launcher");
         ammoType = AmmoType.T_NA;
-        cost = 350;
-        bv = 2.71;
+        cost = 1500;
+        bv = 2.91;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
-        infantryDamage = 0.53;
+        infantryDamage = 0.57;
         infantryRange = 2;
-        crew = 1;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_A,RATING_B,RATING_B,RATING_B};
+        introDate = 2360;
+        techLevel.put(2360, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2370, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2400, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_C;
-        rulesRefs =" 273, TM";
+        rulesRefs = "273, TM";
     }
 }

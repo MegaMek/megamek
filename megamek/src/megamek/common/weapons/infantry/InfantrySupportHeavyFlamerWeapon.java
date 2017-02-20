@@ -31,7 +31,7 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
 
     public InfantrySupportHeavyFlamerWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
+
         name = "Flamer (Heavy)";
         setInternalName(name);
         addLookupName("InfantryHeavyFlamer");
@@ -45,8 +45,9 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
         infantryRange = 0;
         crew = 2;
         introDate = 2100;
-        techLevel.put(2100,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        techLevel.put(2100,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
+        rulesRefs =" 273, TM";
     }
 }

@@ -32,7 +32,7 @@ public class InfantrySupportHeavyRecoillessRifleWeapon extends InfantryWeapon {
 
     public InfantrySupportHeavyRecoillessRifleWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Recoilless Rifle (Heavy)";
         setInternalName(name);
         addLookupName("InfantryHRR");

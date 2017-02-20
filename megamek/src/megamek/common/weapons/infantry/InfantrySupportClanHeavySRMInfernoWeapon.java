@@ -20,33 +20,36 @@ package megamek.common.weapons.infantry;
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
+
 /**
- * @author Sebastian Brocks
+ * @author Klaus Mittag
  */
-public class InfantrySupportLightSRMWeapon extends InfantryWeapon {
+public class InfantrySupportClanHeavySRMInfernoWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -5311681183178942222L;
+    private static final long serialVersionUID = 1563575288967582942L;
 
-    public InfantrySupportLightSRMWeapon() {
+    public InfantrySupportClanHeavySRMInfernoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "SRM Launcher (Light)";
+
+        name = "SRM Launcher (Hvy, One-Shot) - Inferno[Clan]";
         setInternalName(name);
-        addLookupName("InfantrySRMLight");
-        addLookupName("InfantrySRM");
-        addLookupName("Light SRM Launcher");
+        addLookupName("InfantryHeavySRMInferno");
+        addLookupName("Infantry Heavy SRM Launcher (Inferno)");
         ammoType = AmmoType.T_NA;
-        cost = 1500;
-        bv = 2.91;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
-        infantryDamage = 0.57;
+        cost = 3000;
+        bv = 1.74;
+        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
+        infantryDamage = 0.34;
         infantryRange = 2;
-        introDate = 2370;
-        techLevel.put(2370,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_C;
+        rulesRefs =" 273, TM";
     }
 }

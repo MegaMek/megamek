@@ -24,16 +24,16 @@ import megamek.common.TechConstants;
 /**
  * @author Klaus Mittag
  */
-public class InfantrySupportStandardSRMInfernoWeapon extends InfantryWeapon {
+public class InfantrySupportISStandardSRMInfernoWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -8624375390758959949L;
 
-    public InfantrySupportStandardSRMInfernoWeapon() {
+    public InfantrySupportISStandardSRMInfernoWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "SRM Launcher (Std, Two-Shot) - Inferno";
         setInternalName(name);
         addLookupName("InfantryStandardSRMInferno");
@@ -47,9 +47,12 @@ public class InfantrySupportStandardSRMInfernoWeapon extends InfantryWeapon {
         infantryRange = 2;
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        introDate = 2370;
-        techLevel.put(2370,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        introDate = 2360;
+        techLevel.put(2360, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2370, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2400, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

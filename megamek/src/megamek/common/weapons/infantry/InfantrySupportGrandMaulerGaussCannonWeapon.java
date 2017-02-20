@@ -32,7 +32,7 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
 
     public InfantrySupportGrandMaulerGaussCannonWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Gauss Cannon (Grand Mauler)";
         setInternalName(name);
         addLookupName("InfantryGrandMaulerGaussCannon");
@@ -45,9 +45,12 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
         infantryDamage = 0.63;
         infantryRange = 2;
         crew = 1;
-        introDate = 3059;
-        techLevel.put(3059,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3059, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3065, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_E};
         techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

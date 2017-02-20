@@ -32,7 +32,7 @@ public class InfantrySupportCompactGrenadeLauncherWeapon extends InfantryWeapon 
 
     public InfantrySupportCompactGrenadeLauncherWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Grenade Launcher (Compact)";
         setInternalName(name);
         addLookupName("InfantryCompactGL");
@@ -46,8 +46,9 @@ public class InfantrySupportCompactGrenadeLauncherWeapon extends InfantryWeapon 
         infantryRange = 1;
         crew = 1;
         introDate = 2100;
-        techLevel.put(2100,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_C,RATING_B};
+        techLevel.put(2100,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_B,RATING_C,RATING_B,RATING_B};
         techRating = RATING_C;
+        rulesRefs =" 273, TM";
     }
 }

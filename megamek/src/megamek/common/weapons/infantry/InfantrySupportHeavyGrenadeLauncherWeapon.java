@@ -32,7 +32,7 @@ public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
 
     public InfantrySupportHeavyGrenadeLauncherWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Grenade Launcher (Heavy)";
         setInternalName(name);
         addLookupName("InfantryHeavyGrenadeLauncher");
@@ -44,9 +44,12 @@ public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
         infantryDamage = 1.76;
         infantryRange = 1;
         crew = 1;
-        introDate = 3050;
-        techLevel.put(3050,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3044;
+        techLevel.put(3044, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3050, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3057, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_C};
         techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

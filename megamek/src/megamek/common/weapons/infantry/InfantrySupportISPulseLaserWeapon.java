@@ -23,31 +23,34 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportStandardSRMWeapon extends InfantryWeapon {
+public class InfantrySupportISPulseLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportStandardSRMWeapon() {
+    public InfantrySupportISPulseLaserWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "SRM Launcher (Std, Two-Shot)";
+
+        name = "Support Pulse Laser";
         setInternalName(name);
-        addLookupName("InfantryStandardSRM");
-        addLookupName("Infantry2ShotSRM");
-        addLookupName("Infantry Two-Shot SRM Launcher");
+        addLookupName("InfantrySupportPulseLaser");
+        addLookupName("Infantry Support Pulse Laser");
+        addLookupName("InfantrySmallPulseLaser");
         ammoType = AmmoType.T_NA;
-        cost = 1500;
-        bv = 5.83;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 1.14;
-        infantryRange = 2;
-        crew = 1;
-        introDate = 2370;
-        techLevel.put(2370,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
-        techRating = RATING_C;
+        cost = 16000;
+        bv = 5.81;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PULSE).or(F_INF_BURST).or(F_INF_SUPPORT);
+        infantryDamage = 0.81;
+        infantryRange = 3;
+        crew = 2;
+        introDate = 2600;
+        techLevel.put(2600, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2610, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2650, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_E ,RATING_D ,RATING_C};
+        techRating = RATING_E;
+        rulesRefs = "273, TM";
     }
 }

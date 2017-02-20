@@ -32,8 +32,8 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
 
     public InfantrySupportLRMWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "LRM Launcher (FarShot)";
+
+        name = "LRM Launcher (Corean Farshot)";
         setInternalName(name);
         addLookupName("InfantryLRM");
         addLookupName("LRM Launcher");
@@ -44,9 +44,12 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
         setModes(new String[] { "", "Indirect" });
         infantryDamage = 0.48;
         infantryRange = 3;
-        introDate = 3057;
-        techLevel.put(3057,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3057, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3065, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

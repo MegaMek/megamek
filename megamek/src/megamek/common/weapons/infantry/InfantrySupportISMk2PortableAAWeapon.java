@@ -23,38 +23,44 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHeavyMachineGunWeapon extends InfantryWeapon {
+public class InfantrySupportISMk2PortableAAWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHeavyMachineGunWeapon() {
+    public InfantrySupportISMk2PortableAAWeapon() {
         super();
 
-        name = "Machine Gun (Support)";
+        name = "AA Weapon (Mk. 2, Man-Portable)";
         setInternalName(name);
-        addLookupName("InfantryHMG");
-        addLookupName("InfantrySupportMG");
-        addLookupName("InfantrySupportMachineGun");
+        addLookupName("InfantryMk2PortableAA");
+        addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
         ammoType = AmmoType.T_NA;
-        cost = 1750;
-        bv = 4.80;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT);
-        infantryDamage = 0.94;
-        crew = 2;
+        cost = 3500;
+        bv = 4.14;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
+        infantryDamage = 0.81;
         infantryRange = 2;
+        crew = 2;
         damage = 1;
         minimumRange = 0;
         shortRange = 2;
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_C,RATING_C,RATING_C,RATING_C};
-        techRating = RATING_C;
-        rulesRefs =" 273, TM";
+        introDate = 2493;
+        extinctDate = 2790;
+        reintroDate = 3056;
+        techLevel.put(2493, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2510, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2590, TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3056, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3066, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_D};
+        techRating = RATING_F;
+        rulesRefs = "273, TM";
     }
 }
+

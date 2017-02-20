@@ -19,41 +19,35 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+
 /**
- * @author Sebastian Brocks
+ * @author Ben Grills
  */
-public class InfantrySupportPortableMGWeapon extends InfantryWeapon {
+public class InfantrySupportClanMk1LightAAWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 3434311797513896108L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportPortableMGWeapon() {
+    public InfantrySupportClanMk1LightAAWeapon() {
         super();
 
-        name = "Machine Gun (Portable)";
+        name = "AA Weapon (Mk. 1, Light)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryMGPortable");
-        addLookupName("Infantry MG Portable");
-        addLookupName("InfantryMG");
+        addLookupName("InfantryMk1LightAA");
+        addLookupName("Infantry Mk 1 Light AA Weapon");
         ammoType = AmmoType.T_NA;
         cost = 1000;
-        bv = 1.99;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
-        infantryDamage = 0.65;
+        bv = 0.70;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_AA).or(F_INF_SUPPORT);
+        infantryDamage = 0.23;
         infantryRange = 1;
-        damage = 1;
-        minimumRange = 0;
-        shortRange = 1;
-        mediumRange = 2;
-        longRange = 3;
-        extremeRange = 4;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
+        crew = 1;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_C,RATING_C ,RATING_C ,RATING_C};
+        techRating = RATING_D;
         rulesRefs =" 273, TM";
-
     }
 }

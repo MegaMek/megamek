@@ -32,7 +32,7 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
 
     public InfantrySupportFiredrakeNeedlerWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+
         name = "Needler, Support (Firedrake)";
         setInternalName(name);
         addLookupName("InfantryFiredrake");
@@ -41,17 +41,18 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 500;
         bv = 6.13;
-        // TM and its errata don't say this has the (N) property, but the fluff text does, as does its original entry in Combat Equipment, so I have included it here.
-        //Taharqa: I think we should ask on the forums about this before we make assumptions, removing
         flags = flags.or(F_INCENDIARY_NEEDLES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         infantryDamage = 1.2;
         infantryRange = 1;
         crew = 2;
-        introDate = 3061;
-        techLevel.put(3061,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_C};
+        introDate = 3053;
+        techLevel.put(3053, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3061, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3075, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_C ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "273, TM";
     }
 }

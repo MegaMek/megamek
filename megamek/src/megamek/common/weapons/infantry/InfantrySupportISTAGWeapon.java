@@ -28,20 +28,20 @@ import megamek.server.Server;
  * @author Neoancient
  *
  */
-public class InfantryTAGWeapon extends InfantryWeapon {
+public class InfantrySupportISTAGWeapon extends InfantryWeapon {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4986981464279987117L;
 
-	public InfantryTAGWeapon() {
+	public InfantrySupportISTAGWeapon() {
         super();
         flags = flags.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON)
         		.andNot(F_TANK_WEAPON).andNot(F_BA_WEAPON).andNot(F_PROTO_WEAPON)
                 .or(F_TAG).or(F_NO_FIRES).or(F_INF_ENCUMBER);
 
-        name = "Infantry TAG";
+        name = "TAG (Light, Man-Portable)";
         setInternalName("InfantryTAG");
         addLookupName("Infantry TAG");
         damage = 0;
@@ -50,16 +50,16 @@ public class InfantryTAGWeapon extends InfantryWeapon {
         longRange = 9;
         extremeRange = 12;
         cost = 40000;
-    	introDate = 2585;
-    	extinctDate = 2835;
-    	reintroDate = 3037;
-    	techLevel.put(2585, TechConstants.T_IS_EXPERIMENTAL);
-    	techLevel.put(2600, TechConstants.T_IS_ADVANCED);
-    	techLevel.put(3037, TechConstants.T_IS_EXPERIMENTAL);
-    	techLevel.put(3047, TechConstants.T_IS_ADVANCED);
+    	introDate = 2593;
+    	extinctDate = 2770;
+    	reintroDate = 3051;
+    	techLevel.put(2593, TechConstants.T_IS_EXPERIMENTAL);
+    	techLevel.put(2610, TechConstants.T_IS_ADVANCED);
+    	techLevel.put(3051, TechConstants.T_IS_EXPERIMENTAL);
+    	techLevel.put(3061, TechConstants.T_IS_ADVANCED);
     	availRating = new int[] { RATING_F,RATING_X ,RATING_E ,RATING_E};
     	techRating = RATING_E;
-    	rulesRefs = "318, TO";;
+    	rulesRefs = "273, TM";
 	}
 
     @Override

@@ -23,34 +23,32 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
+public class InfantrySupportClanHeavyLaserWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHellboreAssaultLaserWeapon() {
+    public InfantrySupportClanHeavyLaserWeapon() {
         super();
 
-        name = "Laser (Hellbore Assault)";
+        name = "Support Laser (Heavy)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryHellbore");
-        addLookupName("InfantryHellboreAssaultLaser");
-        addLookupName("Infantry Hellbore Assault Laser");
+        addLookupName("InfantryHeavyLaser");
+        addLookupName("Infantry Heavy Laser");
+        addLookupName("InfantryMediumLaser");
         ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 3.22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.63;
-        infantryRange = 2;
-        crew = 1;
-        introDate = 3049;
-        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3058, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3062, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_E;
-        rulesRefs = "273, TM";
+        cost = 40000;
+        bv = 17.35;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+        infantryDamage = 1.47;
+        infantryRange = 5;
+        crew = 3;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_E ,RATING_D ,RATING_C};
+        techRating = RATING_D;
+        rulesRefs =" 273, TM";
     }
 }

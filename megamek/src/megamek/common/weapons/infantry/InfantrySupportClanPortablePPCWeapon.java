@@ -20,35 +20,35 @@ package megamek.common.weapons.infantry;
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
-
 /**
- * @author Klaus Mittag
+ * @author Ben Grills
  */
-public class InfantrySupportHeavySRMInfernoWeapon extends InfantryWeapon {
+public class InfantrySupportClanPortablePPCWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 1563575288967582942L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHeavySRMInfernoWeapon() {
+    public InfantrySupportClanPortablePPCWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "SRM Launcher (Hvy, One-Shot) - Inferno";
+
+        name = "Particle Cannon (Semi-Portable)[Clan]";
         setInternalName(name);
-        addLookupName("InfantryHeavySRMInferno");
-        addLookupName("Infantry Heavy SRM Launcher (Inferno)");
+        addLookupName("InfantrySemiPortablePPC");
+        addLookupName("InfantryManPackPPC");
+        addLookupName("Infantry Semi-Portable PPC");
         ammoType = AmmoType.T_NA;
-        cost = 3000;
-        bv = 1.74;
-        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
-        infantryDamage = 0.34;
+        cost = 7000;
+        bv = 3.68;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_PPC).or(F_INF_SUPPORT);
+        infantryDamage = 0.72;
         infantryRange = 2;
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
-        introDate = 2370;
-        techLevel.put(2370,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
-        techRating = RATING_C;
+        crew = 2;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_E ,RATING_D ,RATING_C};
+        techRating = RATING_E;
+        rulesRefs =" 273, TM";
     }
 }

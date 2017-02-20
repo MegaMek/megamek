@@ -23,34 +23,34 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
+public class InfantrySupportISStandardSRMWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHellboreAssaultLaserWeapon() {
+    public InfantrySupportISStandardSRMWeapon() {
         super();
-
-        name = "Laser (Hellbore Assault)";
+ 
+        name = "SRM Launcher (Std, Two-Shot)";
         setInternalName(name);
-        addLookupName("InfantryHellbore");
-        addLookupName("InfantryHellboreAssaultLaser");
-        addLookupName("Infantry Hellbore Assault Laser");
+        addLookupName("InfantryStandardSRM");
+        addLookupName("Infantry2ShotSRM");
+        addLookupName("Infantry Two-Shot SRM Launcher");
         ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 3.22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.63;
+        cost = 1500;
+        bv = 5.83;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        infantryDamage = 1.14;
         infantryRange = 2;
         crew = 1;
-        introDate = 3049;
-        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3058, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3062, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_E;
+        introDate = 2360;
+        techLevel.put(2360, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2370, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2400, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C,RATING_C ,RATING_D ,RATING_C};
+        techRating = RATING_C;
         rulesRefs = "273, TM";
     }
 }

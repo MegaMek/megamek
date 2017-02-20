@@ -23,30 +23,32 @@ import megamek.common.TechConstants;
 /**
  * @author Ben Grills
  */
-public class InfantrySupportSemiPortableLaserWeapon extends InfantryWeapon {
+public class InfantrySupportClanPortableAutocannonWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportSemiPortableLaserWeapon() {
+    public InfantrySupportClanPortableAutocannonWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Support Laser (Semi-Portable)";
+
+        name = "Autocannon (Semi-Portable)[Clan]";
         setInternalName(name);
-        addLookupName("InfantrySemiPortableLaser");
-        addLookupName("Infantry Semi Portable Laser");
+        addLookupName("InfantryPortableAutocannon");
+        addLookupName("InfantrySemiPortableAutocannon");
+        addLookupName("Infantry Semi Portable Autocannon");
         ammoType = AmmoType.T_NA;
-        cost = 5000;
-        bv = 4.37;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.61;
-        infantryRange = 3;
+        cost = 2000;
+        bv = 2.35;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+        infantryDamage = 0.77;
+        infantryRange = 1;
         crew = 2;
-        introDate = 2400;
-        techLevel.put(2400,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_D,RATING_C};
-        techRating = RATING_D;
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_D ,RATING_D ,RATING_C};
+        techRating = RATING_C;
+        rulesRefs = "273, TM";
     }
 }

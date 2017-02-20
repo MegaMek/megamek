@@ -32,7 +32,7 @@ public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
 
     public InfantrySupportVintageMiniGunWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+
         name = "Vintage MiniGun";
         setInternalName(name);
         addLookupName("InfantryVintageMiniGun");
@@ -46,8 +46,9 @@ public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
         infantryRange = 2;
         crew = 2;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_E,RATING_E,RATING_E};
+        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
+        availRating = new int[]{RATING_E,RATING_E,RATING_E,RATING_F};
         techRating = RATING_C;
+        rulesRefs =" 273, TM";
     }
 }

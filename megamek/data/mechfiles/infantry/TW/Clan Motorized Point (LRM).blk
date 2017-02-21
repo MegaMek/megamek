@@ -21,11 +21,11 @@ Clan Motorized Point
 </Model>
 
 <year>
-2815
+3065
 </year>
 
 <type>
-Clan Level 2
+Clan Level 5
 </type>
 
 <motion_type>
@@ -67,3 +67,6 @@ LRM Launcher (FarShot)
 ClanKit
 </armorKit>
 
+<History>
+The LRM is an IS only weapon per IO. Moving this unit to unofficial status and changing the Clan Introdate on them
+</history>

@@ -21,11 +21,11 @@ Clan Foot Point
 </Model>
 
 <year>
-2815
+3065
 </year>
 
 <type>
-Clan Level 2
+Clan Level 5
 </type>
 
 <motion_type>
@@ -66,4 +66,6 @@ LRM Launcher (FarShot)
 <armorKit>
 ClanKit
 </armorKit>
+
+
 

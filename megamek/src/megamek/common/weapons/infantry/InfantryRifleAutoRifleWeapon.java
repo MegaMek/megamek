@@ -37,6 +37,7 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryAssaultRifle");
         addLookupName("Auto Rifle");
+        addLookupName("Auto-Rifle");
         addLookupName("Infantry Automatic Rifle");
         addLookupName("InfantryAutoRifle");
         addLookupName("Infantry Auto Rifle");

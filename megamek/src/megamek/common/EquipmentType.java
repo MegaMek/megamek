@@ -183,6 +183,8 @@ public class EquipmentType {
     protected int toHitModifier = 0;
 
     protected Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
+    
+    protected TechProgression techProgression = new TechProgression();
 
     protected BigInteger flags = BigInteger.valueOf(0);
 
@@ -284,7 +286,11 @@ public class EquipmentType {
         }
         return TechConstants.T_TECH_UNKNOWN;
     }
-
+    
+    public int getTechLevel(int date, boolean clan) {
+        return techProgression.getTechLevel(date, clan);
+    }
+    
     public double getTonnage(Entity entity) {
         return getTonnage(entity, Entity.LOC_NONE);
     }
@@ -813,6 +819,35 @@ public class EquipmentType {
             return false;
         }
         return true;
+    }
+    
+    public int getAvailability(int year, boolean clan) {
+        return techProgression.getAvailability(year, clan);
+    }
+
+    public String getAvailabilityName(int year, boolean clan) {
+        int avail = getAvailability(year, clan);
+        return EquipmentType.getRatingName(avail);
+    }
+
+    public int getIntroductionDate(boolean clan) {
+        return clan? techProgression.getClanPrototype():
+            techProgression.getISPrototype();
+    }
+
+    public int getExtinctionDate(boolean clan) {
+        return clan? techProgression.getClanExtinction():
+            techProgression.getISExtinction();
+    }
+
+    public int getReintroductionDate(boolean clan) {
+        return clan? techProgression.getClanReintroduction():
+            techProgression.getISReintroduction();
+    }
+
+    public boolean isAvailableIn(int year, boolean clan) {
+        return getIntroductionDate(clan) >= year
+                && !techProgression.isExtinct(year, clan);
     }
 
     public static double getArmorCost(int inArmor) {

@@ -2178,6 +2178,10 @@ public class Infantry extends Entity {
             
         double ton = men * mult;
         
+        if(isAntiMekTrained()) {
+            ton += men * .015;
+        }
+        
         //add in field gun weight
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {

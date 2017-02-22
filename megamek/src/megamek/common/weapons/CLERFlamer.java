@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 
 /**
@@ -56,5 +57,9 @@ public class CLERFlamer extends FlamerWeapon {
         introDate = 3067;
         techLevel.put(3067, techLevel.get(3071));
         techLevel.put(3081, TechConstants.T_CLAN_TW);
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, 3067, 3081);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

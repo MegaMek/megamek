@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jay Lawson
@@ -58,5 +59,9 @@ public class CLAAAMissileWeapon extends CapitalMissileWeapon {
         this.techRating = RATING_E;
         this.rulesRefs = "357, TO";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, 3072, DATE_NONE);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

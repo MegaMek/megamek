@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -54,5 +55,9 @@ public class ISStreakSRM4 extends StreakSRMWeapon {
         availRating = new int[] { RATING_E ,RATING_E ,RATING_D ,RATING_D};
         techRating = RATING_E;
         rulesRefs = "230, TM";;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3055, 3058, 3060);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_D, RATING_D });
     }
 }

@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -55,5 +56,9 @@ public class ISSRM2OS extends SRMWeapon {
         this.reintroDate = 3030;
         availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_C;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2676, 2800, 3030);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
     }
 }

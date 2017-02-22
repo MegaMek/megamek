@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -50,5 +51,9 @@ public class InfantryArchaicISNeuralLashWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_E,RATING_E ,RATING_D ,RATING_E};
         techRating = RATING_E;
         rulesRefs = "272, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2295, 2315, 2500);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_D, RATING_E });
     }
 }

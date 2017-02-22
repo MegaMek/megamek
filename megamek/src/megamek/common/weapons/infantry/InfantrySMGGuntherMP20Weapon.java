@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -50,5 +51,9 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
         availRating = new int[] { RATING_X,RATING_E ,RATING_C ,RATING_C};
         techRating = RATING_C;
         rulesRefs = "273, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3000, 3007, 3025);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_E, RATING_C, RATING_C });
     }
 }

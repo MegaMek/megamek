@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -69,6 +70,10 @@ public class ISSmallPulseLaserPrototype extends PulseLaserWeapon {
         availRating = new int[] { RATING_E, RATING_F, RATING_E };
         techRating = RATING_E;
         this.flags = flags.or(F_BURST_FIRE).or(F_PROTOTYPE);;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2595, DATE_NONE, DATE_NONE, 2609, 3037);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
     }
 
     /*

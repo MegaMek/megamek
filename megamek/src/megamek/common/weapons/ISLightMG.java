@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 
 /**
@@ -65,6 +66,10 @@ public class ISLightMG extends MGWeapon {
 		techRating = RATING_B;
 		rulesRefs = "228, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3059, 3068, 3070);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
     }
 
 }

@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jay Lawson
@@ -57,5 +58,9 @@ public class BombISRL10 extends MissileWeapon {
         techRating = RATING_B;
         rulesRefs = "229, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3055, 3064, 3067);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
     }
 }

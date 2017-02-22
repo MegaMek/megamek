@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jason Tighe
@@ -57,6 +58,10 @@ public class CLSmallChemicalLaser extends CLChemicalLaserWeapon {
         introDate = 3059;
         techLevel.put(3059, techLevel.get(3071));
         techLevel.put(3083, TechConstants.T_CLAN_TW);
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3059, DATE_NONE, 3083);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 
 }

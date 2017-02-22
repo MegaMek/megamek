@@ -21,6 +21,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -62,6 +63,10 @@ public class ISPlasmaRifle extends AmmoWeapon {
         techLevel.put(3068, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 3068);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 
     /*

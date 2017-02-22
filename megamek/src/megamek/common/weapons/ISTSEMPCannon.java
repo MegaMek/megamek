@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 
 public class ISTSEMPCannon extends TSEMPWeapon {
@@ -36,6 +37,10 @@ public class ISTSEMPCannon extends TSEMPWeapon {
         techRating = RATING_E;
         tonnage = 6;
         criticals  = 5;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3085, 3109, DATE_NONE);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 
     /*

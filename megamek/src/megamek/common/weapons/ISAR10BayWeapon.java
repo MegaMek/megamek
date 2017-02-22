@@ -18,6 +18,7 @@ package megamek.common.weapons;
 
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -58,6 +59,10 @@ public class ISAR10BayWeapon extends AmmoBayWeapon {
         extinctDate = 2850;
         reintroDate = 3051;
         availRating = new int[] { RATING_E, RATING_F, RATING_E };
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(DATE_NONE, DATE_NONE, 2550, 2850, 3051);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
     }
 
     /*

@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -51,5 +52,9 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
         techRating = RATING_E;
         rulesRefs = "273, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3069, 3080, DATE_NONE);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

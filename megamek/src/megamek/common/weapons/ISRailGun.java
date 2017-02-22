@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Andrew Hunter
@@ -56,5 +57,9 @@ public class ISRailGun extends GaussWeapon {
         techLevel.put(3061, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 3061);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

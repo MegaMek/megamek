@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.BattleForceElement;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 
 /**
@@ -50,6 +51,10 @@ public class CLFussilade extends ATMWeapon {
         introDate = 3072;
         techLevel.put(3072, TechConstants.T_CLAN_EXPERIMENTAL);
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3072);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability(new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 
     @Override

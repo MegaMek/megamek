@@ -18,6 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 
@@ -69,6 +70,10 @@ public class ISBASmallVariableSpeedPulseLaser extends
         availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_E;
         rulesRefs = "321, TO";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3070, 3072, 3080);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 
 }

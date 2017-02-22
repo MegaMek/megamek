@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -45,5 +46,9 @@ public class CLStreakSRM5 extends StreakSRMWeapon {
         techLevel.put(3060, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_F;
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

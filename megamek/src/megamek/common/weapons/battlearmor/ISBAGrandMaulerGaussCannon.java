@@ -19,6 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -57,5 +58,9 @@ public class ISBAGrandMaulerGaussCannon extends Weapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_E};
         techRating = RATING_E;
         rulesRefs = "255, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3050, 3059, 3060);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_E });
     }
 }

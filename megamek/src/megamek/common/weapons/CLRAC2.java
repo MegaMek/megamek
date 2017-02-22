@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -63,5 +64,9 @@ public class CLRAC2 extends RACWeapon {
         techRating = RATING_F;
         rulesRefs = "286, TO";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3073, 3104, 3145);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

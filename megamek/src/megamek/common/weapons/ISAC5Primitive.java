@@ -18,6 +18,7 @@ import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -66,6 +67,10 @@ public class ISAC5Primitive extends ACWeapon {
         availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
         techRating = RATING_C;
         rulesRefs = "217, IO";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2240, DATE_NONE, DATE_NONE, 2260);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
     }
 
     @Override

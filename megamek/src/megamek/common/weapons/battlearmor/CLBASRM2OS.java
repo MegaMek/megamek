@@ -14,6 +14,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.weapons.SRMWeapon;
 
 
@@ -57,5 +58,9 @@ public class CLBASRM2OS extends SRMWeapon {
 		availRating = new int[] { RATING_X ,RATING_D ,RATING_C ,RATING_B};	
 		techRating = RATING_F;
 		rulesRefs = "261, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(2860, 2868, 2870);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
     }
 }

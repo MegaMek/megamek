@@ -18,6 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.weapons.TAGWeapon;
 
 
@@ -57,5 +58,9 @@ public class ISBALightTAG extends TAGWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         techRating = RATING_E;
         rulesRefs = "270, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3046, 3053, 3057);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

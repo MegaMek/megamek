@@ -19,6 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.weapons.LaserWeapon;
 
 /**
@@ -62,5 +63,9 @@ public class ISBAERSmallLaser extends LaserWeapon {
         techRating = RATING_E;
         rulesRefs = "258, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3050, 3058, 3062);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
     }
 }

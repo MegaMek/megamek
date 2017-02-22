@@ -19,6 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -62,6 +63,10 @@ public class ISBAMediumRecoillessRifle extends Weapon {
         techRating = RATING_C;
         rulesRefs = "268, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3047, 3054, 3056);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }
 
 }

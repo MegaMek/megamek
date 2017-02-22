@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -66,6 +67,10 @@ public class ISLargePulseLaserPrototype extends PulseLaserWeapon {
         extinctDate = 2609;
         reintroDate = 3037;
         availRating = new int[] { RATING_E, RATING_F, RATING_E };
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2595, DATE_NONE, DATE_NONE, 2609, 3037);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
     }
 
     /*

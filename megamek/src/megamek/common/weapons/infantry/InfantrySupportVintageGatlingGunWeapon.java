@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -50,5 +51,9 @@ public class InfantrySupportVintageGatlingGunWeapon extends InfantryWeapon {
         availRating = new int[]{RATING_E,RATING_E,RATING_F,RATING_F};
         techRating = RATING_B;
         rulesRefs =" 273, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_F, RATING_F });
     }
 }

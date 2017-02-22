@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -57,6 +58,10 @@ public class CLHAG40 extends HAGWeapon {
         availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_F;
         rulesRefs = "219, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3057, 3068, 3072);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 
 }

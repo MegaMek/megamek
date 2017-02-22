@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -59,5 +60,9 @@ public class CLImprovedSRM2 extends SRMWeapon {
         techRating = RATING_D;
         rulesRefs = "96, IO";
         
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(2815, 2817, 2819, 2828, 3080);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
     }
 }

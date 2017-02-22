@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -59,6 +60,10 @@ public class ISArrowIV extends ArtilleryWeapon {
         extinctDate = 2830;
         reintroDate = 3045;
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, 2600, DATE_NONE, 2830, 3045);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
     }
 
 }

@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -59,6 +60,10 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         techLevel.put(3072, techLevel.get(3071));
         techLevel.put(3093, TechConstants.T_IS_ADVANCED);
         // suppveeslots = 3;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3072, 3093, DATE_NONE);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 
     /*

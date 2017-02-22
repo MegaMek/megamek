@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -47,5 +48,9 @@ public class InfantryPistoMachinePistolSPEC7AWeapon extends InfantryWeapon {
         availRating = new int[]{RATING_X,RATING_X,RATING_D,RATING_D};
         techRating = RATING_D;
         rulesRefs =" 177, HB:HK";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, DATE_NONE);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }
 }

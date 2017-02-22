@@ -14,6 +14,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.TechProgression;
 
 public class ISSmallReengineeredLaser extends ReengineeredLaserWeapon {
 
@@ -51,5 +52,9 @@ public class ISSmallReengineeredLaser extends ReengineeredLaserWeapon {
         introDate = 3130;
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, 3130, DATE_NONE);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

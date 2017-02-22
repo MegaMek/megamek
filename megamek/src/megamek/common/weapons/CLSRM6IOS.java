@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -53,5 +54,9 @@ public class CLSRM6IOS extends SRMWeapon {
         introDate = 3058;
         techLevel.put(3058, techLevel.get(3071));
         techLevel.put(3081, TechConstants.T_CLAN_TW);
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, 3058, 3081);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

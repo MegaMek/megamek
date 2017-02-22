@@ -19,6 +19,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -58,6 +59,10 @@ public class CLSwordfishWeapon extends SubCapitalMissileWeapon {
         techLevel.put(3072, TechConstants.T_CLAN_TW);
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_F;
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, 3070, 3072);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 
     /*

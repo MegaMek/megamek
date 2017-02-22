@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Andrew Hunter
@@ -58,5 +59,9 @@ public class CLLB20XAC extends LBXACWeapon {
         availRating = new int[] { RATING_X, RATING_D, RATING_C, RATING_B };
         techRating = RATING_F;
         rulesRefs = "207, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(2819, 2821, 2828);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
     }
 }

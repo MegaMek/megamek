@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Andrew Hunter
@@ -62,5 +63,9 @@ public class CLHeavyLargeLaser extends LaserWeapon {
         techLevel.put(3059, techLevel.get(3071));
         techRating = RATING_F;
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3059);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
     }
 }

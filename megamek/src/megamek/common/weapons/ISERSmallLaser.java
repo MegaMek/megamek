@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Andrew Hunter
@@ -59,5 +60,9 @@ public class ISERSmallLaser extends LaserWeapon {
                 EquipmentType.RATING_X, EquipmentType.RATING_D };
         introDate = 3058;
         techLevel.put(3058, techLevel.get(3071));
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 3058);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
     }
 }

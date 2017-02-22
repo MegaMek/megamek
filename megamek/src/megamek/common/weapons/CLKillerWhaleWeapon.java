@@ -19,6 +19,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -60,6 +61,10 @@ public class CLKillerWhaleWeapon extends CapitalMissileWeapon {
         techLevel.put(2855,techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_D, RATING_D };
         techRating = RATING_F;
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2855);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_X });
     }
 
     /*

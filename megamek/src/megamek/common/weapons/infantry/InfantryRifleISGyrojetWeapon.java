@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -49,5 +50,9 @@ public class InfantryRifleISGyrojetWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_C,RATING_C ,RATING_B ,RATING_B};
         techRating = RATING_F;
         rulesRefs = "273, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(2530, 2540, 2570);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_B, RATING_B });
     }
 }

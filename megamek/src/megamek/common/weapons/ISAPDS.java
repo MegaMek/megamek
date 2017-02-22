@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -54,5 +55,9 @@ public class ISAPDS extends AmmoWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_X ,RATING_E};
         techRating = RATING_E;
         rulesRefs = "91, IO";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3134, 3137, DATE_NONE);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
     }
 }

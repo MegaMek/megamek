@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks, modified by Greg
@@ -51,5 +52,9 @@ public class CLIATM3 extends CLIATMWeapon {
         introDate = 3070;
         availRating = new int[]{RATING_X,RATING_X,RATING_F};
         techRating = RATING_F;
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3070, DATE_NONE, DATE_NONE);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -52,5 +53,9 @@ public class InfantrySupportISStandardSRMWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_C,RATING_C ,RATING_D ,RATING_C};
         techRating = RATING_C;
         rulesRefs = "273, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2360, 2370, 2400);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_C });
     }
 }

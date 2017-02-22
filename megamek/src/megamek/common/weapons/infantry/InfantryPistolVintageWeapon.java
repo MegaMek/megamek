@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -49,5 +50,9 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
         availRating = new int[]{RATING_C,RATING_D,RATING_D,RATING_E};
         techRating = RATING_C;
         rulesRefs =" 273, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_D, RATING_D, RATING_E });
     }
 }

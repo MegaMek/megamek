@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -52,5 +53,9 @@ public class CLPrototypeRL15 extends PrototypeRLWeapon {
         availRating = new int[] { RATING_X,RATING_B ,RATING_X ,RATING_X};
         techRating = RATING_B;
         rulesRefs = "229, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(2807, DATE_NONE, DATE_NONE, 2823);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_X, RATING_X });
     }
 }

@@ -18,6 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.weapons.PulseLaserWeapon;
 
 /**
@@ -62,5 +63,9 @@ public class ISBAMediumPulseLaser extends PulseLaserWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_C};
         techRating = RATING_E;
         rulesRefs = "258, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3052, 3060, 3062);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
     }
 }

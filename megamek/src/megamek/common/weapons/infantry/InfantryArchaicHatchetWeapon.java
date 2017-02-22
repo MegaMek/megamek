@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -51,5 +52,9 @@ public class InfantryArchaicHatchetWeapon extends InfantryWeapon {
         techRating = RATING_A;
         rulesRefs =" 272, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
+        techProgression.setTechRating(RATING_A);
+        techProgression.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
     }
 }

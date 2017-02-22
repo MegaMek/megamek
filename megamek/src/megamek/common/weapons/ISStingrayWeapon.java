@@ -19,6 +19,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -59,6 +60,10 @@ public class ISStingrayWeapon extends SubCapitalMissileWeapon {
         techLevel.put(3071, TechConstants.T_IS_TW_ALL);
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_F;
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(DATE_NONE, 3060, 3071);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 
     /*

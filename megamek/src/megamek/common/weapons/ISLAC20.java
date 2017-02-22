@@ -17,6 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 public class ISLAC20 extends LACWeapon {
 
@@ -47,5 +48,9 @@ public class ISLAC20 extends LACWeapon {
         explosionDamage = damage;
         introDate = 3068;
         techLevel.put(3068, techLevel.get(3071));
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 3068);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

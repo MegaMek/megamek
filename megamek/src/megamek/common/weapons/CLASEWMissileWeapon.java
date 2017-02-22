@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jay Lawson
@@ -55,5 +56,9 @@ public class CLASEWMissileWeapon extends CapitalMissileWeapon {
         techLevel.put(3073, TechConstants.T_CLAN_UNOFFICIAL);
         availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_F };
         techRating = RATING_F;
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3073);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
     }
 }

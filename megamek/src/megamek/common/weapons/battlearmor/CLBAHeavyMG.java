@@ -18,6 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 
 /**
@@ -58,6 +59,10 @@ public class CLBAHeavyMG extends BAMGWeapon {
         techRating = RATING_C;
         rulesRefs = "258, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3050, 3059, 3068);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
     }
 
 }

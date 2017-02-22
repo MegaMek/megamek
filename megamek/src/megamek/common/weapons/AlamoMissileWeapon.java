@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jay Lawson
@@ -49,5 +50,9 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
         maxRange = RANGE_MED;
         ammoType = AmmoType.T_ALAMO;
         capital = true;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3071, DATE_NONE, DATE_NONE);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 }

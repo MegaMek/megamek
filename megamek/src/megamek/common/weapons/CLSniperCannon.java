@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -59,6 +60,10 @@ public class CLSniperCannon extends ArtilleryCannonWeapon {
         availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_D};
         techRating = RATING_B;
         rulesRefs = "285, TO";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3032, 3079, DATE_NONE);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
     }
 
 }

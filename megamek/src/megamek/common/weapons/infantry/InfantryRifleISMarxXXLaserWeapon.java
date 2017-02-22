@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -50,5 +51,9 @@ public class InfantryRifleISMarxXXLaserWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_D,RATING_E ,RATING_D ,RATING_D};
         techRating = RATING_D;
         rulesRefs = "273, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2680, DATE_NONE, 2690);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_D, RATING_E, RATING_D, RATING_D });
     }
 }

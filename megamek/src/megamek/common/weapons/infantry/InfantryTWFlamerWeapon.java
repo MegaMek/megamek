@@ -18,6 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -50,5 +51,9 @@ public class InfantryTWFlamerWeapon extends InfantryWeapon {
         techLevel.put(2100,TechConstants.T_IS_UNOFFICIAL);
         availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2100);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

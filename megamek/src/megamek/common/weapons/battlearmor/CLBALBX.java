@@ -18,6 +18,7 @@ import megamek.common.BattleForceElement;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -56,6 +57,10 @@ public class CLBALBX extends Weapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_F;
         rulesRefs = "207, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3075, 3085, DATE_NONE);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 
     @Override

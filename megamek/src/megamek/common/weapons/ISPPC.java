@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Andrew Hunter
@@ -64,6 +65,10 @@ public class ISPPC extends PPCWeapon {
         techLevel.put(2460, techLevel.get(3071));
         availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_D;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2460);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
     }
 
 }

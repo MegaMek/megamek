@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jason Tighe
@@ -60,5 +61,9 @@ public class CLProtoMechAC2 extends ProtoMechACWeapon {
         techLevel.put(3070, techLevel.get(3071));
         techLevel.put(3070, TechConstants.T_CLAN_ADVANCED);
         techLevel.put(3073, TechConstants.T_CLAN_TW);
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, 3070, 3073);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

@@ -16,6 +16,7 @@ package megamek.common.weapons.battlearmor;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -62,6 +63,10 @@ public class ISBATaser extends AmmoWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_E};
         techRating = RATING_E;
         rulesRefs = "345, TO";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3055, 3067, DATE_NONE);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
     }
 
     /*

@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -57,5 +58,9 @@ public class ISThunderBolt15 extends ThunderBoltWeapon {
         introDate = 3072;
         techLevel.put(3072, techLevel.get(3071));
         techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, 3072, 3081);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

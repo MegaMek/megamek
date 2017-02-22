@@ -18,6 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.weapons.PulseLaserWeapon;
 import megamek.common.WeaponType;
 
@@ -68,5 +69,9 @@ public class CLBAERSmallPulseLaser extends PulseLaserWeapon {
 
 
         
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3057, 3082, 3085);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 }

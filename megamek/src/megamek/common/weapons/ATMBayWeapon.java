@@ -17,6 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jay Lawson
@@ -47,5 +48,9 @@ public class ATMBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_ATM;
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(DATE_NONE, DATE_NONE, 3071);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 }

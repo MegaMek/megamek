@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Andrew Hunter
@@ -60,5 +61,9 @@ public class CLERMediumLaser extends LaserWeapon {
         introDate = 2824;
         techLevel.put(2824, techLevel.get(3071));
         techRating = RATING_F;
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2824);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
     }
 }

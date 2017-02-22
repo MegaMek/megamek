@@ -19,6 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.weapons.PPCWeapon;
 
 /**
@@ -56,5 +57,9 @@ public class ISBASupportPPC extends PPCWeapon {
         availRating = new int[] { RATING_X ,RATING_F ,RATING_D ,RATING_C};
         techRating = RATING_D;
         rulesRefs = "267, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3046, 3053, 3056);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_C });
     }
 }

@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -49,5 +50,9 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_E};
         techRating = RATING_E;
         rulesRefs = "272, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(2815, 2820, DATE_NONE);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_E });
     }
 }

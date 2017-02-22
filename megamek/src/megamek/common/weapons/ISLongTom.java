@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -58,6 +59,10 @@ public class ISLongTom extends ArtilleryWeapon {
         techRating = RATING_B;
         rulesRefs = "284, TO";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2445, 2500, DATE_NONE);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
     }
 
 }

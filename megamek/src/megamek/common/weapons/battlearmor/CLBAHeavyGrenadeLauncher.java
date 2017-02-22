@@ -19,6 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -57,6 +58,10 @@ public class CLBAHeavyGrenadeLauncher extends Weapon {
         availRating = new int[] { RATING_X ,RATING_D ,RATING_D ,RATING_C};
         techRating = RATING_C;
         rulesRefs = "256,TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(2875, 2900, 3050);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
     }
 
 }

@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Dave Nawton
@@ -47,5 +48,9 @@ public class InfantryProstheticVibroBladeWeapon extends InfantryWeapon {
         techLevel.put(2393,TechConstants.T_ALLOWED_ALL);
         availRating = new int[]{RATING_F,RATING_E,RATING_D,RATING_D};
         techRating = RATING_D;
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(DATE_NONE, DATE_NONE, 2393);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_F, RATING_E, RATING_D, RATING_D });
     }
 }

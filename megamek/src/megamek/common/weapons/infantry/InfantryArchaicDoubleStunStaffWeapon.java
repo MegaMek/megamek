@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -48,5 +49,9 @@ public class InfantryArchaicDoubleStunStaffWeapon extends InfantryWeapon {
         availRating = new int[]{RATING_A,RATING_C,RATING_A,RATING_C};
         techRating = RATING_A;
         rulesRefs =" 272, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(DATE_NONE, DATE_NONE, 2100);
+        techProgression.setTechRating(RATING_A);
+        techProgression.setAvailability( new int[] { RATING_A, RATING_C, RATING_A, RATING_C });
     }
 }

@@ -18,6 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -56,5 +57,9 @@ public class ISBAMicroGrenadeLauncher extends Weapon {
         availRating = new int[] { RATING_X ,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_B;
         rulesRefs = "256, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 3050);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_B });
     }
 }

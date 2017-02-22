@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -57,5 +58,9 @@ public class ISRL10 extends RLWeapon {
         techRating = RATING_B;
         rulesRefs = "229, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2200, 3064, 3067);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

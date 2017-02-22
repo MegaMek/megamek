@@ -18,6 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 
 /**
@@ -57,5 +58,9 @@ public class CLBAFlamer extends BAFlamerWeapon {
         availRating = new int[] { RATING_X ,RATING_D ,RATING_B ,RATING_B};
         techRating = RATING_C;
         rulesRefs = "255, TO";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(2860, 2868, 3050);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_B, RATING_B });
     }
 }

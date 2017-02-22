@@ -18,6 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -53,5 +54,9 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_C};
         techRating = RATING_E;
         rulesRefs = "273, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3058, 3065, 3075);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
     }
 }

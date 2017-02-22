@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.WeaponType;
 
 /**
@@ -61,6 +62,10 @@ public class CLMG extends MGWeapon {
         techRating = RATING_C;
         rulesRefs = "228, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(2817, 2825, 2830);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_A });
     }
 
 }

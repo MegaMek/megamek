@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jay Lawson
@@ -54,5 +55,9 @@ public class BombArrowIV extends AmmoWeapon {
         techLevel.put(2623, techLevel.get(3071));
         availRating = new int[] { RATING_E, RATING_F, RATING_E };
         techRating = RATING_E;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, 2623, DATE_NONE, 2859, 3046);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
     }
 }

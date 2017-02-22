@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
@@ -61,6 +62,10 @@ public class ISERLargeLaser extends LaserWeapon {
         reintroDate = 3037;
         availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techRating = RATING_E;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2620, 2950, 3037);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
     }
 
     @Override

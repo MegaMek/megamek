@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author beerockxs
@@ -49,5 +50,9 @@ public class CLFluidGun extends FluidGunWeapon {
         availRating = new int[] { RATING_B ,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_B;
         rulesRefs = "313, TO";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2807);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

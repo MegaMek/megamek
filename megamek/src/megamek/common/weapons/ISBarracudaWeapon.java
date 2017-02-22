@@ -19,6 +19,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -65,6 +66,10 @@ public class ISBarracudaWeapon extends CapitalMissileWeapon {
         availRating = new int[] { RATING_D, RATING_X, RATING_D };
         techRating = RATING_F;
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2305, 2855, 3051);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_D, RATING_X, RATING_D, RATING_X });
     }
 
     /*

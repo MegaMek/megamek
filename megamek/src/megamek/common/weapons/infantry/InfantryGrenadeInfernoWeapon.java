@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -55,5 +56,9 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
         techRating = RATING_D;
         rulesRefs =" 272, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(DATE_NONE, DATE_NONE, 2385);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_D, RATING_E, RATING_D, RATING_C });
     }
 }

@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -54,5 +55,9 @@ public class ISTAG extends TAGWeapon {
         availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techRating = RATING_E;
         flags = flags.andNot(F_BA_WEAPON).or(F_AERO_WEAPON);
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2600, 2835, 3044);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
     }
 }

@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -47,5 +48,9 @@ public class CLLRM17 extends LRMWeapon {
         availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         techRating = RATING_F;
         rulesRefs = "231, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3050, 3059, 3062);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
     }
 }

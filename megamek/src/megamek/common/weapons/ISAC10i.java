@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -68,5 +69,9 @@ public class ISAC10i extends ACWeapon {
         introDate = 2460;
         techLevel.put(2460, techLevel.get(3071));
         techRating = RATING_C;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2460);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_D, RATING_D, RATING_X });
     }
 }

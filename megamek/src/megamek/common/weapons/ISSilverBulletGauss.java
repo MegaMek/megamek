@@ -22,6 +22,7 @@ import megamek.common.BattleForceElement;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -75,6 +76,10 @@ public class ISSilverBulletGauss extends GaussWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         techRating = RATING_D;
         rulesRefs = "314, TO";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3051, 3080, 3090);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 
     /*

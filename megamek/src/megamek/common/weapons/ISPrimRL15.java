@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Dave Nawton
@@ -52,5 +53,9 @@ public class ISPrimRL15 extends RLWeapon {
         availRating = new int[] { RATING_B, RATING_X, RATING_X };
         techRating = RATING_B;
         toHitModifier = -1;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2315, 2315);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_B, RATING_X, RATING_X, RATING_X });
     }
 }

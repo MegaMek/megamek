@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -31,6 +32,7 @@ import java.util.regex.Pattern;
 import megamek.common.EquipmentType;
 import megamek.common.MiscType;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 
 /**
  * Goes through the list of EquipmentType and uses the old-style tech progression data
@@ -43,9 +45,10 @@ import megamek.common.TechConstants;
  */
 public class TechProgressionFormatter {
     
-    private static final File SRC_DIR = new File("megamek/src/megamek");
+    private static final File SRC_DIR = new File("megamek/src");
     
     private static Map<String,String> miscMap = new HashMap<>();
+    private static Map<String,String> weaponMap = new HashMap<>();
     
     private static int getProgressionIndex(int techLevel) {
         switch(techLevel) {
@@ -67,7 +70,7 @@ public class TechProgressionFormatter {
         return 2;
     }
     
-    private static String formatCode(EquipmentType eq) {
+    private static String formatCode(EquipmentType eq, String prefix) {
         boolean clan = false;
         boolean is = false;
         StringBuilder sb = new StringBuilder();
@@ -86,14 +89,14 @@ public class TechProgressionFormatter {
             }
         }
         if (clan && is) {
-            sb.append("        misc.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);\n");
-            sb.append("        misc.techProgression.setProgression(");
+            sb.append("        " + prefix + "techProgression.setTechBase(TechProgression.TECH_BASE_ALL);\n");
+            sb.append("        " + prefix + "techProgression.setProgression(");
         } else if (clan) {
-            sb.append("        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);\n");
-            sb.append("        misc.techProgression.setClanProgression(");
+            sb.append("        " + prefix + "techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);\n");
+            sb.append("        " + prefix + "techProgression.setClanProgression(");
         } else {
-            sb.append("        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);\n");
-            sb.append("        misc.techProgression.setISProgression(");
+            sb.append("        " + prefix + "techProgression.setTechBase(TechProgression.TECH_BASE_IS);\n");
+            sb.append("        " + prefix + "techProgression.setISProgression(");
         }
         for (int i = 0; i <= 2; i++) {
             if (techYears.containsKey(i)) {
@@ -115,9 +118,9 @@ public class TechProgressionFormatter {
         }
         sb.append(");\n");
         
-        sb.append("        misc.techProgression.setTechRating(RATING_")
+        sb.append("        " + prefix + "techProgression.setTechRating(RATING_")
             .append(eq.getTechRatingName()).append(");\n");
-        sb.append("        misc.techProgression.setAvailability( new int[] { ");
+        sb.append("        " + prefix + "techProgression.setAvailability( new int[] { ");
         for (int i = 0; i < 4; i++) {
             sb.append("RATING_").append(eq.getAvailabilityName(i));
             if (i < 3) {
@@ -138,19 +141,27 @@ public class TechProgressionFormatter {
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
             final EquipmentType eq = e.nextElement();
             if (eq instanceof MiscType) {
-                miscMap.put(eq.getInternalName(), formatCode(eq));
+                miscMap.put(eq.getInternalName(), formatCode(eq, "misc."));
+            } else if (eq instanceof WeaponType) {
+                weaponMap.put(eq.getInternalName(), formatCode(eq, ""));
             }
         }
         
-        File oldFile = new File(SRC_DIR, "common/MiscType.java");
-        File newFile = new File(SRC_DIR, "common/MiscTypeOld.java");
+//        updateMiscType();
+        updateWeaponType();
+    }
+
+    @SuppressWarnings("unused")
+    private static void updateMiscType() {
+        File oldFile = new File(SRC_DIR, "megamek/common/MiscType.java");
+        File newFile = new File(SRC_DIR, "megamek/common/MiscType.java.old");
         
         if (!newFile.exists()) {
             oldFile.renameTo(newFile);
         }
 
-        oldFile = new File(SRC_DIR, "common/MiscTypeOld.java");
-        newFile = new File(SRC_DIR, "common/MiscType.java");
+        oldFile = new File(SRC_DIR, "megamek/common/MiscType.java.old");
+        newFile = new File(SRC_DIR, "megamek/common/MiscType.java");
 
         InputStream is = null;
         OutputStream os = null;
@@ -189,6 +200,59 @@ public class TechProgressionFormatter {
             os.close();
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
+        }
+    }
+    
+    private static void updateWeaponType() {
+        for (String key : weaponMap.keySet()) {
+            EquipmentType wtype = EquipmentType.get(key);
+            String fName = wtype.getClass().getName().replaceAll("\\.", "/") + ".java";
+            File f = new File(SRC_DIR, fName);
+            File backup = new File(SRC_DIR, fName + ".old");
+            if (!backup.exists()) {
+                f.renameTo(backup);
+            }
+            
+            f = new File(SRC_DIR, fName);
+            backup = new File(SRC_DIR, fName + ".old");
+            
+            InputStream is = null;
+            OutputStream os = null;
+            try {
+                is = new FileInputStream(backup);
+                os = new FileOutputStream(f);
+            } catch (IOException ex) {
+                
+            }
+            PrintWriter pw = new PrintWriter(os);
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                String line = null;
+                boolean finished = false;
+                /* Find constructor */
+                do {
+                    line = reader.readLine();
+                    if (line != null) {
+                        pw.println(line);
+                        if (line.startsWith("import megamek.common.TechConstants;")) {
+                            pw.println("import megamek.common.TechProgression;");
+                        }
+                    }
+                } while (line != null && !line.matches(".*public\\s+" + wtype.getClass().getSimpleName() + ".*"));
+                
+                while (null != (line = reader.readLine())) {
+                    if (!finished && line.matches("\\s+\\}\\s*$")) {
+                        pw.print(weaponMap.get(key));
+                        finished = true;
+                    }
+                    pw.println(line);
+                }
+                pw.close();
+                is.close();
+                os.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }            
         }
     }
 

@@ -17,6 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jay Lawson
@@ -54,5 +55,9 @@ public class ISSCCWeaponHeavy extends SubCapitalCannonWeapon {
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_E;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, 3068, 3071);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

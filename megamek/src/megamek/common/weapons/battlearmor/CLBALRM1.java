@@ -14,6 +14,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.weapons.LRMWeapon;
 
 
@@ -50,6 +51,10 @@ public class CLBALRM1 extends LRMWeapon {
 		techRating = RATING_F;	
 		rulesRefs = "261, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(3053, 3060, 3062);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
     }
 }
 

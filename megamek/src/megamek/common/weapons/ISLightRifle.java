@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jason Tighe
@@ -63,5 +64,9 @@ public class ISLightRifle extends RifleWeapon {
         introDate = 1950;
         techLevel.put(1950, techLevel.get(3071));
         techLevel.put(3084, TechConstants.T_IS_ADVANCED);
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(1950, 3084, DATE_NONE);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_X, RATING_X });
     }
 }

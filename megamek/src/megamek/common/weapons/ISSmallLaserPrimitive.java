@@ -16,6 +16,7 @@ package megamek.common.weapons;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -58,5 +59,9 @@ public class ISSmallLaserPrimitive extends LaserWeapon {
         reintroDate = 3067;
         techLevel.put(2290, techLevel.get(3071));
         techRating = RATING_C;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2290, DATE_NONE, DATE_NONE, 2310, 3067);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_C, RATING_X });
     }
 }

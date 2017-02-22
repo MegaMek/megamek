@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -37,5 +38,9 @@ public class ISNailGun extends NailRivetGunWeapon {
         techLevel.put(2310, techLevel.get(3071));
         availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_C;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2310);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
     }
 }

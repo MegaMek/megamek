@@ -13,6 +13,8 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.TechProgression;
+
 /**
  * @author Sebastian Brocks
  */
@@ -45,5 +47,9 @@ public class CLATM9 extends ATMWeapon {
         shortAV = 14;
         medAV = 14;
         maxRange = RANGE_MED;
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3054);
+        techProgression.setTechRating(RATING_F);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
     }
 }

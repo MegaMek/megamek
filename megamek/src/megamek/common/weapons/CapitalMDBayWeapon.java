@@ -17,6 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jay Lawson
@@ -51,6 +52,10 @@ public class CapitalMDBayWeapon extends AmmoBayWeapon {
         introDate = 2715;
         techLevel.put(2715, techLevel.get(3071));
         this.techLevel.put(2715, TechConstants.T_IS_EXPERIMENTAL);
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(2715, DATE_NONE, DATE_NONE);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
     }
     
     @Override

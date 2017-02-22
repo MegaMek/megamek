@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -46,8 +47,12 @@ public class InfantrySupportHeavyRecoillessRifleWeapon extends InfantryWeapon {
         infantryRange = 2;
         crew = 3;
         introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
+        techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
         availRating = new int[]{RATING_A,RATING_A,RATING_A};
         techRating = RATING_C;
+        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
+        techProgression.setTechRating(RATING_C);
+        techProgression.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
     }
 }

@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jason Tighe
@@ -62,5 +63,9 @@ public class ISHeavyRifle extends RifleWeapon {
         techRating = RATING_B;
         availRating = new int[] { RATING_C, RATING_F, RATING_X };
         techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(1950, DATE_NONE, 3084);
+        techProgression.setTechRating(RATING_B);
+        techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_X, RATING_X });
     }
 }

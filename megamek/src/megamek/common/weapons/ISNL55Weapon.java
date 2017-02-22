@@ -17,6 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Jay Lawson
@@ -54,5 +55,9 @@ public class ISNL55Weapon extends NavalLaserWeapon {
         techLevel.put(2307, techLevel.get(3071));
         availRating = new int[] { RATING_D, RATING_F, RATING_E };
         techRating = RATING_D;
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2307);
+        techProgression.setTechRating(RATING_D);
+        techProgression.setAvailability( new int[] { RATING_D, RATING_F, RATING_E, RATING_X });
     }
 }

@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.BombType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Sebastian Brocks
@@ -53,5 +54,9 @@ public class CLBombTAG extends TAGWeapon {
         techRating = RATING_E;
         rulesRefs = "238, TM";
 
+        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2807);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
     }
 }

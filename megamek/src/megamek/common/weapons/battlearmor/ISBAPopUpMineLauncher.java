@@ -21,6 +21,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -65,6 +66,10 @@ public class ISBAPopUpMineLauncher extends Weapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_F};
         techRating = RATING_E;
         rulesRefs = "267, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(DATE_NONE, 3050, DATE_NONE);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_F });
     }
 
     /*

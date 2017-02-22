@@ -19,6 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.TechProgression;
 
 /**
  * @author Ben Grills
@@ -52,5 +53,9 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
         availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_F};
         techRating = RATING_E;
         rulesRefs = "273, TM";
+        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        techProgression.setISProgression(3049, 3058, 3068);
+        techProgression.setTechRating(RATING_E);
+        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_F });
     }
 }

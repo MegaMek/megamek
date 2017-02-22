@@ -3835,6 +3835,10 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_F ,RATING_F ,RATING_E ,RATING_D};
         misc.techRating = RATING_E;
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(2680, DATE_NONE, 3054, 2784, 3050);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_F, RATING_F, RATING_E, RATING_D });
         return misc;
     }
 
@@ -3858,6 +3862,10 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_F ,RATING_F ,RATING_E ,RATING_D};
         misc.techRating = RATING_E;
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(2675, 2868, 3054);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_E });
         return misc;
     }
 
@@ -3879,6 +3887,10 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_F ,RATING_F ,RATING_F ,RATING_F};
         misc.techRating = RATING_E;
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(2675, DATE_NONE, DATE_NONE, 2680);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_F, RATING_F, RATING_F, RATING_F });
         return misc;
     }
 
@@ -3900,6 +3912,10 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_X, RATING_E, RATING_F , RATING_X};
         misc.techRating = RATING_E;
         
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(2860, DATE_NONE, DATE_NONE, 2868);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_E, RATING_F, RATING_X });
         return misc;
     }
 
@@ -3921,6 +3937,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(DATE_NONE, 3057, 3060);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -3941,6 +3961,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(DATE_NONE);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -3988,6 +4012,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_F;
         misc.rulesRefs = "253, TM";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(DATE_NONE);
+        misc.techProgression.setTechRating(RATING_F);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -4011,7 +4039,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
-
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(3050, 3052, 3054, 3055);
+        misc.techProgression.setTechRating(RATING_F);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return misc;
     }
 
@@ -4032,7 +4063,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
-
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(DATE_NONE);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return misc;
     }
 
@@ -4058,6 +4092,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(2695, 2710, 3054, 2770, 3052);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_F, RATING_F, RATING_E, RATING_D });
         return misc;
     }
 
@@ -4079,7 +4117,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
-
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(DATE_NONE);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
         return misc;
     }
 
@@ -4105,6 +4146,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(2705, 2720, 3055, 2770, 3053);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_E, RATING_D });
         return misc;
     }
 
@@ -4126,6 +4171,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(2705, 2720, 3055, 2770, 3053);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_E, RATING_D });
         return misc;
     }
 
@@ -4147,6 +4196,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(3050, 3057, 3059);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -4167,6 +4220,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "252, TM";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3058);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -4189,6 +4246,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "253, TM";
         
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(3053, 3061, 3065);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -4211,6 +4272,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.rulesRefs = "253, TM";
         
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(DATE_NONE);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -4233,6 +4298,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_F;
         misc.rulesRefs = "282, TO";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(DATE_NONE, 3088, 3100);
+        misc.techProgression.setTechRating(RATING_F);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
         return misc;
     }
 
@@ -4256,6 +4325,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_F;
         misc.rulesRefs = "282, TO";
      
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(3075, 3088, 3100);
+        misc.techProgression.setTechRating(RATING_F);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
         return misc;
     }
 
@@ -4279,7 +4352,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_F;
         misc.rulesRefs = "280, TO";
 
-
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(DATE_NONE, 3084, 3105);
+        misc.techProgression.setTechRating(RATING_F);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -4304,7 +4380,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_F;
         misc.rulesRefs = "280, TO";
 
-
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(3074, 3084, 3105);
+        misc.techProgression.setTechRating(RATING_F);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
     
@@ -5150,6 +5229,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(3047, 3076);
+        misc.techProgression.setTechRating(RATING_D);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -5172,6 +5255,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(3061, 3076);
+        misc.techProgression.setTechRating(RATING_D);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -5192,6 +5279,11 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(2300, TechConstants.T_IS_TW_NON_BOX);
         misc.availRating = new int[] { RATING_B, RATING_B, RATING_A };
         misc.techRating = RATING_B;
+
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(2285, 2295, 2310);
+        misc.techProgression.setTechRating(RATING_B);
+        misc.techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_A, RATING_A });
         return misc;
     }
 
@@ -5212,6 +5304,11 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(2820, TechConstants.T_CLAN_TW);
         misc.availRating = new int[] { RATING_X, RATING_B, RATING_A };
         misc.techRating = RATING_B;
+
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2820);
+        misc.techProgression.setTechRating(RATING_B);
+        misc.techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_A, RATING_A });
         return misc;
     }
 
@@ -5234,6 +5331,11 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_F;
         misc.flags = misc.flags.or(F_FERRO_LAMELLOR).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(3070, 3109);
+        misc.techProgression.setTechRating(RATING_F);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return misc;
     }
 
@@ -5254,6 +5356,11 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(2439, TechConstants.T_IS_TW_NON_BOX);
         misc.availRating = new int[] { RATING_B, RATING_C, RATING_B };
         misc.techRating = RATING_C;
+
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(2425, 2434, 2439);
+        misc.techProgression.setTechRating(RATING_C);
+        misc.techProgression.setAvailability( new int[] { RATING_B, RATING_C, RATING_B, RATING_B });
         return misc;
     }
 
@@ -5279,6 +5386,11 @@ public class MiscType extends EquipmentType {
         misc.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2820);
         misc.techProgression.setTechRating(RATING_C);
         misc.techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_A, RATING_X });
+
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(2425, 2434, 2439);
+        misc.techProgression.setTechRating(RATING_C);
+        misc.techProgression.setAvailability( new int[] { RATING_B, RATING_C, RATING_B, RATING_B });
         return misc;
     }
 
@@ -5299,6 +5411,11 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_C;
         misc.flags = misc.flags.or(F_PRIMITIVE_ARMOR).or(F_MECH_EQUIPMENT);
         misc.techLevel.put(2300, TechConstants.T_IS_TW_NON_BOX);
+
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(2425, 2434, 2439);
+        misc.techProgression.setTechRating(RATING_C);
+        misc.techProgression.setAvailability( new int[] { RATING_B, RATING_C, RATING_B, RATING_B });
         return misc;
     }
 
@@ -5316,6 +5433,11 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         misc.flags = misc.flags.or(F_PRIMITIVE_ARMOR).or(F_MECH_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
+
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(2425, 2434, 2439);
+        misc.techProgression.setTechRating(RATING_C);
+        misc.techProgression.setAvailability( new int[] { RATING_B, RATING_C, RATING_B, RATING_B });
         return misc;
     }
 
@@ -5337,6 +5459,11 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(2470, TechConstants.T_IS_TW_NON_BOX);
         misc.availRating = new int[] { RATING_C, RATING_C, RATING_C };
         misc.techRating = RATING_D;
+
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(2455, 2470, 2470);
+        misc.techProgression.setTechRating(RATING_D);
+        misc.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_B });
         return misc;
     }
 
@@ -5358,6 +5485,11 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(2820, TechConstants.T_CLAN_TW);
         misc.availRating = new int[] { RATING_X, RATING_C, RATING_C };
         misc.techRating = RATING_D;
+
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(2455, 2470, 2470);
+        misc.techProgression.setTechRating(RATING_D);
+        misc.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_B });
         return misc;
     }
 
@@ -6387,6 +6519,10 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_E};
         misc.techRating = RATING_E;
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(2893, 2900, 3050);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_E });
         return misc;
     }
 
@@ -9518,6 +9654,10 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3025, misc.techLevel.get(3071));
         misc.techRating = RATING_D;
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(3015, 3025, DATE_NONE, 3046);
+        misc.techProgression.setTechRating(RATING_D);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_F });
         return misc;
     }
 
@@ -11444,6 +11584,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_D;
         misc.rulesRefs = "348, TO";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(DATE_NONE, 3051);
+        misc.techProgression.setTechRating(RATING_D);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_E, RATING_C, RATING_C });
         return misc;
     }    
      
@@ -11904,6 +12048,10 @@ public class MiscType extends EquipmentType {
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
         misc.techRating = RATING_E;
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(3105, 3114);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
         return misc;
     }
 
@@ -11923,6 +12071,10 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_E;
         misc.techLevel.put(3126, TechConstants.T_CLAN_ADVANCED);
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        misc.techProgression.setClanProgression(DATE_NONE, 3126);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
         return misc;
     }
 
@@ -11943,6 +12095,10 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3115, TechConstants.T_IS_EXPERIMENTAL);
         misc.techLevel.put(3123, TechConstants.T_IS_ADVANCED);
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(3111, 3123);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
         return misc;
     }
 
@@ -11963,6 +12119,10 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(misc.introDate, TechConstants.T_IS_EXPERIMENTAL);
         misc.techLevel.put(3103, TechConstants.T_IS_ADVANCED);
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(3087, 3103);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
         return misc;
     }
 
@@ -11984,6 +12144,10 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(misc.introDate, TechConstants.T_IS_EXPERIMENTAL);
         misc.techLevel.put(3131, TechConstants.T_IS_ADVANCED);
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        misc.techProgression.setISProgression(3120, 3131);
+        misc.techProgression.setTechRating(RATING_E);
+        misc.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
         return misc;
     }
 
@@ -13937,6 +14101,10 @@ public class MiscType extends EquipmentType {
     	misc.techRating = RATING_C;
     	misc.rulesRefs = "318, TO";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        misc.techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
+        misc.techProgression.setTechRating(RATING_C);
+        misc.techProgression.setAvailability( new int[] { RATING_B, RATING_C, RATING_D, RATING_E });
     	return misc;
     }
     
@@ -13956,6 +14124,10 @@ public class MiscType extends EquipmentType {
     	misc.techRating = RATING_C;
     	misc.rulesRefs = "318, TO";
 
+        misc.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        misc.techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
+        misc.techProgression.setTechRating(RATING_C);
+        misc.techProgression.setAvailability( new int[] { RATING_B, RATING_C, RATING_E, RATING_F });
     	return misc;
     }
     

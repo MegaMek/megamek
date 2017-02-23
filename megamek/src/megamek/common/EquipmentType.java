@@ -831,18 +831,15 @@ public class EquipmentType {
     }
 
     public int getIntroductionDate(boolean clan) {
-        return clan? techProgression.getClanPrototype():
-            techProgression.getISPrototype();
+        return techProgression.getIntroductionDate(clan);
     }
 
     public int getExtinctionDate(boolean clan) {
-        return clan? techProgression.getClanExtinction():
-            techProgression.getISExtinction();
+        return techProgression.getExtinctionDate(clan);
     }
 
     public int getReintroductionDate(boolean clan) {
-        return clan? techProgression.getClanReintroduction():
-            techProgression.getISReintroduction();
+        return techProgression.getReintroductionDate(clan);
     }
 
     public boolean isAvailableIn(int year, boolean clan) {

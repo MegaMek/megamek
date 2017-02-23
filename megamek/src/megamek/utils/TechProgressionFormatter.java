@@ -131,6 +131,64 @@ public class TechProgressionFormatter {
         
         return sb.toString();
     }
+    
+    public static String formatMunitionMutator(String name, int weight, Map<Integer,Integer> techLevel,
+            int introDate, int extinctDate, int reintroDate, int techRating, int[] availRating,
+            String rulesRef) {
+        StringBuilder sb = new StringBuilder();
+        boolean isClan = TechConstants.isClan(techLevel.get(introDate));
+        Map<Integer,Integer> techYears = new HashMap<>();
+        for (Map.Entry<Integer,Integer> e : techLevel.entrySet()) {
+            if (e.getKey() >= introDate) {
+                techYears.merge(getProgressionIndex(e.getValue()),
+                        e.getKey(), (y1, y2) -> Math.min(y1, y2));
+            }
+        }
+        sb.append("                munitions.add(new MunitionMutator(\"")
+            .append(name).append("\", ").append(weight).append(", M_")
+            .append(name.toUpperCase().replaceAll("\\-", "_"))
+            .append(",\n");
+        if (isClan) {
+            sb.append("                                TechProgression.TECH_BASE_CLAN, ");
+        } else {
+            sb.append("                                TechProgression.TECH_BASE_IS, ");
+        }
+        sb.append("new int[] { ");
+        for (int i = 0; i <= 2; i++) {
+            if (techYears.containsKey(i)) {
+                sb.append(techYears.get(i));
+            } else {
+                sb.append("DATE_NONE");
+            }
+            if (i < 2) {
+                sb.append(", ");
+            }
+        }
+        if (extinctDate > 0) {
+            sb.append(", ");
+            sb.append(extinctDate);
+            if (reintroDate > 0) {
+                sb.append(", ");
+                sb.append(reintroDate);
+            }
+        }
+        sb.append(" },\n");
+        sb.append("                                RATING_");
+        sb.append(EquipmentType.getRatingName(techRating));
+        sb.append(", new int[] { ");
+        for (int i = 0; i < availRating.length; i++) {
+            sb.append("RATING_");
+            sb.append(EquipmentType.getRatingName(availRating[i]));
+            if (i < availRating.length - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append(" }, \"");
+        sb.append(rulesRef);
+        sb.append("\"));\n");
+        
+        return sb.toString();
+    }
 
     /**
      * @param args
@@ -148,7 +206,7 @@ public class TechProgressionFormatter {
         }
         
 //        updateMiscType();
-        updateWeaponType();
+//        updateWeaponType();
     }
 
     @SuppressWarnings("unused")
@@ -203,6 +261,7 @@ public class TechProgressionFormatter {
         }
     }
     
+    @SuppressWarnings("unused")
     private static void updateWeaponType() {
         for (String key : weaponMap.keySet()) {
             EquipmentType wtype = EquipmentType.get(key);
@@ -255,5 +314,4 @@ public class TechProgressionFormatter {
             }            
         }
     }
-
 }

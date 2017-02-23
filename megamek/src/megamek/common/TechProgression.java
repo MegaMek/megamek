@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import java.util.Arrays;
+
 /**
  * Handles the progression of technology through prototype, production, extinction and reintroduction
  * phases. Calculates current rules level for IS or Clan.
@@ -30,6 +32,12 @@ public class TechProgression {
 	public static final int TECH_BASE_ALL  = 0;
 	public static final int TECH_BASE_IS   = 1;
 	public static final int TECH_BASE_CLAN = 2;
+	
+	public static final int PROTOTYPE    = 0;
+	public static final int PRODUCTION   = 1;
+	public static final int COMMON       = 2;
+	public static final int EXTINCT      = 3;
+	public static final int REINTRODUCED = 4;
 
 	/* Aliases for TechConstants rules levels that reflect tech progression usage */
     public static final int RULES_TOURNAMENT     = TechConstants.T_SIMPLE_STANDARD;
@@ -38,19 +46,17 @@ public class TechProgression {
 	public static final int RULES_UNAVAILABLE  = TechConstants.T_SIMPLE_UNOFFICIAL;
 	
     private int techBase = TECH_BASE_ALL;
-    private int isPrototype = DATE_NA;
-    private int isProduction = DATE_NA;
-    private int isCommon = DATE_NA;
-    private int isExtinction = DATE_NA;
-    private int isReintroduction = DATE_NA;
-    private int clanPrototype = DATE_NA;
-    private int clanProduction = DATE_NA;
-    private int clanCommon = DATE_NA;
-    private int clanExtinction = DATE_NA;
-    private int clanReintroduction = DATE_NA;
+    private int[] isProgression = new int[5];
+    private int[] clanProgression = new int[5];
     private boolean isIntroLevel = false; //Whether RULES_STANDARD should be considered T_INTRO_BOXSET.
+    private boolean unofficial = false;
     private int techRating = EquipmentType.RATING_C;
     private int[] availability = new int[EquipmentType.ERA_DA + 1];
+    
+    public TechProgression() {
+        Arrays.fill(isProgression, DATE_NA);
+        Arrays.fill(clanProgression, DATE_NA);
+    }
     
     public void setTechBase(int base) {
         techBase = base;
@@ -60,13 +66,28 @@ public class TechProgression {
         return techBase;
     }
     
+    public void setISProgression(int[] prog) {
+        Arrays.fill(isProgression, DATE_NA);
+        System.arraycopy(prog, 0, isProgression, 0, Math.min(isProgression.length, prog.length));
+    }
+    
+    public void setClanProgression(int[] prog) {
+        Arrays.fill(clanProgression, DATE_NA);
+        System.arraycopy(prog, 0, clanProgression, 0, Math.min(clanProgression.length, prog.length));
+    }
+    
+    public void setProgression(int[] prog) {
+        setISProgression(prog);
+        setClanProgression(prog);
+    }
+    
     public void setISProgression(int prototype, int production, int common,
             int extinct, int reintroduction) {
-        isPrototype = prototype;
-        isProduction = production;
-        isCommon = common;
-        isExtinction = extinct;
-        isReintroduction = reintroduction;
+        isProgression[PROTOTYPE] = prototype;
+        isProgression[PRODUCTION] = production;
+        isProgression[COMMON] = common;
+        isProgression[EXTINCT] = extinct;
+        isProgression[REINTRODUCED] = reintroduction;
     }
 
     public void setISProgression(int prototype, int production, int common,
@@ -88,11 +109,11 @@ public class TechProgression {
     
     public void setClanProgression(int prototype, int production, int common,
             int extinct, int reintroduction) {
-        clanPrototype = prototype;
-        clanProduction = production;
-        clanCommon = common;
-        clanExtinction = extinct;
-        clanReintroduction = reintroduction;
+        clanProgression[PROTOTYPE] = prototype;
+        clanProgression[PRODUCTION] = production;
+        clanProgression[COMMON] = common;
+        clanProgression[EXTINCT] = extinct;
+        clanProgression[REINTRODUCED] = reintroduction;
     }
 
     public void setClanProgression(int prototype, int production, int common,
@@ -138,89 +159,94 @@ public class TechProgression {
         setISProgression(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
         setClanProgression(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
     }
-
-    public int getISPrototype() {
-        return isPrototype;
+    
+    public int getPrototypeDate(boolean clan) {
+        return clan?clanProgression[PROTOTYPE] : isProgression[PROTOTYPE];
     }
 
-    public void setISPrototype(int isPrototype) {
-        this.isPrototype = isPrototype;
+    public int getProductionDate(boolean clan) {
+        return clan?clanProgression[PRODUCTION] : isProgression[PRODUCTION];
     }
 
-    public int getISProduction() {
-        return isProduction;
+    public int getCommonDate(boolean clan) {
+        return clan?clanProgression[COMMON] : isProgression[COMMON];
     }
 
-    public void setISProduction(int isProduction) {
-        this.isProduction = isProduction;
+    public int getExtinctionDate(boolean clan) {
+        return clan?clanProgression[EXTINCT] : isProgression[EXTINCT];
     }
 
-    public int getISCommon() {
-        return isCommon;
+    public int getReintroductionDate(boolean clan) {
+        return clan?clanProgression[REINTRODUCED] : isProgression[REINTRODUCED];
     }
-
-    public void setISCommon(int isCommon) {
-        this.isCommon = isCommon;
+    
+    public int getIntroductionDate(boolean clan) {
+        if (getPrototypeDate(clan) > 0) {
+            return getPrototypeDate(clan);
+        }
+        if (getProductionDate(clan) > 0) {
+            return getProductionDate(clan);
+        }
+        return getCommonDate(clan);
     }
-
-    public int getISExtinction() {
-        return isExtinction;
+    
+    /*
+     * Methods which return universe-wide dates
+     */
+    
+    public int getPrototypeDate() {
+        return earliestDate(isProgression[PROTOTYPE], clanProgression[PROTOTYPE]);
     }
-
-    public void setISExtinction(int isExtinction) {
-        this.isExtinction = isExtinction;
+    
+    public int getProductionDate() {
+        return earliestDate(isProgression[PRODUCTION], clanProgression[PRODUCTION]);
     }
-
-    public int getISReintroduction() {
-        return isReintroduction;
+    
+    public int getCommonDate() {
+        return earliestDate(isProgression[COMMON], clanProgression[COMMON]);
     }
-
-    public void setISReintroduction(int isReintroduction) {
-        this.isReintroduction = isReintroduction;
+    
+    public int getExtinctionDate() {
+        return Math.max(isProgression[EXTINCT], clanProgression[EXTINCT]);
     }
-
-    public int getClanPrototype() {
-        return clanPrototype;
+    
+    public int getReintroductionDate() {
+        return earliestDate(isProgression[REINTRODUCED], clanProgression[REINTRODUCED]);
     }
-
-    public void setClanPrototype(int clanPrototype) {
-        this.clanPrototype = clanPrototype;
+    
+    public int getIntroductionDate() {
+        if (getPrototypeDate() > 0) {
+            return getPrototypeDate();
+        }
+        if (getProductionDate() > 0) {
+            return getProductionDate();
+        }
+        return getCommonDate();
     }
-
-    public int getClanProduction() {
-        return clanProduction;
-    }
-
-    public void setClanProduction(int clanProduction) {
-        this.clanProduction = clanProduction;
-    }
-
-    public int getClanCommon() {
-        return clanCommon;
-    }
-
-    public void setClanCommon(int clanCommon) {
-        this.clanCommon = clanCommon;
-    }
-
-    public int getClanExtinction() {
-        return clanExtinction;
-    }
-
-    public void setClanExtinction(int clanExtinction) {
-        this.clanExtinction = clanExtinction;
-    }
-
-    public int getClanReintroduction() {
-        return clanReintroduction;
-    }
-
-    public void setClanReintroduction(int clanReintroduction) {
-        this.clanReintroduction = clanReintroduction;
+    
+    /**
+     * Finds the earliest of two dates, ignoring DATE_NA unless both values are set to DATE_NA
+     */
+    private static int earliestDate(int d1, int d2) {
+        if (d1 < 0) {
+            return d2;
+        }
+        if (d2 < 0) {
+            return d1;
+        }
+        return Math.min(d1, d2);
     }
 
     public void setIntroLevel(boolean intro) {
         isIntroLevel = intro;
+    }
+    
+    public boolean isUnofficial() {
+        return unofficial;
+    }
+    
+    public void setUnofficial(boolean unofficial) {
+        this.unofficial = unofficial;
     }
     
     public void setTechRating(int rating) {
@@ -255,7 +281,7 @@ public class TechProgression {
         if (clan) {
             if (techBase == TECH_BASE_IS
                     && era < EquipmentType.ERA_CLAN
-                    && isPrototype >= 2780) {
+                    && isProgression[PROTOTYPE] >= 2780) {
                 return EquipmentType.RATING_X;
             } else {
                 return getBaseAvailability(era);
@@ -270,8 +296,8 @@ public class TechProgression {
             } else if (techBase == TECH_BASE_ALL
                     && era == EquipmentType.ERA_SW
                     && availability[era] >= EquipmentType.RATING_E
-                    && isExtinction != DATE_NA
-                    && year > isExtinction) {
+                    && isProgression[EXTINCT] != DATE_NA
+                    && year > isProgression[EXTINCT]) {
                 return Math.min(EquipmentType.RATING_X, availability[era] + 1);
             } else {
                 return getBaseAvailability(era);
@@ -281,23 +307,23 @@ public class TechProgression {
     
     public int getRulesLevel(int year, boolean clan) {
         if (clan) {
-            if (year < clanPrototype
+            if (year < clanProgression[PROTOTYPE]
                     || isExtinct(year, clan)) {
                 return RULES_UNAVAILABLE;
-            } else if (year >= clanCommon) {
+            } else if (year >= clanProgression[COMMON]) {
                 return RULES_TOURNAMENT;
-            } else if (year >= clanProduction) {
+            } else if (year >= clanProgression[PRODUCTION]) {
                 return RULES_ADVANCED;
             } else {
                 return RULES_EXPERIMENTAL;
             }            
         } else {
-            if (year < isPrototype
+            if (year < isProgression[PROTOTYPE]
                     || isExtinct(year, clan)) {
                 return RULES_UNAVAILABLE;
-            } else if (year >= isCommon) {
+            } else if (year >= isProgression[COMMON]) {
                 return RULES_TOURNAMENT;
-            } else if (year >= isProduction) {
+            } else if (year >= isProgression[PRODUCTION]) {
                 return RULES_ADVANCED;
             } else {
                 return RULES_EXPERIMENTAL;
@@ -309,6 +335,9 @@ public class TechProgression {
      * Calculates the TechConstants value for the equipment.
      */
     public int getTechLevel(int year, boolean clan) {
+        if (unofficial) {
+            return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
+        }
         switch (getRulesLevel(year, clan)) {
         case RULES_TOURNAMENT:
             if (isIntroLevel) {
@@ -328,15 +357,15 @@ public class TechProgression {
     
     public boolean isExtinct(int year, boolean clan) {
         if (clan) {
-            return clanExtinction != DATE_NA
-                    && clanExtinction > year
-                    && (clanReintroduction == DATE_NA
-                            || year < clanReintroduction);
+            return clanProgression[EXTINCT] != DATE_NA
+                    && clanProgression[EXTINCT] > year
+                    && (clanProgression[REINTRODUCED] == DATE_NA
+                            || year < clanProgression[REINTRODUCED]);
         } else {
-            return isExtinction != DATE_NA
-                    && isExtinction > year
-                    && (isReintroduction == DATE_NA
-                            || year < isReintroduction);
+            return isProgression[EXTINCT] != DATE_NA
+                    && isProgression[EXTINCT] > year
+                    && (isProgression[REINTRODUCED] == DATE_NA
+                            || year < isProgression[REINTRODUCED]);
         }
     }
     

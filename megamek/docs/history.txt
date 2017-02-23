@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.43.1-git
 + Issue #476: VTOL armor diagram changes color incorrectly?
++ Issue #490: Fixed princess documentation.
 
 v0.43.0 (2017-02-13 03:30 UTC)
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

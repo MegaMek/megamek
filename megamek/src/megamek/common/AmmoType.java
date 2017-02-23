@@ -1934,16 +1934,6 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.addType(mutator.createMunitionType(base));
             }
         }
-        
-        if (bases.size() > 0) {
-            System.out.println(bases.get(0).getName());
-            for (MunitionMutator mutator : munitions) {
-                System.out.print(megamek.utils.TechProgressionFormatter.formatMunitionMutator(mutator.name,
-                        mutator.weight, mutator.techLevel, mutator.introDate, mutator.extinctDate,
-                        mutator.reintroDate, mutator.techRating, mutator.availRating, mutator.rulesRefs));
-            }
-        }
-        
     }
 
     
@@ -1970,6 +1960,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2290, DATE_NONE, DATE_NONE, 2310);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
     
@@ -1995,6 +1989,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2240, DATE_NONE, DATE_NONE, 2260);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
     
@@ -2021,6 +2019,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2443, DATE_NONE, DATE_NONE, 2470);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
     
@@ -2046,6 +2048,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2510, DATE_NONE, DATE_NONE, 2500);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
     private static AmmoType createISLRM5pAmmo() {
@@ -2072,6 +2078,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2295, DATE_NONE, DATE_NONE, 2320);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -2099,6 +2109,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2295, DATE_NONE, DATE_NONE, 2320);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
     private static AmmoType createISLRM15pAmmo() {
@@ -2125,6 +2139,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2295, DATE_NONE, DATE_NONE, 2320);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -2152,6 +2170,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2295, DATE_NONE, DATE_NONE, 2320);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -2178,6 +2200,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2439, DATE_NONE, DATE_NONE, 2470);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -2203,6 +2229,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2439, DATE_NONE, DATE_NONE, 2470);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -2228,6 +2258,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "217, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2439, DATE_NONE, DATE_NONE, 2470);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
     
@@ -2252,6 +2286,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "118, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2445, DATE_NONE, DATE_NONE, 2510);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
         return ammo;
     }
     
@@ -2278,6 +2316,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2290, 2300, 2305);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -2303,6 +2345,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2240, 2250, 2255);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -2328,6 +2374,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2443, 2460, 2465);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -2353,6 +2403,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2488, 2500, 2502);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
         return ammo;
     }
     
@@ -2377,6 +2431,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2810, 2818, 2833, 3080);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -2401,6 +2459,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2810, 2818, 2833, 3080);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -2425,6 +2487,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2810, 2818, 2833, 3080);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -2449,6 +2515,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2810, 2818, 2833, 3080);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -2472,6 +2542,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "218, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_A });
         return ammo;
     }
 
@@ -2497,6 +2571,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
         return ammo;
     }
 
@@ -2524,6 +2602,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
         return ammo;
     }
 
@@ -2550,6 +2632,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3058, 3068, 3070);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -2577,6 +2663,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3058, 3068, 3070);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -2603,6 +2693,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3059, 3068, 3070);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -2630,6 +2724,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3059, 3068, 3070);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -2657,6 +2755,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2295, 2300, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2684,6 +2786,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2295, 2300, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2711,6 +2817,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2295, 2300, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2738,6 +2848,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2295, 2300, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2763,6 +2877,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2370, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2787,6 +2905,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2370, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2812,6 +2934,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "230, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2370, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2840,6 +2966,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2380, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2868,6 +2998,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2380, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2896,6 +3030,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2380, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2924,6 +3062,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2380, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2950,6 +3092,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2380, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -2976,6 +3122,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2380, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -3002,6 +3152,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2365, 2380, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -3029,6 +3183,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "284, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2445, 2500, 2520);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -3054,6 +3212,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "284, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 1950, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -3079,6 +3241,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "284, TO";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 1950, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
     
@@ -3105,6 +3271,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "285, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3012, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3133,6 +3303,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "285, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3012, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3159,6 +3333,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "285, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3012, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3185,6 +3363,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "285, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3032, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
         return ammo;
     }
     
@@ -3211,6 +3393,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "285, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3032, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
         return ammo;
     }
     
@@ -3237,6 +3423,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "285, TO";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3032, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3266,6 +3456,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 207";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(3050, 3058, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3292,6 +3486,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 207";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(3050, 3058, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3321,6 +3519,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 207";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2590, 2595, 3040, 2840, 3035);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3347,6 +3549,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 207";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(3050, 3058, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3379,6 +3585,10 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "TM 207";
 
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3050, 3058, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3411,6 +3621,10 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "TM 207";
 
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3050, 3058, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3445,6 +3659,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 207";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2590, 2595, 3040, 2840, 3035);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3476,6 +3694,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 207";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3050, 3058, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3501,6 +3723,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 208";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3050, 3057, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3529,6 +3755,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 207";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2635, 2640, 3040, 2915, 3035);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3554,6 +3784,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 208";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3050, 3057, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3579,6 +3813,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 208";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3052, 3060, 3061);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3605,6 +3843,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 207";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3055, 3062, 3071);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3630,6 +3872,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "TM 207";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3055, 3062, 3071);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3660,6 +3906,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "218, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2587, 2590, 3045, 2865, 3040);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_D, RATING_F, RATING_D, RATING_C });
         return ammo;
     }
 
@@ -3687,6 +3937,10 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "219, TM";
 
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3044, 3056, 3065);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3712,6 +3966,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "218, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3046, 3061, 3067);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3737,6 +3995,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "313, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3065, 3081, 3090);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -3764,6 +4026,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "230, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2645, 2647, 2650, 2845, 3035);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -3789,6 +4055,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "230, TM";;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3055, 3058, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -3814,6 +4084,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "230, TM";;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3055, 3058, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -3838,6 +4112,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3047, 3058, 3063);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3862,6 +4140,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3047, 3058, 3063);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3886,6 +4168,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3047, 3058, 3063);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3910,6 +4196,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3047, 3058, 3063);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -3932,6 +4222,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2200, 3064, 3067);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
         return ammo;
     }
 
@@ -3954,6 +4248,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2200, 3064, 3067);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
         return ammo;
     }
 
@@ -3976,6 +4274,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "229, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2200, 3064, 3067);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
         return ammo;
     }
 
@@ -3997,6 +4299,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2807, DATE_NONE, DATE_NONE, 2823);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -4018,6 +4324,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2807, DATE_NONE, DATE_NONE, 2823);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -4039,6 +4349,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2807, DATE_NONE, DATE_NONE, 2823);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -4067,6 +4381,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "204, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2608, 2617, 3048, 2835, 3045);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_C });
         return ammo;
     }
 
@@ -4090,6 +4408,10 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "91, IO";
 
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3134, 3137, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
         return ammo;
     }
 
@@ -4115,6 +4437,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "141, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2575, 2587, 3049);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_C });
         return ammo;
     }
 
@@ -4139,6 +4465,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "141, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3049, 3060, 3064);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -4165,6 +4495,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "141, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3049, 3062, 3066);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -4190,6 +4524,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "141, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3049, 3062, 3066);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -4215,6 +4553,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "141, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3049, 3062, 3066);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -4240,6 +4582,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "141, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3049, 3062, 3066);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -4265,6 +4611,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "141, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3049, 3062, 3066);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -4287,6 +4637,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "313, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
         return ammo;
     }
 
@@ -4308,6 +4662,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "313, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2807);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_B });
         return ammo;
     }
 
@@ -4335,6 +4693,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "218, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2817, 2828, 2830);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
         return ammo;
     }
     
@@ -4361,6 +4723,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "96, TO";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2813, 2821, 2822, 2837, 3080);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_E, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -4388,6 +4754,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "207, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2819, 2821, 2828);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4415,6 +4785,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2819, 2821, 2828);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4442,6 +4816,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2819, 2821, 2828);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4468,6 +4846,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2819, 2821, 2828);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4499,6 +4881,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2819, 2821, 2828);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4530,6 +4916,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2819, 2821, 2828);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4562,6 +4952,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2819, 2821, 2828);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4593,6 +4987,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2819, 2821, 2828);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4617,6 +5015,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2807);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_A, RATING_B, RATING_A });
         return ammo;
     }
 
@@ -4644,6 +5046,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3049, 3059, 3070);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4672,6 +5078,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3049, 3059, 3070);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4700,6 +5110,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2817, 2825, 2830);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_A });
         return ammo;
     }
 
@@ -4729,6 +5143,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2817, 2825, 2830);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_A });
         return ammo;
     }
 
@@ -4756,6 +5174,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3060, 3070);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4784,6 +5206,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "228, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3060, 3070);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
         return ammo;
     }
 
@@ -4810,6 +5236,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "208, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2820, 2822, 2829);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
         return ammo;
     }
 
@@ -4836,6 +5266,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "208, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2820, 2822, 2829);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
         return ammo;
     }
 
@@ -4863,6 +5297,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "208, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2820, 2822, 2829);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
         return ammo;
     }
 
@@ -4888,6 +5326,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "208, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2820, 2822, 2829);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
         return ammo;
     }
 
@@ -4913,6 +5355,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "286, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3073, 3104, 3145);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -4938,6 +5384,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "286, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3073, 3104, 3145);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -4965,6 +5415,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -4993,6 +5447,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5020,6 +5478,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5048,6 +5510,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5074,6 +5540,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_C, RATING_B};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2824);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -5100,6 +5570,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5127,6 +5601,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5154,6 +5632,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5181,6 +5663,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5207,6 +5693,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_C, RATING_B};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2824);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -5234,6 +5724,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5261,6 +5755,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5289,6 +5787,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5317,6 +5819,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5343,6 +5849,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_C, RATING_B};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2824);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -5369,6 +5879,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5396,6 +5910,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5423,6 +5941,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5450,6 +5972,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5476,6 +6002,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_C, RATING_B};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2824);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -5502,6 +6032,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
     }
 
@@ -5528,6 +6062,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -5554,6 +6092,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
     }
 
@@ -5580,6 +6122,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -5606,6 +6152,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
     }
 
@@ -5633,6 +6183,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
     private static AmmoType createCLImprovedSRM2Ammo() {
@@ -5657,6 +6211,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2817, 2819);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -5684,6 +6242,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825, 2828, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
         return ammo;
     }
     
@@ -5711,6 +6273,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825, 2828, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
         return ammo;
     }
     
@@ -5738,6 +6304,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5765,6 +6335,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5792,6 +6366,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5818,6 +6396,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5845,6 +6427,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -5871,6 +6457,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5897,6 +6487,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5923,6 +6517,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5950,6 +6548,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -5977,6 +6579,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -6002,6 +6608,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -6028,6 +6638,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -6054,6 +6668,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -6080,6 +6698,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -6107,6 +6729,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -6132,6 +6758,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -6159,6 +6789,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -6185,6 +6819,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -6211,6 +6849,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "231, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3050, 3059, 3062);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
         return ammo;
 
     }
@@ -6238,6 +6880,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_C });
         return ammo;
     }
     
@@ -6265,6 +6911,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2818, 2820, 2831, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
         return ammo;
     }
   
@@ -6292,6 +6942,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825, 2831, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -6319,6 +6973,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825, 2831, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
         return ammo;
     }
     
@@ -6346,6 +7004,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "96, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2815, 2824, 2825, 2831, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -6370,6 +7032,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -6394,6 +7060,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_C, RATING_B};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -6416,6 +7086,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -6440,6 +7114,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_C, RATING_B};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -6462,6 +7140,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -6486,6 +7168,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_C, RATING_B};
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -6507,6 +7193,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3060, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -6533,6 +7223,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "230, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2817, 2819, 2830);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -6555,6 +7249,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -6581,6 +7279,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "230, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2817, 2819, 2830);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -6603,6 +7305,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -6629,6 +7335,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "230, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2817, 2819, 2830);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -6655,6 +7365,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "204, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2819, 2831, 2835);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_C });
         return ammo;
     }
 
@@ -6678,6 +7392,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_D, RATING_C};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2828);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
         return ammo;
     }
 
@@ -6700,6 +7418,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_D, RATING_C};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2828);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
         return ammo;
     }
 
@@ -6724,6 +7446,10 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "320, TO";
 
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3059, 3085, 3145);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -6747,6 +7473,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "320, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3059, 3085, 3145);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -6770,6 +7500,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "320, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3059, 3085, 3145);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
         return ammo;
 
     }
@@ -6797,6 +7531,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3062, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -6822,6 +7560,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3062, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -6849,6 +7591,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3062, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -6874,6 +7620,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3062, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -6901,6 +7651,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3062, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -6926,6 +7680,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3062, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -6953,6 +7711,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3062, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -6978,6 +7740,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_C;
         ammo.rulesRefs = "229, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3062, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -7005,6 +7771,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3053, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7035,6 +7805,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3053, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7063,6 +7837,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3054, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7090,6 +7868,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3053, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7120,6 +7902,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3053, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7148,6 +7934,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3054, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7174,6 +7964,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3053, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7204,6 +7998,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3053, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7231,6 +8029,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3054, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7258,6 +8060,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3053, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7287,6 +8093,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3053, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7314,6 +8124,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "138, TW";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3047, 3054, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
         return ammo;
     }
 
@@ -7339,6 +8153,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7367,6 +8185,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7395,6 +8217,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7424,6 +8250,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7454,6 +8284,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7479,6 +8313,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7506,6 +8344,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7534,6 +8376,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7563,6 +8409,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7593,6 +8443,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7618,6 +8472,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7646,6 +8504,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7674,6 +8536,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7703,6 +8569,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7733,6 +8603,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7757,6 +8631,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7785,6 +8663,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7813,6 +8695,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7842,6 +8728,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7872,6 +8762,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "67, IO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, DATE_NONE, DATE_NONE, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -7897,6 +8791,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -7922,6 +8820,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -7947,6 +8849,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -7972,6 +8878,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -7997,6 +8907,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8022,6 +8936,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8047,6 +8965,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8072,6 +8994,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8097,6 +9023,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -8121,6 +9051,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8146,6 +9080,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8171,6 +9109,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8196,6 +9138,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8221,6 +9167,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -8245,6 +9195,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8270,6 +9224,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8295,6 +9253,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8320,6 +9282,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -8345,6 +9311,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -8369,6 +9339,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -8394,6 +9368,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_D};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(DATE_NONE, DATE_NONE, 2868);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -8417,6 +9395,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3060, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -8440,6 +9422,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_C, RATING_C};
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2820);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_X });
         return ammo;
     }
 
@@ -8464,6 +9450,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2825, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_D, RATING_C};
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(DATE_NONE, DATE_NONE, 2825);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
         return ammo;
     }
 
@@ -8487,6 +9477,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -8510,6 +9504,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3059;
         ammo.techLevel.put(3059, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_D};
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3059);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -8533,6 +9531,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_D};
         ammo.techRating = RATING_A;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_A);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -8554,6 +9556,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3060, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_D};
         ammo.techRating = RATING_A;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_A);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -8579,6 +9585,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, 3073, 3145);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -8605,6 +9615,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, 3070, 3145);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -8631,6 +9645,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3065, 3070, 3145);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -8659,6 +9677,10 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "284, TO";
 
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2593, 2600, DATE_NONE, 2830, 3044);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -8684,6 +9706,10 @@ public class AmmoType extends EquipmentType {
         ammo.rulesRefs = "284, TO";
 
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2807, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -8709,6 +9735,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "284, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2807, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -8735,6 +9765,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "284, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2807, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -8761,6 +9795,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "284, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2807, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
         return ammo;
     }
 
@@ -8787,6 +9825,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -8813,6 +9855,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -8839,6 +9885,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -8865,6 +9915,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -8890,6 +9944,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -8914,6 +9972,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -8938,6 +10000,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -8962,6 +10028,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -8986,6 +10056,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9010,6 +10084,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9033,6 +10111,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3050, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9056,6 +10138,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3050, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9079,6 +10165,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3050, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9102,6 +10192,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3050, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9125,6 +10219,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3050, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9150,6 +10248,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "284, TO";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3065, 3075, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -9175,6 +10277,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_D};
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -9200,6 +10306,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_D};
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -9225,6 +10335,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_D};
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -9250,6 +10364,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_D};
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -9275,6 +10393,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_D};
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3060);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -9298,6 +10420,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_B};
         ammo.techRating = RATING_B;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -9320,6 +10446,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_E};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3067, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9344,6 +10474,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.techLevel.put(3084, TechConstants.T_IS_ADVANCED);
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3067, 3084, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -9367,6 +10501,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_B};
         ammo.techRating = RATING_B;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -9390,6 +10528,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_B};
         ammo.techRating = RATING_B;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -9413,6 +10555,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_B};
         ammo.techRating = RATING_B;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -9436,6 +10582,10 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_B};
         ammo.techRating = RATING_B;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3050);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -9460,6 +10610,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9485,6 +10639,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9509,6 +10667,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9533,6 +10695,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9557,6 +10723,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9581,6 +10751,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9607,6 +10781,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_D;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(3057, 3068, 3070);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_C });
         return ammo;
     }
 
@@ -9633,6 +10811,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_D;
         ammo.rulesRefs = "207, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
+        ammo.techProgression.setProgression(3057, 3068, 3070);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_C });
         return ammo;
     }
 
@@ -9658,6 +10840,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_D;
         ammo.rulesRefs = "285, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3059, 3079, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -9684,6 +10870,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_D;
         ammo.rulesRefs = "285, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3059, 3079, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -9710,6 +10900,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_D;
         ammo.rulesRefs = "285, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3059, 3079, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -9734,6 +10928,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_D;
         ammo.rulesRefs = "285, TO";;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3068, 3079);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -9761,6 +10959,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_D;
         ammo.rulesRefs = "285, TO";;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3067, 3060);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -9788,6 +10990,10 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(theModes);
         ammo.setInstantModeSwitch(true);
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3049, DATE_NONE, 3079);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9814,6 +11020,10 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(theModes);
         ammo.setInstantModeSwitch(true);
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3056, DATE_NONE, 3083);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -9843,6 +11053,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3054, DATE_NONE, 3080);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -9872,6 +11086,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3054, DATE_NONE, 3080);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -9902,6 +11120,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3054, DATE_NONE, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -9932,6 +11154,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3054, DATE_NONE, 3080);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -9960,6 +11186,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3072, 3081);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -9988,6 +11218,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3072, 3081);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -10016,6 +11250,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3072, 3081);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -10044,6 +11282,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3072, 3081);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -10068,6 +11310,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "314, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3054, 3072, 3090);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
         return ammo;
     }
 
@@ -10094,6 +11340,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "218, TM";
         
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3060, 3069, 3072);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -10118,6 +11368,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3064, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3064, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -10142,6 +11396,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3064;
         ammo.techLevel.put(3064, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3064, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10171,6 +11429,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_D;
         ammo.rulesRefs = "314, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3051, 3080, 3090);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -10197,6 +11459,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "219, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -10222,6 +11488,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "219, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -10247,6 +11517,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_F;
         ammo.rulesRefs = "219, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(3057, 3068, 3072);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
         return ammo;
     }
 
@@ -10271,6 +11545,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3069, ammo.techLevel.get(3067));
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3069);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10295,6 +11573,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3068, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3068);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10327,6 +11609,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2195, ammo.techLevel.get(3067));
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2195, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10351,6 +11637,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2197, ammo.techLevel.get(3067));
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2197, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10375,6 +11665,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2200, ammo.techLevel.get(3067));
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2200, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10399,6 +11693,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2200, ammo.techLevel.get(3067));
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2200, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10423,6 +11721,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2201, ammo.techLevel.get(3067));
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2201, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10447,6 +11749,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2202, ammo.techLevel.get(3067));
         ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2202, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10470,6 +11776,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2448, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2448, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
     
@@ -10493,6 +11803,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -10516,6 +11830,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2448, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2448, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
     
@@ -10539,6 +11857,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 2820);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -10562,6 +11884,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2448, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2448, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -10585,6 +11911,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_X });
         return ammo;
     }
     
@@ -10608,6 +11938,10 @@ public class AmmoType extends EquipmentType {
             ammo.techLevel.put(2715, ammo.techLevel.get(3067));
             ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2715, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
             return ammo;
         }
 
@@ -10631,6 +11965,10 @@ public class AmmoType extends EquipmentType {
             ammo.techLevel.put(2715, ammo.techLevel.get(3067));
             ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2715, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
             return ammo;
         }
 
@@ -10654,6 +11992,10 @@ public class AmmoType extends EquipmentType {
             ammo.techLevel.put(2715, ammo.techLevel.get(3067));
             ammo.techRating = RATING_D;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2715, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
             return ammo;
         }
 
@@ -10675,6 +12017,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3057, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -10697,6 +12043,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3057, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -10719,6 +12069,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3057);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -10744,6 +12098,10 @@ public class AmmoType extends EquipmentType {
         ammo.reintroDate = 3051;
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 2305, 2855, 3051);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_E, RATING_X });
         return ammo;
     }
     
@@ -10767,6 +12125,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -10790,6 +12152,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3056, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -10813,6 +12179,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3056);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -10836,6 +12206,10 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE);
         ammo.capital = true;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3067, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
     
@@ -10858,6 +12232,10 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_NUCLEAR).or(F_CAP_MISSILE);
         ammo.capital = true;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3067, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -10885,6 +12263,10 @@ public class AmmoType extends EquipmentType {
         ammo.reintroDate = 3051;
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2305, DATE_NONE, 2854, 3051);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_E, RATING_X });
         return ammo;
     }
     
@@ -10910,6 +12292,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -10933,6 +12319,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3056, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -10956,6 +12346,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3056);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -10982,6 +12376,10 @@ public class AmmoType extends EquipmentType {
         ammo.reintroDate = 3051;
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2305, DATE_NONE, 2855, 3051);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_E, RATING_X });
         return ammo;
     }
     
@@ -11006,6 +12404,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -11030,6 +12432,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3056, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -11054,6 +12460,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3056);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11080,6 +12490,10 @@ public class AmmoType extends EquipmentType {
         ammo.reintroDate = 3051;
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2550, DATE_NONE, 2850, 3051);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_D, RATING_X });
         return ammo;
     }
     
@@ -11104,6 +12518,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -11129,6 +12547,10 @@ public class AmmoType extends EquipmentType {
         ammo.reintroDate = 3051;
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2550, DATE_NONE, 2850, 3051);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
     
@@ -11152,6 +12574,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -11175,6 +12601,10 @@ public class AmmoType extends EquipmentType {
                 .or(F_CAP_MISSILE);
         ammo.capital = true;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
     
@@ -11198,6 +12628,10 @@ public class AmmoType extends EquipmentType {
                 .or(F_CAP_MISSILE);
         ammo.capital = true;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3067, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -11223,6 +12657,10 @@ public class AmmoType extends EquipmentType {
         ammo.reintroDate = 3051;
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 2305, DATE_NONE, 2854, 3051);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
     
@@ -11246,6 +12684,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -11271,6 +12713,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3056);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -11296,6 +12742,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3056);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11320,6 +12770,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3056, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -11344,6 +12798,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3056);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11367,6 +12825,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3056, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3056, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -11390,6 +12852,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3056, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3056);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11409,6 +12875,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3055, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_E;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3055);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11428,6 +12898,10 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_NUCLEAR);
         ammo.capital = true;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -11453,6 +12927,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3073, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3073, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11478,6 +12956,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3073, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3073, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11503,6 +12985,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3073, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3073, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -11529,6 +13015,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3091, TechConstants.T_CLAN_TW);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3090, 3091);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11555,6 +13045,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3091, TechConstants.T_CLAN_TW);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3090, 3091);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11581,6 +13075,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3091, TechConstants.T_CLAN_TW);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3090, 3091);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11606,6 +13104,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3072, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11630,6 +13132,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3072, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11654,6 +13160,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3072, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11679,6 +13189,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3072, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3072, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -11705,6 +13219,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3072, TechConstants.T_CLAN_TW);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3070, 3072);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11730,6 +13248,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3072, TechConstants.T_CLAN_TW);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3070, 3072);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11755,6 +13277,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3072, TechConstants.T_CLAN_TW);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3070, 3072);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11781,6 +13307,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3072, TechConstants.T_CLAN_TW);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 3070, 3072);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -11809,6 +13339,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "263, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2521, 2531, 3052, 2819, 3043);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_D, RATING_F, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -11836,6 +13370,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "263, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2521, 2531, 3052, 2819, 3043);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_D, RATING_F, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -11863,6 +13401,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "263, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2521, 2531, 3052, 2819, 3043);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_D, RATING_F, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -11890,6 +13432,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "263, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(2521, 2531, 3052, 2819, 3043);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_D, RATING_F, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -11914,6 +13460,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "263, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2830, 2840, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -11938,6 +13488,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "263, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2830, 2840, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -11962,6 +13516,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "263, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2830, 2840, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -11986,6 +13544,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_B;
         ammo.rulesRefs = "263, TM";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(2830, 2840, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -12008,6 +13570,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "284, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3065, 3095, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -12030,6 +13596,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "284, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3065, 3095, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -12052,6 +13622,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "284, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3065, 3095, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -12074,6 +13648,10 @@ public class AmmoType extends EquipmentType {
         ammo.techRating = RATING_E;
         ammo.rulesRefs = "284, TO";
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3065, 3095, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -12095,6 +13673,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3069);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -12116,6 +13698,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3068);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -12140,6 +13726,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(1950, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_A, RATING_A, RATING_A};
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
+        ammo.techProgression.setTechRating(RATING_A);
+        ammo.techProgression.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
         return ammo;
     }
 
@@ -12163,6 +13753,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(1950, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_A, RATING_A, RATING_A};
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
+        ammo.techProgression.setTechRating(RATING_A);
+        ammo.techProgression.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
         return ammo;
     }
 
@@ -12187,6 +13781,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_A, RATING_A};
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2820);
+        ammo.techProgression.setTechRating(RATING_A);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_A, RATING_A, RATING_X });
         return ammo;
     }
 
@@ -12210,6 +13808,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_A, RATING_A};
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2820);
+        ammo.techProgression.setTechRating(RATING_A);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_A, RATING_A, RATING_X });
         return ammo;
     }
 
@@ -12231,6 +13833,10 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 8500;
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
     private static AmmoType createISTHBLB2XAmmo() {
@@ -12250,6 +13856,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.cost = 3000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3067, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12270,6 +13880,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.cost = 15000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 3067, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12290,6 +13904,10 @@ public class AmmoType extends EquipmentType {
     ammo.bv = 26;
     ammo.cost = 30000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     return ammo;
 }
 
@@ -12315,6 +13933,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.cost = 4950;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12340,6 +13962,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 11;
         ammo.cost = 25000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12365,6 +13991,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 26;
         ammo.cost = 51000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
     
@@ -12384,6 +14014,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 8;
         ammo.cost = 2000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12403,6 +14037,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 31;
         ammo.cost = 15000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12422,6 +14060,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 42;
         ammo.cost = 30000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
     
@@ -12441,6 +14083,10 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12460,6 +14106,10 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 80000;
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
     
@@ -12482,6 +14132,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
         ammo.techRating = RATING_F;
           
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3073);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
         return ammo;
     }
 
@@ -12505,6 +14159,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3073);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -12530,6 +14188,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3068;
         ammo.techLevel.put(3068, ammo.techLevel.get(3067));
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3068);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -12555,6 +14217,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3068;
         ammo.techLevel.put(3068, ammo.techLevel.get(3067));
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3068);
+        ammo.techProgression.setTechRating(RATING_D);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
     
@@ -12578,6 +14244,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[]{RATING_A, RATING_A, RATING_A};
         ammo.techRating = RATING_A;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
+        ammo.techProgression.setTechRating(RATING_A);
+        ammo.techProgression.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
         return ammo;
     }
 
@@ -12603,6 +14273,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3054, ammo.techLevel.get(3067));
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3054);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -12628,6 +14302,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3054, ammo.techLevel.get(3067));
         ammo.techRating = RATING_F;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3054);
+        ammo.techProgression.setTechRating(RATING_F);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
         return ammo;
     }
 
@@ -12653,6 +14331,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2400, ammo.techLevel.get(3067));
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
         return ammo;
     }
 
@@ -12678,6 +14360,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2400, ammo.techLevel.get(3067));
         ammo.techRating = RATING_C;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 2400);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
         return ammo;
     }
 
@@ -12696,6 +14382,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 4;
         ammo.cost = 52000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12714,6 +14404,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 6;
         ammo.cost = 52000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12732,6 +14426,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 10;
         ammo.cost = 52000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12754,6 +14452,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3058;
         ammo.techLevel.put(3058, ammo.techLevel.get(3067));
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -12776,6 +14478,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3058;
         ammo.techLevel.put(3058, ammo.techLevel.get(3067));
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -12798,6 +14504,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3058;
         ammo.techLevel.put(3058, ammo.techLevel.get(3067));
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -12820,6 +14530,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 3058;
         ammo.techLevel.put(3058, ammo.techLevel.get(3067));
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3058);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
     
@@ -12839,6 +14553,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.cost = 12000;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
+        ammo.techProgression.setTechRating(RATING_C);
+        ammo.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
         return ammo;
     }
 
@@ -12861,6 +14579,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3062);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -12883,6 +14605,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3062);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -12905,6 +14631,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3062);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -12927,6 +14657,10 @@ public class AmmoType extends EquipmentType {
         ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, DATE_NONE, 3062);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
     }
 
@@ -12952,6 +14686,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3058, DATE_NONE, 3082);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -12977,6 +14715,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3058, DATE_NONE, 3082);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -13002,6 +14744,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3058, DATE_NONE, 3082);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -13027,6 +14773,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3058, DATE_NONE, 3082);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 
@@ -13052,6 +14802,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_B;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(1950, DATE_NONE, 3084);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -13077,6 +14831,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_B;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(1950, DATE_NONE, 3084);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -13102,6 +14860,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
         ammo.techRating = RATING_B;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(1950, DATE_NONE, 3084);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_C, RATING_F, RATING_X, RATING_X });
         return ammo;
     }
 
@@ -13128,6 +14890,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2820;
         ammo.techLevel.put(2820, ammo.techLevel.get(3067));
         ammo.techRating = RATING_B;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
+        ammo.techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -13154,6 +14920,10 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 1950;
         ammo.techLevel.put(1950, ammo.techLevel.get(3067));
         ammo.techRating = RATING_B;
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(DATE_NONE, 1950, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_B);
+        ammo.techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_X });
         return ammo;
     }
 
@@ -13176,6 +14946,10 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3072, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
 
+        ammo.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
+        ammo.techProgression.setISProgression(3072, DATE_NONE, DATE_NONE);
+        ammo.techProgression.setTechRating(RATING_E);
+        ammo.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return ammo;
     }
 

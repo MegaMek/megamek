@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.MiscType;
 import megamek.common.TechConstants;
@@ -49,6 +50,7 @@ public class TechProgressionFormatter {
     
     private static Map<String,String> miscMap = new HashMap<>();
     private static Map<String,String> weaponMap = new HashMap<>();
+    private static Map<String,String> ammoMap = new HashMap<>();
     
     private static int getProgressionIndex(int techLevel) {
         switch(techLevel) {
@@ -202,11 +204,14 @@ public class TechProgressionFormatter {
                 miscMap.put(eq.getInternalName(), formatCode(eq, "misc."));
             } else if (eq instanceof WeaponType) {
                 weaponMap.put(eq.getInternalName(), formatCode(eq, ""));
+            } else if (eq instanceof AmmoType) {
+                ammoMap.put(eq.getInternalName(), formatCode(eq, "ammo."));
             }
         }
         
 //        updateMiscType();
 //        updateWeaponType();
+//        updateAmmoType();
     }
 
     @SuppressWarnings("unused")
@@ -312,6 +317,61 @@ public class TechProgressionFormatter {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }            
+        }
+    }
+
+    @SuppressWarnings("unused")
+    private static void updateAmmoType() {
+        File oldFile = new File(SRC_DIR, "megamek/common/AmmoType.java");
+        File newFile = new File(SRC_DIR, "megamek/common/AmmoType.java.old");
+        
+        if (!newFile.exists()) {
+            oldFile.renameTo(newFile);
+        }
+
+        oldFile = new File(SRC_DIR, "megamek/common/AmmoType.java.old");
+        newFile = new File(SRC_DIR, "megamek/common/AmmoType.java");
+
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(oldFile);
+            os = new FileOutputStream(newFile);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        PrintWriter pw = new PrintWriter(os);
+        Pattern namePattern = Pattern.compile(".*\"(.*?)\".*");
+        EquipmentType etype = null;
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String line = null;
+            while (null != (line = reader.readLine())) {
+                if (etype == null) {
+                    Matcher m = namePattern.matcher(line);
+                    if (m.matches()) {
+                        etype = EquipmentType.get(m.group(1));
+                        if (!(etype instanceof AmmoType)) {
+                            etype = null;
+                        }
+                    }
+                }
+                if (line.contains("new AmmoType()")) {
+                    etype = null;
+                } else if (line.contains("return ammo;")) {
+                    if (etype == null) {
+                        System.err.println("equipment name not found");
+                    } else {
+                        pw.print(ammoMap.get(etype.getInternalName()));
+                    }
+                }
+                pw.println(line);
+            }
+            pw.close();
+            is.close();
+            os.close();
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
         }
     }
 }

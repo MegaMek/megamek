@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.common.AmmoType;
+import megamek.common.BombType;
 import megamek.common.EquipmentType;
 import megamek.common.MiscType;
 import megamek.common.TechConstants;
@@ -51,6 +52,7 @@ public class TechProgressionFormatter {
     private static Map<String,String> miscMap = new HashMap<>();
     private static Map<String,String> weaponMap = new HashMap<>();
     private static Map<String,String> ammoMap = new HashMap<>();
+    private static Map<String,String> bombMap = new HashMap<>();
     
     private static int getProgressionIndex(int techLevel) {
         switch(techLevel) {
@@ -204,6 +206,8 @@ public class TechProgressionFormatter {
                 miscMap.put(eq.getInternalName(), formatCode(eq, "misc."));
             } else if (eq instanceof WeaponType) {
                 weaponMap.put(eq.getInternalName(), formatCode(eq, ""));
+            } else if (eq instanceof BombType) {
+                bombMap.put(eq.getInternalName(), formatCode(eq, "bomb."));
             } else if (eq instanceof AmmoType) {
                 ammoMap.put(eq.getInternalName(), formatCode(eq, "ammo."));
             }
@@ -212,6 +216,7 @@ public class TechProgressionFormatter {
 //        updateMiscType();
 //        updateWeaponType();
 //        updateAmmoType();
+        printBombConversion();
     }
 
     @SuppressWarnings("unused")
@@ -372,6 +377,14 @@ public class TechProgressionFormatter {
             os.close();
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
+        }
+    }
+    
+    private static void printBombConversion() {
+        //Bomb internal names are set by constants, making file processing difficult
+        for (String bomb : bombMap.keySet()) {
+            System.out.println(bomb);
+            System.out.println(bombMap.get(bomb));
         }
     }
 }

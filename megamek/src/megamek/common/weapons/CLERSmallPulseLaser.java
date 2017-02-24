@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -63,9 +63,9 @@ public class CLERSmallPulseLaser extends PulseLaserWeapon {
         introDate = 3057;
         techLevel.put(3057, techLevel.get(3071));
         techLevel.put(3082, TechConstants.T_CLAN_TW);
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(3057, DATE_NONE, 3082);
-        techProgression.setTechRating(RATING_F);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3057, DATE_NONE, 3082);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

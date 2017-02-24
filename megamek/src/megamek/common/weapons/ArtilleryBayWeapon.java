@@ -21,7 +21,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -55,10 +55,10 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_ARTILLERY;
-        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        techProgression.setProgression(DATE_NONE, DATE_NONE, 3071);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 
     /*

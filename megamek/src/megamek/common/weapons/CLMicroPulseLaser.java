@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -64,10 +64,10 @@ public class CLMicroPulseLaser extends PulseLaserWeapon {
                 EquipmentType.RATING_X, EquipmentType.RATING_D };
         introDate = 3060;
         techRating = RATING_F;
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 3060);
-        techProgression.setTechRating(RATING_F);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3060);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
     }
 
 }

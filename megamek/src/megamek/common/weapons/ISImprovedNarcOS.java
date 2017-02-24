@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -56,9 +56,9 @@ public class ISImprovedNarcOS extends NarcWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_E;
         rulesRefs = "141, TW";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3049, 3062, 3070);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3049, 3062, 3070);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 }

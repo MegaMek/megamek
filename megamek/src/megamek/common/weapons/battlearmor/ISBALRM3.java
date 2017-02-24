@@ -14,7 +14,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.LRMWeapon;
 
 
@@ -52,9 +52,9 @@ public class ISBALRM3 extends LRMWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_E;
         rulesRefs = "261, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3050, 3057, 3060);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3050, 3057, 3060);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 }

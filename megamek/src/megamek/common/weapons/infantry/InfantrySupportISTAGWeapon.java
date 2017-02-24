@@ -15,7 +15,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -61,10 +61,10 @@ public class InfantrySupportISTAGWeapon extends InfantryWeapon {
     	availRating = new int[] { RATING_F,RATING_X ,RATING_E ,RATING_E};
     	techRating = RATING_E;
     	rulesRefs = "273, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(2593, 2610, DATE_NONE, 2770, 3051);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_F, RATING_X, RATING_E, RATING_E });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2593, 2610, DATE_NONE, 2770, 3051);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_E, RATING_E });
 	}
 
     @Override

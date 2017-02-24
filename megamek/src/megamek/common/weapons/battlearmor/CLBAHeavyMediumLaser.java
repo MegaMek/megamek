@@ -19,7 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.LaserWeapon;
 
 /**
@@ -64,9 +64,9 @@ public class CLBAHeavyMediumLaser extends LaserWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_D};
         techRating = RATING_F;
         rulesRefs = "258, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(3052, 3059, 3062);
-        techProgression.setTechRating(RATING_F);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3052, 3059, 3062);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }
 }

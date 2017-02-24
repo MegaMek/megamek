@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -43,9 +43,9 @@ public class ISVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
         introDate = 1950;
         techLevel.put(1950, techLevel.get(3071));
         techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, 1950, 3080);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_D, RATING_E, RATING_F, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 1950, 3080);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_E, RATING_F, RATING_X });
     }
 }

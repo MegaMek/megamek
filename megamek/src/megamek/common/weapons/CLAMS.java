@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -60,9 +60,9 @@ public class CLAMS extends AmmoWeapon {
         availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_F;
         atClass = CLASS_POINT_DEFENSE;
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2831);
-        techProgression.setTechRating(RATING_F);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2831);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
     }
 }

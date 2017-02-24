@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -65,10 +65,10 @@ public class CLLightMG extends MGWeapon {
         techRating = RATING_C;
         rulesRefs = "228, TM";
 
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(3050, 3060, 3070);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3050, 3060, 3070);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
     }
 
 }

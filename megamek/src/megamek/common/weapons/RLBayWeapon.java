@@ -17,7 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -48,9 +48,9 @@ public class RLBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.toHitModifier = 1;
         this.atClass = CLASS_ROCKET_LAUNCHER;
-        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        techProgression.setProgression(DATE_NONE, DATE_NONE, 3071);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 }

@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 
 
@@ -60,9 +60,9 @@ public class ISNPPCWeaponHeavy extends NavalPPCWeapon {
         availRating = new int[] { RATING_D, RATING_F, RATING_D };
         techRating = RATING_D;
 
-        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        techProgression.setProgression(DATE_NONE, DATE_NONE, 2356);
-        techProgression.setTechRating(RATING_D);
-        techProgression.setAvailability( new int[] { RATING_D, RATING_F, RATING_D, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2356);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_F, RATING_D, RATING_X });
     }
 }

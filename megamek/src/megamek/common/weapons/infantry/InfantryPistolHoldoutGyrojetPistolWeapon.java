@@ -20,7 +20,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -72,10 +72,10 @@ public class InfantryPistolHoldoutGyrojetPistolWeapon extends InfantryWeapon {
         availRating = new int[]{RATING_D,RATING_D,RATING_C,RATING_B};
         techRating = RATING_D;
         rulesRefs =" 273, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        techProgression.setProgression(DATE_NONE, DATE_NONE, 2100);
-        techProgression.setTechRating(RATING_D);
-        techProgression.setAvailability( new int[] { RATING_D, RATING_D, RATING_C, RATING_B });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_D, RATING_C, RATING_B });
     }
 }
 

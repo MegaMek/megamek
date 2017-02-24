@@ -251,10 +251,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         bomb.techRating = RATING_B;
         bomb.rulesRefs = "246, TW";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        bomb.techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
-        bomb.techProgression.setTechRating(RATING_B);
-        bomb.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        bomb.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        bomb.techAdvancement.setTechRating(RATING_B);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
 
         return bomb;
     }
@@ -278,10 +278,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_D ,RATING_D ,RATING_D ,RATING_D};
         bomb.techRating = RATING_B;
         bomb.rulesRefs = "246, TW";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        bomb.techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
-        bomb.techProgression.setTechRating(RATING_B);
-        bomb.techProgression.setAvailability( new int[] { RATING_D, RATING_D, RATING_D, RATING_D });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        bomb.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        bomb.techAdvancement.setTechRating(RATING_B);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_D, RATING_D, RATING_D, RATING_D });
 
         return bomb;
     }
@@ -308,10 +308,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_E ,RATING_F ,RATING_E ,RATING_D};
         bomb.techRating = RATING_C;
         bomb.rulesRefs = "247, TW";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(DATE_NONE, 2200, 3065, 2800, 3060);
-        bomb.techProgression.setTechRating(RATING_C);
-        bomb.techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_D });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(DATE_NONE, 2200, 3065, 2800, 3060);
+        bomb.techAdvancement.setTechRating(RATING_C);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_D });
 
         return bomb;
     }
@@ -336,10 +336,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_D};
         bomb.techRating = RATING_C;
         bomb.rulesRefs = "247, TW";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        bomb.techProgression.setClanProgression(DATE_NONE, 2807, 3065);
-        bomb.techProgression.setTechRating(RATING_C);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 2807, 3065);
+        bomb.techAdvancement.setTechRating(RATING_C);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
 
         return bomb;
     }
@@ -367,10 +367,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_E ,RATING_F ,RATING_D ,RATING_D};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "238, TM";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(2595, 2605, 2645, 2835, 3035);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_D });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(2595, 2605, 2645, 2835, 3035);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_D });
 
         return bomb;
     }
@@ -394,14 +394,14 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_D};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "238, TM";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        bomb.techProgression.setClanProgression(2595, 2605, 2645);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        bomb.techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2807);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        bomb.techAdvancement.setClanAdvancement(2595, 2605, 2645);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        bomb.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
 
         return bomb;
     }
@@ -426,10 +426,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X ,RATING_X ,RATING_B ,RATING_B};
         bomb.techRating = RATING_B;
         bomb.rulesRefs = "229, TM";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(3055, 3064, 3067);
-        bomb.techProgression.setTechRating(RATING_B);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(3055, 3064, 3067);
+        bomb.techAdvancement.setTechRating(RATING_B);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
         
         return bomb;
     }
@@ -452,10 +452,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "357, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(3064, 3072, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(3064, 3072, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
      
         return bomb;
     }
@@ -477,10 +477,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "357, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        bomb.techProgression.setClanProgression(DATE_NONE, 3072, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 3072, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
      
         return bomb;
     }
@@ -504,10 +504,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         bomb.techRating = RATING_D;
         bomb.rulesRefs = "358, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(3071, DATE_NONE, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_D);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(3071, DATE_NONE, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_D);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
 
         return bomb;
     }
@@ -529,10 +529,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
         bomb.techRating = RATING_D;
         bomb.rulesRefs = "358, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        bomb.techProgression.setClanProgression(DATE_NONE, 3076, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_D);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 3076, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_D);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
 
         return bomb;
     }
@@ -555,10 +555,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_E};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "358, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(3067, 3073, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(3067, 3073, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
 
         return bomb;
     }
@@ -579,11 +579,11 @@ public class BombType extends AmmoType {
         bomb.techLevel.put(3073, TechConstants.T_CLAN_UNOFFICIAL);
         bomb.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_F };
         bomb.techRating = RATING_F;
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        bomb.techProgression.setClanProgression(DATE_NONE, 3073);
-        bomb.techProgression.setUnofficial(true);
-        bomb.techProgression.setTechRating(RATING_F);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 3073);
+        bomb.techAdvancement.setUnofficial(true);
+        bomb.techAdvancement.setTechRating(RATING_F);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
 
         return bomb;
     }
@@ -610,10 +610,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_E ,RATING_F ,RATING_E ,RATING_E};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "359, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(2617, 2623, DATE_NONE, 2855, 3046);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(2617, 2623, DATE_NONE, 2855, 3046);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_E });
        
         return bomb;
     }
@@ -637,10 +637,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_E};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "359, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        bomb.techProgression.setClanProgression(DATE_NONE, 2807, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 2807, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_E });
        
         return bomb;
     }
@@ -671,10 +671,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_E ,RATING_F ,RATING_E ,RATING_E};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "358, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(2590, 2600, DATE_NONE, 2840, 3047);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(2590, 2600, DATE_NONE, 2840, 3047);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_E });
 
         return bomb;
     }
@@ -702,10 +702,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_E};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "358, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        bomb.techProgression.setClanProgression(DATE_NONE, 2807, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 2807, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_E });
 
         return bomb;
     }
@@ -729,10 +729,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_D ,RATING_D ,RATING_D ,RATING_C};
         bomb.techRating = RATING_B;
         bomb.rulesRefs = "359, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        bomb.techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
-        bomb.techProgression.setTechRating(RATING_B);
-        bomb.techProgression.setAvailability( new int[] { RATING_D, RATING_D, RATING_D, RATING_C });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        bomb.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        bomb.techAdvancement.setTechRating(RATING_B);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_D, RATING_D, RATING_D, RATING_C });
 
         return bomb;
     }
@@ -755,10 +755,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "359, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(3064, 3072, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(3064, 3072, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
 
         return bomb;
     }
@@ -780,10 +780,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "359, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        bomb.techProgression.setClanProgression(DATE_NONE, 3074, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 3074, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
 
         return bomb;
     }
@@ -808,10 +808,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
         bomb.techRating = RATING_E;
         bomb.rulesRefs = "360, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(3055, 3065, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_E);
-        bomb.techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(3055, 3065, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_E);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
 
 
         return bomb;
@@ -835,10 +835,10 @@ public class BombType extends AmmoType {
         bomb.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         bomb.techRating = RATING_B;
         bomb.rulesRefs = "360, TO";
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        bomb.techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
-        bomb.techProgression.setTechRating(RATING_B);
-        bomb.techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        bomb.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        bomb.techAdvancement.setTechRating(RATING_B);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
 
         return bomb;
     }
@@ -858,10 +858,10 @@ public class BombType extends AmmoType {
         bomb.cost = 0;
         bomb.flags = bomb.flags.or(F_NUCLEAR);
         bomb.capital = true;
-        bomb.techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        bomb.techProgression.setISProgression(3071, DATE_NONE, DATE_NONE);
-        bomb.techProgression.setTechRating(RATING_C);
-        bomb.techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        bomb.techAdvancement.setISAdvancement(3071, DATE_NONE, DATE_NONE);
+        bomb.techAdvancement.setTechRating(RATING_C);
+        bomb.techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
 
         return bomb;
     }

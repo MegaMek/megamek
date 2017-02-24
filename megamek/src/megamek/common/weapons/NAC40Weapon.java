@@ -17,7 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -54,9 +54,9 @@ public class NAC40Weapon extends NavalACWeapon {
         availRating = new int[] { RATING_E, RATING_X, RATING_E };
         introDate = 2202;
         techLevel.put(2202, techLevel.get(3071));
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2202);
-        techProgression.setTechRating(RATING_D);
-        techProgression.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2202);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
     }
 }

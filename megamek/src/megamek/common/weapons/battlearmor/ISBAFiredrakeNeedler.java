@@ -20,7 +20,7 @@ package megamek.common.weapons.battlearmor;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -61,10 +61,10 @@ public class ISBAFiredrakeNeedler extends Weapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_B};
         techRating = RATING_D;
         rulesRefs = "266, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3053, 3060, 3068);
-        techProgression.setTechRating(RATING_D);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3053, 3060, 3068);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
     }
 
 }

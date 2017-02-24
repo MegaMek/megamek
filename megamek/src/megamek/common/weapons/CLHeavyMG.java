@@ -20,7 +20,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -64,10 +64,10 @@ public class CLHeavyMG extends MGWeapon {
         availRating = new int[] { RATING_X,RATING_X ,RATING_C ,RATING_B};
         techRating = RATING_B;
         rulesRefs = "228, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(3049, 3059, 3070);
-        techProgression.setTechRating(RATING_B);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3049, 3059, 3070);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
     }
 
 }

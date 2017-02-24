@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -53,9 +53,9 @@ public class ISSRM4 extends SRMWeapon {
         techLevel.put(2370, techLevel.get(3071));
         availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_C;
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2370);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2370);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
     }
 }

@@ -19,7 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -51,9 +51,9 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_C};
         techRating = RATING_D;
         rulesRefs = "273, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3010, 3020, 3050);
-        techProgression.setTechRating(RATING_D);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_C });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3010, 3020, 3050);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_C });
     }
 }

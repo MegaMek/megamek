@@ -14,7 +14,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.AdvancedSRMWeapon;
 /**
  * @author Sebastian Brocks
@@ -51,9 +51,9 @@ public class CLAdvancedSRM2 extends AdvancedSRMWeapon {
         techLevel.put(3062, TechConstants.T_CLAN_TW);
         availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};	
         techRating = RATING_F;
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(3047, 3056, 3062);
-        techProgression.setTechRating(RATING_F);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3047, 3056, 3062);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
     }
 }

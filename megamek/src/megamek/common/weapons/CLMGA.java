@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -63,10 +63,10 @@ public class CLMGA extends AmmoWeapon {
         availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_F };
         techRating = RATING_E;
         rulesRefs = "228, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(DATE_NONE, 3069, 3070);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 3069, 3070);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
     }
 
     /*

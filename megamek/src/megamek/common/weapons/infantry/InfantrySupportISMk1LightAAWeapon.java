@@ -19,7 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -56,9 +56,9 @@ public class InfantrySupportISMk1LightAAWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_D};
         techRating = RATING_F;
         rulesRefs = "273, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(2485, 2500, 2590, 2790, 3056);
-        techProgression.setTechRating(RATING_F);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2485, 2500, 2590, 2790, 3056);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
     }
 }

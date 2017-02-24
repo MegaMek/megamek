@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -53,9 +53,9 @@ public class CLStreakSRM4Prototype extends CLPrototypeStreakSRMWeapon {
         techLevel.put(2820, techLevel.get(3071));
         
                
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(2820, DATE_NONE, DATE_NONE, 2825);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_X, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2825);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_X, RATING_X });
     }
 }

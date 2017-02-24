@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -60,9 +60,9 @@ public class ISAMS extends AmmoWeapon {
         availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techRating = RATING_E;
         atClass = CLASS_POINT_DEFENSE;
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2617, 2796, 3040);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2617, 2796, 3040);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
     }
 }

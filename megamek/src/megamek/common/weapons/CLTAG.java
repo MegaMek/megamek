@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -53,9 +53,9 @@ public class CLTAG extends TAGWeapon {
         availRating = new int[] { RATING_X, RATING_E, RATING_D };
         techRating = RATING_E;
         flags = flags.andNot(F_BA_WEAPON).or(F_AERO_WEAPON);
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(DATE_NONE, DATE_NONE, 2820);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_X });
     }
 }

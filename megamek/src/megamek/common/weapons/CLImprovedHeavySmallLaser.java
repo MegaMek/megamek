@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jason Tighe
@@ -63,9 +63,9 @@ public class CLImprovedHeavySmallLaser extends LaserWeapon {
         introDate = 3069;
         techLevel.put(3069, techLevel.get(3071));
         techLevel.put(3085, TechConstants.T_CLAN_TW);
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(3069, DATE_NONE, 3085);
-        techProgression.setTechRating(RATING_F);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3069, DATE_NONE, 3085);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

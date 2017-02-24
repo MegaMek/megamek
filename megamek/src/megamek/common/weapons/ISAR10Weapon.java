@@ -19,7 +19,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -66,10 +66,10 @@ public class ISAR10Weapon extends CapitalMissileWeapon {
         reintroDate = 3051;
         techLevel.put(3051, TechConstants.T_IS_TW_NON_BOX);
         availRating = new int[] { RATING_E, RATING_F, RATING_E };
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2550, 2850, 3051);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2550, 2850, 3051);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
     }
 
     /*

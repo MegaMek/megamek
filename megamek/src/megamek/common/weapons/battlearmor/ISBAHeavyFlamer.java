@@ -18,7 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 public class ISBAHeavyFlamer extends BAFlamerWeapon {
@@ -54,9 +54,9 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         techRating = RATING_C;
         rulesRefs = "312, TO";
 
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3065, 3073, 3075);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3065, 3073, 3075);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 }

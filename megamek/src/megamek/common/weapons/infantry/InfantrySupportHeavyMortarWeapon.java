@@ -19,7 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -50,9 +50,9 @@ public class InfantrySupportHeavyMortarWeapon extends InfantryWeapon {
         availRating = new int[]{RATING_C,RATING_C,RATING_C,RATING_C};
         techRating = RATING_B;
         rulesRefs =" 273, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        techProgression.setProgression(DATE_NONE, DATE_NONE, 1950);
-        techProgression.setTechRating(RATING_B);
-        techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
     }
 }

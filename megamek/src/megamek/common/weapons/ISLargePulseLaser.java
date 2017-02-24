@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -62,9 +62,9 @@ public class ISLargePulseLaser extends PulseLaserWeapon {
         extinctDate = 2950;
         reintroDate = 3037;
         availRating = new int[] { RATING_E, RATING_F, RATING_D };
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2609, 2950, 3037);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2609, 2950, 3037);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
     }
 }

@@ -20,7 +20,7 @@ package megamek.common.weapons;
 import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -58,10 +58,10 @@ public class CLFireExtinguisher extends Weapon {
         introDate = 2820;
         techLevel.put(2820, techLevel.get(3071));
 
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
-        techProgression.setTechRating(RATING_B);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
     }
 
     /*

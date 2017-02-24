@@ -19,7 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.LaserWeapon;
 
 /**
@@ -59,9 +59,9 @@ public class ISBAMediumLaser extends LaserWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_B ,RATING_B};
         techRating = RATING_E;
         rulesRefs = "258, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3045, DATE_NONE, 3050);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3045, DATE_NONE, 3050);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
     }
 }

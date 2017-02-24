@@ -19,7 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -59,10 +59,10 @@ public class CLBAHeavyRecoillessRifle extends Weapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_D};
         techRating = RATING_C;
         rulesRefs = "268, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(DATE_NONE, 3057, DATE_NONE);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 3057, DATE_NONE);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }
 
 }

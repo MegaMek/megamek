@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jason Tighe
@@ -56,9 +56,9 @@ public class ISMekMortar2 extends MekMortarWeapon {
         availRating = new int[] { RATING_D ,RATING_F ,RATING_F ,RATING_E};
         techRating = RATING_B;
         rulesRefs = "263, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(2521, 2531, 3052, 2819, 3043);
-        techProgression.setTechRating(RATING_B);
-        techProgression.setAvailability( new int[] { RATING_D, RATING_F, RATING_F, RATING_E });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2521, 2531, 3052, 2819, 3043);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_F, RATING_F, RATING_E });
     }
 }

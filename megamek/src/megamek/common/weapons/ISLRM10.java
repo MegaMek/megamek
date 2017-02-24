@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -52,9 +52,9 @@ public class ISLRM10 extends LRMWeapon {
         techLevel.put(2300, techLevel.get(3071));
         availRating = new int[] { RATING_C, RATING_C, RATING_C };
         techRating = RATING_C;
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, DATE_NONE, 2300);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2300);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
     }
 }

@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -60,10 +60,10 @@ public class ISMekTaser extends AmmoWeapon {
                 .or(F_TASER).or(F_TANK_WEAPON);
         introDate = 3084;
         techLevel.put(3084, TechConstants.T_IS_ADVANCED);
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, 3084, DATE_NONE);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 3084, DATE_NONE);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 
     /*

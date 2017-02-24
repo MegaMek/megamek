@@ -22,7 +22,7 @@ import java.util.Arrays;
  * @author Neoancient
  *
  */
-public class TechProgression {
+public class TechAdvancement {
 	
 	/* Constants for special cases not involving a specific year */
 	public static final int DATE_NA = -1;
@@ -39,23 +39,23 @@ public class TechProgression {
 	public static final int EXTINCT      = 3;
 	public static final int REINTRODUCED = 4;
 
-	/* Aliases for TechConstants rules levels that reflect tech progression usage */
+	/* Aliases for TechConstants rules levels that reflect tech advancement usage */
     public static final int RULES_TOURNAMENT     = TechConstants.T_SIMPLE_STANDARD;
 	public static final int RULES_ADVANCED     = TechConstants.T_SIMPLE_ADVANCED;
 	public static final int RULES_EXPERIMENTAL = TechConstants.T_SIMPLE_EXPERIMENTAL;
 	public static final int RULES_UNAVAILABLE  = TechConstants.T_SIMPLE_UNOFFICIAL;
 	
     private int techBase = TECH_BASE_ALL;
-    private int[] isProgression = new int[5];
-    private int[] clanProgression = new int[5];
+    private int[] isAdvancement = new int[5];
+    private int[] clanAdvancement = new int[5];
     private boolean isIntroLevel = false; //Whether RULES_STANDARD should be considered T_INTRO_BOXSET.
     private boolean unofficial = false;
     private int techRating = EquipmentType.RATING_C;
     private int[] availability = new int[EquipmentType.ERA_DA + 1];
     
-    public TechProgression() {
-        Arrays.fill(isProgression, DATE_NA);
-        Arrays.fill(clanProgression, DATE_NA);
+    public TechAdvancement() {
+        Arrays.fill(isAdvancement, DATE_NA);
+        Arrays.fill(clanAdvancement, DATE_NA);
     }
     
     public void setTechBase(int base) {
@@ -66,118 +66,118 @@ public class TechProgression {
         return techBase;
     }
     
-    public void setISProgression(int[] prog) {
-        Arrays.fill(isProgression, DATE_NA);
-        System.arraycopy(prog, 0, isProgression, 0, Math.min(isProgression.length, prog.length));
+    public void setISAdvancement(int[] prog) {
+        Arrays.fill(isAdvancement, DATE_NA);
+        System.arraycopy(prog, 0, isAdvancement, 0, Math.min(isAdvancement.length, prog.length));
     }
     
-    public void setClanProgression(int[] prog) {
-        Arrays.fill(clanProgression, DATE_NA);
-        System.arraycopy(prog, 0, clanProgression, 0, Math.min(clanProgression.length, prog.length));
+    public void setClanAdvancement(int[] prog) {
+        Arrays.fill(clanAdvancement, DATE_NA);
+        System.arraycopy(prog, 0, clanAdvancement, 0, Math.min(clanAdvancement.length, prog.length));
     }
     
-    public void setProgression(int[] prog) {
-        setISProgression(prog);
-        setClanProgression(prog);
+    public void setAdvancement(int[] prog) {
+        setISAdvancement(prog);
+        setClanAdvancement(prog);
     }
     
-    public void setISProgression(int prototype, int production, int common,
+    public void setISAdvancement(int prototype, int production, int common,
             int extinct, int reintroduction) {
-        isProgression[PROTOTYPE] = prototype;
-        isProgression[PRODUCTION] = production;
-        isProgression[COMMON] = common;
-        isProgression[EXTINCT] = extinct;
-        isProgression[REINTRODUCED] = reintroduction;
+        isAdvancement[PROTOTYPE] = prototype;
+        isAdvancement[PRODUCTION] = production;
+        isAdvancement[COMMON] = common;
+        isAdvancement[EXTINCT] = extinct;
+        isAdvancement[REINTRODUCED] = reintroduction;
     }
 
-    public void setISProgression(int prototype, int production, int common,
+    public void setISAdvancement(int prototype, int production, int common,
             int extinct) {
-        setISProgression(prototype, production, common, extinct, DATE_NA);
+        setISAdvancement(prototype, production, common, extinct, DATE_NA);
     }
 
-    public void setISProgression(int prototype, int production, int common) {
-        setISProgression(prototype, production, common, DATE_NA, DATE_NA);
+    public void setISAdvancement(int prototype, int production, int common) {
+        setISAdvancement(prototype, production, common, DATE_NA, DATE_NA);
     }
 
-    public void setISProgression(int prototype, int production) {
-        setISProgression(prototype, production, DATE_NA, DATE_NA, DATE_NA);
+    public void setISAdvancement(int prototype, int production) {
+        setISAdvancement(prototype, production, DATE_NA, DATE_NA, DATE_NA);
     }
 
-    public void setISProgression(int prototype) {
-        setISProgression(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
+    public void setISAdvancement(int prototype) {
+        setISAdvancement(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
     }
     
-    public void setClanProgression(int prototype, int production, int common,
+    public void setClanAdvancement(int prototype, int production, int common,
             int extinct, int reintroduction) {
-        clanProgression[PROTOTYPE] = prototype;
-        clanProgression[PRODUCTION] = production;
-        clanProgression[COMMON] = common;
-        clanProgression[EXTINCT] = extinct;
-        clanProgression[REINTRODUCED] = reintroduction;
+        clanAdvancement[PROTOTYPE] = prototype;
+        clanAdvancement[PRODUCTION] = production;
+        clanAdvancement[COMMON] = common;
+        clanAdvancement[EXTINCT] = extinct;
+        clanAdvancement[REINTRODUCED] = reintroduction;
     }
 
-    public void setClanProgression(int prototype, int production, int common,
+    public void setClanAdvancement(int prototype, int production, int common,
             int extinct) {
-        setClanProgression(prototype, production, common, extinct, DATE_NA);
+        setClanAdvancement(prototype, production, common, extinct, DATE_NA);
     }
 
-    public void setClanProgression(int prototype, int production, int common) {
-        setClanProgression(prototype, production, common, DATE_NA, DATE_NA);
+    public void setClanAdvancement(int prototype, int production, int common) {
+        setClanAdvancement(prototype, production, common, DATE_NA, DATE_NA);
     }
 
-    public void setClanProgression(int prototype, int production) {
-        setClanProgression(prototype, production, DATE_NA, DATE_NA, DATE_NA);
+    public void setClanAdvancement(int prototype, int production) {
+        setClanAdvancement(prototype, production, DATE_NA, DATE_NA, DATE_NA);
     }
 
-    public void setClanProgression(int prototype) {
-        setClanProgression(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
+    public void setClanAdvancement(int prototype) {
+        setClanAdvancement(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
     }
     
-    public void setProgression(int prototype, int production, int common,
+    public void setAdvancement(int prototype, int production, int common,
             int extinct, int reintroduction) {
-        setISProgression(prototype, production, common, extinct, reintroduction);
-        setClanProgression(prototype, production, common, extinct, reintroduction);
+        setISAdvancement(prototype, production, common, extinct, reintroduction);
+        setClanAdvancement(prototype, production, common, extinct, reintroduction);
     }
         
-    public void setProgression(int prototype, int production, int common,
+    public void setAdvancement(int prototype, int production, int common,
             int extinct) {
-        setISProgression(prototype, production, common, extinct, DATE_NA);
-        setClanProgression(prototype, production, common, extinct, DATE_NA);
+        setISAdvancement(prototype, production, common, extinct, DATE_NA);
+        setClanAdvancement(prototype, production, common, extinct, DATE_NA);
     }
     
-    public void setProgression(int prototype, int production, int common) {
-        setISProgression(prototype, production, common, DATE_NA, DATE_NA);
-        setClanProgression(prototype, production, common, DATE_NA, DATE_NA);
+    public void setAdvancement(int prototype, int production, int common) {
+        setISAdvancement(prototype, production, common, DATE_NA, DATE_NA);
+        setClanAdvancement(prototype, production, common, DATE_NA, DATE_NA);
     }
     
-    public void setProgression(int prototype, int production) {
-        setISProgression(prototype, production, DATE_NA, DATE_NA, DATE_NA);
-        setClanProgression(prototype, production, DATE_NA, DATE_NA, DATE_NA);
+    public void setAdvancement(int prototype, int production) {
+        setISAdvancement(prototype, production, DATE_NA, DATE_NA, DATE_NA);
+        setClanAdvancement(prototype, production, DATE_NA, DATE_NA, DATE_NA);
     }
     
-    public void setProgression(int prototype) {
-        setISProgression(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
-        setClanProgression(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
+    public void setAdvancement(int prototype) {
+        setISAdvancement(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
+        setClanAdvancement(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
     }
     
     public int getPrototypeDate(boolean clan) {
-        return clan?clanProgression[PROTOTYPE] : isProgression[PROTOTYPE];
+        return clan?clanAdvancement[PROTOTYPE] : isAdvancement[PROTOTYPE];
     }
 
     public int getProductionDate(boolean clan) {
-        return clan?clanProgression[PRODUCTION] : isProgression[PRODUCTION];
+        return clan?clanAdvancement[PRODUCTION] : isAdvancement[PRODUCTION];
     }
 
     public int getCommonDate(boolean clan) {
-        return clan?clanProgression[COMMON] : isProgression[COMMON];
+        return clan?clanAdvancement[COMMON] : isAdvancement[COMMON];
     }
 
     public int getExtinctionDate(boolean clan) {
-        return clan?clanProgression[EXTINCT] : isProgression[EXTINCT];
+        return clan?clanAdvancement[EXTINCT] : isAdvancement[EXTINCT];
     }
 
     public int getReintroductionDate(boolean clan) {
-        return clan?clanProgression[REINTRODUCED] : isProgression[REINTRODUCED];
+        return clan?clanAdvancement[REINTRODUCED] : isAdvancement[REINTRODUCED];
     }
     
     public int getIntroductionDate(boolean clan) {
@@ -195,23 +195,23 @@ public class TechProgression {
      */
     
     public int getPrototypeDate() {
-        return earliestDate(isProgression[PROTOTYPE], clanProgression[PROTOTYPE]);
+        return earliestDate(isAdvancement[PROTOTYPE], clanAdvancement[PROTOTYPE]);
     }
     
     public int getProductionDate() {
-        return earliestDate(isProgression[PRODUCTION], clanProgression[PRODUCTION]);
+        return earliestDate(isAdvancement[PRODUCTION], clanAdvancement[PRODUCTION]);
     }
     
     public int getCommonDate() {
-        return earliestDate(isProgression[COMMON], clanProgression[COMMON]);
+        return earliestDate(isAdvancement[COMMON], clanAdvancement[COMMON]);
     }
     
     public int getExtinctionDate() {
-        return Math.max(isProgression[EXTINCT], clanProgression[EXTINCT]);
+        return Math.max(isAdvancement[EXTINCT], clanAdvancement[EXTINCT]);
     }
     
     public int getReintroductionDate() {
-        return earliestDate(isProgression[REINTRODUCED], clanProgression[REINTRODUCED]);
+        return earliestDate(isAdvancement[REINTRODUCED], clanAdvancement[REINTRODUCED]);
     }
     
     public int getIntroductionDate() {
@@ -281,7 +281,7 @@ public class TechProgression {
         if (clan) {
             if (techBase == TECH_BASE_IS
                     && era < EquipmentType.ERA_CLAN
-                    && isProgression[PROTOTYPE] >= 2780) {
+                    && isAdvancement[PROTOTYPE] >= 2780) {
                 return EquipmentType.RATING_X;
             } else {
                 return getBaseAvailability(era);
@@ -296,8 +296,8 @@ public class TechProgression {
             } else if (techBase == TECH_BASE_ALL
                     && era == EquipmentType.ERA_SW
                     && availability[era] >= EquipmentType.RATING_E
-                    && isProgression[EXTINCT] != DATE_NA
-                    && year > isProgression[EXTINCT]) {
+                    && isAdvancement[EXTINCT] != DATE_NA
+                    && year > isAdvancement[EXTINCT]) {
                 return Math.min(EquipmentType.RATING_X, availability[era] + 1);
             } else {
                 return getBaseAvailability(era);
@@ -307,23 +307,23 @@ public class TechProgression {
     
     public int getRulesLevel(int year, boolean clan) {
         if (clan) {
-            if (year < clanProgression[PROTOTYPE]
+            if (year < clanAdvancement[PROTOTYPE]
                     || isExtinct(year, clan)) {
                 return RULES_UNAVAILABLE;
-            } else if (year >= clanProgression[COMMON]) {
+            } else if (year >= clanAdvancement[COMMON]) {
                 return RULES_TOURNAMENT;
-            } else if (year >= clanProgression[PRODUCTION]) {
+            } else if (year >= clanAdvancement[PRODUCTION]) {
                 return RULES_ADVANCED;
             } else {
                 return RULES_EXPERIMENTAL;
             }            
         } else {
-            if (year < isProgression[PROTOTYPE]
+            if (year < isAdvancement[PROTOTYPE]
                     || isExtinct(year, clan)) {
                 return RULES_UNAVAILABLE;
-            } else if (year >= isProgression[COMMON]) {
+            } else if (year >= isAdvancement[COMMON]) {
                 return RULES_TOURNAMENT;
-            } else if (year >= isProgression[PRODUCTION]) {
+            } else if (year >= isAdvancement[PRODUCTION]) {
                 return RULES_ADVANCED;
             } else {
                 return RULES_EXPERIMENTAL;
@@ -357,15 +357,15 @@ public class TechProgression {
     
     public boolean isExtinct(int year, boolean clan) {
         if (clan) {
-            return clanProgression[EXTINCT] != DATE_NA
-                    && clanProgression[EXTINCT] > year
-                    && (clanProgression[REINTRODUCED] == DATE_NA
-                            || year < clanProgression[REINTRODUCED]);
+            return clanAdvancement[EXTINCT] != DATE_NA
+                    && clanAdvancement[EXTINCT] > year
+                    && (clanAdvancement[REINTRODUCED] == DATE_NA
+                            || year < clanAdvancement[REINTRODUCED]);
         } else {
-            return isProgression[EXTINCT] != DATE_NA
-                    && isProgression[EXTINCT] > year
-                    && (isProgression[REINTRODUCED] == DATE_NA
-                            || year < isProgression[REINTRODUCED]);
+            return isAdvancement[EXTINCT] != DATE_NA
+                    && isAdvancement[EXTINCT] > year
+                    && (isAdvancement[REINTRODUCED] == DATE_NA
+                            || year < isAdvancement[REINTRODUCED]);
         }
     }
     

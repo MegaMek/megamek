@@ -14,7 +14,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.SRMWeapon;
 
 
@@ -56,10 +56,10 @@ public class ISBASRM6OS extends SRMWeapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_B};
         techRating = RATING_E;
         rulesRefs = "261, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3045, 3050, 3051);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_B });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3045, 3050, 3051);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_B });
     }
     
 }

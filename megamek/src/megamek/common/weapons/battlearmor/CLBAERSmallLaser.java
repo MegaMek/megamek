@@ -18,7 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.LaserWeapon;
 
 
@@ -65,9 +65,9 @@ public class CLBAERSmallLaser extends LaserWeapon {
         rulesRefs = "258, TM";
 
   
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(2867, 2870, 2880);
-        techProgression.setTechRating(RATING_F);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_C });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2867, 2870, 2880);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_C });
     }
 }

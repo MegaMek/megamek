@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -68,10 +68,10 @@ public class ISSnubNosePPC extends PPCWeapon {
         reintroDate = 3067;
         availRating = new int[] { RATING_E, RATING_F, RATING_E };
         techRating = RATING_E;
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(2784, DATE_NONE, 3067, 2790, 3067);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2784, DATE_NONE, 3067, 2790, 3067);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
     }
 
     @Override

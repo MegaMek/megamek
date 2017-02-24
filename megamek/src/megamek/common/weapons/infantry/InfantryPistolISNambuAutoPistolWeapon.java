@@ -19,7 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -51,9 +51,9 @@ public class InfantryPistolISNambuAutoPistolWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_B,RATING_C ,RATING_C ,RATING_C};
         techRating = RATING_C;
         rulesRefs = "273, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(2530, 2540, 2600);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_B, RATING_C, RATING_C, RATING_C });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2530, 2540, 2600);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_C, RATING_C, RATING_C });
     }
 }

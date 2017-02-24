@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author BATTLEMASTER
@@ -55,9 +55,9 @@ public class ISEnhancedLRM5 extends EnhancedLRMWeapon {
         introDate = 3058;
         techLevel.put(3058, techLevel.get(3071));
         techLevel.put(3082, TechConstants.T_IS_TW_NON_BOX);
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3058, DATE_NONE, 3082);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3058, DATE_NONE, 3082);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

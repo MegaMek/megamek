@@ -19,7 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -51,9 +51,9 @@ public class InfantryPistolISMauserAutoPistolWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_C,RATING_B ,RATING_C ,RATING_B};
         techRating = RATING_C;
         rulesRefs = "273, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(2485, 2495, 2550);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_C, RATING_B, RATING_C, RATING_B });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2485, 2495, 2550);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_B, RATING_C, RATING_B });
     }
 }

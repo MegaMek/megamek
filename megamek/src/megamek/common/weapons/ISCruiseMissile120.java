@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -55,10 +55,10 @@ public class ISCruiseMissile120 extends ArtilleryWeapon {
         introDate = 3065;
         techLevel.put(3065, techLevel.get(3071));
         techLevel.put(3095, TechConstants.T_IS_ADVANCED);
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3065, 3095, DATE_NONE);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3065, 3095, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 
 }

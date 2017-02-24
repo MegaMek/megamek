@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -65,10 +65,10 @@ public class ISLightPPC extends PPCWeapon {
                 EquipmentType.RATING_X, EquipmentType.RATING_E };
         introDate = 3067;
         techLevel.put(3067, techLevel.get(3071));
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, DATE_NONE, 3067);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 
 }

@@ -19,7 +19,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -64,9 +64,9 @@ public class CLImprovedAC5 extends ACWeapon {
         availRating = new int[] { RATING_X, RATING_C, RATING_X, RATING_X };
         techRating = RATING_E;
         rulesRefs = "96, IO";
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(DATE_NONE, 2810, 2818, 2833, 3080);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_C, RATING_X, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 2810, 2818, 2833, 3080);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_X, RATING_X });
     }
 }

@@ -19,7 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -60,10 +60,10 @@ public class CLBAHeavyMortar extends Weapon {
         availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_C};
         techRating = RATING_B;
         rulesRefs = "263, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(DATE_NONE, 3060, 3063);
-        techProgression.setTechRating(RATING_B);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_C });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 3060, 3063);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_C });
     }
 
 }

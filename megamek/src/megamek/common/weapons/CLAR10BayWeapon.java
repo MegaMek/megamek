@@ -18,7 +18,7 @@ package megamek.common.weapons;
 
 import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -57,10 +57,10 @@ public class CLAR10BayWeapon extends AmmoBayWeapon {
         introDate = 2855;
         techLevel.put(2100, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_D, RATING_D };
-        techProgression.setTechBase(TechProgression.TECH_BASE_ALL);
-        techProgression.setProgression(DATE_NONE, DATE_NONE, 3071);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_X });
     }
 
     /*

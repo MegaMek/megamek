@@ -17,7 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -55,9 +55,9 @@ public class CLNL55Weapon extends NavalLaserWeapon {
         techLevel.put(2820, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_D;
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(DATE_NONE, 2820, DATE_NONE);
-        techProgression.setTechRating(RATING_D);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
     }
 }

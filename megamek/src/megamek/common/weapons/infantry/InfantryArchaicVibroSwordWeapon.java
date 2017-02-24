@@ -19,7 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -52,9 +52,9 @@ public class InfantryArchaicVibroSwordWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_D,RATING_D ,RATING_C ,RATING_C};
         techRating = RATING_E;
         rulesRefs = "272, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(2430, 2440, 2500);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_D, RATING_D, RATING_C, RATING_C });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2430, 2440, 2500);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_D, RATING_C, RATING_C });
     }
 }

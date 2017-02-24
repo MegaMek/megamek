@@ -16,7 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -58,9 +58,9 @@ public class ISLAAMissileWeapon extends CapitalMissileWeapon {
         techRating = RATING_E;
         rulesRefs = "359, TO";
 
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3064, 3072, DATE_NONE);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3064, 3072, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
     }
 }

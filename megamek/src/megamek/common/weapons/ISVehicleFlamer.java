@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -59,9 +59,9 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         availRating = new int[] { RATING_B ,RATING_B ,RATING_B ,RATING_A};
         techRating = RATING_C;
         rulesRefs = "218, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
-        techProgression.setTechRating(RATING_C);
-        techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_A });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_A });
     }
 }

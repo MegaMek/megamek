@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 
 public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
@@ -38,10 +38,10 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
         tonnage = 8;
         criticals  = 7;
         tankslots = 1;
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(3133, DATE_NONE, DATE_NONE);
-        techProgression.setTechRating(RATING_E);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3133, DATE_NONE, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
     }
     
     //TODO - Implement Game Rules.  See IO pg 94 for specifics.

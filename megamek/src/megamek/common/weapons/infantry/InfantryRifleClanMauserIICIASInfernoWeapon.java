@@ -19,7 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -51,9 +51,9 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_D};
         techRating = RATING_F;
         rulesRefs = "273, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_CLAN);
-        techProgression.setClanProgression(3008, 3015, DATE_NONE);
-        techProgression.setTechRating(RATING_F);
-        techProgression.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3008, 3015, DATE_NONE);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
     }
 }

@@ -19,7 +19,7 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -51,9 +51,9 @@ public class InfantryPistolISHoldOutLaserPistolWeapon extends InfantryWeapon {
         availRating = new int[] { RATING_B,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_D;
         rulesRefs = "273, TM";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(2313, 2320, 2350);
-        techProgression.setTechRating(RATING_D);
-        techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2313, 2320, 2350);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

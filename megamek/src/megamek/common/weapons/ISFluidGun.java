@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
-import megamek.common.TechProgression;
+import megamek.common.TechAdvancement;
 
 /**
  * @author beerockxs
@@ -50,9 +50,9 @@ public class ISFluidGun extends FluidGunWeapon {
         availRating = new int[] { RATING_B ,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_B;
         rulesRefs = "313, TO";
-        techProgression.setTechBase(TechProgression.TECH_BASE_IS);
-        techProgression.setISProgression(DATE_NONE, DATE_NONE, 1950);
-        techProgression.setTechRating(RATING_B);
-        techProgression.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

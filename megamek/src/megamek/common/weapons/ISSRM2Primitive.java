@@ -16,7 +16,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -54,11 +53,6 @@ public class ISSRM2Primitive extends SRMWeapon {
         maxRange = RANGE_SHORT;
         ammoType = AmmoType.T_SRM_PRIMITIVE;
         //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        introDate = 2439;
-        extinctDate = 2470;
-        techLevel.put(2439, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
-        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
-        techRating = RATING_C;
         rulesRefs = "217, IO";
   
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

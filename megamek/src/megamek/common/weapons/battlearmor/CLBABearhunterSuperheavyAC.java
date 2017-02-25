@@ -18,7 +18,6 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
@@ -55,12 +54,6 @@ public class CLBABearhunterSuperheavyAC extends Weapon {
         bv = 4;
         flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC)
                 .or(F_BA_WEAPON).or(F_BURST_FIRE);
-        introDate = 3055;
-        techLevel.put(3055, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3062, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3065, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};
-        techRating = RATING_D;
         rulesRefs = "258, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);

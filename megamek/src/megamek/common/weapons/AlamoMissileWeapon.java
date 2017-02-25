@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -30,7 +29,6 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
 
     public AlamoMissileWeapon() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Alamo Missile";
         setInternalName(BombType.getBombWeaponName(BombType.B_ALAMO));
         heat = 0;

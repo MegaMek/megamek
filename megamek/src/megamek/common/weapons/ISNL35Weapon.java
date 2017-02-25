@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -33,7 +32,6 @@ public class ISNL35Weapon extends NavalLaserWeapon {
      */
     public ISNL35Weapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Naval Laser 35";
         this.setInternalName(this.name);
         this.addLookupName("NL35");
@@ -50,10 +48,6 @@ public class ISNL35Weapon extends NavalLaserWeapon {
         this.medAV = 3.5;
         this.longAV = 3.5;
         this.maxRange = RANGE_LONG;
-        introDate = 2305;
-        techLevel.put(2305, techLevel.get(3071));
-        availRating = new int[] { RATING_D, RATING_F, RATING_E };
-        techRating = RATING_D;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2305);
         techAdvancement.setTechRating(RATING_D);

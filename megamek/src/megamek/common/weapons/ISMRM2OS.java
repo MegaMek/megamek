@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class ISMRM2OS extends MRMWeapon {
      */
     public ISMRM2OS() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "MRM 2 (OS)";
         setInternalName(name);
         addLookupName("ISMRM2OS");
@@ -42,10 +40,6 @@ public class ISMRM2OS extends MRMWeapon {
         extremeRange = 16;
         bv = 3;
         flags = flags.or(F_ONESHOT);
-        introDate = 3057;
-        techLevel.put(3057, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3057);
         techAdvancement.setTechRating(RATING_E);

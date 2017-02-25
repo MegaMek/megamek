@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class BombArrowIV extends AmmoWeapon {
 
     public BombArrowIV() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Arrow IV (Bomb)";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_ARROW));
         this.heat = 0;
@@ -49,12 +47,6 @@ public class BombArrowIV extends AmmoWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;
-        introDate = 2623;
-        extinctDate = 2859;
-        reintroDate = 3046;
-        techLevel.put(2623, techLevel.get(3071));
-        availRating = new int[] { RATING_E, RATING_F, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, 2623, DATE_NONE, 2859, 3046);
         techAdvancement.setTechRating(RATING_E);

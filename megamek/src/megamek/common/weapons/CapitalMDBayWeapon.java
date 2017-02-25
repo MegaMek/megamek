@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -47,11 +46,6 @@ public class CapitalMDBayWeapon extends AmmoBayWeapon {
         this.atClass = CLASS_CAPITAL_MD;
         this.capital = true;
         this.flags = F_MASS_DRIVER;    
-        techRating = RATING_D;
-        availRating = new int[] { RATING_E, RATING_X, RATING_E };
-        introDate = 2715;
-        techLevel.put(2715, techLevel.get(3071));
-        this.techLevel.put(2715, TechConstants.T_IS_EXPERIMENTAL);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2715, DATE_NONE, DATE_NONE);
         techAdvancement.setTechRating(RATING_D);

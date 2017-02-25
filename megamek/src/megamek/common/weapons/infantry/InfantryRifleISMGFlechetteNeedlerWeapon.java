@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -44,12 +43,6 @@ public class InfantryRifleISMGFlechetteNeedlerWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
         infantryDamage = 0.11;
         infantryRange = 0;
-        introDate = 2315;
-        techLevel.put(2315, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2325, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2350, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_C,RATING_C ,RATING_C ,RATING_B};
-        techRating = RATING_D;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2315, 2325, 2350);

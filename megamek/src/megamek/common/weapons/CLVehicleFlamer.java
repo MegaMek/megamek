@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -53,10 +52,6 @@ public class CLVehicleFlamer extends VehicleFlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        introDate = 2807;
-        techLevel.put(2807, TechConstants.T_CLAN_TW);   ///COMMON
-        availRating = new int[] { RATING_X, RATING_A, RATING_B, RATING_A };
-        techRating = RATING_B;
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);

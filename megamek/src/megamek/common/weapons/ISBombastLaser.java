@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -36,7 +35,6 @@ public class ISBombastLaser extends LaserWeapon {
 
     public ISBombastLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Bombast Laser";
         setInternalName(name);
         addLookupName("IS Bombast Laser");
@@ -59,11 +57,6 @@ public class ISBombastLaser extends LaserWeapon {
         medAV = 12;
         maxRange = RANGE_MED;
         flags = flags.or(F_BOMBAST_LASER);
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3064;
-        techLevel.put(3064, techLevel.get(3071));
-        techLevel.put(3085, TechConstants.T_IS_ADVANCED);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3064, 3085, DATE_NONE);
         techAdvancement.setTechRating(RATING_E);

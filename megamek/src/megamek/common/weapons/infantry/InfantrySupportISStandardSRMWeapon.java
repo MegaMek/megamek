@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -46,12 +45,6 @@ public class InfantrySupportISStandardSRMWeapon extends InfantryWeapon {
         infantryDamage = 1.14;
         infantryRange = 2;
         crew = 1;
-        introDate = 2360;
-        techLevel.put(2360, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2370, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2400, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_C,RATING_C ,RATING_D ,RATING_C};
-        techRating = RATING_C;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2360, 2370, 2400);

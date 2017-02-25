@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class ISLargePulseLaser extends PulseLaserWeapon {
      */
     public ISLargePulseLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Large Pulse Laser";
         setInternalName("ISLargePulseLaser");
         addLookupName("IS Pulse Large Laser");
@@ -57,11 +55,6 @@ public class ISLargePulseLaser extends PulseLaserWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        introDate = 2609;
-        techLevel.put(2609, techLevel.get(3071));
-        extinctDate = 2950;
-        reintroDate = 3037;
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2609, 2950, 3037);
         techAdvancement.setTechRating(RATING_C);

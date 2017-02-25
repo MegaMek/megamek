@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class ISPPC extends PPCWeapon {
      */
     public ISPPC() {
         super();
-        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         name = "PPC";
         setInternalName(name);
         addLookupName("Particle Cannon");
@@ -61,10 +59,6 @@ public class ISPPC extends PPCWeapon {
         maxRange = RANGE_MED;
         // with a capacitor
         explosive = true;
-        introDate = 2460;
-        techLevel.put(2460, techLevel.get(3071));
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
-        techRating = RATING_D;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2460);
         techAdvancement.setTechRating(RATING_D);

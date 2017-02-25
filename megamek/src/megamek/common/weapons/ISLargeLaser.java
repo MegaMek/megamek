@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -32,7 +30,6 @@ public class ISLargeLaser extends LaserWeapon {
 
     public ISLargeLaser() {
         super();
-        this.techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         this.name = "Large Laser";
         this.setInternalName(this.name);
         this.addLookupName("IS Large Laser");
@@ -54,11 +51,6 @@ public class ISLargeLaser extends LaserWeapon {
         this.shortAV = 8;
         this.medAV = 8;
         this.maxRange = RANGE_MED;
-        this.availRating = new int[] { EquipmentType.RATING_C,
-                EquipmentType.RATING_D, EquipmentType.RATING_C };
-        introDate = 2316;
-        techLevel.put(2316, techLevel.get(3071));
-        techRating = RATING_C;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2316);
         techAdvancement.setTechRating(RATING_C);

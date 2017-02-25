@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class CLIATM3 extends CLIATMWeapon {
      */
     public CLIATM3() {
         super();
-        techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         this.name = "iATM 3";
         this.setInternalName("CLiATM3");
         this.addLookupName("Clan iATM-3");
@@ -49,9 +47,6 @@ public class CLIATM3 extends CLIATMWeapon {
         this.shortAV = 6; // Seems to be for aero
         this.medAV = 6; // Seems to be for aero
         this.maxRange = RANGE_MED;
-        introDate = 3070;
-        availRating = new int[]{RATING_X,RATING_X,RATING_F};
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3070, DATE_NONE, DATE_NONE);
         techAdvancement.setTechRating(RATING_F);

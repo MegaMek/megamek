@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -47,12 +46,6 @@ public class ISNarcIOS extends NarcWeapon {
         flags = flags.or(F_ONESHOT);
         bv = 6;
         cost = 100000;
-        introDate = 3056;
-        techLevel.put(3056, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3076, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_E ,RATING_F ,RATING_D ,RATING_C};
-        techRating = RATING_B;
         rulesRefs = "232, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3056, 3076, 3085);

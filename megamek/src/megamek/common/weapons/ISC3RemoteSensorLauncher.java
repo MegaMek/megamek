@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -47,18 +46,12 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         tonnage = 4;
         rackSize = 1;
         damage = 0;
-        techRating = RATING_E;
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         bv = 30;
         shortRange = 3;
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON);
-        introDate = 3072;
-        techLevel.put(3072, techLevel.get(3071));
-        techLevel.put(3093, TechConstants.T_IS_ADVANCED);
         // suppveeslots = 3;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3072, 3093, DATE_NONE);

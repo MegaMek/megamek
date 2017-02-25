@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,14 +34,8 @@ public class ISVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
      */
     public ISVehicularGrenadeLauncher() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Vehicular Grenade Launcher";
         setInternalName("ISVehicularGrenadeLauncher");
-        techRating = RATING_C;
-        availRating = new int[] { RATING_D, RATING_E, RATING_F };
-        introDate = 1950;
-        techLevel.put(1950, techLevel.get(3071));
-        techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, 1950, 3080);
         techAdvancement.setTechRating(RATING_C);

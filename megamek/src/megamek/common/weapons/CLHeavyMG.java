@@ -18,8 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -57,12 +55,6 @@ public class CLHeavyMG extends MGWeapon {
         this.cost = 7500;
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
-        introDate = 3049;
-        techLevel.put(3049, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3070, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_C ,RATING_B};
-        techRating = RATING_B;
         rulesRefs = "228, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3049, 3059, 3070);

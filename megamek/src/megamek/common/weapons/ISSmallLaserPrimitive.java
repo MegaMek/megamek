@@ -14,8 +14,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -29,7 +27,6 @@ public class ISSmallLaserPrimitive extends LaserWeapon {
 
     public ISSmallLaserPrimitive() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Small Laser Prototype";
         setInternalName(name);
         addLookupName("ISSmall Laser Prototype");
@@ -53,12 +50,6 @@ public class ISSmallLaserPrimitive extends LaserWeapon {
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
         //Per Blake Documents using normal weapon information and an introdate 10 years before the normal.
-        this.availRating = new int[] { EquipmentType.RATING_C,EquipmentType.RATING_F, EquipmentType.RATING_C };
-        introDate = 2290;
-        extinctDate = 2310;
-        reintroDate = 3067;
-        techLevel.put(2290, techLevel.get(3071));
-        techRating = RATING_C;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2290, DATE_NONE, DATE_NONE, 2310, 3067);
         techAdvancement.setTechRating(RATING_C);

@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -59,12 +58,6 @@ public class ISHeavyMGA extends AmmoWeapon {
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;
-        introDate = 3061;
-        techLevel.put(3061, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
-        techLevel.put(3068, TechConstants.T_IS_ADVANCED);   ///ADV
-        techLevel.put(3070, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
-        availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_F };
-        techRating = RATING_E;
         rulesRefs = "228, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3061, 3068, 3070);

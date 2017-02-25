@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -43,9 +43,10 @@ public class InfantryArchaicClanNeuralWhipWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.09;
         infantryRange = 0;
-        introDate = 2807;
-        techLevel.put(2807,TechConstants.T_CLAN_UNOFFICIAL);
-        availRating = new int[]{RATING_X,RATING_F,RATING_E, RATING_F};
-        techRating = RATING_D;        
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 2807);
+        techAdvancement.setUnofficial(true);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability(new int[]{RATING_X, RATING_F, RATING_E, RATING_F});
     }
 }

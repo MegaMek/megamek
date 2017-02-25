@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -44,12 +43,6 @@ public class InfantryPistolPulseLaserPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
         infantryDamage = 0.14;
         infantryRange = 0;
-        introDate = 2610;
-        techLevel.put(2610, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2620, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2700, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_D};
-        techRating = RATING_F;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2610, 2620, 2700);

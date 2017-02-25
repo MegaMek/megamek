@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,7 +34,6 @@ public class ISMediumVariableSpeedPulseLaser extends
      */
     public ISMediumVariableSpeedPulseLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Medium VSP Laser";
         setInternalName("ISMediumVSPLaser");
         addLookupName("ISMVSPL");
@@ -61,10 +59,6 @@ public class ISMediumVariableSpeedPulseLaser extends
         cost = 200000;
         shortAV = 7;
         maxRange = RANGE_SHORT;
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3070;
-        techLevel.put(3070, techLevel.get(3071));
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, 3070, DATE_NONE);
         techAdvancement.setTechRating(RATING_E);

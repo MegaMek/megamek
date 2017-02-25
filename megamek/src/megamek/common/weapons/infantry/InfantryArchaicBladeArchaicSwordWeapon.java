@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -46,10 +45,6 @@ public class InfantryArchaicBladeArchaicSwordWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.04;
         infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_B};
-        techRating = RATING_A;
         rulesRefs =" 272, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);

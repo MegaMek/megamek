@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -36,7 +35,6 @@ public class ISThumper extends ArtilleryWeapon {
      */
     public ISThumper() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Thumper";
         setInternalName("ISThumper");
         addLookupName("ISThumperArtillery");
@@ -53,10 +51,6 @@ public class ISThumper extends ArtilleryWeapon {
         criticals = 15;
         bv = 43;
         cost = 187500;
-        introDate = 1950;
-        techLevel.put(1950, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
-        techRating = RATING_B;
         rulesRefs = "284, TO";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -45,12 +44,6 @@ public class InfantrySupportMagPulseHarpoonWeapon extends InfantryWeapon {
         infantryDamage = 0.37;
         infantryRange = 3;
         crew = 2;
-        introDate = 3065;
-        techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3079, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3100, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3065, 3079, 3100);

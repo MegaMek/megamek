@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class CLLRM5OS extends LRMWeapon {
      */
     public CLLRM5OS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "LRM 5 (OS)";
         setInternalName("CLLRM5 (OS)");
         addLookupName("CLLRM5OS");
@@ -49,10 +47,6 @@ public class CLLRM5OS extends LRMWeapon {
         medAV = 3;
         longAV = 3;
         maxRange = RANGE_LONG;
-        introDate = 2824;
-        techLevel.put(2824, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_B, RATING_B };
-        techRating = RATING_F;
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2824);

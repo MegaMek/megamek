@@ -18,8 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -36,7 +34,6 @@ public class ISAC10i extends ACWeapon {
      */
     public ISAC10i() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "AC/10i";
         setInternalName("ISAutocannon10i");
         addLookupName("ISAC10i");
@@ -64,11 +61,6 @@ public class ISAC10i extends ACWeapon {
         ammoType = AmmoType.T_ACi;
         atClass = CLASS_AC;
         //Since this is an unoffical Weapon I'm using the Normal AC10 Stats
-        availRating = new int[] { EquipmentType.RATING_C,
-                EquipmentType.RATING_D, EquipmentType.RATING_D };
-        introDate = 2460;
-        techLevel.put(2460, techLevel.get(3071));
-        techRating = RATING_C;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2460);
         techAdvancement.setTechRating(RATING_C);

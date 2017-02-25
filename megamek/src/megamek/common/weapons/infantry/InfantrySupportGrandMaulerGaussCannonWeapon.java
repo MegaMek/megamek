@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -46,12 +45,6 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
         infantryDamage = 0.63;
         infantryRange = 2;
         crew = 1;
-        introDate = 3050;
-        techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3059, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3065, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3050, 3059, 3065);

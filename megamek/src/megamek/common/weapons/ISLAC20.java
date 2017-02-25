@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 public class ISLAC20 extends LACWeapon {
@@ -28,7 +27,6 @@ public class ISLAC20 extends LACWeapon {
 
     public ISLAC20() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "LAC/20";
         setInternalName("Light Auto Cannon/20");
         addLookupName("IS Light AutoCannon/20");
@@ -46,8 +44,6 @@ public class ISLAC20 extends LACWeapon {
         bv = 118;
         cost = 325000;
         explosionDamage = damage;
-        introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3068);
         techAdvancement.setTechRating(RATING_D);

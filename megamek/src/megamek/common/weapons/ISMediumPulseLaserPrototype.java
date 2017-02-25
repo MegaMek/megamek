@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -38,7 +37,6 @@ public class ISMediumPulseLaserPrototype extends PulseLaserWeapon {
      */
     public ISMediumPulseLaserPrototype() {
         super();
-        techLevel.put(2595, TechConstants.T_IS_EXPERIMENTAL);
         name = "Medium Pulse Laser Prototype";
         setInternalName("ISMediumPulseLaserPrototype");
         addLookupName("IS Pulse Med Laser Prototype");
@@ -59,11 +57,6 @@ public class ISMediumPulseLaserPrototype extends PulseLaserWeapon {
         criticals = 1;
         bv = 48;
         cost = 60000;
-        introDate = 2595;
-        extinctDate = 2609;
-        reintroDate = 3037;
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, 3037);
         techAdvancement.setTechRating(RATING_E);

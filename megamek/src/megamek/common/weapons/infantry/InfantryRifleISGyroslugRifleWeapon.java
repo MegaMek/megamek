@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -43,12 +42,6 @@ public class InfantryRifleISGyroslugRifleWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.35;
         infantryRange = 1;
-        introDate = 2515;
-        techLevel.put(2515, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2530, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2570, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_B,RATING_C ,RATING_C ,RATING_C};
-        techRating = RATING_D;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2515, 2530, 2570);

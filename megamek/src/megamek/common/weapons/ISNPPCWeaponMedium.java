@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class ISNPPCWeaponMedium extends NavalPPCWeapon {
     */
     public ISNPPCWeaponMedium() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Medium NPPC";
         this.setInternalName(this.name);
         this.addLookupName("MediumNPPC");
@@ -52,10 +50,6 @@ public class ISNPPCWeaponMedium extends NavalPPCWeapon {
         this.longAV = 9;
         this.extAV = 9;
         this.maxRange = RANGE_EXT;
-        introDate = 2358;
-        techLevel.put(2358, techLevel.get(3071));
-        availRating = new int[] { RATING_D, RATING_F, RATING_D };
-        techRating = RATING_D;
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2358);

@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class ISMRM2 extends MRMWeapon {
      */
     public ISMRM2() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "MRM 2";
         this.setInternalName(this.name);
         this.addLookupName("MRM-2");
@@ -43,10 +41,6 @@ public class ISMRM2 extends MRMWeapon {
         this.longRange = 15;
         this.extremeRange = 16;
         this.bv = 13;
-        introDate = 3057;
-        techLevel.put(3057, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3057);
         techAdvancement.setTechRating(RATING_E);

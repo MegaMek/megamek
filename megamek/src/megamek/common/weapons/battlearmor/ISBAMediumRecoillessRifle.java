@@ -18,7 +18,6 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
@@ -55,12 +54,6 @@ public class ISBAMediumRecoillessRifle extends Weapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
                 .or(F_BA_WEAPON).or(F_BURST_FIRE);
         cost = 3000;
-        introDate = 3047;
-        techLevel.put(3047, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3054, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3056, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_D};
-        techRating = RATING_C;
         rulesRefs = "268, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

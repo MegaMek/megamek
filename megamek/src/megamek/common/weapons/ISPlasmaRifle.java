@@ -20,7 +20,6 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -37,7 +36,6 @@ public class ISPlasmaRifle extends AmmoWeapon {
     private static final long serialVersionUID = -7919371014161089388L;
 
     public ISPlasmaRifle() {
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Plasma Rifle";
         setInternalName("ISPlasmaRifle");
         heat = 10;
@@ -59,10 +57,6 @@ public class ISPlasmaRifle extends AmmoWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-        introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3068);
         techAdvancement.setTechRating(RATING_E);

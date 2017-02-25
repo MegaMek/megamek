@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.MRMWeapon;
 
@@ -46,12 +45,6 @@ public class ISBAMRM2 extends MRMWeapon {
         tonnage = .12f;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3053;
-        techLevel.put(3053, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_D};
-        techRating = RATING_D;
         rulesRefs = "261, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

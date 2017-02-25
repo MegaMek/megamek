@@ -17,7 +17,6 @@
 package megamek.common.weapons;
 
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -38,7 +37,6 @@ public class CLAR10BayWeapon extends AmmoBayWeapon {
     public CLAR10BayWeapon() {
         super();
         // tech levels are a little tricky
-        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "AR10 Bay (Clan)";
         this.setInternalName(this.name);
         addLookupName("CLAR10Bay");
@@ -54,9 +52,6 @@ public class CLAR10BayWeapon extends AmmoBayWeapon {
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_AR10;
         this.capital = true;
-        introDate = 2855;
-        techLevel.put(2100, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_D };
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);

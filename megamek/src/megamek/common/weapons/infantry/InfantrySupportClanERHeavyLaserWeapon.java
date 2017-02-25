@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -46,11 +45,6 @@ public class InfantrySupportClanERHeavyLaserWeapon extends InfantryWeapon {
         infantryDamage = 1.26;
         infantryRange = 7;
         crew = 3;
-        introDate = 2820;
-        techLevel.put(2820, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2827, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X,RATING_E ,RATING_D ,RATING_C};
-        techRating = RATING_F;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(2820, 2827, DATE_NONE);

@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -28,14 +27,9 @@ public class ISRivetGun extends NailRivetGunWeapon {
 
     public ISRivetGun() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Rivet Gun";
         setInternalName(name);
         addLookupName("ISRivet Gun");
-        introDate = 2310;
-        techLevel.put(2310, techLevel.get(3071));
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
-        techRating = RATING_C;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2310);
         techAdvancement.setTechRating(RATING_C);

@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -46,12 +45,6 @@ public class InfantrySupportISPortablePPCWeapon extends InfantryWeapon {
         infantryDamage = 0.72;
         infantryRange = 2;
         crew = 2;
-        introDate = 2425;
-        techLevel.put(2425, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2436, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2450, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_D,RATING_E ,RATING_D ,RATING_C};
-        techRating = RATING_E;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2425, 2436, 2450);

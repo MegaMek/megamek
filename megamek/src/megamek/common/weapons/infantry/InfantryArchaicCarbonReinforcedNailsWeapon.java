@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -44,11 +43,6 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.02;
         infantryRange = 0;
-        introDate = 2975;
-        techLevel.put(2975,TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2990,TechConstants.T_IS_ADVANCED);
-        availRating = new int[]{RATING_X,RATING_D,RATING_D,RATING_E};
-        techRating = RATING_D;
         rulesRefs =" 272, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2975, 2990, DATE_NONE);

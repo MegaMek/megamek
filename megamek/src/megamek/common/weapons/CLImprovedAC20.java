@@ -17,8 +17,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -55,13 +53,6 @@ public class CLImprovedAC20 extends ACWeapon {
         maxRange = RANGE_SHORT;
         explosionDamage = damage;
         ammoType = AmmoType.T_AC_IMP;
-        introDate = 2810;
-        extinctDate = 2833;
-        reintroDate = 3080;
-        techLevel.put(2810, TechConstants.T_CLAN_ADVANCED);   ///ADV
-        techLevel.put(2818, TechConstants.T_CLAN_TW);   ///COMMON
-        availRating = new int[] { RATING_X, RATING_C, RATING_X, RATING_X };
-        techRating = RATING_E;
         rulesRefs = "96, IO";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 2810, 2818, 2833, 3080);

@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -49,12 +48,6 @@ public class ISLRT10 extends LRTWeapon {
         this.criticals = 2;
         this.bv = 90;
         this.cost = 100000;
-        introDate = 2370;
-        techLevel.put(2370, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2380, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2400, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
-        techRating = RATING_C;
         rulesRefs = "229, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2370, 2380, 2400);

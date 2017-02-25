@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -52,11 +51,6 @@ public class ISAAAMissileWeapon extends CapitalMissileWeapon {
         this.ammoType = AmmoType.T_AAA_MISSILE;
         this.capital = false;
         cost = 9000;
-        this.introDate = 3064;
-        this.techLevel.put(3064, TechConstants.T_IS_EXPERIMENTAL);
-        this.techLevel.put(3072, TechConstants.T_IS_ADVANCED);
-        this.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
-        this.techRating = RATING_E;
         this.rulesRefs = "357, TO";
 
 

@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -44,12 +43,6 @@ public class InfantrySMGImperator2894A1Weapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.22;
         infantryRange = 0;
-        introDate = 2833;
-        techLevel.put(2833, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2842, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2900, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_C ,RATING_B ,RATING_C};
-        techRating = RATING_C;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2833, 2842, 2900);

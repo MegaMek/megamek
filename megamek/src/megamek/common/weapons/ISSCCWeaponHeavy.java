@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -33,7 +32,6 @@ public class ISSCCWeaponHeavy extends SubCapitalCannonWeapon {
      */
     public ISSCCWeaponHeavy() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Heavy Sub-Capital Cannon";
         this.setInternalName(this.name);
         this.addLookupName("HeavySCC");
@@ -50,11 +48,6 @@ public class ISSCCWeaponHeavy extends SubCapitalCannonWeapon {
         this.shortAV = 7;
         this.medAV = 7;
         this.maxRange = RANGE_MED;
-        introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, 3068, 3071);
         techAdvancement.setTechRating(RATING_E);

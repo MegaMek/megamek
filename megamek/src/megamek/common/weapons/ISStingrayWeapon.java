@@ -18,7 +18,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -38,7 +37,6 @@ public class ISStingrayWeapon extends SubCapitalMissileWeapon {
      */
     public ISStingrayWeapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Stingray";
         this.setInternalName(this.name);
         this.addLookupName("Stingray");
@@ -55,11 +53,6 @@ public class ISStingrayWeapon extends SubCapitalMissileWeapon {
         this.shortAV = 3.5;
         this.medAV = 3.5;
         this.maxRange = RANGE_MED;
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        techLevel.put(3071, TechConstants.T_IS_TW_ALL);
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, 3060, 3071);
         techAdvancement.setTechRating(RATING_F);

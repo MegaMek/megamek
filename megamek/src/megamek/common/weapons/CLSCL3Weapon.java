@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -33,7 +32,6 @@ public class CLSCL3Weapon extends SubCapitalLaserWeapon {
      */
     public CLSCL3Weapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         this.name = "Sub-Capital Laser 3 (Clan)";
         this.setInternalName(this.name);
         this.addLookupName("CLSCL3");
@@ -49,11 +47,6 @@ public class CLSCL3Weapon extends SubCapitalLaserWeapon {
         this.shortAV = 3;
         this.medAV = 3;
         this.maxRange = RANGE_MED;
-        introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
-        techLevel.put(3073, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 3068, 3073);
         techAdvancement.setTechRating(RATING_E);

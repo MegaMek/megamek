@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.PulseLaserWeapon;
@@ -60,12 +58,6 @@ public class CLBAMicroPulseLaser extends PulseLaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        introDate = 3050;
-        techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3060, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3063, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_C};
-        techRating = RATING_F;
 
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);

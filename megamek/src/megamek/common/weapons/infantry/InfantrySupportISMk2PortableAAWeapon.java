@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -51,16 +50,6 @@ public class InfantrySupportISMk2PortableAAWeapon extends InfantryWeapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
-        introDate = 2493;
-        extinctDate = 2790;
-        reintroDate = 3056;
-        techLevel.put(2493, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2510, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2590, TechConstants.T_IS_TW_NON_BOX);
-        techLevel.put(3056, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3066, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_D};
-        techRating = RATING_F;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2493, 2510, 2590, 2790, 3056);

@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class ISMML9 extends MMLWeapon {
      */
     public ISMML9() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "MML 9";
         setInternalName("ISMML9");
         addLookupName("IS MML-9");
@@ -45,10 +43,6 @@ public class ISMML9 extends MMLWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_LONG;
-        introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3068);

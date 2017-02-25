@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -32,7 +31,6 @@ public class CLLightTAG extends TAGWeapon {
 
     public CLLightTAG() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Light TAG";
         setInternalName("CLLightTAG");
         addLookupName("Clan Light TAG");
@@ -48,10 +46,6 @@ public class CLLightTAG extends TAGWeapon {
         extremeRange = 12;
         bv = 0;
         cost = 40000;
-        introDate = 3054;
-        techLevel.put(3054, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_F;
         flags = flags.andNot(F_BA_WEAPON).or(F_AERO_WEAPON);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3054);

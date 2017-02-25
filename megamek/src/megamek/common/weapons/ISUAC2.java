@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class ISUAC2 extends UACWeapon {
      */
     public ISUAC2() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Ultra AC/2";
         this.setInternalName("ISUltraAC2");
         this.addLookupName("IS Ultra AC/2");
@@ -56,10 +54,6 @@ public class ISUAC2 extends UACWeapon {
         this.extAV = 3;
         this.maxRange = RANGE_EXT;
         this.explosionDamage = damage;
-        introDate = 3057;
-        techLevel.put(3057, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3057);
         techAdvancement.setTechRating(RATING_E);

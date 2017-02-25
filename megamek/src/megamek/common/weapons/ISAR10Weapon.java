@@ -18,7 +18,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -39,7 +38,6 @@ public class ISAR10Weapon extends CapitalMissileWeapon {
     public ISAR10Weapon() {
         super();
         // assume a barracuda is loaded
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "AR10";
         this.setInternalName(this.name);
         this.addLookupName("AR10");
@@ -60,12 +58,6 @@ public class ISAR10Weapon extends CapitalMissileWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
-        introDate = 2550;
-        techLevel.put(2550, techLevel.get(3071));
-        extinctDate = 2850;
-        reintroDate = 3051;
-        techLevel.put(3051, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_E, RATING_F, RATING_E };
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2550, 2850, 3051);
         techAdvancement.setTechRating(RATING_C);

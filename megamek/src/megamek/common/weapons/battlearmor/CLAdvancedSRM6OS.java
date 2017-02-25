@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.AdvancedSRMWeapon;
 /**
@@ -31,7 +30,6 @@ public class CLAdvancedSRM6OS extends AdvancedSRMWeapon {
      */
     public CLAdvancedSRM6OS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Advanced SRM 6 (OS)";
         setInternalName("CLAdvancedSRM6OS");
         rackSize = 6;
@@ -44,12 +42,6 @@ public class CLAdvancedSRM6OS extends AdvancedSRMWeapon {
         tonnage = .195f;
         criticals = 5;
         cost = 45000;
-        introDate = 3047;
-        techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);	
-        techLevel.put(3056, TechConstants.T_CLAN_ADVANCED);	
-        techLevel.put(3062, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};	
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3047, 3056, 3062);
         techAdvancement.setTechRating(RATING_F);

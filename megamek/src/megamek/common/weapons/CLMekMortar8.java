@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -47,11 +46,6 @@ public class CLMekMortar8 extends MekMortarWeapon {
         criticals = 3;
         tonnage = 5;
         cost = 70000;
-        introDate = 2830;
-        techLevel.put(2830, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2840, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X ,RATING_F ,RATING_F ,RATING_E};
-        techRating = RATING_B;
         rulesRefs = "263, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);

@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -36,7 +35,6 @@ public class CLThumper extends ArtilleryWeapon {
      */
     public CLThumper() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Thumper";
         setInternalName("CLThumper");
         addLookupName("CLThumperArtillery");
@@ -53,10 +51,6 @@ public class CLThumper extends ArtilleryWeapon {
         criticals = 15;
         bv = 43;
         cost = 187500;
-        techRating = RATING_B;
-        techLevel.put(2820, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_C, RATING_B };
-        introDate = 2820;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
         techAdvancement.setTechRating(RATING_B);

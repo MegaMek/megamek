@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -36,7 +35,6 @@ public class ISCruiseMissile50 extends ArtilleryWeapon {
      */
     public ISCruiseMissile50() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         this.name = "Cruise Missile/50";
         this.setInternalName("ISCruiseMissile50");
         this.heat = 50;
@@ -50,11 +48,6 @@ public class ISCruiseMissile50 extends ArtilleryWeapon {
         this.criticals = 55;
         this.bv = 601;
         this.cost = 900000;
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3065;
-        techLevel.put(3065, techLevel.get(3071));
-        techLevel.put(3095, TechConstants.T_IS_ADVANCED);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3065, 3095, DATE_NONE);
         techAdvancement.setTechRating(RATING_E);

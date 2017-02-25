@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -47,12 +46,6 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
         infantryDamage = 0.68;
         infantryRange = 3;
         crew = 2;
-        introDate = 3055;
-        techLevel.put(3055, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3063, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3075, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3055, 3063, 3075);

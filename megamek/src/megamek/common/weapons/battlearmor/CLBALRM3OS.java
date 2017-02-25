@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.LRMWeapon;
 
@@ -42,12 +41,6 @@ public class CLBALRM3OS extends LRMWeapon {
         bv = 7;
         cost = 9000;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3053;
-		techLevel.put(3053, TechConstants.T_CLAN_EXPERIMENTAL);	
-		techLevel.put(3060, TechConstants.T_CLAN_ADVANCED);
-		techLevel.put(3062, TechConstants.T_CLAN_TW);	
-		availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};	
-		techRating = RATING_F;	
 		rulesRefs = "261, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3053, 3060, 3062);

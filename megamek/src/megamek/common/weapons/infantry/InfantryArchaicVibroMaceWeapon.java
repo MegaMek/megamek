@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -44,12 +43,6 @@ public class InfantryArchaicVibroMaceWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.26;
         infantryRange = 0;
-        introDate = 2995;
-        techLevel.put(2995, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3045, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3100, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "272, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2995, 3045, 3100);

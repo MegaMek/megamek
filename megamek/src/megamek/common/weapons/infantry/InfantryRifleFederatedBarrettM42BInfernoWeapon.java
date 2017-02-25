@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -44,12 +43,6 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
         flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.82;
         infantryRange = 1;
-        introDate = 3055;
-        techLevel.put(3055, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3064, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3095, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_C};
-        techRating = RATING_C;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3055, 3064, 3095);

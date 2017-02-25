@@ -18,7 +18,6 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
@@ -54,12 +53,6 @@ public class ISBAHeavyMortar extends Weapon {
         criticals = 2;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
                 .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
-        introDate = 3049;
-        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3057, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3063, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_C};
-        techRating = RATING_B;
         rulesRefs = "263, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

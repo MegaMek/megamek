@@ -13,13 +13,22 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.IGame;
+import megamek.common.Mech;
+import megamek.common.Mounted;
+import megamek.common.MovePath;
+import megamek.common.Targetable;
+import megamek.common.TechAdvancement;
+import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 /**
  * WeaponFireInfo is a wrapper around a WeaponAttackAction that includes
@@ -322,7 +331,7 @@ public class WeaponFireInfo {
         // For clan plasma cannon, assume 7 "damage".
         WeaponType weaponType = (WeaponType) weapon.getType();
         if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
-                weaponType.getTechLevels().containsValue(TechConstants.T_CLAN_TW)) {
+                weaponType.getTechBase() == TechAdvancement.TECH_BASE_CLAN) {
             return 7D;
         }
 

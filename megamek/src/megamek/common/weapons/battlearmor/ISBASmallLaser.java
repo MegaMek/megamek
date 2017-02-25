@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.LaserWeapon;
 
@@ -55,12 +53,6 @@ public class ISBASmallLaser extends LaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        introDate = 3045;
-        techLevel.put(3045, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3050, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_B ,RATING_B};
-        techRating = RATING_E;
         rulesRefs = "258, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3045, DATE_NONE, 3050);

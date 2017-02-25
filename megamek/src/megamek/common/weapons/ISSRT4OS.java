@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class ISSRT4OS extends SRTWeapon {
      */
     public ISSRT4OS() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "SRT 4 (OS)";
         setInternalName("ISSRT4OS");
         addLookupName("ISSRT4 (OS)"); // mtf
@@ -48,10 +46,6 @@ public class ISSRT4OS extends SRTWeapon {
         bv = 8;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         cost = 30000;
-        introDate = 2676;
-        techLevel.put(2676, techLevel.get(3071));
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
-        techRating = RATING_C;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2676);
         techAdvancement.setTechRating(RATING_C);

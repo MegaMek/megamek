@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class ISLB2XAC extends LBXACWeapon {
      */
     public ISLB2XAC() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "LB 2-X AC";
         this.setInternalName("ISLBXAC2");
         this.addLookupName("IS LB 2-X AC");
@@ -55,10 +53,6 @@ public class ISLB2XAC extends LBXACWeapon {
         this.longAV = 2;
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
-        introDate = 3058;
-        techLevel.put(3058, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3058);
         techAdvancement.setTechRating(RATING_E);

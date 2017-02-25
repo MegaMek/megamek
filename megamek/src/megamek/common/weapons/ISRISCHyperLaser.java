@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,7 +33,6 @@ public class ISRISCHyperLaser extends LaserWeapon {
      */
     public ISRISCHyperLaser() {
         super();
-        techLevel.put(3134, TechConstants.T_IS_EXPERIMENTAL);
         name = "RISC Hyper Laser";
         setInternalName("ISRISCHyperLaser");
         heat = 24;
@@ -54,10 +51,6 @@ public class ISRISCHyperLaser extends LaserWeapon {
         maxRange = RANGE_EXT;
         explosionDamage = 10;
         explosive = true;
-        availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_X, RATING_F };
-        introDate = 3134;
-        techRating = RATING_F;
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3134, DATE_NONE, DATE_NONE);

@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class CLSRT2IOS extends SRTWeapon {
      */
     public CLSRT2IOS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "SRT 2 (I-OS)";
         setInternalName("CLSRT2 (IOS)");
         addLookupName("Clan IOS SRT-2");
@@ -48,11 +46,6 @@ public class CLSRT2IOS extends SRTWeapon {
         bv = 4;
         flags = flags.or(F_NO_FIRES).or(F_ONESHOT);
         cost = 8000;
-        techRating = RATING_B;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3058;
-        techLevel.put(3058, techLevel.get(3071));
-        techLevel.put(3081, TechConstants.T_CLAN_TW);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 3058, 3081);
         techAdvancement.setTechRating(RATING_B);

@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -52,12 +51,6 @@ public class CLLB20XAC extends LBXACWeapon {
         shortAV = 20;
         medAV = 20;
         maxRange = RANGE_MED;
-        introDate = 2819;
-        techLevel.put(2819, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
-        techLevel.put(2821, TechConstants.T_CLAN_ADVANCED);   ///ADV
-        techLevel.put(2828, TechConstants.T_CLAN_TW);   ///COMMON
-        availRating = new int[] { RATING_X, RATING_D, RATING_C, RATING_B };
-        techRating = RATING_F;
         rulesRefs = "207, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(2819, 2821, 2828);

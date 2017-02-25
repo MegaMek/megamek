@@ -14,7 +14,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -34,8 +33,6 @@ public abstract class LRTWeapon extends MissileWeapon {
         super();
         ammoType = AmmoType.T_LRM_TORPEDO;
         setModes(new String[] { "", "Indirect" });
-        availRating = new int[] { EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C };
     }
 
     /*

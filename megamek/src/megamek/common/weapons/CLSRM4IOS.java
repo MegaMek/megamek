@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class CLSRM4IOS extends SRMWeapon {
      */
     public CLSRM4IOS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "SRM 4 (I-OS)";
         setInternalName("CLSRM4 (IOS)");
         addLookupName("Clan IOS SRM-4");
@@ -49,11 +47,6 @@ public class CLSRM4IOS extends SRMWeapon {
         cost = 48000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        techRating = RATING_B;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3058;
-        techLevel.put(3058, techLevel.get(3071));
-        techLevel.put(3081, TechConstants.T_CLAN_TW);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 3058, 3081);
         techAdvancement.setTechRating(RATING_B);

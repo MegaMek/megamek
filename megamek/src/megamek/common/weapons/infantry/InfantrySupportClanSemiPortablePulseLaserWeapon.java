@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -46,11 +45,6 @@ public class InfantrySupportClanSemiPortablePulseLaserWeapon extends InfantryWea
         infantryDamage = 0.55;
         infantryRange = 2;
         crew = 2;
-        introDate = 3051;
-        techLevel.put(3051, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
-        techRating = RATING_F;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3051, 3059, DATE_NONE);

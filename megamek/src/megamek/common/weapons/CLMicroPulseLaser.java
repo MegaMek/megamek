@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -36,7 +34,6 @@ public class CLMicroPulseLaser extends PulseLaserWeapon {
      */
     public CLMicroPulseLaser() {
         super();
-        techLevel.put(3060, TechConstants.T_CLAN_TW);
         name = "Micro Pulse Laser";
         setInternalName("CLMicroPulseLaser");
         addLookupName("Clan Micro Pulse Laser");
@@ -60,10 +57,6 @@ public class CLMicroPulseLaser extends PulseLaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        this.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D };
-        introDate = 3060;
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3060);
         techAdvancement.setTechRating(RATING_F);

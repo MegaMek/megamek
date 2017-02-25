@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,7 +34,6 @@ public class ISGAC4 extends ACWeapon {
      */
     public ISGAC4() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "GAC/4";
         setInternalName(name);
         addLookupName("IS Gatling Auto Cannon/4");
@@ -66,13 +64,8 @@ public class ISGAC4 extends ACWeapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MECH_WEAPON)
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON).or(F_PULSE);
         ammoType = AmmoType.T_AC;
-        techRating = RATING_X;
         atClass = CLASS_AC;
         //Going to Assume these are like IS RACs
-        introDate = 3062;
-        techLevel.put(3062, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3062);
         techAdvancement.setTechRating(RATING_E);

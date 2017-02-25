@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class ISERPPC extends PPCWeapon {
      */
     public ISERPPC() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "ER PPC";
         setInternalName("ISERPPC");
         addLookupName("IS ER PPC");
@@ -58,12 +56,6 @@ public class ISERPPC extends PPCWeapon {
         maxRange = RANGE_LONG;
         // with a capacitor
         explosive = true;
-        introDate = 2751;
-        techLevel.put(2751, techLevel.get(3071));
-        extinctDate = 2860;
-        reintroDate = 3037;
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2751, 2860, 3037);
         techAdvancement.setTechRating(RATING_E);

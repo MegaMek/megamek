@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -36,7 +35,6 @@ public class ISLongTom extends ArtilleryWeapon {
      */
     public ISLongTom() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Long Tom";
         setInternalName("ISLongTom");
         addLookupName("ISLongTomArtillery");
@@ -52,11 +50,6 @@ public class ISLongTom extends ArtilleryWeapon {
         criticals = 30;
         bv = 368;
         cost = 450000;
-        introDate = 2445;
-        techLevel.put(2445, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2500, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
-        techRating = RATING_B;
         rulesRefs = "284, TO";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

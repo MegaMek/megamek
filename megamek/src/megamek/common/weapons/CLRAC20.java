@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -50,10 +49,6 @@ public class CLRAC20 extends RACWeapon {
         criticals = 10;
         bv = 823;
         cost = 960000;
-        techRating = RATING_F;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_F };
-        introDate = 3073;
-        techLevel.put(3073, TechConstants.T_CLAN_UNOFFICIAL);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3073);
         techAdvancement.setTechRating(RATING_F);

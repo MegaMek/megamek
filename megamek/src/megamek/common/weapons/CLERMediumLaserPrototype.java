@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,7 +34,6 @@ public class CLERMediumLaserPrototype extends LaserWeapon {
      */
     public CLERMediumLaserPrototype() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "ER Medium Laser (CP)";
         setInternalName("CLERMediumLaserPrototype");
         heat = 5;
@@ -55,11 +53,6 @@ public class CLERMediumLaserPrototype extends LaserWeapon {
         shortAV = 5;
         medAV = 5;
         maxRange = RANGE_MED;
-        introDate = 2820;
-        extinctDate = 2824;
-        techLevel.put(2820, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_E, RATING_X };
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2824);
         techAdvancement.setTechRating(RATING_F);

@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -44,12 +43,6 @@ public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapo
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.25;
         infantryRange = 0;
-        introDate = 3035;
-        techLevel.put(3035, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3045, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3060, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[]{RATING_X,RATING_F,RATING_D,RATING_C};
-        techRating = RATING_D;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3035, 3045, 3060);

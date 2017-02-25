@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class ISHeavyPPC extends PPCWeapon {
      */
     public ISHeavyPPC() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Heavy PPC";
         setInternalName(name);
         addLookupName("ISHeavyPPC");
@@ -60,10 +58,6 @@ public class ISHeavyPPC extends PPCWeapon {
         cost = 250000;
         // with a capacitor
         explosive = true;
-        introDate = 3067;
-        techLevel.put(3067, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         techAdvancement.setTechRating(RATING_E);

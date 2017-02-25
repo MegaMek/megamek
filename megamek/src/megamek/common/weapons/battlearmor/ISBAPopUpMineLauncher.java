@@ -20,7 +20,6 @@ package megamek.common.weapons.battlearmor;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -61,10 +60,6 @@ public class ISBAPopUpMineLauncher extends Weapon {
         String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot" };
         setModes(modeStrings);
         flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON);
-        introDate = 3050;
-        techLevel.put(3050, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_F};
-        techRating = RATING_E;
         rulesRefs = "267, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, 3050, DATE_NONE);

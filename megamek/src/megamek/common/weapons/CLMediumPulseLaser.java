@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class CLMediumPulseLaser extends PulseLaserWeapon {
      */
     public CLMediumPulseLaser() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Medium Pulse Laser";
         this.setInternalName("CLMediumPulseLaser");
         this.addLookupName("Clan Pulse Med Laser");
@@ -57,10 +55,6 @@ public class CLMediumPulseLaser extends PulseLaserWeapon {
         this.shortAV = 7;
         this.medAV = 7;
         this.maxRange = RANGE_MED;
-        introDate = 2827;
-        techLevel.put(2827, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2827);
         techAdvancement.setTechRating(RATING_F);

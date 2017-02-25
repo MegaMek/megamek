@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class ISLRM20OS extends LRMWeapon {
      */
     public ISLRM20OS() {
         super();
-        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         name = "LRM 20 (OS)";
         setInternalName(name);
         addLookupName("IS OS LRM-20");
@@ -49,12 +47,6 @@ public class ISLRM20OS extends LRMWeapon {
         medAV = 12;
         longAV = 12;
         maxRange = RANGE_LONG;
-        introDate = 2676;
-        techLevel.put(2676, techLevel.get(3071));
-        this.extinctDate = 2800;
-        this.reintroDate = 3030;
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
-        techRating = RATING_C;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2676, 2800, 3030);
         techAdvancement.setTechRating(RATING_C);

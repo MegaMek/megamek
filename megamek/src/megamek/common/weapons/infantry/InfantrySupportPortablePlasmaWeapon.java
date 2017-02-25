@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.infantry;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -47,12 +46,6 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
         infantryDamage = 1.58;
         infantryRange = 2;
         crew = 1;
-        introDate = 3058;
-        techLevel.put(3058, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3065, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3075, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_C};
-        techRating = RATING_E;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3058, 3065, 3075);

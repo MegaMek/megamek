@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,7 +34,6 @@ public class ISTHBLB20XAC extends LBXACWeapon {
      */
     public ISTHBLB20XAC() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "LB 20-X AC (THB)";
         setInternalName("ISTHBLBXAC20");
         addLookupName("IS LB 20-X AC (THB)");
@@ -52,10 +50,6 @@ public class ISTHBLB20XAC extends LBXACWeapon {
         bv = 204;
         cost = 700000;
         //Since this are the Tactical Handbook Weapons I'm using the TM Stats.
-        introDate = 3058;
-        techLevel.put(3058, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3058);
         techAdvancement.setTechRating(RATING_E);

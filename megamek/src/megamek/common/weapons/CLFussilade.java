@@ -14,7 +14,6 @@
 package megamek.common.weapons;
 
 import megamek.common.BattleForceElement;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -31,7 +30,6 @@ public class CLFussilade extends ATMWeapon {
 
     public CLFussilade() {
         super();
-        techLevel.clear();
         flags = flags.or(WeaponType.F_PROTO_WEAPON);
         rackSize = 3;
         minimumRange = 4;
@@ -44,13 +42,8 @@ public class CLFussilade extends ATMWeapon {
         medAV = 6;
         longAV = 6;
         maxRange = RANGE_MED;
-        techRating = RATING_F;
         cost = 100000;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         bv = 11;
-        introDate = 3072;
-        techLevel.put(3072, TechConstants.T_CLAN_EXPERIMENTAL);
-
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3072);
         techAdvancement.setTechRating(RATING_F);

@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.BombType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -48,14 +47,6 @@ public class ISBombTAG extends TAGWeapon {
         this.extremeRange = 20;
         this.bv = 0;
         this.cost = 50000;
-        introDate = 2595;
-        extinctDate = 2835;
-        reintroDate = 3035;
-        techLevel.put(2595, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2605, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2645, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_E ,RATING_F ,RATING_D ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "238, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

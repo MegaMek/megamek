@@ -17,10 +17,9 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.PulseLaserWeapon;
 import megamek.common.WeaponType;
+import megamek.common.weapons.PulseLaserWeapon;
 
 /**
  * @author Sebastian Brocks
@@ -59,12 +58,6 @@ public class CLBAERSmallPulseLaser extends PulseLaserWeapon {
         cost = 30000;
         flags = flags.or(F_BURST_FIRE).or(F_NO_FIRES).or(F_BA_WEAPON).
         		andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3057;
-        techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3082, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3085, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_F;
         rulesRefs = "258,TM";
 
 

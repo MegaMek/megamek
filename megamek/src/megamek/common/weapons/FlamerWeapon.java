@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -41,8 +40,6 @@ public abstract class FlamerWeapon extends EnergyWeapon {
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         atClass = CLASS_POINT_DEFENSE;
-        availRating = new int[] { EquipmentType.RATING_B,
-                EquipmentType.RATING_B, EquipmentType.RATING_B };
     }
 
     @Override

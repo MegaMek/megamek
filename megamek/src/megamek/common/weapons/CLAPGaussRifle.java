@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -36,7 +35,6 @@ public class CLAPGaussRifle extends GaussWeapon {
      */
     public CLAPGaussRifle() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "AP Gauss Rifle";
         setInternalName("CLAPGaussRifle");
         addLookupName("Clan AP Gauss Rifle");
@@ -56,10 +54,6 @@ public class CLAPGaussRifle extends GaussWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         explosionDamage = 3;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3069;
-        techLevel.put(3069, TechConstants.T_CLAN_TW);
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3069);
         techAdvancement.setTechRating(RATING_F);

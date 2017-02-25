@@ -52,10 +52,6 @@ public class ISHVAC5 extends HVACWeapon {
         extAV = 5;
         maxRange = RANGE_EXT;
         explosionDamage = 5;
-        techRating = RATING_D;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3059;
-        techLevel.put(3059, techLevel.get(3071));
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3059, 3079, DATE_NONE);
         techAdvancement.setTechRating(RATING_D);

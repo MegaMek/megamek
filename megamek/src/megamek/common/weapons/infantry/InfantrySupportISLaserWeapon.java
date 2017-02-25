@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -52,12 +51,6 @@ public class InfantrySupportISLaserWeapon extends InfantryWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        introDate = 2372;
-        techLevel.put(2372, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2380, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2410, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
-        techRating = RATING_D;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2372, 2380, 2410);

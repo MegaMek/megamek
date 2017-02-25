@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -50,12 +49,6 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         bv = 15;
         cost = 8500;
         explosionDamage = 3;
-        introDate = 3054;
-        techLevel.put(3054, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3072, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_C};
-        techRating = RATING_E;
         rulesRefs = "314, TO";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3054, 3072, 3090);

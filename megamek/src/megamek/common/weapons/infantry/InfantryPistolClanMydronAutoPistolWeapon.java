@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -44,10 +43,6 @@ public class InfantryPistolClanMydronAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.14;
         infantryRange = 0;
-        introDate = 2807;
-        techLevel.put(2807, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_B ,RATING_B ,RATING_B};
-        techRating = RATING_C;
         rulesRefs =" 273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);

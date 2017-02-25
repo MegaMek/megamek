@@ -236,6 +236,10 @@ public class TechAdvancement {
         }
         return Math.min(d1, d2);
     }
+    
+    public boolean isIntroLevel() {
+        return isIntroLevel;
+    }
 
     public void setIntroLevel(boolean intro) {
         isIntroLevel = intro;
@@ -266,6 +270,13 @@ public class TechAdvancement {
      */
     public int getBaseAvailability(int year) {
         int era = getTechEra(year);
+        if (era < 0 || era > availability.length) {
+            return EquipmentType.RATING_X;
+        }
+        return availability[era];
+    }
+    
+    public int getBaseEraAvailability(int era) {
         if (era < 0 || era > availability.length) {
             return EquipmentType.RATING_X;
         }
@@ -305,9 +316,13 @@ public class TechAdvancement {
         }
     }
     
+    /**
+     * Determines rules level for either IS or Clan usage.
+     */
     public int getRulesLevel(int year, boolean clan) {
         if (clan) {
             if (year < clanAdvancement[PROTOTYPE]
+                    || getIntroductionDate(clan) < 0
                     || isExtinct(year, clan)) {
                 return RULES_UNAVAILABLE;
             } else if (year >= clanAdvancement[COMMON]) {
@@ -319,6 +334,7 @@ public class TechAdvancement {
             }            
         } else {
             if (year < isAdvancement[PROTOTYPE]
+                    || getIntroductionDate(clan) < 0
                     || isExtinct(year, clan)) {
                 return RULES_UNAVAILABLE;
             } else if (year >= isAdvancement[COMMON]) {
@@ -329,6 +345,13 @@ public class TechAdvancement {
                 return RULES_EXPERIMENTAL;
             }            
         }
+    }
+    
+    /**
+     * Determines general rules level, taking the lower value if different.
+     */
+    public int getRulesLevel(int year) {
+        return Math.min(getRulesLevel(year, true), getRulesLevel(year, false));
     }
     
     /**
@@ -355,6 +378,35 @@ public class TechAdvancement {
         return TechConstants.T_TECH_UNKNOWN;
     }
     
+    /**
+     * Calculates the TechConstants value for the equipment. Uses IS constant for ALL if it
+     * does not exist at that level.
+     */
+    public int getTechLevel(int year) {
+        if (unofficial) {
+            return techBase == TECH_BASE_CLAN? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
+        }
+        switch (getRulesLevel(year)) {
+        case RULES_TOURNAMENT:
+            if (isIntroLevel) {
+                return TechConstants.T_INTRO_BOXSET;
+            } else if (techBase == TECH_BASE_ALL) {
+                return TechConstants.T_TW_ALL;
+            } else if (techBase == TECH_BASE_IS) {
+                return TechConstants.T_CLAN_TW;
+            } else {
+                return TechConstants.T_IS_TW_ALL;
+            }
+        case RULES_ADVANCED:
+            return techBase == TECH_BASE_CLAN? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
+        case RULES_EXPERIMENTAL:
+            return techBase == TECH_BASE_CLAN? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
+        case RULES_UNAVAILABLE:
+            return techBase == TECH_BASE_CLAN? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
+        }
+        return TechConstants.T_TECH_UNKNOWN;
+    }
+    
     public boolean isExtinct(int year, boolean clan) {
         if (clan) {
             return clanAdvancement[EXTINCT] != DATE_NA
@@ -367,6 +419,13 @@ public class TechAdvancement {
                     && (isAdvancement[REINTRODUCED] == DATE_NA
                             || year < isAdvancement[REINTRODUCED]);
         }
+    }
+    
+    public boolean isExtinct(int year) {
+        return getExtinctionDate() != DATE_NA
+                && getExtinctionDate() > year
+                && (getReintroductionDate() == DATE_NA
+                        || year < getReintroductionDate());
     }
     
     public static int getTechEra(int year) {

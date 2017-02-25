@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -50,12 +49,6 @@ public class ISRL10 extends RLWeapon {
         shortAV = 6;
         medAV = 6;
         maxRange = RANGE_MED;
-        introDate = 2200;
-        techLevel.put(2200, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3064, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_B ,RATING_B ,RATING_B ,RATING_B};
-        techRating = RATING_B;
         rulesRefs = "229, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

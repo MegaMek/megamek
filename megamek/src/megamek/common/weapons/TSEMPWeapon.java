@@ -46,9 +46,6 @@ public class TSEMPWeapon extends EnergyWeapon {
         heat = 10;
         explosive = true;
         explosionDamage = 10;
-        availRating = new int[]{RATING_X,RATING_X,RATING_X,RATING_E};
-        techRating = RATING_E;
-
     }
     
     /*

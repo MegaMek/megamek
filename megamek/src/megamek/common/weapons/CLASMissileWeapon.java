@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -52,10 +51,6 @@ public class CLASMissileWeapon extends CapitalMissileWeapon {
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;
-        introDate = 3076;
-        techLevel.put(3076, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_D;
         rulesRefs = "358, TO";
 
 

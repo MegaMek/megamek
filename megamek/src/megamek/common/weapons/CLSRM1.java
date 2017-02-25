@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -45,12 +44,6 @@ public class CLSRM1 extends SRMWeapon {
         flags = flags.or(F_NO_FIRES);
         cost = 80000;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
-        introDate = 3050;
-        techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3062, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
-        techRating = RATING_F;
         rulesRefs = "231, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3050, 3059, 3062);

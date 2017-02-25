@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -51,12 +50,6 @@ public class CLBAFlamer extends BAFlamerWeapon {
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        introDate = 2860;
-        techLevel.put(2860, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2868, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3050, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_D ,RATING_B ,RATING_B};
-        techRating = RATING_C;
         rulesRefs = "255, TO";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(2860, 2868, 3050);

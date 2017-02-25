@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,7 +33,6 @@ public class ISLightPPC extends PPCWeapon {
      */
     public ISLightPPC() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Light PPC";
         setInternalName(name);
         addLookupName("ISLightPPC");
@@ -61,10 +58,6 @@ public class ISLightPPC extends PPCWeapon {
         cost = 150000;
         // with a capacitor
         explosive = true;
-        this.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_E };
-        introDate = 3067;
-        techLevel.put(3067, techLevel.get(3071));
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3067);
         techAdvancement.setTechRating(RATING_C);

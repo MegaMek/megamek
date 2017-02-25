@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,7 +34,6 @@ public class ISAMS extends AmmoWeapon {
      */
     public ISAMS() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "AMS";
         setInternalName("ISAntiMissileSystem");
         addLookupName("IS Anti-Missile System");
@@ -53,12 +51,6 @@ public class ISAMS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
-        introDate = 2617;
-        techLevel.put(2617, techLevel.get(3071));
-        extinctDate = 2796;
-        reintroDate = 3040;
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
-        techRating = RATING_E;
         atClass = CLASS_POINT_DEFENSE;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2617, 2796, 3040);

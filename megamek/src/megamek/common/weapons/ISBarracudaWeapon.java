@@ -18,7 +18,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -38,7 +37,6 @@ public class ISBarracudaWeapon extends CapitalMissileWeapon {
      */
     public ISBarracudaWeapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Barracuda";
         this.setInternalName(this.name);
         this.addLookupName("Barracuda");
@@ -59,12 +57,6 @@ public class ISBarracudaWeapon extends CapitalMissileWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         this.toHitModifier = -2;
-        introDate = 2305;
-        techLevel.put(2305, techLevel.get(3071));
-        extinctDate = 2855;
-        reintroDate = 3051;
-        availRating = new int[] { RATING_D, RATING_X, RATING_D };
-        techRating = RATING_F;
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2305, 2855, 3051);

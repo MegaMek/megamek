@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -48,10 +47,6 @@ public class InfantrySupportLightRecoillessRifleInfernoWeapon extends InfantryWe
         infantryDamage = 0.19;
         infantryRange = 2;
         crew = 1;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_A,RATING_A,RATING_A,RATING_A};
-        techRating = RATING_C;
         rulesRefs =" 273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);

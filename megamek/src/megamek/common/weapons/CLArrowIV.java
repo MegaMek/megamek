@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -53,11 +52,6 @@ public class CLArrowIV extends ArtilleryWeapon {
         criticals = 12;
         bv = 240;
         cost = 450000;
-        techRating = RATING_E;
-        introDate = 2807;
-        techLevel.put(2807, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "359, TO";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);

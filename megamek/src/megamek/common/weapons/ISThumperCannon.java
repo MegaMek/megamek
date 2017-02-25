@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -54,11 +53,6 @@ public class ISThumperCannon extends ArtilleryCannonWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_MED;
-        introDate = 3012;
-        techLevel.put(3012, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3079, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_D};
-        techRating = RATING_B;
         rulesRefs = "285, TO";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3012, 3079, DATE_NONE);

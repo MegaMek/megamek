@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -51,11 +50,6 @@ public class ISLAAMissileWeapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_MED;
         this.ammoType = AmmoType.T_LAA_MISSILE;
         this.capital = false;
-        introDate = 3064;
-        techLevel.put(3064, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3072, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "359, TO";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

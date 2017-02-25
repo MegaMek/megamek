@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -45,12 +44,6 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
         infantryDamage = 1.58;
         infantryRange = 5;
         crew = 3;
-        introDate = 3070;
-        techLevel.put(3070, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3082, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3070, 3082, 3090);

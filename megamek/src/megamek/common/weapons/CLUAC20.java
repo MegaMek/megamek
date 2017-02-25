@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -53,12 +52,6 @@ public class CLUAC20 extends UACWeapon {
         medAV = 30;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        introDate = 2820;
-        techLevel.put(2820, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2822, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(2829, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_D ,RATING_D ,RATING_C};
-        techRating = RATING_F;
         rulesRefs = "208, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(2820, 2822, 2829);

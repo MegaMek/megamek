@@ -40,7 +40,6 @@ public abstract class RifleWeapon extends AmmoWeapon {
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_RIFLE;
         explosive = false; // when firing incendiary ammo
-        techRating = RATING_C;
         atClass = CLASS_AC;
     }
 

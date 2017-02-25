@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -61,12 +60,6 @@ public class ISIHGaussRifle extends GaussWeapon {
         longAV = 22;
         maxRange = RANGE_LONG;
         explosionDamage = 30;
-        introDate = 3065;
-        techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3081, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "313, TO";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

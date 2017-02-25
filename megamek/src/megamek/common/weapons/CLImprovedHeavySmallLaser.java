@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class CLImprovedHeavySmallLaser extends LaserWeapon {
      */
     public CLImprovedHeavySmallLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Improved Heavy Small Laser";
         shortName = "Imp. Heavy Medium Laser";
         setInternalName("CLImprovedSmallHeavyLaser");
@@ -58,11 +56,6 @@ public class CLImprovedHeavySmallLaser extends LaserWeapon {
         maxRange = RANGE_SHORT;
         explosionDamage = 3;
         explosive = true;
-        techRating = RATING_F;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3069;
-        techLevel.put(3069, techLevel.get(3071));
-        techLevel.put(3085, TechConstants.T_CLAN_TW);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3069, DATE_NONE, 3085);
         techAdvancement.setTechRating(RATING_F);

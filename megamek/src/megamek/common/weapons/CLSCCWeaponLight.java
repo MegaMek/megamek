@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -33,7 +32,6 @@ public class CLSCCWeaponLight extends SubCapitalCannonWeapon {
      */
     public CLSCCWeaponLight() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         this.name = "Light Sub-Capital Cannon (Clan)";
         this.setInternalName(this.name);
         this.addLookupName("CLLightSCC");
@@ -51,11 +49,6 @@ public class CLSCCWeaponLight extends SubCapitalCannonWeapon {
         this.medAV = 2;
         this.longAV = 2;
         this.maxRange = RANGE_LONG;
-        introDate = 3090;
-        techLevel.put(3090, techLevel.get(3071));
-        techLevel.put(3091, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 3090, 3091);
         techAdvancement.setTechRating(RATING_E);

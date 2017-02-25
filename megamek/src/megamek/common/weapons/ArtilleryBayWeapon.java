@@ -20,7 +20,6 @@ import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -41,7 +40,6 @@ public class ArtilleryBayWeapon extends AmmoBayWeapon {
     public ArtilleryBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.techLevel.put(3071, TechConstants.T_ALL);
         this.flags = flags.or(F_ARTILLERY);
         this.name = "Artillery Bay";
         this.setInternalName(this.name);

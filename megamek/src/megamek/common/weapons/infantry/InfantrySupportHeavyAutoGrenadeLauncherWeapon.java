@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -45,11 +44,6 @@ public class InfantrySupportHeavyAutoGrenadeLauncherWeapon extends InfantryWeapo
         infantryDamage = 1.93;
         infantryRange = 1;
         crew = 1;
-        introDate = 2891;
-        techLevel.put(2891, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2900, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
-        techRating = RATING_D;
         rulesRefs = "273, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);

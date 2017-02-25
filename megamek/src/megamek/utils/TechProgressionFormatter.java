@@ -115,9 +115,9 @@ public class TechProgressionFormatter {
         if (eq.getExtinctionDate() != EquipmentType.DATE_NONE) {
             sb.append(", ");
             sb.append(eq.getExtinctionDate());
-            if (eq.getReintruductionDate() != EquipmentType.DATE_NONE) {
+            if (eq.getReintroductionDate() != EquipmentType.DATE_NONE) {
                 sb.append(", ");
-                sb.append(eq.getReintruductionDate());
+                sb.append(eq.getReintroductionDate());
             }
         }
         sb.append(");\n");
@@ -199,7 +199,7 @@ public class TechProgressionFormatter {
      */
     public static void main(String[] args) {
         EquipmentType.initializeTypes();
-        
+        /*
         for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
             final EquipmentType eq = e.nextElement();
             if (eq instanceof MiscType) {
@@ -212,11 +212,14 @@ public class TechProgressionFormatter {
                 ammoMap.put(eq.getInternalName(), formatCode(eq, "ammo."));
             }
         }
+        */
         
 //        updateMiscType();
 //        updateWeaponType();
 //        updateAmmoType();
-        printBombConversion();
+//        printBombConversion();
+        
+        removeOldTechLevel();
     }
 
     @SuppressWarnings("unused")
@@ -380,6 +383,7 @@ public class TechProgressionFormatter {
         }
     }
     
+    @SuppressWarnings("unused")
     private static void printBombConversion() {
         //Bomb internal names are set by constants, making file processing difficult
         for (String bomb : bombMap.keySet()) {
@@ -387,4 +391,57 @@ public class TechProgressionFormatter {
             System.out.println(bombMap.get(bomb));
         }
     }
+    
+    private static void removeOldTechLevel() {
+        stripOldTechLevel("megamek/common/MiscType", "misc.");
+        stripOldTechLevel("megamek/common/AmmoType", "ammo.");
+        stripOldTechLevel("megamek/common/BombType", "bomb.");
+        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
+            final EquipmentType etype = e.nextElement();
+            if (etype instanceof WeaponType) {
+                stripOldTechLevel(etype.getClass().getName().replaceAll("\\.", "/"), "");
+            }
+        }
+    }
+    
+    private static void stripOldTechLevel(String fName, String prefix) {
+        File oldFile = new File(SRC_DIR, fName + ".java");
+        File newFile = new File(SRC_DIR, fName + ".java.old");
+        
+        if (!newFile.exists()) {
+            oldFile.renameTo(newFile);
+        }
+
+        oldFile = new File(SRC_DIR, fName + ".java.old");
+        newFile = new File(SRC_DIR, fName + ".java");
+
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(oldFile);
+            os = new FileOutputStream(newFile);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        PrintWriter pw = new PrintWriter(os);
+        Pattern pattern = Pattern.compile(".*" + prefix
+                + "(techLevel|introDate|extinctDate|reintroDate|techRating|availRating).*");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String line = null;
+            while (null != (line = reader.readLine())) {
+                if (!pattern.matcher(line).matches()
+                        && !line.contains("EquipmentType.RATING_")) {
+                    pw.println(line);
+                }
+            }
+            pw.close();
+            is.close();
+            os.close();
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
+    
+
 }

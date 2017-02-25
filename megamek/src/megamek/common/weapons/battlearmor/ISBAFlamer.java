@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -35,7 +34,6 @@ public class ISBAFlamer extends BAFlamerWeapon {
      */
     public ISBAFlamer() {
         super();
-        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         name = "Flamer [BA]";
         setInternalName("ISBAFlamer");
         addLookupName("ISBAFlamer");
@@ -52,10 +50,6 @@ public class ISBAFlamer extends BAFlamerWeapon {
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        introDate = 3050;
-        techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_D ,RATING_B ,RATING_B};
-        techRating = RATING_C;
         rulesRefs = "255, TO";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

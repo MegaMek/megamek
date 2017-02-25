@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,7 +34,6 @@ public class CLAMS extends AmmoWeapon {
      */
     public CLAMS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "AMS";
         setInternalName("CLAntiMissileSystem");
         addLookupName("Clan Anti-Missile Sys");
@@ -55,10 +53,6 @@ public class CLAMS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
-        introDate = 2831;
-        techLevel.put(2831, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
-        techRating = RATING_F;
         atClass = CLASS_POINT_DEFENSE;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2831);

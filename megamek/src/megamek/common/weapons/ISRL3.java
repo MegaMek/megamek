@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class ISRL3 extends RLWeapon {
      */
     public ISRL3() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Rocket Launcher 3";
         setInternalName("RL3");
         addLookupName("RL 3");
@@ -43,10 +41,6 @@ public class ISRL3 extends RLWeapon {
         longRange = 12;
         extremeRange = 14;
         bv = 4;
-        introDate = 3050;
-        techLevel.put(3050, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
         techAdvancement.setTechRating(RATING_E);

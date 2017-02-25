@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -44,10 +43,6 @@ public class InfantryProstheticNeedleWeapon extends InfantryWeapon {
         infantryDamage = 0.0;
         infantryRange = 0;
         //Rating and Dates not available below is compiled from various books
-        introDate = 2375;
-        techLevel.put(2375,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_F,RATING_E,RATING_D,RATING_D};
-        techRating = RATING_D;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2375);
         techAdvancement.setTechRating(RATING_D);

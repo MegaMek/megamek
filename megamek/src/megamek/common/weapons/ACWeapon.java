@@ -47,7 +47,6 @@ public abstract class ACWeapon extends AmmoWeapon {
                 .or(F_AERO_WEAPON).or(F_TANK_WEAPON);
         ammoType = AmmoType.T_AC;
         explosive = true; // when firing incendiary ammo
-        techRating = RATING_C;
         atClass = CLASS_AC;
     }
 

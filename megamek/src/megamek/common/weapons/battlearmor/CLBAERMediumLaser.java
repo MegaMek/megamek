@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.LaserWeapon;
 
@@ -57,12 +55,6 @@ public class CLBAERMediumLaser extends LaserWeapon {
         medAV = 7;
         maxRange = RANGE_MED;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 2867;
-        techLevel.put(2867, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2870, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(2880, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_E ,RATING_D ,RATING_C};
-        techRating = RATING_F;
         rulesRefs = "258, TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);

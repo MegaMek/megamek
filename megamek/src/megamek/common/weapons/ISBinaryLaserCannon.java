@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -32,7 +31,6 @@ public class ISBinaryLaserCannon extends LaserWeapon {
 
     public ISBinaryLaserCannon() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Blazer Cannon";
         setInternalName(name);
         addLookupName("IS Binary Laser Cannon");
@@ -56,11 +54,6 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         shortAV = 16;
         medAV = 16;
         maxRange = RANGE_MED;
-        techRating = RATING_D;
-        availRating = new int[] { RATING_X, RATING_E, RATING_E };
-        introDate = 2812;
-        techLevel.put(2812, techLevel.get(3071));
-        techLevel.put(3077, TechConstants.T_IS_TW_NON_BOX);
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2812, DATE_NONE, 3077);

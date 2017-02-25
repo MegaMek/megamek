@@ -14,7 +14,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -56,11 +55,6 @@ public class ISPPCPrimitive extends PPCWeapon {
         // with a capacitor
         explosive = true;
         //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        introDate = 2439;
-        extinctDate = 2470;
-        techLevel.put(2439, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
-        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
-        techRating = RATING_C;
         rulesRefs = "217, IO";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(2439, DATE_NONE, DATE_NONE, 2470);

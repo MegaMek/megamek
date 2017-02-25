@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -43,11 +42,6 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.14;
         infantryRange = 0;
-        introDate = 2840;
-        techLevel.put(2840, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2850, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[]{RATING_X,RATING_D,RATING_D,RATING_C};
-        techRating = RATING_F;
         rulesRefs = "273, TM";;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(2840, 2850, DATE_NONE);

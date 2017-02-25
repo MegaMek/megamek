@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -45,10 +44,7 @@ public abstract class RACWeapon extends UACWeapon {
         // explosive when jammed
         explosive = true;
         explosionDamage = damage;
-        techRating = RATING_E;
         atClass = CLASS_AC;
-        availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_E };
     }
 
     /*

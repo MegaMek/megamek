@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,15 +34,9 @@ public class ISMPod extends MPodWeapon {
      */
     public ISMPod() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "M-Pod";
         setInternalName("ISMPod");
         addLookupName("ISM-Pod");
-        introDate = 3060;
-        techRating = RATING_C;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3064, TechConstants.T_IS_TW_NON_BOX);
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, 3060, 3064);

@@ -17,7 +17,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -55,11 +54,6 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         cost = 11250;
         flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MECH_WEAPON)
                 .or(WeaponType.F_TANK_WEAPON);
-        introDate = 3068;
-        techLevel.put(3068, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3079, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_D;
         rulesRefs = "285, TO";;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, 3068, 3079);

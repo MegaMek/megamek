@@ -14,7 +14,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -51,10 +50,6 @@ public class InfantrySupportClanTAGWeapon extends InfantryWeapon {
         longRange = 9;
         extremeRange = 12;
         cost = 40000;
-        introDate = 2807;
-        techLevel.put(2807, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_E ,RATING_E ,RATING_E};
-        techRating = RATING_E;
     	rulesRefs = "318, TO";;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);

@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -31,7 +30,6 @@ public class CLLRT10 extends LRTWeapon {
      */
     public CLLRT10() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "LRT 10";
         this.setInternalName("CLLRTorpedo10");
         this.addLookupName("Clan LRT-10");
@@ -48,10 +46,6 @@ public class CLLRT10 extends LRTWeapon {
         this.criticals = 1;
         this.bv = 109;
         this.cost = 100000;
-        introDate = 2824;
-        techLevel.put(2824, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_B, RATING_B };
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2824);
         techAdvancement.setTechRating(RATING_F);

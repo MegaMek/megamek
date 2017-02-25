@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -53,10 +51,6 @@ public class ISMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        introDate = 1950;
-        techLevel.put(1950, TechConstants.T_INTRO_BOXSET);
-        availRating = new int[] { RATING_A ,RATING_A ,RATING_B ,RATING_A};
-        techRating = RATING_B;
         rulesRefs = "228, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);

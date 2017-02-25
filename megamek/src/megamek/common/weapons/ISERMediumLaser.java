@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class ISERMediumLaser extends LaserWeapon {
      */
     public ISERMediumLaser() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "ER Medium Laser";
         this.setInternalName("ISERMediumLaser");
         this.addLookupName("IS ER Medium Laser");
@@ -55,10 +53,6 @@ public class ISERMediumLaser extends LaserWeapon {
         this.shortAV = 5;
         this.medAV = 5;
         this.maxRange = RANGE_MED;
-        introDate = 3058;
-        techLevel.put(3058, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3058);
         techAdvancement.setTechRating(RATING_E);

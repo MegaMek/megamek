@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -53,10 +52,6 @@ public class CLAAAMissileWeapon extends CapitalMissileWeapon {
         this.ammoType = AmmoType.T_AAA_MISSILE;
         this.capital = false;
         cost = 9000;
-        this.introDate = 3072;
-        this.techLevel.put(3072, TechConstants.T_CLAN_ADVANCED);
-        this.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
-        this.techRating = RATING_E;
         this.rulesRefs = "357, TO";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);

@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -45,11 +44,6 @@ public class InfantryRifleClanMauserIICIASWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
         infantryDamage = 1.37;
         infantryRange = 3;
-        introDate = 3008;
-        techLevel.put(3008, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3015, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_D};
-        techRating = RATING_F;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3008, 3015, DATE_NONE);

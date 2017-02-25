@@ -18,7 +18,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -38,7 +37,6 @@ public class ISKillerWhaleWeapon extends CapitalMissileWeapon {
      */
     public ISKillerWhaleWeapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Killer Whale";
         this.setInternalName(this.name);
         this.addLookupName("KillerWhale");
@@ -57,12 +55,6 @@ public class ISKillerWhaleWeapon extends CapitalMissileWeapon {
         this.longAV = 4;
         this.extAV = 4;
         this.maxRange = RANGE_EXT;
-        introDate = 2305;
-        techLevel.put(2305, techLevel.get(3071));
-        extinctDate = 2855;
-        reintroDate = 3051;
-        availRating = new int[] { RATING_D, RATING_X, RATING_D };
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2305, 2855, 3051);
         techAdvancement.setTechRating(RATING_F);

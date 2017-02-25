@@ -18,7 +18,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -38,7 +37,6 @@ public class CLMantaRayWeapon extends SubCapitalMissileWeapon {
      */
     public CLMantaRayWeapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         this.name = "Manta Ray (Clan)";
         this.setInternalName(this.name);
         this.addLookupName("CLMantaRay");
@@ -54,11 +52,6 @@ public class CLMantaRayWeapon extends SubCapitalMissileWeapon {
         this.cost = 150000;
         this.shortAV = 5;
         this.maxRange = RANGE_SHORT;
-        introDate = 3070;
-        techLevel.put(3070,techLevel.get(3071));
-        techLevel.put(3072, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 3070, 3072);
         techAdvancement.setTechRating(RATING_F);

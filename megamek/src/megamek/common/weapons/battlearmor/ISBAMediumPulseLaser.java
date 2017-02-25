@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.PulseLaserWeapon;
 
@@ -56,12 +55,6 @@ public class ISBAMediumPulseLaser extends PulseLaserWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         shortAV = 6;
         maxRange = RANGE_SHORT;
-        introDate = 3052;
-        techLevel.put(3052, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3062, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_C};
-        techRating = RATING_E;
         rulesRefs = "258, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3052, 3060, 3062);

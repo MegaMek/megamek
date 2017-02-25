@@ -18,7 +18,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -38,7 +37,6 @@ public class ISSwordfishWeapon extends SubCapitalMissileWeapon {
      */
     public ISSwordfishWeapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Swordfish";
         this.setInternalName(this.name);
         this.addLookupName("Swordfish");
@@ -54,11 +52,6 @@ public class ISSwordfishWeapon extends SubCapitalMissileWeapon {
         this.cost = 110000;
         this.shortAV = 4;
         this.maxRange = RANGE_SHORT;
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        techLevel.put(3071, TechConstants.T_IS_TW_ALL);
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, 3060, 3071);
         techAdvancement.setTechRating(RATING_F);

@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.weapons.NarcWeapon;
 
@@ -49,11 +48,6 @@ public class ISBACompactNarc extends NarcWeapon {
         tonnage = .15f;
         criticals = 1;
         cost = 15000;
-        introDate = 3060;
-		techLevel.put(3060, TechConstants.T_IS_ADVANCED);
-		techLevel.put(3065, TechConstants.T_IS_TW_NON_BOX);
-		availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_D};
-		techRating = RATING_E;
 		rulesRefs = "263, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, 3060, 3065);

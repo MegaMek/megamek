@@ -17,7 +17,6 @@
 package megamek.common.weapons;
 
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -38,7 +37,6 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
     public CapitalMissileBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "Capital Missile Bay";
         this.setInternalName(this.name);
         this.heat = 0;

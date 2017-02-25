@@ -18,7 +18,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -39,7 +38,6 @@ public class CLAR10Weapon extends CapitalMissileWeapon {
     public CLAR10Weapon() {
         super();
         // assume a barracuda is loaded
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "AR10 (Clan)";
         this.setInternalName(this.name);
         this.addLookupName("CLAR10");
@@ -60,10 +58,6 @@ public class CLAR10Weapon extends CapitalMissileWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
-        introDate = 2855;
-        techLevel.put(2855,techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_D };
-        techRating = RATING_F;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2855);
         techAdvancement.setTechRating(RATING_F);

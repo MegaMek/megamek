@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
     public PointDefenseBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "Point Defense Bay";
         this.setInternalName(this.name);
         this.heat = 0;

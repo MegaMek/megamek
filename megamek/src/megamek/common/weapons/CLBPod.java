@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -35,14 +34,9 @@ public class CLBPod extends BPodWeapon {
      */
     public CLBPod() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "B-Pod";
         this.setInternalName("CLBPod");
         this.addLookupName("CLB-Pod");
-        introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3068);
         techAdvancement.setTechRating(RATING_E);

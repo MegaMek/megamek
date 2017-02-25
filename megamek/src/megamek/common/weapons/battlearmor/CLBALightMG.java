@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
@@ -51,12 +50,6 @@ public class CLBALightMG extends BAMGWeapon {
         criticals = 1;
         bv = 5;
         cost = 5000;
-        introDate = 3050;
-        techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3060, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3068, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_B};
-        techRating = RATING_C;
         rulesRefs = "258, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3050, 3060, 3068);

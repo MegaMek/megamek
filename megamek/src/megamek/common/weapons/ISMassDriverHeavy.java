@@ -17,7 +17,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -49,10 +48,6 @@ public class ISMassDriverHeavy extends MassDriverWeapon {
         this.shortAV = 140;
         this.medAV = 140;
         this.longAV = 140;
-        techRating = RATING_D;
-        availRating = new int[] { RATING_E, RATING_F, RATING_E };
-        introDate = 2715;
-        this.techLevel.put(2715, TechConstants.T_IS_EXPERIMENTAL);
         
         
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);

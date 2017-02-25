@@ -17,7 +17,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 import megamek.common.TechAdvancement;
 
 /**
@@ -34,7 +33,6 @@ public class ISNGaussWeaponMedium extends NavalGaussWeapon {
      */
     public ISNGaussWeaponMedium() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Medium N-Gauss";
         this.setInternalName(this.name);
         this.addLookupName("MediumNGauss");
@@ -53,10 +51,6 @@ public class ISNGaussWeaponMedium extends NavalGaussWeapon {
         this.longAV = 25;
         this.extAV = 25;
         this.maxRange = RANGE_EXT;
-        introDate = 2448;
-        techLevel.put(2448, techLevel.get(3071));
-        availRating = new int[] { RATING_E, RATING_F, RATING_E };
-        techRating = RATING_E;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2448);
         techAdvancement.setTechRating(RATING_E);

@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -35,7 +34,6 @@ public abstract class CLPrototypeStreakSRMWeapon extends SRMWeapon {
         super();
         ammoType = AmmoType.T_SRM_STREAK;
         toHitModifier = -1;
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
     }
 
     /*

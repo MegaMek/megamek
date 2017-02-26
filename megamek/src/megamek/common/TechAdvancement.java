@@ -348,8 +348,7 @@ public class TechAdvancement {
      */
     public int getRulesLevel(int year, boolean clan) {
         if (clan) {
-            if (year < clanAdvancement[PROTOTYPE]
-                    || getIntroductionDate(clan) < 0
+            if (getIntroductionDate(clan) > year
                     || isExtinct(year, clan)) {
                 return RULES_UNAVAILABLE;
             } else if (year >= clanAdvancement[COMMON]) {
@@ -360,8 +359,7 @@ public class TechAdvancement {
                 return RULES_EXPERIMENTAL;
             }            
         } else {
-            if (year < isAdvancement[PROTOTYPE]
-                    || getIntroductionDate(clan) < 0
+            if (getIntroductionDate(clan) > year
                     || isExtinct(year, clan)) {
                 return RULES_UNAVAILABLE;
             } else if (year >= isAdvancement[COMMON]) {
@@ -386,21 +384,21 @@ public class TechAdvancement {
      */
     public int getTechLevel(int year, boolean clan) {
         if (unofficial) {
-            return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
+            return techBase == TECH_BASE_CLAN? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
         }
         switch (getRulesLevel(year, clan)) {
         case RULES_TOURNAMENT:
             if (isIntroLevel) {
                 return TechConstants.T_INTRO_BOXSET;
             } else {
-                return clan? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_ALL;
+                return techBase == TECH_BASE_CLAN? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_ALL;
             }
         case RULES_ADVANCED:
-            return clan? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
+            return techBase == TECH_BASE_CLAN? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
         case RULES_EXPERIMENTAL:
-            return clan? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
+            return techBase == TECH_BASE_CLAN? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
         case RULES_UNAVAILABLE:
-            return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
+            return techBase == TECH_BASE_CLAN? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
         }
         return TechConstants.T_TECH_UNKNOWN;
     }
@@ -437,12 +435,12 @@ public class TechAdvancement {
     public boolean isExtinct(int year, boolean clan) {
         if (clan) {
             return clanAdvancement[EXTINCT] != DATE_NA
-                    && clanAdvancement[EXTINCT] > year
+                    && clanAdvancement[EXTINCT] < year
                     && (clanAdvancement[REINTRODUCED] == DATE_NA
                             || year < clanAdvancement[REINTRODUCED]);
         } else {
             return isAdvancement[EXTINCT] != DATE_NA
-                    && isAdvancement[EXTINCT] > year
+                    && isAdvancement[EXTINCT] < year
                     && (isAdvancement[REINTRODUCED] == DATE_NA
                             || year < isAdvancement[REINTRODUCED]);
         }
@@ -450,7 +448,7 @@ public class TechAdvancement {
     
     public boolean isExtinct(int year) {
         return getExtinctionDate() != DATE_NA
-                && getExtinctionDate() > year
+                && getExtinctionDate() < year
                 && (getReintroductionDate() == DATE_NA
                         || year < getReintroductionDate());
     }

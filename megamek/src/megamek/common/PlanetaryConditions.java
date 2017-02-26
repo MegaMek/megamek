@@ -585,7 +585,7 @@ public class PlanetaryConditions implements Serializable {
         }
 
         // temperature difference
-        if((en instanceof Tank) || (en instanceof Infantry) || (en instanceof Protomech)) {
+        if((en instanceof Tank) || ((en instanceof Infantry) && !((Infantry)en).isXCT()) || (en instanceof Protomech)) {
             mod -= Math.abs(getTemperatureDifference(50,-30));
         }
 

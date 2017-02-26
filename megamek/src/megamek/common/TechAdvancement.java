@@ -322,7 +322,7 @@ public class TechAdvancement {
                     && isAdvancement[PROTOTYPE] >= 2780) {
                 return EquipmentType.RATING_X;
             } else {
-                return getBaseAvailability(era);
+                return getBaseEraAvailability(era);
             }            
         } else {
             if (techBase == TECH_BASE_CLAN) {
@@ -338,7 +338,7 @@ public class TechAdvancement {
                     && year > isAdvancement[EXTINCT]) {
                 return Math.min(EquipmentType.RATING_X, availability[era] + 1);
             } else {
-                return getBaseAvailability(era);
+                return getBaseEraAvailability(era);
             }
         }
     }

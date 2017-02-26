@@ -282,6 +282,33 @@ public class TechAdvancement {
         }
         return availability[era];
     }
+
+    /**
+     * Adjusts base availability code for IS/Clan and IS extinction
+     * 
+     * @param era - one of the ERA_* constants from EquipmentType
+     * @param clan - whether this should be calculated for a Clan faction rather than IS
+     * @return - The availability code for the faction in the era. The code for an IS faction
+     *           during the SW era may be two values indicating availability before and after
+     *           the extinction date.
+     */
+    public String getEraAvailabilityName(int era, boolean clan) {
+        switch (era) {
+        case EquipmentType.ERA_SL:
+            return EquipmentType.getRatingName(getAvailability(2779, clan));
+        case EquipmentType.ERA_SW:
+            if (getAvailability(2780, clan) != getAvailability(3049, clan)) {
+                return EquipmentType.getRatingName(getAvailability(2780, clan))
+                        + "/" + EquipmentType.getRatingName(getAvailability(3049, clan));                
+            }
+            return EquipmentType.getRatingName(getAvailability(3049, clan));
+        case EquipmentType.ERA_CLAN:
+            return EquipmentType.getRatingName(getAvailability(3100, clan));
+        case EquipmentType.ERA_DA:
+            return EquipmentType.getRatingName(getAvailability(3145, clan));
+        }
+        return "U";
+    }
     
     /**
      * Computes availability code of equipment for IS factions in the given year, adjusting
@@ -392,7 +419,7 @@ public class TechAdvancement {
                 return TechConstants.T_INTRO_BOXSET;
             } else if (techBase == TECH_BASE_ALL) {
                 return TechConstants.T_TW_ALL;
-            } else if (techBase == TECH_BASE_IS) {
+            } else if (techBase == TECH_BASE_CLAN) {
                 return TechConstants.T_CLAN_TW;
             } else {
                 return TechConstants.T_IS_TW_ALL;

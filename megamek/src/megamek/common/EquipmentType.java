@@ -146,7 +146,9 @@ public class EquipmentType {
     public static final int RATING_D = 3;
     public static final int RATING_E = 4;
     public static final int RATING_F = 5;
-    public static final int RATING_X = 6;
+    public static final int RATING_FSTAR = 6; // Increasing F (Clan equipmment for IS or extinct equipment
+                                              // during SW era has a 50% chance of being X, denoted by F*.
+    public static final int RATING_X = 7;
 
     public static final int ERA_SL = 0;
     public static final int ERA_SW = 1;
@@ -155,7 +157,7 @@ public class EquipmentType {
 
     public static final int DATE_NONE = -1;
 
-    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F",
+    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F", "F*",
             "X" };
 
 
@@ -771,14 +773,31 @@ public class EquipmentType {
     public String getFullRatingName() {
         String rating = getTechRatingName();
         rating += "/";
-        rating += getAvailabilityName(ERA_SL);
+        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_SL));
         rating += "-";
-        rating += getAvailabilityName(ERA_SW);
+        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_SW));
         rating += "-";
-        rating += getAvailabilityName(ERA_CLAN);
+        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_CLAN));
         rating += "-";
-        rating += getAvailabilityName(ERA_DA);
+        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_DA));
         return rating;
+    }
+    
+    public String getFullRatingName(boolean clan) {
+        String rating = getTechRatingName();
+        rating += "/";
+        rating += techAdvancement.getEraAvailabilityName(ERA_SL, clan);
+        rating += "-";
+        rating += techAdvancement.getEraAvailabilityName(ERA_SW, clan);
+        rating += "-";
+        rating += techAdvancement.getEraAvailabilityName(ERA_CLAN, clan);
+        rating += "-";
+        rating += techAdvancement.getEraAvailabilityName(ERA_DA, clan);
+        return rating;        
+    }
+    
+    public String getEraAvailabilityName(int era, boolean clan) {
+        return techAdvancement.getEraAvailabilityName(era, clan);
     }
 
     /**

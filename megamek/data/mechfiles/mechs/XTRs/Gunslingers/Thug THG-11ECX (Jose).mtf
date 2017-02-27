@@ -34,12 +34,12 @@ RTC Armor:10
 
 Weapons:7
 ER Large Laser, Left Arm
-SRM 6, Left Torso
-SRM 6, Right Torso
-SRM 6, Left Torso
-SRM 6, Right Torso
-SRM 6, Right Torso
 ER Large Laser, Right Arm
+SRM 6, Left Torso
+SRM 6, Left Torso
+SRM 6, Right Torso
+SRM 6, Right Torso
+SRM 6, Right Torso
 
 Left Arm:
 Shoulder
@@ -50,7 +50,7 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISERLargeLaser
 ISERLargeLaser
--Empty-
+Mek Null Signature System
 -Empty-
 -Empty-
 -Empty-
@@ -64,7 +64,7 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISERLargeLaser
 ISERLargeLaser
--Empty-
+Mek Null Signature System
 -Empty-
 -Empty-
 -Empty-
@@ -80,7 +80,7 @@ SRM 6
 SRM 6
 IS Ammo SRM-6
 IS Ammo SRM-6
--Empty-
+Mek Null Signature System
 -Empty-
 
 Right Torso:
@@ -95,7 +95,7 @@ SRM 6
 SRM 6
 SRM 6
 IS Ammo SRM-6
--Empty-
+Mek Null Signature System
 
 Center Torso:
 Fusion Engine
@@ -108,7 +108,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
+Mek Null Signature System
 -Empty-
 
 Head:
@@ -131,7 +131,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
--Empty-
+Mek Null Signature System
 -Empty-
 -Empty-
 -Empty-
@@ -145,7 +145,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
--Empty-
+Mek Null Signature System
 -Empty-
 -Empty-
 -Empty-

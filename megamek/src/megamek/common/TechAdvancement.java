@@ -207,6 +207,10 @@ public class TechAdvancement {
     }
     
     public int getExtinctionDate() {
+        if (isAdvancement[EXTINCT] == DATE_NA
+                || clanAdvancement[EXTINCT] == DATE_NA) {
+            return DATE_NA;
+        }
         return Math.max(isAdvancement[EXTINCT], clanAdvancement[EXTINCT]);
     }
     

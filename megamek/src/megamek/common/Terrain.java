@@ -313,8 +313,7 @@ public class Terrain implements ITerrain, Serializable {
             }
             break;
         case Terrains.MUD:
-            if ((moveMode != EntityMovementMode.BIPED) && (moveMode != EntityMovementMode.QUAD)
-                    && (moveMode != EntityMovementMode.HOVER) && (moveMode != EntityMovementMode.WIGE)) {
+            if ((moveMode != EntityMovementMode.HOVER) && (moveMode != EntityMovementMode.WIGE)) {
                 roll.addModifier(1, "Mud");
             }
             break;
@@ -416,8 +415,7 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 0;
         case Terrains.MUD:
-            if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)
-                    || (moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
+            if ((moveMode == EntityMovementMode.HOVER) || (moveMode == EntityMovementMode.WIGE)) {
                 return 0;
             }
             return 1;
@@ -517,9 +515,6 @@ public class Terrain implements ITerrain, Serializable {
             }
             return TargetRoll.AUTOMATIC_SUCCESS;
         case (Terrains.MUD):
-            if ((moveMode == EntityMovementMode.BIPED) || (moveMode == EntityMovementMode.QUAD)) {
-                return TargetRoll.AUTOMATIC_SUCCESS;
-            }
             return -1;
         case (Terrains.TUNDRA):
             return -1;

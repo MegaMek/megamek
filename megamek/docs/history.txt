@@ -1,7 +1,20 @@
 VERSION HISTORY:
 ----------------
 v0.43.1-git
++ Feature: Added checks for null crew when checking for MD enhancements
++ Feature: Merge pull request #486 from pheonixstorm/SPA-Update
 + Issue #476: VTOL armor diagram changes color incorrectly?
++ Feature: Added checks for illegal superheavy mech equipment.
++ Feature: Added specialized infantry to verifier.
++ Feature: Added infantry specializations to cost calculation.
++ Feature: Fixed max platoon size test in verifier.
++ Feature: Show BV calculations for conventional infantry.
++ Feature: Added infantry BV calculations from TacOps.
++ Feature: Added infantry specializations to weight calculations.
++ Feature: Added anti-mek equipment back to infantry weight calculations.
++ Data: New Sprites and New Maps (Thanks DancefloorLandmine)
++ Issue #494 - Updated Princess Behaviors (Thanks pfarland and xStormforgex)
++ Issue #484 and fixes to image names.
 + Issue #490: Fixed princess documentation.
 
 v0.43.0 (2017-02-13 03:30 UTC)

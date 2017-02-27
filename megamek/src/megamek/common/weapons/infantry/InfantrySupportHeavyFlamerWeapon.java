@@ -46,7 +46,8 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
         crew = 2;
         rulesRefs =" 273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
+        techAdvancement.setAdvancement(TechAdvancement.DATE_ES, TechAdvancement.DATE_ES, TechAdvancement.DATE_ES);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }

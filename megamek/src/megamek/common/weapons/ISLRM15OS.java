@@ -48,8 +48,9 @@ public class ISLRM15OS extends LRMWeapon {
         longAV = 9;
         maxRange = RANGE_LONG;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2676, 2800, 3030);
+        techAdvancement.setISAdvancement(2660, 2676, 3045, 2800, 3030);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
     }
 }

@@ -55,9 +55,11 @@ public class ISAC10 extends ACWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2460);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setISAdvancement(2243, 2460, 2465);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2465, 2855);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_D, RATING_D, RATING_X });
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
     }
 }

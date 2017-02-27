@@ -39,6 +39,8 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.setInternalName(this.name);
         this.addLookupName("IS Vehicle Flamer");
         this.addLookupName("ISVehicleFlamer");
+        this.addLookupName("CLVehicleFlamer");
+        this.addLookupName("Clan Vehicle Flamer");
         this.heat = 3;
         this.damage = 2;
         this.infDamageClass = WeaponType.WEAPON_BURST_4D6;
@@ -54,9 +56,10 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "218, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_A });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
+        techAdvancement.setIntroLevel(true);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
     }
 }

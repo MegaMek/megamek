@@ -59,10 +59,12 @@ public class ISPPC extends PPCWeapon {
         maxRange = RANGE_MED;
         // with a capacitor
         explosive = true;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2460);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setISAdvancement(2435, 2460, 2500);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2500, 2825);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
     }
 
 }

@@ -48,9 +48,11 @@ public class ISSRM2 extends SRMWeapon {
         cost = 10000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2370);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setISAdvancement(2365, 2370, 2400);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2400, 2836);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
     }
 }

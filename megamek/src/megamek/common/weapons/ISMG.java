@@ -53,7 +53,8 @@ public class ISMG extends MGWeapon {
         this.maxRange = RANGE_SHORT;
         rulesRefs = "228, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
+        techAdvancement.setISAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_B);
         techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
     }

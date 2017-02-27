@@ -48,7 +48,8 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
         crew = 1;
         rulesRefs =" 273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        techAdvancement.setAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
     }

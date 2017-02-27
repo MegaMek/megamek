@@ -47,6 +47,7 @@ public class ISBALRM5 extends LRMWeapon {
         rulesRefs = "261, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3050, 3057, 3060);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }

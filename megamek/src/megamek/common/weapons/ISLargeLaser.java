@@ -51,9 +51,11 @@ public class ISLargeLaser extends LaserWeapon {
         this.shortAV = 8;
         this.medAV = 8;
         this.maxRange = RANGE_MED;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2316);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setISAdvancement(2306, 2316, 2320);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2320, 2855);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_D, RATING_C, RATING_X });
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_D, RATING_C, RATING_B });
     }
 }

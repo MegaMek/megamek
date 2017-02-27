@@ -1960,6 +1960,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2022);
+        misc.techAdvancement.setIntroLevel(true);
         misc.techAdvancement.setTechRating(RATING_C);
         misc.techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_X });
         return misc;
@@ -2270,6 +2271,7 @@ public class MiscType extends EquipmentType {
 
         misc.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3022);
+        misc.techAdvancement.setIntroLevel(true);
         misc.techAdvancement.setTechRating(RATING_B);
         misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_X });
         return misc;
@@ -6757,6 +6759,7 @@ public class MiscType extends EquipmentType {
 
         misc.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        misc.techAdvancement.setIntroLevel(true);
         misc.techAdvancement.setTechRating(RATING_A);
         misc.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
         return misc;

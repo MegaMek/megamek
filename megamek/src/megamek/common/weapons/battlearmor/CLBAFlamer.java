@@ -37,6 +37,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         name = "Flamer [BA]";
         setInternalName("CLBAFlamer");
         addLookupName("Clan BA Flamer");
+        addLookupName("ISBAFlamer");
         heat = 3;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
@@ -51,8 +52,10 @@ public class CLBAFlamer extends BAFlamerWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         rulesRefs = "255, TO";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setClanAdvancement(2860, 2868, 3050);
+        techAdvancement.setISAdvancement(DATE_NONE, 3050, 3050);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_B, RATING_B });
     }

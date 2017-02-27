@@ -52,7 +52,8 @@ public class ISBAMediumLaser extends LaserWeapon {
         maxRange = RANGE_SHORT;
         rulesRefs = "258, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3045, DATE_NONE, 3050);
+        techAdvancement.setISAdvancement(3045, 3050, 3050);
+        techAdvancement.setIntroLevel(true);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
     }

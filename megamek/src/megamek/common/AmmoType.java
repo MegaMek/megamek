@@ -525,6 +525,7 @@ public class AmmoType extends EquipmentType {
         // all level 1 ammo
         base = AmmoType.createISVehicleFlamerAmmo();
         vehicleFlamerAmmos.add(base);
+        clanVehicleFlamerAmmos.add(base);
         EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createISMGAmmo());
         EquipmentType.addType(AmmoType.createISMGAmmoHalf());
@@ -827,9 +828,6 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLStreakSRM4Ammo());
         EquipmentType.addType(AmmoType.createCLStreakSRM5Ammo());
         EquipmentType.addType(AmmoType.createCLStreakSRM6Ammo());
-        base = AmmoType.createCLVehicleFlamerAmmo();
-        clanVehicleFlamerAmmos.add(base);
-        EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createCLMGAmmo());
         EquipmentType.addType(AmmoType.createCLMGAmmoHalf());
         EquipmentType.addType(AmmoType.createCLHeavyMGAmmo());
@@ -2248,8 +2246,10 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.rulesRefs = "207, TM";
 
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         ammo.techAdvancement.setISAdvancement(2290, 2300, 2305);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2305, 2855);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_B);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
         return ammo;
@@ -2273,6 +2273,8 @@ public class AmmoType extends EquipmentType {
 
         ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         ammo.techAdvancement.setISAdvancement(2240, 2250, 2255);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2255, 2855);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_B);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
         return ammo;
@@ -2294,8 +2296,10 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 6000;
         ammo.rulesRefs = "207, TM";
 
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2443, 2460, 2465);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        ammo.techAdvancement.setISAdvancement(2243, 2460, 2465);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2465, 2855);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_B);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
         return ammo;
@@ -2316,9 +2320,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 22;
         ammo.cost = 10000;
         ammo.rulesRefs = "207, TM";
-
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         ammo.techAdvancement.setISAdvancement(2488, 2500, 2502);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2502, 2855);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_B);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
         return ammo;
@@ -2416,6 +2421,9 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Vehicle Flamer Ammo");
         ammo.addLookupName("IS Ammo Vehicle Flamer");
         ammo.addLookupName("ISVehicleFlamer Ammo");
+        ammo.addLookupName("Clan Vehicle Flamer Ammo");
+        ammo.addLookupName("Clan Ammo Vehicle Flamer");
+        ammo.addLookupName("CLVehicleFlamer Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_VEHICLE_FLAMER;
@@ -2423,9 +2431,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 1000;
         ammo.rulesRefs = "218, TM";
-
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        ammo.techAdvancement.setISAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_C);
         ammo.techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_A });
         return ammo;
@@ -2448,9 +2456,9 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 1000;
         ammo.rulesRefs = "228, TM";
-
         ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
+        ammo.techAdvancement.setISAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_B);
         ammo.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
         return ammo;
@@ -2475,9 +2483,9 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.cost = 500;
         ammo.rulesRefs = "228, TM";
-
         ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
+        ammo.techAdvancement.setISAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_B);
         ammo.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
         return ammo;
@@ -2599,8 +2607,10 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.rulesRefs = "229, TM";
 
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         ammo.techAdvancement.setISAdvancement(2295, 2300, 2400);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2400, 2830);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_C);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
@@ -2624,8 +2634,10 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.rulesRefs = "229, TM";
 
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         ammo.techAdvancement.setISAdvancement(2295, 2300, 2400);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2400, 2830);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_C);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
@@ -2649,8 +2661,10 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.rulesRefs = "229, TM";
 
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         ammo.techAdvancement.setISAdvancement(2295, 2300, 2400);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2400, 2830);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_C);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
@@ -2674,8 +2688,10 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.rulesRefs = "229, TM";
 
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         ammo.techAdvancement.setISAdvancement(2295, 2300, 2400);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2400, 2830);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_C);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
@@ -2697,8 +2713,10 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
 
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         ammo.techAdvancement.setISAdvancement(2365, 2370, 2400);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2400, 2836);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_C);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
@@ -2719,8 +2737,10 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.cost = 27000;
         ammo.rulesRefs = "229, TM";
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         ammo.techAdvancement.setISAdvancement(2365, 2370, 2400);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2400, 2836);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_C);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
@@ -2742,8 +2762,10 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 27000;
         ammo.rulesRefs = "230, TM";
         
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         ammo.techAdvancement.setISAdvancement(2365, 2370, 2400);
+        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2400, 2836);
+        ammo.techAdvancement.setIntroLevel(true);
         ammo.techAdvancement.setTechRating(RATING_C);
         ammo.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
         return ammo;
@@ -4389,30 +4411,6 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setClanAdvancement(2819, 2821, 2828);
         ammo.techAdvancement.setTechRating(RATING_F);
         ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
-        return ammo;
-    }
-
-    private static AmmoType createCLVehicleFlamerAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Vehicle Flamer Ammo";
-        ammo.shortName = "Vehicle Flamer";
-        ammo.setInternalName("Clan Vehicle Flamer Ammo");
-        ammo.addLookupName("Clan Ammo Vehicle Flamer");
-        ammo.addLookupName("CLVehicleFlamer Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_VEHICLE_FLAMER;
-        ammo.shots = 20;
-        ammo.bv = 1;
-        ammo.cost = 1000;
-        ammo.kgPerShot = 50;
-        ammo.rulesRefs = "207, TM";
-
-        ammo.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_A, RATING_B, RATING_A });
         return ammo;
     }
 

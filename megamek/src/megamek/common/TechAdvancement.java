@@ -63,6 +63,28 @@ public class TechAdvancement {
         Arrays.fill(clanAdvancement, DATE_NONE);
     }
     
+    public TechAdvancement(int techBase, int[] isAdvancement, int[] clanAdvancement,
+            int techRating, int[] availability) {
+        this();
+        setTechBase(techBase);
+        if (isAdvancement == null) {
+            Arrays.fill(isAdvancement, DATE_NONE);
+        } else {
+            setISAdvancement(isAdvancement);
+        }
+        if (clanAdvancement == null) {
+            Arrays.fill(clanAdvancement, DATE_NONE);
+        } else {
+            setClanAdvancement(clanAdvancement);
+        }
+        setTechRating(techRating);
+        setAvailability(availability);
+    }
+    
+    public TechAdvancement(int[] advancement, int techRating, int[] availability) {
+        this(TECH_BASE_ALL, advancement, advancement, techRating, availability);
+    }
+    
     public void setTechBase(int base) {
         techBase = base;
     }
@@ -241,7 +263,7 @@ public class TechAdvancement {
     /**
      * Finds the earliest of two dates, ignoring DATE_NA unless both values are set to DATE_NA
      */
-    private static int earliestDate(int d1, int d2) {
+    public static int earliestDate(int d1, int d2) {
         if (d1 < 0) {
             return d2;
         }

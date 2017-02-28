@@ -223,6 +223,21 @@ public class Aero extends Entity {
         altitude = 5;
     }
 
+    @Override
+    protected void initTechAdvancement() {
+        if (isPrimitive()) {
+            techAdvancement.setTechBase(TECH_BASE_IS);
+            techAdvancement.setISAdvancement(DATE_ES, 2195, DATE_NONE, 2520);
+            techAdvancement.setTechRating(RATING_D);
+            techAdvancement.setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);            
+        } else {
+            techAdvancement.setTechBase(TECH_BASE_ALL);
+            techAdvancement.setAdvancement(DATE_NONE, 2470, 2490);
+            techAdvancement.setTechRating(RATING_D);
+            techAdvancement.setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+        }
+    }
+    
     /**
      * Returns this entity's safe thrust, factored for heat, extreme
      * temperatures, gravity, and bomb load.

@@ -64,7 +64,7 @@ public class EntityWeightClass {
     private static double[] dropshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 2499, 9999, 100000 }; // Seven padding 0s
     private static double[] jumpshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 749999, 2500000 }; // Ten padding 0s
     private static double[] GEWeightLimits = { 0, 15, 40, 90, 150 }; // One padding 0
-    private static double[] protoWeightLimits = { 0, 3, 5, 7, 9 }; // One padding 0
+    private static double[] protoWeightLimits = { 0, 3, 5, 7, 9, 10 }; // One padding 0
 
     public static int getWeightClass(double tonnage, String type) {
         int i;

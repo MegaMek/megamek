@@ -322,6 +322,7 @@ public abstract class Mech extends Entity {
         // ejection systems are disabled by default or not.
         autoEject = !PreferenceManager.getClientPreferences()
                 .defaultAutoejectDisabled();
+        initTechAdvancement();
     }
 
     /**
@@ -2945,6 +2946,57 @@ public abstract class Mech extends Entity {
                 critSlot = (critSlot + 1) % getNumberOfCriticals(loc);
             }
         }
+    }
+    
+    @Override
+    protected void initTechAdvancement() {
+        if (isSuperHeavy()) {
+            techAdvancement.setTechBase(TECH_BASE_IS);
+            techAdvancement.setISAdvancement(3077, 3078);
+            techAdvancement.setTechRating(RATING_D);
+            techAdvancement.setAvailability(RATING_X, RATING_F, RATING_F, RATING_F);
+        } else if (getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
+            techAdvancement.setTechBase(TECH_BASE_ALL);
+            techAdvancement.setAdvancement(2495, 2519, 3070);
+            techAdvancement.setTechRating(RATING_D);
+            techAdvancement.setAvailability(RATING_E, RATING_F, RATING_E, RATING_E);
+        } else if (isPrimitive()) {
+            if (isIndustrial()) {
+                techAdvancement.setTechBase(TECH_BASE_IS);
+                techAdvancement.setISAdvancement(2300, 2350, 2425, 2520);
+                techAdvancement.setTechRating(RATING_D);
+                techAdvancement.setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
+            } else {
+                techAdvancement.setTechBase(TECH_BASE_IS);
+                techAdvancement.setISAdvancement(2439, 2443, 2470, 2520);
+                techAdvancement.setTechRating(RATING_C);
+                techAdvancement.setAvailability(RATING_C, RATING_X, RATING_F, RATING_F);
+            }
+        } else {
+            if (isIndustrial()) {
+                techAdvancement.setTechBase(TECH_BASE_ALL);
+                techAdvancement.setAdvancement(2460, 2470, 2500);
+                techAdvancement.setTechRating(RATING_C);
+                techAdvancement.setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+            } else {
+                techAdvancement.setTechBase(TECH_BASE_ALL);            
+                techAdvancement.setAdvancement(2460, 2470, 2500);
+                techAdvancement.setTechRating(RATING_D);
+                techAdvancement.setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+            }
+        }
+    }
+    
+    @Override
+    protected void addSystemTechAdvancement() {
+        super.addSystemTechAdvancement();
+        //TODO: add gyro and cockpit
+    }
+    
+    @Override
+    public void recalculateTechAdvancement() {
+        super.recalculateTechAdvancement();
+        addSystemTechAdvancement();
     }
 
     /**

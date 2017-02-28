@@ -87,7 +87,7 @@ import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
  * Entity is a master class for basically anything on the board except terrain.
  */
 public abstract class Entity extends TurnOrdered implements Transporter,
-        Targetable, RoundUpdated, PhaseUpdated {
+        Targetable, RoundUpdated, PhaseUpdated, ITechnology {
     /**
      *
      */
@@ -196,6 +196,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected String model;
     protected int year = 3071;
     protected int techLevel;
+    protected TechAdvancement techAdvancement;
     /**
      * Used by support vehicles to define the structural tech rating 
      * (TM pg 117).  The values should come from EquipmentType.RATING_A-X.
@@ -816,6 +817,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             armorType[i] = EquipmentType.T_ARMOR_UNKNOWN;
             armorTechLevel[i] = TechConstants.T_TECH_UNKNOWN;
         }
+        techAdvancement = new TechAdvancement();
         hardenedArmorDamaged = new boolean[locations()];
         locationBlownOff = new boolean[locations()];
         locationBlownOffThisPhase = new boolean[locations()];
@@ -1031,7 +1033,37 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setTechLevel(int techLevel) {
         this.techLevel = techLevel;
     }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return techAdvancement;
+    }
+    
+    /**
+     * Sets initial TechAdvancement without equipment based on construction options.
+     */
+    protected abstract void initTechAdvancement();
+    
+    /**
+     * Resets techAdvancement to initial value and adjusts for all installed equipment.
+     */
+    public void recalculateTechAdvancement() {
+        techAdvancement = new TechAdvancement();
+        initTechAdvancement();
+        addSystemTechAdvancement();
+        getEquipment().forEach(m -> ITechnology.aggregate(this, m.getType(), isMixedTech()));
+    }
 
+    /**
+     * Incorporate dates for components that are not in the equipment list, such as engines and structure.
+     */
+    protected void addSystemTechAdvancement() {
+        if (hasEngine()) {
+            ITechnology.aggregate(this, getEngine(), isMixedTech());
+        }
+        //TODO: armor and structure
+    }
+    
     public int getRecoveryTurn() {
         return recoveryTurn;
     }

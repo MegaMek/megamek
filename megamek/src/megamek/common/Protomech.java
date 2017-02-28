@@ -334,6 +334,33 @@ public class Protomech extends Entity {
         }
         return 0;
     }
+    
+    @Override
+    protected void initTechAdvancement() {
+        if (isQuad) {
+            techAdvancement.setTechBase(TECH_BASE_CLAN);
+            techAdvancement.setClanAdvancement(3075, 3078, 3100);
+            techAdvancement.setTechRating(RATING_F);
+            techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+        } else if (getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+            techAdvancement.setTechBase(TECH_BASE_CLAN);
+            techAdvancement.setClanAdvancement(3075, 3078, 3100);
+            techAdvancement.setTechRating(RATING_F);
+            techAdvancement.setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+        } else {
+            techAdvancement.setTechBase(TECH_BASE_CLAN);
+            techAdvancement.setClanAdvancement(3050, 3059, 3060);
+            techAdvancement.setTechRating(RATING_F);
+            techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);            
+        }
+        /* glider
+            techAdvancement.setTechBase(TECH_BASE_CLAN);
+            techAdvancement.setClanAdvancement(3075, 3079, 3100);
+            techAdvancement.setTechRating(RATING_F);
+            techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
+        */            
+        
+    }
 
     /**
      * Override Entity#newRound() method.

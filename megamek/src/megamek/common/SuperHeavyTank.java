@@ -71,6 +71,13 @@ public class SuperHeavyTank extends Tank {
         return LOC_TURRET_2;
     }
 
+    protected void initTechAdvancement() {
+        techAdvancement.setTechBase(TECH_BASE_ALL);
+        techAdvancement.setAdvancement(2465, DATE_NONE, 3070);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability(RATING_E, RATING_F, RATING_F, RATING_E);
+    }
+
     /**
      * Rolls up a hit location
      */

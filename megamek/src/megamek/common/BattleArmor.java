@@ -348,6 +348,43 @@ public class BattleArmor extends Infantry {
         // Construction complete.
         isInitialized = true;
     }
+    
+    protected void initTechAdvancement() {
+        techAdvancement.setTechBase(TECH_BASE_ALL);
+        switch(getWeightClass()) {
+        case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+            techAdvancement.setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905);
+            techAdvancement.setClanAdvancement(2710, DATE_NONE, 3058);
+            techAdvancement.setTechRating(RATING_D);
+            techAdvancement.setAvailability(RATING_F, RATING_X, RATING_E, RATING_D);
+            break;
+        case EntityWeightClass.WEIGHT_LIGHT:
+            techAdvancement.setClanAdvancement(2860, 2870, 2900);
+            techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
+            techAdvancement.setTechRating(RATING_E);
+            techAdvancement.setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+            break;
+        case EntityWeightClass.WEIGHT_HEAVY:
+            techAdvancement.setClanAdvancement(2862, 2875, 3058);
+            techAdvancement.setISAdvancement(DATE_NONE, 3050, 3058);
+            techAdvancement.setTechRating(RATING_E);
+            techAdvancement.setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+            break;
+        case EntityWeightClass.WEIGHT_ASSAULT:
+            techAdvancement.setClanAdvancement(2865, 2877, 3060);
+            techAdvancement.setISAdvancement(DATE_NONE, 3050, 3060);
+            techAdvancement.setTechRating(RATING_E);
+            techAdvancement.setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+            break;
+        case EntityWeightClass.WEIGHT_MEDIUM:
+        default:
+            techAdvancement.setClanAdvancement(2835, 2868, 2875);
+            techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3052);
+            techAdvancement.setTechRating(RATING_E);
+            techAdvancement.setAvailability(RATING_X, RATING_D, RATING_D, RATING_D);
+            break;
+        }
+    }
 
     /**
      * Returns this entity's original jumping mp.

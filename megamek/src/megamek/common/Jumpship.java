@@ -78,6 +78,21 @@ public class Jumpship extends Aero {
     }
 
     @Override
+    protected void initTechAdvancement() {
+        if (isPrimitive()) {
+            techAdvancement.setTechBase(TECH_BASE_IS);
+            techAdvancement.setISAdvancement(DATE_ES, 2195, DATE_NONE, 2500);
+            techAdvancement.setTechRating(RATING_D);
+            techAdvancement.setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
+        } else {
+            techAdvancement.setTechBase(TECH_BASE_ALL);
+            techAdvancement.setAdvancement(DATE_NONE, 2295);
+            techAdvancement.setTechRating(RATING_D);
+            techAdvancement.setAvailability(RATING_D, RATING_E, RATING_D, RATING_F);
+        }
+    }
+    
+    @Override
     public int locations() {
         return 6;
     }

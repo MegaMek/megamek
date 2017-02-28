@@ -210,6 +210,86 @@ public class Infantry extends Entity {
         setOriginalWalkMP(1);
     }
 
+    @Override
+    protected void initTechAdvancement() {
+        techAdvancement.setTechBase(TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+        switch(getMovementMode()) {
+        case INF_MOTORIZED:
+            techAdvancement.setTechRating(RATING_B);
+            techAdvancement.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+            break;
+        case INF_JUMP:
+            techAdvancement.setAdvancement(DATE_ES, DATE_ES, DATE_ES);
+            techAdvancement.setTechRating(RATING_D);
+            techAdvancement.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+            break;
+        case INF_UMU:
+            techAdvancement.setAdvancement(DATE_PS, DATE_PS);
+            techAdvancement.setTechRating(RATING_B);
+            techAdvancement.setAvailability(RATING_D, RATING_D, RATING_D, RATING_D);
+            break;
+        case WHEELED:
+            techAdvancement.setTechRating(RATING_A);
+            techAdvancement.setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+            break;
+        case TRACKED:
+            techAdvancement.setTechRating(RATING_B);
+            techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+            break;
+        case HOVER:
+            techAdvancement.setTechRating(RATING_C);
+            techAdvancement.setAvailability(RATING_A, RATING_B, RATING_A, RATING_B);
+            break;
+        case VTOL:
+            techAdvancement.setAdvancement(DATE_ES, DATE_ES);
+            techAdvancement.setTechRating(RATING_C);
+            techAdvancement.setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+            break;
+        case SUBMARINE:
+            techAdvancement.setAdvancement(DATE_PS, DATE_PS);
+            techAdvancement.setTechRating(RATING_C);
+            techAdvancement.setAvailability(RATING_D, RATING_D, RATING_D, RATING_D);
+            break;
+        case INF_LEG:
+        default:
+            techAdvancement.setTechRating(RATING_A);
+            techAdvancement.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+            break;
+        }
+    }
+    
+    @Override
+    protected void addSystemTechAdvancement() {
+        super.addSystemTechAdvancement();
+        if (hasSpecialization(COMBAT_ENGINEERS)) {
+            ITechnology.aggregate(this, new TechAdvancement(new int[] { DATE_PS, DATE_PS, DATE_PS },
+                    RATING_C, new int[] { RATING_A, RATING_B, RATING_A, RATING_A}), isMixedTech());
+        }
+        if (hasSpecialization(MARINES)) {
+            ITechnology.aggregate(this, new TechAdvancement(new int[] { DATE_PS, DATE_PS, DATE_PS },
+                    RATING_C, new int[] { RATING_A, RATING_A, RATING_A, RATING_A}), isMixedTech());
+        }
+        if (hasSpecialization(MOUNTAIN_TROOPS) || hasSpecialization(PARATROOPS)) {
+            ITechnology.aggregate(this, new TechAdvancement(new int[] { DATE_PS, DATE_PS, DATE_PS },
+                    RATING_C, new int[] { RATING_A, RATING_A, RATING_A, RATING_A}), isMixedTech());
+        }
+        if (hasSpecialization(PARAMEDICS)) {
+            ITechnology.aggregate(this, new TechAdvancement(new int[] { DATE_PS, DATE_PS, DATE_PS },
+                    RATING_B, new int[] { RATING_C, RATING_C, RATING_C, RATING_C}), isMixedTech());
+        }
+        if (hasSpecialization(TAG_TROOPS)) {
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL,
+                    new int[] { 2585, 2600, DATE_NONE, 2535, 3037 },
+                    new int[] { 2585, 2600 },
+                    RATING_C, new int[] { RATING_A, RATING_A, RATING_A, RATING_A}), isMixedTech());
+        }
+        if (isAntiMekTrained()) {
+            ITechnology.aggregate(this, new TechAdvancement(new int[] { 2451, 2460, 2500 },
+                    RATING_D, new int[] { RATING_D, RATING_D, RATING_D, RATING_D}), isMixedTech());
+        }
+    }
+    
     /**
      * Infantry can face freely (except when dug in)
      */

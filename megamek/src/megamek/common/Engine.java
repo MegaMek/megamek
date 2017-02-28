@@ -26,7 +26,7 @@ import megamek.common.verifier.TestEntity;
 /**
  * This class represents an engine, such as those driving mechs.
  */
-public class Engine implements Serializable {
+public class Engine implements Serializable, ITechnology {
     /**
      *
      */
@@ -132,6 +132,7 @@ public class Engine implements Serializable {
     private int engineType;
     private int engineFlags;
     private int baseChassisHeatSinks = -1;
+    private TechAdvancement techAdvancement;
     public StringBuffer problem = new StringBuffer("Illegal engine: ");
 
     /**
@@ -157,6 +158,7 @@ public class Engine implements Serializable {
             this.engineType = -1;
             this.engineFlags = -1;
         }
+        initTechAdvancement();
     }
 
     /**
@@ -748,6 +750,168 @@ public class Engine implements Serializable {
         return cost;
     }
 
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return techAdvancement;
+    }
+    
+    /* TODO: We don't really need a separate copy of this for every engine instance */
+    protected void initTechAdvancement() {
+        techAdvancement = new TechAdvancement();
+        switch(engineType) {
+        case COMBUSTION_ENGINE:
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+                techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+                techAdvancement.setTechRating(RATING_B);
+                techAdvancement.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+                break;                
+            } else {
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+                if (hasFlag(LARGE_ENGINE)) {
+                    techAdvancement.setAdvancement(2630, 3080);
+                } else {
+                    techAdvancement.setAdvancement(DATE_ES, DATE_ES, 2295);
+                }
+                techAdvancement.setTechRating(RATING_C);
+                techAdvancement.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+            }
+            break;
+        case NORMAL_ENGINE:
+            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                techAdvancement.setAdvancement(DATE_ES, DATE_ES, DATE_ES);
+                techAdvancement.setTechRating(RATING_C);
+                techAdvancement.setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+                break;                
+            } else {
+                if (hasFlag(LARGE_ENGINE)) {
+                    techAdvancement.setAdvancement(2630, 3080, 3115);
+                } else {
+                    techAdvancement.setAdvancement(DATE_ES, DATE_ES, 2295);
+                    techAdvancement.setIntroLevel(true);
+                }
+                techAdvancement.setTechRating(RATING_D);
+                techAdvancement.setAvailability(RATING_C, RATING_E, RATING_D, RATING_D);
+            }
+            break;
+        case XL_ENGINE:
+            if (hasFlag(CLAN_ENGINE)) {
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+                if (hasFlag(LARGE_ENGINE)) {
+                    techAdvancement.setClanAdvancement(2850, 3080);
+                    techAdvancement.setAvailability(RATING_D, RATING_F, RATING_E, RATING_E);
+                } else {
+                    techAdvancement.setClanAdvancement(2819, 2827, 2829);
+                    techAdvancement.setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+                }
+                techAdvancement.setTechRating(RATING_F);
+            } else {
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+                if (hasFlag(LARGE_ENGINE)) {
+                    techAdvancement.setISAdvancement(2630, 3080, DATE_NONE, 2822, 3054);
+                    techAdvancement.setAvailability(RATING_D, RATING_F, RATING_E, RATING_E);
+                } else {
+                    techAdvancement.setISAdvancement(2556, 2579, 3045, 2865, 3035);
+                    techAdvancement.setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
+                }
+                techAdvancement.setTechRating(RATING_E);
+            }
+            break;
+        case XXL_ENGINE:
+            if (hasFlag(CLAN_ENGINE)) {
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+                if (hasFlag(LARGE_ENGINE)) {
+                    techAdvancement.setClanAdvancement(3055, 3125);
+                    techAdvancement.setAvailability(RATING_X, RATING_X, RATING_F, RATING_F);
+                } else {
+                    techAdvancement.setClanAdvancement(2949, 3079);
+                    techAdvancement.setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+                }
+                techAdvancement.setTechRating(RATING_F);
+            } else {
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+                if (hasFlag(LARGE_ENGINE)) {
+                    techAdvancement.setISAdvancement(3058, 3130);
+                    techAdvancement.setAvailability(RATING_X, RATING_X, RATING_F, RATING_F);
+                } else {
+                    techAdvancement.setISAdvancement(3050, 3105);
+                    techAdvancement.setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+                }
+                techAdvancement.setTechRating(RATING_F);
+            }
+            break;
+        case FUEL_CELL:
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+                techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+                techAdvancement.setTechRating(RATING_C);
+                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_C, RATING_B);
+                break;                
+            } else {
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+                techAdvancement.setAdvancement(2995, 2470, 3078);
+                techAdvancement.setTechRating(RATING_D);
+                techAdvancement.setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+            }
+            break;
+        case LIGHT_ENGINE:
+            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+            if (hasFlag(LARGE_ENGINE)) {
+                techAdvancement.setISAdvancement(3059, 3065);
+                techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
+            } else {
+                techAdvancement.setISAdvancement(3050, 3062, 3067);
+                techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+            }
+            techAdvancement.setTechRating(RATING_D);
+            break;
+        case COMPACT_ENGINE:
+            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+            techAdvancement.setISAdvancement(3060, 3068, 3072);
+            techAdvancement.setTechRating(RATING_E);
+            techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+            break;
+        case FISSION:
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+                techAdvancement.setAdvancement(DATE_ES, DATE_ES, DATE_ES);
+                techAdvancement.setTechRating(RATING_C);
+                techAdvancement.setAvailability(RATING_E, RATING_E, RATING_D, RATING_C);
+                break;                
+            } else {                
+                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+                techAdvancement.setAdvancement(2470, 2882, 3079);
+                techAdvancement.setTechRating(RATING_D);
+                techAdvancement.setAvailability(RATING_E, RATING_E, RATING_D, RATING_D);
+            }
+            break;
+        case MAGLEV:
+            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+            techAdvancement.setAdvancement(DATE_ES, DATE_ES, DATE_ES);
+            techAdvancement.setTechRating(RATING_C);
+            techAdvancement.setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
+            break;
+        case STEAM:
+            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+            techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+            techAdvancement.setTechRating(RATING_A);
+            techAdvancement.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+            break;
+        case BATTERY:
+            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+            techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+            techAdvancement.setTechRating(RATING_C);
+            techAdvancement.setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+            break;
+        case SOLAR:
+            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+            techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+            techAdvancement.setTechRating(RATING_C);
+            techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            break;            
+        }
+    }
     /**
      * Return the tech type (tech level + tech base) for the current engine.
      *

@@ -24,14 +24,19 @@ import java.util.Arrays;
  */
 public class TechAdvancement {
 	
-	/* Constants for special cases not involving a specific year */
-	public static final int DATE_NA = -1;
-	public static final int DATE_PS = 1950;
-    public static final int DATE_ES = 2100;
+	/* Local versions of ITechnology constants for convenience */
+	public static final int DATE_NONE = ITechnology.DATE_NONE;
+	public static final int DATE_PS = ITechnology.DATE_PS;
+    public static final int DATE_ES = ITechnology.DATE_ES;
 	
-	public static final int TECH_BASE_ALL  = 0;
-	public static final int TECH_BASE_IS   = 1;
-	public static final int TECH_BASE_CLAN = 2;
+	public static final int TECH_BASE_ALL  = ITechnology.TECH_BASE_ALL;
+	public static final int TECH_BASE_IS   = ITechnology.TECH_BASE_IS;
+	public static final int TECH_BASE_CLAN = ITechnology.TECH_BASE_CLAN;
+	
+    public static final int ERA_SL     = ITechnology.ERA_SL;
+    public static final int ERA_SW     = ITechnology.ERA_SW;
+    public static final int ERA_CLAN   = ITechnology.ERA_CLAN;
+    public static final int ERA_DA     = ITechnology.ERA_DA;
 	
 	public static final int PROTOTYPE    = 0;
 	public static final int PRODUCTION   = 1;
@@ -50,12 +55,12 @@ public class TechAdvancement {
     private int[] clanAdvancement = new int[5];
     private boolean isIntroLevel = false; //Whether RULES_STANDARD should be considered T_INTRO_BOXSET.
     private boolean unofficial = false;
-    private int techRating = EquipmentType.RATING_C;
-    private int[] availability = new int[EquipmentType.ERA_DA + 1];
+    private int techRating = ITechnology.RATING_C;
+    private int[] availability = new int[ERA_DA + 1];
     
     public TechAdvancement() {
-        Arrays.fill(isAdvancement, DATE_NA);
-        Arrays.fill(clanAdvancement, DATE_NA);
+        Arrays.fill(isAdvancement, DATE_NONE);
+        Arrays.fill(clanAdvancement, DATE_NONE);
     }
     
     public void setTechBase(int base) {
@@ -67,12 +72,12 @@ public class TechAdvancement {
     }
     
     public void setISAdvancement(int[] prog) {
-        Arrays.fill(isAdvancement, DATE_NA);
+        Arrays.fill(isAdvancement, DATE_NONE);
         System.arraycopy(prog, 0, isAdvancement, 0, Math.min(isAdvancement.length, prog.length));
     }
     
     public void setClanAdvancement(int[] prog) {
-        Arrays.fill(clanAdvancement, DATE_NA);
+        Arrays.fill(clanAdvancement, DATE_NONE);
         System.arraycopy(prog, 0, clanAdvancement, 0, Math.min(clanAdvancement.length, prog.length));
     }
     
@@ -92,19 +97,19 @@ public class TechAdvancement {
 
     public void setISAdvancement(int prototype, int production, int common,
             int extinct) {
-        setISAdvancement(prototype, production, common, extinct, DATE_NA);
+        setISAdvancement(prototype, production, common, extinct, DATE_NONE);
     }
 
     public void setISAdvancement(int prototype, int production, int common) {
-        setISAdvancement(prototype, production, common, DATE_NA, DATE_NA);
+        setISAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
     }
 
     public void setISAdvancement(int prototype, int production) {
-        setISAdvancement(prototype, production, DATE_NA, DATE_NA, DATE_NA);
+        setISAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
     }
 
     public void setISAdvancement(int prototype) {
-        setISAdvancement(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
+        setISAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
     }
     
     public void setClanAdvancement(int prototype, int production, int common,
@@ -118,19 +123,19 @@ public class TechAdvancement {
 
     public void setClanAdvancement(int prototype, int production, int common,
             int extinct) {
-        setClanAdvancement(prototype, production, common, extinct, DATE_NA);
+        setClanAdvancement(prototype, production, common, extinct, DATE_NONE);
     }
 
     public void setClanAdvancement(int prototype, int production, int common) {
-        setClanAdvancement(prototype, production, common, DATE_NA, DATE_NA);
+        setClanAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
     }
 
     public void setClanAdvancement(int prototype, int production) {
-        setClanAdvancement(prototype, production, DATE_NA, DATE_NA, DATE_NA);
+        setClanAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
     }
 
     public void setClanAdvancement(int prototype) {
-        setClanAdvancement(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
+        setClanAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
     }
     
     public void setAdvancement(int prototype, int production, int common,
@@ -141,23 +146,23 @@ public class TechAdvancement {
         
     public void setAdvancement(int prototype, int production, int common,
             int extinct) {
-        setISAdvancement(prototype, production, common, extinct, DATE_NA);
-        setClanAdvancement(prototype, production, common, extinct, DATE_NA);
+        setISAdvancement(prototype, production, common, extinct, DATE_NONE);
+        setClanAdvancement(prototype, production, common, extinct, DATE_NONE);
     }
     
     public void setAdvancement(int prototype, int production, int common) {
-        setISAdvancement(prototype, production, common, DATE_NA, DATE_NA);
-        setClanAdvancement(prototype, production, common, DATE_NA, DATE_NA);
+        setISAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
+        setClanAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
     }
     
     public void setAdvancement(int prototype, int production) {
-        setISAdvancement(prototype, production, DATE_NA, DATE_NA, DATE_NA);
-        setClanAdvancement(prototype, production, DATE_NA, DATE_NA, DATE_NA);
+        setISAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
+        setClanAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
     }
     
     public void setAdvancement(int prototype) {
-        setISAdvancement(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
-        setClanAdvancement(prototype, DATE_NA, DATE_NA, DATE_NA, DATE_NA);
+        setISAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
+        setClanAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
     }
     
     public int getPrototypeDate(boolean clan) {
@@ -207,18 +212,18 @@ public class TechAdvancement {
     }
     
     public int getExtinctionDate() {
-        if (isAdvancement[EXTINCT] == DATE_NA
-                || clanAdvancement[EXTINCT] == DATE_NA) {
-            return DATE_NA;
+        if (isAdvancement[EXTINCT] == DATE_NONE
+                || clanAdvancement[EXTINCT] == DATE_NONE) {
+            return DATE_NONE;
         }
         return Math.max(isAdvancement[EXTINCT], clanAdvancement[EXTINCT]);
     }
     
     public int getReintroductionDate() {
         /* check for universal extinction first */
-        if (isAdvancement[EXTINCT] == DATE_NA
-                || clanAdvancement[EXTINCT] == DATE_NA) {
-            return DATE_NA;
+        if (isAdvancement[EXTINCT] == DATE_NONE
+                || clanAdvancement[EXTINCT] == DATE_NONE) {
+            return DATE_NONE;
         }
         return earliestDate(isAdvancement[REINTRODUCED], clanAdvancement[REINTRODUCED]);
     }
@@ -273,6 +278,13 @@ public class TechAdvancement {
     public void setAvailability(int[] av) {
         System.arraycopy(av, 0, availability, 0, Math.min(av.length, availability.length));
     }
+    
+    public void setAvailability(int sl, int sw, int clan, int da) {
+        availability[ERA_SL] = sl;
+        availability[ERA_SW] = sw;
+        availability[ERA_CLAN] = clan;
+        availability[ERA_DA] = da;
+    }
 
     /**
      * Base availability code in the given year regardless of tech base
@@ -280,14 +292,14 @@ public class TechAdvancement {
     public int getBaseAvailability(int year) {
         int era = getTechEra(year);
         if (era < 0 || era > availability.length) {
-            return EquipmentType.RATING_X;
+            return ITechnology.RATING_X;
         }
         return availability[era];
     }
     
     public int getBaseEraAvailability(int era) {
         if (era < 0 || era > availability.length) {
-            return EquipmentType.RATING_X;
+            return ITechnology.RATING_X;
         }
         return availability[era];
     }
@@ -303,17 +315,17 @@ public class TechAdvancement {
      */
     public String getEraAvailabilityName(int era, boolean clan) {
         switch (era) {
-        case EquipmentType.ERA_SL:
+        case ERA_SL:
             return EquipmentType.getRatingName(getAvailability(2779, clan));
-        case EquipmentType.ERA_SW:
+        case ERA_SW:
             if (getAvailability(2780, clan) != getAvailability(3049, clan)) {
                 return EquipmentType.getRatingName(getAvailability(2780, clan))
                         + "/" + EquipmentType.getRatingName(getAvailability(3049, clan));                
             }
             return EquipmentType.getRatingName(getAvailability(3049, clan));
-        case EquipmentType.ERA_CLAN:
+        case ERA_CLAN:
             return EquipmentType.getRatingName(getAvailability(3100, clan));
-        case EquipmentType.ERA_DA:
+        case ERA_DA:
             return EquipmentType.getRatingName(getAvailability(3145, clan));
         }
         return "U";
@@ -327,25 +339,25 @@ public class TechAdvancement {
         int era = getTechEra(year);
         if (clan) {
             if (techBase == TECH_BASE_IS
-                    && era < EquipmentType.ERA_CLAN
+                    && era < ERA_CLAN
                     && isAdvancement[PROTOTYPE] >= 2780) {
-                return EquipmentType.RATING_X;
+                return ITechnology.RATING_X;
             } else {
                 return getBaseEraAvailability(era);
             }            
         } else {
             if (techBase == TECH_BASE_CLAN) {
-                if (era < EquipmentType.ERA_CLAN) {
-                    return EquipmentType.RATING_X;
+                if (era < ERA_CLAN) {
+                    return ITechnology.RATING_X;
                 } else {
-                    return Math.min(EquipmentType.RATING_X, getBaseAvailability(era) + 1);
+                    return Math.min(ITechnology.RATING_X, getBaseAvailability(era) + 1);
                 }
             } else if (techBase == TECH_BASE_ALL
-                    && era == EquipmentType.ERA_SW
-                    && availability[era] >= EquipmentType.RATING_E
-                    && isAdvancement[EXTINCT] != DATE_NA
+                    && era == ERA_SW
+                    && availability[era] >= ITechnology.RATING_E
+                    && isAdvancement[EXTINCT] != DATE_NONE
                     && year > isAdvancement[EXTINCT]) {
-                return Math.min(EquipmentType.RATING_X, availability[era] + 1);
+                return Math.min(ITechnology.RATING_X, availability[era] + 1);
             } else {
                 return getBaseEraAvailability(era);
             }
@@ -443,34 +455,34 @@ public class TechAdvancement {
     
     public boolean isExtinct(int year, boolean clan) {
         if (clan) {
-            return clanAdvancement[EXTINCT] != DATE_NA
+            return clanAdvancement[EXTINCT] != DATE_NONE
                     && clanAdvancement[EXTINCT] < year
-                    && (clanAdvancement[REINTRODUCED] == DATE_NA
+                    && (clanAdvancement[REINTRODUCED] == DATE_NONE
                             || year < clanAdvancement[REINTRODUCED]);
         } else {
-            return isAdvancement[EXTINCT] != DATE_NA
+            return isAdvancement[EXTINCT] != DATE_NONE
                     && isAdvancement[EXTINCT] < year
-                    && (isAdvancement[REINTRODUCED] == DATE_NA
+                    && (isAdvancement[REINTRODUCED] == DATE_NONE
                             || year < isAdvancement[REINTRODUCED]);
         }
     }
     
     public boolean isExtinct(int year) {
-        return getExtinctionDate() != DATE_NA
+        return getExtinctionDate() != DATE_NONE
                 && getExtinctionDate() < year
-                && (getReintroductionDate() == DATE_NA
+                && (getReintroductionDate() == DATE_NONE
                         || year < getReintroductionDate());
     }
     
     public static int getTechEra(int year) {
         if (year < 2780) {
-            return EquipmentType.ERA_SL;
+            return ERA_SL;
         } else if (year < 3050) {
-            return EquipmentType.ERA_SW;
+            return ERA_SW;
         } else if (year < 3130) {
-            return EquipmentType.ERA_CLAN;
+            return ERA_CLAN;
         } else {
-            return EquipmentType.ERA_DA;
+            return ERA_DA;
         }
     }
 }

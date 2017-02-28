@@ -140,26 +140,8 @@ public class EquipmentType implements ITechnology {
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
     public static final double POINT_ADDITION_CLAN_FF = 0.08;
 
-    public static final int RATING_A = 0;
-    public static final int RATING_B = 1;
-    public static final int RATING_C = 2;
-    public static final int RATING_D = 3;
-    public static final int RATING_E = 4;
-    public static final int RATING_F = 5;
-    public static final int RATING_FSTAR = 6; // Increasing F (Clan equipmment for IS or extinct equipment
-                                              // during SW era has a 50% chance of being X, denoted by F*.
-    public static final int RATING_X = 7;
-
-    public static final int ERA_SL = 0;
-    public static final int ERA_SW = 1;
-    public static final int ERA_CLAN = 2;
-    public static final int ERA_DA = 3;
-
-    public static final int DATE_NONE = -1;
-
     public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F", "F*",
             "X" };
-
 
     protected String name = null;
 
@@ -265,7 +247,7 @@ public class EquipmentType implements ITechnology {
     public Map<Integer, Integer> getTechLevels() {
         Map<Integer,Integer> techLevel = new HashMap<>();
         if (techAdvancement.isUnofficial()) {
-            if (techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_CLAN) {
+            if (techAdvancement.getTechBase() == TECH_BASE_CLAN) {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
             } else {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_IS_UNOFFICIAL);
@@ -284,7 +266,7 @@ public class EquipmentType implements ITechnology {
         if (techAdvancement.getProductionDate(false) > 0) {
             techLevel.put(techAdvancement.getProductionDate(false), TechConstants.T_IS_ADVANCED);
         }
-        if (techAdvancement.getTechBase() == TechAdvancement.TECH_BASE_ALL
+        if (techAdvancement.getTechBase() == TECH_BASE_ALL
                 && techAdvancement.getCommonDate() > 0) {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_TW_ALL);
         } else if (techAdvancement.getCommonDate(true) > 0) {

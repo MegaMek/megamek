@@ -19,6 +19,29 @@ public interface ITechnology {
     
     TechAdvancement getTechAdvancement();
 
+    public static final int TECH_BASE_ALL  = 0;
+    public static final int TECH_BASE_IS   = 1;
+    public static final int TECH_BASE_CLAN = 2;
+    
+    public static final int RATING_A = 0;
+    public static final int RATING_B = 1;
+    public static final int RATING_C = 2;
+    public static final int RATING_D = 3;
+    public static final int RATING_E = 4;
+    public static final int RATING_F = 5;
+    public static final int RATING_FSTAR = 6; // Increasing F (Clan equipmment for IS or extinct equipment
+                                              // during SW era has a 50% chance of being X, denoted by F*.
+    public static final int RATING_X = 7;
+
+    public static final int ERA_SL = 0;
+    public static final int ERA_SW = 1;
+    public static final int ERA_CLAN = 2;
+    public static final int ERA_DA = 3;
+
+    public static final int DATE_NONE = -1;
+    public static final int DATE_PS = 1950;
+    public static final int DATE_ES = 2100;
+
     /* Convenience methods */
     default int getTechBase() {
         return getTechAdvancement().getTechBase();

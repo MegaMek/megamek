@@ -42,7 +42,7 @@ import megamek.server.Server;
  * @author Ben
  * @version
  */
-public class EquipmentType {
+public class EquipmentType implements ITechnology {
     public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
@@ -760,6 +760,11 @@ public class EquipmentType {
             return "U";
         }
         return ratingNames[rating];
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return techAdvancement;
     }
 
     public int getTechRating() {

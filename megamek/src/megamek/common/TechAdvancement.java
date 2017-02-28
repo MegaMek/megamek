@@ -215,6 +215,11 @@ public class TechAdvancement {
     }
     
     public int getReintroductionDate() {
+        /* check for universal extinction first */
+        if (isAdvancement[EXTINCT] == DATE_NA
+                || clanAdvancement[EXTINCT] == DATE_NA) {
+            return DATE_NA;
+        }
         return earliestDate(isAdvancement[REINTRODUCED], clanAdvancement[REINTRODUCED]);
     }
     

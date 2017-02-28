@@ -13,6 +13,8 @@ v0.43.1-git
 + Feature: Added infantry specializations to weight calculations.
 + Feature: Added anti-mek equipment back to infantry weight calculations.
 + Data: New Sprites and New Maps (Thanks DancefloorLandmine)
++ Issue #494 - Updated Princess Behaviors (Thanks pfarland and xStormforgex)
++ Issue #484 and fixes to image names.
 
 v0.43.0 (2017-02-13 03:30 UTC)
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

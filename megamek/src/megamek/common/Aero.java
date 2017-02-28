@@ -238,6 +238,27 @@ public class Aero extends Entity {
         }
     }
     
+    protected static final TechAdvancement[] COCKPIT_TA = {
+            new TechAdvancement(new int[] { 2455, 2470, 2491 }, RATING_C,
+                    new int[] { RATING_C, RATING_C, RATING_C, RATING_C}), //Standard            
+            new TechAdvancement(TECH_BASE_ALL, new int[] { 3060, 3070, 3080 },
+                    new int[] { DATE_NONE, 3080, 3080 }, RATING_E,
+                    new int[] { RATING_X, RATING_X, RATING_E, RATING_D}), //Small            
+            new TechAdvancement(TECH_BASE_ALL, new int[] { 2620, 2631, DATE_NONE, 2855, 3025 },
+                    new int[] { 2620, 2631 }, RATING_D,
+                    new int[] { RATING_C, RATING_F, RATING_E, RATING_D}), //Cockpit command console
+            new TechAdvancement(new int[] { DATE_ES, 2295, DATE_NONE, 2520 }, RATING_C,
+                    new int[] { RATING_D, RATING_X, RATING_X, RATING_F}), //Primitive            
+    };
+
+    @Override
+    protected void addSystemTechAdvancement() {
+        super.addSystemTechAdvancement();
+        if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
+            ITechnology.aggregate(this, COCKPIT_TA[getCockpitType()], isMixedTech());
+        }        
+    }
+    
     /**
      * Returns this entity's safe thrust, factored for heat, extreme
      * temperatures, gravity, and bomb load.

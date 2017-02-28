@@ -2987,10 +2987,77 @@ public abstract class Mech extends Entity {
         }
     }
     
+    protected final static TechAdvancement[] GYRO_TA =  {
+            new TechAdvancement(new int[] { 2295, 2350, 2505 }, RATING_D,
+                    new int[] { RATING_C, RATING_C, RATING_C, RATING_C}), //Standard
+            new TechAdvancement(TECH_BASE_IS,
+                    new int[] { 3050, 3067, 3072 }, null, RATING_E, 
+                    new int[] { RATING_X, RATING_X, RATING_E, RATING_D}), //XL
+            new TechAdvancement(TECH_BASE_IS,
+                    new int[] { 3050, 3068, 3072 }, null, RATING_E, 
+                    new int[] { RATING_X, RATING_X, RATING_E, RATING_D}), //Compact
+            new TechAdvancement(TECH_BASE_IS,
+                    new int[] { 3050, 3067, 3072 }, null, RATING_E, 
+                    new int[] { RATING_X, RATING_X, RATING_E, RATING_D}), //Heavy duty
+            new TechAdvancement(TECH_BASE_IS,
+                    new int[] { DATE_NONE }, null, RATING_A, 
+                    new int[] { RATING_A, RATING_A, RATING_A, RATING_A}), //None (placeholder)
+            new TechAdvancement(TECH_BASE_IS,
+                    new int[] { 2900, 2940 }, null, RATING_D, 
+                    new int[] { RATING_X, RATING_F, RATING_F, RATING_F}), //Superheavy
+    };
+    
+    protected final static TechAdvancement[] COCKPIT_TA = {
+            new TechAdvancement(new int[] { 2463, 2470, 2487 }, RATING_D,
+                    new int[] { RATING_C, RATING_C, RATING_C, RATING_C}), //Standard
+            new TechAdvancement(TECH_BASE_ALL,
+                    new int[] { 3060, 3067, 3080 },
+                    new int[] { DATE_NONE, DATE_NONE, 3080 }, RATING_E,
+                    new int[] { RATING_X, RATING_X, RATING_E, RATING_D}), //Small
+            new TechAdvancement(TECH_BASE_ALL, new int[] { 2620, 2631, DATE_NONE, 2855, 3025 },
+                    new int[] { 2620, 2631 }, RATING_D,
+                    new int[] { RATING_C, RATING_F, RATING_E, RATING_D}), //Cockpit command console
+            new TechAdvancement(TECH_BASE_ALL, new int[] { 3053, 3075, 3100 },
+                    new int[] { 3055, 3075, 3100 }, RATING_D,
+                    new int[] { RATING_X, RATING_X, RATING_F, RATING_F}), //Torso mounted
+            //FIXME: Dual not listed in IO; these are stats for standard
+            new TechAdvancement(new int[] { 2463, 2470, 2487 }, RATING_D,
+                    new int[] { RATING_C, RATING_C, RATING_C, RATING_C}), //Dual
+            new TechAdvancement(new int[] { 2464, 2470, 2490 }, RATING_C,
+                    new int[] { RATING_B, RATING_C, RATING_C, RATING_B}), //Industrial
+            new TechAdvancement(new int[] { 2425, 2439, DATE_NONE, 2520 }, RATING_D,
+                    new int[] { RATING_D, RATING_X, RATING_X, RATING_F}), //Primitive
+            new TechAdvancement(new int[] { 2295, 2350, DATE_NONE, 2520 }, RATING_C,
+                    new int[] { RATING_C, RATING_X, RATING_X, RATING_F}), //Primitive industrial
+            new TechAdvancement(TECH_BASE_IS, new int[] { 3055, 3076 }, null, RATING_E,
+                    new int[] { RATING_X, RATING_X, RATING_F, RATING_E}), //Superheavy
+            new TechAdvancement(TECH_BASE_IS, new int[] { 3125, 3135 }, null, RATING_E,
+                    new int[] { RATING_X, RATING_F, RATING_X, RATING_E}), //Superheavy tripod
+            new TechAdvancement(TECH_BASE_IS, new int[] { 2585, 2602 }, null, RATING_E,
+                    new int[] { RATING_X, RATING_X, RATING_X, RATING_F}), //Tripod
+            new TechAdvancement(TECH_BASE_ALL, new int[] { 3069 }, new int[] { 3078 }, RATING_E,
+                    new int[] { RATING_X, RATING_X, RATING_F, RATING_F}), //Cockpit interface
+            new TechAdvancement(TECH_BASE_IS, new int[] { 3052, DATE_NONE, DATE_NONE, 3055 },
+                    null, RATING_E, new int[] { RATING_X, RATING_X, RATING_F, RATING_X}), //VRRP
+            new TechAdvancement(TECH_BASE_CLAN, null, new int[] { 3125, 3135 },
+                    RATING_E, new int[] { RATING_X, RATING_X, RATING_X, RATING_F}), //QuadVee
+            new TechAdvancement(TECH_BASE_IS, new int[] { 2900, 2940 }, null, RATING_D,
+                    new int[] { RATING_X, RATING_F, RATING_F, RATING_F}) //Superheavy industrial            
+    };
+    
     @Override
     protected void addSystemTechAdvancement() {
         super.addSystemTechAdvancement();
-        //TODO: add gyro and cockpit
+        if (getGyroType() > 0 && getGyroType() < GYRO_TA.length) {
+            ITechnology.aggregate(this, GYRO_TA[getGyroType()], isMixedTech());
+        }
+        if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
+            ITechnology.aggregate(this, COCKPIT_TA[getCockpitType()], isMixedTech());
+        }
+        //Clan interface cockpit has higher tech rating
+        if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {
+            techAdvancement.setTechRating(Math.max(techAdvancement.getTechRating(), RATING_F));
+        }
     }
     
     @Override

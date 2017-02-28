@@ -301,6 +301,12 @@ public class TechAdvancement {
         System.arraycopy(av, 0, availability, 0, Math.min(av.length, availability.length));
     }
     
+    public void setAvailability(int era, int av) {
+        if (era > 0 && era < availability.length) {
+            availability[era] = av;
+        }
+    }
+    
     public void setAvailability(int sl, int sw, int clan, int da) {
         availability[ERA_SL] = sl;
         availability[ERA_SW] = sw;
@@ -506,5 +512,29 @@ public class TechAdvancement {
         } else {
             return ERA_DA;
         }
+    }
+    
+    private final static TechAdvancement TA_OMNI = new TechAdvancement(TECH_BASE_ALL,
+            new int[] { DATE_NONE, DATE_NONE, 3052 },
+            new int[] { 2849, 2856, 2864 }, ITechnology.RATING_E,
+            new int[] { ITechnology.RATING_X, ITechnology.RATING_E, ITechnology.RATING_E, ITechnology.RATING_D });
+    private final static TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(
+            new int[] { DATE_PS, 3075, 3075 }, ITechnology.RATING_A,
+            new int[] { ITechnology.RATING_E, ITechnology.RATING_D, ITechnology.RATING_E, ITechnology.RATING_E });
+    private final static TechAdvancement TA_MIXED_TECH = new TechAdvancement(TECH_BASE_ALL,
+            new int[] { 3050, 3077, 3110 },
+            new int[] { 2815, 3077, 3110 }, ITechnology.RATING_A,
+            new int[] { ITechnology.RATING_X, ITechnology.RATING_X, ITechnology.RATING_E, ITechnology.RATING_D });
+    
+    public static TechAdvancement omniAdvancement() {
+        return TA_OMNI;
+    }
+    
+    public static TechAdvancement patchworkArmorAdvancement() {
+        return TA_PATCHWORK_ARMOR;
+    }
+    
+    public static TechAdvancement mixedTechAdvancement() {
+        return TA_MIXED_TECH;
     }
 }

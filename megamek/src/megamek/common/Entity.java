@@ -1061,6 +1061,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (hasEngine()) {
             ITechnology.aggregate(this, getEngine(), isMixedTech());
         }
+        if (isOmni()) {
+            ITechnology.aggregate(this, TechAdvancement.omniAdvancement(), isMixedTech());
+        }
+        if (hasPatchworkArmor()) {
+            ITechnology.aggregate(this, TechAdvancement.patchworkArmorAdvancement(), isMixedTech());
+        }
+        if (isMixedTech()) {
+            ITechnology.aggregate(this, TechAdvancement.mixedTechAdvancement(), true);
+        }
         //TODO: armor and structure
     }
     

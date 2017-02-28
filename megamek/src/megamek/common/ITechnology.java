@@ -74,9 +74,9 @@ public interface ITechnology {
     }
     
     /**
-     * Adjusts TechAdvancement dates of items made up of multiple components (e.g. Entity) to be
+     * Adjusts TechAdvancement values of items made up of multiple components (e.g. Entity) to be
      * consistent with all subcomponents by choosing the latest date in each category except extinction,
-     * which chooses the earliest date.
+     * which chooses the earliest date, and maximum of tech and availability ratings.
      * 
      * @param master - the object to be adjusted
      * @param ta - the TechAdvancement object for the component
@@ -122,6 +122,13 @@ public interface ITechnology {
                         Math.max(master.getTechAdvancement().getReintroductionDate(true),
                                 ta.getReintroductionDate(true)));
             }
+        }
+        master.getTechAdvancement().setTechRating(Math.max(master.getTechAdvancement().getTechRating(),
+                ta.getTechRating()));
+        for (int era = 0; era <= ERA_DA; era++) {
+            master.getTechAdvancement().setAvailability(era,
+                    Math.max(master.getTechAdvancement().getBaseEraAvailability(era),
+                            ta.getBaseEraAvailability(era)));
         }
     }
 }

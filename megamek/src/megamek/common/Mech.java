@@ -6233,7 +6233,7 @@ public abstract class Mech extends Entity {
             sb.append(newLine);
         }
 
-        if (getFluff().getDeployment().trim().length() > 0) {
+        if (getFluff().getHistory().trim().length() > 0) {
             sb.append("history:");
             sb.append(getFluff().getHistory());
             sb.append(newLine);

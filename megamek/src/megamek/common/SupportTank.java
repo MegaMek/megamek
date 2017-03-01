@@ -86,12 +86,12 @@ public class SupportTank extends Tank {
     protected void initTechAdvancement() {
         /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
          * be the same as Clan invasion era. */
-        techAdvancement.setTechBase(TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         switch(getMovementMode()) {
         case HOVER:
-            techAdvancement.setTechRating(RATING_C);
-            techAdvancement.setAdvancement(DATE_PS, DATE_ES, DATE_ES);
+            techAdvancement.setTechRating(RATING_C)
+                .setAdvancement(DATE_PS, DATE_ES, DATE_ES);
             if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
                 techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
             } else {
@@ -101,8 +101,8 @@ public class SupportTank extends Tank {
         case NAVAL:
         case SUBMARINE:
         case HYDROFOIL:
-            techAdvancement.setTechRating(RATING_A);
-            techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            techAdvancement.setTechRating(RATING_A)
+                .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
             break;
         case TRACKED:
             techAdvancement.setTechRating(RATING_B);

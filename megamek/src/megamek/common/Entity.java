@@ -817,7 +817,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             armorType[i] = EquipmentType.T_ARMOR_UNKNOWN;
             armorTechLevel[i] = TechConstants.T_TECH_UNKNOWN;
         }
-        techAdvancement = new TechAdvancement();
         hardenedArmorDamaged = new boolean[locations()];
         locationBlownOff = new boolean[locations()];
         locationBlownOffThisPhase = new boolean[locations()];
@@ -834,6 +833,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
         externalId = UUID.randomUUID().toString();
+        initTechAdvancement();
     }
 
     protected void initMilitary() {

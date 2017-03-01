@@ -48,11 +48,12 @@ public class Warship extends Jumpship {
 
     @Override
     protected void initTechAdvancement() {
-        techAdvancement.setTechBase(TECH_BASE_ALL);
-        techAdvancement.setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050);
-        techAdvancement.setClanAdvancement(2295, 2305);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability(RATING_D, RATING_E, RATING_E, RATING_F);
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
+                .setClanAdvancement(2295, 2305)
+                .setApproximate(true, false, false, false, false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_F);
     }
     
     @Override

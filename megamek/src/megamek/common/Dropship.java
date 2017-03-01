@@ -41,15 +41,17 @@ public class Dropship extends SmallCraft {
     @Override
     protected void initTechAdvancement() {
         if (isPrimitive()) {
-            techAdvancement.setTechBase(TECH_BASE_IS);
-            techAdvancement.setISAdvancement(DATE_ES, 2195, DATE_NONE, 2500);
-            techAdvancement.setTechRating(RATING_D);
-            techAdvancement.setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
+            techAdvancement = new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
+                    .setISApproximate(false, true, false, false)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
         } else {
-            techAdvancement.setTechBase(TECH_BASE_ALL);
-            techAdvancement.setAdvancement(DATE_NONE, 2465, 2490);
-            techAdvancement.setTechRating(RATING_D);
-            techAdvancement.setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+            techAdvancement = new TechAdvancement(TECH_BASE_IS)
+                    .setAdvancement(DATE_NONE, 2470, 2490)
+                    .setISApproximate(false, true, false)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
         }
     }
     

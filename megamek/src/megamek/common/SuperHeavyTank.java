@@ -72,10 +72,11 @@ public class SuperHeavyTank extends Tank {
     }
 
     protected void initTechAdvancement() {
-        techAdvancement.setTechBase(TECH_BASE_ALL);
-        techAdvancement.setAdvancement(2465, DATE_NONE, 3070);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability(RATING_E, RATING_F, RATING_F, RATING_E);
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(2470, DATE_NONE, 3075)
+                .setApproximate(true, false, true)
+                .setTechRating(RATING_C)
+                .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E);
     }
 
     /**

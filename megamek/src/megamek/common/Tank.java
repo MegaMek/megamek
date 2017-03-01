@@ -200,10 +200,10 @@ public class Tank extends Entity {
     }
     
     protected void initTechAdvancement() {
-        techAdvancement.setTechBase(TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, 2470, 2490);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_NONE, 2470, 2490)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
     }
 
     /**

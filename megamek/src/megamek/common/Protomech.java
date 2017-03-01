@@ -338,26 +338,30 @@ public class Protomech extends Entity {
     @Override
     protected void initTechAdvancement() {
         if (isQuad) {
-            techAdvancement.setTechBase(TECH_BASE_CLAN);
-            techAdvancement.setClanAdvancement(3075, 3078, 3100);
-            techAdvancement.setTechRating(RATING_F);
-            techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
+                    .setClanAdvancement(3075, 3083, 3100)
+                    .setClanApproximate(false, true, false)
+                    .setTechRating(RATING_F)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
         } else if (getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
-            techAdvancement.setTechBase(TECH_BASE_CLAN);
-            techAdvancement.setClanAdvancement(3075, 3078, 3100);
-            techAdvancement.setTechRating(RATING_F);
-            techAdvancement.setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
+                    .setClanAdvancement(3075, 3083, 3100)
+                    .setClanApproximate(false, true, false)
+                    .setTechRating(RATING_F)
+                    .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
         } else {
-            techAdvancement.setTechBase(TECH_BASE_CLAN);
-            techAdvancement.setClanAdvancement(3050, 3059, 3060);
-            techAdvancement.setTechRating(RATING_F);
-            techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);            
+            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
+                    .setClanAdvancement(3055, 3059, 3060)
+                    .setClanApproximate(true, false, false)
+                    .setTechRating(RATING_F)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
         }
         /* glider
-            techAdvancement.setTechBase(TECH_BASE_CLAN);
-            techAdvancement.setClanAdvancement(3075, 3079, 3100);
-            techAdvancement.setTechRating(RATING_F);
-            techAdvancement.setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
+            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
+                    .setClanAdvancement(3075, 3084, 3100)
+                    .setClanApproximate(false, true, false)
+                    .setTechRating(RATING_F)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
         */            
         
     }

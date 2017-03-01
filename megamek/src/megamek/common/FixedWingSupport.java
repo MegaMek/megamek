@@ -112,9 +112,9 @@ public class FixedWingSupport extends ConvFighter {
 
     @Override
     protected void initTechAdvancement() {
-        techAdvancement.setTechBase(TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        techAdvancement.setTechRating(RATING_B);
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_B);
         if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
             techAdvancement.setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
         } else {

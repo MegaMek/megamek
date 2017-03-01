@@ -30,16 +30,16 @@ public class SpaceStation extends Jumpship {
 
     @Override
     protected void initTechAdvancement() {
-        techAdvancement.setTechBase(TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_ES, DATE_ES);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_ES, DATE_ES)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
         /** Modular
-        techAdvancement.setTechBase(TECH_BASE_ALL);
-        techAdvancement.setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090);
-        techAdvancement.setClanAdvancement(2565, 2585);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability(RATING_F, RATING_F, RATING_F, RATING_F);
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090)
+            .setClanAdvancement(2565, 2585)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F);
          */
     }
 

@@ -212,8 +212,8 @@ public class Infantry extends Entity {
 
     @Override
     protected void initTechAdvancement() {
-        techAdvancement.setTechBase(TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         switch(getMovementMode()) {
         case INF_MOTORIZED:
             techAdvancement.setTechRating(RATING_B);
@@ -263,30 +263,37 @@ public class Infantry extends Entity {
     protected void addSystemTechAdvancement() {
         super.addSystemTechAdvancement();
         if (hasSpecialization(COMBAT_ENGINEERS)) {
-            ITechnology.aggregate(this, new TechAdvancement(new int[] { DATE_PS, DATE_PS, DATE_PS },
-                    RATING_C, new int[] { RATING_A, RATING_B, RATING_A, RATING_A}), isMixedTech());
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+                    .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A), isMixedTech());
         }
         if (hasSpecialization(MARINES)) {
-            ITechnology.aggregate(this, new TechAdvancement(new int[] { DATE_PS, DATE_PS, DATE_PS },
-                    RATING_C, new int[] { RATING_A, RATING_A, RATING_A, RATING_A}), isMixedTech());
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A), isMixedTech());
         }
         if (hasSpecialization(MOUNTAIN_TROOPS) || hasSpecialization(PARATROOPS)) {
-            ITechnology.aggregate(this, new TechAdvancement(new int[] { DATE_PS, DATE_PS, DATE_PS },
-                    RATING_C, new int[] { RATING_A, RATING_A, RATING_A, RATING_A}), isMixedTech());
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A), isMixedTech());
         }
         if (hasSpecialization(PARAMEDICS)) {
-            ITechnology.aggregate(this, new TechAdvancement(new int[] { DATE_PS, DATE_PS, DATE_PS },
-                    RATING_B, new int[] { RATING_C, RATING_C, RATING_C, RATING_C}), isMixedTech());
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C), isMixedTech());
         }
         if (hasSpecialization(TAG_TROOPS)) {
-            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL,
-                    new int[] { 2585, 2600, DATE_NONE, 2535, 3037 },
-                    new int[] { 2585, 2600 },
-                    RATING_C, new int[] { RATING_A, RATING_A, RATING_A, RATING_A}), isMixedTech());
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setISAdvancement(2585, 2600, DATE_NONE, 2535, 3037)
+                    .setClanAdvancement(2585, 2600)
+                    .setApproximate(true, false, false, false, false).setTechRating(RATING_E)
+                    .setAvailability(RATING_F, RATING_X, RATING_E, RATING_E), isMixedTech());
         }
         if (isAntiMekTrained()) {
-            ITechnology.aggregate(this, new TechAdvancement(new int[] { 2451, 2460, 2500 },
-                    RATING_D, new int[] { RATING_D, RATING_D, RATING_D, RATING_D}), isMixedTech());
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(2456, 2460, 2500)
+                    .setApproximate(true, false, false).setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D), isMixedTech());
         }
     }
     

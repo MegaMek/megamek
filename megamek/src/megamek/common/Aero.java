@@ -226,29 +226,35 @@ public class Aero extends Entity {
     @Override
     protected void initTechAdvancement() {
         if (isPrimitive()) {
-            techAdvancement.setTechBase(TECH_BASE_IS);
-            techAdvancement.setISAdvancement(DATE_ES, 2195, DATE_NONE, 2520);
-            techAdvancement.setTechRating(RATING_D);
-            techAdvancement.setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);            
+            techAdvancement = new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2520)
+                    .setISApproximate(false, true, false)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);            
         } else {
-            techAdvancement.setTechBase(TECH_BASE_ALL);
-            techAdvancement.setAdvancement(DATE_NONE, 2470, 2490);
-            techAdvancement.setTechRating(RATING_D);
-            techAdvancement.setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+            techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_NONE, 2470, 2490)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
         }
     }
     
     protected static final TechAdvancement[] COCKPIT_TA = {
-            new TechAdvancement(new int[] { 2455, 2470, 2491 }, RATING_C,
-                    new int[] { RATING_C, RATING_C, RATING_C, RATING_C}), //Standard            
-            new TechAdvancement(TECH_BASE_ALL, new int[] { 3060, 3070, 3080 },
-                    new int[] { DATE_NONE, 3080, 3080 }, RATING_E,
-                    new int[] { RATING_X, RATING_X, RATING_E, RATING_D}), //Small            
-            new TechAdvancement(TECH_BASE_ALL, new int[] { 2620, 2631, DATE_NONE, 2855, 3025 },
-                    new int[] { 2620, 2631 }, RATING_D,
-                    new int[] { RATING_C, RATING_F, RATING_E, RATING_D}), //Cockpit command console
-            new TechAdvancement(new int[] { DATE_ES, 2295, DATE_NONE, 2520 }, RATING_C,
-                    new int[] { RATING_D, RATING_X, RATING_X, RATING_F}), //Primitive            
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2491)
+                .setApproximate(true, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C), //Standard            
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3065, 3070, 3080)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3080)
+                .setISApproximate(true, false, false).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D), //Small            
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
+                .setISApproximate(true, false, false, true, true)
+                .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
+                .setISApproximate(true, false).setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D), //Cockpit command console
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, 2300, DATE_NONE, 2520)
+                .setISApproximate(false, true, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F), //Primitive            
     };
 
     @Override

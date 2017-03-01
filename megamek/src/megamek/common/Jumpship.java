@@ -80,15 +80,17 @@ public class Jumpship extends Aero {
     @Override
     protected void initTechAdvancement() {
         if (isPrimitive()) {
-            techAdvancement.setTechBase(TECH_BASE_IS);
-            techAdvancement.setISAdvancement(DATE_ES, 2195, DATE_NONE, 2500);
-            techAdvancement.setTechRating(RATING_D);
-            techAdvancement.setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
+            techAdvancement = new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(2100, 2200, DATE_NONE, 2500)
+                    .setISApproximate(true, true, false, false)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
         } else {
-            techAdvancement.setTechBase(TECH_BASE_ALL);
-            techAdvancement.setAdvancement(DATE_NONE, 2295);
-            techAdvancement.setTechRating(RATING_D);
-            techAdvancement.setAvailability(RATING_D, RATING_E, RATING_D, RATING_F);
+            techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_NONE, 2300)
+                    .setISApproximate(false, true)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F);
         }
     }
     

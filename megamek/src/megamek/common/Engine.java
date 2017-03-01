@@ -132,7 +132,6 @@ public class Engine implements Serializable, ITechnology {
     private int engineType;
     private int engineFlags;
     private int baseChassisHeatSinks = -1;
-    private TechAdvancement techAdvancement;
     public StringBuffer problem = new StringBuffer("Illegal engine: ");
 
     /**
@@ -158,7 +157,6 @@ public class Engine implements Serializable, ITechnology {
             this.engineType = -1;
             this.engineFlags = -1;
         }
-        initTechAdvancement();
     }
 
     /**
@@ -750,173 +748,170 @@ public class Engine implements Serializable, ITechnology {
         return cost;
     }
 
+    private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
+            .setIntroLevel(true).setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_D);
+    private static final TechAdvancement LARGE_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2630, 3085, 3120).setApproximate(false, true, true)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_D);
+    private static final TechAdvancement STANDARD_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
+            .setIntroLevel(true).setTechRating(RATING_C)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+    private static final TechAdvancement LARGE_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2630, 3085).setApproximate(false, true)
+            .setIntroLevel(true).setTechRating(RATING_C)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+    private static final TechAdvancement LIGHT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3055, 3062, 3067).setISApproximate(true, false, false)
+            .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+    private static final TechAdvancement LARGE_LIGHT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3064, 3065).setISApproximate(true)
+            .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
+    private static final TechAdvancement COMPACT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3060, 3068, 3072).setISApproximate(true)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);            
+    private static final TechAdvancement IS_XL_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2556, 2579, 3045, 2865, 3035)
+            .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
+    private static final TechAdvancement CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(2824, 2827, 2829).setClanApproximate(true)
+            .setTechRating(RATING_F).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+    private static final TechAdvancement LARGE_IS_XL_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054).setISApproximate(true, true)
+            .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E);
+    private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(2850, 3080).setClanApproximate(true, true)
+            .setTechRating(RATING_F).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E);
+    private static final TechAdvancement IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3055, 3110).setISApproximate(true, true)
+            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+    private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(2954, 3084).setApproximate(true, true)
+            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+    private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3058, 3130).setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F);
+    private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(3055, 3125).setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F);
+    private static final TechAdvancement FISSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2470, 2882, 3079).setTechRating(RATING_D)
+            .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D);
+    private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2995, 2470, 3078).setApproximate(true).setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);    
+    private static final TechAdvancement SUPPORT_STEAM_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+    private static final TechAdvancement SUPPORT_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+    private static final TechAdvancement SUPPORT_BATTERY_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+    private static final TechAdvancement SUPPORT_FUEL_CELL_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+            .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B);
+    private static final TechAdvancement SUPPORT_SOLAR_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+    private static final TechAdvancement SUPPORT_FISSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
+            .setAvailability(RATING_E, RATING_E, RATING_D, RATING_C);
+    private static final TechAdvancement SUPPORT_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+    private static final TechAdvancement SUPPORT_MAGLEV_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
+            .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
+
     @Override
     public TechAdvancement getTechAdvancement() {
-        return techAdvancement;
-    }
-    
-    /* TODO: We don't really need a separate copy of this for every engine instance */
-    protected void initTechAdvancement() {
-        techAdvancement = new TechAdvancement();
         switch(engineType) {
         case COMBUSTION_ENGINE:
-            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
             if (hasFlag(SUPPORT_VEE_ENGINE)) {
-                techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                        .setTechRating(RATING_B)
-                        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
-                break;                
+                return SUPPORT_ICE_TA;              
             } else {
                 if (hasFlag(LARGE_ENGINE)) {
-                    techAdvancement.setAdvancement(2630, 3085).setApproximate(false, true);
+                    return LARGE_ICE_TA;
                 } else {
-                    techAdvancement.setAdvancement(DATE_ES, DATE_ES, 2300)
-                        .setApproximate(false, false, true);
+                    return STANDARD_ICE_TA;
                 }
-                techAdvancement.setTechRating(RATING_C)
-                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
             }
-            break;
         case NORMAL_ENGINE:
-            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
             if (hasFlag(SUPPORT_VEE_ENGINE)) {
-                techAdvancement.setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                    .setTechRating(RATING_C)
-                    .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
-                break;                
+                return SUPPORT_FUSION_TA;
             } else {
                 if (hasFlag(LARGE_ENGINE)) {
-                    techAdvancement.setAdvancement(2630, 3085, 3120)
-                        .setApproximate(false, true, true);
+                    return LARGE_FUSION_TA;
                 } else {
-                    techAdvancement.setAdvancement(DATE_ES, DATE_ES, 2300)
-                        .setApproximate(false, false, true)
-                        .setIntroLevel(true);
+                    return STANDARD_FUSION_TA;
                 }
-                techAdvancement.setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_E, RATING_D, RATING_D);
             }
-            break;
         case XL_ENGINE:
             if (hasFlag(CLAN_ENGINE)) {
-                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN)
-                    .setTechRating(RATING_F);
                 if (hasFlag(LARGE_ENGINE)) {
-                    techAdvancement.setClanAdvancement(2850, 3080)
-                        .setClanApproximate(true, true)
-                        .setAvailability(RATING_D, RATING_F, RATING_E, RATING_E);
+                    return LARGE_CLAN_XL_TA;
                 } else {
-                    techAdvancement.setClanAdvancement(2824, 2827, 2829)
-                        .setClanApproximate(true)
-                        .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+                    return CLAN_XL_TA;
                 }
             } else {
-                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS)
-                    .setTechRating(RATING_E);
                 if (hasFlag(LARGE_ENGINE)) {
-                    techAdvancement.setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054)
-                        .setISApproximate(true, true)
-                        .setAvailability(RATING_D, RATING_F, RATING_E, RATING_E);
+                    return LARGE_IS_XL_TA;
                 } else {
-                    techAdvancement.setISAdvancement(2556, 2579, 3045, 2865, 3035)
-                        .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
+                    return IS_XL_TA;
                 }
             }
-            break;
         case XXL_ENGINE:
             if (hasFlag(CLAN_ENGINE)) {
-                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN)
-                    .setTechRating(RATING_F);
                 if (hasFlag(LARGE_ENGINE)) {
-                    techAdvancement.setClanAdvancement(3055, 3125)
-                        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F);
+                    return LARGE_CLAN_XXL_TA;
                 } else {
-                    techAdvancement.setClanAdvancement(2954, 3084)
-                        .setApproximate(true, true)
-                        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+                    return CLAN_XXL_TA;
                 }
             } else {
-                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS)
-                    .setTechRating(RATING_F);
                 if (hasFlag(LARGE_ENGINE)) {
-                    techAdvancement.setISAdvancement(3058, 3130)
-                        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F);
+                    return LARGE_IS_XXL_TA;
                 } else {
-                    techAdvancement.setISAdvancement(3055, 3110)
-                        .setISApproximate(true, true)
-                        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+                    return IS_XXL_TA;
                 }
             }
-            break;
         case FUEL_CELL:
             if (hasFlag(SUPPORT_VEE_ENGINE)) {
-                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
-                    .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                    .setTechRating(RATING_C)
-                    .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B);
-                break;                
+                return SUPPORT_FUEL_CELL_TA;
             } else {
-                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
-                    .setAdvancement(2995, 2470, 3078)
-                    .setApproximate(true).setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+                return FUEL_CELL_TA;
             }
-            break;
         case LIGHT_ENGINE:
-            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS)
-                .setTechRating(RATING_D);
             if (hasFlag(LARGE_ENGINE)) {
-                techAdvancement.setISAdvancement(3064, 3065).setISApproximate(true)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
+                return LARGE_LIGHT_FUSION_TA;
             } else {
-                techAdvancement.setISAdvancement(3055, 3062, 3067).setISApproximate(true)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+                return LIGHT_FUSION_TA;
             }
-            break;
         case COMPACT_ENGINE:
-            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS)
-                .setISAdvancement(3060, 3068, 3072).setISApproximate(true)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
-            break;
+            return COMPACT_FUSION_TA;
         case FISSION:
             if (hasFlag(SUPPORT_VEE_ENGINE)) {
-                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
-                    .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                    .setTechRating(RATING_C)
-                    .setAvailability(RATING_E, RATING_E, RATING_D, RATING_C);
-                break;                
+                return SUPPORT_FISSION_TA;
             } else {                
-                techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
-                    .setAdvancement(2470, 2882, 3079)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D);
+                return FISSION_TA;
             }
-            break;
         case MAGLEV:
-            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
-                .setAdvancement(DATE_ES, DATE_ES, DATE_ES)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
-            break;
+            return SUPPORT_MAGLEV_TA;
         case STEAM:
-            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
-                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                .setTechRating(RATING_A)
-                .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
-            break;
+            return SUPPORT_STEAM_TA;
         case BATTERY:
-            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
-                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
-            break;
+            return SUPPORT_BATTERY_TA;
         case SOLAR:
-            techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL)
-                .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
-                .setTechRating(RATING_C)
-                .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
-            break;            
+            return SUPPORT_SOLAR_TA;
+        case NONE:
+        default:
+            return new TechAdvancement();
         }
     }
     /**

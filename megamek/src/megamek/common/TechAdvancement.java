@@ -546,6 +546,21 @@ public class TechAdvancement {
     }
     
     /**
+     * Set a minimum year. Used for composite items (e.g. Entity) that have their own introduction year
+     * @param year
+     */
+    public void setMinYear(int year) {
+        for (int i = 0; i < isAdvancement.length; i++) {
+            if (isAdvancement[i] != DATE_NONE) {
+                isAdvancement[i] = Math.max(isAdvancement[i], year);
+            }
+            if (clanAdvancement[i] != DATE_NONE) {
+                clanAdvancement[i] = Math.max(clanAdvancement[i], year);
+            }
+        }
+    }
+    
+    /**
      * Determines rules level for either IS or Clan usage.
      */
     public int getRulesLevel(int year, boolean clan) {
@@ -653,6 +668,95 @@ public class TechAdvancement {
                 && getExtinctionDate() < year
                 && (getReintroductionDate() == DATE_NONE
                         || year < getReintroductionDate());
+    }
+    
+    public String experimentalDates(boolean clan) {
+        int[] adv = clan? clanAdvancement : isAdvancement;
+        boolean[] approx = clan? clanApproximate : isApproximate;
+        if (adv[PROTOTYPE] == DATE_NONE || (adv[PRODUCTION] != DATE_NONE && adv[PRODUCTION] <= adv[PROTOTYPE])) {
+            return "-";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (approx[PROTOTYPE]) {
+            sb.append("~");
+        }
+        sb.append(adv[PROTOTYPE]);
+        if (adv[PRODUCTION] != DATE_NONE && adv[PRODUCTION] <= adv[COMMON]) {
+            sb.append("-");
+            if (approx[PRODUCTION]) {
+                sb.append("~");
+            }
+            sb.append(adv[PRODUCTION] - 1);
+        } else if (adv[COMMON] != DATE_NONE) {
+            sb.append("-");
+            if (approx[COMMON]) {
+                sb.append("~");
+            }
+            sb.append(adv[COMMON] - 1);
+        } else {
+            sb.append("+");
+        }
+        return sb.toString();
+    }
+    
+    public String advancedDates(boolean clan) {
+        int[] adv = clan? clanAdvancement : isAdvancement;
+        boolean[] approx = clan? clanApproximate : isApproximate;
+        if (adv[PRODUCTION] == DATE_NONE || (adv[COMMON] != DATE_NONE && adv[COMMON] <= adv[PRODUCTION])) {
+            return "-";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (approx[PRODUCTION]) {
+            sb.append("~");
+        }
+        sb.append(adv[PRODUCTION]);
+        if (adv[COMMON] != DATE_NONE) {
+            sb.append("-");
+            if (approx[COMMON]) {
+                sb.append("~");
+            }
+            sb.append(adv[COMMON] - 1);
+        } else {
+            sb.append("+");
+        }
+        return sb.toString();
+    }
+    
+    public String standardDates(boolean clan) {
+        int[] adv = clan? clanAdvancement : isAdvancement;
+        boolean[] approx = clan? clanApproximate : isApproximate;
+        if (adv[COMMON] == DATE_NONE) {
+            return "-";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (approx[COMMON]) {
+            sb.append("~");
+        }
+        sb.append(adv[COMMON]).append("+");
+        return sb.toString();
+    }
+    
+    public String extinctDates(boolean clan) {
+        int[] adv = clan? clanAdvancement : isAdvancement;
+        boolean[] approx = clan? clanApproximate : isApproximate;
+        if (adv[EXTINCT] == DATE_NONE) {
+            return "-";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (approx[EXTINCT]) {
+            sb.append("~");
+        }
+        sb.append(adv[EXTINCT]);
+        if (adv[REINTRODUCED] != DATE_NONE) {
+            sb.append("-");
+            if (approx[REINTRODUCED]) {
+                sb.append("~");
+            }
+            sb.append(adv[REINTRODUCED]);
+        } else {
+            sb.append("+");
+        }
+        return sb.toString();
     }
     
     public static int getTechEra(int year) {

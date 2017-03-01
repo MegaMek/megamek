@@ -1049,7 +1049,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Resets techAdvancement to initial value and adjusts for all installed equipment.
      */
     public void recalculateTechAdvancement() {
-        techAdvancement = new TechAdvancement();
         initTechAdvancement();
         addSystemTechAdvancement();
         getEquipment().forEach(m -> ITechnology.aggregate(this, m.getType(), isMixedTech()));
@@ -1092,7 +1091,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         ITechnology.aggregate(this, EquipmentType.getStructureTechAdvancement(structureType,
                 TechConstants.isClan(structureTechLevel)), isMixedTech());
-        //TODO: armor and structure
+
+        techAdvancement.setMinYear(year);
     }
     
     public int getRecoveryTurn() {

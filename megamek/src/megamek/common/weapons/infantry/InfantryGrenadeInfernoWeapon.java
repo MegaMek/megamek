@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -49,11 +49,11 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
         infantryDamage = 0.19;
         infantryRange = 0;
         //very hackish - using some data from Inferno Fuel.
-        introDate = 2385;
-        techLevel.put(2385,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_D,RATING_E,RATING_D,RATING_C};
-        techRating = RATING_D;
         rulesRefs =" 272, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2385);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_E, RATING_D, RATING_C });
     }
 }

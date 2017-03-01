@@ -334,6 +334,37 @@ public class Protomech extends Entity {
         }
         return 0;
     }
+    
+    @Override
+    protected void initTechAdvancement() {
+        if (isQuad) {
+            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
+                    .setClanAdvancement(3075, 3083, 3100)
+                    .setClanApproximate(false, true, false)
+                    .setTechRating(RATING_F)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+        } else if (getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
+                    .setClanAdvancement(3075, 3083, 3100)
+                    .setClanApproximate(false, true, false)
+                    .setTechRating(RATING_F)
+                    .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+        } else {
+            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
+                    .setClanAdvancement(3055, 3059, 3060)
+                    .setClanApproximate(true, false, false)
+                    .setTechRating(RATING_F)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+        }
+        /* glider
+            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
+                    .setClanAdvancement(3075, 3084, 3100)
+                    .setClanApproximate(false, true, false)
+                    .setTechRating(RATING_F)
+                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
+        */            
+        
+    }
 
     /**
      * Override Entity#newRound() method.
@@ -1082,6 +1113,7 @@ public class Protomech extends Entity {
                         }
                     }
             }
+            ITechnology.aggregate(this, mounted.getType(), isMixedTech());
         } else {
             super.addEquipment(mounted, loc, rearMounted);
         }

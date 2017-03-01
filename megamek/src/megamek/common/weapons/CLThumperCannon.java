@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -53,12 +53,11 @@ public class CLThumperCannon extends ArtilleryCannonWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_MED;
-        introDate = 3032;
-        techLevel.put(3032, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_D};
-        techRating = RATING_B;
         rulesRefs = "285, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3032, 3079, DATE_NONE);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
     }
 
 }

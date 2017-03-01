@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -52,12 +52,11 @@ public class ISASMissileWeapon extends CapitalMissileWeapon {
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;
-        introDate = 3071;
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3070, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_D;
         rulesRefs = "358, TO";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3071, DATE_NONE, DATE_NONE);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -34,7 +34,6 @@ public class ISTHBUAC10 extends UACWeapon {
      */
     public ISTHBUAC10() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         this.name = "Ultra AC/10 (THB)";
         this.setInternalName("ISUltraAC10 (THB)");
         this.addLookupName("IS Ultra AC/10 (THB)");
@@ -51,9 +50,9 @@ public class ISTHBUAC10 extends UACWeapon {
         this.bv = 245;
         this.cost = 400000;
         //Since this are the Tactical Handbook Weapons I'm using the TM Stats.
-        introDate = 3057;
-        techLevel.put(3057, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3057);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

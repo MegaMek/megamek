@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -45,12 +45,10 @@ public class InfantryRifleThunderstrokeIIWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.53;
         infantryRange = 2;
-        introDate = 3053;
-        techLevel.put(3053, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3062, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3053, 3062, 3090);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }
 }

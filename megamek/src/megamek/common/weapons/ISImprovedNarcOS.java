@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -48,12 +48,10 @@ public class ISImprovedNarcOS extends NarcWeapon {
         bv = 15;
         flags = flags.or(F_ONESHOT);
         cost = 250000;
-        introDate = 3049;
-        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3062, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3070, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "141, TW";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3049, 3062, 3070);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 }

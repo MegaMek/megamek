@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author beerockxs
@@ -44,10 +44,10 @@ public class ISFluidGun extends FluidGunWeapon {
         criticals = 2;
         tonnage = 2;
         cost = 35000;
-        introDate = 1950;
-        techLevel.put(1950, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_B ,RATING_B ,RATING_B ,RATING_B};
-        techRating = RATING_B;
         rulesRefs = "313, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

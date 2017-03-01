@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jason Tighe
@@ -50,10 +50,9 @@ public class CLMediumChemicalLaser extends CLChemicalLaserWeapon {
         cost = 30000;
         shortAV = 5;
         maxRange = RANGE_SHORT;
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3059;
-        techLevel.put(3059, techLevel.get(3071));
-        techLevel.put(3083, TechConstants.T_CLAN_TW);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3059, DATE_NONE, 3083);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

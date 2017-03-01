@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -30,7 +30,6 @@ public class CLLRT15IOS extends LRTWeapon {
      */
     public CLLRT15IOS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "LRT 15 (I-OS)";
         setInternalName("CLLRTorpedo15 (IOS)");
         addLookupName("Clan IOS LRT-15");
@@ -48,10 +47,9 @@ public class CLLRT15IOS extends LRTWeapon {
         bv = 33;
         flags = flags.or(F_ONESHOT);
         cost = 140000;
-        techRating = RATING_B;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3058;
-        techLevel.put(3058, techLevel.get(3071));
-        techLevel.put(3081, TechConstants.T_CLAN_TW);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 3058, 3081);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -53,14 +53,12 @@ public class CLMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        introDate = 2817;
-        techLevel.put(2817, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2825, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(2830, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_B ,RATING_B ,RATING_A};
-        techRating = RATING_C;
         rulesRefs = "228, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2817, 2825, 2830);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_A });
     }
 
 }

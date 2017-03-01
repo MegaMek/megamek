@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -43,12 +43,10 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 0;
-        introDate = 3000;
-        techLevel.put(3000, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3010, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_F ,RATING_C ,RATING_B};
-        techRating = RATING_D;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3000, 3010, 3050);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_C, RATING_B });
     }
 }

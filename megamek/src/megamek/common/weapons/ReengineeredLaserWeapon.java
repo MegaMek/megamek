@@ -15,7 +15,6 @@
 package megamek.common.weapons;
 
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -27,15 +26,6 @@ public class ReengineeredLaserWeapon extends LaserWeapon {
      *
      */
     private static final long serialVersionUID = 2113437667446946251L;
-
-    public ReengineeredLaserWeapon() {
-        super();
-        techLevel.put(3120,TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3130,TechConstants.T_IS_ADVANCED);
-        techRating = RATING_E;
-        availRating= new int[] {RATING_X,RATING_X,RATING_X,RATING_E};
-        introDate = 3120;
-    }
 
     /*
      * (non-Javadoc)

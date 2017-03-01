@@ -15,9 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -34,14 +32,8 @@ public abstract class ATMWeapon extends MissileWeapon {
 
     public ATMWeapon() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         ammoType = AmmoType.T_ATM;
         atClass = CLASS_ATM;
-        introDate = 3054;
-        techLevel.put(3054, techLevel.get(3071));
-        availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D };
-        techRating = RATING_F;
     }
 
     /*

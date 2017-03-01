@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -34,7 +34,6 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
      */
     public CLUAC2Prototype() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Ultra AC/2 (CP)";
         setInternalName("CLUltraAC2Prototype");
         heat = 1;
@@ -55,10 +54,9 @@ public class CLUAC2Prototype extends CLPrototypeUACWeapon {
         extAV = 3;
         maxRange = RANGE_EXT;
         explosionDamage = damage;
-        this.techRating = RATING_E;
-        introDate = 2820;
-        extinctDate = 2827;
-        techLevel.put(2820, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_F, RATING_X };
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2827);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_X, RATING_X });
     }
 }

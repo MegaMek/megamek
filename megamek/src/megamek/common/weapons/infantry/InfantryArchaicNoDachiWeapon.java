@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -44,11 +44,11 @@ public class InfantryArchaicNoDachiWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.05;
         infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_IS_UNOFFICIAL);
-        availRating = new int[]{RATING_C,RATING_C,RATING_C,RATING_C};
-        techRating = RATING_A;
         rulesRefs =" 272, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
+        techAdvancement.setTechRating(RATING_A);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
     }
 }

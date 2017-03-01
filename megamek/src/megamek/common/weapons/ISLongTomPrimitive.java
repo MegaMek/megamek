@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Dave Nawton
@@ -50,13 +50,12 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
         criticals = 30;
         bv = 368;
         cost = 450000;
-        introDate = 2445;
-        extinctDate = 2510;
-        techLevel.put(2445, TechConstants.T_IS_EXPERIMENTAL);
-        availRating = new int[] { RATING_F ,RATING_X ,RATING_X ,RATING_X};
-        techRating = RATING_B;
         rulesRefs = "118, IO";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2445, DATE_NONE, DATE_NONE, 2510);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
     }
 
 }

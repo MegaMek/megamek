@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -31,7 +31,6 @@ public class ISTAG extends TAGWeapon {
 
     public ISTAG() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "TAG";
         setInternalName("ISTAG");
         addLookupName("IS TAG");
@@ -47,12 +46,10 @@ public class ISTAG extends TAGWeapon {
         extremeRange = 18;
         bv = 0;
         cost = 50000;
-        introDate = 2600;
-        techLevel.put(2600, techLevel.get(3071));
-        extinctDate = 2835;
-        reintroDate = 3044;
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
-        techRating = RATING_E;
         flags = flags.andNot(F_BA_WEAPON).or(F_AERO_WEAPON);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2600, 2835, 3044);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
     }
 }

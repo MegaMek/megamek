@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 
 /**
@@ -46,10 +46,10 @@ public class InfantrySupportClanHeavySRMInfernoWeapon extends InfantryWeapon {
         infantryRange = 2;
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
-        introDate = 2807;
-        techLevel.put(2807, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_C ,RATING_D ,RATING_C};
-        techRating = RATING_C;
         rulesRefs =" 273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_D, RATING_C });
     }
 }

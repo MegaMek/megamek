@@ -21,12 +21,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
@@ -45,7 +42,7 @@ import megamek.server.Server;
  * @author Ben
  * @version
  */
-public class EquipmentType {
+public class EquipmentType implements ITechnology {
     public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
@@ -143,24 +140,8 @@ public class EquipmentType {
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
     public static final double POINT_ADDITION_CLAN_FF = 0.08;
 
-    public static final int RATING_A = 0;
-    public static final int RATING_B = 1;
-    public static final int RATING_C = 2;
-    public static final int RATING_D = 3;
-    public static final int RATING_E = 4;
-    public static final int RATING_F = 5;
-    public static final int RATING_X = 6;
-
-    public static final int ERA_SL = 0;
-    public static final int ERA_SW = 1;
-    public static final int ERA_CLAN = 2;
-    public static final int ERA_DA = 3;
-
-    public static final int DATE_NONE = -1;
-
-    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F",
+    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F", "F*",
             "X" };
-
 
     protected String name = null;
 
@@ -182,7 +163,9 @@ public class EquipmentType {
     protected boolean spreadable = false;
     protected int toHitModifier = 0;
 
-    protected Map<Integer, Integer> techLevel = new HashMap<Integer, Integer>();
+//    protected Map<Integer,Integer> techLevel = new HashMap<>();
+    
+    protected TechAdvancement techAdvancement = new TechAdvancement();
 
     protected BigInteger flags = BigInteger.valueOf(0);
 
@@ -190,13 +173,6 @@ public class EquipmentType {
 
     protected double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
-
-    // fluffy stuff
-    protected int techRating = RATING_C;
-    protected int[] availRating = { RATING_E, RATING_E, RATING_E, RATING_E };
-    protected int introDate = DATE_NONE;
-    protected int extinctDate = DATE_NONE;
-    protected int reintroDate = DATE_NONE;
 
     /**
      * what modes can this equipment be in?
@@ -264,27 +240,52 @@ public class EquipmentType {
         return internalName;
     }
 
+    /**
+     * @deprecated The old tech progression system has been replaced by the TechAdvancement class.
+     */
+    @Deprecated
     public Map<Integer, Integer> getTechLevels() {
+        Map<Integer,Integer> techLevel = new HashMap<>();
+        if (techAdvancement.isUnofficial()) {
+            if (techAdvancement.getTechBase() == TECH_BASE_CLAN) {
+                techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
+            } else {
+                techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_IS_UNOFFICIAL);
+            }
+            return techLevel;
+        }
+        if (techAdvancement.getPrototypeDate(true) > 0) {
+            techLevel.put(techAdvancement.getPrototypeDate(true), TechConstants.T_CLAN_EXPERIMENTAL);
+        }
+        if (techAdvancement.getPrototypeDate(false) > 0) {
+            techLevel.put(techAdvancement.getPrototypeDate(false), TechConstants.T_IS_EXPERIMENTAL);
+        }
+        if (techAdvancement.getProductionDate(true) > 0) {
+            techLevel.put(techAdvancement.getProductionDate(true), TechConstants.T_CLAN_ADVANCED);
+        }
+        if (techAdvancement.getProductionDate(false) > 0) {
+            techLevel.put(techAdvancement.getProductionDate(false), TechConstants.T_IS_ADVANCED);
+        }
+        if (techAdvancement.getTechBase() == TECH_BASE_ALL
+                && techAdvancement.getCommonDate() > 0) {
+            techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_TW_ALL);
+        } else if (techAdvancement.getCommonDate(true) > 0) {
+            techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_CLAN_TW);
+        } else if (techAdvancement.getCommonDate(false) > 0) {
+            techLevel.put(techAdvancement.getCommonDate(false),
+                    techAdvancement.isIntroLevel()?TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX);
+        }
         return techLevel;
     }
 
     public int getTechLevel(int date) {
-        if (techLevel.containsKey(date)) {
-            return techLevel.get(date);
-        } else {
-            List<Integer> introdates = new ArrayList<Integer>(
-                    techLevel.keySet());
-            Collections.sort(introdates);
-            Collections.reverse(introdates);
-            for (Integer introdate : introdates) {
-                if (introdate <= date) {
-                    return techLevel.get(introdate);
-                }
-            }
-        }
-        return TechConstants.T_TECH_UNKNOWN;
+        return techAdvancement.getTechLevel(date);
     }
-
+    
+    public int getTechLevel(int date, boolean clan) {
+        return techAdvancement.getTechLevel(date, clan);
+    }
+    
     public double getTonnage(Entity entity) {
         return getTonnage(entity, Entity.LOC_NONE);
     }
@@ -626,7 +627,7 @@ public class EquipmentType {
         }
         return T_ARMOR_UNKNOWN;
     }
-
+    
     public static String getArmorTypeName(int armorType) {
         if ((armorType < 0) || (armorType >= armorNames.length)) {
             return "UNKNOWN";
@@ -641,7 +642,7 @@ public class EquipmentType {
         return clan ? "Clan " + armorNames[armorType] : "IS "
                 + armorNames[armorType];
     }
-
+    
     public static int getStructureType(EquipmentType et) {
         if (et == null) {
             return T_STRUCTURE_UNKNOWN;
@@ -724,6 +725,44 @@ public class EquipmentType {
             return 0.05f;
         }
     }
+    
+    /* Armor and structure are stored as integers and standard uses a generic MiscType that
+     * does not have its own TechAdvancement.
+     */
+
+    protected final static TechAdvancement TA_STANDARD_ARMOR = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+    protected final static TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+    protected final static TechAdvancement TA_NONE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+
+    public static TechAdvancement getArmorTechAdvancement(int at, boolean clan) {
+        if (at == T_ARMOR_STANDARD) {
+            return TA_STANDARD_ARMOR;
+        }
+        String armorName = EquipmentType.getArmorTypeName(at, clan);
+        EquipmentType armor = EquipmentType.get(armorName);
+        if (armor != null) {
+            return armor.getTechAdvancement();
+        }
+        return TA_NONE;
+    }
+
+    public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
+        if (at == T_STRUCTURE_STANDARD) {
+            return TA_STANDARD_STRUCTURE;
+        }
+        String structureName = EquipmentType.getStructureTypeName(at, clan);
+        EquipmentType structure = EquipmentType.get(structureName);
+        if (structure != null) {
+            return structure.getTechAdvancement();
+        }
+        return TA_NONE;
+    }
 
     /**
      * @return The C-Bill cost of the piece of equipment.
@@ -742,9 +781,14 @@ public class EquipmentType {
         }
         return ratingNames[rating];
     }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return techAdvancement;
+    }
 
     public int getTechRating() {
-        return techRating;
+        return techAdvancement.getTechRating();
     }
 
     public String getTechRatingName() {
@@ -754,43 +798,68 @@ public class EquipmentType {
     public String getFullRatingName() {
         String rating = getTechRatingName();
         rating += "/";
-        rating += getAvailabilityName(ERA_SL);
+        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_SL));
         rating += "-";
-        rating += getAvailabilityName(ERA_SW);
+        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_SW));
         rating += "-";
-        rating += getAvailabilityName(ERA_CLAN);
+        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_CLAN));
         rating += "-";
-        rating += getAvailabilityName(ERA_DA);
+        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_DA));
         return rating;
     }
-
-    public int getAvailability(int era) {
-        if ((era < 0) || (era > ERA_DA)) {
-            return RATING_X;
-        }
-    // If the avail ratings don't list the era, assume RATING_X
-        if (availRating.length <= era) {
-            return RATING_X;
-        }
-        
-        return availRating[era];
+    
+    public String getFullRatingName(boolean clan) {
+        String rating = getTechRatingName();
+        rating += "/";
+        rating += techAdvancement.getEraAvailabilityName(ERA_SL, clan);
+        rating += "-";
+        rating += techAdvancement.getEraAvailabilityName(ERA_SW, clan);
+        rating += "-";
+        rating += techAdvancement.getEraAvailabilityName(ERA_CLAN, clan);
+        rating += "-";
+        rating += techAdvancement.getEraAvailabilityName(ERA_DA, clan);
+        return rating;        
+    }
+    
+    public String getEraAvailabilityName(int era, boolean clan) {
+        return techAdvancement.getEraAvailabilityName(era, clan);
     }
 
+    /**
+     * @deprecated Use {@link #getAvailability(int,boolean) getAvailability to get availability
+     *      for IS/Clan in a given year, or {@link #getBaseEraAvailability(int) getBaseEraAvailability}
+     *      to get the base code for the era type, or getBaseEraAvailability to get the base code.
+     */
+    @Deprecated
+    public int getAvailability(int era) {
+        return techAdvancement.getBaseEraAvailability(era);
+    }
+
+    /**
+     * @deprecated Use {@link #getAvailabilityName(int,boolean) getAvailabilityName}
+     *      to get availability for IS or Clan in a specific year,
+     *      or {@link #getEraAvailabilityName(int) getEraAvailability to get code(s) for the era.
+     */
+    @Deprecated
     public String getAvailabilityName(int era) {
         int avail = getAvailability(era);
         return EquipmentType.getRatingName(avail);
     }
-
+    
+    public int getTechBase() {
+        return techAdvancement.getTechBase();
+    }
+    
     public int getIntroductionDate() {
-        return introDate;
+        return techAdvancement.getIntroductionDate();
     }
 
     public int getExtinctionDate() {
-        return extinctDate;
+        return techAdvancement.getExtinctionDate();
     }
 
-    public int getReintruductionDate() {
-        return reintroDate;
+    public int getReintroductionDate() {
+        return techAdvancement.getReintroductionDate();
     }
 
     public static String getEquipDateAsString(int date) {
@@ -801,18 +870,35 @@ public class EquipmentType {
         }
 
     }
-
+    
     public boolean isAvailableIn(int year) {
-        if (year < introDate) {
-            return false;
-        }
-        if ((extinctDate == DATE_NONE) || (year < extinctDate)) {
-            return true;
-        }
-        if ((reintroDate == DATE_NONE) || (year < reintroDate)) {
-            return false;
-        }
-        return true;
+        return !techAdvancement.isExtinct(year);
+    }
+    
+    public int getAvailability(int year, boolean clan) {
+        return techAdvancement.getAvailability(year, clan);
+    }
+
+    public String getAvailabilityName(int year, boolean clan) {
+        int avail = getAvailability(year, clan);
+        return EquipmentType.getRatingName(avail);
+    }
+
+    public int getIntroductionDate(boolean clan) {
+        return techAdvancement.getIntroductionDate(clan);
+    }
+
+    public int getExtinctionDate(boolean clan) {
+        return techAdvancement.getExtinctionDate(clan);
+    }
+
+    public int getReintroductionDate(boolean clan) {
+        return techAdvancement.getReintroductionDate(clan);
+    }
+
+    public boolean isAvailableIn(int year, boolean clan) {
+        return getIntroductionDate(clan) >= year
+                && !techAdvancement.isExtinct(year, clan);
     }
 
     public static double getArmorCost(int inArmor) {
@@ -970,7 +1056,7 @@ public class EquipmentType {
                 w.write(",");
                 w.write(getEquipDateAsString(type.getExtinctionDate()));
                 w.write(",");
-                w.write(getEquipDateAsString(type.getReintruductionDate()));
+                w.write(getEquipDateAsString(type.getReintroductionDate()));
                 w.write(",");
                 if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
                     w.write("Variable");

@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -48,14 +48,10 @@ public class CLImprovedLRM10 extends LRMWeapon {
         longAV = 6;
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_LRM_IMP;
-        introDate = 2815;
-        extinctDate = 2831;
-        reintroDate = 3080;
-        techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
-        techLevel.put(2471, TechConstants.T_CLAN_ADVANCED);   ///ADV
-        techLevel.put(2500, TechConstants.T_CLAN_TW);   ///COMMON
-        availRating = new int[] { RATING_X, RATING_D, RATING_X, RATING_X };
-        techRating = RATING_F;
         rulesRefs = "96, IO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2815, DATE_NONE, DATE_NONE, 2831, 3080);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
     }
 }

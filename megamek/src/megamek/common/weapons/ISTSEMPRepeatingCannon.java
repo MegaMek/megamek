@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 
 public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
@@ -30,13 +30,13 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
         setInternalName(name);
         this.addLookupName("ISTSEMPREPEATING");
         flags = flags.or(F_TSEMP).or(F_DIRECT_FIRE).or(F_REPEATING);
-        introDate = 3133;
-        techLevel.put(3133,TechConstants.T_IS_EXPERIMENTAL);
-        availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         tonnage = 8;
         criticals  = 7;
         tankslots = 1;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3133, DATE_NONE, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
     }
     
     //TODO - Implement Game Rules.  See IO pg 94 for specifics.

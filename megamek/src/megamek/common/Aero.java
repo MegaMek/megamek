@@ -223,6 +223,48 @@ public class Aero extends Entity {
         altitude = 5;
     }
 
+    @Override
+    protected void initTechAdvancement() {
+        if (isPrimitive()) {
+            techAdvancement = new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2520)
+                    .setISApproximate(false, true, false)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);            
+        } else {
+            techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_NONE, 2470, 2490)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+        }
+    }
+    
+    protected static final TechAdvancement[] COCKPIT_TA = {
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2491)
+                .setApproximate(true, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C), //Standard            
+            new TechAdvancement(TECH_BASE_IS).setISAdvancement(3065, 3070, 3080)
+                .setClanAdvancement(DATE_NONE, DATE_NONE, 3080)
+                .setISApproximate(true, false, false).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D), //Small            
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
+                .setISApproximate(true, false, false, true, true)
+                .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
+                .setISApproximate(true, false).setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D), //Cockpit command console
+            new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, 2300, DATE_NONE, 2520)
+                .setISApproximate(false, true, false, false).setTechRating(RATING_C)
+                .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F), //Primitive            
+    };
+
+    @Override
+    protected void addSystemTechAdvancement() {
+        super.addSystemTechAdvancement();
+        if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
+            ITechnology.aggregate(this, COCKPIT_TA[getCockpitType()], isMixedTech());
+        }        
+    }
+    
     /**
      * Returns this entity's safe thrust, factored for heat, extreme
      * temperatures, gravity, and bomb load.

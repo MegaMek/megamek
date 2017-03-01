@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -53,12 +53,11 @@ public class ISLongTomCannon extends ArtilleryCannonWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        introDate = 3012;
-        techLevel.put(3012, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3079, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_D};
-        techRating = RATING_B;
         rulesRefs = "285, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3012, 3079, DATE_NONE);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
     }
 
 }

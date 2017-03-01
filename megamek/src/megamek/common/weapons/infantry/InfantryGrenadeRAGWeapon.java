@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -44,12 +44,10 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
         infantryDamage = 0.30;
         infantryRange = 1;
-        introDate = 3057;
-        techLevel.put(3057, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3065, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[]{RATING_X,RATING_X,RATING_D,RATING_C};
-        techRating = RATING_C;
         rulesRefs =" 273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3057, 3065, 3085);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
     }
 }

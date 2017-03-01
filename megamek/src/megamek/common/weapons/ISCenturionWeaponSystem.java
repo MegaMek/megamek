@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -38,7 +38,6 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
      */
     public ISCenturionWeaponSystem() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Centurion Weapon System";
         setInternalName(name);
         heat = 4;
@@ -59,11 +58,12 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         waterLongRange = 10;
         waterExtremeRange = 14;
         maxRange = RANGE_MED;
-        introDate = 2762;
-        availRating = new int[] { RATING_F, RATING_F, RATING_F };
-        techRating = RATING_E;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_CWS);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3071, DATE_NONE, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_F, RATING_F, RATING_F, RATING_X });
     }
     
     /*

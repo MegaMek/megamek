@@ -14,7 +14,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -36,8 +35,6 @@ public abstract class SRTWeapon extends MissileWeapon {
     public SRTWeapon() {
         super();
         ammoType = AmmoType.T_SRM_TORPEDO;
-        availRating = new int[] { EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C };
     }
 
     /*

@@ -121,6 +121,10 @@ public class MechView {
         sHead.append("<font size=+1><b>" + entity.getShortNameRaw()
                 + "</b></font>");
         sHead.append("<br>"); //$NON-NLS-1$
+//        if (entity.getGame() != null
+//                && entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
+            sHead.append(Messages.getString("MechView.BaseTechLevel"));
+//        }
         if (!entity.isDesignValid()) {
             sHead.append(Messages.getString("MechView.DesignInvalid"));
             sHead.append("<br>"); //$NON-NLS-1$
@@ -136,6 +140,44 @@ public class MechView {
                     .getTechLevel()));
         }
         sHead.append("<br>"); //$NON-NLS-1$
+        
+//        if (entity.getGame() != null
+//                && entity.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
+            sHead.append("<table cellspacing=0 cellpadding=1 border=0>");
+            sHead.append(String.format("<tr><th align='left'>%s</th><th>%s</th></tr>", //$NON-NLS-1$//
+                    Messages.getString("MechView.Level"), Messages.getString("MechView.Era"))); //$NON-NLS-1$//
+            sHead.append(String.format("<tr><td>%s</td><td>%s</td></tr>", //$NON-NLS-1$//
+                    TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_EXPERIMENTAL),
+                    entity.getTechAdvancement().experimentalDates(entity.isClan())));
+            sHead.append(String.format("<tr><td>%s</td><td>%s</td></tr>", //$NON-NLS-1$//
+                    TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_ADVANCED),
+                    entity.getTechAdvancement().advancedDates(entity.isClan())));
+            sHead.append(String.format("<tr><td>%s</td><td>%s</td></tr>", //$NON-NLS-1$//
+                    TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_STANDARD),
+                    entity.getTechAdvancement().standardDates(entity.isClan())));
+            int extinctDate = entity.getExtinctionDate(entity.isClan());
+            if (extinctDate < entity.getYear()) {
+                extinctDate = TechAdvancement.DATE_NONE;
+            }
+            boolean isExtinctionOnly = !entity.isClan()
+                    && extinctDate != TechAdvancement.DATE_NONE
+                    && TechAdvancement.getTechEra(extinctDate) == TechAdvancement.ERA_SW;
+            if (extinctDate != TechAdvancement.DATE_NONE) {
+                sHead.append(String.format("<tr><td>%s</td><td>%s", //$NON-NLS-1$//
+                        Messages.getString("MechView.Extinct"), //$NON-NLS-1$//
+                        entity.getTechAdvancement().extinctDates(entity.isClan())));
+                if (isExtinctionOnly) {
+                    sHead.append("*"); //$NON-NLS-1$//
+                }
+                sHead.append("</td></tr>"); //$NON-NLS-1$//
+            }
+            sHead.append("</td><br/>"); //$NON-NLS-1$//
+            if (isExtinctionOnly) {
+                sHead.append("<i>").append(Messages.getString("MechView.ISExtinctOnly")) //$NON-NLS-1$//
+                    .append("</i><br/>");                //$NON-NLS-1$//
+            }
+            sHead.append("<br/>");                //$NON-NLS-1$//
+//        }
         if (!isInf) {
             sHead.append(Math.round(entity.getWeight())).append(
                     Messages.getString("MechView.tons")); //$NON-NLS-1$

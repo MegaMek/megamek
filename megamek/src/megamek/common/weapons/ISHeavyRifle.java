@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jason Tighe
@@ -34,7 +34,6 @@ public class ISHeavyRifle extends RifleWeapon {
      */
     public ISHeavyRifle() {
         super();
-        techLevel.put(1950, TechConstants.T_IS_EXPERIMENTAL);
         name = "Heavy Rifle";
         setInternalName(name);
         addLookupName("IS Heavy Rifle");
@@ -58,9 +57,9 @@ public class ISHeavyRifle extends RifleWeapon {
         extAV = 8;
         maxRange = RANGE_MED;
         explosionDamage = 0;
-        introDate = 1950;
-        techRating = RATING_B;
-        availRating = new int[] { RATING_C, RATING_F, RATING_X };
-        techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(1950, DATE_NONE, 3084);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_F, RATING_X, RATING_X });
     }
 }

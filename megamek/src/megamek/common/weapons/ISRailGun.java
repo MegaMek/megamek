@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -34,7 +34,6 @@ public class ISRailGun extends GaussWeapon {
      */
     public ISRailGun() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         this.name = "Rail Gun";
         this.setInternalName("ISRailGun");
         this.addLookupName("IS Rail Gun");
@@ -52,9 +51,9 @@ public class ISRailGun extends GaussWeapon {
         this.cost = 300000;
         this.explosionDamage = 20;
         //This appears to be like the Heavy Gauss using those stats.
-        introDate = 3061;
-        techLevel.put(3061, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3061);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

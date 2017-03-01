@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -59,13 +59,11 @@ public class CLGaussRifle extends GaussWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
-        introDate = 2817;
-        techLevel.put(2817, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2828, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(2830, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_D};
-        techRating = RATING_F;
         rulesRefs = "218, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2817, 2828, 2830);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
     }
 
     /*

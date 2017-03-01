@@ -20,7 +20,6 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.Mounted;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -37,10 +36,7 @@ public abstract class HVACWeapon extends ACWeapon {
 
     public HVACWeapon() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3079, TechConstants.T_IS_ADVANCED);
         ammoType = AmmoType.T_HYPER_VELOCITY;
-        techRating = RATING_D;
     }
 
     /*

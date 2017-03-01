@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -43,13 +43,11 @@ public class InfantryArchaicNeuralWhipWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.09;
         infantryRange = 0;
-        introDate = 2310;
-        techLevel.put(2310, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2320, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2500, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_F,RATING_F ,RATING_E ,RATING_F};
-        techRating = RATING_F;
         rulesRefs = "272, TM";
         
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2310, 2320, 2500);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_F, RATING_F, RATING_E, RATING_F });
     }
 }

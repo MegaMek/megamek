@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -29,7 +29,6 @@ public class CLStreakSRM1 extends StreakSRMWeapon {
      * 
      */
     public CLStreakSRM1() {
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Streak SRM 1";
         this.setInternalName("CLStreakSRM1");
         this.heat = 0;
@@ -41,9 +40,9 @@ public class CLStreakSRM1 extends StreakSRMWeapon {
         this.tonnage = 0.5f;
         this.criticals = 0;
         this.bv = 20;
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3060);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

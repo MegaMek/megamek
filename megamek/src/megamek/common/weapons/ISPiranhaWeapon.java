@@ -18,7 +18,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -37,7 +37,6 @@ public class ISPiranhaWeapon extends SubCapitalMissileWeapon {
      */
     public ISPiranhaWeapon() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Piranha";
         setInternalName(name);
         addLookupName("Piranha");
@@ -56,11 +55,10 @@ public class ISPiranhaWeapon extends SubCapitalMissileWeapon {
         longAV = 3;
         maxRange = RANGE_LONG;
         flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
-        introDate = 3060;
-        techLevel.put(3060,techLevel.get(3071));
-        techLevel.put(3072, TechConstants.T_IS_TW_ALL);
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, 3060, 3072);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 
     /*

@@ -18,7 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -53,11 +53,11 @@ public class ISBAHeavyGrenadeLauncher extends Weapon {
         cost = 4500;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
                 .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3050;
-		techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
-		availRating = new int[] { RATING_X ,RATING_D ,RATING_D ,RATING_C};
-		techRating = RATING_C;
 		rulesRefs = "256,TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
     }
 
 }

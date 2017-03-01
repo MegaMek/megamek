@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -38,7 +38,6 @@ public class ISGaussRiflePrototype extends GaussWeapon {
      */
     public ISGaussRiflePrototype() {
         super();
-        techLevel.put(2587, TechConstants.T_IS_EXPERIMENTAL);
         name = "Gauss Rifle Prototype";
         setInternalName("ISGaussRiflePrototype");
         addLookupName("IS Gauss Rifle Prototype");
@@ -56,11 +55,10 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         criticals = 8;
         flags = flags.or(F_PROTOTYPE);
         explosionDamage = 20;
-        introDate = 2587;
-        extinctDate = 2590;
-        reintroDate = 3040;
-        availRating = new int[] { RATING_E,RATING_F, RATING_D };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2587, DATE_NONE, DATE_NONE, 2590, 3040);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
     }
 
     /*

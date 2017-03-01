@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -43,12 +43,10 @@ public class InfantrySMGISRuganWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.20;
         infantryRange = 0;
-        introDate = 2713;
-        techLevel.put(2713, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2720, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2750, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_D,RATING_B ,RATING_C ,RATING_D};
-        techRating = RATING_C;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2713, 2720, 2750);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_B, RATING_C, RATING_D });
     }
 }

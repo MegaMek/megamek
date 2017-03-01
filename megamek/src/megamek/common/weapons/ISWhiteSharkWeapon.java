@@ -18,7 +18,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -37,7 +37,6 @@ public class ISWhiteSharkWeapon extends CapitalMissileWeapon {
      */
     public ISWhiteSharkWeapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "White Shark";
         this.setInternalName(this.name);
         this.addLookupName("WhiteShark");
@@ -56,12 +55,10 @@ public class ISWhiteSharkWeapon extends CapitalMissileWeapon {
         this.longAV = 3;
         this.extAV = 3;
         this.maxRange = RANGE_EXT;
-        introDate = 2305;
-        techLevel.put(2305, techLevel.get(3071));
-        extinctDate = 2854;
-        reintroDate = 3051;
-        availRating = new int[] { RATING_D, RATING_X, RATING_D };
-        techRating = RATING_F;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2305, 2854, 3051);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_X, RATING_D, RATING_X });
     }
 
     /*

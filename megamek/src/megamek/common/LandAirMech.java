@@ -30,7 +30,8 @@ public class LandAirMech extends BipedMech {
         { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot", "Avionics", "Landing Gear" };
 
     private int fuel;
-
+    private boolean bimodal;
+    
     public LandAirMech(int inGyroType, int inCockpitType) {
         super(inGyroType, inCockpitType);
         setTechLevel(TechConstants.T_IS_ADVANCED);
@@ -99,17 +100,48 @@ public class LandAirMech extends BipedMech {
         return getFighterModeRunMP(true, false);
     }
     
+    public boolean isBimodal() {
+        return bimodal;
+    }
+    
+    public void setBimodal(boolean bimodal) {
+        this.bimodal = bimodal;
+    }
+    
+    @Override
+    public void initTechAdvancement() {
+        techAdvancement = new TechAdvancement();
+        if (bimodal) {
+            techAdvancement.setTechBase(TECH_BASE_ALL);
+            techAdvancement.setISAdvancement(2680, 2684, DATE_NONE, 2781);
+            techAdvancement.setISAdvancement(DATE_NONE, 2684, DATE_NONE, 2801);
+            techAdvancement.setTechRating(RATING_E);
+            techAdvancement.setAvailability(RATING_E, RATING_F, RATING_X, RATING_X);
+        } else {
+            techAdvancement.setTechBase(TECH_BASE_ALL);
+            techAdvancement.setISAdvancement(2683, 2688, DATE_NONE, 3085);
+            techAdvancement.setISAdvancement(DATE_NONE, 2688, DATE_NONE, 2825);
+            techAdvancement.setTechRating(RATING_E);
+            techAdvancement.setAvailability(RATING_D, RATING_E, RATING_F, RATING_F);
+        }
+        
+    }
+    
     @Override
     public void setBattleForceMovement(Map<String,Integer> movement) {
     	super.setBattleForceMovement(movement);
-    	movement.put("g", getAirMechWalkMP(true, false));
+    	if (!bimodal) {
+    	    movement.put("g", getAirMechWalkMP(true, false));
+    	}
     	movement.put("a", getFighterModeWalkMP(true, false));
     }
     
     @Override
     public void setAlphaStrikeMovement(Map<String,Integer> movement) {
     	super.setBattleForceMovement(movement);
-    	movement.put("g", getAirMechWalkMP(true, false) * 2);
+    	if (!bimodal) {
+    	    movement.put("g", getAirMechWalkMP(true, false) * 2);
+    	}
     	movement.put("a", getFighterModeWalkMP(true, false));
     }
     
@@ -121,7 +153,11 @@ public class LandAirMech extends BipedMech {
         if (bombs > 0) {
             specialAbilities.put(BattleForceSPA.BOMB, bombs / 5);
         }
-        specialAbilities.put(BattleForceSPA.LAM, null);
+        if (bimodal) {
+            specialAbilities.put(BattleForceSPA.BIM, null);
+        } else {
+            specialAbilities.put(BattleForceSPA.LAM, null);
+        }
     }
 
     public long getEntityType(){

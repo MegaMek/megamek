@@ -14,6 +14,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.TechAdvancement;
 
 public class ISSmallReengineeredLaser extends ReengineeredLaserWeapon {
 
@@ -48,8 +49,9 @@ public class ISSmallReengineeredLaser extends ReengineeredLaserWeapon {
         shortAV = 4;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        introDate = 3130;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 3130, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

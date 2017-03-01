@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -35,13 +34,11 @@ public abstract class CLChemicalLaserWeapon extends AmmoWeapon {
     private static final long serialVersionUID = -854810886500324094L;
 
     public CLChemicalLaserWeapon() {
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         ammoType = AmmoType.T_CHEMICAL_LASER;
         minimumRange = WEAPON_NA;
         flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY).or(F_MECH_WEAPON)
                 .or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_PROTO_WEAPON);
         atClass = CLASS_LASER;
-        techLevel.put(3083, TechConstants.T_CLAN_ADVANCED);
     }
 
     /*

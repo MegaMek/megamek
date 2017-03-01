@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jason Tighe
@@ -46,14 +46,10 @@ public class ISMekMortar1 extends MekMortarWeapon {
         criticals = 1;
         tonnage = 2;
         cost = 7000;
-        introDate = 2521;
-        extinctDate = 2819;
-        reintroDate = 3043;
-        techLevel.put(2521, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2531, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3052, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_D ,RATING_F ,RATING_F ,RATING_E};
-        techRating = RATING_B;
         rulesRefs = "263, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2521, 2531, 3052, 2819, 3043);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_F, RATING_F, RATING_E });
     }
 }

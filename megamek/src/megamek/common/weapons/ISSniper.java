@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -52,12 +52,12 @@ public class ISSniper extends ArtilleryWeapon {
         criticals = 20;
         bv = 85;
         cost = 300000;
-        introDate = 1950;
-        techLevel.put(1950, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
-        techRating = RATING_B;
         rulesRefs = "284, TO";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 1950, DATE_NONE);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
     }
 
 }

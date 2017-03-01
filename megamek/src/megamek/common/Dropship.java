@@ -38,6 +38,23 @@ public class Dropship extends SmallCraft {
     int escapePods = 0;
     int lifeBoats = 0;
 
+    @Override
+    protected void initTechAdvancement() {
+        if (isPrimitive()) {
+            techAdvancement = new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
+                    .setISApproximate(false, true, false, false)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
+        } else {
+            techAdvancement = new TechAdvancement(TECH_BASE_IS)
+                    .setAdvancement(DATE_NONE, 2470, 2490)
+                    .setISApproximate(false, true, false)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+        }
+    }
+    
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;

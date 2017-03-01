@@ -16,8 +16,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -33,7 +32,6 @@ public class ISAC10 extends ACWeapon {
      */
     public ISAC10() {
         super();
-        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         name = "AC/10";
         setInternalName("Autocannon/10");
         addLookupName("IS Auto Cannon/10");
@@ -57,10 +55,11 @@ public class ISAC10 extends ACWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        availRating = new int[] { EquipmentType.RATING_C,
-                EquipmentType.RATING_D, EquipmentType.RATING_D };
-        introDate = 2460;
-        techLevel.put(2460, techLevel.get(3071));
-        techRating = RATING_C;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setISAdvancement(2243, 2460, 2465);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2465, 2855);
+        techAdvancement.setIntroLevel(true);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_D });
     }
 }

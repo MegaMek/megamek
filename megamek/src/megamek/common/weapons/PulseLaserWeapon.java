@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -34,8 +33,6 @@ public abstract class PulseLaserWeapon extends LaserWeapon {
         flags = flags.or(F_PULSE);
         atClass = CLASS_PULSE_LASER;
         infDamageClass = WEAPON_PULSE;
-        availRating = new int[] { EquipmentType.RATING_E,
-                EquipmentType.RATING_F, EquipmentType.RATING_D };
     }
 
     /*

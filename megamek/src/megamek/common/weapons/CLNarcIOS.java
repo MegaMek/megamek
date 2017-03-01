@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -46,12 +46,10 @@ public class CLNarcIOS extends NarcWeapon {
         flags = flags.or(F_ONESHOT);
         bv = 6;
         cost = 100000;
-        introDate = 3058;
-        techLevel.put(3058, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3081, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3085, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_E ,RATING_D ,RATING_C};
-        techRating = RATING_F;
         rulesRefs = "232, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3058, 3081, 3085);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_C });
     }
 }

@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -43,12 +43,10 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.17;
         infantryRange = 1;
-        introDate = 2600;
-        techLevel.put(2600, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2620, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2630, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_B,RATING_B ,RATING_B ,RATING_B};
-        techRating = RATING_C;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2600, 2620, 2630);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

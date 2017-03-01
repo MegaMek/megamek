@@ -16,7 +16,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -32,7 +32,6 @@ public class ISSCL2Weapon extends SubCapitalLaserWeapon {
      */
     public ISSCL2Weapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Sub-Capital Laser 2";
         this.setInternalName(this.name);
         this.addLookupName("SCL2");
@@ -48,10 +47,9 @@ public class ISSCL2Weapon extends SubCapitalLaserWeapon {
         this.shortAV = 2;
         this.medAV = 2;
         this.maxRange = RANGE_MED;
-        introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 3068, 3071);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

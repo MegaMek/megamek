@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -34,7 +34,6 @@ public class CLERSmallLaserPrototype extends LaserWeapon {
      */
     public CLERSmallLaserPrototype() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "ER Small Laser (CP)";
         setInternalName("CLERSmallLaserPrototype");
         heat = 2;
@@ -54,10 +53,9 @@ public class CLERSmallLaserPrototype extends LaserWeapon {
         cost = 11250;
         shortAV = 3;
         maxRange = RANGE_SHORT;
-        introDate = 2820;
-        extinctDate = 2825;
-        techLevel.put(2820, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_E, RATING_X };
-        techRating = RATING_F;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2825);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_X, RATING_X });
     }
 }

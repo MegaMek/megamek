@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -45,12 +45,10 @@ public class InfantrySupportISHeavyPulseLaserWeapon extends InfantryWeapon {
         infantryDamage = 0.98;
         infantryRange = 4;
         crew = 4;
-        introDate = 2605;
-        techLevel.put(2605, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2615, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2675, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_E,RATING_F ,RATING_E ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2605, 2615, 2675);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_D });
     }
 }

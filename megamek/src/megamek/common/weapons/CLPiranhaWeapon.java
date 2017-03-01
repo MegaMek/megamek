@@ -18,7 +18,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -37,7 +37,6 @@ public class CLPiranhaWeapon extends SubCapitalMissileWeapon {
      */
     public CLPiranhaWeapon() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Piranha (Clan)";
         setInternalName(name);
         addLookupName("CLPiranha");
@@ -56,11 +55,10 @@ public class CLPiranhaWeapon extends SubCapitalMissileWeapon {
         longAV = 3;
         maxRange = RANGE_LONG;
         flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
-        introDate = 3070;
-        techLevel.put(3070,techLevel.get(3071));
-        techLevel.put(3072, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 3070, 3072);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 
     /*

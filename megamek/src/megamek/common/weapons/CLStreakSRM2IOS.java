@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -48,12 +48,10 @@ public class CLStreakSRM2IOS extends StreakSRMWeapon {
         shortAV = 4;
         medAV = 4;
         maxRange = RANGE_MED;
-        introDate = 3058;
-        techLevel.put(3058, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
-        techLevel.put(3076, TechConstants.T_CLAN_ADVANCED);   ///ADV
-        techLevel.put(3085, TechConstants.T_CLAN_TW);   ///COMMON
-        availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_E };
-        techRating = RATING_B;
         rulesRefs = "327, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3058, 3076, 3085);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

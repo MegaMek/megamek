@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -44,12 +44,10 @@ public class InfantryArchaicShockStaffWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING);
         infantryDamage = 0.21;
         infantryRange = 0;
-        introDate = 3069;
-        techLevel.put(3069, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3072, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3130, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "272, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3069, 3072, 3130);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

@@ -87,7 +87,7 @@ import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
  * Entity is a master class for basically anything on the board except terrain.
  */
 public abstract class Entity extends TurnOrdered implements Transporter,
-        Targetable, RoundUpdated, PhaseUpdated {
+        Targetable, RoundUpdated, PhaseUpdated, ITechnology {
     /**
      *
      */
@@ -196,6 +196,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected String model;
     protected int year = 3071;
     protected int techLevel;
+    protected TechAdvancement techAdvancement;
     /**
      * Used by support vehicles to define the structural tech rating 
      * (TM pg 117).  The values should come from EquipmentType.RATING_A-X.
@@ -832,6 +833,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
         externalId = UUID.randomUUID().toString();
+        initTechAdvancement();
     }
 
     protected void initMilitary() {
@@ -1030,8 +1032,69 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void setTechLevel(int techLevel) {
         this.techLevel = techLevel;
+        recalculateTechAdvancement();
+    }
+    
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        return techAdvancement;
+    }
+    
+    /**
+     * Sets initial TechAdvancement without equipment based on construction options.
+     */
+    protected abstract void initTechAdvancement();
+    
+    /**
+     * Resets techAdvancement to initial value and adjusts for all installed equipment.
+     */
+    public void recalculateTechAdvancement() {
+        initTechAdvancement();
+        addSystemTechAdvancement();
+        getEquipment().forEach(m -> ITechnology.aggregate(this, m.getType(), isMixedTech()));
     }
 
+    protected final static TechAdvancement TA_OMNI = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(DATE_NONE, DATE_NONE, 3052)
+            .setClanAdvancement(2854, 2856, 2864).setClanApproximate(true)
+            .setTechRating(RATING_E).setAvailability(RATING_X, RATING_E, RATING_E, RATING_D);
+    protected final static TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, 3075, 3080).setApproximate(false, false, true).setTechRating(RATING_A)
+            .setAvailability(RATING_E, RATING_D, RATING_E, RATING_E);
+    protected final static TechAdvancement TA_MIXED_TECH = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(3050, 3082, 3115)
+            .setClanAdvancement(2820, 3082, 3115).setApproximate(true, true, true)
+            .setTechRating(RATING_A).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+    
+    /**
+     * Incorporate dates for components that are not in the equipment list, such as engines and structure.
+     */
+    protected void addSystemTechAdvancement() {
+        if (hasEngine()) {
+            ITechnology.aggregate(this, getEngine(), isMixedTech());
+        }
+        if (isOmni()) {
+            ITechnology.aggregate(this, TA_OMNI, isMixedTech());
+        }
+        if (hasPatchworkArmor()) {
+            ITechnology.aggregate(this, TA_PATCHWORK_ARMOR, isMixedTech());
+            for (int loc = 0; loc < locations(); loc++) {
+                ITechnology.aggregate(this, EquipmentType.getArmorTechAdvancement(armorType[loc],
+                        TechConstants.isClan(armorTechLevel[loc])), isMixedTech());
+            }
+        } else {
+            ITechnology.aggregate(this, EquipmentType.getArmorTechAdvancement(armorType[0],
+                    TechConstants.isClan(armorTechLevel[0])), isMixedTech());
+        }
+        if (isMixedTech()) {
+            ITechnology.aggregate(this, TA_MIXED_TECH, true);
+        }
+        ITechnology.aggregate(this, EquipmentType.getStructureTechAdvancement(structureType,
+                TechConstants.isClan(structureTechLevel)), isMixedTech());
+
+        techAdvancement.setMinYear(year);
+    }
+    
     public int getRecoveryTurn() {
         return recoveryTurn;
     }
@@ -1098,6 +1161,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setMixedTech(boolean mixedTech) {
         this.mixedTech = mixedTech;
+        recalculateTechAdvancement();
     }
 
     public boolean isDesignValid() {
@@ -3102,6 +3166,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             throws LocationFullException {
         mounted.setLocation(loc, rearMounted);
         equipmentList.add(mounted);
+        ITechnology.aggregate(this, mounted.getType(), isMixedTech());
 
         // add it to the proper sub-list
         if (mounted.getType() instanceof WeaponType) {
@@ -9457,15 +9522,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setArmorType(int armType, int loc) {
         armorType[loc] = armType;
+        recalculateTechAdvancement();
     }
 
     public void setStructureType(int strucType) {
         structureType = strucType;
         structureTechLevel = getTechLevel();
+        recalculateTechAdvancement();
     }
 
     public void setStructureTechLevel(int level) {
         structureTechLevel = level;
+        recalculateTechAdvancement();
     }
 
     public void setArmorType(String armType) {
@@ -9488,6 +9556,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+        recalculateTechAdvancement();
     }
 
     public void setArmorType(String armType, int loc) {
@@ -9510,6 +9579,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+        recalculateTechAdvancement();
     }
 
     public void setStructureType(String strucType) {
@@ -9532,7 +9602,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
-
+        recalculateTechAdvancement();
     }
 
     public int getArmorType(int loc) {
@@ -9543,10 +9613,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (int i = 0; i < locations(); i++) {
             armorTechLevel[i] = newTL;
         }
+        recalculateTechAdvancement();
     }
 
     public void setArmorTechLevel(int newTL, int loc) {
         armorTechLevel[loc] = newTL;
+        recalculateTechAdvancement();
     }
 
     public int getArmorTechLevel(int loc) {

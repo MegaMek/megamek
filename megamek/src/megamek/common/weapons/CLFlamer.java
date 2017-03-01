@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -34,7 +34,6 @@ public class CLFlamer extends FlamerWeapon {
      */
     public CLFlamer() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Flamer";
         this.setInternalName("CLFlamer");
         this.addLookupName("Clan Flamer");
@@ -51,10 +50,10 @@ public class CLFlamer extends FlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        availRating = new int[] { RATING_X, RATING_A, RATING_A };
-        introDate = 2827;
-        techLevel.put(2827, techLevel.get(3071));
-        techRating = RATING_C;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2827);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_A, RATING_A, RATING_X });
     }
 
 }

@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -35,7 +35,6 @@ public class ISMekTaser extends AmmoWeapon {
      */
     public ISMekTaser() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Mech Taser";
         setInternalName("Mek Taser");
         addLookupName("ISMekTaser");
@@ -57,8 +56,10 @@ public class ISMekTaser extends AmmoWeapon {
         explosive = true;
         flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
                 .or(F_TASER).or(F_TANK_WEAPON);
-        introDate = 3084;
-        techLevel.put(3084, TechConstants.T_IS_ADVANCED);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 3084, DATE_NONE);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 
     /*

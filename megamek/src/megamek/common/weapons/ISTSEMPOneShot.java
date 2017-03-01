@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 
 public class ISTSEMPOneShot extends TSEMPWeapon {
@@ -26,19 +26,18 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
 
     public ISTSEMPOneShot() {
         super();
-        techLevel.put(3095,TechConstants.T_IS_EXPERIMENTAL);
         flags = flags.or(F_ONESHOT);
         cost = 500000;
         bv = 98;
         name = "TSEMP One-Shot";
         setInternalName(name);
         this.addLookupName("ISTSEMPOS");
-        introDate = 3095;
-        techLevel.put(3100,TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         tonnage = 4;
         criticals = 3;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3095, 3100, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 
     /*

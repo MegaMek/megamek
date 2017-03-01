@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.infantry;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -44,10 +44,11 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
         infantryDamage = 0.79;
         infantryRange = 0;
         crew = 2;
-        introDate = 2100;
-        techLevel.put(2100,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
         rulesRefs =" 273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(TechAdvancement.DATE_ES, TechAdvancement.DATE_ES, TechAdvancement.DATE_ES);
+        techAdvancement.setIntroLevel(true);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

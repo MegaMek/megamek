@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.infantry;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -46,9 +46,10 @@ public class InfantryTWFlamerWeapon extends InfantryWeapon {
         infantryRange = 1;
         crew = 1;
         //This Weapon has been replaced by the Flamer Pistol. Moving to Unofficial.
-        introDate = 2100;
-        techLevel.put(2100,TechConstants.T_IS_UNOFFICIAL);
-        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(TechAdvancement.DATE_ES, TechAdvancement.DATE_ES, TechAdvancement.DATE_ES);
+        techAdvancement.setUnofficial(true);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

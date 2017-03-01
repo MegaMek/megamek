@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -46,12 +46,11 @@ public class CLPrototypeRL10 extends PrototypeRLWeapon {
         shortAV = 6;
         medAV = 6;
         maxRange = RANGE_MED;
-        introDate = 2807;
-        extinctDate = 2823;
-        techLevel.put(2807, TechConstants.T_CLAN_EXPERIMENTAL);
-        availRating = new int[] { RATING_X,RATING_B ,RATING_X ,RATING_X};
-        techRating = RATING_B;
         rulesRefs = "229, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2807, DATE_NONE, DATE_NONE, 2823);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_X, RATING_X });
     }
 }

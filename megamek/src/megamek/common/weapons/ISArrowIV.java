@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -35,7 +35,6 @@ public class ISArrowIV extends ArtilleryWeapon {
      */
     public ISArrowIV() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Arrow IV";
         setInternalName("ISArrowIV");
         addLookupName("ISArrowIVSystem");
@@ -52,13 +51,11 @@ public class ISArrowIV extends ArtilleryWeapon {
         criticals = 15;
         bv = 240;
         cost = 450000;
-        techRating = RATING_E;
-        availRating = new int[] { RATING_E, RATING_F, RATING_E };
-        introDate = 2600;
-        techLevel.put(2600, techLevel.get(3071));
-        extinctDate = 2830;
-        reintroDate = 3045;
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 2600, DATE_NONE, 2830, 3045);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
     }
 
 }

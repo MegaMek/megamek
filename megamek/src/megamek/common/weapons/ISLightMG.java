@@ -18,8 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -57,14 +56,12 @@ public class ISLightMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 1;
         this.maxRange = RANGE_SHORT;
-        introDate = 3059;
-		techLevel.put(3059, TechConstants.T_IS_EXPERIMENTAL);
-		techLevel.put(3068, TechConstants.T_IS_ADVANCED);
-		techLevel.put(3070, TechConstants.T_IS_TW_NON_BOX);
-		availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_B};
-		techRating = RATING_B;
 		rulesRefs = "228, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3059, 3068, 3070);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
     }
 
 }

@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -33,7 +33,6 @@ public class CLNPPCWeaponHeavy extends NavalPPCWeapon {
     */
     public CLNPPCWeaponHeavy() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         this.name = "Heavy NPPC (Clan)";
         this.setInternalName(this.name);
         this.addLookupName("CLHeavyNPPC");
@@ -51,10 +50,10 @@ public class CLNPPCWeaponHeavy extends NavalPPCWeapon {
         this.longAV = 15;
         this.extAV = 15;
         this.maxRange = RANGE_EXT;
-        introDate = 2820;
-        techLevel.put(2820, techLevel.get(3071));
-        availRating = new int[] { RATING_D, RATING_D, RATING_E };
-        techRating = RATING_D;
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_D, RATING_E, RATING_X });
     }
 }

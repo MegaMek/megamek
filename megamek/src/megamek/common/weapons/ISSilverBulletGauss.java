@@ -21,7 +21,7 @@ import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.Compute;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -40,7 +40,6 @@ public class ISSilverBulletGauss extends GaussWeapon {
      */
     public ISSilverBulletGauss() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Silver Bullet Gauss Rifle";
         setInternalName("ISSBGR");
         addLookupName("IS Silver Bullet Gauss Rifle");
@@ -68,13 +67,11 @@ public class ISSilverBulletGauss extends GaussWeapon {
         flags = flags.or(F_NO_AIM).andNot(F_DIRECT_FIRE);
         atClass = CLASS_LBX_AC;
         explosionDamage = 20;
-        introDate = 3051;
-        techLevel.put(3051, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3080, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_D;
         rulesRefs = "314, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3051, 3080, 3090);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 
     /*

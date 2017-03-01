@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -30,7 +30,6 @@ public class CLStreakLRM5OS extends StreakLRMWeapon {
      */
     public CLStreakLRM5OS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "Streak LRM 5 (OS)";
         setInternalName("CLOSStreakLRM5");
         addLookupName("Clan Streak LRM-5 (OS)");
@@ -51,10 +50,9 @@ public class CLStreakLRM5OS extends StreakLRMWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_LONG;
-        introDate = 3057;
-        techLevel.put(3057, techLevel.get(3071));
-        techLevel.put(3079, TechConstants.T_CLAN_TW);
-        techRating = RATING_F;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3057, DATE_NONE, 3079);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -34,7 +34,6 @@ public class ISLaserAMSTHB extends LaserWeapon {
      */
     public ISLaserAMSTHB() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "Laser AMS (THB)";
         setInternalName("ISLaserAntiMissileSystemTHB");
         addLookupName("IS Laser Anti-Missile System (THB)");
@@ -55,10 +54,9 @@ public class ISLaserAMSTHB extends LaserWeapon {
         setInstantModeSwitch(false);
         cost = 300000;
         //Since this are the Tactical Handbook Weapons I'm using the TM Stats.
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3059;
-        techLevel.put(3059, techLevel.get(3071));
-        techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3059);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

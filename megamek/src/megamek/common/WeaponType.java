@@ -712,7 +712,6 @@ public class WeaponType extends EquipmentType {
         // Flamers
         EquipmentType.addType(new CLFlamer());
         EquipmentType.addType(new ISFlamer());
-        EquipmentType.addType(new CLVehicleFlamer());
         EquipmentType.addType(new ISVehicleFlamer());
         EquipmentType.addType(new CLHeavyFlamer());
         EquipmentType.addType(new ISHeavyFlamer());
@@ -1516,7 +1515,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBACompactNarc());
         EquipmentType.addType(new ISBAERMediumLaser());
         EquipmentType.addType(new ISBAERSmallLaser());
-        EquipmentType.addType(new ISBAFlamer());
         EquipmentType.addType(new ISBAHeavyFlamer());
         EquipmentType.addType(new ISBAHeavyMG());
         EquipmentType.addType(new ISBALightMG());

@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -34,7 +34,6 @@ public class ISSmallPulseLaser extends PulseLaserWeapon {
      */
     public ISSmallPulseLaser() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Small Pulse Laser";
         this.setInternalName("ISSmallPulseLaser");
         this.addLookupName("IS Small Pulse Laser");
@@ -58,13 +57,11 @@ public class ISSmallPulseLaser extends PulseLaserWeapon {
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
-        introDate = 2609;
-        techLevel.put(2609, techLevel.get(3071));
-        extinctDate = 2950;
-        reintroDate = 3037;
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
-        techRating = RATING_E;
         this.flags = flags.or(F_BURST_FIRE);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2609, 2950, 3037);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
     }
 
 }

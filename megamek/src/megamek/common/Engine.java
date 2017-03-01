@@ -26,7 +26,7 @@ import megamek.common.verifier.TestEntity;
 /**
  * This class represents an engine, such as those driving mechs.
  */
-public class Engine implements Serializable {
+public class Engine implements Serializable, ITechnology {
     /**
      *
      */
@@ -748,6 +748,172 @@ public class Engine implements Serializable {
         return cost;
     }
 
+    private static final TechAdvancement STANDARD_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
+            .setIntroLevel(true).setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_D);
+    private static final TechAdvancement LARGE_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2630, 3085, 3120).setApproximate(false, true, true)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_D);
+    private static final TechAdvancement STANDARD_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, 2300).setApproximate(false, false, true)
+            .setIntroLevel(true).setTechRating(RATING_C)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+    private static final TechAdvancement LARGE_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2630, 3085).setApproximate(false, true)
+            .setIntroLevel(true).setTechRating(RATING_C)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+    private static final TechAdvancement LIGHT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3055, 3062, 3067).setISApproximate(true, false, false)
+            .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+    private static final TechAdvancement LARGE_LIGHT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3064, 3065).setISApproximate(true)
+            .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
+    private static final TechAdvancement COMPACT_FUSION_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3060, 3068, 3072).setISApproximate(true)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);            
+    private static final TechAdvancement IS_XL_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2556, 2579, 3045, 2865, 3035)
+            .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
+    private static final TechAdvancement CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(2824, 2827, 2829).setClanApproximate(true)
+            .setTechRating(RATING_F).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+    private static final TechAdvancement LARGE_IS_XL_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2635, 3085, DATE_NONE, 2822, 3054).setISApproximate(true, true)
+            .setTechRating(RATING_E).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E);
+    private static final TechAdvancement LARGE_CLAN_XL_TA = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(2850, 3080).setClanApproximate(true, true)
+            .setTechRating(RATING_F).setAvailability(RATING_D, RATING_F, RATING_E, RATING_E);
+    private static final TechAdvancement IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3055, 3110).setISApproximate(true, true)
+            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+    private static final TechAdvancement CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(2954, 3084).setApproximate(true, true)
+            .setTechRating(RATING_F).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+    private static final TechAdvancement LARGE_IS_XXL_TA = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3058, 3130).setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F);
+    private static final TechAdvancement LARGE_CLAN_XXL_TA = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(3055, 3125).setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F);
+    private static final TechAdvancement FISSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2470, 2882, 3079).setTechRating(RATING_D)
+            .setAvailability(RATING_E, RATING_E, RATING_D, RATING_D);
+    private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2995, 2470, 3078).setApproximate(true).setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);    
+    private static final TechAdvancement SUPPORT_STEAM_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+    private static final TechAdvancement SUPPORT_ICE_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+    private static final TechAdvancement SUPPORT_BATTERY_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+    private static final TechAdvancement SUPPORT_FUEL_CELL_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+            .setAvailability(RATING_B, RATING_C, RATING_C, RATING_B);
+    private static final TechAdvancement SUPPORT_SOLAR_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+    private static final TechAdvancement SUPPORT_FISSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
+            .setAvailability(RATING_E, RATING_E, RATING_D, RATING_C);
+    private static final TechAdvancement SUPPORT_FUSION_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+    private static final TechAdvancement SUPPORT_MAGLEV_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
+            .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
+
+    @Override
+    public TechAdvancement getTechAdvancement() {
+        switch(engineType) {
+        case COMBUSTION_ENGINE:
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                return SUPPORT_ICE_TA;              
+            } else {
+                if (hasFlag(LARGE_ENGINE)) {
+                    return LARGE_ICE_TA;
+                } else {
+                    return STANDARD_ICE_TA;
+                }
+            }
+        case NORMAL_ENGINE:
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                return SUPPORT_FUSION_TA;
+            } else {
+                if (hasFlag(LARGE_ENGINE)) {
+                    return LARGE_FUSION_TA;
+                } else {
+                    return STANDARD_FUSION_TA;
+                }
+            }
+        case XL_ENGINE:
+            if (hasFlag(CLAN_ENGINE)) {
+                if (hasFlag(LARGE_ENGINE)) {
+                    return LARGE_CLAN_XL_TA;
+                } else {
+                    return CLAN_XL_TA;
+                }
+            } else {
+                if (hasFlag(LARGE_ENGINE)) {
+                    return LARGE_IS_XL_TA;
+                } else {
+                    return IS_XL_TA;
+                }
+            }
+        case XXL_ENGINE:
+            if (hasFlag(CLAN_ENGINE)) {
+                if (hasFlag(LARGE_ENGINE)) {
+                    return LARGE_CLAN_XXL_TA;
+                } else {
+                    return CLAN_XXL_TA;
+                }
+            } else {
+                if (hasFlag(LARGE_ENGINE)) {
+                    return LARGE_IS_XXL_TA;
+                } else {
+                    return IS_XXL_TA;
+                }
+            }
+        case FUEL_CELL:
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                return SUPPORT_FUEL_CELL_TA;
+            } else {
+                return FUEL_CELL_TA;
+            }
+        case LIGHT_ENGINE:
+            if (hasFlag(LARGE_ENGINE)) {
+                return LARGE_LIGHT_FUSION_TA;
+            } else {
+                return LIGHT_FUSION_TA;
+            }
+        case COMPACT_ENGINE:
+            return COMPACT_FUSION_TA;
+        case FISSION:
+            if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                return SUPPORT_FISSION_TA;
+            } else {                
+                return FISSION_TA;
+            }
+        case MAGLEV:
+            return SUPPORT_MAGLEV_TA;
+        case STEAM:
+            return SUPPORT_STEAM_TA;
+        case BATTERY:
+            return SUPPORT_BATTERY_TA;
+        case SOLAR:
+            return SUPPORT_SOLAR_TA;
+        case NONE:
+        default:
+            return new TechAdvancement();
+        }
+    }
     /**
      * Return the tech type (tech level + tech base) for the current engine.
      *

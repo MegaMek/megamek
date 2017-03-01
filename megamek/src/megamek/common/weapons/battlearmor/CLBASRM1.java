@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.SRMWeapon;
 
 
@@ -46,12 +46,10 @@ public class CLBASRM1 extends SRMWeapon {
         tonnage = .035f;
         criticals = 1;
         cost = 5000;
-        introDate = 2860;
-		techLevel.put(2860, TechConstants.T_CLAN_EXPERIMENTAL);
-		techLevel.put(2868, TechConstants.T_CLAN_ADVANCED);	
-		techLevel.put(2870, TechConstants.T_CLAN_TW);	
-		availRating = new int[] { RATING_X ,RATING_D ,RATING_C ,RATING_B};	
-		techRating = RATING_F;
 		rulesRefs = "261, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2860, 2868, 2870);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
     }
 }

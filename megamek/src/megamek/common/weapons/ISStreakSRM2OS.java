@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -49,15 +49,10 @@ public class ISStreakSRM2OS extends StreakSRMWeapon {
         cost = 7500;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        introDate = 2660;
-        extinctDate = 2800;
-    	reintroDate = 3030;	
-        techLevel.put(2660, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2676, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3030, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3045, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_E ,RATING_E ,RATING_D ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "230, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2660, 2676, 3045, 2800, 3030);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_D, RATING_D });
     }
 }

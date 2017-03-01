@@ -17,8 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Harold "BATTLEMASTER" N.
@@ -34,7 +33,6 @@ public class CLWERPPC extends PPCWeapon {
      */
     public CLWERPPC() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_UNOFFICIAL);
         this.name = "Wolverine ER PPC";
         this.setInternalName("CLWERPPC");
         this.addLookupName("Wolverine ER PPC");
@@ -57,11 +55,10 @@ public class CLWERPPC extends PPCWeapon {
         this.medAV = 20;
         this.longAV = 20;
         this.maxRange = RANGE_LONG;
-        this.introDate = 2820;
-        this.techLevel.put(2820, techLevel.get(3071));
-        this.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_D, EquipmentType.RATING_F };
-        this.techRating = RATING_D;
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_F, RATING_X });
     }
 }

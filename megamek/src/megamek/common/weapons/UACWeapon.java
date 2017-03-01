@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -44,10 +43,7 @@ public abstract class UACWeapon extends AmmoWeapon {
         ammoType = AmmoType.T_AC_ULTRA;
         String[] modeStrings = { "Single", "Ultra" };
         setModes(modeStrings);
-        techRating = RATING_E;
         atClass = CLASS_AC;
-        availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_E };
     }
 
     /*

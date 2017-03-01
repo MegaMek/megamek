@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -43,12 +43,10 @@ public class InfantryPistolCoventryHandrocketGyrojetPistolWeapon extends Infantr
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.14;
         infantryRange = 1;
-        introDate = 3045;
-        techLevel.put(3045, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3052, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[]{RATING_X,RATING_X,RATING_D,RATING_C};
-        techRating = RATING_D;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3045, 3052, 3090);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
     }
 }

@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -34,7 +34,6 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
      */
     public ISSmallXPulseLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Small X-Pulse Laser";
         setInternalName("ISSmallXPulseLaser");
         addLookupName("IS X-Pulse Small Laser");
@@ -58,10 +57,9 @@ public class ISSmallXPulseLaser extends PulseLaserWeapon {
         shortAV = 3;
         cost = 31000;
         flags = flags.or(F_BURST_FIRE);
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3057;
-        techLevel.put(3057, techLevel.get(3071));
-        techLevel.put(3078, TechConstants.T_IS_TW_NON_BOX);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3057, DATE_NONE, 3078);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

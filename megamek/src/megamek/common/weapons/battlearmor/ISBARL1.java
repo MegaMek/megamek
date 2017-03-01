@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.RLWeapon;
 
 
@@ -48,13 +48,11 @@ public class ISBARL1 extends RLWeapon {
         tonnage = .025f;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3045;
-        techLevel.put(3045, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3050, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3052, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_B ,RATING_B};
-        techRating = RATING_E;
         rulesRefs = "261, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3045, 3050, 3052);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
     }
 }

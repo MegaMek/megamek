@@ -16,7 +16,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -33,7 +33,6 @@ public class PPCBayWeapon extends BayWeapon {
     public PPCBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.techLevel.put(3071, TechConstants.T_ALL);
         this.name = "PPC Bay";
         this.setInternalName(this.name);
         this.heat = 0;
@@ -46,5 +45,9 @@ public class PPCBayWeapon extends BayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_PPC;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
 }

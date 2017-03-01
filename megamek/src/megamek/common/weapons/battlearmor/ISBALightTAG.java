@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.TAGWeapon;
 
 
@@ -50,12 +50,10 @@ public class ISBALightTAG extends TAGWeapon {
         this.bv = 0;
         this.cost = 40000;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3046;
-        techLevel.put(3046, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3053, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3057, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "270, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3046, 3053, 3057);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

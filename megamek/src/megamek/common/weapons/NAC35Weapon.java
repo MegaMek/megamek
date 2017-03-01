@@ -16,7 +16,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -32,7 +32,6 @@ public class NAC35Weapon extends NavalACWeapon {
      */
     public NAC35Weapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Naval AC 35";
         this.setInternalName(this.name);
         this.addLookupName("NAC35");
@@ -49,9 +48,9 @@ public class NAC35Weapon extends NavalACWeapon {
         this.shortAV = 35;
         this.medAV = 35;
         this.maxRange = RANGE_MED;
-        techRating = RATING_D;
-        availRating = new int[] { RATING_E, RATING_X, RATING_E };
-        introDate = 2201;
-        techLevel.put(2201, techLevel.get(3071));
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2201);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
     }
 }

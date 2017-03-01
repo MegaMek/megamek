@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.NarcWeapon;
 
 /**
@@ -48,13 +48,11 @@ public class CLBACompactNarc extends NarcWeapon {
         tonnage = .15f;
         criticals = 1;
         cost = 15000;
-        introDate = 2865;
-        techLevel.put(2865, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2875, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3065, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "263, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2865, 2875, 3065);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
     }
 
 }

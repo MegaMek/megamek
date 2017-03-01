@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 
 public class ISTSEMPCannon extends TSEMPWeapon {
@@ -24,18 +24,17 @@ public class ISTSEMPCannon extends TSEMPWeapon {
     private static final long serialVersionUID = -4861067053206502295L;
 
     public ISTSEMPCannon() {
-        techLevel.put(3085,TechConstants.T_IS_EXPERIMENTAL);
         cost = 800000;
         bv = 488;
         name = "TSEMP Cannon";
         setInternalName(name);
         this.addLookupName("ISTSEMP");
-        introDate = 3085;
-        techLevel.put(3109,TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         tonnage = 6;
         criticals  = 5;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3085, 3109, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 
     /*

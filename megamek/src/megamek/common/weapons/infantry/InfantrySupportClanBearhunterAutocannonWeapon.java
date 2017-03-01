@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -46,11 +46,10 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         infantryDamage = 2.33;
         infantryRange = 0;
         crew = 2;
-        introDate = 3054;
-        techLevel.put(3054, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3062, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
-        techRating = RATING_D;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3054, 3062, DATE_NONE);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }
 }

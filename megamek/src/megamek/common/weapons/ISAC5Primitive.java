@@ -15,9 +15,8 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -60,12 +59,11 @@ public class ISAC5Primitive extends ACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        introDate = 2240;
-        extinctDate = 2260;
-        techLevel.put(2240, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
-        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
-        techRating = RATING_C;
         rulesRefs = "217, IO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2240, DATE_NONE, DATE_NONE, 2260);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
     }
 
     @Override

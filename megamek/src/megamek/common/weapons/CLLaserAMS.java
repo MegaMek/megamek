@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -34,7 +34,6 @@ public class CLLaserAMS extends LaserWeapon {
      */
     public CLLaserAMS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Laser AMS";
         setInternalName("CLLaserAntiMissileSystem");
         addLookupName("Clan Laser Anti-Missile Sys");
@@ -54,10 +53,9 @@ public class CLLaserAMS extends LaserWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
-        techRating = RATING_F;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3048;
-        techLevel.put(3048, techLevel.get(3071));
-        techLevel.put(3079, TechConstants.T_CLAN_TW);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 3048, 3079);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

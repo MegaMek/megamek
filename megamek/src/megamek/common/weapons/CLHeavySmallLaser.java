@@ -17,8 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -34,7 +33,6 @@ public class CLHeavySmallLaser extends LaserWeapon {
      */
     public CLHeavySmallLaser() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Heavy Small Laser";
         this.setInternalName("CLHeavySmallLaser");
         this.addLookupName("Clan Small Heavy Laser");
@@ -55,10 +53,9 @@ public class CLHeavySmallLaser extends LaserWeapon {
         this.cost = 20000;
         this.shortAV = 6;
         this.maxRange = RANGE_SHORT;
-        this.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D };
-        introDate = 3059;
-        techLevel.put(3059, techLevel.get(3071));
-        techRating = RATING_F;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3059);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
     }
 }

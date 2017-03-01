@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -51,13 +51,12 @@ public class CLBAMG extends BAMGWeapon {
         bv = 5;
         cost = 5000;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 2868;
-        techLevel.put(2868, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(2870, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_D ,RATING_B ,RATING_B};
-        techRating = RATING_C;
         rulesRefs = "258, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 2868, 2870);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_B, RATING_B });
     }
 
 }

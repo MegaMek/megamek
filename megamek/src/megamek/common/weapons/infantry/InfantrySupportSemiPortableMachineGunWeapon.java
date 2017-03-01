@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -46,10 +46,10 @@ public class InfantrySupportSemiPortableMachineGunWeapon extends InfantryWeapon 
         infantryDamage = 0.75;
         infantryRange = 1;
         crew = 2;
-        introDate = 1950;
-        techLevel.put(1950,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_B,RATING_B,RATING_B,RATING_B};
-        techRating = RATING_C;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 1950);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability(new int[]{RATING_B, RATING_B, RATING_B, RATING_B});
         rulesRefs =" 273, TM";
     }
 }

@@ -15,7 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -49,13 +49,11 @@ public class BombISRL10 extends MissileWeapon {
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
         this.ammoType = AmmoType.T_RL_BOMB;
-        introDate = 3055;
-        techLevel.put(3055, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3064, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_B ,RATING_B};
-        techRating = RATING_B;
         rulesRefs = "229, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3055, 3064, 3067);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
     }
 }

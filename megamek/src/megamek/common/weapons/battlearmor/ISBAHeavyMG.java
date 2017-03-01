@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -51,11 +51,11 @@ public class ISBAHeavyMG extends BAMGWeapon {
         criticals = 1;
         bv = 6;
         cost = 7500;
-        introDate = 3068;
-		techLevel.put(3068, TechConstants.T_IS_TW_NON_BOX);
-		availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_B};
-		techRating = RATING_C;
 		rulesRefs = "258, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3068);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
     }
 
 }

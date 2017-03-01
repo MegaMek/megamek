@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -43,12 +43,10 @@ public class InfantryRifleFederatedLongWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.35;
         infantryRange = 1;
-        introDate = 2855;
-        techLevel.put(2855, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2870, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3000, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_C ,RATING_A ,RATING_B};
-        techRating = RATING_C;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2855, 2870, 3000);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_A, RATING_B });
     }
 }

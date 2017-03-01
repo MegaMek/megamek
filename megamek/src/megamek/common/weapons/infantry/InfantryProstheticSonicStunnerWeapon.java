@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Dave Nawton
@@ -43,9 +43,9 @@ public class InfantryProstheticSonicStunnerWeapon extends InfantryWeapon {
         infantryDamage = 0.05;
         infantryRange = 0;
         //Rating and Dates not available below is compiled from various books
-        introDate = 2365;
-        techLevel.put(2365,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_F,RATING_E,RATING_D,RATING_D};
-        techRating = RATING_D;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2365);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_F, RATING_E, RATING_D, RATING_D });
     }
 }

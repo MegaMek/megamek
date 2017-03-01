@@ -14,7 +14,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -34,8 +33,6 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
     public StreakSRMWeapon() {
         super();
         this.ammoType = AmmoType.T_SRM_STREAK;
-        this.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_E };
     }
 
     /*

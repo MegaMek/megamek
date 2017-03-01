@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -53,12 +53,10 @@ public class CLRAC5 extends RACWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        introDate = 3073;
-        techLevel.put(3073, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3104, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3145, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_F;
         rulesRefs = "286, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3073, 3104, 3145);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

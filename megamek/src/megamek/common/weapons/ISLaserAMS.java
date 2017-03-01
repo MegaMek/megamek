@@ -17,7 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -30,7 +30,6 @@ public class ISLaserAMS extends LaserWeapon {
 
     public ISLaserAMS() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Laser AMS";
         setInternalName("ISLaserAntiMissileSystem");
         addLookupName("IS Laser Anti-Missile System");
@@ -50,10 +49,9 @@ public class ISLaserAMS extends LaserWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 225000;
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3059;
-        techLevel.put(3059, techLevel.get(3071));
-        techLevel.put(3079, TechConstants.T_IS_TW_NON_BOX);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 3059, 3079);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

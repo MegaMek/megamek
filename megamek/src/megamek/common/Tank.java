@@ -198,6 +198,13 @@ public class Tank extends Entity {
     public void setMotivePenalty(int p) {
         motivePenalty = p;
     }
+    
+    protected void initTechAdvancement() {
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_NONE, 2470, 2490)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+    }
 
     /**
      * The attack direction modifier for rolls on the motive system hits table

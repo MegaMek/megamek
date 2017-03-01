@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -32,7 +32,6 @@ public class InfantryPistolISGyrojetPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolISGyrojetPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
         name = "Gyrojet Pistol";
         setInternalName(name);
         addLookupName("InfantryGyrojetpistol");
@@ -42,12 +41,10 @@ public class InfantryPistolISGyrojetPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.04;
         infantryRange = 0;
-        introDate = 2615;
-        techLevel.put(2615, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(2625, TechConstants.T_IS_ADVANCED);
-        techLevel.put(2700, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_D,RATING_D ,RATING_C ,RATING_B};
-        techRating = RATING_D;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(2615, 2625, 2700);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_D, RATING_C, RATING_B });
     }
 }

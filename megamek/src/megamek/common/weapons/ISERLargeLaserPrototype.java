@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
@@ -37,7 +37,6 @@ public class ISERLargeLaserPrototype extends LaserWeapon {
 
     public ISERLargeLaserPrototype() {
         super();
-        techLevel.put(2615, TechConstants.T_IS_EXPERIMENTAL);
         name = "ER Large Laser Prototype";
         setInternalName("ISERLargeLaserPrototype");
         addLookupName("IS ER Large Laser Prototype");
@@ -57,11 +56,10 @@ public class ISERLargeLaserPrototype extends LaserWeapon {
         criticals = 2;
         bv = 163;
         cost = 200000;
-        introDate = 2615;
-        extinctDate = 2620;
-        reintroDate = 3037;
-        availRating = new int[] { RATING_E,RATING_F, RATING_D };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2615, DATE_NONE, DATE_NONE, 2620, 3037);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
     }
 
     /*

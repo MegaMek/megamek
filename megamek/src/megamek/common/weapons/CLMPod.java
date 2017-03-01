@@ -17,8 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -35,14 +34,12 @@ public class CLMPod extends MPodWeapon {
      */
     public CLMPod() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         this.name = "M-Pod";
         this.setInternalName("CLMPod");
         this.addLookupName("CLM-Pod");
-        this.introDate = 3064;
-        this.techLevel.put(3064, techLevel.get(3071));
-        this.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D };
-        this.techRating = RATING_D;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 3064, DATE_NONE);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
     }
 }

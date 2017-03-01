@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -56,13 +56,11 @@ public class ISHeavyMG extends MGWeapon {
         this.cost = 7500;
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
-        introDate = 3058;
-        techLevel.put(3058, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3068, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3070, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_B};
-        techRating = RATING_B;
         rulesRefs = "228, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3058, 3068, 3070);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
     }
 
 }

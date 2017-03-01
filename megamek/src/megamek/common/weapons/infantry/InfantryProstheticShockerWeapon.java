@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Dave Nawton
@@ -43,9 +43,9 @@ public class InfantryProstheticShockerWeapon extends InfantryWeapon {
         infantryDamage = 0.05;
         infantryRange = 0;
         //Rating and Dates not available below is compiled from various books
-        introDate = 3060;
-        techLevel.put(3060,TechConstants.T_ALLOWED_ALL);
-        availRating = new int[]{RATING_F,RATING_E,RATING_D,RATING_D};
-        techRating = RATING_D;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3060);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_F, RATING_E, RATING_D, RATING_D });
     }
 }

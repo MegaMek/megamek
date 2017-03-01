@@ -18,7 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.PPCWeapon;
 
 /**
@@ -48,12 +48,11 @@ public class CLBASupportPPC extends PPCWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         cost = 14000;
-        introDate = 2945;
-        techLevel.put(2945, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3056, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_F ,RATING_D ,RATING_C};
-        techRating = RATING_D;
         rulesRefs = "267, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 2945, 3056);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_C });
     }
 }

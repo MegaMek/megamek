@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -39,6 +39,8 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.setInternalName(this.name);
         this.addLookupName("IS Vehicle Flamer");
         this.addLookupName("ISVehicleFlamer");
+        this.addLookupName("CLVehicleFlamer");
+        this.addLookupName("Clan Vehicle Flamer");
         this.heat = 3;
         this.damage = 2;
         this.infDamageClass = WeaponType.WEAPON_BURST_4D6;
@@ -53,10 +55,11 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        introDate = 1950;
-        techLevel.put(1950, TechConstants.T_INTRO_BOXSET);
-        availRating = new int[] { RATING_B ,RATING_B ,RATING_B ,RATING_A};
-        techRating = RATING_C;
         rulesRefs = "218, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
+        techAdvancement.setIntroLevel(true);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
     }
 }

@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -35,7 +35,6 @@ public class CLSniper extends ArtilleryWeapon {
      */
     public CLSniper() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         name = "Sniper";
         setInternalName("CLSniper");
         addLookupName("CLSniperArtillery");
@@ -52,10 +51,10 @@ public class CLSniper extends ArtilleryWeapon {
         criticals = 20;
         bv = 85;
         cost = 300000;
-        techRating = RATING_B;
-        techLevel.put(2820, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_C, RATING_B };
-        introDate = 2820;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_X });
     }
 
 }

@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -42,10 +42,10 @@ public class InfantryPistoMachinePistolSPEC7AWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.13;
         infantryRange = 0;
-        introDate = 3053;
-        techLevel.put(1950,TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[]{RATING_X,RATING_X,RATING_D,RATING_D};
-        techRating = RATING_D;
         rulesRefs =" 177, HB:HK";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }
 }

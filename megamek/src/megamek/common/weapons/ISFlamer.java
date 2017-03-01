@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -34,7 +34,6 @@ public class ISFlamer extends FlamerWeapon {
      */
     public ISFlamer() {
         super();
-        this.techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         this.name = "Flamer";
         this.setInternalName(this.name);
         this.addLookupName("IS Flamer");
@@ -52,9 +51,11 @@ public class ISFlamer extends FlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        introDate = 2025;
-        techLevel.put(2025, techLevel.get(3071));
-        availRating = new int[] { RATING_B, RATING_B, RATING_B };
-        techRating = RATING_C;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setISAdvancement(TechAdvancement.DATE_ES, TechAdvancement.DATE_ES, TechAdvancement.DATE_ES);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, TechAdvancement.DATE_ES, 2830);
+        techAdvancement.setIntroLevel(true);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_A });
     }
 }

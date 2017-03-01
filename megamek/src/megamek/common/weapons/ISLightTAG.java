@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks This servers both as the Fa-Shih's Light TAG and the
@@ -32,7 +32,6 @@ public class ISLightTAG extends TAGWeapon {
 
     public ISLightTAG() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "IS Light TAG";
         this.setInternalName("ISLightTAG");
         this.tonnage = 0.5f;
@@ -47,9 +46,9 @@ public class ISLightTAG extends TAGWeapon {
         this.extremeRange = 12;
         this.bv = 0;
         this.cost = 40000;
-        introDate = 3053;
-        techLevel.put(3053, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3053);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

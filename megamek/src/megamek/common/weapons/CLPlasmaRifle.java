@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.BattleForceElement;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -34,7 +34,6 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
      */
     public CLPlasmaRifle() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_UNOFFICIAL);
         name = "Plasma Rifle";
         setInternalName("MFUK Plasma Rifle");
         addLookupName("Clan Plasma Rifle");
@@ -58,11 +57,11 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         bv = 400;
         cost = 300000;
         //Gonna use the same tech info as the Cannon
-        introDate = 3069;
-        techLevel.put(3069, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_F;
         
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3069);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 
     @Override

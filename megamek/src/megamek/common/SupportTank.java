@@ -83,6 +83,64 @@ public class SupportTank extends Tank {
         return false;
     }
 
+    protected void initTechAdvancement() {
+        /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
+         * be the same as Clan invasion era. */
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+        switch(getMovementMode()) {
+        case HOVER:
+            techAdvancement.setTechRating(RATING_C)
+                .setAdvancement(DATE_PS, DATE_ES, DATE_ES);
+            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+            } else {
+                techAdvancement.setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+            }
+            break;
+        case NAVAL:
+        case SUBMARINE:
+        case HYDROFOIL:
+            techAdvancement.setTechRating(RATING_A)
+                .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            break;
+        case TRACKED:
+            techAdvancement.setTechRating(RATING_B);
+            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            } else {
+                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+            }
+            break;            
+        case WHEELED:
+            techAdvancement.setTechRating(RATING_A);
+            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+            } else if (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
+                techAdvancement.setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+            } else {
+                techAdvancement.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+            }
+            break;
+        case WIGE:
+            techAdvancement.setTechRating(RATING_C);
+            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            } else {
+                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+            }
+            break;
+        default:
+            techAdvancement.setTechRating(RATING_B);
+            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+                techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            } else {
+                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+            }
+            break;            
+        }
+    }
+
     /**
      * Tanks have all sorts of prohibited terrain.
      */

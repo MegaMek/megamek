@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -31,7 +31,6 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
      */
     public ISThunderBolt5() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Thunderbolt 5";
         setInternalName(name);
         addLookupName("IS Thunderbolt-5");
@@ -51,10 +50,9 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         criticals = 1;
         bv = 64;
         cost = 50000;
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3072;
-        techLevel.put(3072, techLevel.get(3071));
-        techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, 3072, 3081);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

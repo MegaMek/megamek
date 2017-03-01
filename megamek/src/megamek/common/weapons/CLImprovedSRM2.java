@@ -14,7 +14,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -49,15 +49,11 @@ public class CLImprovedSRM2 extends SRMWeapon {
         cost = 10000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        introDate = 2815;
-        extinctDate = 2828;
-    	reintroDate =  3080;
-    	techLevel.put(2815, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
-        techLevel.put(2817, TechConstants.T_IS_ADVANCED);   ///ADV
-        techLevel.put(2819, TechConstants.T_ALLOWED_ALL);   ///COMMON
-        availRating = new int[] { RATING_X, RATING_D, RATING_X, RATING_X };
-        techRating = RATING_D;
         rulesRefs = "96, IO";
         
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(2815, 2817, 2819, 2828, 3080);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_X, RATING_X });
     }
 }

@@ -14,7 +14,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -50,16 +50,11 @@ public class InfantrySupportISTAGWeapon extends InfantryWeapon {
         longRange = 9;
         extremeRange = 12;
         cost = 40000;
-    	introDate = 2593;
-    	extinctDate = 2770;
-    	reintroDate = 3051;
-    	techLevel.put(2593, TechConstants.T_IS_EXPERIMENTAL);
-    	techLevel.put(2610, TechConstants.T_IS_ADVANCED);
-    	techLevel.put(3051, TechConstants.T_IS_EXPERIMENTAL);
-    	techLevel.put(3061, TechConstants.T_IS_ADVANCED);
-    	availRating = new int[] { RATING_F,RATING_X ,RATING_E ,RATING_E};
-    	techRating = RATING_E;
     	rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2593, 2610, DATE_NONE, 2770, 3051);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_E, RATING_E });
 	}
 
     @Override

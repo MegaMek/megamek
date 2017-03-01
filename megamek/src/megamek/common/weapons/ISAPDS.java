@@ -18,7 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -49,10 +49,10 @@ public class ISAPDS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 200000;
-        techLevel.put(3134, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3137, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_X ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "91, IO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3134, 3137, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
     }
 }

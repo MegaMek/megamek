@@ -75,6 +75,19 @@ public class SupportVTOL extends VTOL {
         return false;
     }
 
+    protected void initTechAdvancement() {
+        /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
+         * be the same as Clan invasion era. */
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
+            .setTechRating(RATING_C);
+        if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+            techAdvancement.setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+        } else {
+            techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+        }
+    }
+    
     /*
      * (non-Javadoc)
      * @see megamek.common.Entity#getTotalCommGearTons()

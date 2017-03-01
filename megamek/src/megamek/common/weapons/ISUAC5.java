@@ -17,8 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -34,7 +33,6 @@ public class ISUAC5 extends UACWeapon {
      */
     public ISUAC5() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Ultra AC/5";
         setInternalName("ISUltraAC5");
         addLookupName("IS Ultra AC/5");
@@ -55,12 +53,9 @@ public class ISUAC5 extends UACWeapon {
         longAV = 7;
         maxRange = RANGE_LONG;
         explosionDamage = damage;
-        availRating = new int[] { EquipmentType.RATING_D,
-                EquipmentType.RATING_F, EquipmentType.RATING_D };
-        introDate = 2640;
-        techLevel.put(2640, techLevel.get(3071));
-        extinctDate = 2915;
-        reintroDate = 3035;
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2640, 2915, 3035);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_F, RATING_D, RATING_X });
     }
 }

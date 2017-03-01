@@ -17,8 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -34,7 +33,6 @@ public class CLERMicroLaser extends LaserWeapon {
      */
     public CLERMicroLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "ER Micro Laser";
         setInternalName("CLERMicroLaser");
         addLookupName("Clan ER Micro Laser");
@@ -55,10 +53,9 @@ public class CLERMicroLaser extends LaserWeapon {
         cost = 10000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D };
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        techRating = RATING_F;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3060);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
     }
 }

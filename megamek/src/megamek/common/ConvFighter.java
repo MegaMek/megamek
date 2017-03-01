@@ -63,6 +63,14 @@ public class ConvFighter extends Aero {
     }
 
     @Override
+    protected void initTechAdvancement() {
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_NONE, 2470, 2490)
+                .setTechRating(RATING_D)
+                .setAvailability(RATING_C, RATING_D, RATING_C, RATING_B);
+    }
+    
+    @Override
     public double getBVTypeModifier() {
         if (hasStealth()) {
             return 1.4;

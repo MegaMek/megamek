@@ -210,6 +210,93 @@ public class Infantry extends Entity {
         setOriginalWalkMP(1);
     }
 
+    @Override
+    protected void initTechAdvancement() {
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_PS, DATE_PS, DATE_PS);
+        switch(getMovementMode()) {
+        case INF_MOTORIZED:
+            techAdvancement.setTechRating(RATING_B);
+            techAdvancement.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+            break;
+        case INF_JUMP:
+            techAdvancement.setAdvancement(DATE_ES, DATE_ES, DATE_ES);
+            techAdvancement.setTechRating(RATING_D);
+            techAdvancement.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+            break;
+        case INF_UMU:
+            techAdvancement.setAdvancement(DATE_PS, DATE_PS);
+            techAdvancement.setTechRating(RATING_B);
+            techAdvancement.setAvailability(RATING_D, RATING_D, RATING_D, RATING_D);
+            break;
+        case WHEELED:
+            techAdvancement.setTechRating(RATING_A);
+            techAdvancement.setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+            break;
+        case TRACKED:
+            techAdvancement.setTechRating(RATING_B);
+            techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+            break;
+        case HOVER:
+            techAdvancement.setTechRating(RATING_C);
+            techAdvancement.setAvailability(RATING_A, RATING_B, RATING_A, RATING_B);
+            break;
+        case VTOL:
+            techAdvancement.setAdvancement(DATE_ES, DATE_ES);
+            techAdvancement.setTechRating(RATING_C);
+            techAdvancement.setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+            break;
+        case SUBMARINE:
+            techAdvancement.setAdvancement(DATE_PS, DATE_PS);
+            techAdvancement.setTechRating(RATING_C);
+            techAdvancement.setAvailability(RATING_D, RATING_D, RATING_D, RATING_D);
+            break;
+        case INF_LEG:
+        default:
+            techAdvancement.setTechRating(RATING_A);
+            techAdvancement.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+            break;
+        }
+    }
+    
+    @Override
+    protected void addSystemTechAdvancement() {
+        super.addSystemTechAdvancement();
+        if (hasSpecialization(COMBAT_ENGINEERS)) {
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+                    .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A), isMixedTech());
+        }
+        if (hasSpecialization(MARINES)) {
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A), isMixedTech());
+        }
+        if (hasSpecialization(MOUNTAIN_TROOPS) || hasSpecialization(PARATROOPS)) {
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+                    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A), isMixedTech());
+        }
+        if (hasSpecialization(PARAMEDICS)) {
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C), isMixedTech());
+        }
+        if (hasSpecialization(TAG_TROOPS)) {
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setISAdvancement(2585, 2600, DATE_NONE, 2535, 3037)
+                    .setClanAdvancement(2585, 2600)
+                    .setApproximate(true, false, false, false, false).setTechRating(RATING_E)
+                    .setAvailability(RATING_F, RATING_X, RATING_E, RATING_E), isMixedTech());
+        }
+        if (isAntiMekTrained()) {
+            ITechnology.aggregate(this, new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(2456, 2460, 2500)
+                    .setApproximate(true, false, false).setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D), isMixedTech());
+        }
+    }
+    
     /**
      * Infantry can face freely (except when dug in)
      */

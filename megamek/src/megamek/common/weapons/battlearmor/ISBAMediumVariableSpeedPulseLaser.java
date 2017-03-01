@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 
 /**
@@ -61,13 +61,11 @@ public class ISBAMediumVariableSpeedPulseLaser extends
         shortAV = 7;
         maxRange = RANGE_SHORT;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3070;
-        techLevel.put(3070, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3072, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "321, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3070, 3072, 3080);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 
 }

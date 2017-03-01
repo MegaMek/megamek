@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -33,7 +33,6 @@ public class ISRAC5 extends RACWeapon {
      */
     public ISRAC5() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Rotary AC/5";
         this.setInternalName("ISRotaryAC5");
         this.addLookupName("IS Rotary AC/5");
@@ -53,9 +52,9 @@ public class ISRAC5 extends RACWeapon {
         this.medAV = 20;
         this.maxRange = RANGE_MED;
         this.explosionDamage = damage;
-        introDate = 3062;
-        techLevel.put(3062, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3062);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 }

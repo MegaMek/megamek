@@ -18,7 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.PPCWeapon;
 
 /**
@@ -49,12 +49,10 @@ public class ISBASupportPPC extends PPCWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
         bv = 12;
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
-        introDate = 3046;
-        techLevel.put(3046, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3053, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3056, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_F ,RATING_D ,RATING_C};
-        techRating = RATING_D;
         rulesRefs = "267, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3046, 3053, 3056);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_C });
     }
 }

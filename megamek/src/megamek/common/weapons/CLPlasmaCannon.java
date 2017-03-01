@@ -20,7 +20,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -36,7 +36,6 @@ public class CLPlasmaCannon extends AmmoWeapon {
     private static final long serialVersionUID = 322396740172378519L;
 
     public CLPlasmaCannon() {
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Plasma Cannon";
         setInternalName("CLPlasmaCannon");
         heat = 7;
@@ -58,11 +57,11 @@ public class CLPlasmaCannon extends AmmoWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-        introDate = 3069;
-        techLevel.put(3069, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_F;
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3069);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
     }
 
     /*

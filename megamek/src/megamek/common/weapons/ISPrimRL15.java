@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Dave Nawton
@@ -30,7 +30,6 @@ public class ISPrimRL15 extends RLWeapon {
      */
     public ISPrimRL15() {
         super ();
-        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "Primitive Rocket Launcher 15";
         setInternalName("ISPrimRL15");
         heat = 4;
@@ -46,11 +45,10 @@ public class ISPrimRL15 extends RLWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        introDate = 2297;
-        extinctDate = 2315;    
-        techLevel.put(2315, techLevel.get(3071));
-        availRating = new int[] { RATING_B, RATING_X, RATING_X };
-        techRating = RATING_B;
         toHitModifier = -1;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2315, 2315);
+        techAdvancement.setTechRating(RATING_B);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_X, RATING_X, RATING_X });
     }
 }

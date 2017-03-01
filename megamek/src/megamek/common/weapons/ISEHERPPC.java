@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -33,7 +33,6 @@ public class ISEHERPPC extends PPCWeapon {
      */
     public ISEHERPPC() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Enhanced ER PPC";
         setInternalName("ISEHERPPC");
         addLookupName("IS EH ER PPC");
@@ -56,10 +55,9 @@ public class ISEHERPPC extends PPCWeapon {
         longAV = 12;
         maxRange = RANGE_LONG;
         //This is the Clan Wolverine PPC mentioned in Blake Documents
-        introDate = 2823;
-        extinctDate = 2828;
-        techLevel.put(2828, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_F, RATING_X };
-        techRating = RATING_F;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2828, DATE_NONE, DATE_NONE, 2828);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_X, RATING_X });
     }
 }

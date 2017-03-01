@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -53,13 +53,11 @@ public class CLLB5XAC extends LBXACWeapon {
         this.medAV = 5;
         this.longAV = 5;
         this.maxRange = RANGE_LONG;
-        introDate = 2819;
-        techLevel.put(2819, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
-        techLevel.put(2821, TechConstants.T_CLAN_ADVANCED);   ///ADV
-        techLevel.put(2828, TechConstants.T_CLAN_TW);   ///COMMON
-        availRating = new int[] { RATING_X, RATING_D, RATING_C, RATING_B };
-        techRating = RATING_F;
         rulesRefs = "207, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2819, 2821, 2828);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
     }
 }

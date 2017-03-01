@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -30,7 +30,6 @@ public class ISSRM4OS extends SRMWeapon {
      */
     public ISSRM4OS() {
         super();
-        techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
         name = "SRM 4 (OS)";
         setInternalName("ISSRM4OS");
         addLookupName("ISSRM4 (OS)"); // mtf
@@ -49,11 +48,10 @@ public class ISSRM4OS extends SRMWeapon {
         cost = 30000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        introDate = 2676;
-        techLevel.put(2676, techLevel.get(3071));
-        this.extinctDate = 2800;
-        this.reintroDate = 3030;
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
-        techRating = RATING_C;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2660, 2676, 3045, 2800, 3030);
+        techAdvancement.setIntroLevel(true);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
     }
 }

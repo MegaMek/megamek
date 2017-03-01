@@ -17,7 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
@@ -33,7 +33,6 @@ public class ISNGaussWeaponHeavy extends NavalGaussWeapon {
      */
     public ISNGaussWeaponHeavy() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "Heavy N-Gauss";
         this.setInternalName(this.name);
         this.addLookupName("HeavyNGauss");
@@ -52,9 +51,9 @@ public class ISNGaussWeaponHeavy extends NavalGaussWeapon {
         this.longAV = 30;
         this.extAV = 30;
         this.maxRange = RANGE_EXT;
-        introDate = 2449;
-        techLevel.put(2449, techLevel.get(3071));
-        availRating = new int[] { RATING_E, RATING_F, RATING_E };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2449);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
     }
 }

@@ -16,6 +16,8 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.TechAdvancement;
+
 /**
  * @author Jason Tighe
  */
@@ -49,10 +51,10 @@ public class ISHVAC10 extends HVACWeapon {
         longAV = 10;
         maxRange = RANGE_LONG;
         explosionDamage = 10;
-        techRating = RATING_D;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3060, 3079, DATE_NONE);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 
 }

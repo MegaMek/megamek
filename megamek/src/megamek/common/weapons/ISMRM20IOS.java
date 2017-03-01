@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -50,12 +50,10 @@ public class ISMRM20IOS extends MRMWeapon {
         shortAV = 12;
         medAV = 12;
         maxRange = RANGE_MED;
-        introDate = 3056;
-        techLevel.put(3056, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3076, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_C;
         rulesRefs = "327, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3056, 3076, 3085);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 }

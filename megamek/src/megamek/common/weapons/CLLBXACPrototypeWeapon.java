@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -55,10 +54,5 @@ public abstract class CLLBXACPrototypeWeapon extends LBXACWeapon {
             return new CLLBXPrototypeHandler(toHit, waa, game, server);
         }
         return new ACWeaponHandler(toHit, waa, game, server);
-    }
-
-    public CLLBXACPrototypeWeapon() {
-        super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
     }
 }

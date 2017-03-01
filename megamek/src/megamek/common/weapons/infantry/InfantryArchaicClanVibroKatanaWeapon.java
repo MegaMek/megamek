@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -43,10 +43,9 @@ public class InfantryArchaicClanVibroKatanaWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.26;
         infantryRange = 0;
-        introDate = 2807;
-        extinctDate = 2855;
-        techLevel.put(2807,TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[]{RATING_X,RATING_E,RATING_D,RATING_F};
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, 2807, DATE_NONE, 2805);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability(new int[]{RATING_X,RATING_E,RATING_D,RATING_F});
     }
 }

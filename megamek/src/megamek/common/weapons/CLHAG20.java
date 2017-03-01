@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -51,14 +51,12 @@ public class CLHAG20 extends HAGWeapon {
         longAV = 12;
         maxRange = RANGE_LONG;
         explosionDamage = rackSize / 2;
-        introDate = 3057;
-        techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(3068, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3072, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_F;
         rulesRefs = "219, TM";
 
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(3057, 3068, 3072);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 
 }

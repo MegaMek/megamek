@@ -16,8 +16,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author BATTLEMASTER IIC
@@ -33,7 +32,6 @@ public class ISAC15 extends ACWeapon {
      */
     public ISAC15() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "AC/15";
         setInternalName("Autocannon/15");
         addLookupName("IS Auto Cannon/15");
@@ -58,10 +56,9 @@ public class ISAC15 extends ACWeapon {
         maxRange = RANGE_MED;
         explosionDamage = damage;
         //This being an official Weapon I'm using the AC20 information
-        availRating = new int[] { EquipmentType.RATING_D,
-                EquipmentType.RATING_E, EquipmentType.RATING_D };
-        introDate = 2500;
-        techLevel.put(2500, techLevel.get(3071));
-        techRating = RATING_C;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2500);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_D, RATING_E, RATING_D, RATING_X });
     }
 }

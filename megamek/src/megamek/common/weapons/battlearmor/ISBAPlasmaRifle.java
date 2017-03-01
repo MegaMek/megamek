@@ -18,7 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -51,12 +51,10 @@ public class ISBAPlasmaRifle extends Weapon {
         criticals = 2;
         cost = 28000;
         flags = flags.or(F_BA_WEAPON).or(F_DIRECT_FIRE).or(F_PLASMA).or(F_ENERGY).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3058;
-        techLevel.put(3058, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3065, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3074, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_C};
-        techRating = RATING_E;
         rulesRefs = "267, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3058, 3065, 3074);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
     }
 }

@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 import megamek.common.IGame;
 import megamek.common.Mounted;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -33,14 +32,6 @@ public abstract class CLPrototypeUACWeapon extends UACWeapon {
      *
      */
     private static final long serialVersionUID = 8905222321912752035L;
-
-    /**
-     *
-     */
-    public CLPrototypeUACWeapon() {
-        super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
-    }
 
     /*
      * (non-Javadoc)

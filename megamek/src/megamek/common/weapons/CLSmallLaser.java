@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter
@@ -30,7 +30,6 @@ public class CLSmallLaser extends LaserWeapon {
 
     public CLSmallLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Small Laser";
         setInternalName("ClSmall Laser");
         addLookupName("CL Small Laser");
@@ -51,9 +50,9 @@ public class CLSmallLaser extends LaserWeapon {
         bv = 9;
         cost = 11250;
         atClass = CLASS_POINT_DEFENSE;
-        introDate = 2820;
-        techLevel.put(2820, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability(new int[]{RATING_X, RATING_D, RATING_C});
     }
 }

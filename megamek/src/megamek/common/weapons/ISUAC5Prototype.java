@@ -19,7 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.IGame;
 import megamek.common.Mounted;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -38,7 +38,6 @@ public class ISUAC5Prototype extends UACWeapon {
      */
     public ISUAC5Prototype() {
         super();
-        techLevel.put(2635, TechConstants.T_IS_EXPERIMENTAL);
         name = "Ultra AC/5 Prototype";
         setInternalName("ISUltraAC5Prototype");
         addLookupName("IS Ultra AC/5 Prototype");
@@ -60,11 +59,10 @@ public class ISUAC5Prototype extends UACWeapon {
         medAV = 7;
         longAV = 7;
         maxRange = RANGE_LONG;
-        introDate = 2635;
-        extinctDate = 2640;
-        reintroDate = 3035;
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
-        techRating = RATING_E;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2635, DATE_NONE, DATE_NONE, 2640, 3035);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
     }
 
     /*

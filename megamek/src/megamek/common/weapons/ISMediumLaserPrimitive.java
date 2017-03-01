@@ -14,8 +14,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.EquipmentType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -50,11 +49,10 @@ public class ISMediumLaserPrimitive extends LaserWeapon {
         this.shortAV = 5;
         this.maxRange = RANGE_SHORT;
         //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        introDate = 2290;
-        extinctDate = 2310;
-        techLevel.put(2290, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
-        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
-        techRating = RATING_C;
         rulesRefs = "217, IO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2290, DATE_NONE, DATE_NONE, 2310);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
     }
 }

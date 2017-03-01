@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -45,12 +45,10 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
         infantryDamage = 0.74;
         infantryRange = 2;
         crew = 2;
-        introDate = 3053;
-        techLevel.put(3053, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3059, TechConstants.T_IS_ADVANCED);
-        techLevel.put(3065, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
-        techRating = RATING_E;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3053, 3059, 3065);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 }

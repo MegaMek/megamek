@@ -18,7 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Ben Grills
@@ -43,11 +43,10 @@ public class InfantryRifleClanERLaserWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.28;
         infantryRange = 3;
-        introDate = 2835;
-        techLevel.put(2835, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2845, TechConstants.T_CLAN_ADVANCED);
-        availRating = new int[] { RATING_X,RATING_D ,RATING_D ,RATING_C};
-        techRating = RATING_F;
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+        techAdvancement.setClanAdvancement(2835, 2845, DATE_NONE);
+        techAdvancement.setTechRating(RATING_F);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
     }
 }

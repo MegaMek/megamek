@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
@@ -30,7 +30,6 @@ public class ISExtendedLRM15 extends ExtendedLRMWeapon {
      */
     public ISExtendedLRM15() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "Extended LRM 15";
         setInternalName(name);
         addLookupName("IS Extended LRM-15");
@@ -47,10 +46,9 @@ public class ISExtendedLRM15 extends ExtendedLRMWeapon {
         medAV = 9;
         longAV = 9;
         extAV = 9;
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        introDate = 3054;
-        techLevel.put(3054, techLevel.get(3071));
-        techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3054, DATE_NONE, 3080);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
 }

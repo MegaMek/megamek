@@ -18,7 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechConstants;
+import megamek.common.TechAdvancement;
 import megamek.common.weapons.ArtilleryWeapon;
 
 /**
@@ -48,12 +48,11 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         criticals = 4;
         bv = 27;
         cost = 200000;
-        introDate = 3065;
-        techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
-        techLevel.put(3075, TechConstants.T_IS_ADVANCED);
-        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
-        techRating = RATING_E;
         rulesRefs = "284, TO";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(3065, 3075, DATE_NONE);
+        techAdvancement.setTechRating(RATING_E);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 
 }

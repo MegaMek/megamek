@@ -250,7 +250,7 @@ public class Aero extends Entity {
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
                 .setISApproximate(true, false, false, true, true)
                 .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
-                .setISApproximate(true, false).setTechRating(RATING_D)
+                .setClanApproximate(true, false).setTechRating(RATING_D)
                 .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D), //Cockpit command console
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, 2300, DATE_NONE, 2520)
                 .setISApproximate(false, true, false, false).setTechRating(RATING_C)

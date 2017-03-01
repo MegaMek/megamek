@@ -3019,7 +3019,7 @@ public abstract class Mech extends Entity {
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
                 .setISApproximate(true, false, false, true, true)
                 .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
-                .setISApproximate(true, false).setTechRating(RATING_D)
+                .setClanApproximate(true, false).setTechRating(RATING_D)
                 .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D), //Cockpit command console
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3053, 3080, 3100)
                 .setClanAdvancement(3055, 3080, 3100)

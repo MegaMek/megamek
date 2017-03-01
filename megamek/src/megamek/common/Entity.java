@@ -1032,6 +1032,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void setTechLevel(int techLevel) {
         this.techLevel = techLevel;
+        recalculateTechAdvancement();
     }
     
     @Override
@@ -1160,6 +1161,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setMixedTech(boolean mixedTech) {
         this.mixedTech = mixedTech;
+        recalculateTechAdvancement();
     }
 
     public boolean isDesignValid() {
@@ -3164,6 +3166,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             throws LocationFullException {
         mounted.setLocation(loc, rearMounted);
         equipmentList.add(mounted);
+        ITechnology.aggregate(this, mounted.getType(), isMixedTech());
 
         // add it to the proper sub-list
         if (mounted.getType() instanceof WeaponType) {
@@ -9519,15 +9522,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setArmorType(int armType, int loc) {
         armorType[loc] = armType;
+        recalculateTechAdvancement();
     }
 
     public void setStructureType(int strucType) {
         structureType = strucType;
         structureTechLevel = getTechLevel();
+        recalculateTechAdvancement();
     }
 
     public void setStructureTechLevel(int level) {
         structureTechLevel = level;
+        recalculateTechAdvancement();
     }
 
     public void setArmorType(String armType) {
@@ -9550,6 +9556,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+        recalculateTechAdvancement();
     }
 
     public void setArmorType(String armType, int loc) {
@@ -9572,6 +9579,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
+        recalculateTechAdvancement();
     }
 
     public void setStructureType(String strucType) {
@@ -9594,7 +9602,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
         }
-
+        recalculateTechAdvancement();
     }
 
     public int getArmorType(int loc) {
@@ -9605,10 +9613,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (int i = 0; i < locations(); i++) {
             armorTechLevel[i] = newTL;
         }
+        recalculateTechAdvancement();
     }
 
     public void setArmorTechLevel(int newTL, int loc) {
         armorTechLevel[loc] = newTL;
+        recalculateTechAdvancement();
     }
 
     public int getArmorTechLevel(int loc) {

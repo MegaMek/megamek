@@ -1113,6 +1113,7 @@ public class Protomech extends Entity {
                         }
                     }
             }
+            ITechnology.aggregate(this, mounted.getType(), isMixedTech());
         } else {
             super.addEquipment(mounted, loc, rearMounted);
         }

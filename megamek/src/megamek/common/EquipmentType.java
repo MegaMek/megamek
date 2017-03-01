@@ -627,7 +627,7 @@ public class EquipmentType implements ITechnology {
         }
         return T_ARMOR_UNKNOWN;
     }
-
+    
     public static String getArmorTypeName(int armorType) {
         if ((armorType < 0) || (armorType >= armorNames.length)) {
             return "UNKNOWN";
@@ -642,7 +642,7 @@ public class EquipmentType implements ITechnology {
         return clan ? "Clan " + armorNames[armorType] : "IS "
                 + armorNames[armorType];
     }
-
+    
     public static int getStructureType(EquipmentType et) {
         if (et == null) {
             return T_STRUCTURE_UNKNOWN;
@@ -724,6 +724,44 @@ public class EquipmentType implements ITechnology {
             }
             return 0.05f;
         }
+    }
+    
+    /* Armor and structure are stored as integers and standard uses a generic MiscType that
+     * does not have its own TechAdvancement.
+     */
+
+    protected final static TechAdvancement TA_STANDARD_ARMOR = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+    protected final static TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+    protected final static TechAdvancement TA_NONE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+
+    public static TechAdvancement getArmorTechAdvancement(int at, boolean clan) {
+        if (at == T_ARMOR_STANDARD) {
+            return TA_STANDARD_ARMOR;
+        }
+        String armorName = EquipmentType.getArmorTypeName(at, clan);
+        EquipmentType armor = EquipmentType.get(armorName);
+        if (armor != null) {
+            return armor.getTechAdvancement();
+        }
+        return TA_NONE;
+    }
+
+    public static TechAdvancement getStructureTechAdvancement(int at, boolean clan) {
+        if (at == T_STRUCTURE_STANDARD) {
+            return TA_STANDARD_STRUCTURE;
+        }
+        String structureName = EquipmentType.getStructureTypeName(at, clan);
+        EquipmentType structure = EquipmentType.get(structureName);
+        if (structure != null) {
+            return structure.getTechAdvancement();
+        }
+        return TA_NONE;
     }
 
     /**

@@ -1065,7 +1065,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             .setISAdvancement(3050, 3082, 3115)
             .setClanAdvancement(2820, 3082, 3115).setApproximate(true, true, true)
             .setTechRating(RATING_A).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
-
+    
     /**
      * Incorporate dates for components that are not in the equipment list, such as engines and structure.
      */
@@ -1078,10 +1078,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         if (hasPatchworkArmor()) {
             ITechnology.aggregate(this, TA_PATCHWORK_ARMOR, isMixedTech());
+            for (int loc = 0; loc < locations(); loc++) {
+                ITechnology.aggregate(this, EquipmentType.getArmorTechAdvancement(armorType[loc],
+                        TechConstants.isClan(armorTechLevel[loc])), isMixedTech());
+            }
+        } else {
+            ITechnology.aggregate(this, EquipmentType.getArmorTechAdvancement(armorType[0],
+                    TechConstants.isClan(armorTechLevel[0])), isMixedTech());
         }
         if (isMixedTech()) {
             ITechnology.aggregate(this, TA_MIXED_TECH, true);
         }
+        ITechnology.aggregate(this, EquipmentType.getStructureTechAdvancement(structureType,
+                TechConstants.isClan(structureTechLevel)), isMixedTech());
         //TODO: armor and structure
     }
     

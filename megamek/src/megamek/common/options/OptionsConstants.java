@@ -275,6 +275,7 @@ public class OptionsConstants {
     public static final String ALLOWED_CANON_ONLY= "canon_only";  //$NON-NLS$
     public static final String ALLOWED_YEAR= "year";  //$NON-NLS$
     public static final String ALLOWED_TECHLEVEL= "techlevel";  //$NON-NLS$
+    public static final String ALLOWED_ERA_BASED = "era_based"; //$NON_NLS$
     public static final String ALLOWED_ALLOW_ILLEGAL_UNITS= "allow_illegal_units";  //$NON-NLS$
     public static final String ALLOWED_CLAN_IGNORE_EQ_LIMITS= "clan_ignore_eq_limits";  //$NON-NLS$
     public static final String ALLOWED_NO_CLAN_PHYSICAL= "no_clan_physical";  //$NON-NLS$

@@ -2118,8 +2118,8 @@ public class FireControlTest {
         testFireControl.calculateUtility(testFiringPlan, overheatTolerance, false);
         Assert.assertEquals(baseUtility * (1 + FireControl.PRIORITY_TARGET_UTILITY), testFiringPlan.getUtility(),
                             TOLERANCE);
-        Mockito.when(mockBehavior.getPriorityUnitTargets()).thenReturn(new HashSet<Integer>(0));
-        Mockito.when(mockPrincess.getPriorityUnitTargets()).thenReturn(new HashSet<Integer>(0));
+        Mockito.when(mockBehavior.getPriorityUnitTargets()).thenReturn(new HashSet<>(0));
+        Mockito.when(mockPrincess.getPriorityUnitTargets()).thenReturn(new HashSet<>(0));
 
         // Attack an ejected pilot.
         testFiringPlan = Mockito.spy(new FiringPlan(mockPilot));

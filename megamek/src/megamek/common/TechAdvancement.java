@@ -37,6 +37,15 @@ public class TechAdvancement {
     public static final int ERA_SW     = ITechnology.ERA_SW;
     public static final int ERA_CLAN   = ITechnology.ERA_CLAN;
     public static final int ERA_DA     = ITechnology.ERA_DA;
+    
+    public static final int RATING_A    = ITechnology.RATING_A;
+    public static final int RATING_B    = ITechnology.RATING_B;
+    public static final int RATING_D    = ITechnology.RATING_C;
+    public static final int RATING_C    = ITechnology.RATING_D;
+    public static final int RATING_E    = ITechnology.RATING_E;
+    public static final int RATING_F    = ITechnology.RATING_F;
+    public static final int RATING_FSTAR    = ITechnology.RATING_FSTAR;
+    public static final int RATING_X    = ITechnology.RATING_X;
 	
 	public static final int PROTOTYPE    = 0;
 	public static final int PRODUCTION   = 1;
@@ -53,6 +62,8 @@ public class TechAdvancement {
     private int techBase = TECH_BASE_ALL;
     private int[] isAdvancement = new int[5];
     private int[] clanAdvancement = new int[5];
+    private boolean[] isApproximate = new boolean[5];
+    private boolean[] clanApproximate = new boolean[5];
     private boolean isIntroLevel = false; //Whether RULES_STANDARD should be considered T_INTRO_BOXSET.
     private boolean unofficial = false;
     private int techRating = ITechnology.RATING_C;
@@ -61,6 +72,11 @@ public class TechAdvancement {
     public TechAdvancement() {
         Arrays.fill(isAdvancement, DATE_NONE);
         Arrays.fill(clanAdvancement, DATE_NONE);
+    }
+    
+    public TechAdvancement(int techBase) {
+        this();
+        this.techBase = techBase;
     }
     
     public TechAdvancement(int techBase, int[] isAdvancement, int[] clanAdvancement,
@@ -85,106 +101,237 @@ public class TechAdvancement {
         this(TECH_BASE_ALL, advancement, advancement, techRating, availability);
     }
     
-    public void setTechBase(int base) {
+    public TechAdvancement setTechBase(int base) {
         techBase = base;
+        return this;
     }
     
     public int getTechBase() {
         return techBase;
     }
     
-    public void setISAdvancement(int[] prog) {
+    public TechAdvancement setISAdvancement(int[] prog) {
         Arrays.fill(isAdvancement, DATE_NONE);
         System.arraycopy(prog, 0, isAdvancement, 0, Math.min(isAdvancement.length, prog.length));
+        return this;
     }
     
-    public void setClanAdvancement(int[] prog) {
+    public TechAdvancement setISApproximate(boolean[] approx) {
+        Arrays.fill(isApproximate, false);
+        System.arraycopy(approx, 0, isApproximate, 0, Math.min(isApproximate.length, approx.length));
+        return this;
+    }
+    
+    public TechAdvancement setClanAdvancement(int[] prog) {
         Arrays.fill(clanAdvancement, DATE_NONE);
         System.arraycopy(prog, 0, clanAdvancement, 0, Math.min(clanAdvancement.length, prog.length));
+        return this;
     }
     
-    public void setAdvancement(int[] prog) {
+    public TechAdvancement setClanApproximate(boolean[] approx) {
+        Arrays.fill(clanApproximate, false);
+        System.arraycopy(approx, 0, clanApproximate, 0, Math.min(clanApproximate.length, approx.length));
+        return this;
+    }
+    
+    public TechAdvancement setAdvancement(int[] prog) {
         setISAdvancement(prog);
         setClanAdvancement(prog);
+        return this;
     }
     
-    public void setISAdvancement(int prototype, int production, int common,
+    public TechAdvancement setAdvancement(boolean[] approx) {
+        setISApproximate(approx);
+        setClanApproximate(approx);
+        return this;
+    }
+    
+    public TechAdvancement setISAdvancement(int prototype, int production, int common,
             int extinct, int reintroduction) {
         isAdvancement[PROTOTYPE] = prototype;
         isAdvancement[PRODUCTION] = production;
         isAdvancement[COMMON] = common;
         isAdvancement[EXTINCT] = extinct;
         isAdvancement[REINTRODUCED] = reintroduction;
+        return this;
     }
 
-    public void setISAdvancement(int prototype, int production, int common,
+    public TechAdvancement setISApproximate(boolean prototype, boolean production, boolean common,
+            boolean extinct, boolean reintroduction) {
+        isApproximate[PROTOTYPE] = prototype;
+        isApproximate[PRODUCTION] = production;
+        isApproximate[COMMON] = common;
+        isApproximate[EXTINCT] = extinct;
+        isApproximate[REINTRODUCED] = reintroduction;
+        return this;
+    }
+
+    public TechAdvancement setISAdvancement(int prototype, int production, int common,
             int extinct) {
         setISAdvancement(prototype, production, common, extinct, DATE_NONE);
+        return this;
     }
 
-    public void setISAdvancement(int prototype, int production, int common) {
-        setISAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
-    }
-
-    public void setISAdvancement(int prototype, int production) {
-        setISAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
-    }
-
-    public void setISAdvancement(int prototype) {
-        setISAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
+    public TechAdvancement setISApproximate(boolean prototype, boolean production, boolean common,
+            boolean extinct) {
+        setISApproximate(prototype, production, common, extinct, false);
+        return this;
     }
     
-    public void setClanAdvancement(int prototype, int production, int common,
+    public TechAdvancement setISAdvancement(int prototype, int production, int common) {
+        setISAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
+        return this;
+    }
+
+    public TechAdvancement setISApproximate(boolean prototype, boolean production, boolean common) {
+        setISApproximate(prototype, production, common, false, false);
+        return this;
+    }
+    
+    public TechAdvancement setISAdvancement(int prototype, int production) {
+        setISAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
+        return this;
+    }
+
+    public TechAdvancement setISApproximate(boolean prototype, boolean production) {
+        setISApproximate(prototype, production, false, false, false);
+        return this;
+    }
+    
+    public TechAdvancement setISAdvancement(int prototype) {
+        setISAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
+        return this;
+    }
+    
+    public TechAdvancement setISApproximate(boolean prototype) {
+        setISApproximate(prototype, false, false, false, false);
+        return this;
+    }
+    
+    public TechAdvancement setClanAdvancement(int prototype, int production, int common,
             int extinct, int reintroduction) {
         clanAdvancement[PROTOTYPE] = prototype;
         clanAdvancement[PRODUCTION] = production;
         clanAdvancement[COMMON] = common;
         clanAdvancement[EXTINCT] = extinct;
         clanAdvancement[REINTRODUCED] = reintroduction;
+        return this;
     }
 
-    public void setClanAdvancement(int prototype, int production, int common,
+    public TechAdvancement setClanApproximate(boolean prototype, boolean production, boolean common,
+            boolean extinct, boolean reintroduction) {
+        clanApproximate[PROTOTYPE] = prototype;
+        clanApproximate[PRODUCTION] = production;
+        clanApproximate[COMMON] = common;
+        clanApproximate[EXTINCT] = extinct;
+        clanApproximate[REINTRODUCED] = reintroduction;
+        return this;
+    }
+
+    public TechAdvancement setClanAdvancement(int prototype, int production, int common,
             int extinct) {
         setClanAdvancement(prototype, production, common, extinct, DATE_NONE);
-    }
-
-    public void setClanAdvancement(int prototype, int production, int common) {
-        setClanAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
-    }
-
-    public void setClanAdvancement(int prototype, int production) {
-        setClanAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
-    }
-
-    public void setClanAdvancement(int prototype) {
-        setClanAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
+        return this;
     }
     
-    public void setAdvancement(int prototype, int production, int common,
+    public TechAdvancement setClanApproximate(boolean prototype, boolean production, boolean common,
+            boolean extinct) {
+        setClanApproximate(prototype, production, common, extinct, false);
+        return this;
+    }
+
+    public TechAdvancement setClanAdvancement(int prototype, int production, int common) {
+        setClanAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
+        return this;
+    }
+
+    public TechAdvancement setClanApproximate(boolean prototype, boolean production, boolean common) {
+        setClanApproximate(prototype, production, common, false, false);
+        return this;
+    }
+
+    public TechAdvancement setClanAdvancement(int prototype, int production) {
+        setClanAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
+        return this;
+    }
+
+    public TechAdvancement setClanApproximate(boolean prototype, boolean production) {
+        setClanApproximate(prototype, production, false, false, false);
+        return this;
+    }
+
+    public TechAdvancement setClanAdvancement(int prototype) {
+        setClanAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
+        return this;
+    }
+    
+    public TechAdvancement setClanApproximate(boolean prototype) {
+        setClanApproximate(prototype, false, false, false, false);
+        return this;
+    }
+
+    public TechAdvancement setAdvancement(int prototype, int production, int common,
             int extinct, int reintroduction) {
         setISAdvancement(prototype, production, common, extinct, reintroduction);
         setClanAdvancement(prototype, production, common, extinct, reintroduction);
+        return this;
     }
         
-    public void setAdvancement(int prototype, int production, int common,
+    public TechAdvancement setApproximate(boolean prototype, boolean production, boolean common,
+            boolean extinct, boolean reintroduction) {
+        setISApproximate(prototype, production, common, extinct, reintroduction);
+        setClanApproximate(prototype, production, common, extinct, reintroduction);
+        return this;
+    }
+    
+    public TechAdvancement setAdvancement(int prototype, int production, int common,
             int extinct) {
         setISAdvancement(prototype, production, common, extinct, DATE_NONE);
         setClanAdvancement(prototype, production, common, extinct, DATE_NONE);
+        return this;
     }
     
-    public void setAdvancement(int prototype, int production, int common) {
+    public TechAdvancement setApproximate(boolean prototype, boolean production, boolean common,
+            boolean extinct) {
+        setISApproximate(prototype, production, common, extinct, false);
+        setClanApproximate(prototype, production, common, extinct, false);
+        return this;
+    }
+    
+    public TechAdvancement setAdvancement(int prototype, int production, int common) {
         setISAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
         setClanAdvancement(prototype, production, common, DATE_NONE, DATE_NONE);
+        return this;
     }
     
-    public void setAdvancement(int prototype, int production) {
+    public TechAdvancement setApproximate(boolean prototype, boolean production, boolean common) {
+        setISApproximate(prototype, production, common, false, false);
+        setClanApproximate(prototype, production, common, false, false);
+        return this;
+    }
+    
+    public TechAdvancement setAdvancement(int prototype, int production) {
         setISAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
         setClanAdvancement(prototype, production, DATE_NONE, DATE_NONE, DATE_NONE);
+        return this;
     }
     
-    public void setAdvancement(int prototype) {
+    public TechAdvancement setApproximate(boolean prototype, boolean production) {
+        setISApproximate(prototype, production, false, false, false);
+        setClanApproximate(prototype, production, false, false, false);
+        return this;
+    }
+    
+    public TechAdvancement setAdvancement(int prototype) {
         setISAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
         setClanAdvancement(prototype, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE);
+        return this;
+    }
+    
+    public TechAdvancement setApproximate(boolean prototype) {
+        setISApproximate(prototype, false, false, false, false);
+        setClanApproximate(prototype, false, false, false, false);
+        return this;
     }
     
     public int getPrototypeDate(boolean clan) {
@@ -277,41 +424,47 @@ public class TechAdvancement {
         return isIntroLevel;
     }
 
-    public void setIntroLevel(boolean intro) {
+    public TechAdvancement setIntroLevel(boolean intro) {
         isIntroLevel = intro;
+        return this;
     }
     
     public boolean isUnofficial() {
         return unofficial;
     }
     
-    public void setUnofficial(boolean unofficial) {
+    public TechAdvancement setUnofficial(boolean unofficial) {
         this.unofficial = unofficial;
+        return this;
     }
     
-    public void setTechRating(int rating) {
+    public TechAdvancement setTechRating(int rating) {
         techRating = rating;
+        return this;
     }
     
     public int getTechRating() {
         return techRating;
     }
     
-    public void setAvailability(int[] av) {
+    public TechAdvancement setAvailability(int[] av) {
         System.arraycopy(av, 0, availability, 0, Math.min(av.length, availability.length));
+        return this;
     }
     
-    public void setAvailability(int era, int av) {
+    public TechAdvancement setAvailability(int era, int av) {
         if (era > 0 && era < availability.length) {
             availability[era] = av;
         }
+        return this;
     }
     
-    public void setAvailability(int sl, int sw, int clan, int da) {
+    public TechAdvancement setAvailability(int sl, int sw, int clan, int da) {
         availability[ERA_SL] = sl;
         availability[ERA_SW] = sw;
         availability[ERA_CLAN] = clan;
         availability[ERA_DA] = da;
+        return this;
     }
 
     /**
@@ -514,17 +667,17 @@ public class TechAdvancement {
         }
     }
     
-    private final static TechAdvancement TA_OMNI = new TechAdvancement(TECH_BASE_ALL,
-            new int[] { DATE_NONE, DATE_NONE, 3052 },
-            new int[] { 2849, 2856, 2864 }, ITechnology.RATING_E,
-            new int[] { ITechnology.RATING_X, ITechnology.RATING_E, ITechnology.RATING_E, ITechnology.RATING_D });
-    private final static TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(
-            new int[] { DATE_PS, 3075, 3075 }, ITechnology.RATING_A,
-            new int[] { ITechnology.RATING_E, ITechnology.RATING_D, ITechnology.RATING_E, ITechnology.RATING_E });
-    private final static TechAdvancement TA_MIXED_TECH = new TechAdvancement(TECH_BASE_ALL,
-            new int[] { 3050, 3077, 3110 },
-            new int[] { 2815, 3077, 3110 }, ITechnology.RATING_A,
-            new int[] { ITechnology.RATING_X, ITechnology.RATING_X, ITechnology.RATING_E, ITechnology.RATING_D });
+    private final static TechAdvancement TA_OMNI = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(DATE_NONE, DATE_NONE, 3052)
+            .setClanAdvancement(2854, 2856, 2864).setClanApproximate(true)
+            .setTechRating(RATING_E).setAvailability(RATING_X, RATING_E, RATING_E, RATING_D);
+    private final static TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, 3075, 3080).setApproximate(false, false, true).setTechRating(RATING_A)
+            .setAvailability(RATING_E, RATING_D, RATING_E, RATING_E);
+    private final static TechAdvancement TA_MIXED_TECH = new TechAdvancement(TECH_BASE_ALL)
+            .setISAdvancement(3050, 3082, 3115)
+            .setClanAdvancement(2820, 3082, 3115).setApproximate(true, true, true)
+            .setTechRating(RATING_A).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
     
     public static TechAdvancement omniAdvancement() {
         return TA_OMNI;

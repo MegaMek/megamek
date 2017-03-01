@@ -178,6 +178,11 @@ public class MechView {
             }
             sHead.append("<br/>");                //$NON-NLS-1$//
 //        }
+            
+        sHead.append(Messages.getString("MechView.TechRating")).append(": ") //$NON-NLS-1$//
+            .append(entity.getTechAdvancement().getFullRatingName(entity.isClan()))
+            .append("<br/>");
+            
         if (!isInf) {
             sHead.append(Math.round(entity.getWeight())).append(
                     Messages.getString("MechView.tons")); //$NON-NLS-1$

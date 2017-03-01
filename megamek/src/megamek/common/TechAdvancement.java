@@ -512,6 +512,19 @@ public class TechAdvancement {
         return "U";
     }
     
+    public String getFullRatingName(boolean clan) {
+        String rating = EquipmentType.getRatingName(getTechRating());
+        rating += "/";
+        rating += getEraAvailabilityName(ERA_SL, clan);
+        rating += "-";
+        rating += getEraAvailabilityName(ERA_SW, clan);
+        rating += "-";
+        rating += getEraAvailabilityName(ERA_CLAN, clan);
+        rating += "-";
+        rating += getEraAvailabilityName(ERA_DA, clan);
+        return rating;        
+    }
+    
     /**
      * Computes availability code of equipment for IS factions in the given year, adjusting
      * for tech base
@@ -557,6 +570,9 @@ public class TechAdvancement {
             if (clanAdvancement[i] != DATE_NONE) {
                 clanAdvancement[i] = Math.max(clanAdvancement[i], year);
             }
+        }
+        for (int era = 0; era < getTechEra(year); era++) {
+            availability[era] = RATING_X;
         }
     }
     

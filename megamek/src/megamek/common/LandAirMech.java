@@ -28,12 +28,19 @@ public class LandAirMech extends BipedMech {
 
     public static final String systemNames[] =
         { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot", "Avionics", "Landing Gear" };
+    
+    public static final int LAM_UNKNOWN  = -1;
+    public static final int LAM_STANDARD = 0;
+    public static final int LAM_BIMODAL  = 1;
+    
+    public static final String[] LAM_STRING = { "Standard", "Bimodal" };
 
     private int fuel;
-    private boolean bimodal;
+    private int lamType;
     
-    public LandAirMech(int inGyroType, int inCockpitType) {
+    public LandAirMech(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
+        lamType = inLAMType;
         setTechLevel(TechConstants.T_IS_ADVANCED);
         setCritical(Mech.LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
         setCritical(Mech.LOC_LT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
@@ -100,27 +107,27 @@ public class LandAirMech extends BipedMech {
         return getFighterModeRunMP(true, false);
     }
     
-    public boolean isBimodal() {
-        return bimodal;
+    public int getLAMType() {
+        return lamType;
     }
     
-    public void setBimodal(boolean bimodal) {
-        this.bimodal = bimodal;
+    public void setLAMType(int lamType) {
+        this.lamType = lamType;
     }
     
     @Override
     public void initTechAdvancement() {
         techAdvancement = new TechAdvancement();
-        if (bimodal) {
+        if (lamType == LAM_BIMODAL) {
             techAdvancement.setTechBase(TECH_BASE_ALL);
             techAdvancement.setISAdvancement(2680, 2684, DATE_NONE, 2781);
-            techAdvancement.setISAdvancement(DATE_NONE, 2684, DATE_NONE, 2801);
+            techAdvancement.setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801);
             techAdvancement.setTechRating(RATING_E);
             techAdvancement.setAvailability(RATING_E, RATING_F, RATING_X, RATING_X);
         } else {
             techAdvancement.setTechBase(TECH_BASE_ALL);
             techAdvancement.setISAdvancement(2683, 2688, DATE_NONE, 3085);
-            techAdvancement.setISAdvancement(DATE_NONE, 2688, DATE_NONE, 2825);
+            techAdvancement.setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825);
             techAdvancement.setTechRating(RATING_E);
             techAdvancement.setAvailability(RATING_D, RATING_E, RATING_F, RATING_F);
         }
@@ -130,7 +137,7 @@ public class LandAirMech extends BipedMech {
     @Override
     public void setBattleForceMovement(Map<String,Integer> movement) {
     	super.setBattleForceMovement(movement);
-    	if (!bimodal) {
+    	if (lamType != LAM_BIMODAL) {
     	    movement.put("g", getAirMechWalkMP(true, false));
     	}
     	movement.put("a", getFighterModeWalkMP(true, false));
@@ -139,7 +146,7 @@ public class LandAirMech extends BipedMech {
     @Override
     public void setAlphaStrikeMovement(Map<String,Integer> movement) {
     	super.setBattleForceMovement(movement);
-    	if (!bimodal) {
+    	if (lamType != LAM_BIMODAL) {
     	    movement.put("g", getAirMechWalkMP(true, false) * 2);
     	}
     	movement.put("a", getFighterModeWalkMP(true, false));
@@ -153,11 +160,34 @@ public class LandAirMech extends BipedMech {
         if (bombs > 0) {
             specialAbilities.put(BattleForceSPA.BOMB, bombs / 5);
         }
-        if (bimodal) {
+        if (lamType == LAM_BIMODAL) {
             specialAbilities.put(BattleForceSPA.BIM, null);
         } else {
             specialAbilities.put(BattleForceSPA.LAM, null);
         }
+    }
+    
+    public String getLAMTypeString(int lamType) {
+        if (lamType < 0 || lamType >= LAM_STRING.length) {
+            return LAM_STRING[LAM_UNKNOWN];
+        }
+        return LAM_STRING[lamType];
+    }
+    
+    public String getLAMTypeString() {
+        return getLAMTypeString(getLAMType());
+    }
+
+    public static int getLAMTypeForString(String inType) {
+        if ((inType == null) || (inType.length() < 1)) {
+            return LAM_UNKNOWN;
+        }
+        for (int x = 0; x < LAM_STRING.length; x++) {
+            if (inType.equals(LAM_STRING[x])) {
+                return x;
+            }
+        }
+        return LAM_UNKNOWN;
     }
 
     public long getEntityType(){

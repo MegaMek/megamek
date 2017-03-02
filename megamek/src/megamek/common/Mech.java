@@ -6265,6 +6265,11 @@ public abstract class Mech extends Entity {
             sb.append(Mech.FULL_HEAD_EJECT_STRING);
             sb.append(newLine);
         }
+        if (this instanceof LandAirMech) {
+            sb.append("LAM:");
+            sb.append(((LandAirMech)this).getLAMTypeString());
+            sb.append(newLine);
+        }
         sb.append(newLine);
 
         sb.append("Heat Sinks:").append(heatSinks()).append(" ");

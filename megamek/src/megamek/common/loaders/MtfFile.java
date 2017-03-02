@@ -67,6 +67,7 @@ public class MtfFile implements IMechLoader {
     String gyroType;
     String cockpitType;
     String ejectionType;
+    String lamType;
 
     String heatSinks;
     String walkMP;
@@ -224,7 +225,16 @@ public class MtfFile implements IMechLoader {
             if (chassisConfig.indexOf("Quad") != -1) {
                 mech = new QuadMech(iGyroType, iCockpitType);
             } else if (chassisConfig.indexOf("LAM") != -1) {
-                mech = new LandAirMech(iGyroType, iCockpitType);
+                int iLAMType = LandAirMech.LAM_STANDARD;
+                try {
+                    iLAMType = LandAirMech.getLAMTypeForString(lamType.substring(4));
+                    if (iCockpitType == LandAirMech.LAM_UNKNOWN) {
+                        iCockpitType = LandAirMech.LAM_STANDARD;
+                    }
+                } catch (Exception e) {
+                    iLAMType = LandAirMech.LAM_STANDARD;
+                }
+                mech = new LandAirMech(iGyroType, iCockpitType, iLAMType);
             } else if (chassisConfig.indexOf("Tripod") != -1) {
                 mech = new TripodMech(iGyroType, iCockpitType);
             } else {
@@ -922,6 +932,11 @@ public class MtfFile implements IMechLoader {
 
         if (line.trim().toLowerCase().startsWith("myomer:")) {
             myomerType = line;
+            return true;
+        }
+        
+        if (line.trim().toLowerCase().startsWith("lam:")) {
+            lamType = line;
             return true;
         }
 

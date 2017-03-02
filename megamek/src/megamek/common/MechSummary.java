@@ -293,16 +293,19 @@ public class MechSummary implements Serializable {
     }
     
     public String getLevel(int year) {
+        if (m_sLevel.equals("F")) {
+            return m_sLevel;
+        }
         if (year >= m_nStdTechYear) {
-            if (m_sLevel.equals("0")) {
+            if (m_nType == TechConstants.T_INTRO_BOXSET) {
                 return m_sLevel;
             } else {
-                return String.valueOf(TechConstants.T_SIMPLE_STANDARD);
+                return String.valueOf(TechConstants.T_SIMPLE_STANDARD + 1);
             }
         } else if (year >= m_nAdvTechYear) {
-            return String.valueOf(TechConstants.T_SIMPLE_ADVANCED);
+            return String.valueOf(TechConstants.T_SIMPLE_ADVANCED + 1);
         } else {
-            return String.valueOf(TechConstants.T_SIMPLE_EXPERIMENTAL);
+            return String.valueOf(TechConstants.T_SIMPLE_EXPERIMENTAL + 1);
         }
     }
 

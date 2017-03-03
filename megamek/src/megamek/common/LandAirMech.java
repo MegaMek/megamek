@@ -115,23 +115,18 @@ public class LandAirMech extends BipedMech {
         this.lamType = lamType;
     }
     
+    private final static TechAdvancement[] TA_LAM = {
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2683, 2688, DATE_NONE, 3085)
+                .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
+                .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F), //standard
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 2781)
+                .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801)
+                .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_X, RATING_X) //bimodal
+    };
+    
     @Override
-    public void initTechAdvancement() {
-        techAdvancement = new TechAdvancement();
-        if (lamType == LAM_BIMODAL) {
-            techAdvancement.setTechBase(TECH_BASE_ALL);
-            techAdvancement.setISAdvancement(2680, 2684, DATE_NONE, 2781);
-            techAdvancement.setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801);
-            techAdvancement.setTechRating(RATING_E);
-            techAdvancement.setAvailability(RATING_E, RATING_F, RATING_X, RATING_X);
-        } else {
-            techAdvancement.setTechBase(TECH_BASE_ALL);
-            techAdvancement.setISAdvancement(2683, 2688, DATE_NONE, 3085);
-            techAdvancement.setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825);
-            techAdvancement.setTechRating(RATING_E);
-            techAdvancement.setAvailability(RATING_D, RATING_E, RATING_F, RATING_F);
-        }
-        
+    protected TechAdvancement getConstructionTechAdvancement() {
+        return TA_LAM[lamType];
     }
     
     @Override

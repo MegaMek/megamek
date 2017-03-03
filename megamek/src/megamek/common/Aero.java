@@ -222,20 +222,23 @@ public class Aero extends Entity {
         // need to set altitude to something different than entity
         altitude = 5;
     }
+    
+    protected static final TechAdvancement TA_ASF = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2470, 2490)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+    protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2520)
+            .setISApproximate(false, true, false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
 
     @Override
-    protected void initTechAdvancement() {
+    protected TechAdvancement getConstructionTechAdvancement() {
         if (isPrimitive()) {
-            techAdvancement = new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2520)
-                    .setISApproximate(false, true, false)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);            
+            return TA_ASF_PRIMITIVE;
         } else {
-            techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(DATE_NONE, 2470, 2490)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+            return TA_ASF;
         }
     }
     
@@ -261,7 +264,7 @@ public class Aero extends Entity {
     protected void addSystemTechAdvancement() {
         super.addSystemTechAdvancement();
         if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
-            ITechnology.aggregate(this, COCKPIT_TA[getCockpitType()], isMixedTech());
+            compositeTechLevel.addComponent(COCKPIT_TA[getCockpitType()]);
         }        
     }
     

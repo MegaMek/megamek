@@ -82,62 +82,75 @@ public class SupportTank extends Tank {
         }
         return false;
     }
+    
+    private static final TechAdvancement TA_HOVER = new TechAdvancement(TECH_BASE_ALL)
+            .setTechRating(RATING_C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
+            .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+    private static final TechAdvancement TA_HOVER_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setTechRating(RATING_C).setAdvancement(DATE_PS, DATE_ES, DATE_ES)
+            .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+    private static final TechAdvancement TA_NAVAL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+    private static final TechAdvancement TA_TRACKED = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+            .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+    private static final TechAdvancement TA_TRACKED_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_B)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+    private static final TechAdvancement TA_WHEELED_SMALL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+    private static final TechAdvancement TA_WHEELED_MEDIUM = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+    private static final TechAdvancement TA_WHEELED_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+    private static final TechAdvancement TA_WIGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+            .setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+    private static final TechAdvancement TA_WIGE_LARGE = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
 
-    protected void initTechAdvancement() {
+    @Override
+    protected TechAdvancement getConstructionTechAdvancement() {
         /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
          * be the same as Clan invasion era. */
-        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                .setAdvancement(DATE_PS, DATE_PS, DATE_PS);
         switch(getMovementMode()) {
         case HOVER:
-            techAdvancement.setTechRating(RATING_C)
-                .setAdvancement(DATE_PS, DATE_ES, DATE_ES);
             if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+                return TA_HOVER_LARGE;
             } else {
-                techAdvancement.setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+                return TA_HOVER;
             }
-            break;
         case NAVAL:
-        case SUBMARINE:
         case HYDROFOIL:
-            techAdvancement.setTechRating(RATING_A)
-                .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
-            break;
+        case SUBMARINE:
+            return TA_NAVAL;
         case TRACKED:
-            techAdvancement.setTechRating(RATING_B);
             if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-                techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+                return TA_TRACKED_LARGE;
             } else {
-                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+                return TA_TRACKED;
             }
-            break;            
         case WHEELED:
-            techAdvancement.setTechRating(RATING_A);
             if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+                return TA_WHEELED_LARGE;
             } else if (getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM_SUPPORT) {
-                techAdvancement.setAvailability(RATING_A, RATING_B, RATING_A, RATING_A);
+                return TA_WHEELED_MEDIUM;
             } else {
-                techAdvancement.setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+                return TA_WHEELED_SMALL;
             }
-            break;
         case WIGE:
-            techAdvancement.setTechRating(RATING_C);
             if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-                techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+                return TA_WIGE_LARGE;
             } else {
-                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
+                return TA_WIGE;
             }
-            break;
         default:
-            techAdvancement.setTechRating(RATING_B);
-            if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-                techAdvancement.setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
-            } else {
-                techAdvancement.setAvailability(RATING_B, RATING_C, RATING_B, RATING_B);
-            }
-            break;            
+            return TA_TRACKED; // average
         }
     }
 

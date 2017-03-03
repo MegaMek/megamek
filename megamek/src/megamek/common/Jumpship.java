@@ -77,21 +77,20 @@ public class Jumpship extends Aero {
         damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
     }
 
+    protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2300)
+            .setISApproximate(false, true)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F);
+    protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2100, 2200, DATE_NONE, 2500)
+            .setISApproximate(true, true, false, false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
+    
     @Override
-    protected void initTechAdvancement() {
-        if (isPrimitive()) {
-            techAdvancement = new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(2100, 2200, DATE_NONE, 2500)
-                    .setISApproximate(true, true, false, false)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
-        } else {
-            techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(DATE_NONE, 2300)
-                    .setISApproximate(false, true)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F);
-        }
+    protected TechAdvancement getConstructionTechAdvancement() {
+        return isPrimitive()? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
     }
     
     @Override

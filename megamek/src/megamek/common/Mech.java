@@ -2947,42 +2947,58 @@ public abstract class Mech extends Entity {
         }
     }
     
+    protected static final TechAdvancement TA_STANDARD_MECH = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2460, 2470, 2500)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+    protected static final TechAdvancement TA_SUPERHEAVY = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(3077, 3078)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F);
+    protected static final TechAdvancement TA_ULTRALIGHT = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2500, 2519, 3075)
+            .setApproximate(true, false, true)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E);
+    protected static final TechAdvancement TA_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2439, 2443, 2470, 2520)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F);
+    protected static final TechAdvancement TA_PRIMITIVE_INDUSTRIAL = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2300, 2350, 2425, 2520)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
+    protected static final TechAdvancement TA_INDUSTRIAL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2460, 2470, 2500)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+    protected static final TechAdvancement TA_TRIPOD = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2930, 2940).setISApproximate(true)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F);
+    protected static final TechAdvancement TA_TRIPOD_SUPERHEAVY = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2585, 2602).setISApproximate(true)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E);
+
+    
     @Override
-    protected void initTechAdvancement() {
+    protected TechAdvancement getConstructionTechAdvancement() {
         if (isSuperHeavy()) {
-            techAdvancement = new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(3077, 3078)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F);
+            return TA_SUPERHEAVY;
         } else if (getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
-            techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(2500, 2519, 3075)
-                    .setApproximate(true, false, true)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E);
+            return TA_ULTRALIGHT;
         } else if (isPrimitive()) {
             if (isIndustrial()) {
-                techAdvancement = new TechAdvancement(TECH_BASE_IS)
-                        .setISAdvancement(2300, 2350, 2425, 2520)
-                        .setTechRating(RATING_D)
-                        .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
+                return TA_PRIMITIVE_INDUSTRIAL;
             } else {
-                techAdvancement = new TechAdvancement(TECH_BASE_IS)
-                        .setISAdvancement(2439, 2443, 2470, 2520)
-                        .setTechRating(RATING_C)
-                        .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F);
+                return TA_PRIMITIVE;
             }
         } else {
             if (isIndustrial()) {
-                techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                        .setAdvancement(2460, 2470, 2500)
-                        .setTechRating(RATING_C)
-                        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+                return TA_INDUSTRIAL;
             } else {
-                techAdvancement = new TechAdvancement(TECH_BASE_ALL)
-                        .setAdvancement(2460, 2470, 2500)
-                        .setTechRating(RATING_D)
-                        .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+                return TA_STANDARD_MECH;
             }
         }
     }
@@ -3065,23 +3081,17 @@ public abstract class Mech extends Entity {
     protected void addSystemTechAdvancement() {
         super.addSystemTechAdvancement();
         if (getGyroType() > 0 && getGyroType() < GYRO_TA.length) {
-            ITechnology.aggregate(this, GYRO_TA[getGyroType()], isMixedTech());
+            compositeTechLevel.addComponent(GYRO_TA[getGyroType()]);
         }
         if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
-            ITechnology.aggregate(this, COCKPIT_TA[getCockpitType()], isMixedTech());
+            compositeTechLevel.addComponent(COCKPIT_TA[getCockpitType()]);
         }
         //Clan interface cockpit has higher tech rating
-        if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {
-            techAdvancement.setTechRating(Math.max(techAdvancement.getTechRating(), RATING_F));
-        }
+        //if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {
+        //    techAdvancement.setTechRating(Math.max(techAdvancement.getTechRating(), RATING_F));
+        //}
     }
     
-    @Override
-    public void recalculateTechAdvancement() {
-        super.recalculateTechAdvancement();
-        addSystemTechAdvancement();
-    }
-
     /**
      * This method will return the number of contiguous criticals in the given
      * location, starting at the given critical slot

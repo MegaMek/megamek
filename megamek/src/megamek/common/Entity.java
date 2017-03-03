@@ -196,7 +196,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected String model;
     protected int year = 3071;
     protected int techLevel;
-    protected TechAdvancement techAdvancement;
+    protected CompositeTechLevel compositeTechLevel;
     /**
      * Used by support vehicles to define the structural tech rating 
      * (TM pg 117).  The values should come from EquipmentType.RATING_A-X.
@@ -1037,21 +1037,32 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     
     @Override
     public TechAdvancement getTechAdvancement() {
-        return techAdvancement;
+        return null;
     }
     
     /**
      * Sets initial TechAdvancement without equipment based on construction options.
      */
-    protected abstract void initTechAdvancement();
+    protected void initTechAdvancement() {
+        compositeTechLevel = new CompositeTechLevel(this);
+        addSystemTechAdvancement();
+    }
+    
+    public CompositeTechLevel getCompositeTechLevel() {
+        return compositeTechLevel;
+    }
+    
+    /**
+     * return - the base construction option tech advancement
+     */
+    protected abstract TechAdvancement getConstructionTechAdvancement();
     
     /**
      * Resets techAdvancement to initial value and adjusts for all installed equipment.
      */
     public void recalculateTechAdvancement() {
         initTechAdvancement();
-        addSystemTechAdvancement();
-        getEquipment().forEach(m -> ITechnology.aggregate(this, m.getType(), isMixedTech()));
+        getEquipment().forEach(m -> compositeTechLevel.addComponent(m.getType()));
     }
 
     protected final static TechAdvancement TA_OMNI = new TechAdvancement(TECH_BASE_ALL)
@@ -1071,28 +1082,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     protected void addSystemTechAdvancement() {
         if (hasEngine()) {
-            ITechnology.aggregate(this, getEngine(), isMixedTech());
+            compositeTechLevel.addComponent(getEngine());
         }
         if (isOmni()) {
-            ITechnology.aggregate(this, TA_OMNI, isMixedTech());
+            compositeTechLevel.addComponent(TA_OMNI);
         }
         if (hasPatchworkArmor()) {
-            ITechnology.aggregate(this, TA_PATCHWORK_ARMOR, isMixedTech());
+            compositeTechLevel.addComponent(TA_PATCHWORK_ARMOR);
             for (int loc = 0; loc < locations(); loc++) {
-                ITechnology.aggregate(this, EquipmentType.getArmorTechAdvancement(armorType[loc],
-                        TechConstants.isClan(armorTechLevel[loc])), isMixedTech());
+                compositeTechLevel.addComponent(EquipmentType.getArmorTechAdvancement(armorType[loc],
+                        TechConstants.isClan(armorTechLevel[loc])));
             }
         } else {
-            ITechnology.aggregate(this, EquipmentType.getArmorTechAdvancement(armorType[0],
-                    TechConstants.isClan(armorTechLevel[0])), isMixedTech());
+            compositeTechLevel.addComponent(EquipmentType.getArmorTechAdvancement(armorType[0],
+                    TechConstants.isClan(armorTechLevel[0])));
         }
         if (isMixedTech()) {
-            ITechnology.aggregate(this, TA_MIXED_TECH, true);
+            compositeTechLevel.addComponent(TA_MIXED_TECH);
         }
-        ITechnology.aggregate(this, EquipmentType.getStructureTechAdvancement(structureType,
-                TechConstants.isClan(structureTechLevel)), isMixedTech());
-
-        techAdvancement.setMinYear(year);
+        compositeTechLevel.addComponent(EquipmentType.getStructureTechAdvancement(structureType,
+                TechConstants.isClan(structureTechLevel)));
     }
     
     public int getRecoveryTurn() {
@@ -1161,7 +1170,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setMixedTech(boolean mixedTech) {
         this.mixedTech = mixedTech;
-        recalculateTechAdvancement();
     }
 
     public boolean isDesignValid() {
@@ -3166,7 +3174,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             throws LocationFullException {
         mounted.setLocation(loc, rearMounted);
         equipmentList.add(mounted);
-        ITechnology.aggregate(this, mounted.getType(), isMixedTech());
+        compositeTechLevel.addComponent(mounted.getType());
 
         // add it to the proper sub-list
         if (mounted.getType() instanceof WeaponType) {

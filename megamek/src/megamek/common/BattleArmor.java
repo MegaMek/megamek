@@ -349,45 +349,40 @@ public class BattleArmor extends Infantry {
         isInitialized = true;
     }
     
-    protected void initTechAdvancement() {
-        techAdvancement = new TechAdvancement(TECH_BASE_ALL);
-        switch(getWeightClass()) {
-        case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
-            techAdvancement.setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
+    protected static final TechAdvancement[] TA_BATTLEARMOR = {
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
                 .setClanAdvancement(2710, DATE_NONE, 3058)
                 .setTechRating(RATING_D)
-                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D);
-            break;
-        case EntityWeightClass.WEIGHT_LIGHT:
-            techAdvancement.setISAdvancement(DATE_NONE, 3050, 3050)
+                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D), //ultralight
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3050, 3050)
                 .setClanAdvancement(2865, 2870, 2900)
                 .setClanApproximate(true, false, false)
                 .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
-            break;
-        case EntityWeightClass.WEIGHT_HEAVY:
-            techAdvancement.setISAdvancement(DATE_NONE, 3050, 3058)
-                .setClanAdvancement(2867, 2875, 3058)
-                .setClanApproximate(true, false, false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
-            break;
-        case EntityWeightClass.WEIGHT_ASSAULT:
-            techAdvancement.setISAdvancement(DATE_NONE, 3058, 3060)
-                .setClanAdvancement(2870, 2877, 3060)
-                .setClanApproximate(true, false, false)
-                .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
-            break;
-        case EntityWeightClass.WEIGHT_MEDIUM:
-        default:
-            techAdvancement.setISAdvancement(DATE_NONE, 3052, 3052)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D), //light
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3052, 3052)
                 .setClanAdvancement(2840, 2868, 2875)
                 .setClanApproximate(true, false, false)
                 .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_D);
-            break;
+                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_D), //medium
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3050, 3058)
+                .setClanAdvancement(2867, 2875, 3058)
+                .setClanApproximate(true, false, false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D), // heavy
+            new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3058, 3060)
+                .setClanAdvancement(2870, 2877, 3060)
+                .setClanApproximate(true, false, false)
+                .setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D) // assault
+    };
+    
+    @Override
+    protected TechAdvancement getConstructionTechAdvancement() {
+        int index = getWeightClass();
+        if (index < 0 || index >= TA_BATTLEARMOR.length) {
+            index = EntityWeightClass.WEIGHT_MEDIUM;
         }
+        return TA_BATTLEARMOR[index];
     }
 
     /**

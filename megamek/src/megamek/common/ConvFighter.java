@@ -62,12 +62,14 @@ public class ConvFighter extends Aero {
         return used;
     }
 
-    @Override
-    protected void initTechAdvancement() {
-        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+    protected static final TechAdvancement TA_CONV_FIGHTER = new TechAdvancement(TECH_BASE_ALL)
                 .setAdvancement(DATE_NONE, 2470, 2490)
                 .setTechRating(RATING_D)
                 .setAvailability(RATING_C, RATING_D, RATING_C, RATING_B);
+    
+    @Override
+    protected TechAdvancement getConstructionTechAdvancement() {
+        return TA_CONV_FIGHTER;
     }
     
     @Override

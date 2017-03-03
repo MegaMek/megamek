@@ -37,6 +37,7 @@ public class TechAdvancement {
     public static final int ERA_SW     = ITechnology.ERA_SW;
     public static final int ERA_CLAN   = ITechnology.ERA_CLAN;
     public static final int ERA_DA     = ITechnology.ERA_DA;
+    public static final int ERA_NUM    = ITechnology.ERA_NUM;
     
     public static final int RATING_A    = ITechnology.RATING_A;
     public static final int RATING_B    = ITechnology.RATING_B;
@@ -786,5 +787,4 @@ public class TechAdvancement {
             return ERA_DA;
         }
     }
-    
 }

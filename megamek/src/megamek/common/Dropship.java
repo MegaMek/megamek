@@ -38,21 +38,20 @@ public class Dropship extends SmallCraft {
     int escapePods = 0;
     int lifeBoats = 0;
 
+    protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_NONE, 2470, 2490)
+            .setISApproximate(false, true, false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+    protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
+            .setISApproximate(false, true, false, false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
+    
     @Override
-    protected void initTechAdvancement() {
-        if (isPrimitive()) {
-            techAdvancement = new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
-                    .setISApproximate(false, true, false, false)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
-        } else {
-            techAdvancement = new TechAdvancement(TECH_BASE_IS)
-                    .setAdvancement(DATE_NONE, 2470, 2490)
-                    .setISApproximate(false, true, false)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
-        }
+    protected TechAdvancement getConstructionTechAdvancement() {
+        return isPrimitive()? TA_DROPSHIP_PRIMITIVE : TA_DROPSHIP;
     }
     
     // what needs to go here?

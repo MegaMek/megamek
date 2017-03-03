@@ -343,19 +343,11 @@ public class TripodMech extends Mech {
     }
 
     @Override
-    protected void initTechAdvancement() {
+    protected TechAdvancement getConstructionTechAdvancement() {
         if (isSuperHeavy()) {
-            techAdvancement = new TechAdvancement(TECH_BASE_IS)
-                .setISAdvancement(2930, 2940)
-                .setISApproximate(true)
-                .setTechRating(RATING_D)
-                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F);
+            return TA_TRIPOD_SUPERHEAVY;
         } else {
-            techAdvancement = new TechAdvancement(TECH_BASE_IS)
-                    .setISAdvancement(2585, 2602)
-                    .setISApproximate(true)
-                    .setTechRating(RATING_D)
-                    .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E);
+            return TA_TRIPOD;
         }
     }
 

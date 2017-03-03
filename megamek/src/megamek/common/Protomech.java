@@ -335,35 +335,38 @@ public class Protomech extends Entity {
         return 0;
     }
     
+    private static final TechAdvancement TA_STANDARD_PROTOMECH = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(3055, 3059, 3060)
+            .setClanApproximate(true, false, false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+    private static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(3075, 3083, 3100)
+            .setClanApproximate(false, true, false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+    private static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(3075, 3083, 3100)
+            .setClanApproximate(false, true, false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+    /*
+    private static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN)
+            .setClanAdvancement(3075, 3084, 3100)
+            .setClanApproximate(false, true, false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
+            */
+
     @Override
-    protected void initTechAdvancement() {
+    protected TechAdvancement getConstructionTechAdvancement() {
         if (isQuad) {
-            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
-                    .setClanAdvancement(3075, 3083, 3100)
-                    .setClanApproximate(false, true, false)
-                    .setTechRating(RATING_F)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+            return TA_QUAD; 
         } else if (getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
-            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
-                    .setClanAdvancement(3075, 3083, 3100)
-                    .setClanApproximate(false, true, false)
-                    .setTechRating(RATING_F)
-                    .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+            return TA_ULTRA;
         } else {
-            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
-                    .setClanAdvancement(3055, 3059, 3060)
-                    .setClanApproximate(true, false, false)
-                    .setTechRating(RATING_F)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+            return TA_STANDARD_PROTOMECH;
         }
-        /* glider
-            techAdvancement = new TechAdvancement(TECH_BASE_CLAN)
-                    .setClanAdvancement(3075, 3084, 3100)
-                    .setClanApproximate(false, true, false)
-                    .setTechRating(RATING_F)
-                    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
-        */            
-        
     }
 
     /**
@@ -1113,7 +1116,7 @@ public class Protomech extends Entity {
                         }
                     }
             }
-            ITechnology.aggregate(this, mounted.getType(), isMixedTech());
+            compositeTechLevel.addComponent(mounted.getType());
         } else {
             super.addEquipment(mounted, loc, rearMounted);
         }

@@ -126,6 +126,13 @@ public interface ITechnology {
                 || year < getReintroductionDate());        
     }
     
+    default boolean isAvailableIn(int year, boolean clan) {
+        return year >= getIntroductionDate(clan) && !isExtinct(year, clan);
+    }
+    default boolean isAvailableIn(int year) {
+        return year >= getIntroductionDate() && !isExtinct(year);
+    }
+    
     /**
      * Adjusts availability for certain combinations of era and IS/Clan use
      * @param era - one of the four tech eras

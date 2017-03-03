@@ -385,8 +385,8 @@ public class MechSummaryCache {
         e.setUseGeometricBV(false);
         e.setUseReducedOverheatModifierBV(false);
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
-        ms.setAdvancedYear(e.getTechAdvancement().getProductionDate(e.isClan()));
-        ms.setStandardYear(e.getTechAdvancement().getCommonDate(e.isClan()));
+        ms.setAdvancedYear(e.getProductionDate(e.isClan()));
+        ms.setStandardYear(e.getCommonDate(e.isClan()));
         ms.setCost((long) e.getCost(false));
         ms.setUnloadedCost(((long) e.getCost(true)));
         ms.setAlternateCost((int) e.getAlternateCost());

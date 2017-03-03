@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @author Neoancient
  *
  */
-public class CompositeTechLevel {
+public class CompositeTechLevel implements ITechnology {
 
     private boolean clan;
     private boolean mixed;
@@ -49,18 +49,18 @@ public class CompositeTechLevel {
         int protoDate = mixed?initialTA.getPrototypeDate() : initialTA.getPrototypeDate(clan);
         int prodDate = mixed?initialTA.getProductionDate() : initialTA.getProductionDate(clan);
         int commonDate = mixed?initialTA.getCommonDate() : initialTA.getCommonDate(clan);
-        if (commonDate == TechAdvancement.DATE_NONE) {
+        if (commonDate == DATE_NONE) {
             standard = null;
         } else {
             standard = Math.max(commonDate, introYear);
         }
-        if (prodDate == TechAdvancement.DATE_NONE
+        if (prodDate == DATE_NONE
                 || (standard != null && standard <= introYear)) {
             advanced = null;
         } else {
             advanced = Math.max(prodDate, introYear);
         }
-        if (protoDate == TechAdvancement.DATE_NONE
+        if (protoDate == DATE_NONE
                 || (advanced != null && advanced <= introYear)
                 || (standard != null && standard <= introYear)) {
             experimental = null;
@@ -70,9 +70,9 @@ public class CompositeTechLevel {
         addExtinctionRange(mixed? initialTA.getExtinctionDate() : initialTA.getExtinctionDate(clan),
                 mixed? initialTA.getReintroductionDate() : initialTA.getReintroductionDate(clan));
         techRating = initialTA.getTechRating();
-        availability = new int[TechAdvancement.ERA_NUM];
-        for (int era = 0; era < TechAdvancement.ERA_NUM; era++) {
-            availability[era] = initialTA.getBaseEraAvailability(era);
+        availability = new int[ERA_NUM];
+        for (int era = 0; era < ERA_NUM; era++) {
+            availability[era] = initialTA.getBaseAvailability(era);
         }
     }
     
@@ -90,7 +90,7 @@ public class CompositeTechLevel {
         if (experimental == null) {
             return "-";
         }
-        int end = TechAdvancement.DATE_NONE;
+        int end = DATE_NONE;
         if (advanced != null) {
             end = Math.max(experimental, advanced - 1);
         } else if (standard != null) {
@@ -106,7 +106,7 @@ public class CompositeTechLevel {
         if (advanced == null) {
             return "-";
         }
-        int end = TechAdvancement.DATE_NONE;
+        int end = DATE_NONE;
         if (standard != null) {
             end = Math.max(advanced, standard - 1);
         }
@@ -126,7 +126,8 @@ public class CompositeTechLevel {
     /**
      * @return - the range(s) of dates when the tech is extinct
      */
-    public String getExtinctRange() {
+    @Override
+    public String getExtinctionRange() {
         if (extinct.isEmpty()) {
             return "-";
         }
@@ -135,30 +136,22 @@ public class CompositeTechLevel {
     
     /**
      * Adjust the dates for various tech levels to account for the tech advancement of a new component.
-     * @param tech - the new component
+     * @param tech - the advancement for the new component
      */
     public void addComponent(ITechnology tech) {
-        addComponent(tech.getTechAdvancement());
-    }
-    
-    /**
-     * Adjust the dates for various tech levels to account for the tech advancement of a new component.
-     * @param ta - the advancement for the new component
-     */
-    public void addComponent(TechAdvancement ta) {
-        int protoDate = mixed?ta.getPrototypeDate() : ta.getPrototypeDate(clan);
-        int prodDate = mixed?ta.getProductionDate() : ta.getProductionDate(clan);
-        int commonDate = mixed?ta.getCommonDate() : ta.getCommonDate(clan);
+        int protoDate = mixed?tech.getPrototypeDate() : tech.getPrototypeDate(clan);
+        int prodDate = mixed?tech.getProductionDate() : tech.getProductionDate(clan);
+        int commonDate = mixed?tech.getCommonDate() : tech.getCommonDate(clan);
         
         //If this record is blank we ignore it
-        if (protoDate == TechAdvancement.DATE_NONE
-                && prodDate == TechAdvancement.DATE_NONE
-                && commonDate == TechAdvancement.DATE_NONE) {
+        if (protoDate == DATE_NONE
+                && prodDate == DATE_NONE
+                && commonDate == DATE_NONE) {
             return;
         }
 
         //No common date means minimum advanced; no common or production date means only experimental
-        if (commonDate == TechAdvancement.DATE_NONE) {
+        if (commonDate == DATE_NONE) {
             if (standard != null) {
                 if (advanced == null) {
                     advanced = standard;
@@ -167,7 +160,7 @@ public class CompositeTechLevel {
                 }
                 standard = null;
             }
-            if (prodDate == TechAdvancement.DATE_NONE) {
+            if (prodDate == DATE_NONE) {
                 if (advanced != null) {
                     if (experimental == null) {
                         experimental = advanced;
@@ -179,7 +172,7 @@ public class CompositeTechLevel {
             }
         }
         
-        if (protoDate != TechAdvancement.DATE_NONE) {
+        if (protoDate != DATE_NONE) {
             /* If there was no previous prototype stage, part of either the advanced or standard
              * tech ranges may need to be converted to experimental
              */
@@ -195,7 +188,7 @@ public class CompositeTechLevel {
             }
         }
         
-        if (prodDate != TechAdvancement.DATE_NONE) {
+        if (prodDate != DATE_NONE) {
             /*If all previous tech had no advanced date but had a common date (either started common or
              * went straight from prototype to common), a chunk of the previous standard range can
              * become advanced.
@@ -215,24 +208,24 @@ public class CompositeTechLevel {
             standard = Math.max(standard, commonDate);
         }
         
-        addExtinctionRange(mixed?ta.getExtinctionDate() : ta.getExtinctionDate(clan),
-                mixed?ta.getReintroductionDate() : ta.getReintroductionDate(clan));
+        addExtinctionRange(mixed?tech.getExtinctionDate() : tech.getExtinctionDate(clan),
+                mixed?tech.getReintroductionDate() : tech.getReintroductionDate(clan));
         
-        introTech &= ta.isIntroLevel();
-        unofficial |= ta.isUnofficial();
-        techRating = Math.max(techRating, ta.getTechRating());
-        for (int era = 0; era < TechAdvancement.ERA_NUM; era++) {
-            int av = ta.getBaseEraAvailability(era);
-            if (clan && era == ITechnology.ERA_SW
-                    && ta.getTechBase() == TechAdvancement.TECH_BASE_IS
-                    && TechAdvancement.getTechEra(ta.getIntroductionDate()) == ITechnology.ERA_SW) {
-                av = ITechnology.RATING_X; 
+        introTech &= tech.isIntroLevel();
+        unofficial |= tech.isUnofficial();
+        techRating = Math.max(techRating, tech.getTechRating());
+        for (int era = 0; era < ERA_NUM; era++) {
+            int av = tech.getBaseAvailability(era);
+            if (clan && era == ERA_SW
+                    && !tech.isClan()
+                    && ITechnology.getTechEra(tech.getIntroductionDate()) == ERA_SW) {
+                av = RATING_X; 
             }
-            if (!clan && ta.getTechBase() == TechAdvancement.TECH_BASE_CLAN) {
-                if (era == ITechnology.ERA_SW) {
-                    av = ITechnology.RATING_X;
+            if (!clan && tech.isClan()) {
+                if (era == ERA_SW) {
+                    av = RATING_X;
                 } else {
-                    av = Math.min(av + 1, ITechnology.RATING_X);
+                    av = Math.min(av + 1, RATING_X);
                 }
             }
             availability[era] = Math.max(availability[era], av);
@@ -264,26 +257,6 @@ public class CompositeTechLevel {
     }
     
     /**
-     * @return - the highest tech rating of all components
-     */
-    public int getTechRating() {
-        return techRating;
-    }
-    
-    public String getFullRatingName() {
-        String rating = EquipmentType.getRatingName(getTechRating());
-        rating += "/";
-        rating += EquipmentType.getRatingName(availability[ITechnology.ERA_SL]);
-        rating += "-";
-        rating += EquipmentType.getRatingName(availability[ITechnology.ERA_SW]);
-        rating += "-";
-        rating += EquipmentType.getRatingName(availability[ITechnology.ERA_CLAN]);
-        rating += "-";
-        rating += EquipmentType.getRatingName(availability[ITechnology.ERA_DA]);
-        return rating;        
-    }    
-    
-    /**
      * Adds new range to collection of extinction ranges then checks for overlapping ranges
      * and merges them.
      * 
@@ -291,8 +264,8 @@ public class CompositeTechLevel {
      * @param end - reintroduction date of new extinction range, or DATE_NONE if never reintroduced
      */
     private void addExtinctionRange(int start, int end) {
-        if (start == TechAdvancement.DATE_NONE
-                || (end != TechAdvancement.DATE_NONE && end <= introYear)) {
+        if (start == DATE_NONE
+                || (end != DATE_NONE && end <= introYear)) {
             return;
         }
         start = Math.max(introYear, start);
@@ -324,7 +297,7 @@ public class CompositeTechLevel {
         
         DateRange(int start, int end) {
             this.start = start;
-            this.end = end == TechAdvancement.DATE_NONE? null : end;
+            this.end = end == DATE_NONE? null : end;
         }
         
         DateRange(int start) {
@@ -333,9 +306,9 @@ public class CompositeTechLevel {
         }
         
         String formatYear(int year, boolean approximate) {
-            if (year == ITechnology.DATE_PS) {
+            if (year == DATE_PS) {
                 return "PS";
-            } else if (year == ITechnology.DATE_ES) {
+            } else if (year == DATE_ES) {
                 return "ES";
             }
             if (approximate) {
@@ -371,5 +344,76 @@ public class CompositeTechLevel {
         public int compareTo(DateRange other) {
             return start.compareTo(other.start);
         }
+    }
+
+    @Override
+    public boolean isClan() {
+        return clan;
+    }
+
+    @Override
+    public boolean isMixedTech() {
+        return mixed;
+    }
+
+    @Override
+    public boolean isIntroLevel() {
+        return introTech;
+    }
+
+    @Override
+    public boolean isUnofficial() {
+        return unofficial;
+    }
+
+    @Override
+    public int getIntroductionDate() {
+        return introYear;
+    }
+
+    @Override
+    public int getPrototypeDate() {
+        return experimental == null? DATE_NONE : experimental;
+    }
+
+    @Override
+    public int getProductionDate() {
+        return advanced == null? DATE_NONE : advanced;
+    }
+
+    @Override
+    public int getCommonDate() {
+        return standard == null? DATE_NONE : standard;
+    }
+
+    @Override
+    public int getExtinctionDate() {
+        if (extinct.isEmpty()) {
+            return DATE_NONE;
+        } else {
+            return extinct.get(0).start;
+        }
+    }
+
+    @Override
+    public int getReintroductionDate() {
+        if (extinct.isEmpty()) {
+            return DATE_NONE;
+        } else {
+            return extinct.get(0).end == null? DATE_NONE : extinct.get(0).end;
+        }
+    }
+
+    @Override
+    public int getTechRating() {
+        return techRating;
+    }
+
+    @Override
+    public int getBaseAvailability(int era) {
+        if (era < 0 || era > availability.length) {
+            return RATING_X;
+        }
+        return availability[era];
     }
 }

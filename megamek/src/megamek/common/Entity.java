@@ -1035,11 +1035,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         recalculateTechAdvancement();
     }
     
-    @Override
-    public TechAdvancement getTechAdvancement() {
-        return null;
-    }
-    
     /**
      * Sets initial TechAdvancement without equipment based on construction options.
      */
@@ -1048,8 +1043,60 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         addSystemTechAdvancement();
     }
     
-    public CompositeTechLevel getCompositeTechLevel() {
-        return compositeTechLevel;
+
+    @Override
+    public boolean isIntroLevel() {
+        return compositeTechLevel.isIntroLevel();
+    }
+
+    @Override
+    public boolean isUnofficial() {
+        return compositeTechLevel.isUnofficial();
+    }
+
+    @Override
+    public int getIntroductionDate() {
+        return year;
+    }
+
+    @Override
+    public int getPrototypeDate() {
+        return compositeTechLevel.getPrototypeDate();
+    }
+
+    @Override
+    public int getProductionDate() {
+        return compositeTechLevel.getProductionDate();
+    }
+
+    @Override
+    public int getCommonDate() {
+        return compositeTechLevel.getCommonDate();
+    }
+
+    @Override
+    public int getExtinctionDate() {
+        return compositeTechLevel.getExtinctionDate();
+    }
+
+    @Override
+    public int getReintroductionDate() {
+        return compositeTechLevel.getReintroductionDate();
+    }
+
+    @Override
+    public int getTechRating() {
+        return compositeTechLevel.getTechRating();
+    }
+
+    @Override
+    public int getBaseAvailability(int era) {
+        return compositeTechLevel.getBaseAvailability(era);
+    }
+    
+    @Override
+    public String getExtinctionRange() {
+        return compositeTechLevel.getExtinctionRange();
     }
     
     /**

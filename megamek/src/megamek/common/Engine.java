@@ -830,7 +830,6 @@ public class Engine implements Serializable, ITechnology {
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
             .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
 
-    @Override
     public TechAdvancement getTechAdvancement() {
         switch(engineType) {
         case COMBUSTION_ENGINE:
@@ -1170,5 +1169,95 @@ public class Engine implements Serializable, ITechnology {
 
     public int getFlags() {
         return engineFlags;
+    }
+
+    @Override
+    public boolean isClan() {
+        return getTechAdvancement().isClan();
+    }
+
+    @Override
+    public boolean isMixedTech() {
+        return getTechAdvancement().isMixedTech();
+    }
+
+    @Override
+    public boolean isIntroLevel() {
+        return getTechAdvancement().isMixedTech();
+    }
+
+    @Override
+    public boolean isUnofficial() {
+        return getTechAdvancement().isMixedTech();
+    }
+
+    @Override
+    public int getIntroductionDate(boolean clan) {
+        return getTechAdvancement().getIntroductionDate(clan);
+    }
+
+    @Override
+    public int getIntroductionDate() {
+        return getTechAdvancement().getIntroductionDate();
+    }
+
+    @Override
+    public int getPrototypeDate(boolean clan) {
+        return getTechAdvancement().getPrototypeDate(clan);
+    }
+
+    @Override
+    public int getPrototypeDate() {
+        return getTechAdvancement().getPrototypeDate();
+    }
+
+    @Override
+    public int getProductionDate(boolean clan) {
+        return getTechAdvancement().getProductionDate(clan);
+    }
+
+    @Override
+    public int getProductionDate() {
+        return getTechAdvancement().getProductionDate();
+    }
+
+    @Override
+    public int getCommonDate(boolean clan) {
+        return getTechAdvancement().getCommonDate(clan);
+    }
+
+    @Override
+    public int getCommonDate() {
+        return getTechAdvancement().getCommonDate();
+    }
+
+    @Override
+    public int getExtinctionDate(boolean clan) {
+        return getTechAdvancement().getExtinctionDate(clan);
+    }
+
+    @Override
+    public int getExtinctionDate() {
+        return getTechAdvancement().getExtinctionDate();
+    }
+
+    @Override
+    public int getReintroductionDate(boolean clan) {
+        return getTechAdvancement().getReintroductionDate(clan);
+    }
+
+    @Override
+    public int getReintroductionDate() {
+        return getTechAdvancement().getReintroductionDate();
+    }
+
+    @Override
+    public int getTechRating() {
+        return getTechAdvancement().getTechRating();
+    }
+
+    @Override
+    public int getBaseAvailability(int era) {
+        return getTechAdvancement().getBaseAvailability(era);
     }
 } // End class Engine

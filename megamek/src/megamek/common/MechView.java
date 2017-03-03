@@ -148,14 +148,14 @@ public class MechView {
                     Messages.getString("MechView.Level"), Messages.getString("MechView.Era"))); //$NON-NLS-1$//
             sHead.append(String.format("<tr><td>%s</td><td align='center'>%s</td></tr>", //$NON-NLS-1$//
                     TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_EXPERIMENTAL),
-                    entity.getCompositeTechLevel().getExperimentalRange()));
+                    entity.getExperimentalRange()));
             sHead.append(String.format("<tr><td>%s</td><td align='center'>%s</td></tr>", //$NON-NLS-1$//
                     TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_ADVANCED),
-                    entity.getCompositeTechLevel().getAdvancedRange()));
+                    entity.getAdvancedRange()));
             sHead.append(String.format("<tr><td>%s</td><td align='center'>%s</td></tr>", //$NON-NLS-1$//
                     TechConstants.getSimpleLevelName(TechConstants.T_SIMPLE_STANDARD),
-                    entity.getCompositeTechLevel().getStandardRange()));
-            String extinctRange = entity.getCompositeTechLevel().getExtinctRange();
+                    entity.getStandardRange()));
+            String extinctRange = entity.getExtinctionRange();
             if (extinctRange.length() > 1) {
                 sHead.append(String.format("<tr><td>%s</td><td align='center'>%s", //$NON-NLS-1$//
                         Messages.getString("MechView.Extinct"), //$NON-NLS-1$//
@@ -167,7 +167,7 @@ public class MechView {
 //        }
             
         sHead.append(Messages.getString("MechView.TechRating")).append(": ") //$NON-NLS-1$//
-            .append(entity.getCompositeTechLevel().getFullRatingName())
+            .append(entity.getFullRatingName())
             .append("<br/>");
             
         if (!isInf) {

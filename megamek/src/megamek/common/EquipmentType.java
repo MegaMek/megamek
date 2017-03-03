@@ -140,9 +140,6 @@ public class EquipmentType implements ITechnology {
     public static final double POINT_MULTIPLIER_CLAN_FF = 1.2;
     public static final double POINT_ADDITION_CLAN_FF = 0.08;
 
-    public static final String[] ratingNames = { "A", "B", "C", "D", "E", "F", "F*",
-            "X" };
-
     protected String name = null;
 
     // Short name for RS Printing
@@ -775,14 +772,6 @@ public class EquipmentType implements ITechnology {
         return cost;
     }
 
-    public static String getRatingName(int rating) {
-        if ((rating < 0) || (rating > ratingNames.length)) {
-            return "U";
-        }
-        return ratingNames[rating];
-    }
-    
-    @Override
     public TechAdvancement getTechAdvancement() {
         return techAdvancement;
     }
@@ -791,77 +780,38 @@ public class EquipmentType implements ITechnology {
         return techAdvancement.getTechRating();
     }
 
-    public String getTechRatingName() {
-        return EquipmentType.getRatingName(getTechRating());
-    }
-
-    public String getFullRatingName() {
-        String rating = getTechRatingName();
-        rating += "/";
-        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_SL));
-        rating += "-";
-        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_SW));
-        rating += "-";
-        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_CLAN));
-        rating += "-";
-        rating += EquipmentType.getRatingName(techAdvancement.getBaseEraAvailability(ERA_DA));
-        return rating;
-    }
-    
-    public String getFullRatingName(boolean clan) {
-        String rating = getTechRatingName();
-        rating += "/";
-        rating += techAdvancement.getEraAvailabilityName(ERA_SL, clan);
-        rating += "-";
-        rating += techAdvancement.getEraAvailabilityName(ERA_SW, clan);
-        rating += "-";
-        rating += techAdvancement.getEraAvailabilityName(ERA_CLAN, clan);
-        rating += "-";
-        rating += techAdvancement.getEraAvailabilityName(ERA_DA, clan);
-        return rating;        
-    }
-    
-    public String getEraAvailabilityName(int era, boolean clan) {
-        return techAdvancement.getEraAvailabilityName(era, clan);
-    }
-
     /**
-     * @deprecated Use {@link #getAvailability(int,boolean) getAvailability to get availability
-     *      for IS/Clan in a given year, or {@link #getBaseEraAvailability(int) getBaseEraAvailability}
+     * @deprecated Use {@link #calcEraAvailability(int,boolean) calcEraAvailability to get availability
+     *      for IS/Clan in a given year, or {@link #getBaseAvailability(int) getBaseAvailability}
      *      to get the base code for the era type, or getBaseEraAvailability to get the base code.
      */
     @Deprecated
     public int getAvailability(int era) {
-        return techAdvancement.getBaseEraAvailability(era);
+        return calcEraAvailability(era);
     }
 
     /**
-     * @deprecated Use {@link #getAvailabilityName(int,boolean) getAvailabilityName}
+     * @deprecated Use {@link #getYearAvailabilityName(int,boolean) getYearAvailabilityName}
      *      to get availability for IS or Clan in a specific year,
-     *      or {@link #getEraAvailabilityName(int) getEraAvailability to get code(s) for the era.
+     *      or {@link #getEraAvailabilityName(int) getEraAvailabilityName to get code(s) for the era.
      */
     @Deprecated
     public String getAvailabilityName(int era) {
-        int avail = getAvailability(era);
-        return EquipmentType.getRatingName(avail);
+        return getEraAvailabilityName(era);
+    }
+    
+    public boolean isClan() {
+        return techAdvancement.getTechBase() == TECH_BASE_CLAN;
+    }
+    
+    public boolean isMixedTech() {
+        return techAdvancement.getTechBase() == TECH_BASE_ALL;
     }
     
     public int getTechBase() {
         return techAdvancement.getTechBase();
     }
     
-    public int getIntroductionDate() {
-        return techAdvancement.getIntroductionDate();
-    }
-
-    public int getExtinctionDate() {
-        return techAdvancement.getExtinctionDate();
-    }
-
-    public int getReintroductionDate() {
-        return techAdvancement.getReintroductionDate();
-    }
-
     public static String getEquipDateAsString(int date) {
         if (date == DATE_NONE) {
             return "-";
@@ -875,25 +825,34 @@ public class EquipmentType implements ITechnology {
         return !techAdvancement.isExtinct(year);
     }
     
-    public int getAvailability(int year, boolean clan) {
-        return techAdvancement.getAvailability(year, clan);
-    }
-
-    public String getAvailabilityName(int year, boolean clan) {
-        int avail = getAvailability(year, clan);
-        return EquipmentType.getRatingName(avail);
-    }
-
+    @Override
     public int getIntroductionDate(boolean clan) {
         return techAdvancement.getIntroductionDate(clan);
     }
+    
+    @Override
+    public int getIntroductionDate() {
+        return techAdvancement.getIntroductionDate();
+    }
 
+    @Override
     public int getExtinctionDate(boolean clan) {
         return techAdvancement.getExtinctionDate(clan);
     }
 
+    @Override
+    public int getExtinctionDate() {
+        return techAdvancement.getExtinctionDate();
+    }
+
+    @Override
     public int getReintroductionDate(boolean clan) {
         return techAdvancement.getReintroductionDate(clan);
+    }
+
+    @Override
+    public int getReintroductionDate() {
+        return techAdvancement.getReintroductionDate();
     }
 
     public boolean isAvailableIn(int year, boolean clan) {
@@ -1116,5 +1075,35 @@ public class EquipmentType implements ITechnology {
         }
 
         return shortName;
+    }
+
+    @Override
+    public boolean isIntroLevel() {
+        return techAdvancement.isIntroLevel();
+    }
+
+    @Override
+    public boolean isUnofficial() {
+        return techAdvancement.isUnofficial();
+    }
+
+    @Override
+    public int getPrototypeDate() {
+        return techAdvancement.getPrototypeDate();
+    }
+
+    @Override
+    public int getProductionDate() {
+        return techAdvancement.getProductionDate();
+    }
+
+    @Override
+    public int getCommonDate() {
+        return techAdvancement.getCommonDate();
+    }
+
+    @Override
+    public int getBaseAvailability(int era) {
+        return techAdvancement.getBaseAvailability(era);
     }
 }

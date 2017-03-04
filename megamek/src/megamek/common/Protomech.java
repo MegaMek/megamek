@@ -336,24 +336,24 @@ public class Protomech extends Entity {
     }
     
     private static final TechAdvancement TA_STANDARD_PROTOMECH = new TechAdvancement(TECH_BASE_CLAN)
-            .setClanAdvancement(3055, 3059, 3060)
-            .setClanApproximate(true, false, false)
+            .setClanAdvancement(3055, 3059, 3060).setClanApproximate(true, false, false)
+            .setPrototypeFactions(F_CSJ).setProductionFactions(F_CSJ)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
     private static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN)
-            .setClanAdvancement(3075, 3083, 3100)
-            .setClanApproximate(false, true, false)
+            .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
+            .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCC)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
     private static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN)
-            .setClanAdvancement(3075, 3083, 3100)
-            .setClanApproximate(false, true, false)
+            .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
+            .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCY)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
     /*
     private static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN)
-            .setClanAdvancement(3075, 3084, 3100)
-            .setClanApproximate(false, true, false)
+            .setClanAdvancement(3075, 3084, 3100).setClanApproximate(false, true, false)
+            .setPrototypeFactions(F_CLAN).setProductionFactions(F_CSR)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
             */

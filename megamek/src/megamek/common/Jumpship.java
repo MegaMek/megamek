@@ -78,14 +78,13 @@ public class Jumpship extends Aero {
     }
 
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_NONE, 2300)
-            .setISApproximate(false, true)
-            .setTechRating(RATING_D)
+            .setAdvancement(DATE_NONE, 2300).setISApproximate(false, true)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F);
     protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(2100, 2200, DATE_NONE, 2500)
             .setISApproximate(true, true, false, false)
-            .setTechRating(RATING_D)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
     
     @Override

@@ -224,14 +224,12 @@ public class Aero extends Entity {
     }
     
     protected static final TechAdvancement TA_ASF = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_NONE, 2470, 2490)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+            .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
     protected static final TechAdvancement TA_ASF_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2520)
-            .setISApproximate(false, true, false)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
+            .setISApproximate(false, true, false).setProductionFactions(F_TA)
+            .setTechRating(RATING_D).setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
 
     @Override
     protected TechAdvancement getConstructionTechAdvancement() {
@@ -244,19 +242,23 @@ public class Aero extends Entity {
     
     protected static final TechAdvancement[] COCKPIT_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2460, 2470, 2491)
-                .setApproximate(true, false, false).setTechRating(RATING_C)
+                .setApproximate(true, false, false).setPrototypeFactions(F_TH)
+                .setPrototypeFactions(F_TH).setTechRating(RATING_C)
                 .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C), //Standard            
             new TechAdvancement(TECH_BASE_IS).setISAdvancement(3065, 3070, 3080)
                 .setClanAdvancement(DATE_NONE, DATE_NONE, 3080)
-                .setISApproximate(true, false, false).setTechRating(RATING_E)
+                .setISApproximate(true, false, false).setPrototypeFactions(F_WB)
+                .setPrototypeFactions(F_WB, F_CSR).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D), //Small            
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
                 .setISApproximate(true, false, false, true, true)
                 .setClanAdvancement(2625, 2631).setClanApproximate(true, false)
-                .setClanApproximate(true, false).setTechRating(RATING_D)
+                .setClanApproximate(true, false).setPrototypeFactions(F_TH)
+                .setPrototypeFactions(F_TH).setReintroductionFactions(F_FS).setTechRating(RATING_D)
                 .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D), //Cockpit command console
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(DATE_ES, 2300, DATE_NONE, 2520)
-                .setISApproximate(false, true, false, false).setTechRating(RATING_C)
+                .setISApproximate(false, true, false, false)
+                .setPrototypeFactions(F_TA).setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F), //Primitive            
     };
     

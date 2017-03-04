@@ -44,6 +44,69 @@ public interface ITechnology {
     public static final int DATE_PS = 1950;
     public static final int DATE_ES = 2100;
     
+    //codes for recording which factions had access to technology at various points
+    public static final int F_IS = 0;
+    public static final int F_CC = 1;
+    public static final int F_CF = 2;
+    public static final int F_CP = 3;
+    public static final int F_CS = 4;
+    public static final int F_DC = 5;
+    public static final int F_EI = 6;
+    public static final int F_FR = 7;
+    public static final int F_FS = 8;
+    public static final int F_FW = 9;
+    public static final int F_LC = 10;
+    public static final int F_MC = 11;
+    public static final int F_MH = 12;
+    public static final int F_OA = 13;
+    public static final int F_TA = 14;
+    public static final int F_TC = 15;
+    public static final int F_TH = 16;
+    public static final int F_RD = 17;
+    public static final int F_RS = 18;
+    public static final int F_RA = 19;
+    public static final int F_RW = 20;
+    public static final int F_WB = 21;
+    public static final int F_MERC = 22;
+    public static final int F_CLAN = 23;
+    public static final int F_CBR = 24;
+    public static final int F_CBS = 25;
+    public static final int F_CCY = 26;
+    public static final int F_CCC = 27;
+    public static final int F_CFM = 28;
+    public static final int F_CGB = 29;
+    public static final int F_CGS = 30;
+    public static final int F_CHH = 31;
+    public static final int F_CIH = 32;
+    public static final int F_CJF = 33;
+    public static final int F_CMN = 34;
+    public static final int F_CNC = 35;
+    public static final int F_CSF = 36;
+    public static final int F_CSJ = 37;
+    public static final int F_CSR = 38;
+    public static final int F_CSV = 39;
+    public static final int F_CSA = 40;
+    public static final int F_CWM = 41;
+    public static final int F_CWF = 42;
+    public static final int F_CWX = 43;
+    public static final int F_CWV = 44;
+    
+    //display codes using values from IOps
+    public static final String[] IO_FACTION_CODES = {
+            "IS", "CC", "CF", "CP", "CS", "DC", "EI", "FR", "FS", "FW", "LC", "MC",
+            "MH", "OA", "TA", "TC", "TH", "RD", "RS", "RA", "RW", "WB", "Merc", 
+            "Clan", "CBR", "CBS", "CCY", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMN",
+            "CNC", "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV" 
+    };
+    
+    //faction lookup names for MHQ
+    public static final String[] MM_FACTION_CODES = {
+            "IS", "CC", "CIR", "CDP", "CS", "DC", "CEI", "FRR", "FS", "FWL", "LA", "MOC",
+            "MH", "OA", "TA", "TC", "TH", "RD", "ROS", "RA", "RWR", "WOB", "MERC",
+            "CLAN", "CB", "CBS", "CCO", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMG",
+            "CNC", "CDS", "CSJ", "CSR", "CSV", "CSA", "CWI", "CW", "CWIE", "CWOV" 
+    };
+    
     boolean isClan();
     boolean isMixedTech();
     boolean isIntroLevel();

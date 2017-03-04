@@ -35,6 +35,10 @@ public class TechAdvancement implements ITechnology {
     private int[] clanAdvancement = new int[5];
     private boolean[] isApproximate = new boolean[5];
     private boolean[] clanApproximate = new boolean[5];
+    private int[] prototypeFactions = {};
+    private int[] productionFactions = {};
+    private int[] extinctionFactions = {};
+    private int[] reintroductionFactions = {};
     private boolean isIntroLevel = false; //Whether RULES_STANDARD should be considered T_INTRO_BOXSET.
     private boolean unofficial = false;
     private int techRating = RATING_C;
@@ -93,6 +97,42 @@ public class TechAdvancement implements ITechnology {
         setISApproximate(approx);
         setClanApproximate(approx);
         return this;
+    }
+    
+    public TechAdvancement setPrototypeFactions(int... factions) {
+        prototypeFactions = factions;
+        return this;
+    }
+    
+    public int[] getPrototypeFactions() {
+        return prototypeFactions;
+    }
+
+    public TechAdvancement setProductionFactions(int... factions) {
+        productionFactions = factions;
+        return this;
+    }
+
+    public int[] getProductionFactions() {
+        return productionFactions;
+    }
+
+    public TechAdvancement setExtinctionFactions(int... factions) {
+        extinctionFactions = factions;
+        return this;
+    }
+
+    public int[] getExtinctionFactions() {
+        return extinctionFactions;
+    }
+
+    public TechAdvancement setReintroductionFactions(int... factions) {
+        reintroductionFactions = factions;
+        return this;
+    }
+
+    public int[] getReintroductionFactions() {
+        return reintroductionFactions;
     }
 
     public int getPrototypeDate(boolean clan) {

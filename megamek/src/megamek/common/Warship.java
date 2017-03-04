@@ -48,9 +48,9 @@ public class Warship extends Jumpship {
 
     private static final TechAdvancement TA_WARSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(2295, 2305, DATE_NONE, 2950, 3050)
-            .setClanAdvancement(2295, 2305)
-            .setApproximate(true, false, false, false, false)
-            .setTechRating(RATING_E)
+            .setClanAdvancement(2295, 2305).setApproximate(true, false, false, false, false)
+            .setPrototypeFactions(F_TA).setProductionFactions(F_TH)
+            .setReintroductionFactions(F_FS, F_LC, F_DC).setTechRating(RATING_E)
             .setAvailability(RATING_D, RATING_E, RATING_E, RATING_F);
     
     @Override

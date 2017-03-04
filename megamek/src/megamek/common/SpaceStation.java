@@ -34,9 +34,9 @@ public class SpaceStation extends Jumpship {
             .setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
     /*
     private static final TechAdvancement TA_SPACE_STATION_MODULAR = new TechAdvancement(TECH_BASE_ALL)
-            .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090)
-            .setClanAdvancement(2565, 2585)
-            .setTechRating(RATING_D)
+            .setISAdvancement(2565, 2585, DATE_NONE, 2790, 3090).setClanAdvancement(2565, 2585)
+            .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
+            .setReintroductionFactions(F_RS).setTechRating(RATING_D)
             .setAvailability(RATING_F, RATING_F, RATING_F, RATING_F);
             */
 

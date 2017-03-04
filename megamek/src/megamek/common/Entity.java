@@ -1115,13 +1115,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected final static TechAdvancement TA_OMNI = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(DATE_NONE, DATE_NONE, 3052)
             .setClanAdvancement(2854, 2856, 2864).setClanApproximate(true)
+            .setPrototypeFactions(F_CCY, F_CSF).setProductionFactions(F_CCY, F_DC)
             .setTechRating(RATING_E).setAvailability(RATING_X, RATING_E, RATING_E, RATING_D);
     protected final static TechAdvancement TA_PATCHWORK_ARMOR = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_PS, 3075, 3080).setApproximate(false, false, true).setTechRating(RATING_A)
+            .setAdvancement(DATE_PS, 3075, 3080).setApproximate(false, false, true)
+            .setTechRating(RATING_A)
             .setAvailability(RATING_E, RATING_D, RATING_E, RATING_E);
     protected final static TechAdvancement TA_MIXED_TECH = new TechAdvancement(TECH_BASE_ALL)
             .setISAdvancement(3050, 3082, 3115)
             .setClanAdvancement(2820, 3082, 3115).setApproximate(true, true, true)
+            .setPrototypeFactions(F_CLAN, F_DC, F_FS, F_LC)
             .setTechRating(RATING_A).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
     
     /**

@@ -39,14 +39,13 @@ public class Dropship extends SmallCraft {
     int lifeBoats = 0;
 
     protected static final TechAdvancement TA_DROPSHIP = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(DATE_NONE, 2470, 2490)
-            .setISApproximate(false, true, false)
-            .setTechRating(RATING_D)
+            .setAdvancement(DATE_NONE, 2470, 2490).setISApproximate(false, true, false)
+            .setProductionFactions(F_TH).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
     protected static final TechAdvancement TA_DROPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2500)
             .setISApproximate(false, true, false, false)
-            .setTechRating(RATING_D)
+            .setProductionFactions(F_TA).setTechRating(RATING_D)
             .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
     
     @Override

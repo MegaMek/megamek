@@ -288,12 +288,14 @@ public class Infantry extends Entity {
                     .setISAdvancement(2585, 2600, DATE_NONE, 2535, 3037)
                     .setClanAdvancement(2585, 2600)
                     .setApproximate(true, false, false, false, false).setTechRating(RATING_E)
+                    .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_FS)
                     .setAvailability(RATING_F, RATING_X, RATING_E, RATING_E));
         }
         if (isAntiMekTrained()) {
             compositeTechLevel.addComponent(new TechAdvancement(TECH_BASE_ALL)
-                    .setAdvancement(2456, 2460, 2500)
-                    .setApproximate(true, false, false).setTechRating(RATING_D)
+                    .setAdvancement(2456, 2460, 2500).setApproximate(true, false, false)
+                    .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
+                    .setTechRating(RATING_D)
                     .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D));
         }
     }

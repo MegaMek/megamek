@@ -728,10 +728,10 @@ public class EquipmentType implements ITechnology {
      */
 
     protected final static TechAdvancement TA_STANDARD_ARMOR = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false)
+            .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false).setIntroLevel(true)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
     protected final static TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false)
+            .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false).setIntroLevel(true)
             .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
     protected final static TechAdvancement TA_NONE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE).setTechRating(RATING_A)

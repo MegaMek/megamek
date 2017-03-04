@@ -1980,10 +1980,9 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_STANDARD;
         misc.bv = 0;
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2471);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(2464, 2471, 2500)
+            .setIntroLevel(true).setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_X);
         return misc;
     }
 
@@ -2568,10 +2567,9 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TSM).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
 
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3073);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3028, 3050, 3055)
+            .setApproximate(true, false, false).setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
         return misc;
     }
 

@@ -852,7 +852,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public boolean isAvailableIn(int year, boolean clan) {
-        return getIntroductionDate(clan) >= year
+        return getIntroductionDate(clan) <= year
                 && !techAdvancement.isExtinct(year, clan);
     }
 

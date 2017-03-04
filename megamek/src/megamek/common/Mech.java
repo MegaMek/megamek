@@ -3076,17 +3076,31 @@ public abstract class Mech extends Entity {
                 .setISApproximate(true, false).setTechRating(RATING_D)
                 .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F), //Superheavy industrial            
     };
-    
+
+    public TechAdvancement getCockpitTechAdvancement() {
+        if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
+            return COCKPIT_TA[getCockpitType()];
+        }
+        return null;
+    }
+
+    public TechAdvancement getGyroTechAdvancement() {
+        if (getGyroType() > 0 && getGyroType() < GYRO_TA.length) {
+            return GYRO_TA[getGyroType()];
+        }
+        return null;
+    }
+
     @Override
     protected void addSystemTechAdvancement() {
         super.addSystemTechAdvancement();
-        if (getGyroType() > 0 && getGyroType() < GYRO_TA.length) {
-            compositeTechLevel.addComponent(GYRO_TA[getGyroType()]);
+        if (getGyroTechAdvancement() != null) {
+            compositeTechLevel.addComponent(getGyroTechAdvancement());
         }
-        if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
-            compositeTechLevel.addComponent(COCKPIT_TA[getCockpitType()]);
+        if (getCockpitTechAdvancement() != null) {
+            compositeTechLevel.addComponent(getCockpitTechAdvancement());
         }
-        //Clan interface cockpit has higher tech rating
+        //FIXME: Clan interface cockpit has higher tech rating
         //if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {
         //    techAdvancement.setTechRating(Math.max(techAdvancement.getTechRating(), RATING_F));
         //}

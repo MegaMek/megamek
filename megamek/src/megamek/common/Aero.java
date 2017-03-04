@@ -259,12 +259,19 @@ public class Aero extends Entity {
                 .setISApproximate(false, true, false, false).setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_X, RATING_X, RATING_F), //Primitive            
     };
+    
+    public TechAdvancement getCockpitTechAdvancement() {
+        if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
+            return COCKPIT_TA[getCockpitType()];
+        }
+        return null;
+    }
 
     @Override
     protected void addSystemTechAdvancement() {
         super.addSystemTechAdvancement();
-        if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
-            compositeTechLevel.addComponent(COCKPIT_TA[getCockpitType()]);
+        if (getCockpitTechAdvancement() != null) {
+            compositeTechLevel.addComponent(getCockpitTechAdvancement());
         }        
     }
     

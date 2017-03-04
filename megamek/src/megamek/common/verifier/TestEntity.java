@@ -31,6 +31,7 @@ import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
+import megamek.common.ITechnology;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -739,15 +740,30 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public boolean hasIllegalTechLevels(StringBuffer buff, int ammoTechLvl) {
+        /* A large number of units have official tech levels lower than their components at the
+         * intro date. We test instead whether the stated tech level is ever possible based on the
+         * equipment. We also test for mixed IS/Clan tech in units that are not designated as mixed.
+         */
         boolean retVal = false;
         int eTechLevel = getEntity().getTechLevel();
+        int eRulesLevel = getEntity().findMinimumRulesLevel();
+        if (eTechLevel >= eRulesLevel) {
+            return false;
+        }
+        
         int eTLYear = getEntity().getTechLevelYear();
-        boolean mixedTech = getEntity().isMixedTech();
         for (Mounted mounted : getEntity().getEquipment()) {
             EquipmentType nextE = mounted.getType();
-            int eqTechLvl = nextE.getTechLevel(eTLYear);
+            int eqRulesLevel = getEntity().isMixedTech()?
+                    nextE.findMinimumRulesLevel() : nextE.findMinimumRulesLevel(getEntity().isClan());
+            boolean illegal = eqRulesLevel > eRulesLevel;
+            if (!getEntity().isMixedTech()) {
+                illegal |= getEntity().isClan() && nextE.getTechBase() == ITechnology.TECH_BASE_IS;
+                illegal |= !getEntity().isClan() && nextE.getTechBase() == ITechnology.TECH_BASE_CLAN;
+            }
+            int eqTechLevel = TechConstants.convertFromSimplelevel(eqRulesLevel, nextE.isClan());
             if (nextE instanceof AmmoType) {
-                if (!TechConstants.isLegal(ammoTechLvl, eqTechLvl, mixedTech)) {
+                if (eqRulesLevel > eRulesLevel) {
                     if (!retVal) {
                         buff.append("Ammo illegal at unit's tech level (");
                         buff.append(TechConstants
@@ -760,11 +776,10 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append(nextE.getName());
                     buff.append(", (");
                     buff.append(TechConstants
-                            .getLevelDisplayableName(eqTechLvl));
+                            .getLevelDisplayableName(eqTechLevel));
                     buff.append(")\n");
                 }
-            } else if (!(TechConstants.isLegal(eTechLevel, eqTechLvl, true,
-                    mixedTech))) {
+            } else if (illegal) {
                 if (!retVal) {
                     buff.append("Equipment illegal at unit's tech level ");
                     buff.append(TechConstants
@@ -777,81 +792,80 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append(nextE.getName());
                 buff.append(", (");
                 buff.append(TechConstants
-                        .getLevelDisplayableName(eqTechLvl));
+                        .getLevelDisplayableName(eqTechLevel));
                 buff.append(")\n");
             }
         }
         // Check cockpit TL
-        int cockpitTL;
-        int cockpitType;
+        ITechnology cockpit = null;
+        String cockpitName = null;
         if (getEntity() instanceof Aero) {
-            cockpitType =  ((Aero) getEntity()).getCockpitType();
-            cockpitTL = TechConstants.getCockpitTechLevel(
-                    cockpitType, Entity.ETYPE_AERO,
-                    getEntity().isClan(), eTLYear);
-            if (!TechConstants.isLegal(eTechLevel, cockpitTL, mixedTech)) {
-                buff.append("Cockpit is illegal at unit's tech level (");
-                buff.append(TechConstants
-                        .getLevelDisplayableName(eTechLevel));
-                buff.append(", ");
-                buff.append(eTLYear);
-                buff.append("): ");
-                buff.append(Mech.getCockpitDisplayString(cockpitType));
-                buff.append(" (");
-                buff.append(TechConstants
-                        .getLevelDisplayableName(cockpitTL));
-                buff.append(")\n");
-                retVal = true;
-            }
+            cockpit = ((Aero)getEntity()).getCockpitTechAdvancement();
+            cockpitName = ((Aero)getEntity()).getCockpitTypeString();
         } else if (getEntity() instanceof Mech) {
-            // TODO: Enable TL testing for cockpits/gyros
-            //  This ends up causing canon units to fail, and we have to come
-            //  up with a way to deal with this
-            /*
-            Mech mech = (Mech) getEntity();
-            cockpitType = mech.getCockpitType();
-            cockpitTL = TechConstants.getCockpitTechLevel(cockpitType,
-                    mech.getEntityType(), mech.isClan(), eTLYear);
-            int gyroType = mech.getGyroType();
-            int gyroTL = TechConstants.getGyroTechLevel(gyroType,
-                    mech.isClan(), eTLYear);
-            if (!TechConstants.isLegal(eTechLevel, cockpitTL, mixedTech)) {
+            cockpit = ((Mech)getEntity()).getCockpitTechAdvancement();
+            cockpitName = ((Mech)getEntity()).getCockpitTypeString();
+        }
+        if (cockpit != null) {
+            int eqRulesLevel = getEntity().isMixedTech()?
+                    cockpit.findMinimumRulesLevel() : cockpit.findMinimumRulesLevel(getEntity().isClan());
+            boolean illegal = eqRulesLevel > eRulesLevel;
+            if (!getEntity().isMixedTech()) {
+                illegal |= getEntity().isClan() && cockpit.getTechBase() == ITechnology.TECH_BASE_IS;
+                illegal |= !getEntity().isClan() && cockpit.getTechBase() == ITechnology.TECH_BASE_CLAN;                
+            }
+            if (illegal) {
                 buff.append("Cockpit is illegal at unit's tech level (");
                 buff.append(TechConstants
                         .getLevelDisplayableName(eTechLevel));
                 buff.append(", ");
                 buff.append(eTLYear);
                 buff.append("): ");
-                buff.append(Mech.getCockpitDisplayString(cockpitType));
+                buff.append(cockpitName);
                 buff.append(" (");
                 buff.append(TechConstants
-                        .getLevelDisplayableName(cockpitTL));
+                        .getLevelDisplayableName(TechConstants.convertFromSimplelevel(eqRulesLevel, cockpit.isClan())));
                 buff.append(")\n");
                 retVal = true;
             }
-            if (!TechConstants.isLegal(eTechLevel, gyroTL, mixedTech)) {
-                buff.append("Gyro is illegal at unit's tech level (");
-                buff.append(TechConstants
-                        .getLevelDisplayableName(eTechLevel));
-                buff.append(", ");
-                buff.append(eTLYear);
-                buff.append("): ");
-                buff.append(Mech.getGyroDisplayString(gyroType));
-                buff.append(" (");
-                buff.append(TechConstants
-                        .getLevelDisplayableName(cockpitTL));
-                buff.append(")\n");
-                retVal = true;
+        }
+        if (getEntity() instanceof Mech) {
+            ITechnology gyro = ((Mech)getEntity()).getGyroTechAdvancement();
+            if (gyro != null) {
+                int eqRulesLevel = getEntity().isMixedTech()?
+                        gyro.findMinimumRulesLevel() : gyro.findMinimumRulesLevel(getEntity().isClan());
+                boolean illegal = eqRulesLevel > eRulesLevel;
+                if (!getEntity().isMixedTech()) {
+                    illegal |= getEntity().isClan() && gyro.getTechBase() == ITechnology.TECH_BASE_IS;
+                    illegal |= !getEntity().isClan() && gyro.getTechBase() == ITechnology.TECH_BASE_CLAN;                
+                }
+                if (illegal) {
+                    buff.append("Gyro is illegal at unit's tech level (");
+                    buff.append(TechConstants
+                            .getLevelDisplayableName(eTechLevel));
+                    buff.append(", ");
+                    buff.append(eTLYear);
+                    buff.append("): ");
+                    buff.append(((Mech)getEntity()).getGyroTypeString());
+                    buff.append(" (");
+                    buff.append(TechConstants
+                            .getLevelDisplayableName(TechConstants.convertFromSimplelevel(eqRulesLevel,
+                                    gyro.isClan())));
+                    buff.append(")\n");
+                    retVal = true;
+                }
             }
-            */
         }
         if (getEntity().hasEngine()) {
-            // TODO: Enable TL testing for engines
-            //  This ends up causing canon units to fail, and we have to come
-            //  up with a way to deal with this
-            /*
-            int engineTL = getEntity().getEngine().getTechType(eTLYear);
-            if (!TechConstants.isLegal(eTechLevel, engineTL, mixedTech)) {
+            ITechnology engine = getEntity().getEngine().getTechAdvancement();
+            int eqRulesLevel = getEntity().isMixedTech()?
+                    engine.findMinimumRulesLevel() : engine.findMinimumRulesLevel(getEntity().isClan());
+            boolean illegal = eqRulesLevel > eRulesLevel;
+            if (!getEntity().isMixedTech()) {
+                illegal |= getEntity().isClan() && engine.getTechBase() == ITechnology.TECH_BASE_IS;
+                illegal |= !getEntity().isClan() && engine.getTechBase() == ITechnology.TECH_BASE_CLAN;                
+            }
+            if (illegal) {
                 buff.append("Engine is illegal at unit's tech level (");
                 buff.append(TechConstants
                         .getLevelDisplayableName(eTechLevel));
@@ -861,14 +875,12 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append(getEntity().getEngine().getShortEngineName());
                 buff.append(" (");
                 buff.append(TechConstants
-                        .getLevelDisplayableName(engineTL));
+                        .getLevelDisplayableName(TechConstants.convertFromSimplelevel(eqRulesLevel,
+                                engine.isClan())));
                 buff.append(")\n");
-                buff.append("Engine is illegal at unit's tech level: ");
-                buff.append(getEntity().getEngine().getShortEngineName());
                 buff.append("\n");
                 retVal = true;
             }
-            */
         }
 
         return retVal;

@@ -48,6 +48,9 @@ public interface ITechnology {
     boolean isMixedTech();
     boolean isIntroLevel();
     boolean isUnofficial();
+    default int getTechBase() {
+        return isClan()? TECH_BASE_CLAN : TECH_BASE_IS;
+    }
     
     int getIntroductionDate();
     int getPrototypeDate();
@@ -94,10 +97,10 @@ public interface ITechnology {
         if (isUnofficial()) {
             return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
         } else if (year >= getCommonDate(clan)) {
-            if (isIntroLevel()) {
-                return TechConstants.T_INTRO_BOXSET;
+            if (clan) {
+                return TechConstants.T_CLAN_TW;
             } else {
-                return clan? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX;
+                return isIntroLevel()? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX;
             }
         } else if (year >= getProductionDate(clan)) {
             return clan? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
@@ -110,6 +113,44 @@ public interface ITechnology {
     
     default int getTechLevel(int year) {
         return getTechLevel(year, isClan());
+    }
+    
+    /**
+     * Finds the lowest rules level the equipment qualifies for, for either IS or Clan faction
+     * using it.
+     * 
+     * @param clan - whether tech level is being calculated for a Clan faction
+     * @return - the lowest tech level available to the item
+     */
+    default int findMinimumRulesLevel(boolean clan) {
+        if (getCommonDate(clan) != DATE_NONE) {
+            return isIntroLevel()? TechConstants.T_SIMPLE_INTRO : TechConstants.T_SIMPLE_STANDARD;
+        }
+        if (getProductionDate(clan) != DATE_NONE) {
+            return TechConstants.T_SIMPLE_ADVANCED;
+        }
+        if (getPrototypeDate(clan) != DATE_NONE) {
+            return TechConstants.T_SIMPLE_EXPERIMENTAL;
+        }
+        return TechConstants.T_SIMPLE_UNOFFICIAL;
+    }
+
+    /**
+     * Finds the lowest rules level the equipment qualifies for regardless of faction using it.
+     * 
+     * @return - the lowest tech level available to the item
+     */
+    default int findMinimumRulesLevel() {
+        if (getCommonDate() != DATE_NONE) {
+            return isIntroLevel()? TechConstants.T_SIMPLE_INTRO : TechConstants.T_SIMPLE_STANDARD;
+        }
+        if (getProductionDate() != DATE_NONE) {
+            return TechConstants.T_SIMPLE_ADVANCED;
+        }
+        if (getPrototypeDate() != DATE_NONE) {
+            return TechConstants.T_SIMPLE_EXPERIMENTAL;
+        }
+        return TechConstants.T_SIMPLE_UNOFFICIAL;
     }
 
     default boolean isExtinct(int year, boolean clan) {

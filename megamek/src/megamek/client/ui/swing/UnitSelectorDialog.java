@@ -622,7 +622,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                             .intOption(OptionsConstants.ALLOWED_YEAR) : 999999;
                     boolean techLevelMatch = false;
                     int type = mech.getType();
-                    if (client.getGame() != null
+                    if (client != null && client.getGame() != null
                             && client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
                         type = mech.getType(year);
                     }
@@ -973,7 +973,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 return ms.getCost();
             }
             if (col == COL_LEVEL) {
-                if (client.getGame() != null
+                if (client != null && client.getGame() != null
                         && client.getGame().getOptions().booleanOption(OptionsConstants.ALLOWED_ERA_BASED)) {
                     return ms.getLevel(client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
                 }

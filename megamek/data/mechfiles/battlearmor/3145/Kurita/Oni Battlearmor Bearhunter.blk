@@ -45,11 +45,11 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-Bearhunter Superheavy AC:RA
+CLBearhunter Superheavy AC:RA
 BAHeavyBattleClawVibro:LA
 BABasicManipulator:RA
 IS BA ECM:Body
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 SwarmMek
 SwarmWeaponMek
 StopSwarm

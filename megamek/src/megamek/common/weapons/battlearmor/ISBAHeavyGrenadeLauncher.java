@@ -39,6 +39,9 @@ public class ISBAHeavyGrenadeLauncher extends Weapon {
         addLookupName("BA Heavy Grenade Launcher");
         addLookupName("ISBAAutoGL");
         addLookupName("ISBAHeavyGL");
+        //Per TM Errata the orignal Grenade Launcher becomes the Heavy. Lookups below to keep unit files consistant.
+        addLookupName("ISBAGrenadeLauncher");
+      	addLookupName("IS BA Grenade Launcher");
         heat = 0;
         damage = 1;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;

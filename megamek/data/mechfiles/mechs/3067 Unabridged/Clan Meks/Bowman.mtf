@@ -2,22 +2,22 @@ Version:1.0
 Bowman
 (Standard)
 
-
 Config:Biped
 TechBase:Clan
 Era:2973
+Source:RS 3068 - Late Succession War - LosTech
 Rules Level:3
 
 Mass:70
-Engine:350 XL Engine
-Structure:Endo Steel
+Engine:350 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
 Walk MP:5
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:20
 RA Armor:20
 LT Armor:20
@@ -30,13 +30,12 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:10
 
-Weapons:6
-1 CLArrowIVSystem, Right Arm, Ammo:20
-3 CLERMediumLaser, Left Arm
-1 CLLRM20, Left Torso, Ammo:6
-1 CLECMSuite, Head
-2 CLAntiPersonnelPod, Left Leg
-2 CLAntiPersonnelPod, Right Leg
+Weapons:5
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Arrow IV, Right Torso
+LRM 20, Left Torso
 
 Left Arm:
 Shoulder
@@ -55,16 +54,16 @@ CLERMediumLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
+CLArrowIV
 
 Left Torso:
 Fusion Engine
@@ -73,25 +72,25 @@ CLLRM20
 CLLRM20
 CLLRM20
 CLLRM20
-CLLRM20 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Ammo LRM-20
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLArrowIVSystem (Split)
-CLArrowIVSystem (Split)
-CLArrowIV Ammo
-CLArrowIV Homing Ammo
-CLArrowIV FASCAM Ammo
-CLArrowIV Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLArrowIV
+CLArrowIV
+CLArrowIVAmmo
+CLArrowIVAmmo
+CLArrowIVHomingAmmo
+CLArrowIVHomingAmmo
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Center Torso:
@@ -105,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
+Clan Endo Steel
 -Empty-
 
 Head:
@@ -149,4 +148,5 @@ CLAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -49,7 +49,7 @@ BASalvageArm:LA
 BABasicManipulator:RA
 BACuttingTorch:RA
 BASearchlight:LA
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 ISImprovedSensors:Body
 </Squad Equipment>
 

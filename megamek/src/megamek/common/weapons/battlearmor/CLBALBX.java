@@ -37,6 +37,7 @@ public class CLBALBX extends Weapon {
         name = "Battle Armor LB-X AC";
         setInternalName(name);
         addLookupName("CLBALBX");
+        addLookupName("Clan BA LBX");
         heat = 0;
         damage = 4;
         rackSize = 4;

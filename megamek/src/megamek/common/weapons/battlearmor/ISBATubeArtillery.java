@@ -44,7 +44,7 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         mediumRange = 2;
         longRange = 2;
         extremeRange = 2; // No extreme range.
-        tonnage = 0.5f;
+        tonnage = 0.5;
         criticals = 4;
         bv = 27;
         cost = 200000;

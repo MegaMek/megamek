@@ -45,7 +45,7 @@ Jump
 </armor_tech>
 
 <Squad Equipment>
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
 Mauser 960 Assault System:APM

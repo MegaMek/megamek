@@ -51,7 +51,7 @@ StopSwarm
 LegAttack
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 BASearchlight:Body
 ISBALightMachineGun:RA
 </Squad Equipment>

@@ -48,7 +48,7 @@ Jump
 IS BA ECM:Body
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-BAExtendedLifeSupport:Body
+ISBAExtendedLifeSupport:Body
 Mauser 960 Assault System:APM
 SwarmMek
 SwarmWeaponMek

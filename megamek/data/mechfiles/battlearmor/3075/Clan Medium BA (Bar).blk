@@ -54,7 +54,7 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-BAExtendedLifeSupport:Body
+CLBAExtendedLifeSupport:Body
 </Point Equipment>
 
 <Trooper 1 Equipment>

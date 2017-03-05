@@ -236,6 +236,10 @@ public class EquipmentType implements ITechnology {
     public String getInternalName() {
         return internalName;
     }
+    
+    public String getRulesRefs() {
+        return rulesRefs;
+    }
 
     /**
      * @deprecated The old tech progression system has been replaced by the TechAdvancement class.

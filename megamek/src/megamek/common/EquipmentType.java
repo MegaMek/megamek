@@ -851,11 +851,6 @@ public class EquipmentType implements ITechnology {
         return techAdvancement.getReintroductionDate();
     }
 
-    public boolean isAvailableIn(int year, boolean clan) {
-        return getIntroductionDate(clan) <= year
-                && !techAdvancement.isExtinct(year, clan);
-    }
-
     public static double getArmorCost(int inArmor) {
         if ((inArmor < 0) || (inArmor >= armorCosts.length)) {
             return -1;

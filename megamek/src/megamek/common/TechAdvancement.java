@@ -14,6 +14,7 @@
 package megamek.common;
 
 import java.util.Arrays;
+import java.util.StringJoiner;
 
 /**
  * Handles the progression of technology through prototype, production, extinction and reintroduction
@@ -208,6 +209,119 @@ public class TechAdvancement implements ITechnology {
         return getCommonDate();
     }
     
+    private String formatDate(int index, boolean clan, int[] factions) {
+        int date = clan? clanAdvancement[index] : isAdvancement[index];
+        if (date == DATE_NONE) {
+            return "-";
+        }
+        StringBuilder sb = new StringBuilder();
+        if (clan? clanApproximate[index] : isApproximate[index]) {
+            sb.append("~");
+        }
+        if (date == DATE_PS) {
+            sb.append("PS");
+        } else if (date == DATE_ES) {
+            sb.append("ES");
+        } else {
+            sb.append(date);
+        }
+        if (factions != null && factions.length > 0) {
+            StringJoiner sj = new StringJoiner(",");
+            for (int f : factions) {
+                if ((clan && f >= F_CLAN) || (!clan && f < F_CLAN)) {
+                    sj.add(IO_FACTION_CODES[f]);
+                }
+            }
+            if (sj.length() > 0) {
+                sb.append("(").append(sj.toString()).append(")");
+            }
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Formats prototype date indicating approximate when appropriate, and prototype faction if any
+     * for either IS or Clan use tech base.
+     */
+    public String getPrototypeDateName(boolean clan) {
+        return formatDate(PROTOTYPE, clan, prototypeFactions);
+    }
+    
+    /**
+     * Formats earliest of Clan or IS prototype date indicating approximate when appropriate,
+     * and prototype faction if any for mixed tech.
+     */
+    public String getPrototypeDateName() {
+        return formatDate(PROTOTYPE, clanAdvancement[PROTOTYPE] != DATE_NONE
+                && clanAdvancement[PROTOTYPE] < isAdvancement[PROTOTYPE], prototypeFactions);
+    }
+    
+    /**
+     * Formats production date indicating approximate when appropriate, and production faction if any
+     * for either IS or Clan use tech base.
+     */
+    public String getProductionDateName(boolean clan) {
+        return formatDate(PRODUCTION, clan, productionFactions);
+    }
+    
+    /**
+     * Formats earliest of Clan or IS production date indicating approximate when appropriate,
+     * and production faction if any for mixed tech.
+     */
+    public String getProductionDateName() {
+        return formatDate(PRODUCTION, clanAdvancement[PRODUCTION] != DATE_NONE
+                && clanAdvancement[PRODUCTION] < isAdvancement[PRODUCTION], productionFactions);
+    }
+    
+    /**
+     * Formats common date indicating approximate when appropriate.
+     */
+    public String getCommonDateName(boolean clan) {
+        return formatDate(COMMON, clan, null);
+    }
+    
+    /**
+     * Formats earliest of Clan or IS common date indicating approximate when appropriate for mixed tech.
+     */
+    public String getCommonDateName() {
+        return formatDate(COMMON, clanAdvancement[COMMON] != DATE_NONE
+                && clanAdvancement[COMMON] < isAdvancement[COMMON], null);
+    }
+    
+    /**
+     * Formats extinction date indicating approximate when appropriate, and extinction faction if any
+     * for either IS or Clan use tech base.
+     */
+    public String getExtinctionDateName(boolean clan) {
+        return formatDate(EXTINCT, clan, extinctionFactions);
+    }
+    
+    /**
+     * Formats earliest of Clan or IS extinction date indicating approximate when appropriate,
+     * and extinction faction if any for mixed tech.
+     */
+    public String getExtinctionDateName() {
+        return formatDate(EXTINCT, clanAdvancement[EXTINCT] != DATE_NONE
+                && clanAdvancement[EXTINCT] < isAdvancement[EXTINCT], extinctionFactions);
+    }
+    
+    /**
+     * Formats reintroduction date indicating approximate when appropriate, and reintroduction faction if any
+     * for either IS or Clan use tech base.
+     */
+    public String getReintroductionDateName(boolean clan) {
+        return formatDate(REINTRODUCED, clan, reintroductionFactions);
+    }
+    
+    /**
+     * Formats earliest of Clan or IS reintroduction date indicating approximate when appropriate,
+     * and reintroduction faction if any for mixed tech.
+     */
+    public String getReintroductionDateName() {
+        return formatDate(REINTRODUCED, clanAdvancement[REINTRODUCED] != DATE_NONE
+                && clanAdvancement[REINTRODUCED] < isAdvancement[REINTRODUCED], reintroductionFactions);
+    }
+    
     /**
      * Finds the earliest of two dates, ignoring DATE_NA unless both values are set to DATE_NA
      */
@@ -276,5 +390,4 @@ public class TechAdvancement implements ITechnology {
     public boolean isMixedTech() {
         return techBase == TECH_BASE_ALL;
     }
-
 }

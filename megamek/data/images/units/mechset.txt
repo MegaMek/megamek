@@ -575,7 +575,7 @@ chassis "Field Gun Infantry" "Infantry/fieldgun.png"
 chassis "Firefighter" "Infantry/motorized_infantry.png"
 chassis "Foot Platoon" "defaults/default_infantry_platoon.png"
 chassis "Foot Squad" "defaults/default_infantry.png"
-chassis "Frogmen" "Infantry/motorized_infantry_platoon.png"
+chassis "Frogmen" "Infantry/Infantry_UMU_Platoon.png"
 chassis "FS Jump Platoon" "Infantry/jump_infantry.png"
 chassis "FS Mechanized Hover Platoon" "Infantry/mecha_h_platoon.png"
 chassis "FS Mechanized Tracked Platoon" "Infantry/mecha_t_platoon.png"
@@ -845,7 +845,7 @@ exact "SpecOps Paratrooper MI6 Extraction Team" "defaults/default_infantry.png"
 exact "SRM Foot Infantry Taurian Citizens' Militia" "Infantry/srm_infantry_platoon.png"
 exact "XCT Marine Special Asteroid Support Forces" "defaults/default_infantry.png"
 exact "Xenoplanetary Infantry Eagle Corps Eyrie Defense Force" "defaults/default_infantry.png"
-
+exact "VTOL Infantry Hachiman Taro Enterprise Extraction Force" "infantry/Infantry_VTOL_Platoon.png"
 
 
 #Gun Emplacements

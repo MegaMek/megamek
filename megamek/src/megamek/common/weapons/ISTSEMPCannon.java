@@ -33,8 +33,11 @@ public class ISTSEMPCannon extends TSEMPWeapon {
         criticals  = 5;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3085, 3109, DATE_NONE);
+        techAdvancement.setISApproximate(true,false,false);
         techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
+        techAdvancement.setPrototypeFactions(F_RS).setProductionFactions(F_RS);
+        rulesRefs = "91, IO";
     }
 
     /*

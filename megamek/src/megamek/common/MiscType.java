@@ -3634,6 +3634,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = BattleArmor.BASIC_STEALTH_ARMOR;
         misc.setInternalName("Clan " + BattleArmor.BASIC_STEALTH_ARMOR);
+        misc.addLookupName("IS BA Stealth");
         misc.tonnage = 0;
         misc.criticals = 3;
         misc.spreadable = true;
@@ -3674,6 +3675,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = BattleArmor.STANDARD_STEALTH_ARMOR;
         misc.setInternalName("Clan " + BattleArmor.STANDARD_STEALTH_ARMOR);
+        misc.addLookupName("Clan BA Stealth");
         misc.tonnage = 0;
         misc.criticals = 4;
         misc.spreadable = true;
@@ -3774,6 +3776,7 @@ public class MiscType extends EquipmentType {
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
         misc.setInternalName(EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_BA_REACTIVE, false));
+        misc.addLookupName("IS BA Reactive");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
@@ -3795,6 +3798,7 @@ public class MiscType extends EquipmentType {
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REACTIVE);
         misc.setInternalName(EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_BA_REACTIVE, true));
+        misc.addLookupName("Clan BA Reactive");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
@@ -3817,6 +3821,7 @@ public class MiscType extends EquipmentType {
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
         misc.setInternalName(EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_BA_REFLECTIVE, false));
+        misc.addLookupName("IS BA Reflective");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
@@ -3839,6 +3844,7 @@ public class MiscType extends EquipmentType {
                 .getArmorTypeName(EquipmentType.T_ARMOR_BA_REFLECTIVE);
         misc.setInternalName(EquipmentType.getArmorTypeName(
                 EquipmentType.T_ARMOR_BA_REFLECTIVE, true));
+        misc.addLookupName("Clan BA Reflective");
         misc.tonnage = 0;
         misc.criticals = 7;
         misc.spreadable = true;
@@ -9105,7 +9111,9 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 18000;
         misc.rulesRefs = "287, TO";
-
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_DETACHABLE_WEAPON_PACK)
+                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+                .andNot(F_AERO_EQUIPMENT);
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 3073, 3080);
         misc.techAdvancement.setTechRating(RATING_E);
@@ -9122,7 +9130,9 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 18000;
         misc.rulesRefs = "287, TO";
-
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_DETACHABLE_WEAPON_PACK)
+                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+                .andNot(F_AERO_EQUIPMENT);
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(2865, 2880, 3051);
         misc.techAdvancement.setTechRating(RATING_E);
@@ -9176,7 +9186,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Extended Life Support";
         misc.setInternalName("ISBAExtendedLifeSupport");
         misc.cost = 10000;
-        misc.tonnage = 0.025f;
+        misc.tonnage = 0.025;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_EXTENDED_LIFESUPPORT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
@@ -9197,7 +9207,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Extended Life Support";
         misc.setInternalName("CLBAExtendedLifeSupport");
         misc.cost = 10000;
-        misc.tonnage = 0.025f;
+        misc.tonnage = 0.025;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_EXTENDED_LIFESUPPORT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)

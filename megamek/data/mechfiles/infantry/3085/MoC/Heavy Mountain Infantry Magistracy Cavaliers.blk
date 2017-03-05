@@ -35,6 +35,10 @@ Leg
 <Field Guns Equipment>
 </Field Guns Equipment>
 
+<source>
+TRO 3085 - Civil War
+</source>
+
 <squad_size>
 7
 </squad_size>
@@ -44,22 +48,22 @@ Leg
 </squadn>
 
 <secondn>
-2
+1
 </secondn>
 
 <Primary>
-Imperator AX-22 Assault Rifle
+Rifle (Imperator AX-22 Assault)
 </Primary>
 
 <Secondary>
-Infantry Heavy Mortar
+Mortar (Heavy)
 </Secondary>
 
-<specialization>
-128
-</specialization>
+<antimek>
+8
+</antimek>
 
 <armorKit>
-CanopianKit
+Magistracy of Canopus Infantry Kit
 </armorKit>
 

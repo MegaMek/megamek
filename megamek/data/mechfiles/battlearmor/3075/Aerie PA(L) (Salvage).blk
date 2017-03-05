@@ -48,11 +48,11 @@ Jump
 BASalvageArm:RA
 BAArmoredGlove:LA
 CLBASpaceOperationsAdaptation:Body
-Infantry Clan Mauser IIC:APM:RA
-Clan BA Stealth:LA
-Clan BA Stealth:LA
-Clan BA Stealth:RA
-Clan BA Stealth:RA
+Laser Rifle (Mauser IIC IAS):APM:RA
+Clan BA Stealth (Standard):Body
+Clan BA Stealth (Standard):RA
+Clan BA Stealth (Standard):LA
+Clan BA Stealth (Standard):RA
 </Point Equipment>
 
 <Trooper 1 Equipment>

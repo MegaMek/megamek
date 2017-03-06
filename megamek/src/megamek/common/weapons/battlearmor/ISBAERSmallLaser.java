@@ -46,7 +46,7 @@ public class ISBAERSmallLaser extends LaserWeapon {
         waterMediumRange = 2;
         waterLongRange = 3;
         waterExtremeRange = 4;
-        tonnage = 0.35f;
+        tonnage = 0.35;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         bv = 17;

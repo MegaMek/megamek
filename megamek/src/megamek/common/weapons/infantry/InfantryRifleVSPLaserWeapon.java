@@ -39,7 +39,7 @@ public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
         addLookupName("VariablePulseLaserRifle");
         ammoType = AmmoType.T_NA;
         cost = 4500;
-        tonnage = 0.006f;
+        tonnage = 0.006;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
         infantryDamage = 0.33;

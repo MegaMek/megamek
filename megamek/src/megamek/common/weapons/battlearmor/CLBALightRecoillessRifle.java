@@ -48,7 +48,7 @@ public class CLBALightRecoillessRifle extends Weapon {
         longRange = 6;
         extremeRange = 8;
         bv = 12;
-        tonnage = 0.175f;
+        tonnage = 0.175;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 1000;

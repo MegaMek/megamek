@@ -48,7 +48,7 @@ public class ISBAMediumRecoillessRifle extends Weapon {
         longRange = 6;
         extremeRange = 8;
         bv = 19;
-        tonnage = 0.25f;
+        tonnage = 0.25;
         cost = 3000;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)

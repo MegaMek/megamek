@@ -47,7 +47,7 @@ public class ISBAHeavyMG extends BAMGWeapon {
         mediumRange = 2;
         longRange = 2;
         extremeRange = 2;
-        tonnage = 0.15f;
+        tonnage = 0.15;
         criticals = 1;
         bv = 6;
         cost = 7500;

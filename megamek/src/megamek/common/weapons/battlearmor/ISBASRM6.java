@@ -42,7 +42,7 @@ public class ISBASRM6 extends SRMWeapon {
         this.mediumRange = 6;
         this.longRange = 9;
         this.extremeRange = 12;
-        this.tonnage = .360f;
+        this.tonnage = .360;
         this.criticals = 3;
         this.bv = 59;
         cost = 30000;

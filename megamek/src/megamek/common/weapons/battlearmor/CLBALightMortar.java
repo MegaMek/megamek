@@ -48,7 +48,7 @@ public class CLBALightMortar extends Weapon {
         longRange = 3;
         extremeRange = 4;
         bv = 9;
-        tonnage = 0.3f;
+        tonnage = 0.3;
         cost = 2100;
         criticals = 2;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)

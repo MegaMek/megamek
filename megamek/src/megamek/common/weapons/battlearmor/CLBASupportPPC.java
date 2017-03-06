@@ -45,6 +45,7 @@ public class CLBASupportPPC extends PPCWeapon {
         longRange = 7;
         extremeRange = 10;
         bv = 14;
+        tonnage = .240;
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         cost = 14000;

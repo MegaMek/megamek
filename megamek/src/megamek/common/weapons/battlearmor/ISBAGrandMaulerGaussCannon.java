@@ -45,7 +45,7 @@ public class ISBAGrandMaulerGaussCannon extends Weapon {
         mediumRange = 4;
         longRange = 5;
         extremeRange = 8;
-        tonnage = 0.125f;
+        tonnage = 0.125;
         cost = 8000;
         criticals = 2;
         bv = 6;

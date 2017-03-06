@@ -44,7 +44,7 @@ public class ISBAMG extends BAMGWeapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        tonnage = 0.1f;
+        tonnage = 0.1;
         criticals = 1;
         bv = 5;
         cost = 5000;

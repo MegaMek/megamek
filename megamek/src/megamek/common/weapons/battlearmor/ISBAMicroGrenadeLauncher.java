@@ -46,7 +46,7 @@ public class ISBAMicroGrenadeLauncher extends Weapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        tonnage = 0.075f;
+        tonnage = 0.075;
         criticals = 1;
         bv = 1;
         cost = 1950;

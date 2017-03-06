@@ -39,7 +39,7 @@ public class ISBALRM4OS extends LRMWeapon {
         minimumRange = 6;
         bv = 8;
         cost = 12000;
-        tonnage = .16f;
+        tonnage = .16;
         criticals = 5;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";

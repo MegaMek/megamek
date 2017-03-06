@@ -43,7 +43,7 @@ public class CLBASRM1 extends SRMWeapon {
         extremeRange = 12;
         bv = 15;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        tonnage = .035f;
+        tonnage = .035;
         criticals = 1;
         cost = 5000;
 		rulesRefs = "261, TM";

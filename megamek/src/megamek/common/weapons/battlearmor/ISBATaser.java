@@ -51,7 +51,7 @@ public class ISBATaser extends AmmoWeapon {
         bv = 15;
         toHitModifier = 1;
         cost = 10000;
-        tonnage = 0.3f;
+        tonnage = 0.3;
         criticals = 3;
         flags = flags.or(F_BA_WEAPON).or(F_ONESHOT).or(F_TASER).or(F_BALLISTIC)
                 .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);

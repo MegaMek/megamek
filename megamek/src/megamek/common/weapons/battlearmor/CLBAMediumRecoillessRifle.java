@@ -48,7 +48,7 @@ public class CLBAMediumRecoillessRifle extends Weapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
-        tonnage = 0.25f;
+        tonnage = 0.25;
         criticals = 2;
         bv = 19;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);

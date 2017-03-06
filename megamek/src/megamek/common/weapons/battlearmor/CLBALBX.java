@@ -45,13 +45,14 @@ public class CLBALBX extends Weapon {
         mediumRange = 5;
         longRange = 8;
         extremeRange = 10;
-        tonnage = 0.4f;
+        tonnage = 0.4;
         criticals = 2;
         toHitModifier = -1;
         ammoType = AmmoType.T_NA;
         bv = 20;
         cost = 70000;
         rulesRefs = "207, TM";
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3075, 3085, DATE_NONE);
         techAdvancement.setTechRating(RATING_F);

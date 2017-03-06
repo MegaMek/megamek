@@ -54,7 +54,7 @@ public class CLBAMicroBomb extends Weapon {
         extremeRange = 0;
         bv = 11;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        tonnage = .1f;
+        tonnage = .1;
         criticals = 2;
         cost = 30000;
         rulesRefs = "253, TM";

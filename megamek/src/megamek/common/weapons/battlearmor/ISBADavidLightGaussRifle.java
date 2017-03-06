@@ -45,7 +45,7 @@ public class ISBADavidLightGaussRifle extends Weapon {
         longRange = 8;
         extremeRange = 10;
         bv = 7;
-        tonnage = 0.1f;
+        tonnage = 0.1;
         criticals = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
                 .or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);

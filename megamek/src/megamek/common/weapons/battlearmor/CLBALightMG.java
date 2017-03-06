@@ -46,7 +46,7 @@ public class CLBALightMG extends BAMGWeapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
-        tonnage = 0.075f;
+        tonnage = 0.075;
         criticals = 1;
         bv = 5;
         cost = 5000;

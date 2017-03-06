@@ -56,7 +56,7 @@ SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
-BARemoteSensorDispenser:Body
+ISBARemoteSensorDispenser:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>

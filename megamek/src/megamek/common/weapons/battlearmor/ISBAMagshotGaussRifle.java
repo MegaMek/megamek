@@ -37,7 +37,7 @@ public class ISBAMagshotGaussRifle extends Weapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = 0.175f;
+        tonnage = 0.175;
         criticals = 3;
         bv = 15;
         cost = 10500;

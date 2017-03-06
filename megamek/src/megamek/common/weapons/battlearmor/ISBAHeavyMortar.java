@@ -49,7 +49,7 @@ public class ISBAHeavyMortar extends Weapon {
         extremeRange = 8;
         bv = 17;
         cost = 7500;
-        tonnage = 0.4f;
+        tonnage = 0.4;
         criticals = 2;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
                 .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;

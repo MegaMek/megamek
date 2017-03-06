@@ -48,7 +48,7 @@ public class ISBAMediumPulseLaser extends PulseLaserWeapon {
         waterMediumRange = 3;
         waterLongRange = 4;
         waterExtremeRange = 6;
-        tonnage = 0.8f;
+        tonnage = 0.8;
         criticals = 3;
         bv = 48;
         cost = 60000;

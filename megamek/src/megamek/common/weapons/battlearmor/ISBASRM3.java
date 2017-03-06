@@ -43,7 +43,7 @@ public class ISBASRM3 extends SRMWeapon {
         extremeRange = 12;
         bv = 30;
         cost = 15000;
-        tonnage = .180f;
+        tonnage = .180;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";

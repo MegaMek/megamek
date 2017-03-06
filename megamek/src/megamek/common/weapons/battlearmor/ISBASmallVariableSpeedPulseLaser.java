@@ -55,7 +55,7 @@ public class ISBASmallVariableSpeedPulseLaser extends
         damageShort = 5;
         damageMedium = 4;
         damageLong = 3;
-        tonnage = .5f;
+        tonnage = .5;
         criticals = 2;
         bv = 22;
         cost = 60000;

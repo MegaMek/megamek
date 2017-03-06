@@ -44,7 +44,7 @@ public class ISBASupportPPC extends PPCWeapon {
         mediumRange = 5;
         longRange = 7;
         extremeRange = 10;
-        tonnage = 0.25f;
+        tonnage = 0.25;
         criticals = 2;
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
         bv = 12;

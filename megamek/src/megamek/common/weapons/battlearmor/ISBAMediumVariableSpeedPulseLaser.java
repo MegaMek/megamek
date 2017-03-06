@@ -54,7 +54,7 @@ public class ISBAMediumVariableSpeedPulseLaser extends
         damageShort = 9;
         damageMedium = 7;
         damageLong = 5;
-        tonnage = .9f;
+        tonnage = .9;
         criticals = 4;
         bv = 56;
         cost = 200000;

@@ -45,7 +45,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        tonnage = 0.15f;
+        tonnage = 0.15;
         criticals = 1;
         bv = 5;
         cost = 7500;

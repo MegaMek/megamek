@@ -47,7 +47,7 @@ public class ISBAERMediumLaser extends LaserWeapon {
         waterMediumRange = 5;
         waterLongRange = 8;
         waterExtremeRange = 10;
-        tonnage = 0.8f;
+        tonnage = 0.8;
         criticals = 3;
         bv = 62;
         cost = 80000;

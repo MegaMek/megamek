@@ -600,7 +600,7 @@ public class MiscType extends EquipmentType {
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                 return Math.ceil((entity.getWeight() / 20.0f) * 2.0f) / 2.0;
             } else {
-                return Math.ceil((entity.getWeight() * 0.07f * 2.0f)) / 2.0;
+                return ((entity.getWeight() * 0.07) * 2.0) / 2.0;
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMECH_EQUIPMENT)) {
             return Math.ceil((entity.getWeight() / 5.0f) * 2.0f) / 2.0;
@@ -2703,7 +2703,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Battle Armor C3 (BC3)";
         misc.setInternalName("BattleArmorC3");
         misc.addLookupName("IS BattleArmor C3");
-        misc.tonnage = .250f;
+        misc.tonnage = .250;
         misc.criticals = 1;
         misc.cost = 62500;
         misc.flags = misc.flags.or(F_C3S).or(F_BA_EQUIPMENT)
@@ -2726,7 +2726,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISBC3i");
         misc.addLookupName("IS BC3i");
         misc.addLookupName("IS BattleArmor C3i");
-        misc.tonnage = .350f;
+        misc.tonnage = .350;
         misc.criticals = 1;
         misc.cost = 125000;
         misc.flags = misc.flags.or(F_C3I).or(F_BA_EQUIPMENT)
@@ -6197,8 +6197,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLBARemoteSensorDispenser() {
         MiscType misc = new MiscType();
 
-        misc.name = "Remote Sensor Dispenser [CL]";
-        misc.setInternalName("CL BARemoteSensorDispenser");
+        misc.name = "Remote Sensor Dispenser [Clan]";
+        misc.setInternalName("CLBARemoteSensorDispenser");
         misc.addLookupName("Clan BA Remote Sensor Dispenser");
         misc.tonnage = 0.04;
         misc.criticals = 1;

@@ -53,7 +53,7 @@ public class ISBAPopUpMineLauncher extends Weapon {
         mediumRange = 0;
         longRange = 0;
         extremeRange = 0;
-        tonnage = 0.2f;
+        tonnage = 0.2;
         criticals = 1;
         cost = 2500;
         bv = 6;

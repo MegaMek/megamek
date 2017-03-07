@@ -47,7 +47,7 @@ public class ISBAKingDavidLightGaussRifle extends Weapon {
         longRange = 9;
         extremeRange = 12;
         bv = 7;
-        tonnage = 0.275f;
+        tonnage = 0.275;
         criticals = 2;
         cost = 30000;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)

@@ -52,7 +52,7 @@ public class CLBAERSmallPulseLaser extends PulseLaserWeapon {
         waterMediumRange = 2;
         waterLongRange = 4;
         waterExtremeRange = 4;
-        tonnage = .55f;
+        tonnage = .55;
         criticals = 2;
         bv = 36;
         cost = 30000;

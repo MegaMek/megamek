@@ -39,7 +39,7 @@ public class InfantrySupportVintageMGWeapon extends InfantryWeapon {
         addLookupName("VintageMachineGun");
         ammoType = AmmoType.T_NA;
         cost = 6000;
-        tonnage = .011f;
+        tonnage = .011;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT).or(F_BALLISTIC);
         infantryDamage = 0.39;

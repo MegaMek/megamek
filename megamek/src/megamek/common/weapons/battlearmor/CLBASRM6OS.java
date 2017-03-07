@@ -44,7 +44,7 @@ public class CLBASRM6OS extends SRMWeapon {
         longRange = 9;
         extremeRange = 12;
         bv = 12;
-        tonnage = .120f;
+        tonnage = .120;
         criticals = 4;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 15000;

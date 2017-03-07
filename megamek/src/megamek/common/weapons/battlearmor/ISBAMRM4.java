@@ -42,7 +42,7 @@ public class ISBAMRM4 extends MRMWeapon {
         this.extremeRange = 16;
         this.bv = 23;
         cost = 20000;
-        tonnage = .24f;
+        tonnage = .24;
         criticals = 3;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";

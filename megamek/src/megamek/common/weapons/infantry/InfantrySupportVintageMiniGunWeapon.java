@@ -39,7 +39,7 @@ public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
         addLookupName("VintageMinGun");
         ammoType = AmmoType.T_NA;
         cost = 50000;
-        tonnage = .021f;
+        tonnage = .021;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
         infantryDamage = 0.81;

@@ -43,7 +43,7 @@ public class CLAdvancedSRM1 extends AdvancedSRMWeapon {
         extremeRange = 16;
         bv = 15;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        tonnage = .06f;
+        tonnage = .06;
         criticals = 2;
         cost = 15000;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);

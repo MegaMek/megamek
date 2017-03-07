@@ -44,7 +44,7 @@ public class ISBARL5 extends RLWeapon {
         extremeRange = 14;
         bv = 6;
         cost = 6000;
-        tonnage = .125f;
+        tonnage = .125;
         criticals = 4;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";

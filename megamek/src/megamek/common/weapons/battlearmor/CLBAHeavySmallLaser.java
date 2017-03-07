@@ -49,7 +49,7 @@ public class CLBAHeavySmallLaser extends LaserWeapon {
         this.waterMediumRange = 2;
         this.waterLongRange = 2;
         this.waterExtremeRange = 4;
-        this.tonnage = 0.5f;
+        this.tonnage = 0.5;
         this.criticals = 3;
         this.bv = 15;
         this.cost = 20000;

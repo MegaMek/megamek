@@ -49,6 +49,7 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         bv = 27;
         cost = 200000;
         rulesRefs = "284, TO";
+        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3065, 3075, DATE_NONE);
         techAdvancement.setTechRating(RATING_E);

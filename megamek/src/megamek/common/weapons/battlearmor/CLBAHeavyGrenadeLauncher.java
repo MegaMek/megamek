@@ -46,7 +46,7 @@ public class CLBAHeavyGrenadeLauncher extends Weapon {
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        tonnage = 0.1f;
+        tonnage = 0.1;
         criticals = 1;
         bv = 1;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);

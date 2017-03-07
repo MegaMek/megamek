@@ -42,7 +42,7 @@ public class ISBAMRM3OS extends MRMWeapon {
         extremeRange = 16;
         bv = 4;
         cost = 7500;
-        tonnage = .15f;
+        tonnage = .15;
         criticals = 3;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "261, TM";

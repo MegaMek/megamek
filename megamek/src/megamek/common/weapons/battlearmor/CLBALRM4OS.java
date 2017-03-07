@@ -36,7 +36,7 @@ public class CLBALRM4OS extends LRMWeapon {
         heat = 0;
         rackSize = 4;
         minimumRange = WEAPON_NA;
-        tonnage = 0.1f;
+        tonnage = 0.1;
         criticals = 3;
         bv = 9;
         cost = 12000;

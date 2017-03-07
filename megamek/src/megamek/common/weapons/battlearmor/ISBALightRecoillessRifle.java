@@ -48,7 +48,7 @@ public class ISBALightRecoillessRifle extends Weapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
-        tonnage = 0.175f;
+        tonnage = 0.175;
         cost = 1000;
         criticals = 2;
         bv = 12;

@@ -47,7 +47,7 @@ public class ISBAPlasmaRifle extends Weapon {
         longRange = 6;
         extremeRange = 8;
         bv = 12;
-        tonnage = 0.3f;
+        tonnage = 0.3;
         criticals = 2;
         cost = 28000;
         flags = flags.or(F_BA_WEAPON).or(F_DIRECT_FIRE).or(F_PLASMA).or(F_ENERGY).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);

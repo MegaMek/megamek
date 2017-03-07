@@ -42,7 +42,7 @@ public class CLBASRM4 extends SRMWeapon {
         mediumRange = 6;
         longRange = 9;
         extremeRange = 12;
-        tonnage = .140f;
+        tonnage = .140;
         criticals = 2;
         bv = 39;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);

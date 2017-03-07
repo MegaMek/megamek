@@ -46,7 +46,7 @@ public class ISBATsunamiGaussRifle extends Weapon {
         mediumRange = 4;
         longRange = 5;
         extremeRange = 8;
-        tonnage = 0.125f;
+        tonnage = 0.125;
         criticals = 2;
         cost = 9500;
         bv = 6;

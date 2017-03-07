@@ -1140,6 +1140,7 @@ public class WeaponType extends EquipmentType {
         // Infantry Level 1 Weapons
         EquipmentType.addType(new InfantryRifleLaserWeapon());
         EquipmentType.addType(new InfantrySupportLRMWeapon());
+//        EquipmentType.addType(new InfantrySupportLRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportISLightSRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportClanLightSRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
@@ -1347,6 +1348,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportLightMortarWeapon());
         EquipmentType.addType(new InfantrySupportLightMortarInfernoWeapon());
         EquipmentType.addType(new InfantrySupportOneShotMRMWeapon());
+        EquipmentType.addType(new InfantrySupportOneShotMRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportFiredrakeNeedlerWeapon());
         EquipmentType.addType(new InfantrySupportISPortablePPCWeapon());
         EquipmentType.addType(new InfantrySupportClanPortablePPCWeapon());

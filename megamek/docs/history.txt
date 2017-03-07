@@ -18,6 +18,7 @@ v0.43.1-git
 + Issue #490: Fixed princess documentation.
 + Feature: Princess will now respond with "You are not my boss." if a player attempts to issue a command to an enemy
     Princess instance.
++ Issue #198: Long tom cannons cannot switch to indirect firing mode 
 
 v0.43.0 (2017-02-13 03:30 UTC)
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

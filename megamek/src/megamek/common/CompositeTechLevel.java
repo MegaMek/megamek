@@ -9,6 +9,7 @@
  */
 package megamek.common;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,8 +21,9 @@ import java.util.stream.Collectors;
  * @author Neoancient
  *
  */
-public class CompositeTechLevel implements ITechnology {
-
+public class CompositeTechLevel implements ITechnology, Serializable {
+    private static final long serialVersionUID = -2591881133085092725L;
+    
     private boolean clan;
     private boolean mixed;
     private boolean introTech;

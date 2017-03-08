@@ -45,9 +45,11 @@ public class InfantrySupportISPortablePPCWeapon extends InfantryWeapon {
         infantryDamage = 0.72;
         infantryRange = 2;
         crew = 2;
+        tonnage = .040;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2425, 2436, 2450);
+        techAdvancement.setISAdvancement(2430, 2436, 2450);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_D, RATING_E, RATING_D, RATING_C });
     }

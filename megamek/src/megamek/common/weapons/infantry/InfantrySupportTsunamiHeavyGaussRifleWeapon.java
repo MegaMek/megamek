@@ -45,9 +45,11 @@ public class InfantrySupportTsunamiHeavyGaussRifleWeapon extends InfantryWeapon 
         infantryDamage = 0.63;
         infantryRange = 2;
         crew = 1;
+        tonnage = .00125;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3048, 3056, 3068);
+        techAdvancement.setISAdvancement(3053, 3056, 3068);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_E });
     }

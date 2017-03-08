@@ -45,6 +45,7 @@ public class InfantrySupportClanSemiPortableLaserWeapon extends InfantryWeapon {
         infantryRange = 3;
         crew = 2;
         rulesRefs =" 273, TM";
+        tonnage = .040;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
         techAdvancement.setTechRating(RATING_D);

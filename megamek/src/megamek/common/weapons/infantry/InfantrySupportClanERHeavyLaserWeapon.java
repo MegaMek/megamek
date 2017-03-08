@@ -45,9 +45,11 @@ public class InfantrySupportClanERHeavyLaserWeapon extends InfantryWeapon {
         infantryDamage = 1.26;
         infantryRange = 7;
         crew = 3;
+        tonnage = .240;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2820, 2827, DATE_NONE);
+        techAdvancement.setClanAdvancement(2825, 2827, DATE_NONE);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_F);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_C });
     }

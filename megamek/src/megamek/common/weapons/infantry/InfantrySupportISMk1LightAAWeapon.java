@@ -46,7 +46,8 @@ public class InfantrySupportISMk1LightAAWeapon extends InfantryWeapon {
         crew = 1;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2485, 2500, 2590, 2790, 3056);
+        techAdvancement.setISAdvancement(2490, 2500, 2590, 2790, 3056);
+        techAdvancement.setApproximate(true, false, false,false,false);
         techAdvancement.setTechRating(RATING_F);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
     }

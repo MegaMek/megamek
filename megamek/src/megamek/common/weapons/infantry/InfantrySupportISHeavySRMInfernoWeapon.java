@@ -34,7 +34,7 @@ public class InfantrySupportISHeavySRMInfernoWeapon extends InfantryWeapon {
     public InfantrySupportISHeavySRMInfernoWeapon() {
         super();
 
-        name = "SRM Launcher (Hvy, One-Shot) - Inferno";
+        name = "SRM Launcher (Hvy, One-Shot) w/ Inferno";
         setInternalName(name);
         addLookupName("InfantryHeavySRMInferno");
         addLookupName("Infantry Heavy SRM Launcher (Inferno)");
@@ -47,8 +47,10 @@ public class InfantrySupportISHeavySRMInfernoWeapon extends InfantryWeapon {
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         rulesRefs = "273, TM";
+        tonnage = .020;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2361, 2370, 2400);
+        techAdvancement.setISAdvancement(2366, 2370, 2400);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_C });
     }

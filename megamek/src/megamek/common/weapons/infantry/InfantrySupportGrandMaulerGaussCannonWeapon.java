@@ -45,9 +45,11 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
         infantryDamage = 0.63;
         infantryRange = 2;
         crew = 1;
+        tonnage = .014;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3050, 3059, 3065);
+        techAdvancement.setISAdvancement(3055, 3059, 3065);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_E });
     }

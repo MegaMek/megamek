@@ -45,9 +45,13 @@ public class InfantrySupportISHeavyPulseLaserWeapon extends InfantryWeapon {
         infantryDamage = 0.98;
         infantryRange = 4;
         crew = 4;
+        tonnage = .300;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2605, 2615, 2675);
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setISAdvancement(2610, 2615, 2675);
+        techAdvancement.setISApproximate(true, false, false);
+        techAdvancement.setClanAdvancement(2610,2615,2675);
+        techAdvancement.setClanApproximate(true,false,false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_D });
     }

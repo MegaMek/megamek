@@ -18,6 +18,7 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
+import megamek.common.TechAdvancement;
 
 
 /**
@@ -47,5 +48,10 @@ public class InfantrySupportISStandardSRMInfernoWeapon extends InfantryWeapon {
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         rulesRefs = "273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2365, 2370, 2400);
+        techAdvancement.setApproximate(true, false, false);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_C });
     }
 }

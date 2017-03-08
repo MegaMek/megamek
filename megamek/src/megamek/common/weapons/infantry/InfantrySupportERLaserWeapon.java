@@ -45,9 +45,11 @@ public class InfantrySupportERLaserWeapon extends InfantryWeapon {
         infantryDamage = 0.84;
         infantryRange = 4;
         crew = 2;
+        tonnage = .110;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3049, 3059, 3075);
+        techAdvancement.setISAdvancement(3054, 3059, 3075);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }

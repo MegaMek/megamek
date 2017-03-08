@@ -1140,7 +1140,7 @@ public class WeaponType extends EquipmentType {
         // Infantry Level 1 Weapons
         EquipmentType.addType(new InfantryRifleLaserWeapon());
         EquipmentType.addType(new InfantrySupportLRMWeapon());
-//        EquipmentType.addType(new InfantrySupportLRMInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportLRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportISLightSRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportClanLightSRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
@@ -1318,6 +1318,7 @@ public class WeaponType extends EquipmentType {
       
          // Infantry Support Weapons
         EquipmentType.addType(new InfantrySupportPortableMGWeapon());
+        EquipmentType.addType(new InfantrySupportSemiPortableMGWeapon());
         EquipmentType.addType(new InfantrySupportISMk1LightAAWeapon());
         EquipmentType.addType(new InfantrySupportClanMk1LightAAWeapon());
         EquipmentType.addType(new InfantrySupportISMk2PortableAAWeapon());
@@ -1389,7 +1390,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportISPulseLaserWeapon());
         EquipmentType.addType(new InfantrySupportClanPulseLaserWeapon());
         EquipmentType.addType(new InfantrySupportISHeavyPulseLaserWeapon());
-        EquipmentType.addType(new InfantrySupportClanHeavyPulseLaserWeapon());
+//        EquipmentType.addType(new InfantrySupportClanHeavyPulseLaserWeapon());
         EquipmentType.addType(new InfantrySupportClanSemiPortablePulseLaserWeapon());
         EquipmentType.addType(new InfantrySupportUltraHeavyLaserWeapon());
         EquipmentType.addType(new InfantrySupportVintageMGWeapon());

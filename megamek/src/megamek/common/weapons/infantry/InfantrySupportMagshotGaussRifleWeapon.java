@@ -45,9 +45,11 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
         infantryDamage = 0.74;
         infantryRange = 2;
         crew = 2;
+        tonnage = .045;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3053, 3059, 3065);
+        techAdvancement.setISAdvancement(3058, 3059, 3065);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }

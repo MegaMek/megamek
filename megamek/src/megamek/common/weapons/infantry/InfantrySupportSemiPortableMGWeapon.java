@@ -19,37 +19,37 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechAdvancement;
-
 /**
- * @author Ben Grills
+ * @author Sebastian Brocks
  */
-public class InfantrySupportSemiPortableMachineGunWeapon extends InfantryWeapon {
+public class InfantrySupportSemiPortableMGWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 3434311797513896108L;
 
-    public InfantrySupportSemiPortableMachineGunWeapon() {
+    public InfantrySupportSemiPortableMGWeapon() {
         super();
 
         name = "Machine Gun (Semi-Portable)";
         setInternalName(name);
-        addLookupName("InfantryMMG");
-        addLookupName("InfantryMG");
-        addLookupName("InfantryMachineGun");
-        addLookupName("Infantry Semi Portable Machine Gun");
+        addLookupName("InfantryMGSemiPortable");
+        addLookupName("Infantry MG Semi Portable");
+        addLookupName("InfantrySemiMG");
         ammoType = AmmoType.T_NA;
-        cost = 1100;
+        cost = 1000;
         bv = 2.29;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT);
+        tonnage = .002;
+        crew = 2;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
         infantryDamage = 0.75;
         infantryRange = 1;
-        crew = 2;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 1950);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability(new int[]{RATING_B, RATING_B, RATING_B, RATING_B});
         rulesRefs =" 273, TM";
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
+        techAdvancement.setIntroLevel(true);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
     }
 }

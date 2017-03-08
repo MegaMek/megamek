@@ -21,36 +21,36 @@ import megamek.common.AmmoType;
 import megamek.common.TechAdvancement;
 
 /**
- * @author Ben Grills
+ * @author Sebastian Brocks
  */
-public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
+public class InfantrySupportLRMInfernoWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = -966926675003846938L;
 
-    public InfantrySupportHellboreAssaultLaserWeapon() {
+    public InfantrySupportLRMInfernoWeapon() {
         super();
 
-        name = "Laser (Hellbore Assault)";
+        name = "LRM Launcher (Corean Farshot) w/Inferno";
         setInternalName(name);
-        addLookupName("InfantryHellbore");
-        addLookupName("InfantryHellboreAssaultLaser");
-        addLookupName("Infantry Hellbore Assault Laser");
+        addLookupName("InfantryInfernoLRM");
+        addLookupName("LRM Inferno Launcher");
+        addLookupName("LRM Inferno Launcher (FarShot)");
         ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 3.22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_ENCUMBER).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 0.63;
-        infantryRange = 2;
-        crew = 1;
-        tonnage = .020;
+        cost = 2000;
+        bv = 1.36;
+        tonnage = .03;
+        flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        setModes(new String[] { "", "Indirect" });
+        infantryDamage = 0.19;
+        infantryRange = 3;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3054, 3058, 3062);
+        techAdvancement.setISAdvancement(3050, 3057, 3065);
         techAdvancement.setApproximate(true, false, false);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }
 }

@@ -44,10 +44,11 @@ public class InfantrySupportHeavyAutoGrenadeLauncherWeapon extends InfantryWeapo
         infantryDamage = 1.93;
         infantryRange = 1;
         crew = 1;
+        tonnage = .020;
         rulesRefs = "273, TM";
-
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2891, 2900, DATE_NONE);
+        techAdvancement.setClanAdvancement(2896, 2900, DATE_NONE);
+        techAdvancement.setApproximate(true, false);
         techAdvancement.setTechRating(RATING_D);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }

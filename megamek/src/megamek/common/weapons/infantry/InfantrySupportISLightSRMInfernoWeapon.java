@@ -47,8 +47,10 @@ public class InfantrySupportISLightSRMInfernoWeapon extends InfantryWeapon {
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         rulesRefs = "273, TM";
+        tonnage = .010;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2360, 2370, 2400);
+        techAdvancement.setISAdvancement(2365, 2370, 2400);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_C });
     }

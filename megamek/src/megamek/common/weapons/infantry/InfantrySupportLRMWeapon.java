@@ -41,6 +41,7 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 2000;
         bv = 3.44;
+        tonnage = .03;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         setModes(new String[] { "", "Indirect" });
         infantryDamage = 0.48;
@@ -48,6 +49,7 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3050, 3057, 3065);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_D);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
     }

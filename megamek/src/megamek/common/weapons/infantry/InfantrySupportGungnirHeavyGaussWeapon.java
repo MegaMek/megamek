@@ -45,9 +45,11 @@ public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
         infantryDamage = 1.23;
         infantryRange = 3;
         crew = 3;
+        tonnage = .060;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3069, 3080, DATE_NONE);
+        techAdvancement.setISAdvancement(3074, 3080, DATE_NONE);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }

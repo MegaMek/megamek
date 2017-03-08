@@ -45,9 +45,11 @@ public class InfantrySupportISStandardSRMWeapon extends InfantryWeapon {
         infantryDamage = 1.14;
         infantryRange = 2;
         crew = 1;
+        tonnage = .030;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2360, 2370, 2400);
+        techAdvancement.setISAdvancement(2365, 2370, 2400);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_C });
     }

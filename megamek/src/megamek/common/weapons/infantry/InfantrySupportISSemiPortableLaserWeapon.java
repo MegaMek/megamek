@@ -44,9 +44,11 @@ public class InfantrySupportISSemiPortableLaserWeapon extends InfantryWeapon {
         infantryDamage = 0.61;
         infantryRange = 3;
         crew = 2;
+        tonnage = .040;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2390, 2400, 2450);
+        techAdvancement.setISAdvancement(2395, 2400, 2450);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_D);
         techAdvancement.setAvailability( new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
     }

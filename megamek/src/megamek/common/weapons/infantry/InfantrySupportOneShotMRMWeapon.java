@@ -41,13 +41,15 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
         ammoType = AmmoType.T_NA;
         cost = 2500;
         bv = 2.71;
+        tonnage = .03;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
         infantryDamage = 0.53;
         infantryRange = 2;
         crew = 1;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3058, 3065, 3075);
+        techAdvancement.setISAdvancement(3063, 3065, 3075);
+        techAdvancement.setApproximate(true,false,false);
         techAdvancement.setTechRating(RATING_D);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }

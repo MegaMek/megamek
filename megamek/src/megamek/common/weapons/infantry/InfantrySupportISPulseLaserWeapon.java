@@ -46,8 +46,10 @@ public class InfantrySupportISPulseLaserWeapon extends InfantryWeapon {
         infantryRange = 3;
         crew = 2;
         rulesRefs = "273, TM";
+        tonnage = .150;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2600, 2610, 2650);
+        techAdvancement.setISAdvancement(2605, 2610, 2650);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_C });
     }

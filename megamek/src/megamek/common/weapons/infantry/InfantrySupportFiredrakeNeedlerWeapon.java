@@ -47,9 +47,11 @@ public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
         infantryDamage = 1.2;
         infantryRange = 1;
         crew = 2;
+        tonnage = .025;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3053, 3061, 3075);
+        techAdvancement.setISAdvancement(3058, 3061, 3075);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_D);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_C });
     }

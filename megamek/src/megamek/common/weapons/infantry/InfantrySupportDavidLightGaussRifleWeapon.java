@@ -51,8 +51,10 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
         longRange = 9;
         extremeRange = 12;
         rulesRefs = "273, TM";
+        tonnage = .018;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3055, 3063, 3075);
+        techAdvancement.setISAdvancement(3060, 3063, 3075);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }

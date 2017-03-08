@@ -45,6 +45,7 @@ public class InfantrySupportClanPortablePPCWeapon extends InfantryWeapon {
         infantryDamage = 0.72;
         infantryRange = 2;
         crew = 2;
+        tonnage = .040;
         rulesRefs =" 273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);

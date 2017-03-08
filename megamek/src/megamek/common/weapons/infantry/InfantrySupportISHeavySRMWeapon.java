@@ -43,9 +43,11 @@ public class InfantrySupportISHeavySRMWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
         infantryDamage = 0.57;
         infantryRange = 2;
+        tonnage = .020;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2361, 2370, 2400);
+        techAdvancement.setISAdvancement(2366, 2370, 2400);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_C });
     }

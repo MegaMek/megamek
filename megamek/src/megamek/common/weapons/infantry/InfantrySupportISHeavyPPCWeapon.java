@@ -45,9 +45,11 @@ public class InfantrySupportISHeavyPPCWeapon extends InfantryWeapon {
         infantryDamage = 1.58;
         infantryRange = 3;
         crew = 5;
+        tonnage =1800;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2460, 2470, 2500);
+        techAdvancement.setISAdvancement(2465, 2470, 2500);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_E);
         techAdvancement.setAvailability( new int[] { RATING_C, RATING_D, RATING_C, RATING_D });
     }

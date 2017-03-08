@@ -45,9 +45,11 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
         infantryDamage = 0.70;
         infantryRange = 3;
         crew = 2;
+        tonnage = .025;
         rulesRefs = "273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(3051, 3060, DATE_NONE);
+        techAdvancement.setClanAdvancement(3056, 3060, DATE_NONE);
+        techAdvancement.setApproximate(true, false, false);
         techAdvancement.setTechRating(RATING_F);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_D });
     }

@@ -2,7 +2,9 @@ VERSION HISTORY:
 ----------------
 v0.42.2-git
 + Issue #476: VTOL armor diagram changes color incorrectly?
-+ Issue #198: Long tom cannons cannot switch to indirect firing mode 
++ Issue #198: Long tom cannons cannot switch to indirect firing mode
++ Issue #456: Cannot cancel hotloading of LRMs during battle
++ Issue #457: Hot loaded LRMs not working properly 
 
 v0.42.1 (2017-02-13 03:30 UTC)
 + Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

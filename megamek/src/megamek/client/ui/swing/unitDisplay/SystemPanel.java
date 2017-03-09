@@ -876,10 +876,26 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                     for (Enumeration<EquipmentMode> e = m.getType()
                             .getModes(); e.hasMoreElements();) {
                         EquipmentMode em = e.nextElement();
+                        //Hack to prevent showing an option that is disabled by the server, but would
+                        //be overwritten by every entity update if made also in the client
+                        if (em.equals("HotLoad") && en instanceof Mech
+                                && !client.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
+                            continue;
+                        }
                         m_chMode.addItem(em.getDisplayableName());
                     }
-                    m_chMode.setSelectedItem(m.curMode()
-                            .getDisplayableName());
+                    if (m_chMode.getModel().getSize() <= 1) {
+                        m_chMode.removeAllItems();
+                        m_chMode.setEnabled(false);
+                    } else {
+                        if (m.pendingMode().equals("None")) {
+                            m_chMode.setSelectedItem(m.curMode()
+                                    .getDisplayableName());
+                        } else {
+                            m_chMode.setSelectedItem(m.pendingMode()
+                                    .getDisplayableName());
+                        }
+                    }
                 } else {
                     CriticalSlot cs = getSelectedCritical();
                     if ((cs != null)

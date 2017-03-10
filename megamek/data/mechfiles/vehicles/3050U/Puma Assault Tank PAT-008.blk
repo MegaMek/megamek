@@ -1,8 +1,12 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
 
 <UnitType>
 Tank
@@ -24,21 +28,17 @@ PAT-008
 IS Level 2
 </type>
 
-<tonnage>
-95.0
-</tonnage>
-
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-4
-</engine_type>
-
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+4
+</engine_type>
 
 <armor_type>
 6
@@ -57,11 +57,11 @@ Tracked
 </armor>
 
 <Body Equipment>
-ISGuardianECM
+ISGuardianECMSuite
 ISTargeting Computer
-IS MML-9 LRM Ammo Artemis-capable
-IS MML-9 SRM Ammo Artemis-capable
-IS MML-9 LRM Ammo Artemis-capable
+IS Ammo MML-9 LRM Artemis-capable
+IS Ammo MML-9 SRM Artemis-capable
+IS Ammo MML-9 LRM Artemis-capable
 ISAMS Ammo
 ISAMS Ammo
 ISAMS Ammo
@@ -73,21 +73,21 @@ ISAMS Ammo
 ISAntiMissileSystem
 ISAntiMissileSystem
 ISMML9
-IS Artemis IV FCS
+ISArtemisIV
 ISBPod
 </Front Equipment>
 
 <Right Equipment>
 ISAntiMissileSystem
 ISMML9
-IS Artemis IV FCS
+ISArtemisIV
 ISBPod
 </Right Equipment>
 
 <Left Equipment>
 ISAntiMissileSystem
 ISMML9
-IS Artemis IV FCS
+ISArtemisIV
 ISBPod
 </Left Equipment>
 
@@ -99,3 +99,12 @@ ISAntiMissileSystem
 ISAntiMissileSystem
 ISERPPC
 </Turret Equipment>
+
+<source>
+TRO 3050 - Jihad
+</source>
+
+<tonnage>
+95.0
+</tonnage>
+

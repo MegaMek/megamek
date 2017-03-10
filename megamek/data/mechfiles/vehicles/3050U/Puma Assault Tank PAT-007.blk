@@ -1,8 +1,12 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
 
 <UnitType>
 Tank
@@ -24,21 +28,17 @@ PAT-007
 IS Level 2
 </type>
 
-<tonnage>
-95.0
-</tonnage>
-
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-4
-</engine_type>
-
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+4
+</engine_type>
 
 <armor_type>
 6
@@ -58,10 +58,10 @@ Tracked
 
 <Body Equipment>
 IS Vehicle Flamer Ammo
-IS MML-7 LRM Ammo
-IS MML-7 SRM Ammo
-IS MML-7 LRM Ammo
-IS MML-7 SRM Ammo
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
 IS Machine Gun Ammo - Half
 IS Machine Gun Ammo - Half
 ISC3iUnit
@@ -76,15 +76,15 @@ Medium Laser
 
 <Right Equipment>
 ISMML7
-ISMachine Gun
-ISMachine Gun
+Machine Gun
+Machine Gun
 ISMGA
 </Right Equipment>
 
 <Left Equipment>
 ISMML7
-ISMachine Gun
-ISMachine Gun
+Machine Gun
+Machine Gun
 ISMGA
 </Left Equipment>
 
@@ -94,6 +94,14 @@ Vehicle Flamer
 </Rear Equipment>
 
 <Turret Equipment>
-ISHeavyPPC
+Heavy PPC
 </Turret Equipment>
+
+<source>
+TRO 3050 - Jihad
+</source>
+
+<tonnage>
+95.0
+</tonnage>
 

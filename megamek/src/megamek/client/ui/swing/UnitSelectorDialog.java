@@ -888,7 +888,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 case COL_BV:
                     return "BV";
                 case COL_YEAR:
-                    return OptionsConstants.ALLOWED_YEAR;
+                    return "Year";
                 case COL_COST:
                     return "Price";
                 case COL_LEVEL:

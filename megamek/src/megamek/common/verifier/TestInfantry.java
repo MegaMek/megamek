@@ -22,6 +22,7 @@ package megamek.common.verifier;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
+import megamek.common.options.OptionsConstants;
 
 
 public class TestInfantry extends TestEntity {
@@ -116,48 +117,117 @@ public class TestInfantry extends TestEntity {
     		return true;
     	}
     	
-    	if (inf.getSecondaryN() > 2) {
-            buff.append("Number of secondary weapons exceeds maximum of 2").append("\n\n");
+    	int max = maxSecondaryWeapons(inf);
+    	if (inf.getSecondaryN() > max) {
+            buff.append("Number of secondary weapons exceeds maximum of " + max).append("\n\n");
             correct = false;
-    	}
-    	if (inf.getMovementMode() == EntityMovementMode.VTOL) {
-    		if (inf.getSecondaryN() > 1) {
-                buff.append("Number of secondary weapons exceeds maximum of 1").append("\n\n");
-                correct = false;
-    		} else if (inf.hasMicrolite() && inf.getSecondaryN() > 0) {
-                buff.append("Microlite VTOL units cannot use secondary weapons.").append("\n\n");
-                correct = false;
-    		}
     	}
     	
-    	if (inf.getSecondaryWeapon().getCrew() * inf.getSecondaryN() > inf.getSquadSize()) {
-            buff.append("Secondary weapon crew requirement exceeds squad size.").append("\n\n");
-            correct = false;
+    	if (inf.getSecondaryWeapon() != null) {
+        	int secondaryCrew = inf.getSecondaryWeapon().getCrew();
+        	if (inf.getCrew() != null) {
+        		if (inf.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+        			secondaryCrew--;
+        		}
+        		if (inf.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+        			secondaryCrew--;
+        		}
+        	}
+        	secondaryCrew = Math.max(secondaryCrew, 1);
+        	if (secondaryCrew * inf.getSecondaryN() > inf.getSquadSize()) {
+                buff.append("Secondary weapon crew requirement exceeds squad size.").append("\n\n");
+                correct = false;
+        	}
+    	}
+    	
+    	max = maxSquadSize(inf);
+    	if (inf.getSquadSize() > max) {
+            buff.append("Maximum squad size is " + max + "\n\n");
+            correct = false;    		
     	}
 
-    	if (inf.getMovementMode() == EntityMovementMode.HOVER
-    			&& inf.getSquadSize() > 5) {
-            buff.append("Maximum squad size for Mechanized/Hover is 5.\n\n");
-            correct = false;
-    	} else if (inf.getMovementMode() == EntityMovementMode.TRACKED
-    			&& inf.getSquadSize() > 7) {
-            buff.append("Maximum squad size for Mechanized/Tracked is 7.\n\n");
-            correct = false;
-    	} else if (inf.getMovementMode() == EntityMovementMode.WHEELED
-    			&& inf.getSquadSize() > 6) {
-            buff.append("Maximum squad size for Mechanized/Wheeled is 6.\n\n");
-            correct = false;
-    	} else if (inf.getMovementMode() == EntityMovementMode.VTOL) {
-    		if (inf.hasMicrolite() && inf.getSquadSize() != 2) {
-                buff.append("Microlite VTOL squad size is 2.\n\n");
-                correct = false;
-    		} else if (!inf.hasMicrolite() && inf.getSquadSize() != 4) {
-                buff.append("Micro-copter VTOL squad size is 4.\n\n");
-                correct = false;
-    		}
+    	max = maxUnitSize(inf);
+    	if (inf.getShootingStrength() > max) {
+            buff.append("Maximum platoon size is " + max + "\n\n");
+            correct = false;    		
     	}
 
         return correct;
+    }
+    
+    public static int maxSecondaryWeapons(Infantry inf) {
+    	int max = 2;
+    	if (inf.getMovementMode() == EntityMovementMode.VTOL) {
+    		max = inf.hasMicrolite()?0 : 1;
+    	} else if (inf.getMovementMode() == EntityMovementMode.INF_UMU) {
+    		max = inf.getAllUMUCount();
+    	}
+    	if (inf.hasSpecialization(Infantry.COMBAT_ENGINEERS)) {
+    		max = 0;
+    	}
+    	if (inf.hasSpecialization(Infantry.MOUNTAIN_TROOPS | Infantry.PARAMEDICS)) {
+    		max = 1;
+    	}
+    	if (inf.getCrew() != null) {
+    		if (inf.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+    			max++;
+    		}
+    		if (inf.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+    			max++;
+    		}
+    	}
+    	return max;
+    }
+    
+    public static int maxSquadSize(Infantry inf) {
+    	switch(inf.getMovementMode()) {
+    	case HOVER:
+    	case SUBMARINE:
+    		return 5;
+    	case WHEELED:
+    		return 6;
+    	case TRACKED:
+    		return 7;
+    	case INF_UMU:
+    		 return inf.getAllUMUCount() > 1? 6 : 10;
+    	case VTOL:
+    		return inf.hasMicrolite()? 2 : 4;
+    	default:
+    		return 10;
+    	}
+    }
+    
+    public static int maxUnitSize(Infantry inf) {
+    	int max;
+    	switch(inf.getMovementMode()) {
+    	case INF_UMU:
+    		if (inf.getAllUMUCount() > 1) {
+    			max = 12;
+    		} else {
+    			max = 30;
+    		}
+    		break;
+    	case HOVER:
+    	case SUBMARINE:
+    		max = 20;
+    		break;
+    	case WHEELED:
+    		max = 24;
+    		break;
+    	case TRACKED:
+    		max = 28;
+    		break;
+    	case VTOL:
+    		max = maxSquadSize(inf) * 4;
+    		break;
+    	default:
+    		max = 30;
+    		break;
+    	}
+    	if (inf.hasSpecialization(Infantry.COMBAT_ENGINEERS | Infantry.MOUNTAIN_TROOPS)) {
+    		max = Math.min(max, 20);
+    	}
+    	return max;
     }
 
     @Override

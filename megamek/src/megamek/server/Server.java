@@ -28821,7 +28821,8 @@ public class Server implements Runnable {
                 m.setPendingDump(mode == -1);
             // a mode change for ammo means dumping or hotloading
             } else if ((m.getType() instanceof AmmoType)
-                && !m.getType().hasInstantModeSwitch() && (mode <= 0)) {
+                && !m.getType().hasInstantModeSwitch() && (mode < 0
+                            || mode == 0 && m.isPendingDump())) {
                 m.setPendingDump(mode == -1);
             } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted()
                        && (mode <= 0)) {

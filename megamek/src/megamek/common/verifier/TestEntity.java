@@ -1101,6 +1101,32 @@ public abstract class TestEntity implements TestEntityOption {
         }
         if (getEntity() instanceof Mech) {
             Mech mech = (Mech) getEntity();
+            
+            if (mech.isSuperHeavy()) {
+            	switch (mech.hasEngine()? mech.getEngine().getEngineType() : Engine.NONE) {
+            	case Engine.NORMAL_ENGINE:
+            	case Engine.LARGE_ENGINE:
+            		break;
+            	case Engine.XL_ENGINE:
+            	case Engine.XXL_ENGINE:
+            	case Engine.COMPACT_ENGINE:
+            	case Engine.LIGHT_ENGINE:
+            		if (mech.isIndustrial()) {
+            			buff.append("Superheavy industrialMechs can only use standard or large fusion engine\n");
+            			illegal = true;
+            		}
+            		break;
+            	default:
+            		buff.append("Superheavy Mechs must use some type of fusion engine\n");
+            		illegal = true;
+            	}
+            	
+            	if (mech.getArmoredComponentBV() > 0) {
+            		buff.append("Superheavy Mechs cannot have armored components\n");
+            		illegal = true;
+            	}
+            }
+            
             if (hasHarjelII && hasHarjelIII) {
                 illegal = true;
                 buff.append("Can't mix HarJel II and HarJel III\n");
@@ -1281,7 +1307,22 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("RISC emergency coolant system must be mounted in location with engine crit\n");
                     illegal = true;
                 }
-            }
+                
+                if (mech.isSuperHeavy()
+                		&& (m.getType().hasFlag(MiscType.F_TSM)
+                				|| m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)
+                				|| m.getType().hasFlag(MiscType.F_SCM)
+                				|| m.getType().hasFlag(MiscType.F_MASC)
+                				|| m.getType().hasFlag(MiscType.F_JUMP_JET)
+                				|| m.getType().hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER)
+                				|| m.getType().hasFlag(MiscType.F_UMU)
+                				|| m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
+                				|| m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
+                				|| m.getType().hasFlag(MiscType.F_PARTIAL_WING))) {
+                	buff.append("Superheavy may not mount " + m.getType().getName() + "\n");
+                	illegal = true;
+                }
+            }                
 
             if (mech.hasNullSig()) {
                 if (mech.hasStealth()) {

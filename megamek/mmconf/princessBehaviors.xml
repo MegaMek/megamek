@@ -52,4 +52,95 @@
     <braveryIndex>5</braveryIndex>
     <strategicTargets/>
   </behavior>
+  <behavior>
+    <name>Scout (pPT)</name>
+    <homeEdge>0</homeEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>4</fallShameIndex>
+    <hyperAggressionIndex>8</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>7</herdMentalityIndex>
+    <braveryIndex>3</braveryIndex>
+    <strategicTargets/>
+  </behavior>
+  <behavior>
+    <name>Striker (pPT)</name>
+    <homeEdge>0</homeEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>3</fallShameIndex>
+    <hyperAggressionIndex>9</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>7</herdMentalityIndex>
+    <braveryIndex>8</braveryIndex>
+    <strategicTargets/>
+  </behavior>
+  <behavior>
+    <name>Juggernaut (pPT)</name>
+    <homeEdge>0</homeEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>5</fallShameIndex>
+    <hyperAggressionIndex>9</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>5</herdMentalityIndex>
+    <braveryIndex>7</braveryIndex>
+    <strategicTargets/>
+  </behavior>
+  <behavior>
+    <name>Sniper (pPT)</name>
+    <homeEdge>0</homeEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>5</fallShameIndex>
+    <hyperAggressionIndex>1</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>2</herdMentalityIndex>
+    <braveryIndex>6</braveryIndex>
+    <strategicTargets/>
+  </behavior>
+  <behavior>
+    <name>Brawler (pPT)</name>
+    <homeEdge>0</homeEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>5</fallShameIndex>
+    <hyperAggressionIndex>4</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>2</herdMentalityIndex>
+    <braveryIndex>8</braveryIndex>
+    <strategicTargets/>
+  </behavior>
+  <behavior>
+    <name>Missile Boat (pPT)</name>
+    <homeEdge>0</homeEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>5</fallShameIndex>
+    <hyperAggressionIndex>1</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>3</herdMentalityIndex>
+    <braveryIndex>4</braveryIndex>
+    <strategicTargets/>
+  </behavior>
+  <behavior>
+    <name>Skirmisher (pPT)</name>
+    <homeEdge>0</homeEdge>
+    <forcedWithdrawal>true</forcedWithdrawal>
+    <goHome>false</goHome>
+    <autoFlee>false</autoFlee>
+    <fallShameIndex>4</fallShameIndex>
+    <hyperAggressionIndex>6</hyperAggressionIndex>
+    <selfPreservationIndex>5</selfPreservationIndex>
+    <herdMentalityIndex>6</herdMentalityIndex>
+    <braveryIndex>6</braveryIndex>
+    <strategicTargets/>
+  </behavior>
 </princessBehaviors>

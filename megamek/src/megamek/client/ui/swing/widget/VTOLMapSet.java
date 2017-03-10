@@ -106,10 +106,10 @@ public class VTOLMapSet implements DisplayMapSet {
             new int[] { 150, 90, 90, 150 }, 4);
     // Rear armor
     private Polygon rearArmor = new Polygon(new int[] { 67, 67, 83, 83 },
-            new int[] { 180, 150, 150, 180 }, 4);
+            new int[] { 240, 180, 180, 240 }, 4);
     // Rear internal structure
     private Polygon rearIS = new Polygon(new int[] { 67, 67, 83, 83 },
-            new int[] { 240, 180, 180, 240 }, 4);
+            new int[] { 180, 150, 150, 180 }, 4);
     // Rotor armor
     private Polygon rotorArmor1 = new Polygon(new int[] { 0, 0, 45, 45 },
             new int[] { 90, 75, 75, 90 }, 4);

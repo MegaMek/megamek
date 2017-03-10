@@ -322,8 +322,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((ae instanceof Mech) || (ae instanceof Tank)) {
             bMekTankStealthActive = ae.isStealthActive();
         }
-        boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals("Indirect"))
-                || (wtype instanceof ArtilleryCannonWeapon);
+        boolean isIndirect = (wtype.hasModes() && weapon.curMode().equals("Indirect"));
         boolean isInferno = ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_MML))
                 && (atype.getMunitionType() == AmmoType.M_INFERNO))
@@ -3453,7 +3452,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             }
 
-            if ((spotter == null) && !(wtype instanceof MekMortarWeapon) && !(wtype instanceof ArtilleryCannonWeapon)) {
+            if ((spotter == null) && !(wtype instanceof MekMortarWeapon) && !(wtype instanceof ArtilleryCannonWeapon)
+                    && !ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
                 return "No available spotter";
             }
         }

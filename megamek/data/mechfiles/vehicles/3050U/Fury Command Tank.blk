@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Fury Command Tank
@@ -28,29 +28,21 @@ Fury Command Tank
 IS Level 2
 </type>
 
-<tonnage>
-80.0
-</tonnage>
-
 <motion_type>
 Tracked
 </motion_type>
 
 <transporters>
-TroopSpace: 1
+troopspace:1.0
 </transporters>
-
-<armor_type>
-0
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
 
 <cruiseMP>
 4
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
 
 <armor>
 60
@@ -80,4 +72,12 @@ IS Gauss Ammo
 <Turret Equipment>
 ISGaussRifle
 </Turret Equipment>
+
+<source>
+TRO 3050 - Star League
+</source>
+
+<tonnage>
+80.0
+</tonnage>
 

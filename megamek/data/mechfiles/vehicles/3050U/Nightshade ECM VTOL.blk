@@ -2,56 +2,77 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 VTOL
 </UnitType>
+
 <Name>
 Nightshade ECM VTOL
 </Name>
+
 <Model>
 (Standard)
 </Model>
-<Tonnage>
-25
-</Tonnage>
-<cruiseMP>
-12
-</cruiseMP>
-<Armor>
-10
-5
-5
-8
-2
-</Armor>
-<armor_tech>
-3
-</armor_tech>
-<Front Equipment>
-ISMediumLaser
-</Front Equipment>
-<Body Equipment>
-ISGuardianECM
-</Body Equipment>
-<type>
-IS Level 2
-</type>
+
 <year>
 2597
 </year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
+
+<type>
+IS Level 2
+</type>
+
 <motion_type>
 VTOL
 </motion_type>
+
+<cruiseMP>
+12
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+10
+6
+6
+8
+2
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+</Body Equipment>
+
+<Front Equipment>
+Medium Laser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<source>
+TRO 3050 - Star League
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

@@ -2497,7 +2497,15 @@ public class Aero extends Entity {
         r.addDesc(this);
         vDesc.addElement(r);
 
-        r = new Report(7035);
+        if (((getEntityType() & Entity.ETYPE_DROPSHIP) == 0)
+                || ((getEntityType() & Entity.ETYPE_SMALL_CRAFT) == 0)
+                || ((getEntityType() & Entity.ETYPE_FIGHTER_SQUADRON) == 0)
+                || ((getEntityType() & Entity.ETYPE_JUMPSHIP) == 0)
+                || ((getEntityType() & Entity.ETYPE_SPACE_STATION) == 0)) {
+            r = new Report(7036);
+        } else {
+            r = new Report(7030);
+        }
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);

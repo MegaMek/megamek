@@ -6,6 +6,7 @@ v0.42.2-git
 + Issue #456: Cannot cancel hotloading of LRMs during battle
 + Issue #499: Map Editor Theme Broken
 + Issue #487: Issues with startup.sh 
++ Issue #464: Incorrect titles for ASF and BA in the end-of-battle text
 
 v0.42.1 (2017-02-13 03:30 UTC)
 + Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

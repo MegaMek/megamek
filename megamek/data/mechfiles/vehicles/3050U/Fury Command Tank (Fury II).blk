@@ -13,15 +13,15 @@ Tank
 </UnitType>
 
 <Name>
-Rotunda Scout Vehicle
+Fury Command Tank
 </Name>
 
 <Model>
-RND-J-1-11
+(Fury II)
 </Model>
 
 <year>
-2725
+2732
 </year>
 
 <type>
@@ -29,11 +29,11 @@ IS Level 2
 </type>
 
 <motion_type>
-Wheeled
+Tracked
 </motion_type>
 
 <cruiseMP>
-9
+4
 </cruiseMP>
 
 <engine_type>
@@ -49,19 +49,19 @@ Wheeled
 </armor_tech>
 
 <armor>
-6
-4
-4
-3
+60
+44
+44
+40
+60
 </armor>
 
 <Body Equipment>
-IS Ammo SRM-2
+IS Gauss Ammo
 </Body Equipment>
 
 <Front Equipment>
-Large Laser
-SRM 2
+Medium Laser
 </Front Equipment>
 
 <Right Equipment>
@@ -73,7 +73,15 @@ SRM 2
 <Rear Equipment>
 </Rear Equipment>
 
+<Turret Equipment>
+ISGaussRifle
+</Turret Equipment>
+
+<source>
+TRO 3050 - Star League
+</source>
+
 <tonnage>
-20.0
+80.0
 </tonnage>
 

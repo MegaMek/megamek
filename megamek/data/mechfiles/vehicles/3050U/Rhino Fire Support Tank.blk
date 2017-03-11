@@ -13,53 +13,50 @@ Tank
 </UnitType>
 
 <Name>
-Gabriel Reconnaissance Hovercraft
+Rhino Fire Support Tank
 </Name>
 
 <Model>
-(TDF)
+(Standard)
 </Model>
 
 <year>
-3065
+2669
 </year>
 
 <type>
-IS Level 3
+IS Level 1
 </type>
 
 <motion_type>
-Hover
+Tracked
 </motion_type>
 
 <cruiseMP>
-13
+3
 </cruiseMP>
 
 <engine_type>
 0
 </engine_type>
 
-<armor_type>
-1
-</armor_type>
-
-<armor_tech>
-5
-</armor_tech>
-
 <armor>
-5
-3
-3
-3
-3
+64
+54
+54
+40
+60
 </armor>
 
 <Body Equipment>
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-10
 </Body Equipment>
 
 <Front Equipment>
+LRM 10
 </Front Equipment>
 
 <Right Equipment>
@@ -72,15 +69,17 @@ Hover
 </Rear Equipment>
 
 <Turret Equipment>
-RL10
-RL10
+LRM 20
+LRM 20
+Medium Laser
+Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO 3050 - Star League
 </source>
 
 <tonnage>
-5.0
+80.0
 </tonnage>
 

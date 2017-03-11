@@ -245,7 +245,14 @@
 	</target>
 
 	<target name="nix-tar" description="Create a compressed tar file of the unix distribution">
-		<tar destfile="${nixdist}.tar.gz" basedir="${nixdist}" compression="gzip"  longfile="gnu"/>
+		<tar destfile="${nixdist}.tar.gz" compression="gzip"  longfile="gnu">
+			<tarfileset dir="${nixdist}" filemode="755">
+				<include name="**/*.sh"/>
+			</tarfileset>
+			<tarfileset dir="${nixdist}">
+				<exclude name="**/*.sh"/>
+			</tarfileset>
+		</tar>
 	</target>
 
 	<target name="nix-clean">

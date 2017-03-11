@@ -2077,6 +2077,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             sb.append(m.getDesc().substring(0, ammoIndex));
             sb.append(m.getDesc().substring(ammoIndex + 4));
         }
+        if (m.isHotLoaded()) {
+            sb.append(Messages.getString("MechDisplay.isHotLoaded"));
+        }
         return sb.toString();
     }
 

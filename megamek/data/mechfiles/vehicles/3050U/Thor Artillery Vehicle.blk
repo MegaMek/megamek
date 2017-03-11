@@ -13,15 +13,15 @@ Tank
 </UnitType>
 
 <Name>
-Gabriel Reconnaissance Hovercraft
+Thor Artillery Vehicle
 </Name>
 
 <Model>
-(TDF)
+(Standard)
 </Model>
 
 <year>
-3065
+2680
 </year>
 
 <type>
@@ -29,11 +29,11 @@ IS Level 3
 </type>
 
 <motion_type>
-Hover
+Wheeled
 </motion_type>
 
 <cruiseMP>
-13
+5
 </cruiseMP>
 
 <engine_type>
@@ -45,21 +45,25 @@ Hover
 </armor_type>
 
 <armor_tech>
-5
+-1
 </armor_tech>
 
 <armor>
-5
-3
-3
-3
-3
+29
+23
+23
+22
+28
 </armor>
 
 <Body Equipment>
+ISThumperAmmo
+ISThumperAmmo
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
+ISThumper
 </Front Equipment>
 
 <Right Equipment>
@@ -72,15 +76,15 @@ Hover
 </Rear Equipment>
 
 <Turret Equipment>
-RL10
-RL10
+Medium Laser
+Medium Laser
 </Turret Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO 3050 - Star League
 </source>
 
 <tonnage>
-5.0
+55.0
 </tonnage>
 

@@ -1323,6 +1323,7 @@ public abstract class TestEntity implements TestEntityOption {
                 if (mech.isSuperHeavy()
                 		&& (m.getType().hasFlag(MiscType.F_TSM)
                 				|| m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)
+                				|| m.getType().hasFlag(MiscType.F_SCM)
                 				|| m.getType().hasFlag(MiscType.F_MASC)
                 				|| m.getType().hasFlag(MiscType.F_JUMP_JET)
                 				|| m.getType().hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER)

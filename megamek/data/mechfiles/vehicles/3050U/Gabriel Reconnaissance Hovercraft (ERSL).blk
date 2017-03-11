@@ -76,6 +76,10 @@ ISERSmallLaser
 ISERSmallLaser
 </Turret Equipment>
 
+<source>
+TRO 3050 - Jihad
+</source>
+
 <tonnage>
 5.0
 </tonnage>

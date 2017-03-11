@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Burke Defense Tank
@@ -28,21 +28,17 @@ Burke Defense Tank
 IS Level 2
 </type>
 
-<tonnage>
-75.0
-</tonnage>
-
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
-
 <cruiseMP>
 2
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
 
 <armor_type>
 1
@@ -80,7 +76,15 @@ ISStreakSRM4
 </Rear Equipment>
 
 <Turret Equipment>
-ISHeavyPPC
-ISHeavyPPC
+Heavy PPC
+Heavy PPC
 </Turret Equipment>
+
+<source>
+TRO 3050 - Jihad
+</source>
+
+<tonnage>
+75.0
+</tonnage>
 

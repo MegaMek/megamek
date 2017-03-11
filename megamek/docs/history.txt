@@ -8,6 +8,7 @@ v0.42.2-git
 + Issue #487: Issues with startup.sh 
 + Issue #464: Incorrect titles for ASF and BA in the end-of-battle text
 + Issue #421: Toughness Text In Pilot Tab Spacing Issue
++ Issue #442: Tooltip colors still not quite right for firing vectors
 
 v0.42.1 (2017-02-13 03:30 UTC)
 + Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

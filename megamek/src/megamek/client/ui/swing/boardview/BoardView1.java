@@ -5693,9 +5693,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check if it's on any attacks
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>"); //$NON-NLS-1$
+                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                 txt.append(aSprite.getTooltip().toString());
-                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+                txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
         }
 
@@ -5774,14 +5774,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             
-            txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>");
+            txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
             if (aaa.turnsTilHit == 1)
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", 
                         new Object[] { wpName, ammoName }));
             else
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", 
                         new Object[] { wpName, ammoName, aaa.turnsTilHit }));
-            txt.append("</TD></TR></TABLE>");
+            txt.append("</FONT></TD></TR></TABLE>");
         }
 
         // Artillery fire adjustment

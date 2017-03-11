@@ -34,10 +34,10 @@ RTR Armor:12
 RTC Armor:12
 
 Weapons:4
-LRT 15, Right Torso
-LRT 15, Left Torso
-LRT 15, Right Arm
 LRT 15, Left Arm
+LRT 15, Right Arm
+LRT 15, Left Torso
+LRT 15, Right Torso
 
 Left Arm:
 Shoulder
@@ -46,9 +46,9 @@ CLLRT15
 CLLRT15
 CLArtemisV
 CLArtemisV
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable
 Clan HarJel
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -60,9 +60,9 @@ CLLRT15
 CLLRT15
 CLArtemisV
 CLArtemisV
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable
 Clan HarJel
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -77,10 +77,9 @@ CLLRT15
 CLArtemisV
 CLArtemisV
 Clan HarJel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
-Clan Ferro-Lamellor
-Clan Ferro-Lamellor
-
 
 Right Torso:
 Fusion Engine
@@ -92,11 +91,9 @@ CLLRT15
 CLArtemisV
 CLArtemisV
 Clan HarJel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
-Clan Ferro-Lamellor
-Clan Ferro-Lamellor
-
-
 
 Center Torso:
 Fusion Engine
@@ -116,9 +113,9 @@ Head:
 Sensors
 Sensors
 NovaCEWS
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable
 -Empty-
 -Empty-
 -Empty-

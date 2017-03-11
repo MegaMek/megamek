@@ -1217,11 +1217,12 @@ public class Infantry extends Entity {
         r.addDesc(this);
         vDesc.addElement(r);
 
-        r = new Report(7040);
+        r = new Report(7041);
         r.type = Report.PUBLIC;
+        r.add(getCrew().getGunnery());
         r.newlines = 0;
         vDesc.addElement(r);
-        vDesc.addAll(getCrew().getDescVector(true));
+
         r = new Report(7070, Report.PUBLIC);
         r.add(getKillNumber());
         vDesc.addElement(r);

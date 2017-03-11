@@ -39,7 +39,7 @@ public class InfantrySupportVintageGatlingGunWeapon extends InfantryWeapon {
         addLookupName("Vintage Gatling Gun");
         ammoType = AmmoType.T_NA;
         cost = 450000;
-        tonnage = 0.296f;
+        tonnage = 0.296;
         bv = 0.0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_SUPPORT).or(F_BALLISTIC);
         infantryDamage = 0.17;

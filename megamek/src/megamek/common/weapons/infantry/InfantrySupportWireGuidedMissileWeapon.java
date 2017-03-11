@@ -39,7 +39,7 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
         addLookupName("WireGuidedMissileLauncher");
         ammoType = AmmoType.T_NA;
         cost = 800000;
-        tonnage = 0.095f;
+        tonnage = 0.095;
         bv = 0.00;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
         infantryDamage = 1.08;

@@ -13,19 +13,19 @@ Tank
 </UnitType>
 
 <Name>
-Gabriel Reconnaissance Hovercraft
+Zephyr Hovertank
 </Name>
 
 <Model>
-(TDF)
+(Standard)
 </Model>
 
 <year>
-3065
+2621
 </year>
 
 <type>
-IS Level 3
+IS Level 2
 </type>
 
 <motion_type>
@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <cruiseMP>
-13
+9
 </cruiseMP>
 
 <engine_type>
@@ -45,21 +45,25 @@ Hover
 </armor_type>
 
 <armor_tech>
-5
+-1
 </armor_tech>
 
 <armor>
-5
-3
-3
-3
-3
+29
+24
+24
+19
+29
 </armor>
 
 <Body Equipment>
+IS Ammo SRM-6
+IS Ammo SRM-6
+ISGuardianECMSuite
 </Body Equipment>
 
 <Front Equipment>
+SRM 6
 </Front Equipment>
 
 <Right Equipment>
@@ -69,18 +73,21 @@ Hover
 </Left Equipment>
 
 <Rear Equipment>
+Small Laser
 </Rear Equipment>
 
 <Turret Equipment>
-RL10
-RL10
+Medium Laser
+Medium Laser
+Medium Laser
+ISTAG
 </Turret Equipment>
 
 <source>
-TRO 3050 - Jihad
+TRO 3050 - Star League
 </source>
 
 <tonnage>
-5.0
+40.0
 </tonnage>
 

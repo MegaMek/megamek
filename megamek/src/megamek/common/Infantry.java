@@ -65,8 +65,8 @@ public class Infantry extends Entity {
     public static int PARAMEDICS        = 1 << 8;
     public static int PARATROOPS        = 1 << 9;
     public static int TAG_TROOPS        = 1 << 10;
-    public static int SCUBA             = 1 << 11;
-    public static int XCT               = 1 << 12;
+    public static int XCT               = 1 << 11;
+    public static int SCUBA             = 1 << 12;
     public static int NUM_SPECIALIZATIONS = 13;
     public static int COMBAT_ENGINEERS = BRIDGE_ENGINEERS | DEMO_ENGINEERS
             | FIRE_ENGINEERS | MINE_ENGINEERS | SENSOR_ENGINEERS

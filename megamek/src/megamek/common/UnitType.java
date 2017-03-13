@@ -68,6 +68,8 @@ public class UnitType {
             return PROTOMEK;
         } else if (e instanceof Warship) {
             return WARSHIP;
+        } else if (e instanceof SpaceStation) {
+            return SPACE_STATION;
         } else if (e instanceof Jumpship) {
             return JUMPSHIP;
         } else if (e instanceof Dropship) {

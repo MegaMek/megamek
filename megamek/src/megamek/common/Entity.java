@@ -8968,6 +8968,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return space;
     }
 
+    public double getPodMountedTroopCarryingSpace() {
+        double space = 0;
+        for (Transporter t : omniPodTransports) {
+            if (t instanceof TroopSpace) {
+                space += ((TroopSpace) t).totalSpace;
+            }
+        }
+        return space;
+    }
+
     public boolean hasBattleArmorHandles() {
         for (Transporter t : transports) {
             if (t instanceof BattleArmorHandles) {

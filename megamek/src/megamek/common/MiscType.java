@@ -2043,6 +2043,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2064,6 +2065,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRAILER_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2086,6 +2088,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_MONOCYCLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2107,6 +2110,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_BICYCLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2128,6 +2132,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_HYDROFOIL).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2149,6 +2154,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_SUBMERSIBLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2170,6 +2176,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_CONVERTIBLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -3383,6 +3390,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_ARMORED_CHASSIS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.introDate = 1950;
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
@@ -3403,6 +3411,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.introDate = 1950;
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
@@ -6281,6 +6290,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING)
                 .or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
@@ -8299,6 +8309,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_BASIC_FIRECONTROL).or(
                 MiscType.F_SUPPORT_TANK_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.industrial = true;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
@@ -8316,6 +8327,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL).or(
                 MiscType.F_SUPPORT_TANK_EQUIPMENT.or(MiscType.F_TANK_EQUIPMENT));
+        misc.omniFixedOnly = true;
         misc.introDate = 2284;
         misc.techLevel.put(2284, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
@@ -8459,6 +8471,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8481,6 +8494,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8502,6 +8516,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_AMPHIBIOUS).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8523,6 +8538,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_SNOWMOBILE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_D,
                 EquipmentType.RATING_E, EquipmentType.RATING_E };
@@ -8546,6 +8562,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8568,6 +8585,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8590,6 +8608,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8611,6 +8630,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8633,6 +8653,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8655,6 +8676,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8677,6 +8699,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -9172,6 +9195,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_STOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.introDate = 1950;
@@ -9190,6 +9214,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_VSTOL_CHASSIS)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.introDate = 1950;
@@ -10042,6 +10067,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 2820;
         misc.techLevel.put(2820, misc.techLevel.get(3071));
         misc.flags = misc.flags.andNot(F_AERO_EQUIPMENT).or(F_NAVAL_TUG_ADAPTOR);
+        misc.omniFixedOnly = true;
         return misc;
     }
 
@@ -10054,6 +10080,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.andNot(F_AERO_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
                 .or(F_PROP);
+        misc.omniFixedOnly = true;
         //Setting this Pre-Spaceflight
         misc.techRating = RATING_A;
         misc.introDate = 1950;
@@ -10071,6 +10098,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
+        misc.omniFixedOnly = true;
         //Setting this Pre-Spaceflight
         misc.techRating = RATING_A;
         misc.introDate = 1950;

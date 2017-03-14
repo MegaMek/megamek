@@ -454,8 +454,9 @@ public class BLKFile {
 
         int numLocs = t.locations();
         // Aeros have an extra special location called "wings" that we
-        //  don't want to consider
-        if (t instanceof Aero){
+        //  don't want to consider, but Fixed Wing Support vehicles have a "Body" location that will
+        // not index right if the wings locations is removed.
+        if (t instanceof Aero && !(t instanceof FixedWingSupport)){
             numLocs--;
         }
 
@@ -514,8 +515,13 @@ public class BLKFile {
             }
             int armor_array[];
             if (t instanceof Aero){
-                armor_array = new int[numLocs];
-                for (int i = 0; i < numLocs; i++) {
+                if (t instanceof FixedWingSupport) {
+                    //exclude body and wings
+                    armor_array = new int[numLocs - 2];
+                } else {
+                    armor_array = new int[numLocs];
+                }
+                for (int i = 0; i < armor_array.length; i++) {
                     armor_array[i] = t.getOArmor(i);
                 }
             } else {

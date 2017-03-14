@@ -4,19 +4,24 @@
 package megamek.utils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import megamek.common.Entity;
+import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
+import megamek.common.loaders.BLKFile;
 import megamek.common.loaders.EntityLoadingException;
 
 /**
@@ -53,7 +58,23 @@ public class TemporaryOmniRework {
                 if (!en.isOmni()) {
                     continue;
                 }
+                
                 setAllPod(en);
+
+                try {
+                    if (en instanceof Mech) {
+                        FileOutputStream out = new FileOutputStream(ms.getSourceFile());
+                        PrintStream p = new PrintStream(out);
+
+                        p.println(((Mech)en).getMtf());
+                        p.close();
+                        out.close();
+                    } else {
+                        BLKFile.encode(ms.getSourceFile().toString(), en);                            
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } catch (EntityLoadingException ex) {
                 ex.printStackTrace();
             }
@@ -100,6 +121,7 @@ public class TemporaryOmniRework {
                 e.printStackTrace();
             }
         }
-        printChassisList();
+        //printChassisList();
+        resetAllPod();
     }
 }

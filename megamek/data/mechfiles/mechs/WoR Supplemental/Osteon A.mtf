@@ -38,37 +38,37 @@ Improved Heavy Medium Laser, Left Arm
 Improved Heavy Medium Laser, Left Arm
 Improved Heavy Medium Laser, Right Arm
 Improved Heavy Medium Laser, Right Arm
+'Mech Mortar 8, Left Torso
+'Mech Mortar 8, Left Torso
 ER Large Laser, Left Torso
-Medium Pulse Laser, Right Torso
-'Mech Mortar 8, Left Torso
-'Mech Mortar 8, Left Torso
 'Mech Mortar 8, Right Torso
+Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -76,13 +76,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Mech Mortar-8
-Clan Mech Mortar-8
-Clan Mech Mortar-8
-Clan Mech Mortar-8
-Clan Mech Mortar-8
-Clan Mech Mortar-8
-CLERLargeLaser
+Clan Mech Mortar-8 (omnipod)
+Clan Mech Mortar-8 (omnipod)
+Clan Mech Mortar-8 (omnipod)
+Clan Mech Mortar-8 (omnipod)
+Clan Mech Mortar-8 (omnipod)
+Clan Mech Mortar-8 (omnipod)
+CLERLargeLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -90,13 +90,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Mech Mortar-8
-Clan Mech Mortar-8
-Clan Mech Mortar-8
-CLMediumPulseLaser
-Clan Ammo SC Mortar-8
-Clan Ammo SC Mortar-8
-Clan Ammo SC Mortar-8
+Clan Mech Mortar-8 (omnipod)
+Clan Mech Mortar-8 (omnipod)
+Clan Mech Mortar-8 (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Ammo SC Mortar-8 (omnipod)
+Clan Ammo SC Mortar-8 (omnipod)
+Clan Ammo SC Mortar-8 (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -117,10 +117,10 @@ Sensors
 Head:
 Sensors
 Sensors
-NovaCEWS
-Clan Ammo SC Mortar-8
-Clan Ammo SC Mortar-8
-Clan Ammo SC Mortar-8
+NovaCEWS (omnipod)
+Clan Ammo SC Mortar-8 (omnipod)
+Clan Ammo SC Mortar-8 (omnipod)
+Clan Ammo SC Mortar-8 (omnipod)
 -Empty-
 -Empty-
 -Empty-

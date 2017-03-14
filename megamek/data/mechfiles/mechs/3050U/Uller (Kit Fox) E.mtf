@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Uller (Kit Fox)
 E
 
@@ -9,16 +9,16 @@ Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:30
-Engine:180 XL Fusion Engine
-Structure:Endo-Steel
+Engine:180 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
-Base Chassis Heat Sinks: 10
+Base Chassis Heat Sinks:7
 Walk MP:6
 Jump MP:6
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:7
 RA Armor:7
 LT Armor:8
@@ -32,9 +32,9 @@ RTR Armor:4
 RTC Armor:4
 
 Weapons:3
-1 CLERPPC, Right Arm
-1 CLERSmallLaser, Right Arm
-1 CLATM3, Left Arm, Ammo:60
+ATM 3, Left Arm
+ER PPC, Right Arm
+ER Small Laser, Right Arm
 
 Left Arm:
 Shoulder
@@ -43,76 +43,82 @@ Lower Arm Actuator
 Hand Actuator
 CLATM3 (omnipod)
 CLATM3 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Endo-Steel
-Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink (omnipod)
-CLDouble Heat Sink (omnipod)
-CLDouble Heat Sink (omnipod)
-CLDouble Heat Sink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 CLERPPC (omnipod)
 CLERPPC (omnipod)
 CLERSmallLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
-Endo-Steel
-Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
-Endo-Steel
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 Jump Jet (omnipod)
-CLATM3 Ammo (omnipod)
+Clan Ammo ATM-3 (omnipod)
 Clan Ammo ATM-3 ER (omnipod)
 Clan Ammo ATM-3 HE (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -121,6 +127,12 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet (omnipod)
 Jump Jet (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -129,3 +141,11 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet (omnipod)
 Jump Jet (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

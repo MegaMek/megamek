@@ -37,7 +37,7 @@ troopspace:4.0
 </transporters>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -69,11 +69,11 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
-Clan Ammo ATM-3 ER
-Clan Ammo ATM-3
-Clan Ammo ATM-3 HE
-CLActiveProbe
-CLCASE
+Clan Ammo ATM-3 ER:OMNI
+Clan Ammo ATM-3:OMNI
+Clan Ammo ATM-3 HE:OMNI
+CLActiveProbe:OMNI
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -89,8 +89,8 @@ CLCASE
 </Rear Equipment>
 
 <Turret Equipment>
-CLATM3
-CLATM3
+CLATM3:OMNI
+CLATM3:OMNI
 </Turret Equipment>
 
 <tonnage>

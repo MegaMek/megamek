@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:70
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -32,44 +32,44 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:4
-Medium Laser, Center Torso
-Medium Laser, Center Torso
-Gauss Rifle, Right Arm
 Gauss Rifle, Left Arm
+Gauss Rifle, Right Arm
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+IS Gauss Ammo (omnipod)
+IS Gauss Ammo (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+IS Gauss Ammo (omnipod)
+IS Gauss Ammo (omnipod)
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISCASE
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -83,7 +83,7 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISCASE
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -104,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser
-Medium Laser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 
 Head:
 Life Support

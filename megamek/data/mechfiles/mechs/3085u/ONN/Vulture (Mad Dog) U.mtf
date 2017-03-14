@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:60
 Engine:300 XL (Clan) Engine(IS)
-Structure:Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -43,9 +43,9 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-CLMediumPulseLaser
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -57,9 +57,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-CLMediumPulseLaser
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -70,29 +70,29 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRTorpedo15
-CLLRTorpedo15
-CLArtemisV
-CLArtemisV
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
 Clan HarJel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRTorpedo15
-CLLRTorpedo15
-CLArtemisV
-CLArtemisV
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
 Clan HarJel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLUMU
+CLUMU (omnipod)
 Clan HarJel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLUMU
-CLUMU
+CLUMU (omnipod)
+CLUMU (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLUMU
-CLUMU
+CLUMU (omnipod)
+CLUMU (omnipod)
 -Empty-
 -Empty-
 -Empty-

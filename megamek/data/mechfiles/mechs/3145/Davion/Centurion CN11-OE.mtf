@@ -34,9 +34,9 @@ RTR Armor:6
 RTC Armor:6
 
 Weapons:3
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
 Gauss Rifle, Right Arm
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -55,13 +55,13 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
 IS Endo Steel
 IS Endo Steel
 -Empty-
@@ -70,8 +70,8 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISAngelECMSuite
-ISAngelECMSuite
+ISAngelECMSuite (omnipod)
+ISAngelECMSuite (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -84,8 +84,8 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Gauss Ammo
-IS Gauss Ammo
+IS Gauss Ammo (omnipod)
+IS Gauss Ammo (omnipod)
 IS Endo Steel
 -Empty-
 -Empty-
@@ -103,10 +103,10 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
-ISERMediumLaser
-ISC3BoostedSystemSlaveUnit
-ISC3BoostedSystemSlaveUnit
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISC3BoostedSystemSlaveUnit (omnipod)
+ISC3BoostedSystemSlaveUnit (omnipod)
 
 Head:
 Life Support

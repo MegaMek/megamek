@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:70
 Engine:280 XL Engine(IS)
-Structure:Clan Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:10
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:16
 RA Armor:16
 LT Armor:22
@@ -32,46 +32,46 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:4
-Medium Laser, Center Torso
-Medium Laser, Center Torso
 HAG/30, Left Arm
 HAG/30, Right Arm
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-HAG/30 Ammo
-HAG/30 Ammo
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-HAG/30 Ammo
-HAG/30 Ammo
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-HAG/30 Ammo
-HAG/30 Ammo
-ISCASE
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -83,9 +83,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-HAG/30 Ammo
-HAG/30 Ammo
-ISCASE
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -104,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser
-Medium Laser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 
 Head:
 Life Support

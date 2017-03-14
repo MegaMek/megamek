@@ -32,17 +32,17 @@ RTR Armor:7
 RTC Armor:9
 
 Weapons:6
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-LRM 20, Right Torso
-LRM 20, Left Torso
-ER Large Laser, Right Arm
 ER Large Laser, Left Arm
+ER Large Laser, Right Arm
+LRM 20, Left Torso
+LRM 20, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
+CLERLargeLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -56,7 +56,7 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
+CLERLargeLaser (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -70,28 +70,28 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-Clan Ammo LRM-20
-Clan Ammo LRM-20
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+Clan Ammo LRM-20 (omnipod)
+Clan Ammo LRM-20 (omnipod)
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-Clan Ammo LRM-20
-Clan Ammo LRM-20
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+Clan Ammo LRM-20 (omnipod)
+Clan Ammo LRM-20 (omnipod)
 -Empty-
 -Empty-
 
@@ -106,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 
 Head:
 Life Support
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

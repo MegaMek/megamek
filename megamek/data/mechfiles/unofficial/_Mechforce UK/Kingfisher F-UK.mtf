@@ -8,15 +8,16 @@ Era:3060
 Rules Level:2
 
 Mass:90
-Engine:360 Fusion Engine
-Structure:Endo Steel
+Engine:360 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
+Base Chassis Heat Sinks:14
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:30
 RA Armor:30
 LT Armor:28
@@ -29,65 +30,67 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:13
 
-Weapons:6
-1 CLATM9, Right Arm, Ammo:28
-1 CLATM9, Left Arm
-2 CLERMediumLaser, Right Torso
-1 CLATM9, Left Torso
-2 CLERMediumLaser, Left Torso
-1 CLERMediumLaser, Center Torso
+Weapons:8
+ATM 9, Left Arm
+ATM 9, Right Arm
+ATM 9, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-CLATM9 Ammo
-CLATM9 ER Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 ER (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-CLATM9 Ammo
-CLATM9 HE Ammo
-Endo Steel
-Ferro-Fibrous
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 HE (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-CLERMediumLaser
-CLERMediumLaser
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Torso:
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERMediumLaser
-CLERMediumLaser
-Endo Steel
-Ferro-Fibrous
-Endo Steel
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -104,8 +107,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-Endo Steel
+CLERMediumLaser (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
@@ -126,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -140,12 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

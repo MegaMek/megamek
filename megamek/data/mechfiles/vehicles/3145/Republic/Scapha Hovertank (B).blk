@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,7 +65,7 @@ Hover
 </armor>
 
 <Body Equipment>
-IS Light Gauss Ammo
+IS Light Gauss Ammo:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -81,7 +81,7 @@ IS Light Gauss Ammo
 </Rear Equipment>
 
 <Turret Equipment>
-ISLightGaussRifle
+ISLightGaussRifle:OMNI
 </Turret Equipment>
 
 <source>

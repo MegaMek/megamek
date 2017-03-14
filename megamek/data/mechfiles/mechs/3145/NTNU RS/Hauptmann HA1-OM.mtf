@@ -4,13 +4,13 @@ HA1-OM
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
-Era:3120	
+Era:3120
 Source:RS 3145 NTNU - Late Republic
 Rules Level:3
 
 Mass:95
 Engine:285 Fusion Engine(IS)
-Structure:Clan Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:11
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:32
 RA Armor:32
 LT Armor:30
@@ -32,21 +32,21 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:5
+LRM 15, Left Arm
+LRM 15, Right Arm
 C3 Master Boosted with TAG, Left Torso
 LRM 15, Right Torso
-LRM 15, Right Arm
-LRM 15, Left Arm
 ER PPC, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-LRM 15
-LRM 15
-LRM 15
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+LRM 15 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -55,42 +55,42 @@ LRM 15
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-LRM 15
-LRM 15
-LRM 15
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+LRM 15 (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
 
 Right Torso:
-LRM 15
-LRM 15
-LRM 15
-IS Ammo LRM-15
-IS Ammo LRM-15
-IS Ammo LRM-15
-IS Ammo LRM-15
-IS Ammo LRM-15
-IS Ammo LRM-15
-ISCASE
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+IS Ammo LRM-15 (omnipod)
+IS Ammo LRM-15 (omnipod)
+IS Ammo LRM-15 (omnipod)
+IS Ammo LRM-15 (omnipod)
+IS Ammo LRM-15 (omnipod)
+IS Ammo LRM-15 (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 
@@ -105,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 
 Head:
 Life Support

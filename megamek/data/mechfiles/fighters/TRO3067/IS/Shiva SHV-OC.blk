@@ -76,27 +76,27 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISERSmallLaser
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+ISERSmallLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERPPC
-ISLightGaussRifle
-IS Light Gauss Ammo
-IS Light Gauss Ammo
-ISERMediumLaser
-ISERMediumLaser
+ISERPPC:OMNI
+ISLightGaussRifle:OMNI
+IS Light Gauss Ammo:OMNI
+IS Light Gauss Ammo:OMNI
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERPPC
-ISLightGaussRifle
-IS Light Gauss Ammo
-IS Light Gauss Ammo
-ISERMediumLaser
-ISERMediumLaser
+ISERPPC:OMNI
+ISLightGaussRifle:OMNI
+IS Light Gauss Ammo:OMNI
+IS Light Gauss Ammo:OMNI
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

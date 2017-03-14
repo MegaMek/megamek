@@ -8,15 +8,16 @@ Era:3050
 Rules Level:2
 
 Mass:50
-Engine:250 XL Engine
-Structure:Standard
+Engine:250 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:17 Double
+Base Chassis Heat Sinks:10
 Walk MP:5
 Jump MP:5
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:16
 RA Armor:16
 LT Armor:16
@@ -29,22 +30,28 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:8
 
-Weapons:4
-3 CLERMediumLaser, Right Arm
-3 CLERMediumLaser, Left Arm
-1 CLERMediumLaser, Right Torso
-3 CLMediumPulseLaser, Left Torso
+Weapons:10
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,11 +61,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,25 +73,25 @@ CLERMediumLaser
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -102,7 +109,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (omnipod)
 -Empty-
 
 Head:
@@ -124,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +145,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

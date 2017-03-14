@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,9 +65,9 @@ Hover
 </armor>
 
 <Body Equipment>
-ISAngelECMSuite
-ISDroneOperatingSystem
-ISC3SlaveUnit
+ISAngelECMSuite:OMNI
+ISDroneOperatingSystem:OMNI
+ISC3SlaveUnit:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -80,12 +80,12 @@ ISC3SlaveUnit
 </Left Equipment>
 
 <Rear Equipment>
-ISSRM2IOS
+ISSRM2IOS:OMNI
 </Rear Equipment>
 
 <Turret Equipment>
-BloodhoundActiveProbe
-ER Flamer
+BloodhoundActiveProbe:OMNI
+ER Flamer:OMNI
 </Turret Equipment>
 
 <source>

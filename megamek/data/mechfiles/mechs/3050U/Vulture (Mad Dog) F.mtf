@@ -2,22 +2,23 @@ Version:1.0
 Vulture (Mad Dog)
 F
 
-Config:Biped OmniMech
+Config:Biped Omnimech
 TechBase:Clan
 Era:3069
 Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:60
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:12 Double
+Base Chassis Heat Sinks:12
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous Armor
+Armor:Ferro-Fibrous(Clan)
 LA Armor:16
 RA Armor:16
 LT Armor:16
@@ -30,22 +31,24 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:7
 
-Weapons:4
-2 CLERMediumLaser, Left Torso
-2 CLERMediumLaser, Right Torso
-1 CLHAG20, Left Arm
-1 CLHAG20, Right Arm
+Weapons:6
+HAG/20, Left Arm
+HAG/20, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-Ferro-Fibrous
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -53,56 +56,56 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-Ferro-Fibrous
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-Engine
-Engine
-CLERMediumLaser
-CLERMediumLaser
-CLHAG20 Ammo
-CLHAG20 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+HAG/20 Ammo (omnipod)
+HAG/20 Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Engine
-Engine
-CLERMediumLaser
-CLERMediumLaser
-CLHAG20 Ammo
-CLHAG20 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+HAG/20 Ammo (omnipod)
+HAG/20 Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -110,7 +113,7 @@ Head:
 Life Support
 Cockpit
 Sensors
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -147,3 +150,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+

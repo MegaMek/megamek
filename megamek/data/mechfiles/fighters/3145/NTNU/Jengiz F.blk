@@ -76,28 +76,29 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLLongTomCannon
-CLUltraAC20
-CLLongTomCannonAmmo
-CLLongTomCannonAmmo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-CLCASE
+CLLongTomCannon:OMNI
+CLUltraAC20:OMNI
+CLLongTomCannonAmmo:OMNI
+CLLongTomCannonAmmo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERMediumLaser
+CLERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERMediumLaser
+CLERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERSmallLaser
-CLTargeting Computer
+CLERSmallLaser:OMNI
+CLTargeting Computer:OMNI
 </Aft Equipment>
 
 <source>

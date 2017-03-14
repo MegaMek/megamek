@@ -32,8 +32,8 @@ RTR Armor:4
 RTC Armor:4
 
 Weapons:2
-Light TAG, Right Torso
 Mech Taser, Left Torso
+Light TAG, Right Torso
 
 Left Arm:
 Shoulder
@@ -46,8 +46,8 @@ Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-Mek Null Signature System
-Chameleon Light Polarization Shield
+Mek Null Signature System (omnipod)
+Chameleon Light Polarization Shield (omnipod)
 
 Right Arm:
 Shoulder
@@ -60,32 +60,32 @@ Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-Mek Null Signature System
-Chameleon Light Polarization Shield
+Mek Null Signature System (omnipod)
+Chameleon Light Polarization Shield (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Mek Taser
-Mek Taser
-Mek Taser
-Taser Ammo
+Mek Taser (omnipod)
+Mek Taser (omnipod)
+Mek Taser (omnipod)
+Taser Ammo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
-Mek Null Signature System
-Chameleon Light Polarization Shield
+Mek Null Signature System (omnipod)
+Chameleon Light Polarization Shield (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLightTAG
+CLLightTAG (omnipod)
 Clan Endo Steel
-Mek Null Signature System
-Chameleon Light Polarization Shield
+Mek Null Signature System (omnipod)
+Chameleon Light Polarization Shield (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +102,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Mek Null Signature System
+Mek Null Signature System (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-NovaCEWS
+NovaCEWS (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -124,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Mek Null Signature System
-Chameleon Light Polarization Shield
+Mek Null Signature System (omnipod)
+Chameleon Light Polarization Shield (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Mek Null Signature System
-Chameleon Light Polarization Shield
+Mek Null Signature System (omnipod)
+Chameleon Light Polarization Shield (omnipod)
 -Empty-
 -Empty-
 -Empty-

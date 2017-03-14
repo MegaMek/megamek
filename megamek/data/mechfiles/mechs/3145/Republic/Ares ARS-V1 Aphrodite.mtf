@@ -1,26 +1,26 @@
-Version:1.0
-Ares 
+Version:1.1
+Ares
 ARS-V1C Aphrodite
 
-Config:Tripod OmniMech
+Config:Tripod Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3136
 Source:TRO 3145 Republic of the Sphere - Dark Ages
 Rules Level:3
 
 Mass:135
-Engine:270 Engine
-Structure:Endo-Composite
+Engine:270 Fusion Engine(IS)
+Structure:IS Endo-Composite
 Myomer:Standard
-Gyro:Superheavy Gyro
 Cockpit:Superheavy Tripod Cockpit
+Gyro:Superheavy Gyro
 
-Heat Sinks:21 Double
+Heat Sinks:15 Double
 Base Chassis Heat Sinks:10
 Walk MP:2
 Jump MP:0
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:41
 RA Armor:41
 LT Armor:40
@@ -34,75 +34,78 @@ RTL Armor:16
 RTR Armor:16
 RTC Armor:22
 
-Weapons:14
-CLRotaryAC5, Left Arm
-CLStreakLRM5, Right Arm
-CLStreakLRM5, Right Arm
-CLStreakLRM5, Right Arm
-CLERMediumLaser, Right Torso
-CLERSmallLaser, Right Torso
-ISLRM5, Right Torso
-ISSRM2, Right Torso
-CLERMediumLaser, Left Torso
-CLERSmallLaser, Left Torso
-ISLRM5, Left Torso
-ISSRM2, Left Torso
-CLERSmallLaser, Center Torso
-ISSRM2, Center Torso
-
+Weapons:16
+Rotary AC/5, Left Arm
+Streak LRM 5, Right Arm
+Streak LRM 5, Right Arm
+Streak LRM 5, Right Arm
+ER Medium Laser, Left Torso
+ER Small Laser, Left Torso
+LRM 5, Left Torso
+SRM 2, Left Torso
+C3 Master with TAG, Left Torso
+ER Medium Laser, Right Torso
+ER Small Laser, Right Torso
+LRM 5, Right Torso
+SRM 2, Right Torso
+C3 Master with TAG, Right Torso
+ER Small Laser, Center Torso
+SRM 2, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-ISCASEII
-Endo-Composite
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 Ammo (omnipod)
+CLRotaryAC5 Ammo (omnipod)
+ISCASEII (omnipod)
+IS Endo-Composite
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLStreakLRM5
-CLStreakLRM5
-CLStreakLRM5
-CLStreakLRM5 Ammo
-ISCASEII
-Endo-Composite
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+CLStreakLRM5 (omnipod)
+CLStreakLRM5 (omnipod)
+CLStreakLRM5 (omnipod)
+Clan Streak LRM 5 Ammo (omnipod)
+ISCASEII (omnipod)
+IS Endo-Composite
+-Empty-
+-Empty-
 
 Left Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLERMediumLaser
-CLERSmallLaser
-ISLRM5
-ISSRM2
-ISSRM2 Ammo
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISCASEII
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
+LRM 5 (omnipod)
+SRM 2 (omnipod)
+IS Ammo SRM-2 (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISCASEII (omnipod)
 -Empty-
 
 Right Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLERMediumLaser
-CLERSmallLaser
-ISLRM5
-ISSRM2
-ISLRM5 Ammo
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISCASEII
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
+LRM 5 (omnipod)
+SRM 2 (omnipod)
+IS Ammo LRM-5 (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISCASEII (omnipod)
 -Empty-
 
 Center Torso:
@@ -111,19 +114,19 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLERSmallLaser
-ISSRM2
-ISAngelECM
-ISAngelECM
-Endo-Composite
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+CLERSmallLaser (omnipod)
+SRM 2 (omnipod)
+ISAngelECMSuite (omnipod)
+ISAngelECMSuite (omnipod)
+IS Endo-Composite
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Composite
+IS Endo-Composite
 Sensors
 Life Support
 -Empty-
@@ -138,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAPod
-ISAPod
+ISAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -152,8 +155,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAPod
-ISAPod
+ISAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -166,11 +169,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAPod
-ISAPod
+ISAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

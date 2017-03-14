@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:4
 
 Mass:65
-Engine:325 XL (Clan) Engine
-Structure:Endo Steel
+Engine:325 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -41,57 +41,57 @@ ER Medium Pulse Laser, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERMediumPulseLaser
-CLERMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-Ferro-Fibrous
-Ferro-Fibrous
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumPulseLaser
-CLERMediumPulseLaser
-CLERSmallPulseLaser
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-Endo Steel
-Ferro-Fibrous
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLERSmallPulseLaser (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumPulseLaser
-CLERMediumPulseLaser
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLAngelECMSuite
-CLAngelECMSuite
-CLCASEII
-Endo Steel
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLRotaryAC5 Ammo (omnipod)
+CLRotaryAC5 Ammo (omnipod)
+CLRotaryAC5 Ammo (omnipod)
+CLAngelECMSuite (omnipod)
+CLAngelECMSuite (omnipod)
+CLCASEII (omnipod)
+Clan Endo Steel
 -Empty-
 
 Center Torso:
@@ -105,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Endo Steel
+Clan Ferro-Fibrous
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

@@ -44,10 +44,6 @@ Aerodyne
 20
 </heatsinks>
 
-<omnipodheatsinks>
-5
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
@@ -87,17 +83,20 @@ Clan Ultra AC/20 Ammo:OMNI
 Clan Ultra AC/20 Ammo:OMNI
 Clan Ultra AC/20 Ammo:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Right Wing Equipment>
 

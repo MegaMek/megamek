@@ -68,23 +68,23 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-Large Re-engineered Laser
+Large Re-engineered Laser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISMML7
-Large Re-engineered Laser
-IS Ammo MML-7 LRM
+ISMML7:OMNI
+Large Re-engineered Laser:OMNI
+IS Ammo MML-7 LRM:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-Large Re-engineered Laser
-ISMML7
-IS Ammo MML-7 LRM
+Large Re-engineered Laser:OMNI
+ISMML7:OMNI
+IS Ammo MML-7 LRM:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-IS Ammo MML-7 SRM
+IS Ammo MML-7 SRM:OMNI
 </Aft Equipment>
 
 <source>

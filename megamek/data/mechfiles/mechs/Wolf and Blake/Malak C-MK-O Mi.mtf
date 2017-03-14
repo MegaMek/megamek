@@ -41,11 +41,11 @@ ER Small Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISMediumVSPLaser
-ISMediumVSPLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISMediumVSPLaser (omnipod)
+ISMediumVSPLaser (omnipod)
 IS Light Ferro-Fibrous
 IS Light Ferro-Fibrous
 -Empty-
@@ -55,8 +55,8 @@ IS Light Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumVSPLaser
-ISMediumVSPLaser
+ISMediumVSPLaser (omnipod)
+ISMediumVSPLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -69,12 +69,12 @@ IS Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISC3iUnit
-ISC3iUnit
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Supercharger
+ISC3iUnit (omnipod)
+ISC3iUnit (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Supercharger (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -113,7 +113,7 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-

@@ -4,7 +4,7 @@ BJ2-OG
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
-Era:3134	
+Era:3134
 Source:RS 3145 NTNU - Dark Ages
 Rules Level:3
 
@@ -32,44 +32,44 @@ RTR Armor:6
 RTC Armor:9
 
 Weapons:3
-Small Re-engineered Laser, Center Torso
 Rotary AC/5, Left Arm
 Rotary AC/5, Right Arm
+Small Re-engineered Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -82,9 +82,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -103,7 +103,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Small Re-engineered Laser
+Small Re-engineered Laser (omnipod)
 IS Endo Steel
 
 Head:
@@ -125,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

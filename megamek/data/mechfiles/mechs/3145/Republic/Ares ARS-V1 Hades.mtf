@@ -1,26 +1,26 @@
-Version:1.0
-Ares 
+Version:1.1
+Ares
 ARS-V1B Hades
 
-Config:Tripod OmniMech
+Config:Tripod Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3136
 Source:TRO 3145 Republic of the Sphere - Dark Ages
 Rules Level:3
 
 Mass:135
-Engine:270 Engine
-Structure:Endo-Composite
+Engine:270 Fusion Engine(IS)
+Structure:IS Endo-Composite
 Myomer:Standard
-Gyro:Superheavy Gyro
 Cockpit:Superheavy Tripod Cockpit
+Gyro:Superheavy Gyro
 
-Heat Sinks:21 Double
+Heat Sinks:12 Double
 Base Chassis Heat Sinks:10
 Walk MP:2
 Jump MP:0
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:41
 RA Armor:41
 LT Armor:40
@@ -35,55 +35,57 @@ RTR Armor:16
 RTC Armor:22
 
 Weapons:14
-ISMRM20, Left Arm
-CLUltraAC10, Left Arm
-ISMRM20, Right Arm
-ISTSEMPCannon, Right Arm
-CLERMediumLaser, Right Torso
-CLERSmallLaser, Right Torso
-ISLRM5, Right Torso
-ISSRM2, Right Torso
-CLERMediumLaser, Left Torso
-CLERSmallLaser, Left Torso
-ISLRM5, Left Torso
-ISSRM2, Left Torso
-CLERSmallLaser, Center Torso
-ISSRM2, Center Torso
+MRM 20, Left Arm
+Ultra AC/10, Left Arm
+MRM 20, Right Arm
+TSEMP Cannon, Right Arm
+ER Medium Laser, Left Torso
+ER Small Laser, Left Torso
+LRM 5, Left Torso
+SRM 2, Left Torso
+ER Medium Laser, Right Torso
+ER Small Laser, Right Torso
+LRM 5, Right Torso
+SRM 2, Right Torso
+SRM 2, Center Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISMRM20
-ISMRM20
-IS MRM Apollo FCS
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10 Ammo
-CLUltraAC10 Ammo
-ISCASEII
-Endo-Composite
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+ISApollo (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+ISCASEII (omnipod)
+IS Endo-Composite
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMRM20
-ISMRM20
-IS MRM Apollo FCS
-ISTSEMP
-ISTSEMP
-ISTSEMP
-Endo-Composite
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+ISApollo (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+IS Endo-Composite
+-Empty-
+-Empty-
 -Empty-
 
 Left Torso:
-CLERMediumLaser
-CLERSmallLaser
-ISLRM5
-ISSRM2
-ISSRM2 Ammo
-ISMRM20 Ammo
-ISCASEII
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
+LRM 5 (omnipod)
+SRM 2 (omnipod)
+IS Ammo SRM-2 (omnipod)
+IS MRM 20 Ammo (omnipod)
+ISCASEII (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -91,13 +93,13 @@ ISCASEII
 -Empty-
 
 Right Torso:
-CLERMediumLaser
-CLERSmallLaser
-ISLRM5
-ISSRM2
-ISLRM5 Ammo
-ISMRM20 Ammo
-ISCASEII
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
+LRM 5 (omnipod)
+SRM 2 (omnipod)
+IS Ammo LRM-5 (omnipod)
+IS MRM 20 Ammo (omnipod)
+ISCASEII (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -110,19 +112,19 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISSRM2
-CLERSmallLaser
-Endo-Composite
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+SRM 2 (omnipod)
+CLERSmallLaser (omnipod)
+IS Endo-Composite
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Composite
+IS Endo-Composite
 Sensors
 Life Support
 -Empty-
@@ -137,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAPod
-ISAPod
+ISAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -151,8 +153,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAPod
-ISAPod
+ISAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -165,11 +167,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAPod
-ISAPod
+ISAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

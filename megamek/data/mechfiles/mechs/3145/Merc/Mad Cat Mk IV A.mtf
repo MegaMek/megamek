@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:75
 Engine:375 XXL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
@@ -32,21 +32,21 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:8
-Small Pulse Laser, Center Torso
-Small Pulse Laser, Center Torso
-Small Pulse Laser, Left Torso
-ER Large Laser, Right Arm
 ER Large Laser, Left Arm
-ATM 9, Right Torso
+ER Large Laser, Right Arm
 ATM 9, Left Torso
+Small Pulse Laser, Left Torso
+ATM 9, Right Torso
 Small Pulse Laser, Right Torso
+Small Pulse Laser, Center Torso
+Small Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -58,9 +58,9 @@ Clan Ferro-Lamellor
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -74,28 +74,28 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-CLSmallPulseLaser
-Clan Ammo ATM-9
-Clan Ammo ATM-9 ER
-Clan Endo-Steel
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 ER (omnipod)
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-CLSmallPulseLaser
-Clan Ammo ATM-9
-Clan Ammo ATM-9 HE
-Clan Endo-Steel
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 HE (omnipod)
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -108,14 +108,14 @@ Gyro (armored)
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLSmallPulseLaser
-CLSmallPulseLaser
+CLSmallPulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Clan Endo-Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

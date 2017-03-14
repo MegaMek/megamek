@@ -32,9 +32,9 @@ RTR Armor:7
 RTC Armor:9
 
 Weapons:6
-ER Large Laser, Right Arm
 ER Large Laser, Left Arm
 ER Medium Pulse Laser, Left Arm
+ER Large Laser, Right Arm
 ER Medium Pulse Laser, Right Arm
 iATM 9, Left Torso
 iATM 9, Right Torso
@@ -43,9 +43,9 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERMediumPulseLaser
-CLERMediumPulseLaser
+CLERLargeLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -57,9 +57,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERMediumPulseLaser
-CLERMediumPulseLaser
+CLERLargeLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -70,12 +70,12 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLiATM9
-CLiATM9
-CLiATM9
-CLiATM9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -84,12 +84,12 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLiATM9
-CLiATM9
-CLiATM9
-CLiATM9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -106,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-NovaCEWS
+NovaCEWS (omnipod)
 Clan Endo Steel
 
 Head:

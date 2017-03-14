@@ -76,27 +76,29 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERPPC
-CLERPPC
-CLActiveProbe
-CLTargeting Computer
+CLERPPC:OMNI
+CLERPPC:OMNI
+CLActiveProbe:OMNI
+CLTargeting Computer:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-CLCASE
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-CLCASE
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERMediumLaser
-CLECMSuite
+CLERMediumLaser:OMNI
+CLECMSuite:OMNI
 </Aft Equipment>
 
 <source>

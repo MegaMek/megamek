@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:50
 Engine:250 XL (Clan) Engine
-Structure:Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -52,56 +52,56 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMicroPulseLaser
-CLMicroPulseLaser
-CLMicroPulseLaser
-Sword
-Sword
-Sword
-Sword
+CLMicroPulseLaser (omnipod)
+CLMicroPulseLaser (omnipod)
+CLMicroPulseLaser (omnipod)
+Sword (omnipod)
+Sword (omnipod)
+Sword (omnipod)
+Sword (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-Spot Welder
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+Spot Welder (omnipod)
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLMG
-CLMG
-CLMG
-CLMG
-CLLightActiveProbe
-Liquid Storage (1 ton)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLLightActiveProbe (omnipod)
+Liquid Storage (1 ton) (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLMG
-CLMG
-CLMG
-CLMG
-Clan Machine Gun Ammo - Half
-Liquid Storage (1 ton)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+Clan Machine Gun Ammo - Half (omnipod)
+Liquid Storage (1 ton) (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -114,14 +114,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (omnipod)
 Clan HarJel
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLECMSuite
+CLECMSuite (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -136,8 +136,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -150,8 +150,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -160,3 +160,4 @@ Jump Jet
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\Black Hawk 3050U.jpg
+

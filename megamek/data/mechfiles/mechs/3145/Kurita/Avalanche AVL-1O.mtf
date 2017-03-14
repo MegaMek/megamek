@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:50
 Engine:250 Fusion Engine(IS)
-Structure:IS Endo-Steel
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -42,12 +42,12 @@ LRM 10, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISERMediumLaser
-ISERMediumLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -56,25 +56,25 @@ IS Endo-Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISERMediumLaser
-ISERMediumLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-Jump Jet
-Jump Jet
-LRM 10
-LRM 10
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+LRM 10 (omnipod)
+LRM 10 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -82,14 +82,14 @@ IS Endo-Steel
 -Empty-
 
 Right Torso:
-Jump Jet
-Jump Jet
-LRM 10
-LRM 10
-IS Ammo LRM-10
-IS Ammo LRM-10
-ISCASE
-IS Endo-Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+LRM 10 (omnipod)
+LRM 10 (omnipod)
+IS Ammo LRM-10 (omnipod)
+IS Ammo LRM-10 (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-IS Endo-Steel
+Jump Jet (omnipod)
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-IS Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-

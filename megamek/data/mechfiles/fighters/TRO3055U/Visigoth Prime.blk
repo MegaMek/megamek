@@ -84,6 +84,7 @@ CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -91,12 +92,14 @@ CLSmallPulseLaser:OMNI
 CLStreakSRM4:OMNI
 Clan Streak SRM 4 Ammo:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLSmallPulseLaser:OMNI
 CLStreakSRM4:OMNI
 Clan Streak SRM 4 Ammo:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Right Wing Equipment>
 

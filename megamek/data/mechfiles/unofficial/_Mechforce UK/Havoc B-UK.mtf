@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:90
-Engine:270 Fusion Engine
-Structure:Standard
+Engine:270 Fusion (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:18 Double
+Base Chassis Heat Sinks:10
 Walk MP:3
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:30
 RA Armor:30
 LT Armor:28
@@ -29,65 +30,67 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:14
 
-Weapons:2
-3 CLLargePulseLaser, Right Arm
-1 CLUltraAC20, Left Arm, Ammo:10
+Weapons:4
+Ultra AC/20, Left Arm
+Large Pulse Laser, Right Arm
+Large Pulse Laser, Right Arm
+Large Pulse Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20 Ammo
-CLUltraAC20 Ammo
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 -Empty-
 -Empty-
 
 Left Torso:
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
 
 Right Torso:
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -100,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
@@ -122,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -136,12 +139,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

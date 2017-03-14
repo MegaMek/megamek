@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Loki (Hellbringer)
 C
 
@@ -9,16 +9,16 @@ Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:65
-Engine:325 XL Fusion Engine
-Structure:Standard
+Engine:325 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:13 Double
-Base Chassis Heat Sinks: 13
+Base Chassis Heat Sinks:13
 Walk MP:5
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:11
 RA Armor:11
 LT Armor:14
@@ -32,22 +32,22 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:7
-1 CLERLargeLaser, Left Arm
-1 CLERSmallLaser, Left Arm
-1 CLERSmallLaser, Left Arm
-1 CLERMediumLaser, Left Torso
-1 CLERMediumLaser, Left Torso
-1 CLLBXAC20, Right Torso, Ammo:15
-1 CLATM6, Right Arm, Ammo:30
+ER Large Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ATM 6, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+LB 20-X AC, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
-CLERSmallLaser
-CLERSmallLaser
+CLERLargeLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -59,22 +59,22 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLATM6
-CLATM6
-CLATM6
-CLATM6 Ammo
-CLATM6 ER Ammo
-CLATM6 HE Ammo
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 ER (omnipod)
+Clan Ammo ATM-6 HE (omnipod)
 -Empty-
 -Empty-
 
 Left Torso:
-Engine
-Engine
-CLERMediumLaser
-CLERMediumLaser
-CLLBXAC20 Ammo
-CLLBXAC20 Ammo
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -83,30 +83,30 @@ CLLBXAC20 Ammo
 -Empty-
 
 Right Torso:
-Engine
-Engine
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20 CL Ammo
+Fusion Engine
+Fusion Engine
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+Clan LB 20-X Cluster Ammo (omnipod)
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -117,12 +117,24 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -133,3 +145,11 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

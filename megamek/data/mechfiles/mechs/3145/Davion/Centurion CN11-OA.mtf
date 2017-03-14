@@ -55,12 +55,12 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
 IS Endo Steel
 IS Endo Steel
 -Empty-
@@ -70,12 +70,12 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMML9
-ISMML9
-ISMML9
-ISMML9
-ISMML9
-ISArtemisIV
+ISMML9 (omnipod)
+ISMML9 (omnipod)
+ISMML9 (omnipod)
+ISMML9 (omnipod)
+ISMML9 (omnipod)
+ISArtemisIV (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -84,12 +84,12 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-IS Ammo MML-9 LRM Artemis-capable
-IS Ammo MML-9 SRM Artemis-capable
-ISCASEII
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+IS Ammo MML-9 LRM Artemis-capable (omnipod)
+IS Ammo MML-9 SRM Artemis-capable (omnipod)
+ISCASEII (omnipod)
 IS Endo Steel
 -Empty-
 -Empty-
@@ -103,7 +103,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-

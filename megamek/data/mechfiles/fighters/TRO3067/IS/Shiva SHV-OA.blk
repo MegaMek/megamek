@@ -76,25 +76,25 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-LRM 10
-ISArtemisIV
-IS Ammo LRM-10 Artemis-capable
-IS Ammo LRM-10 Artemis-capable
-ISERSmallLaser
+LRM 10:OMNI
+ISArtemisIV:OMNI
+IS Ammo LRM-10 Artemis-capable:OMNI
+IS Ammo LRM-10 Artemis-capable:OMNI
+ISERSmallLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERLargeLaser
-ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
+ISERLargeLaser:OMNI
+ISGaussRifle:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERLargeLaser
-ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
+ISERLargeLaser:OMNI
+ISGaussRifle:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

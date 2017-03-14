@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,8 +65,8 @@ Hover
 </armor>
 
 <Body Equipment>
-ISAngelECMSuite
-ISDroneOperatingSystem
+ISAngelECMSuite:OMNI
+ISDroneOperatingSystem:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -79,12 +79,12 @@ ISDroneOperatingSystem
 </Left Equipment>
 
 <Rear Equipment>
-ISSRM2IOS
+ISSRM2IOS:OMNI
 </Rear Equipment>
 
 <Turret Equipment>
-Light PPC
-PPC Capacitor
+Light PPC:OMNI
+PPC Capacitor:OMNI
 </Turret Equipment>
 
 <source>

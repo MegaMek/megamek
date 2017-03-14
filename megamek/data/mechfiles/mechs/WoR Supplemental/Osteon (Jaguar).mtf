@@ -34,37 +34,37 @@ RTR Armor:12
 RTC Armor:12
 
 Weapons:5
-ER PPC, Right Torso
-ER Small Laser, Left Torso
-ER Small Laser, Right Torso
-Large Pulse Laser, Left Torso
 Ultra AC/20, Right Arm
+Large Pulse Laser, Left Torso
+ER Small Laser, Left Torso
+ER PPC, Right Torso
+ER Small Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -72,11 +72,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLERSmallLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLERSmallLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 -Empty-
@@ -86,11 +86,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
-CLERSmallLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERSmallLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 -Empty-
@@ -113,10 +113,10 @@ Sensors
 Head:
 Sensors
 Sensors
-NovaCEWS
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
+NovaCEWS (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-

@@ -76,15 +76,16 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERPPC
-CLGaussRifle
-CLLRM20
-CLArtemisV
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-CLCASE
+CLERPPC:OMNI
+CLGaussRifle:OMNI
+CLLRM20:OMNI
+CLArtemisV:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -94,8 +95,8 @@ CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-WatchdogECMSuite
-CLTargeting Computer
+WatchdogECMSuite:OMNI
+CLTargeting Computer:OMNI
 </Aft Equipment>
 
 <source>

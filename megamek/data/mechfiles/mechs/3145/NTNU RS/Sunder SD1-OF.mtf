@@ -4,13 +4,13 @@ SD1-OF
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
-Era:3134	
+Era:3134
 Source:RS 3145 NTNU - Dark Ages
 Rules Level:3
 
 Mass:90
 Engine:360 XL Engine(IS)
-Structure:Clan Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:14
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:30
 RA Armor:30
 LT Armor:28
@@ -32,24 +32,24 @@ RTR Armor:10
 RTC Armor:12
 
 Weapons:12
+LRM 5, Left Arm
+LRM 5, Left Arm
+Thunderbolt 5, Right Arm
+Thunderbolt 5, Right Arm
+Thunderbolt 5, Right Arm
+LRM 5, Left Torso
+LRM 5, Left Torso
+LRM 5, Left Torso
+Thunderbolt 5, Right Torso
+Thunderbolt 5, Right Torso
+Thunderbolt 5, Right Torso
 ER Medium Laser, Head
-Thunderbolt 5, Right Torso
-Thunderbolt 5, Right Arm
-Thunderbolt 5, Right Torso
-Thunderbolt 5, Right Arm
-Thunderbolt 5, Right Arm
-Thunderbolt 5, Right Torso
-LRM 5, Left Torso
-LRM 5, Left Arm
-LRM 5, Left Arm
-LRM 5, Left Torso
-LRM 5, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM5
-CLLRM5
+CLLRM5 (omnipod)
+CLLRM5 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -62,12 +62,12 @@ CLLRM5
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Thunderbolt 5
-Thunderbolt 5
-Thunderbolt 5
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Thunderbolt 5 (omnipod)
+Thunderbolt 5 (omnipod)
+Thunderbolt 5 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -77,13 +77,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLRM5
-CLLRM5
-CLLRM5
-Clan Ammo LRM-5
-Clan Ammo LRM-5
-Clan Ammo LRM-5
-ISCASE
+CLLRM5 (omnipod)
+CLLRM5 (omnipod)
+CLLRM5 (omnipod)
+Clan Ammo LRM-5 (omnipod)
+Clan Ammo LRM-5 (omnipod)
+Clan Ammo LRM-5 (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 
@@ -91,15 +91,15 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Thunderbolt 5
-Thunderbolt 5
-Thunderbolt 5
-IS Ammo Thunderbolt-5
-IS Ammo Thunderbolt-5
-IS Ammo Thunderbolt-5
-IS Ammo Thunderbolt-5
-IS Ammo Thunderbolt-5
-ISCASE
+Thunderbolt 5 (omnipod)
+Thunderbolt 5 (omnipod)
+Thunderbolt 5 (omnipod)
+IS Ammo Thunderbolt-5 (omnipod)
+IS Ammo Thunderbolt-5 (omnipod)
+IS Ammo Thunderbolt-5 (omnipod)
+IS Ammo Thunderbolt-5 (omnipod)
+IS Ammo Thunderbolt-5 (omnipod)
+ISCASE (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -112,14 +112,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISC3BoostedSystemSlaveUnit
-ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit (omnipod)
+ISC3BoostedSystemSlaveUnit (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Sensors
 Life Support
 -Empty-

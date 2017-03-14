@@ -76,35 +76,36 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERPPC
-NovaCEWS
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-CLCASE
+CLERPPC:OMNI
+NovaCEWS:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLiATM9
-CLiATM9
+CLiATM9:OMNI
+CLiATM9:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLiATM9
-CLiATM9
+CLiATM9:OMNI
+CLiATM9:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

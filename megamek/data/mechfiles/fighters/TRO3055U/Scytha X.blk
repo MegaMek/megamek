@@ -44,10 +44,6 @@ Aerodyne
 30
 </heatsinks>
 
-<omnipodheatsinks>
-10
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
@@ -85,6 +81,7 @@ Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -95,6 +92,7 @@ Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -104,6 +102,7 @@ Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Right Wing Equipment>
 

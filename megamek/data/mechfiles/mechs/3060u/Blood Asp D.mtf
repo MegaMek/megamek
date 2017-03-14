@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:90
-Engine:360 XL (Clan) Engine
-Structure:Endo Steel
+Engine:360 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -45,12 +45,12 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
+CLERLargeLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -59,10 +59,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-Endo Steel
+CLERLargeLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -72,30 +72,30 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Clan Gauss Ammo
-Clan Gauss Ammo
-Endo Steel
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-Clan Ultra AC/2 Ammo
-Endo Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+Clan Ultra AC/2 Ammo (omnipod)
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-

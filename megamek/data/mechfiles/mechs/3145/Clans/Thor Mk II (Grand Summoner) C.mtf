@@ -32,17 +32,17 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:5
-Flamer, Center Torso
-Streak SRM 4, Right Torso
 Large Pulse Laser, Left Arm
 Large Pulse Laser, Right Arm
 Ultra AC/20, Left Torso
+Streak SRM 4, Right Torso
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -55,8 +55,8 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -69,23 +69,23 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
-Clan Ultra AC/20 Ammo
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -105,7 +105,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLFlamer
+CLFlamer (omnipod)
 Clan Endo Steel
 
 Head:

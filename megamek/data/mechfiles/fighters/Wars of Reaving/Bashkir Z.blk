@@ -76,12 +76,13 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-NovaCEWS
-CLCASE
-CLCASE
+CLImprovedMediumHeavyLaser:OMNI
+CLImprovedMediumHeavyLaser:OMNI
+CLImprovedMediumHeavyLaser:OMNI
+NovaCEWS:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>

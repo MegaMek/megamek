@@ -9,15 +9,16 @@ Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:25
-Engine:175 XL Engine
-Structure:Endo Steel
+Engine:175 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
 Walk MP:7
 Jump MP:6
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:4
 RA Armor:4
 LT Armor:7
@@ -30,16 +31,21 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:6
 
-Weapons:9
-1 CLActiveProbe, Head
-1 CLERSmallLaser, Left Arm
-4 CLHeavyMG, Left Arm, Ammo:100
-1 CLHMGA, Left Arm
-1 CLERSmallLaser, Right Arm
-4 CLHeavyMG, Right Arm
-1 CLHMGA, Right Arm
-1 CLERSmallLaser, Left Leg
-1 CLERSmallLaser, Right Leg
+Weapons:14
+ER Small Laser, Left Leg
+ER Small Laser, Right Leg
+ER Small Laser, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun Array, Left Arm
+ER Small Laser, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun Array, Right Arm
 
 Left Arm:
 Shoulder
@@ -51,9 +57,9 @@ CLHeavyMG (omnipod)
 CLHeavyMG (omnipod)
 CLHeavyMG (omnipod)
 CLHeavyMG (omnipod)
-CLHMGA (omnipod)
-Endo Steel
-Ferro-Fibrous
+Clan Heavy Machine Gun Array (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -65,36 +71,36 @@ CLHeavyMG (omnipod)
 CLHeavyMG (omnipod)
 CLHeavyMG (omnipod)
 CLHeavyMG (omnipod)
-CLHMGA (omnipod)
-Endo Steel
-Ferro-Fibrous
+Clan Heavy Machine Gun Array (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Jump Jet
-Jump Jet
-Jump Jet
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-Jump Jet
-Jump Jet
-Jump Jet
-CLHeavyMG Ammo (100) (omnipod)
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Clan Heavy Machine Gun Ammo - Full (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -108,14 +114,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLActiveProbe
+CLActiveProbe (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -131,7 +137,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 CLERSmallLaser (omnipod)
-Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -145,11 +151,12 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 CLERSmallLaser (omnipod)
-Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

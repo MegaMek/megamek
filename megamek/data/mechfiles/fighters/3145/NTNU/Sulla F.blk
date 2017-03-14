@@ -79,17 +79,19 @@ Aerodyne
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLImprovedHeavyLargeLaser
-CLCASE
+CLImprovedHeavyLargeLaser:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLImprovedHeavyLargeLaser
-CLCASE
+CLImprovedHeavyLargeLaser:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-WatchdogECMSuite
+WatchdogECMSuite:OMNI
 </Aft Equipment>
 
 <source>

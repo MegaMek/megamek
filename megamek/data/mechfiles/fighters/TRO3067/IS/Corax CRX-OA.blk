@@ -71,18 +71,18 @@ Aerodyne
 </Nose Equipment>
 
 <Left Wing Equipment>
-SRM 6
-IS Ammo SRM-6
+SRM 6:OMNI
+IS Ammo SRM-6:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-SRM 6
-IS Ammo SRM-6
+SRM 6:OMNI
+IS Ammo SRM-6:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-Small Laser
-Small Laser
+Small Laser:OMNI
+Small Laser:OMNI
 </Aft Equipment>
 
 <source>

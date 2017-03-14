@@ -2,66 +2,99 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Talos Hovercraft
 </Name>
+
 <Model>
 NA
 </Model>
-<Tonnage>
-50
-</Tonnage>
+
+<year>
+3056
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:3.5
+</transporters>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 9
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 30
 22
 22
 21
 30
-</Armor>
-<Turret Equipment>
-ISLRM15
-ISMediumLaser
-ISTAG
-</Turret Equipment>
-<Front Equipment>
-ISLRM5
-ISLRM5
-</Front Equipment>
-<transporters>
-TroopSpace:3.5
-</transporters>
+</armor>
+
 <Body Equipment>
-ISLRM15 Ammo
-ISLRM15 Ammo
-ISLRM5 Ammo
+IS Ammo LRM-15:OMNI
+IS Ammo LRM-15:OMNI
+IS Ammo LRM-5:OMNI
 </Body Equipment>
-<type>
-IS
-</type>
-<year>
-3056
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+LRM 5:OMNI
+LRM 5:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+LRM 15:OMNI
+Medium Laser:OMNI
+ISTAG:OMNI
+</Turret Equipment>
+
+<tonnage>
+50.0
+</tonnage>
+

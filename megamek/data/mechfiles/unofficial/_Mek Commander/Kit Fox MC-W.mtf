@@ -8,15 +8,16 @@ Era:3059
 Rules Level:2
 
 Mass:30
-Engine:180 XL Engine
-Structure:Endo Steel
+Engine:180 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:8
 RA Armor:8
 LT Armor:10
@@ -29,47 +30,48 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:4
 
-Weapons:4
-1 CLUltraAC5, Right Arm, Ammo:20
-2 CLStreakSRM4, Left Arm, Ammo:25
-1 CLERMediumLaser, Right Torso
-1 CLERMediumLaser, Left Torso
+Weapons:5
+Streak SRM 4, Left Arm
+Streak SRM 4, Left Arm
+Ultra AC/5, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM4
-CLStreakSRM4
-CLStreakSRM4 Ammo
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5 Ammo
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -80,10 +82,10 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -102,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
@@ -124,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +140,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -32,72 +32,72 @@ RTR Armor:8
 RTC Armor:11
 
 Weapons:11
-AMS, Head
-ER Medium Laser, Right Torso
-ER Medium Laser, Left Torso
-Ultra AC/2, Right Arm
-Ultra AC/2, Right Arm
-Ultra AC/2, Right Arm
 Ultra AC/2, Left Arm
 Ultra AC/2, Left Arm
 Ultra AC/2, Left Arm
-LRM 15, Right Torso
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
 LRM 15, Left Torso
+ER Medium Laser, Left Torso
+LRM 15, Right Torso
+ER Medium Laser, Right Torso
+AMS, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-Clan Ultra AC/2 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+Clan Ultra AC/2 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-Clan Ultra AC/2 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+Clan Ultra AC/2 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRM15
-CLLRM15
-CLERMediumLaser
-Clan Ammo LRM-15
-Clan Ammo LRM-15
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM15
-CLLRM15
-CLERMediumLaser
-Clan Ammo LRM-15
-Clan Ultra AC/2 Ammo
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ultra AC/2 Ammo (omnipod)
 CLMASC
 CLMASC
 CLMASC
-Endo Steel
+Clan Endo Steel
 -Empty-
 
 Center Torso:
@@ -111,14 +111,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLAMS Ammo
+CLAMS Ammo (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLAntiMissileSystem
+CLAntiMissileSystem (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -133,8 +133,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -147,8 +147,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

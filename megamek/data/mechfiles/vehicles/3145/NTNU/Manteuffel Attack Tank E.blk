@@ -33,7 +33,7 @@ Tracked
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,18 +65,18 @@ Tracked
 </armor>
 
 <Body Equipment>
-IS LB 10-X AC Ammo
-IS LB 10-X Cluster Ammo
-ISGuardianECMSuite
-ISCASE
-Taser Ammo
-Taser Ammo
+IS LB 10-X AC Ammo:OMNI
+IS LB 10-X Cluster Ammo:OMNI
+ISGuardianECMSuite:OMNI
+ISCASE:OMNI
+Taser Ammo:OMNI
+Taser Ammo:OMNI
 </Body Equipment>
 
 <Front Equipment>
-ISERSmallLaser
-Medium Laser
-Medium Laser
+ISERSmallLaser:OMNI
+Medium Laser:OMNI
+Medium Laser:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -89,8 +89,8 @@ Medium Laser
 </Rear Equipment>
 
 <Turret Equipment>
-ISLBXAC10
-Mek Taser
+ISLBXAC10:OMNI
+Mek Taser:OMNI
 </Turret Equipment>
 
 <source>

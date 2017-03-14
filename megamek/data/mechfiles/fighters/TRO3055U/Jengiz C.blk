@@ -83,12 +83,14 @@ Clan Streak SRM 6 Ammo:OMNI
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLLBXAC20:OMNI
 Clan LB 20-X Cluster Ammo:OMNI
 Clan LB 20-X Cluster Ammo:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Left Wing Equipment>
 
@@ -97,12 +99,14 @@ CLLBXAC20:OMNI
 Clan LB 20-X Cluster Ammo:OMNI
 Clan LB 20-X Cluster Ammo:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLStreakSRM4:OMNI
 Clan Streak SRM 4 Ammo:OMNI
 CLERSmallLaser:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Aft Equipment>
 

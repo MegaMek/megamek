@@ -44,10 +44,6 @@ Aerodyne
 28
 </heatsinks>
 
-<omnipodheatsinks>
-8
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
@@ -87,6 +83,7 @@ Clan Gauss Ammo:OMNI
 Clan Gauss Ammo:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Nose Equipment>
 

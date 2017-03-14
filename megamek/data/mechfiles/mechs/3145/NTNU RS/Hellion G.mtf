@@ -4,7 +4,7 @@ G
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
-Era:3119	
+Era:3119
 Source:RS 3145 NTNU - Late Republic
 Rules Level:3
 
@@ -32,19 +32,19 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:5
-LRM 10, Right Torso
-TSEMP One-Shot, Left Torso
 Improved Heavy Medium Laser, Left Arm
 Improved Heavy Medium Laser, Right Arm
 Improved Heavy Medium Laser, Right Arm
+TSEMP One-Shot, Left Torso
+LRM 10, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -57,10 +57,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -69,9 +69,9 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-TSEMP One-Shot
-TSEMP One-Shot
-TSEMP One-Shot
+TSEMP One-Shot (omnipod)
+TSEMP One-Shot (omnipod)
+TSEMP One-Shot (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -83,8 +83,8 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10
-Clan Ammo LRM-10
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
 CLMASC
 Clan Endo Steel
 Clan Endo Steel
@@ -105,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

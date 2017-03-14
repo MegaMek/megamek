@@ -2,67 +2,99 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Kamayari
 </Name>
+
 <Model>
 C-UK
 </Model>
-<Tonnage>
-90
-</Tonnage>
+
+<year>
+3058
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 50
 45
 45
 25
 50
-</Armor>
-<Turret Equipment>
-ISLBXAC10
-ISLBXAC10
-ISERLargeLaser
-</Turret Equipment>
-<Front Equipment>
-ISMRM40
-</Front Equipment>
+</armor>
+
 <Body Equipment>
-ISLBXAC10 CL Ammo
-ISLBXAC10 Ammo
-ISLBXAC10 CL Ammo
-ISMRM40 Ammo
-ISMRM40 Ammo
-ISMRM40 Ammo
-ISC3SlaveUnit
-ISGuardianECM
+IS LB 10-X Cluster Ammo:OMNI
+IS LB 10-X AC Ammo:OMNI
+IS LB 10-X Cluster Ammo:OMNI
+IS MRM 40 Ammo:OMNI
+IS MRM 40 Ammo:OMNI
+IS MRM 40 Ammo:OMNI
+ISC3SlaveUnit:OMNI
+ISGuardianECMSuite:OMNI
 </Body Equipment>
-<type>
-IS
-</type>
-<year>
-3058
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+MRM 40:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISLBXAC10:OMNI
+ISLBXAC10:OMNI
+ISERLargeLaser:OMNI
+</Turret Equipment>
+
+<tonnage>
+90.0
+</tonnage>
+

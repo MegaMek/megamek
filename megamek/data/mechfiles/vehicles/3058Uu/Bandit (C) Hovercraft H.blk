@@ -36,6 +36,10 @@ Hover
 troopspace:5.0
 </transporters>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 9
 </cruiseMP>

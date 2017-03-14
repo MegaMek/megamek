@@ -87,6 +87,7 @@ HAG/40 Ammo:OMNI
 HAG/40 Ammo:OMNI
 CLHeavyMediumLaser:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -95,6 +96,7 @@ HAG/40 Ammo:OMNI
 HAG/40 Ammo:OMNI
 HAG/40 Ammo:OMNI
 CLHeavyMediumLaser:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Right Wing Equipment>
 

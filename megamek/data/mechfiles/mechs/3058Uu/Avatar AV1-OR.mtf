@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:4
 
 Mass:70
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -42,12 +42,12 @@ ER Large Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,13 +57,13 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
 -Empty-
 -Empty-
 
@@ -71,8 +71,8 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Gauss Ammo
-ISCASE
+Clan Gauss Ammo (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -85,11 +85,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
-IS MRM 40 Ammo
-IS MRM 40 Ammo
-ISCASE
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+IS MRM 40 Ammo (omnipod)
+IS MRM 40 Ammo (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser
-Medium Laser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERLargeLaser
+CLERLargeLaser (omnipod)
 Sensors
 Life Support
 -Empty-

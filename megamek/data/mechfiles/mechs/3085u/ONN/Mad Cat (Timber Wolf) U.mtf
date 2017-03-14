@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:75
 Engine:375 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -43,11 +43,11 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLERMicroLaser
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMicroLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -57,9 +57,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERMicroLaser
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+CLERMicroLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -70,30 +70,30 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLUMU
-CLUMU
-CLLRTorpedo15
-CLLRTorpedo15
-CLArtemisIV
-Clan Ammo LRTorpedo-15 (Clan) Artemis-capable
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis-capable (omnipod)
 Clan HarJel
-Ferro-Fibrous
-Ferro-Fibrous
-Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLUMU
-CLUMU
-CLLRTorpedo15
-CLLRTorpedo15
-CLArtemisIV
-Clan Ammo LRTorpedo-15 (Clan) Artemis-capable
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis-capable (omnipod)
 Clan HarJel
-Ferro-Fibrous
-Ferro-Fibrous
-Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -107,13 +107,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Clan HarJel
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

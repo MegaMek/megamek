@@ -37,7 +37,7 @@ troopspace:5.0
 </transporters>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -69,9 +69,9 @@ troopspace:5.0
 </armor>
 
 <Body Equipment>
-CLActiveProbe
-CLECMSuite
-CLAPGaussRifle Ammo
+CLActiveProbe:OMNI
+CLECMSuite:OMNI
+CLAPGaussRifle Ammo:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -87,10 +87,10 @@ CLAPGaussRifle Ammo
 </Rear Equipment>
 
 <Turret Equipment>
-CLAPGaussRifle
-CLAPGaussRifle
-CLERMediumLaser
-CLERMediumLaser
+CLAPGaussRifle:OMNI
+CLAPGaussRifle:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Turret Equipment>
 
 <source>

@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:75
-Engine:375 XL Engine
-Structure:Endo Steel
+Engine:375 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:15 Double
+Base Chassis Heat Sinks:15
 Walk MP:5
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:21
 RA Armor:21
 LT Armor:25
@@ -29,22 +30,28 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:8
 
-Weapons:4
-6 ISMediumLaser, Right Torso
-1 ISGaussRifle, Left Torso, Ammo:16
-2 ISMediumLaser, Center Torso
-1 ISMediumLaser, Head
+Weapons:10
+Gauss Rifle, Left Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -54,11 +61,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -67,28 +74,28 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-Endo-Steel
-Endo-Steel
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-Endo-Steel
-Endo-Steel
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
@@ -102,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumLaser
-ISMediumLaser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISMediumLaser
+Medium Laser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -124,7 +131,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISGauss Ammo
+IS Gauss Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +145,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISGauss Ammo
+IS Gauss Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -146,4 +153,5 @@ ISGauss Ammo
 -Empty-
 -Empty-
 -Empty-
+
 

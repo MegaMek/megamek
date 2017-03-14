@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:50
 Engine:250 XL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 Cockpit:Torso-Mounted Cockpit
 Gyro:Standard Gyro
@@ -34,22 +34,22 @@ RTR Armor:5
 RTC Armor:8
 
 Weapons:5
-ER Small Laser, Head
+LB 10-X AC, Left Arm
 ER PPC, Right Arm
 Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Right Arm
-LB 10-X AC, Left Arm
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-Clan LB 10-X AC Ammo
-Clan LB 10-X Cluster Ammo
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
 Clan Reflective
 Clan Reflective
 Clan Reflective
@@ -57,13 +57,13 @@ Clan Reflective
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLMediumPulseLaser
-CLMediumPulseLaser
-Clan Endo-Steel
-Clan Endo-Steel
-Clan Endo-Steel
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -72,10 +72,10 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Jump Jet
-Jump Jet
-Clan Endo-Steel
-Clan Endo-Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 -Empty-
 -Empty-
@@ -86,10 +86,10 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Jump Jet
-Jump Jet
-Clan Endo-Steel
-Clan Endo-Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 -Empty-
 -Empty-
@@ -113,7 +113,7 @@ Sensors
 Head:
 Sensors
 Sensors
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-

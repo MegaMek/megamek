@@ -44,11 +44,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumShield
-ISMediumShield
-ISMediumShield
-ISMediumShield
-ISMediumShield
+ISMediumShield (omnipod)
+ISMediumShield (omnipod)
+ISMediumShield (omnipod)
+ISMediumShield (omnipod)
+ISMediumShield (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -58,10 +58,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Hatchet
-Hatchet
-Hatchet
-Hatchet
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
 IS Endo Steel
 IS Endo Steel
 -Empty-
@@ -71,12 +71,12 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-IS Ammo MML-9 LRM Artemis-capable
-IS Ammo MML-9 SRM Artemis-capable
-ISERSmallLaser (R)
-ISCASEII
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+IS Ammo MML-9 LRM Artemis-capable (omnipod)
+IS Ammo MML-9 SRM Artemis-capable (omnipod)
+ISERSmallLaser (R) (omnipod)
+ISCASEII (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -85,14 +85,14 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-ISMML9
-ISMML9
-ISMML9
-ISMML9
-ISMML9
-ISArtemisIV
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISMML9 (omnipod)
+ISMML9 (omnipod)
+ISMML9 (omnipod)
+ISMML9 (omnipod)
+ISMML9 (omnipod)
+ISArtemisIV (omnipod)
 IS Endo Steel
 
 Center Torso:
@@ -104,10 +104,10 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
-ISERMediumLaser
-BeagleActiveProbe
-BeagleActiveProbe
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
 
 Head:
 Life Support

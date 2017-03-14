@@ -68,31 +68,31 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISLargePulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISTargeting Computer
+ISLargePulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISTargeting Computer:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISSmallPulseLaser
-ISSmallPulseLaser
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISSmallPulseLaser:OMNI
+ISSmallPulseLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISSmallPulseLaser
-ISSmallPulseLaser
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISSmallPulseLaser:OMNI
+ISSmallPulseLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISERMediumLaser
+ISERMediumLaser:OMNI
 </Aft Equipment>
 
 <source>

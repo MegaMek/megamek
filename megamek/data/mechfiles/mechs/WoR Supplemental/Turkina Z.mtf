@@ -32,67 +32,67 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:5
-Light TAG, Center Torso
-iATM 12, Left Torso
-iATM 12, Right Arm
 iATM 12, Left Arm
+iATM 12, Right Arm
+iATM 12, Left Torso
 iATM 12, Right Torso
+Light TAG, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-Jump Jet
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-Jump Jet
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -105,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-CLLightTAG
+Jump Jet (omnipod)
+CLLightTAG (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-NovaCEWS
+NovaCEWS (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

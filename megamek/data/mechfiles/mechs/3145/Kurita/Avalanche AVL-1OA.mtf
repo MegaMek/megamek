@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:50
 Engine:250 Fusion Engine(IS)
-Structure:IS Endo-Steel
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -32,24 +32,24 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:8
+SRM 4, Left Leg
+SRM 4, Right Leg
 ER Medium Laser, Left Arm
 ER Medium Laser, Left Arm
 ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
 SRM 6, Left Torso
 SRM 6, Right Torso
-SRM 4, Left Leg
-SRM 4, Right Leg
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISERMediumLaser
-ISERMediumLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -58,25 +58,25 @@ IS Endo-Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISERMediumLaser
-ISERMediumLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-Jump Jet
-Jump Jet
-SRM 6
-SRM 6
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+SRM 6 (omnipod)
+SRM 6 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -84,14 +84,14 @@ IS Endo-Steel
 -Empty-
 
 Right Torso:
-Jump Jet
-Jump Jet
-SRM 6
-SRM 6
-IS Ammo SRM-4
-IS Ammo SRM-6
-ISCASE
-IS Endo-Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+SRM 6 (omnipod)
+SRM 6 (omnipod)
+IS Ammo SRM-4 (omnipod)
+IS Ammo SRM-6 (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-IS Endo-Steel
+Jump Jet (omnipod)
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-IS Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -130,7 +130,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-SRM 4
+SRM 4 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -144,7 +144,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-SRM 4
+SRM 4 (omnipod)
 -Empty-
 -Empty-
 -Empty-

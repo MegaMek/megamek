@@ -1,24 +1,24 @@
-Version:1.1
+Version:1.0
 Perseus
 P1B
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3058
+Source:TRO 3067
 Rules Level:2
-source:TRO 3067
 
 Mass:75
-Engine:300 XL Fusion Engine
-Structure:Endo-Steel
+Engine:300 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
-Base Chassis Heat Sinks: 12
+Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:21
 RA Armor:21
 LT Armor:24
@@ -32,79 +32,79 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:5
-1 ISLargePulseLaser, Left Arm
-1 ISLargePulseLaser, Left Arm
-1 ISGaussRifle, Right Arm, Ammo:8
-1 ISERLargeLaser, Left Torso
-1 ISAntiMissileSystem, Head
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Left Arm
+Gauss Rifle, Right Arm
+ER Large Laser, Left Torso
+AMS, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLargePulseLaser
-ISLargePulseLaser
-ISLargePulseLaser
-ISLargePulseLaser
+ISLargePulseLaser (omnipod)
+ISLargePulseLaser (omnipod)
+ISLargePulseLaser (omnipod)
+ISLargePulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
-Endo-Steel
-Endo-Steel
-Endo-Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
-Engine
-Engine
-Engine
-ISERLargeLaser
-ISERLargeLaser
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERLargeLaser (omnipod)
+ISERLargeLaser (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-Engine
-Engine
-Engine
-ISGauss Ammo
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Gauss Ammo (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -112,17 +112,29 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISAntiMissileSystem
+ISAntiMissileSystem (omnipod)
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS AMS Ammo
-IS AMS Ammo
+ISAMS Ammo (omnipod)
+ISAMS Ammo (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -131,3 +143,11 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

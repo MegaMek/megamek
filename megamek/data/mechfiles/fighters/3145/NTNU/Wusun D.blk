@@ -76,12 +76,13 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLGaussRifle
-CLImprovedHeavyLargeLaser
-CLTargeting Computer
-Clan Gauss Ammo
-Clan Gauss Ammo
-CLCASE
+CLGaussRifle:OMNI
+CLImprovedHeavyLargeLaser:OMNI
+CLTargeting Computer:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -91,7 +92,7 @@ CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLECMSuite
+CLECMSuite:OMNI
 </Aft Equipment>
 
 <source>

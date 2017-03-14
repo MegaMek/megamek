@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:30
-Engine:180 XL Engine
-Structure:Endo Steel
+Engine:180 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:7
 RA Armor:7
 LT Armor:8
@@ -31,10 +32,10 @@ RTR Armor:4
 RTC Armor:4
 
 Weapons:4
-1 CLERLargeLaser, Left Arm
-1 CLSmallPulseLaser, Left Arm
-1 CLStreakSRM4, Right Arm, Ammo:25
-1 CLLBXAC5, Right Arm, Ammo:20
+ER Large Laser, Left Arm
+Small Pulse Laser, Left Arm
+Streak SRM 4, Right Arm
+LB 5-X AC, Right Arm
 
 Left Arm:
 Shoulder
@@ -43,8 +44,8 @@ Lower Arm Actuator
 Hand Actuator
 CLERLargeLaser (omnipod)
 CLSmallPulseLaser (omnipod)
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -58,34 +59,34 @@ CLLBXAC5 (omnipod)
 CLLBXAC5 (omnipod)
 CLLBXAC5 (omnipod)
 CLLBXAC5 (omnipod)
-CLStreakSRM4 Ammo (omnipod)
-CLLBXAC5 CL Ammo (omnipod)
-Endo Steel
-Ferro-Fibrous
+Clan Streak SRM 4 Ammo (omnipod)
+Clan LB 5-X Cluster Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -103,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -147,4 +148,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

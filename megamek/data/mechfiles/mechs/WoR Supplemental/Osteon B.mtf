@@ -34,10 +34,10 @@ RTR Armor:12
 RTC Armor:12
 
 Weapons:5
-Improved Heavy Large Laser, Right Torso
+ER Large Laser, Left Arm
+ER Large Laser, Left Arm
 Improved Heavy Large Laser, Left Torso
-ER Large Laser, Left Arm
-ER Large Laser, Left Arm
+Improved Heavy Large Laser, Right Torso
 ER Large Laser, Head
 
 Left Arm:
@@ -45,12 +45,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLERLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERLargeLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -59,12 +59,12 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-ISLargeVibroblade
-ISLargeVibroblade
-ISLargeVibroblade
-ISLargeVibroblade
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+ISLargeVibroblade (omnipod)
+ISLargeVibroblade (omnipod)
+ISLargeVibroblade (omnipod)
+ISLargeVibroblade (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -72,13 +72,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -86,13 +86,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -113,10 +113,10 @@ Sensors
 Head:
 Sensors
 Sensors
-NovaCEWS
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
+NovaCEWS (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-

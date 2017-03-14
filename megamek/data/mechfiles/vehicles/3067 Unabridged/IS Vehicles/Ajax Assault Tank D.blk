@@ -36,6 +36,10 @@ Tracked
 troopspace:4.0
 </transporters>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
@@ -57,41 +61,36 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
-ISDroneCarrierControlSystem
-ISGuardianECMSuite
-ISArrowIVHomingAmmo
-ISArrowIVHomingAmmo
-ISArrowIVAmmo
-ISArrowIVAmmo
-IS Light Machine Gun Ammo - Half
-ISCASE
+ISDroneCarrierControlSystem:OMNI
+ISGuardianECMSuite:OMNI
+ISArrowIVHomingAmmo:OMNI
+ISArrowIVHomingAmmo:OMNI
+ISArrowIVAmmo:OMNI
+ISArrowIVAmmo:OMNI
+IS Light Machine Gun Ammo - Half:OMNI
+ISCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
 </Front Equipment>
 
 <Right Equipment>
-Light Machine Gun
+Light Machine Gun:OMNI
 </Right Equipment>
 
 <Left Equipment>
-Light Machine Gun
+Light Machine Gun:OMNI
 </Left Equipment>
 
 <Rear Equipment>
-Light Machine Gun
+Light Machine Gun:OMNI
 </Rear Equipment>
 
 <Turret Equipment>
-ISArrowIV
-ISERMediumLaser
-ISERMediumLaser
+ISArrowIV:OMNI
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
 </Turret Equipment>
-
-<transporters>
-cargobay:8:1
-infantrybay:4:1
-</transporters>
 
 <tonnage>
 90.0

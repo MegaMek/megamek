@@ -72,6 +72,7 @@ CLLBXAC10:OMNI
 Clan LB 10-X Cluster Ammo:OMNI
 Clan LB 10-X Cluster Ammo:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -79,6 +80,7 @@ CLGaussRifle:OMNI
 Clan Gauss Ammo:OMNI
 Clan Gauss Ammo:OMNI
 CLERLargeLaser:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Left Wing Equipment>
 
@@ -88,6 +90,7 @@ Clan Gauss Ammo:OMNI
 Clan Gauss Ammo:OMNI
 CLERLargeLaser:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -96,6 +99,7 @@ CLStreakSRM6:OMNI
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 Clan Streak SRM 6 Ammo:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Aft Equipment>
 

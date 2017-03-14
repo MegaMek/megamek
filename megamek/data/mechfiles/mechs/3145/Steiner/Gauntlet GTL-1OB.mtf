@@ -34,24 +34,24 @@ RTC Armor:10
 Weapons:11
 Medium Laser, Left Arm
 Medium Laser, Left Arm
-Medium Laser, Right Arm
-Medium Laser, Right Arm
-Medium Laser, Right Arm
-Medium Laser, Right Arm
-Medium Laser, Left Arm
-Medium Laser, Right Arm
 Medium Laser, Left Arm
 Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
 Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Light Ferro-Fibrous
@@ -61,11 +61,11 @@ IS Light Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Light Ferro-Fibrous
@@ -75,10 +75,10 @@ IS Light Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-IS Coolant Pod
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+IS Coolant Pod (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -89,10 +89,10 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser
-ISGuardianECMSuite
-ISGuardianECMSuite
-IS Coolant Pod
+ISMediumPulseLaser (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+IS Coolant Pod (omnipod)
 ISMASC
 ISMASC
 ISMASC
@@ -111,7 +111,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (omnipod)
 IS Light Ferro-Fibrous
 
 Head:
@@ -133,8 +133,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -147,8 +147,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

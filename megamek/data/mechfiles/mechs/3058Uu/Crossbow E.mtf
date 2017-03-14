@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:65
-Engine:325 Fusion (Clan) Engine
-Structure:Standard
+Engine:325 Fusion (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -52,33 +52,33 @@ AP Gauss Rifle, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle Ammo
-CLAPGaussRifle Ammo
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle Ammo (omnipod)
+CLAPGaussRifle Ammo (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle Ammo
-CLAPGaussRifle Ammo
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle Ammo (omnipod)
+CLAPGaussRifle Ammo (omnipod)
 
 Left Torso:
-CLAPGaussRifle Ammo
+CLAPGaussRifle Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -92,7 +92,7 @@ CLAPGaussRifle Ammo
 -Empty-
 
 Right Torso:
-CLAPGaussRifle Ammo
+CLAPGaussRifle Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -116,8 +116,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 
 Head:
 Life Support

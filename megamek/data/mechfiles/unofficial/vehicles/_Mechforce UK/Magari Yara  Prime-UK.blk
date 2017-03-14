@@ -2,61 +2,92 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Magari Yara
 </Name>
+
 <Model>
 Prime-UK
 </Model>
-<Tonnage>
-45
-</Tonnage>
+
+<year>
+3058
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 11
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 50
 40
 40
 22
-</Armor>
-<Front Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-ISStreakSRM4
-ISStreakSRM4
-ISTAG
-</Front Equipment>
+</armor>
+
 <Body Equipment>
-ISStreakSRM4 Ammo
-ISC3SlaveUnit
-ISGuardianECM
+IS Streak SRM 4 Ammo:OMNI
+ISC3SlaveUnit:OMNI
+ISGuardianECMSuite:OMNI
 </Body Equipment>
-<type>
-IS
-</type>
-<year>
-3058
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+Medium Laser:OMNI
+Medium Laser:OMNI
+Medium Laser:OMNI
+ISStreakSRM4:OMNI
+ISStreakSRM4:OMNI
+ISTAG:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<tonnage>
+45.0
+</tonnage>
+

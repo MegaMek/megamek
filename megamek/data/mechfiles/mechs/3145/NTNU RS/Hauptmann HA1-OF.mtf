@@ -4,7 +4,7 @@ HA1-OF
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
-Era:3094	
+Era:3094
 Source:RS 3145 NTNU - Early Republic
 Rules Level:2
 
@@ -34,15 +34,15 @@ RTC Armor:15
 Weapons:5
 Medium X-Pulse Laser, Left Arm
 Medium X-Pulse Laser, Left Arm
-Medium X-Pulse Laser, Head
 Heavy PPC, Right Arm
 Improved Heavy Gauss Rifle, Left Torso
+Medium X-Pulse Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumXPulseLaser
-ISMediumXPulseLaser
+ISMediumXPulseLaser (omnipod)
+ISMediumXPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +55,10 @@ ISMediumXPulseLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -67,25 +67,25 @@ Heavy PPC
 -Empty-
 
 Left Torso:
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGaussRifle
-ISCASEII
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISImprovedHeavyGaussRifle (omnipod)
+ISCASEII (omnipod)
 
 Right Torso:
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISCASE
+ISImprovedHeavyGauss Ammo (omnipod)
+ISImprovedHeavyGauss Ammo (omnipod)
+ISImprovedHeavyGauss Ammo (omnipod)
+ISImprovedHeavyGauss Ammo (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -105,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISAngelECMSuite
-ISAngelECMSuite
+ISAngelECMSuite (omnipod)
+ISAngelECMSuite (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISMediumXPulseLaser
+ISMediumXPulseLaser (omnipod)
 Sensors
 Life Support
 -Empty-

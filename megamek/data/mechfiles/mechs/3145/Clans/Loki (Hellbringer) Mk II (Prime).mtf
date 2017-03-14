@@ -34,22 +34,22 @@ RTR Armor:7
 RTC Armor:7
 
 Weapons:5
-Streak SRM 4, Right Torso
-ER Large Laser, Left Arm
-ER Large Laser, Right Arm
-Gauss Rifle, Right Arm
 Gauss Rifle, Left Arm
+ER Large Laser, Left Arm
+Gauss Rifle, Right Arm
+ER Large Laser, Right Arm
+Streak SRM 4, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLERLargeLaser
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLERLargeLaser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -57,13 +57,13 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLERLargeLaser
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLERLargeLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -71,8 +71,8 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Gauss Ammo
-Clan Gauss Ammo
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -85,9 +85,9 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
-Clan Gauss Ammo
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -107,16 +107,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

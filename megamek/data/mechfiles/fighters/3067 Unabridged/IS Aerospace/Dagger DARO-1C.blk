@@ -76,21 +76,21 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISERMediumLaser
-ISERPPC
-ISTargeting Computer
+ISERMediumLaser:OMNI
+ISERPPC:OMNI
+ISTargeting Computer:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERMediumLaser
+ISERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERMediumLaser
+ISERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISMediumPulseLaser
+ISMediumPulseLaser:OMNI
 </Aft Equipment>
 
 <source>

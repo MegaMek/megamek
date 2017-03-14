@@ -51,13 +51,13 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 -Empty-
 -Empty-
 
@@ -65,13 +65,13 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 -Empty-
 -Empty-
 
@@ -79,10 +79,10 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-IS Coolant Pod
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Coolant Pod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -93,10 +93,10 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-IS Coolant Pod
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Coolant Pod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -114,14 +114,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISC3SlaveUnit
+ISC3SlaveUnit (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -136,8 +136,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -150,8 +150,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

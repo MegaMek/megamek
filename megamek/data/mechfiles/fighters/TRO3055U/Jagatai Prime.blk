@@ -44,10 +44,6 @@ Aerodyne
 17
 </heatsinks>
 
-<omnipodheatsinks>
-2
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
@@ -83,6 +79,7 @@ Aerodyne
 CLLRM20:OMNI
 Clan Ammo LRM-20:OMNI
 Clan Ammo LRM-20:OMNI
+CLCASE:OMNI
 CLCASE:OMNI
 </Nose Equipment>
 

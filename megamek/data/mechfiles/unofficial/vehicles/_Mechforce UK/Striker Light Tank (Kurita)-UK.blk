@@ -2,55 +2,81 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Striker Light Tank
 </Name>
+
 <Model>
 (Kurita)-UK
 </Model>
-<Tonnage>
-35
-</Tonnage>
+
+<year>
+3058
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+1
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
 25
 20
 20
 14
 25
-</Armor>
-<Turret Equipment>
-ISMRM30
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
-ISMRM30 Ammo
+IS MRM 30 Ammo:OMNI
 </Body Equipment>
-<type>
-IS
-</type>
-<year>
-3058
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-1
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+MRM 30:OMNI
+</Turret Equipment>
+
+<tonnage>
+35.0
+</tonnage>
+

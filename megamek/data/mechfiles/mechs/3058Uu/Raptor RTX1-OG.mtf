@@ -41,26 +41,26 @@ ER Small Laser, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISSmallPulseLaser
-ISSmallPulseLaser
-ISSmallPulseLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISSmallPulseLaser (omnipod)
+ISSmallPulseLaser (omnipod)
+ISSmallPulseLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -84,7 +84,7 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel

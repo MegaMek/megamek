@@ -81,6 +81,7 @@ CLAntiMissileSystem:OMNI
 CLAMS Ammo:OMNI
 CLTargeting Computer:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>

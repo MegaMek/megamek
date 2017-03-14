@@ -4,7 +4,7 @@ SR1-OM
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
-Era:3135	
+Era:3135
 Source:RS 3145 NTNU - Dark Ages
 Rules Level:3
 
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:9
 Walk MP:6
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:14
@@ -38,12 +38,12 @@ C3 Master Boosted with TAG, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -52,19 +52,19 @@ ISC3MasterBoostedSystemUnit
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-ISCASE
+ISCASE (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -78,7 +78,7 @@ IS Endo Steel
 -Empty-
 
 Right Torso:
-ISCASE
+ISCASE (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -124,7 +124,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
+Heat Sink (omnipod)
 IS Endo Steel
 -Empty-
 -Empty-

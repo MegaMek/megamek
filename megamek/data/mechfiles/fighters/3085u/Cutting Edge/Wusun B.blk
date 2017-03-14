@@ -76,14 +76,15 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLHAG40
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-CLTargeting Computer
-CLCASE
-CLCASE
+CLHAG40:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+CLTargeting Computer:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>

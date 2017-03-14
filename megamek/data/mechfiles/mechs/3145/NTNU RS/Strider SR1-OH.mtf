@@ -4,7 +4,7 @@ SR1-OH
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
-Era:3099	
+Era:3099
 Source:RS 3145 NTNU - Early Republic
 Rules Level:3
 
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:9
 Walk MP:6
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:14
@@ -38,8 +38,8 @@ Streak LRM 10, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakLRM10
-CLStreakLRM10
+CLStreakLRM10 (omnipod)
+CLStreakLRM10 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -52,8 +52,8 @@ CLStreakLRM10
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakLRM10
-CLStreakLRM10
+CLStreakLRM10 (omnipod)
+CLStreakLRM10 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -64,8 +64,8 @@ CLStreakLRM10
 -Empty-
 
 Left Torso:
-Clan Streak LRM 10 Ammo
-ISCASE
+Clan Streak LRM 10 Ammo (omnipod)
+ISCASE (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -78,8 +78,8 @@ IS Endo Steel
 -Empty-
 
 Right Torso:
-Clan Streak LRM 10 Ammo
-ISCASE
+Clan Streak LRM 10 Ammo (omnipod)
+ISCASE (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -124,7 +124,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
+Heat Sink (omnipod)
 IS Endo Steel
 -Empty-
 -Empty-

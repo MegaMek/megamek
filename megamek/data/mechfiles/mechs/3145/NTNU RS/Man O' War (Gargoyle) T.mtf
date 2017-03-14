@@ -4,7 +4,7 @@ T
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
-Era:3128	
+Era:3128
 Source:RS 3145 NTNU - Late Republic
 Rules Level:3
 
@@ -32,39 +32,39 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:9
-Small Pulse Laser, Center Torso
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-TSEMP Cannon, Left Arm
 ATM 9, Left Arm
+TSEMP Cannon, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+Small Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -73,10 +73,10 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Ammo ATM-9
-Clan Ammo ATM-9 ER
-Clan Ammo ATM-9 HE
-CLCASEII
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 ER (omnipod)
+Clan Ammo ATM-9 HE (omnipod)
+CLCASEII (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -109,7 +109,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLSmallPulseLaser
+CLSmallPulseLaser (omnipod)
 -Empty-
 
 Head:

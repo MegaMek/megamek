@@ -68,23 +68,23 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-Medium Laser
-Medium Laser
+Medium Laser:OMNI
+Medium Laser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-Medium Laser
-Medium Laser
+Medium Laser:OMNI
+Medium Laser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-Small Laser
-Small Laser
+Small Laser:OMNI
+Small Laser:OMNI
 </Aft Equipment>
 
 <source>

@@ -68,22 +68,22 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISERPPC
-ISERPPC
+ISERPPC:OMNI
+ISERPPC:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:3
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -32,70 +32,70 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:8
-Laser AMS, Head
-ER Medium Laser, Center Torso
+Streak LRM 15, Left Arm
+ER Large Pulse Laser, Left Arm
+Streak LRM 15, Right Arm
+ER Large Pulse Laser, Right Arm
 ER Large Laser, Left Torso
 ER Large Laser, Right Torso
-ER Large Pulse Laser, Left Arm
-ER Large Pulse Laser, Right Arm
-Streak LRM 15, Right Arm
-Streak LRM 15, Left Arm
+ER Medium Laser, Center Torso
+Laser AMS, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLStreakLRM15
-CLStreakLRM15
-CLStreakLRM15
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERLargePulseLaser
-Clan Streak LRM 15 Ammo
-Clan Streak LRM 15 Ammo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLStreakLRM15 (omnipod)
+CLStreakLRM15 (omnipod)
+CLStreakLRM15 (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+Clan Streak LRM 15 Ammo (omnipod)
+Clan Streak LRM 15 Ammo (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLStreakLRM15
-CLStreakLRM15
-CLStreakLRM15
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERLargePulseLaser
-Clan Streak LRM 15 Ammo
-Clan Streak LRM 15 Ammo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLStreakLRM15 (omnipod)
+CLStreakLRM15 (omnipod)
+CLStreakLRM15 (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+Clan Streak LRM 15 Ammo (omnipod)
+Clan Streak LRM 15 Ammo (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-Jump Jet
-CLERLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+CLERLargeLaser (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-Jump Jet
-CLERLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+CLERLargeLaser (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-CLERMediumLaser
+Jump Jet (omnipod)
+CLERMediumLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLLaserAntiMissileSystem
+CLLaserAntiMissileSystem (omnipod)
 Sensors
 Life Support
 -Empty-

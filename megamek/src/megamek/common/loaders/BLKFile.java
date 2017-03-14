@@ -607,6 +607,10 @@ public class BLKFile {
         if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
         }
+        
+        if (t.isSupportVehicle() || (t instanceof FixedWingSupport)) {
+            blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
+        }
 
         if (t.getFluff().getCapabilities().trim().length() > 0) {
             blk.writeBlockData("capabilities", t.getFluff().getCapabilities());

@@ -1,9 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,35 +20,25 @@ Sternensturm
 STM-OA
 </Model>
 
-<Tonnage>
-40
-</Tonnage>
+<year>
+3098
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 10
 </SafeThrust>
 
-<Armor>
-76
-57
-57
-38
-</Armor>
-
-<Nose Equipment>
-ISERPPC
-ISERPPCCapacitor
-ISTargeting Computer
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -62,38 +52,49 @@ ISTargeting Computer
 320
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3098
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 20
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<omni>
+1
+</omni>
 
-<history>
-</history>
+<armor>
+76
+57
+57
+38
+</armor>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Nose Equipment>
+ISERPPC:OMNI
+PPC Capacitor:OMNI
+ISTargeting Computer:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <source>
 TRO 3145 Lyran Commonwealth - Early Republic
 </source>
+
+<tonnage>
+40.0
+</tonnage>
 

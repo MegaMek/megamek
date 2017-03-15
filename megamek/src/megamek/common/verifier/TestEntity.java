@@ -1030,8 +1030,8 @@ public abstract class TestEntity implements TestEntityOption {
                     turretWeight += m.getType().getTonnage(tank);
                 }
             }
-            turretWeight *= 0.1f;
-            turret2Weight *= 0.1f;
+            turretWeight *= 0.1;
+            turret2Weight *= 0.1;
             if (tank.isSupportVehicle()) {
                 if (getEntity().getWeight() < 5) {
                     turretWeight = TestEntity.ceil(turretWeight, Ceil.KILO);

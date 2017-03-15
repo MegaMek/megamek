@@ -68,7 +68,7 @@ BattleArmorHandles - troopers:-1
 ISC3SlaveUnit:OMNI
 ISTargeting Computer:OMNI
 IS Streak SRM 4 Ammo:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -100,4 +100,8 @@ TRO 3145 Federated Suns - Early Republic
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

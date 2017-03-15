@@ -45,12 +45,12 @@ LRM 5, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Medium Laser (omnipod)
 Small Laser (omnipod)
 -Empty-
@@ -59,9 +59,9 @@ Small Laser (omnipod)
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Medium Laser (omnipod)
 Small Laser (omnipod)
 IS Endo Steel

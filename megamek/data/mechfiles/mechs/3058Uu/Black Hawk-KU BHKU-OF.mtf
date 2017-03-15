@@ -68,9 +68,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -82,9 +82,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -103,7 +103,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet
 -Empty-
 
 Head:
@@ -125,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+Jump Jet
+Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+Jump Jet
+Jump Jet
 -Empty-
 -Empty-
 -Empty-

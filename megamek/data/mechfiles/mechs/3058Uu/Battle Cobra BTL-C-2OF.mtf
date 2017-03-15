@@ -64,9 +64,9 @@ IS Ferro-Fibrous
 -Empty-
 
 Left Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -78,9 +78,9 @@ IS Ferro-Fibrous
 IS Ferro-Fibrous
 
 Right Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISPlasmaRifleAmmo (omnipod)
 ISPlasmaRifleAmmo (omnipod)
 ISPlasmaRifleAmmo (omnipod)
@@ -102,8 +102,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISC3iUnit (omnipod)
-ISC3iUnit (omnipod)
+ISC3iUnit
+ISC3iUnit
 
 Head:
 Life Support

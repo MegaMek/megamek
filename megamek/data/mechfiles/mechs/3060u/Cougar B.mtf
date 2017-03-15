@@ -39,8 +39,8 @@ ER Medium Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLERPPC (omnipod)
@@ -53,8 +53,8 @@ CLERPPC (omnipod)
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLERPPC (omnipod)
@@ -81,8 +81,8 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)

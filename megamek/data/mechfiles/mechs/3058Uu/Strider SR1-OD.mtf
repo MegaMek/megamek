@@ -70,7 +70,7 @@ ISStreakSRM2 (omnipod)
 Left Torso:
 ISTAG (omnipod)
 ISC3SlaveUnit (omnipod)
-ISCASE (omnipod)
+ISCASE
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -83,7 +83,7 @@ IS Endo Steel
 
 Right Torso:
 IS Streak SRM 2 Ammo (omnipod)
-ISCASE (omnipod)
+ISCASE
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -128,7 +128,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink (omnipod)
+Heat Sink
 IS Endo Steel
 -Empty-
 -Empty-

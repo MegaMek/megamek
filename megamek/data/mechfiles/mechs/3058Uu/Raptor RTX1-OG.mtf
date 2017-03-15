@@ -41,12 +41,12 @@ ER Small Laser, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISPlasmaRifle (omnipod)
 ISPlasmaRifle (omnipod)
 ISPlasmaRifleAmmo (omnipod)
@@ -55,9 +55,9 @@ ISPlasmaRifleAmmo (omnipod)
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISSmallPulseLaser (omnipod)
 ISSmallPulseLaser (omnipod)
 ISSmallPulseLaser (omnipod)

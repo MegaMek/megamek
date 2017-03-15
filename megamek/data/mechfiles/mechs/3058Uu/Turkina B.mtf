@@ -72,29 +72,29 @@ CLTargeting Computer (omnipod)
 Left Torso:
 Fusion Engine
 Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+Jump Jet
 CLERMediumLaser (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+Jump Jet
 CLERMediumLaser (omnipod)
 
 Center Torso:
@@ -108,7 +108,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet
 CLMediumPulseLaser (omnipod)
 
 Head:

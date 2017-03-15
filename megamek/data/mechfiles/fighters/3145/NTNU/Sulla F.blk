@@ -82,12 +82,14 @@ Aerodyne
 CLImprovedHeavyLargeLaser:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLImprovedHeavyLargeLaser:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

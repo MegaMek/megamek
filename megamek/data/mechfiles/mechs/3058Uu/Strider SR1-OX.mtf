@@ -66,7 +66,7 @@ ISMML3 (omnipod)
 
 Left Torso:
 IS Ammo MML-3 LRM (omnipod)
-ISCASE (omnipod)
+ISCASE
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -83,7 +83,7 @@ Bombast Laser (omnipod)
 Bombast Laser (omnipod)
 Bombast Laser (omnipod)
 IS Ammo MML-3 SRM (omnipod)
-ISCASE (omnipod)
+ISCASE
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -125,7 +125,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink (omnipod)
+Heat Sink
 IS Endo Steel
 -Empty-
 -Empty-

@@ -41,9 +41,9 @@ Thunderbolt 10, Left Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISSNPPC (omnipod)
 ISSNPPC (omnipod)
 -Empty-
@@ -73,8 +73,8 @@ Jump Jet (omnipod)
 Jump Jet (omnipod)
 Thunderbolt 10 (omnipod)
 Thunderbolt 10 (omnipod)
-ISC3iUnit (omnipod)
-ISC3iUnit (omnipod)
+ISC3iUnit
+ISC3iUnit
 -Empty-
 -Empty-
 -Empty-

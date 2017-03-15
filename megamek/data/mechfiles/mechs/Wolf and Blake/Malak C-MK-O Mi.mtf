@@ -41,9 +41,9 @@ ER Small Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISMediumVSPLaser (omnipod)
 ISMediumVSPLaser (omnipod)
 IS Light Ferro-Fibrous
@@ -69,11 +69,11 @@ IS Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISC3iUnit (omnipod)
-ISC3iUnit (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISC3iUnit
+ISC3iUnit
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 Supercharger (omnipod)
 IS Endo Steel
 IS Endo Steel

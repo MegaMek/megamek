@@ -57,9 +57,9 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-Clan LB 10-X Cluster Ammo:OMNI
-Clan LB 10-X AC Ammo:OMNI
-Clan LB 10-X Cluster Ammo:OMNI
+Clan LB 10-X Cluster Ammo
+Clan LB 10-X AC Ammo
+Clan LB 10-X Cluster Ammo
 Clan Streak SRM 4 Ammo:OMNI
 Clan Streak SRM 4 Ammo:OMNI
 Clan Streak SRM 4 Ammo:OMNI
@@ -67,8 +67,8 @@ CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
-CLLBXAC10:OMNI
-CLLBXAC10:OMNI
+CLLBXAC10
+CLLBXAC10
 </Front Equipment>
 
 <Right Equipment>
@@ -90,4 +90,8 @@ CLStreakSRM4:OMNI
 <tonnage>
 95.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

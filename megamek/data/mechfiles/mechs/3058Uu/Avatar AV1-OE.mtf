@@ -78,7 +78,7 @@ ISDoubleHeatSink (omnipod)
 ISDoubleHeatSink (omnipod)
 ISGuardianECMSuite (omnipod)
 ISGuardianECMSuite (omnipod)
-ISCASE (omnipod)
+ISCASE
 
 Right Torso:
 Fusion Engine
@@ -92,7 +92,7 @@ IS Ultra AC/10 Ammo (omnipod)
 IS Ultra AC/10 Ammo (omnipod)
 ISC3iUnit (omnipod)
 ISC3iUnit (omnipod)
-ISCASE (omnipod)
+ISCASE
 
 Center Torso:
 Fusion Engine
@@ -105,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (omnipod)
-Medium Laser (omnipod)
+Medium Laser
+Medium Laser
 
 Head:
 Life Support

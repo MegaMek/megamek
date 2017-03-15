@@ -68,7 +68,7 @@ BattleArmorHandles - troopers:-1
 IS LB 10-X AC Ammo:OMNI
 IS LB 10-X Cluster Ammo:OMNI
 ISGuardianECMSuite:OMNI
-ISCASE:OMNI
+ISCASE
 Taser Ammo:OMNI
 Taser Ammo:OMNI
 </Body Equipment>
@@ -100,4 +100,8 @@ RS 3145 NTNU - Early Republic
 <tonnage>
 70.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

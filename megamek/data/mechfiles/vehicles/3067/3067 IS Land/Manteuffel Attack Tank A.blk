@@ -71,7 +71,7 @@ IS Ultra AC/20 Ammo:OMNI
 IS Ultra AC/20 Ammo:OMNI
 IS Ultra AC/20 Ammo:OMNI
 ISC3SlaveUnit:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -96,4 +96,8 @@ ISUltraAC20:OMNI
 <tonnage>
 70.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

@@ -79,8 +79,9 @@ Aerodyne
 CLMediumPulseLaser:OMNI
 CLSRM6:OMNI
 Clan Ammo SRM-6:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

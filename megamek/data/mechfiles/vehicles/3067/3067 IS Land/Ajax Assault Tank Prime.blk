@@ -64,7 +64,7 @@ IS Gauss Ammo:OMNI
 IS Gauss Ammo:OMNI
 IS Streak SRM 4 Ammo:OMNI
 ISC3SlaveUnit:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -90,4 +90,8 @@ ISStreakSRM4:OMNI
 <tonnage>
 90.0
 </tonnage>
+
+<baseChassisTurretWeight>
+3.5
+</baseChassisTurretWeight>
 

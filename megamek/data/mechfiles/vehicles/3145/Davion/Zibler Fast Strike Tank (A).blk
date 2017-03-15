@@ -67,7 +67,7 @@ BattleArmorHandles - troopers:-1
 <Body Equipment>
 IS Ammo LAC/2:OMNI
 IS Ammo LAC/2:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -96,4 +96,8 @@ TRO 3145 Federated Suns - Early Republic
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

@@ -74,11 +74,11 @@ CLLargePulseLaser (omnipod)
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
 Clan LB 20-X AC Ammo (omnipod)
@@ -88,11 +88,11 @@ Clan LB 20-X Cluster Ammo (omnipod)
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 CLStreakSRM6 (omnipod)
 CLStreakSRM6 (omnipod)
 CLMG (omnipod)
@@ -110,7 +110,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet
 Clan Streak SRM 6 Ammo (omnipod)
 
 Head:

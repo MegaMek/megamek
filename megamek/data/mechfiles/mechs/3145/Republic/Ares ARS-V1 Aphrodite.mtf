@@ -83,29 +83,29 @@ IS Endo-Composite
 Left Torso:
 ISDoubleHeatSink (omnipod)
 ISDoubleHeatSink (omnipod)
-CLERMediumLaser (omnipod)
-CLERSmallLaser (omnipod)
-LRM 5 (omnipod)
-SRM 2 (omnipod)
-IS Ammo LRM-5 (omnipod)
+CLERMediumLaser
+CLERSmallLaser
+LRM 5
+SRM 2
+IS Ammo LRM-5
 ISC3MasterUnit (omnipod)
 ISC3MasterUnit (omnipod)
 ISC3MasterUnit (omnipod)
-ISCASEII (omnipod)
+ISCASEII
 -Empty-
 
 Right Torso:
 ISDoubleHeatSink (omnipod)
 ISDoubleHeatSink (omnipod)
-CLERMediumLaser (omnipod)
-CLERSmallLaser (omnipod)
-LRM 5 (omnipod)
-SRM 2 (omnipod)
-IS Ammo SRM-2 (omnipod)
+CLERMediumLaser
+CLERSmallLaser
+LRM 5
+SRM 2
+IS Ammo SRM-2
 ISC3MasterUnit (omnipod)
 ISC3MasterUnit (omnipod)
 ISC3MasterUnit (omnipod)
-ISCASEII (omnipod)
+ISCASEII
 -Empty-
 
 Center Torso:
@@ -116,8 +116,8 @@ Gyro
 Gyro
 ISDoubleHeatSink (omnipod)
 ISDoubleHeatSink (omnipod)
-CLERSmallLaser (omnipod)
-SRM 2 (omnipod)
+CLERSmallLaser
+SRM 2
 ISAngelECMSuite (omnipod)
 ISAngelECMSuite (omnipod)
 IS Endo-Composite
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAntiPersonnelPod (omnipod)
-ISAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod
+ISAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-
@@ -155,8 +155,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAntiPersonnelPod (omnipod)
-ISAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod
+ISAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-
@@ -169,8 +169,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAntiPersonnelPod (omnipod)
-ISAntiPersonnelPod (omnipod)
+ISAntiPersonnelPod
+ISAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-

@@ -46,9 +46,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERSmallLaser (omnipod)
 ISERSmallLaser (omnipod)
 -Empty-
@@ -80,8 +80,8 @@ ISUMU (omnipod)
 ISERMediumLaser (omnipod)
 BeagleActiveProbe (omnipod)
 BeagleActiveProbe (omnipod)
-ISC3iUnit (omnipod)
-ISC3iUnit (omnipod)
+ISC3iUnit
+ISC3iUnit
 
 Right Torso:
 Fusion Engine

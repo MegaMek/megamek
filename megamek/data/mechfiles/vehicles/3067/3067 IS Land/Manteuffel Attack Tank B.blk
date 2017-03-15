@@ -69,7 +69,7 @@ ISHeavyGauss Ammo:OMNI
 ISHeavyGauss Ammo:OMNI
 ISHeavyGauss Ammo:OMNI
 ISHeavyGauss Ammo:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -93,4 +93,8 @@ ISERSmallLaser:OMNI
 <tonnage>
 70.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

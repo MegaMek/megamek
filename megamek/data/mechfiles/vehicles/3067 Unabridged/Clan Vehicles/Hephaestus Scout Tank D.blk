@@ -40,6 +40,10 @@ troopspace:5.0
 BattleArmorHandles - troopers:-1
 </transporters>
 
+<transporters>
+troopspace:1.0
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
@@ -69,7 +73,7 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-CLActiveProbe:OMNI
+CLActiveProbe
 CLECMSuite:OMNI
 CLAPGaussRifle Ammo:OMNI
 </Body Equipment>
@@ -100,4 +104,8 @@ RS 3067U
 <tonnage>
 30.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

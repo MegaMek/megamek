@@ -80,8 +80,9 @@ CLLargePulseLaser:OMNI
 CLAntiMissileSystem:OMNI
 CLAMS Ammo:OMNI
 CLTargeting Computer:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

@@ -71,7 +71,7 @@ BattleArmorHandles - troopers:-1
 <Body Equipment>
 BeagleActiveProbe:OMNI
 ISGuardianECMSuite:OMNI
-ISCASE:OMNI
+ISCASE
 IS LB 10-X Cluster Ammo:OMNI
 IS LB 10-X AC Ammo:OMNI
 </Body Equipment>
@@ -101,4 +101,8 @@ TRO 3145 Free Worlds League - Early Republic
 <tonnage>
 45.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

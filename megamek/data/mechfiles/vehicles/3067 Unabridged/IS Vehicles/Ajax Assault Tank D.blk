@@ -40,6 +40,10 @@ troopspace:4.0
 BattleArmorHandles - troopers:-1
 </transporters>
 
+<transporters>
+troopspace:4.0
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
@@ -68,7 +72,7 @@ ISArrowIVHomingAmmo:OMNI
 ISArrowIVAmmo:OMNI
 ISArrowIVAmmo:OMNI
 IS Light Machine Gun Ammo - Half:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -95,4 +99,8 @@ ISERMediumLaser:OMNI
 <tonnage>
 90.0
 </tonnage>
+
+<baseChassisTurretWeight>
+3.5
+</baseChassisTurretWeight>
 

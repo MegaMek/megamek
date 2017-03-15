@@ -46,9 +46,9 @@ ER Small Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERPPC (omnipod)
 ISERPPC (omnipod)
 ISERPPC (omnipod)
@@ -79,8 +79,8 @@ ISDoubleHeatSink (omnipod)
 ISDoubleHeatSink (omnipod)
 ISERMediumLaser (omnipod)
 ISERMediumLaser (omnipod)
-ISC3iUnit (omnipod)
-ISC3iUnit (omnipod)
+ISC3iUnit
+ISC3iUnit
 -Empty-
 -Empty-
 -Empty-

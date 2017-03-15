@@ -74,9 +74,9 @@ Clan Ammo SRM-4 (omnipod)
 Clan Ultra AC/20 Ammo (omnipod)
 Clan Ultra AC/20 Ammo (omnipod)
 Clan Ultra AC/20 Ammo (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 -Empty-
 -Empty-
 
@@ -88,9 +88,9 @@ Clan Ammo LRM-5 (omnipod)
 Clan Ultra AC/20 Ammo (omnipod)
 Clan Ultra AC/20 Ammo (omnipod)
 Clan Ultra AC/20 Ammo (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 -Empty-
 -Empty-
 
@@ -105,7 +105,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet
 -Empty-
 
 Head:

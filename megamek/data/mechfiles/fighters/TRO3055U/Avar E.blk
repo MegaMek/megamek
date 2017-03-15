@@ -79,8 +79,9 @@ Aerodyne
 CLHeavyLargeLaser:OMNI
 CLActiveProbe:OMNI
 Clan Streak SRM 4 Ammo:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

@@ -71,7 +71,7 @@ ISLongTomCannonAmmo:OMNI
 ISLongTomCannonAmmo:OMNI
 ISLongTomCannonAmmo:OMNI
 ISLongTomCannonAmmo:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -107,4 +107,12 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <tonnage>
 190.0
 </tonnage>
+
+<baseChassisTurretWeight>
+2.5
+</baseChassisTurretWeight>
+
+<baseChassisTurret2Weight>
+3.0
+</baseChassisTurret2Weight>
 

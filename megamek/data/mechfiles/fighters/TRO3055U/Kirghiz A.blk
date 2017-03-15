@@ -77,8 +77,9 @@ CLLBXAC2:OMNI
 Clan LB 2-X Cluster Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -86,8 +87,9 @@ CLLBXAC2:OMNI
 Clan LB 2-X Cluster Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

@@ -87,11 +87,12 @@ CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
+CLCASE
 CLCASE:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -99,11 +100,12 @@ CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
+CLCASE
 CLCASE:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

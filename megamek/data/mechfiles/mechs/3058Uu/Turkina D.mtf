@@ -70,11 +70,11 @@ CLATM12 (omnipod)
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 Clan Ammo ATM-12 (omnipod)
 Clan Ammo ATM-12 (omnipod)
 Clan Ammo ATM-12 ER (omnipod)
@@ -84,11 +84,11 @@ Clan Ammo ATM-12 HE (omnipod)
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 Clan Ammo ATM-12 (omnipod)
 Clan Ammo ATM-12 (omnipod)
 Clan Ammo ATM-12 ER (omnipod)
@@ -106,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet
 CLERMediumLaser (omnipod)
 
 Head:

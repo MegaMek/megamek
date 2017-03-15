@@ -70,18 +70,19 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 IS Vehicular Stealth
+IS Vehicular Stealth
 ISRotaryAC5 Ammo:OMNI
 ISRotaryAC5 Ammo:OMNI
 ISRotaryAC5 Ammo:OMNI
 IS Ammo MML-3 LRM:OMNI
 IS Ammo MML-3 SRM:OMNI
-IS Machine Gun Ammo - Half:OMNI
-ISGuardianECMSuite:OMNI
-ISC3SlaveUnit:OMNI
+IS Machine Gun Ammo - Half
+ISGuardianECMSuite
+ISC3SlaveUnit
 </Body Equipment>
 
 <Front Equipment>
-Machine Gun:OMNI
+Machine Gun
 Machine Gun:OMNI
 </Front Equipment>
 
@@ -108,4 +109,8 @@ Dark Age
 <tonnage>
 60.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

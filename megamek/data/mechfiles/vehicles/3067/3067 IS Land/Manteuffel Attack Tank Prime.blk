@@ -70,7 +70,7 @@ ISRotaryAC5 Ammo:OMNI
 ISRotaryAC5 Ammo:OMNI
 ISGuardianECMSuite:OMNI
 ISC3SlaveUnit:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -95,4 +95,8 @@ ISERMediumLaser:OMNI
 <tonnage>
 70.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

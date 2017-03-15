@@ -77,7 +77,7 @@ ISArtemisIV (omnipod)
 IS Ammo LRM-10 Artemis-capable (omnipod)
 IS Ammo LRM-15 Artemis-capable (omnipod)
 IS Ammo LRM-15 Artemis-capable (omnipod)
-ISCASE (omnipod)
+ISCASE
 -Empty-
 -Empty-
 
@@ -91,7 +91,7 @@ ISArtemisIV (omnipod)
 IS Ammo LRM-10 Artemis-capable (omnipod)
 IS Ammo LRM-15 Artemis-capable (omnipod)
 IS Ammo LRM-15 Artemis-capable (omnipod)
-ISCASE (omnipod)
+ISCASE
 -Empty-
 -Empty-
 
@@ -106,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (omnipod)
-Medium Laser (omnipod)
+Medium Laser
+Medium Laser
 
 Head:
 Life Support

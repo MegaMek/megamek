@@ -14,7 +14,7 @@ Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
-Base Chassis Heat Sinks:11
+Base Chassis Heat Sinks:10
 Walk MP:4
 Jump MP:0
 
@@ -79,7 +79,7 @@ Thunderbolt 15 (omnipod)
 Thunderbolt 15 (omnipod)
 IS Ammo Thunderbolt-15 (omnipod)
 IS Ammo Thunderbolt-15 (omnipod)
-ISCASE (omnipod)
+ISCASE
 
 Right Torso:
 Fusion Engine
@@ -93,7 +93,7 @@ Thunderbolt 15 (omnipod)
 Thunderbolt 15 (omnipod)
 IS Ammo Thunderbolt-15 (omnipod)
 IS Ammo Thunderbolt-15 (omnipod)
-ISCASE (omnipod)
+ISCASE
 
 Center Torso:
 Fusion Engine
@@ -106,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (omnipod)
-Medium Laser (omnipod)
+Medium Laser
+Medium Laser
 
 Head:
 Life Support

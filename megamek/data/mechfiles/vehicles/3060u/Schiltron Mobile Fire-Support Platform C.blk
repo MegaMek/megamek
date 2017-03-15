@@ -65,8 +65,8 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-ISC3MasterUnit:OMNI
-ISGuardianECMSuite:OMNI
+ISC3MasterUnit
+ISGuardianECMSuite
 </Body Equipment>
 
 <Front Equipment>
@@ -95,4 +95,8 @@ Clan Invasion
 <tonnage>
 80.0
 </tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

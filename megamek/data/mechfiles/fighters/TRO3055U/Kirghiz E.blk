@@ -81,8 +81,9 @@ HAG/40 Ammo:OMNI
 HAG/40 Ammo:OMNI
 HAG/40 Ammo:OMNI
 HAG/40 Ammo:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -92,8 +93,9 @@ HAG/40 Ammo:OMNI
 HAG/40 Ammo:OMNI
 HAG/40 Ammo:OMNI
 HAG/40 Ammo:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

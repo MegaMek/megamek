@@ -46,9 +46,9 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 MRM 10 (omnipod)
 MRM 10 (omnipod)
 MRM 10 (omnipod)
@@ -78,8 +78,8 @@ Jump Jet (omnipod)
 ISERMediumLaser (omnipod)
 IS Streak SRM 6 Ammo (omnipod)
 IS MRM 10 Ammo (omnipod)
-ISC3iUnit (omnipod)
-ISC3iUnit (omnipod)
+ISC3iUnit
+ISC3iUnit
 ISCASE (omnipod)
 -Empty-
 -Empty-

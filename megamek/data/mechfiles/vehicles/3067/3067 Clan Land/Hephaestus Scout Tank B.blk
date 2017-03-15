@@ -70,7 +70,7 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 Clan Streak SRM 6 Ammo:OMNI
-CLActiveProbe:OMNI
+CLActiveProbe
 CLCASE:OMNI
 </Body Equipment>
 
@@ -95,4 +95,8 @@ CLStreakSRM6:OMNI
 <tonnage>
 30.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

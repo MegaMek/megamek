@@ -64,7 +64,7 @@ ISC3MasterBoostedSystemUnit (omnipod)
 -Empty-
 
 Left Torso:
-ISCASE (omnipod)
+ISCASE
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -78,7 +78,7 @@ IS Endo Steel
 -Empty-
 
 Right Torso:
-ISCASE (omnipod)
+ISCASE
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -124,7 +124,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink (omnipod)
+Heat Sink
 IS Endo Steel
 -Empty-
 -Empty-

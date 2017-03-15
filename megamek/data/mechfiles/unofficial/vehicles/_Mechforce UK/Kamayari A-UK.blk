@@ -98,3 +98,7 @@ MRM 30:OMNI
 90.0
 </tonnage>
 
+<baseChassisTurretWeight>
+3.0
+</baseChassisTurretWeight>
+

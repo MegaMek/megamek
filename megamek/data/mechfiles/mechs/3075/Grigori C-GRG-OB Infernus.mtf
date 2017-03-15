@@ -45,9 +45,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISMML7 (omnipod)
 ISMML7 (omnipod)
 ISMML7 (omnipod)
@@ -76,8 +76,8 @@ Jump Jet (omnipod)
 ISERSmallLaser (R) (omnipod)
 IS Ammo MML-7 LRM Artemis-capable (omnipod)
 IS Ammo MML-7 SRM Artemis-capable (omnipod)
-ISC3iUnit (omnipod)
-ISC3iUnit (omnipod)
+ISC3iUnit
+ISC3iUnit
 ISCASE (omnipod)
 -Empty-
 -Empty-

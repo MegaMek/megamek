@@ -82,6 +82,7 @@ Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 CLArtemisIV:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -92,8 +93,9 @@ Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 CLArtemisIV:OMNI
 CLArtemisIV:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -104,8 +106,9 @@ Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 CLArtemisIV:OMNI
 CLArtemisIV:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

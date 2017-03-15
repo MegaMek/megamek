@@ -65,8 +65,8 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-ISGuardianECMSuite:OMNI
-ISC3MasterUnit:OMNI
+ISGuardianECMSuite
+ISC3MasterUnit
 IS Ammo Thunderbolt-15:OMNI
 IS Ammo Thunderbolt-15:OMNI
 IS Ammo Thunderbolt-15:OMNI
@@ -110,4 +110,8 @@ Jihad
 <tonnage>
 80.0
 </tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

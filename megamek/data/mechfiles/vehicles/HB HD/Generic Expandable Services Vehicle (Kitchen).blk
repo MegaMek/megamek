@@ -37,10 +37,6 @@ cargobay:3.0:1
 </transporters>
 
 <transporters>
-refrigeratedcargobay:1.74:1:2
-</transporters>
-
-<transporters>
 BattleArmorHandles - troopers:-1
 </transporters>
 

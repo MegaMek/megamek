@@ -41,9 +41,9 @@ Plasma Rifle, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser (omnipod)
 ISERMediumLaser (omnipod)
 IS Endo Steel
@@ -55,9 +55,9 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISPlasmaRifle (omnipod)
 ISPlasmaRifle (omnipod)
 IS Endo Steel
@@ -67,12 +67,12 @@ IS Endo Steel
 -Empty-
 
 Left Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 IS Endo Steel
 IS Endo Steel
 -Empty-
@@ -81,12 +81,12 @@ IS Endo Steel
 -Empty-
 
 Right Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISPlasmaRifleAmmo (omnipod)
 ISPlasmaRifleAmmo (omnipod)
 IS Endo Steel

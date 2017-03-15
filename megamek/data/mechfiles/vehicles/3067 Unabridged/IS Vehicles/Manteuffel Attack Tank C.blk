@@ -69,7 +69,7 @@ ISC3MasterUnit:OMNI
 IS Gauss Ammo:OMNI
 IS Gauss Ammo:OMNI
 IS Machine Gun Ammo - Half:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -93,4 +93,8 @@ ISGaussRifle:OMNI
 <tonnage>
 70.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

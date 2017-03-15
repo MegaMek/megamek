@@ -65,7 +65,7 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-ISCASE:OMNI
+ISCASE
 ISC3SlaveUnit:OMNI
 IS Ammo MML-7 LRM:OMNI
 IS Ammo MML-7 SRM:OMNI
@@ -96,4 +96,8 @@ TRO 3145 Federated Suns - Early Republic
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

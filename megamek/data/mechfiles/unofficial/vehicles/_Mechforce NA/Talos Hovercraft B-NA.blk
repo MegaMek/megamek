@@ -40,6 +40,10 @@ troopspace:6.0
 BattleArmorHandles - troopers:-1
 </transporters>
 
+<transporters>
+troopspace:2.5
+</transporters>
+
 <cruiseMP>
 9
 </cruiseMP>
@@ -99,4 +103,8 @@ ISAntiMissileSystem:OMNI
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>
 

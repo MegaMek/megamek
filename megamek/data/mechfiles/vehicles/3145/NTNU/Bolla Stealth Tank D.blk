@@ -70,17 +70,18 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 IS Vehicular Stealth
-ISC3SlaveUnit:OMNI
-ISGuardianECMSuite:OMNI
+IS Vehicular Stealth
+ISC3SlaveUnit
+ISGuardianECMSuite
 CLSniperCannonAmmo:OMNI
 CLSniperCannonAmmo:OMNI
 CLMediumChemLaserAmmo:OMNI
-IS Machine Gun Ammo - Half:OMNI
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
 CLMediumChemLaser:OMNI
-Machine Gun:OMNI
+Machine Gun
 Machine Gun:OMNI
 </Front Equipment>
 
@@ -104,4 +105,8 @@ RS 3145 NTNU - Early Republic
 <tonnage>
 60.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

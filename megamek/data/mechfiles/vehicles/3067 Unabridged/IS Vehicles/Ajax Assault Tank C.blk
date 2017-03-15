@@ -57,7 +57,7 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-ISCASE:OMNI
+ISCASE
 ISTargeting Computer:OMNI
 ISGuardianECMSuite:OMNI
 IS Streak SRM 6 Ammo:OMNI
@@ -90,4 +90,8 @@ ISStreakSRM6:OMNI
 <tonnage>
 90.0
 </tonnage>
+
+<baseChassisTurretWeight>
+3.5
+</baseChassisTurretWeight>
 

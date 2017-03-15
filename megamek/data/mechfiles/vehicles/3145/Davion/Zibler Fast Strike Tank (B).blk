@@ -65,7 +65,7 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-ISCASE:OMNI
+ISCASE
 IS LB 10-X Cluster Ammo:OMNI
 IS Light Machine Gun Ammo - Half:OMNI
 IS LB 10-X AC Ammo:OMNI
@@ -101,4 +101,8 @@ TRO 3145 Federated Suns - Early Republic
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

@@ -57,8 +57,8 @@ CLERSmallLaser (omnipod)
 CLERSmallLaser (omnipod)
 CLERSmallLaser (omnipod)
 CLTargeting Computer (omnipod)
-Clan Coolant Pod (armored) (omnipod)
 Clan HarJel (armored)
+-Empty-
 
 Right Arm:
 Shoulder
@@ -77,30 +77,30 @@ Clan HarJel (armored)
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 CLLRM15 (omnipod)
 CLLRM15 (omnipod)
 Clan Ammo LRM-15 (omnipod)
-Liquid Storage (1 ton) (armored) (omnipod)
 Clan HarJel (armored)
+-Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
 CLLRM15 (omnipod)
 CLLRM15 (omnipod)
 Clan Ammo LRM-15 (omnipod)
-Liquid Storage (1 ton) (armored) (omnipod)
 Clan HarJel (armored)
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -113,7 +113,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet
 Clan HarJel (armored)
 
 Head:

@@ -70,16 +70,17 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 IS Vehicular Stealth
+IS Vehicular Stealth
 IS Ammo MML-9 LRM:OMNI
 IS Ammo MML-9 LRM:OMNI
 IS Ammo MML-9 SRM:OMNI
-IS Ammo MG - Full:OMNI
-ISC3iUnit:OMNI
-ISGuardianECMSuite:OMNI
+IS Ammo MG - Full
+ISC3iUnit
+ISGuardianECMSuite
 </Body Equipment>
 
 <Front Equipment>
-Machine Gun:OMNI
+Machine Gun
 </Front Equipment>
 
 <Right Equipment>
@@ -104,4 +105,8 @@ Jihad
 <tonnage>
 60.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

@@ -69,7 +69,7 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-CLActiveProbe:OMNI
+CLActiveProbe
 CLECMSuite:OMNI
 </Body Equipment>
 
@@ -94,4 +94,8 @@ CLTAG:OMNI
 <tonnage>
 30.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

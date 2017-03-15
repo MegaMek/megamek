@@ -36,10 +36,6 @@ Aerodyne
 troopspace:12.0
 </transporters>
 
-<transporters>
-cargobay:20.0:1
-</transporters>
-
 <SafeThrust>
 4
 </SafeThrust>

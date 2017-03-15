@@ -43,8 +43,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLATM9 (omnipod)
 CLATM9 (omnipod)
 CLATM9 (omnipod)
@@ -57,8 +57,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLATM9 (omnipod)
 CLATM9 (omnipod)
 CLATM9 (omnipod)
@@ -69,8 +69,8 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+Jump Jet
+Jump Jet
 CLERMediumLaser (omnipod)
 CLERMicroLaser (omnipod)
 Clan Ammo ATM-9 (omnipod)
@@ -83,10 +83,10 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
 CLERMicroLaser (omnipod)
 Clan Ammo ATM-9 (omnipod)
 Clan Ammo ATM-9 HE (omnipod)
@@ -105,7 +105,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet
 Clan Endo Steel
 
 Head:

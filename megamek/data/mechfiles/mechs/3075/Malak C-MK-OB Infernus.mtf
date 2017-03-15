@@ -41,9 +41,9 @@ Snub-Nose PPC, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser (omnipod)
 IS Light Ferro-Fibrous
 IS Light Ferro-Fibrous
@@ -69,11 +69,11 @@ IS Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISC3iUnit (omnipod)
-ISC3iUnit (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISC3iUnit
+ISC3iUnit
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel

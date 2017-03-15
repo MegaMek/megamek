@@ -65,7 +65,7 @@ LRM 10 (omnipod)
 
 Left Torso:
 IS Ammo LRM-10 (omnipod)
-ISCASE (omnipod)
+ISCASE
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -79,7 +79,7 @@ IS Endo Steel
 
 Right Torso:
 IS Ammo LRM-10 (omnipod)
-ISCASE (omnipod)
+ISCASE
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -124,7 +124,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink (omnipod)
+Heat Sink
 IS Endo Steel
 -Empty-
 -Empty-

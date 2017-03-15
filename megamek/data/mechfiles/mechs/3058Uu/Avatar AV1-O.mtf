@@ -81,7 +81,7 @@ Machine Gun (omnipod)
 IS Ammo LRM-10 Artemis-capable (omnipod)
 IS Ammo LRM-10 Artemis-capable (omnipod)
 IS Ammo LRM-10 Artemis-capable (omnipod)
-ISCASE (omnipod)
+ISCASE
 -Empty-
 
 Right Torso:
@@ -95,7 +95,7 @@ Machine Gun (omnipod)
 IS Ammo MG - Full (omnipod)
 IS LB 10-X AC Ammo (omnipod)
 IS LB 10-X Cluster Ammo (omnipod)
-ISCASE (omnipod)
+ISCASE
 -Empty-
 
 Center Torso:
@@ -109,8 +109,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (omnipod)
-Medium Laser (omnipod)
+Medium Laser
+Medium Laser
 
 Head:
 Life Support

@@ -77,7 +77,7 @@ ISDoubleHeatSink (omnipod)
 ISDoubleHeatSink (omnipod)
 IS LB 20-X AC Ammo (omnipod)
 IS LB 20-X Cluster Ammo (omnipod)
-ISCASE (omnipod)
+ISCASE
 
 Right Torso:
 Fusion Engine
@@ -90,7 +90,7 @@ ISLBXAC20 (omnipod)
 ISLBXAC20 (omnipod)
 IS LB 20-X AC Ammo (omnipod)
 IS LB 20-X Cluster Ammo (omnipod)
-ISCASE (omnipod)
+ISCASE
 -Empty-
 
 Center Torso:
@@ -104,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (omnipod)
-Medium Laser (omnipod)
+Medium Laser
+Medium Laser
 
 Head:
 Life Support

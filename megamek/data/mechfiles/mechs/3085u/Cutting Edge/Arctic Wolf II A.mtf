@@ -14,7 +14,7 @@ Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:11 Double
-Base Chassis Heat Sinks:11
+Base Chassis Heat Sinks:10
 Walk MP:7
 Jump MP:7
 
@@ -71,8 +71,8 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+Jump Jet
+Jump Jet
 CLLRM15 (omnipod)
 CLLRM15 (omnipod)
 CLSmallPulseLaser (omnipod)
@@ -83,8 +83,8 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+Jump Jet
+Jump Jet
 CLLRM15 (omnipod)
 CLLRM15 (omnipod)
 Clan Ammo LRM-15 (omnipod)
@@ -105,7 +105,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet
 Clan Endo Steel
 
 Head:
@@ -127,7 +127,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet (omnipod)
+Jump Jet
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -141,7 +141,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet (omnipod)
+Jump Jet
 Clan Ferro-Fibrous
 -Empty-
 -Empty-

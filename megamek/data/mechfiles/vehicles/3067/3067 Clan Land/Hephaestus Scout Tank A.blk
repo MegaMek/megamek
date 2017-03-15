@@ -70,7 +70,7 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
-CLActiveProbe:OMNI
+CLActiveProbe
 CLCASE:OMNI
 </Body Equipment>
 
@@ -95,4 +95,8 @@ CLERSmallLaser:OMNI
 <tonnage>
 30.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

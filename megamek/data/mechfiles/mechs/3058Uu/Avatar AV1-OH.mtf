@@ -14,7 +14,7 @@ Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
-Base Chassis Heat Sinks:11
+Base Chassis Heat Sinks:10
 Walk MP:4
 Jump MP:0
 
@@ -79,7 +79,7 @@ ISMML3 (omnipod)
 ISArtemisIV (omnipod)
 IS Ammo MML-3 LRM Artemis-capable (omnipod)
 IS Ammo MML-3 SRM Artemis-capable (omnipod)
-ISCASE (omnipod)
+ISCASE
 
 Right Torso:
 Fusion Engine
@@ -92,7 +92,7 @@ ISMML3 (omnipod)
 ISMML3 (omnipod)
 ISArtemisIV (omnipod)
 IS Ammo MML-3 LRM Artemis-capable (omnipod)
-ISCASE (omnipod)
+ISCASE
 -Empty-
 
 Center Torso:
@@ -106,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (omnipod)
-Medium Laser (omnipod)
+Medium Laser
+Medium Laser
 
 Head:
 Life Support

@@ -79,7 +79,7 @@ MRM 20 (omnipod)
 MRM 20 (omnipod)
 MRM 20 (omnipod)
 IS MRM 20 Ammo (omnipod)
-ISCASE (omnipod)
+ISCASE
 -Empty-
 
 Right Torso:
@@ -94,7 +94,7 @@ MRM 20 (omnipod)
 MRM 20 (omnipod)
 IS MRM 20 Ammo (omnipod)
 IS Light Gauss Ammo (omnipod)
-ISCASE (omnipod)
+ISCASE
 
 Center Torso:
 Fusion Engine
@@ -107,8 +107,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser (omnipod)
-Medium Laser (omnipod)
+Medium Laser
+Medium Laser
 
 Head:
 Life Support

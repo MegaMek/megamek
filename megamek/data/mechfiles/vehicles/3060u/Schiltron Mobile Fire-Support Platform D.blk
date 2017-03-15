@@ -74,8 +74,8 @@ ISRotaryAC5 Ammo:OMNI
 IS Ammo LRM-15 Artemis-capable:OMNI
 IS Ammo LRM-15 Artemis-capable:OMNI
 IS Ammo LRM-15 Artemis-capable:OMNI
-ISC3MasterUnit:OMNI
-ISGuardianECMSuite:OMNI
+ISC3MasterUnit
+ISGuardianECMSuite
 ISTargeting Computer:OMNI
 </Body Equipment>
 
@@ -105,4 +105,8 @@ Civil War
 <tonnage>
 80.0
 </tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

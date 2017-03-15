@@ -53,8 +53,8 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLMediumPulseLaser (omnipod)
 CLHeavyMG (omnipod)
 CLHeavyMG (omnipod)
@@ -67,8 +67,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLMediumPulseLaser (omnipod)
 CLHeavyMG (omnipod)
 CLHeavyMG (omnipod)
@@ -94,8 +94,8 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet (omnipod)
 Jump Jet (omnipod)
 CLStreakSRM4 (omnipod)

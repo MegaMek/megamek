@@ -81,8 +81,9 @@ Clan LB 20-X Cluster Ammo:OMNI
 Clan LB 20-X Cluster Ammo:OMNI
 Clan LB 20-X Cluster Ammo:OMNI
 CLERSmallLaser:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -91,6 +92,7 @@ Clan Ultra AC/20 Ammo:OMNI
 CLERSmallLaser:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -99,6 +101,7 @@ Clan Ultra AC/20 Ammo:OMNI
 CLERSmallLaser:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

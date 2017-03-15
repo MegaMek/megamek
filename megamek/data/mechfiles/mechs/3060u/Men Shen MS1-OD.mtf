@@ -14,7 +14,7 @@ Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:11 Double
-Base Chassis Heat Sinks:11
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:0
 
@@ -105,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-BeagleActiveProbe (omnipod)
-BeagleActiveProbe (omnipod)
+BeagleActiveProbe
+BeagleActiveProbe
 
 Head:
 Life Support

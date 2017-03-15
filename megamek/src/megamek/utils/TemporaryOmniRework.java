@@ -190,7 +190,6 @@ public class TemporaryOmniRework {
                     }
                 }
 
-                /*
                 try {
                     if (en instanceof Mech) {
                         FileOutputStream out = new FileOutputStream(ms.getSourceFile());
@@ -205,7 +204,6 @@ public class TemporaryOmniRework {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                */
             } catch (EntityLoadingException ex) {
                 ex.printStackTrace();
             }

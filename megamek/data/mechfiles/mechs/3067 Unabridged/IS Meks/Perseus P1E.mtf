@@ -30,12 +30,10 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:9
 
-Weapons:8
+Weapons:6
 Large VSP Laser, Left Arm
 Medium VSP Laser, Left Arm
 Gauss Rifle, Right Arm
-Vehicular Grenade Launcher, Left Torso
-Vehicular Grenade Launcher, Left Torso
 ER Medium Laser, Left Torso
 SRM 6 (I-OS), Center Torso
 ER Small Laser, Head
@@ -72,8 +70,6 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
- (omnipod)
- (omnipod)
 ISERMediumLaser (R) (omnipod)
 BeagleActiveProbe (omnipod)
 BeagleActiveProbe (omnipod)
@@ -81,6 +77,8 @@ IS Endo Steel
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
+-Empty-
+-Empty-
 
 Right Torso:
 Fusion Engine

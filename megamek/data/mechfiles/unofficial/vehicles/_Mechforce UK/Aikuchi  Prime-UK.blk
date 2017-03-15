@@ -68,7 +68,7 @@ IS MRM 40 Ammo:OMNI
 IS MRM 40 Ammo:OMNI
 IS MRM 40 Ammo:OMNI
 IS MRM 40 Ammo:OMNI
-ISC3SlaveUnit:OMNI
+ISC3SlaveUnit
 </Body Equipment>
 
 <Front Equipment>

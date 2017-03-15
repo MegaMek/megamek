@@ -73,15 +73,15 @@ Clan Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 Clan Improved Jump Jet (omnipod)
 Clan Improved Jump Jet (omnipod)
 Clan Improved Jump Jet (omnipod)
 Clan Improved Jump Jet (omnipod)
-CLERMediumLaser (omnipod)
+CLERMediumLaser
 Clan Ultra AC/10 Ammo (omnipod)
 
 Right Torso:
@@ -91,7 +91,7 @@ Clan Improved Jump Jet (omnipod)
 Clan Improved Jump Jet (omnipod)
 Clan Improved Jump Jet (omnipod)
 Clan Improved Jump Jet (omnipod)
-CLERMediumLaser (omnipod)
+CLERMediumLaser
 Clan Ultra AC/10 Ammo (omnipod)
 CLMASC
 CLMASC
@@ -109,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLAMS Ammo (omnipod)
+CLAMS Ammo
 CLECMSuite (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLAntiMissileSystem (omnipod)
+CLAntiMissileSystem
 Sensors
 Life Support
 -Empty-
@@ -131,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-

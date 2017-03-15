@@ -43,9 +43,9 @@ Medium VSP Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISMML7 (omnipod)
 ISMML7 (omnipod)
 ISMML7 (omnipod)
@@ -71,8 +71,8 @@ IS Light Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISC3iUnit (omnipod)
-ISC3iUnit (omnipod)
+ISC3iUnit
+ISC3iUnit
 Jump Jet (omnipod)
 Jump Jet (omnipod)
 ISERSmallLaser (R) (omnipod)

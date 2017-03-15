@@ -42,8 +42,8 @@ ER Medium Laser, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLHeavyFlamer (omnipod)
 CLHeavyFlamer (omnipod)
 CLERFlamer (omnipod)
@@ -56,8 +56,8 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLPlasmaCannon (omnipod)
 CLPlasmaCannonAmmo (omnipod)
 CLPlasmaCannonAmmo (omnipod)
@@ -70,8 +70,8 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+Jump Jet
+Jump Jet
 RemoteSensorDispenser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -84,10 +84,10 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
 CLERMediumLaser (omnipod)
 CLActiveProbe (omnipod)
 Clan Endo Steel
@@ -106,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
+Jump Jet
 Clan Endo Steel
 
 Head:

@@ -71,7 +71,7 @@ BattleArmorHandles - troopers:-1
 <Body Equipment>
 IS Ammo LAC/5:OMNI
 IS Ammo LAC/5:OMNI
-ISCASE:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -102,4 +102,8 @@ TRO 3145 Free Worlds League - Early Republic
 <tonnage>
 45.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

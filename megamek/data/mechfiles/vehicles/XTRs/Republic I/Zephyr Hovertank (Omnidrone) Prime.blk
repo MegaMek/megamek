@@ -65,8 +65,8 @@ BattleArmorHandles - troopers:-1
 </armor>
 
 <Body Equipment>
-ISAngelECMSuite:OMNI
-ISDroneOperatingSystem:OMNI
+ISAngelECMSuite
+ISDroneOperatingSystem
 </Body Equipment>
 
 <Front Equipment>
@@ -79,7 +79,7 @@ ISDroneOperatingSystem:OMNI
 </Left Equipment>
 
 <Rear Equipment>
-ISSRM2IOS:OMNI
+ISSRM2IOS
 </Rear Equipment>
 
 <Turret Equipment>
@@ -94,4 +94,8 @@ XTRO Republic I - Early Republic
 <tonnage>
 40.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

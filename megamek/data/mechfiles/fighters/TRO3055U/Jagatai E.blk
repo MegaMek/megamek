@@ -80,8 +80,9 @@ CLERMediumLaser:OMNI
 CLHAG20:OMNI
 HAG/20 Ammo:OMNI
 HAG/20 Ammo:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -91,6 +92,7 @@ HAG/20 Ammo:OMNI
 HAG/20 Ammo:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -100,6 +102,7 @@ HAG/20 Ammo:OMNI
 HAG/20 Ammo:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

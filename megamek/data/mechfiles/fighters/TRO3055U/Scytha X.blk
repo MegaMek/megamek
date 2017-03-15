@@ -80,8 +80,9 @@ CLImprovedHeavyLargeLaser:OMNI
 Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -93,6 +94,7 @@ Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -104,6 +106,7 @@ Clan Coolant Pod:OMNI
 Clan Coolant Pod:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

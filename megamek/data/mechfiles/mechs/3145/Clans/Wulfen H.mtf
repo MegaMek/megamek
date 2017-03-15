@@ -16,7 +16,7 @@ Cockpit:Standard Cockpit
 Gyro:XL Gyro
 
 Heat Sinks:14 Double
-Base Chassis Heat Sinks:12
+Base Chassis Heat Sinks:10
 Walk MP:10
 Jump MP:0
 
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-CLECMSuite (omnipod)
+CLECMSuite
 Sensors
 Life Support
 -Empty-

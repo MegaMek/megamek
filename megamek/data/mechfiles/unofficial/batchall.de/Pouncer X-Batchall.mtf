@@ -57,8 +57,8 @@ Shoulder
 Upper Arm Actuator
 CLERPPC (omnipod)
 CLERPPC (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
@@ -69,8 +69,8 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+Jump Jet
+Jump Jet
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Endo Steel
@@ -83,10 +83,10 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-Jump Jet (omnipod)
-Jump Jet (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Endo Steel
@@ -106,7 +106,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLMicroPulseLaser (omnipod)
-Jump Jet (omnipod)
+Jump Jet
 
 Head:
 Life Support

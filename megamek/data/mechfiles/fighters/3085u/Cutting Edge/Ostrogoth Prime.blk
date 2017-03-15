@@ -88,8 +88,9 @@ CLArtemisIV:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -100,8 +101,9 @@ CLArtemisIV:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
+CLCASE
 CLCASE:OMNI
-CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

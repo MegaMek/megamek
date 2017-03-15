@@ -72,7 +72,7 @@ BattleArmorHandles - troopers:-1
 Clan Ammo ATM-3 ER:OMNI
 Clan Ammo ATM-3:OMNI
 Clan Ammo ATM-3 HE:OMNI
-CLActiveProbe:OMNI
+CLActiveProbe
 CLCASE:OMNI
 </Body Equipment>
 
@@ -96,4 +96,8 @@ CLATM3:OMNI
 <tonnage>
 30.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

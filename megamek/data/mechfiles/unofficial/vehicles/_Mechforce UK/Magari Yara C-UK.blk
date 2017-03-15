@@ -65,7 +65,7 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 IS Streak SRM 6 Ammo:OMNI
-ISC3SlaveUnit:OMNI
+ISC3SlaveUnit
 </Body Equipment>
 
 <Front Equipment>

@@ -40,9 +40,9 @@ ER Large Laser, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISTAG (omnipod)
 IS Endo Steel
 IS Endo Steel
@@ -54,9 +54,9 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERLargeLaser (omnipod)
 ISERLargeLaser (omnipod)
 IS Endo Steel
@@ -66,12 +66,12 @@ IS Endo Steel
 -Empty-
 
 Left Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 BloodhoundActiveProbe (omnipod)
 BloodhoundActiveProbe (omnipod)
 BloodhoundActiveProbe (omnipod)
@@ -80,12 +80,12 @@ IS Endo Steel
 -Empty-
 
 Right Torso:
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
-ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISAngelECMSuite (omnipod)
 ISAngelECMSuite (omnipod)
 IS Endo Steel

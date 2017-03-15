@@ -86,6 +86,7 @@ Clan Gauss Ammo:OMNI
 CLERPPC:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -94,6 +95,7 @@ Clan Gauss Ammo:OMNI
 CLERPPC:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

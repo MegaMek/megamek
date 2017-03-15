@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+4
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -78,7 +82,9 @@ Clan LB 2-X Cluster Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
@@ -88,7 +94,9 @@ Clan LB 2-X Cluster Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 

@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+5
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -83,12 +87,16 @@ CLImprovedHeavyLargeLaser:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
 CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLImprovedHeavyLargeLaser:OMNI
 CLCASE:OMNI
 CLCASE:OMNI
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 

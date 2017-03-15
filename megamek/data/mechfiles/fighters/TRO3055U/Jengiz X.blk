@@ -81,7 +81,9 @@ CLRotaryAC5 Ammo:OMNI
 CLRotaryAC5 Ammo:OMNI
 CLRotaryAC5 Ammo:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
@@ -92,7 +94,9 @@ CLRotaryAC5 Ammo:OMNI
 CLRotaryAC5 Ammo:OMNI
 CLImprovedMediumHeavyLaser:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
@@ -103,7 +107,9 @@ CLRotaryAC5 Ammo:OMNI
 CLRotaryAC5 Ammo:OMNI
 CLImprovedMediumHeavyLaser:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 

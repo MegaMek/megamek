@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+1
+</omnipodheatsinks>
+
 <fuel>
 320
 </fuel>
@@ -88,7 +92,9 @@ Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 CLArtemisIV:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
@@ -98,7 +104,9 @@ Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 CLArtemisIV:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 

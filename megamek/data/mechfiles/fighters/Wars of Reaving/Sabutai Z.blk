@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+1
+</omnipodheatsinks>
+
 <fuel>
 240
 </fuel>
@@ -95,7 +99,9 @@ Clan Ammo iATM-9:OMNI
 Clan Ammo iATM-9:OMNI
 Clan Ammo iATM-9:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 

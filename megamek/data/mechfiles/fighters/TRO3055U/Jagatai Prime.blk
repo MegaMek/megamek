@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+2
+</omnipodheatsinks>
+
 <fuel>
 320
 </fuel>
@@ -80,7 +84,9 @@ CLLRM20:OMNI
 Clan Ammo LRM-20:OMNI
 Clan Ammo LRM-20:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 

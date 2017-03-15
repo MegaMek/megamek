@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+16
+</omnipodheatsinks>
+
 <fuel>
 320
 </fuel>

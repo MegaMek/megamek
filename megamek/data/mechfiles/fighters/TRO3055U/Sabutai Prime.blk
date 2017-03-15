@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+6
+</omnipodheatsinks>
+
 <fuel>
 240
 </fuel>
@@ -80,7 +84,9 @@ CLGaussRifle:OMNI
 Clan Gauss Ammo:OMNI
 CLERSmallLaser:OMNI
 CLCASE
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 

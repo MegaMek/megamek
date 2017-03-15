@@ -465,6 +465,9 @@ public class BLKFile {
                 blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
                 blk.writeBlockData("heatsinks", ((Aero)t).getHeatSinks());
                 blk.writeBlockData("sink_type", ((Aero)t).getHeatType());
+                if (((Aero)t).getPodHeatSinks() > 0) {
+                    blk.writeBlockData("omnipodheatsinks", ((Aero)t).getPodHeatSinks());
+                }
                 blk.writeBlockData("fuel", ((Aero)t).getFuel());
             }
             if(t.hasEngine()) {

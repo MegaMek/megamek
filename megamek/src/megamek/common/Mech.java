@@ -2833,11 +2833,19 @@ public abstract class Mech extends Entity {
             }
         }
     }
-
+    
     public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
+            int loc) throws LocationFullException {
+        return addEquipment(etype, etype2, false, false, loc);
+    }
+    
+    public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
+            boolean omnipod1, boolean omnipod2,
             int loc) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         Mounted mounted2 = new Mounted(this, etype2);
+        mounted.setOmniPodMounted(omnipod1);
+        mounted2.setOmniPodMounted(omnipod2);
         // check criticals for space
         if (getEmptyCriticals(loc) < 1) {
             throw new LocationFullException(mounted.getName() + " and "
@@ -6317,12 +6325,15 @@ public abstract class Mech extends Entity {
             // superheavy mechs can have two heatsinks or ammo bin in one slot
             // they can't be armored or rear or turret mounted or VGLs, so we
             // just need the internalname
+            if (m.isOmniPodMounted()) {
+                toReturn.append(" ").append(MtfFile.OMNIPOD);
+            }
             if (cs.getMount2() != null) {
                 toReturn.append("|").append(
                         cs.getMount2().getType().getInternalName());
-            }
-            if (m.isOmniPodMounted()) {
-            	toReturn.append(" ").append(MtfFile.OMNIPOD);
+                if (cs.getMount2().isOmniPodMounted()) {
+                    toReturn.append(" ").append(MtfFile.OMNIPOD);
+                }
             }
             return toReturn.toString();
         } else {

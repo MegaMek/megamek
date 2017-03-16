@@ -623,6 +623,7 @@ public class MtfFile implements IMechLoader {
                 critName = critName.substring(0, critName.length() - 4).trim();
             }
             EquipmentType etype2 = null;
+            boolean isOmniPod2 = false;
             if (critName.contains("|")) {
                 String critName2 = critName.substring(critName.indexOf("|") + 1);
                 etype2 = EquipmentType.get(critName2);
@@ -630,6 +631,13 @@ public class MtfFile implements IMechLoader {
                     etype2 = EquipmentType.get(mech.isClan() ? "Clan " + critName2 : "IS " + critName2);
                 }
                 critName = critName.substring(0, critName.indexOf("|"));
+                isOmniPod2 = isOmniPod;
+                if (critName.toLowerCase().trim().endsWith(OMNIPOD)) {
+                    critName = critName.substring(0, critName.length() - OMNIPOD.length()).trim();
+                    isOmniPod = true;
+                } else {
+                    isOmniPod = false;
+                }
             }
 
             try {
@@ -709,8 +717,7 @@ public class MtfFile implements IMechLoader {
                                     throw new EntityLoadingException("must combine ammo or heatsinks in one slot");
                                 }
                             }
-                            mount = mech.addEquipment(etype, etype2, loc);
-                            mount.setOmniPodMounted(isOmniPod);
+                            mount = mech.addEquipment(etype, etype2, isOmniPod, isOmniPod2, loc);
                         }
                         // vehicular grenade launchers need to have their facing
                         // set

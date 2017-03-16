@@ -66,6 +66,7 @@ BattleArmorHandles - troopers:-1
 
 <Body Equipment>
 ISC3BoostedSystemSlaveUnit:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>

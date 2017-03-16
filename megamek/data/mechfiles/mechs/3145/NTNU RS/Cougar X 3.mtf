@@ -2,7 +2,7 @@ Version:1.1
 Cougar
 X 3
 
-Config:Biped Omnimech
+Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3132
 Source:RS 3145 NT NU
@@ -16,7 +16,6 @@ Cockpit:Standard Cockpit
 Gyro:Heavy Duty Gyro
 
 Heat Sinks:11 Double
-Base Chassis Heat Sinks:7
 Walk MP:5
 Jump MP:0
 

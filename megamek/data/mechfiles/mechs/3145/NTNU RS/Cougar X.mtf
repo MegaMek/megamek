@@ -2,7 +2,7 @@ Version:1.0
 Cougar
 X
 
-Config:Biped Omnimech
+Config:Biped
 TechBase:Mixed (IS Chassis)
 Era:3132
 Source:RS 3145 NT NU
@@ -14,7 +14,6 @@ Structure:IS Composite
 Myomer:Standard
 
 Heat Sinks:10 Double
-Base Chassis Heat Sinks:7
 Walk MP:5
 Jump MP:7
 

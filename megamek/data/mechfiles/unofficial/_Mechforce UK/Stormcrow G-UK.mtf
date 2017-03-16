@@ -13,7 +13,7 @@ Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
-Base Chassis Heat Sinks:13
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:0
 
@@ -57,8 +57,8 @@ Shoulder
 Upper Arm Actuator
 CLERPPC (omnipod)
 CLERPPC (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -69,8 +69,6 @@ CLDoubleHeatSink (omnipod)
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
 CLStreakSRM6 (omnipod)
 CLStreakSRM6 (omnipod)
 Clan Streak SRM 6 Ammo (omnipod)
@@ -78,6 +76,8 @@ Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
+-Empty-
+-Empty-
 -Empty-
 
 Right Torso:

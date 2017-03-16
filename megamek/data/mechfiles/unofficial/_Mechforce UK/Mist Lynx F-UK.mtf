@@ -67,10 +67,10 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet (omnipod)
 Jump Jet (omnipod)
 Jump Jet (omnipod)
@@ -83,8 +83,8 @@ Fusion Engine
 Fusion Engine
 CLTargeting Computer (omnipod)
 CLTargeting Computer (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet (omnipod)
 Jump Jet (omnipod)
 Jump Jet (omnipod)
@@ -110,7 +110,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-CLActiveProbe (omnipod)
+CLActiveProbe
 Sensors
 Life Support
 -Empty-

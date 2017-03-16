@@ -13,7 +13,7 @@ Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
-Base Chassis Heat Sinks:13
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:0
 
@@ -47,18 +47,18 @@ CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
 CLERPPC (omnipod)
 CLERPPC (omnipod)
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-

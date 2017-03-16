@@ -13,7 +13,7 @@ Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:15 Double
-Base Chassis Heat Sinks:13
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:6
 
@@ -44,8 +44,8 @@ Hand Actuator
 CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
 CLMediumPulseLaser (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -61,8 +61,8 @@ CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
+-Empty-
+-Empty-
 
 Left Torso:
 Fusion Engine

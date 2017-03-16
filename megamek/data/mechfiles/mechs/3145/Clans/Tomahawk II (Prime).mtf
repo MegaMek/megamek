@@ -14,7 +14,7 @@ Structure:Clan Endo-Composite
 Myomer:Standard
 
 Heat Sinks:16 Double
-Base Chassis Heat Sinks:11
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
@@ -73,13 +73,13 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
-CLDoubleHeatSink (omnipod)
 CLMediumPulseLaser (omnipod)
 HAG/30 Ammo (omnipod)
 HAG/30 Ammo (omnipod)
 HAG/30 Ammo (omnipod)
 HAG/30 Ammo (omnipod)
+-Empty-
+-Empty-
 -Empty-
 
 Right Torso:

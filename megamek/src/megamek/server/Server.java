@@ -11795,8 +11795,6 @@ public class Server implements Runnable {
             srcHex = swapHex;
             src = origDest;
             dest = origSrc;
-            // Adjust elevation, since it's relative to the surface of srcHex
-            entitySrcElevation -= (destHex.getLevel() - srcHex.getLevel());
         } else {
             src = origSrc;
             dest = origDest;

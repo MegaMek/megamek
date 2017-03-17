@@ -3538,6 +3538,12 @@ public abstract class Mech extends Entity {
                             || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM))) {
                 toSubtract = 1;
             }
+            
+            if (etype instanceof AmmoType
+                    && ((AmmoType)mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
+                toSubtract = 1;
+            }
+
 
             if ((etype instanceof MiscType)
                     && etype.hasFlag(MiscType.F_BLUE_SHIELD)) {
@@ -5002,6 +5008,9 @@ public abstract class Mech extends Entity {
             finalBV *= cockpitMod;
         } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             finalBV *= 0.95;
+        } else if (getCockpitType() == Mech.COCKPIT_INTERFACE) {
+            cockpitMod = 1.3;
+            finalBV *= cockpitMod;
         }
         finalBV = Math.round(finalBV);
         bvText.append("Total BV * Cockpit Modifier");
@@ -7598,7 +7607,7 @@ public abstract class Mech extends Entity {
         if ((getGyroType() == GYRO_HEAVY_DUTY)) {
             return 1.0;
         }
-        if (getGyroType() == GYRO_NONE) {
+        if (getGyroType() == GYRO_NONE && getCockpitType() != COCKPIT_INTERFACE) {
             return 0;
         }
         return 0.5;

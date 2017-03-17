@@ -312,7 +312,7 @@ public final class ImageUtil {
      */
     public static class AtlasImageLoader extends TileMapImageLoader {
 
-        Map<String, String> imgFileToAtlasMap;
+        Map<File, String> imgFileToAtlasMap;
 
         @SuppressWarnings("unchecked")
         public AtlasImageLoader() {
@@ -323,7 +323,7 @@ public final class ImageUtil {
 
             try (InputStream is = new FileInputStream(Configuration.imageFileAtlasMapFile())) {
                 XStream xstream = new XStream();
-                imgFileToAtlasMap = (Map<String, String>) xstream.fromXML(is);
+                imgFileToAtlasMap = (Map<File, String>) xstream.fromXML(is);
             } catch (FileNotFoundException e) {
                 imgFileToAtlasMap = null;
                 e.printStackTrace();
@@ -334,10 +334,11 @@ public final class ImageUtil {
         }
 
         public Image loadImage(String fileName) {
-            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(fileName)) {
+            File fn = new File(fileName);
+            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(fn)) {
                 return null;
             }
-            return super.loadImage(imgFileToAtlasMap.get(fileName));
+            return super.loadImage(imgFileToAtlasMap.get(fn));
         }
     }
 

@@ -507,11 +507,6 @@ public class MechTileset {
         public void loadImage(Component comp) {
             // System.out.println("loading mech image...");
             File fin = new MegaMekFile(dir, imageFile).getFile();
-            if (!fin.exists()) {
-                System.out.println("Warning: MechTileSet is trying to " +
-                        "load a file that doesn't exist: "
-                        + fin.getPath());
-            }
             image = ImageUtil.loadImageFromFile(fin.toString());
             if (image == null) {
                 System.out.println("Received null image from "

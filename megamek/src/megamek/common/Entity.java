@@ -3758,12 +3758,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int countWorkingMisc(BigInteger flag, int location) {
         int count = 0;
-        for (Mounted m : getMisc()) {
+        OUTER: for (Mounted m : getMisc()) {
             if (!m.isInoperable() && m.getType().hasFlag(flag)
-                && (!m.getType().hasModes() || m.curMode().equals("On"))) { //$NON-NLS-1$
-                if ((location == -1) || (m.getLocation() == location)) {
-                    count++;
+                    && ((location == -1) || (m.getLocation() == location))) {
+                if (m.getType().hasModes()) {
+                    for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
+                        if (e.nextElement().equals("On") && !m.curMode().equals("On")) {
+                            continue OUTER;
+                        }
+                    }
                 }
+                count++;
             }
         }
         return count;

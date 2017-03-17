@@ -3362,6 +3362,12 @@ public abstract class Mech extends Entity {
                             || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM))) {
                 toSubtract = 1;
             }
+            
+            if (etype instanceof AmmoType
+                    && ((AmmoType)mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
+                toSubtract = 1;
+            }
+
 
             if ((etype instanceof MiscType)
                     && etype.hasFlag(MiscType.F_BLUE_SHIELD)) {

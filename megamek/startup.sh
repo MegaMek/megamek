@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # MegaMek -
 # Copyright (C) 2005 Ben Mazur (bmazur@sev.org)

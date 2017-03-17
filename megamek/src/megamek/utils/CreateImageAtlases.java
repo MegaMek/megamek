@@ -48,7 +48,7 @@ public class CreateImageAtlases {
      * written to a file which can later be used when loading images to see if a
      * particular image can be loaded from an atlas instead.
      */
-    Map<String, String> imgFileToAtlasMap = new HashMap<>();
+    Map<File, String> imgFileToAtlasMap = new HashMap<>();
 
     /**
      * Keep track of what images have been written to an atlas. At the end, this
@@ -129,7 +129,6 @@ public class CreateImageAtlases {
         BufferedImage atlas = new BufferedImage(imagesPerRow * hexWidth, numRows * hexHeight,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics g = atlas.getGraphics();
-        String imgPath;
         File atlasFile = new File(dir, dir.getName() + "_atlas.png");
         String atlasLoc;
 
@@ -158,9 +157,8 @@ public class CreateImageAtlases {
             y = row * hexHeight;
 
             // Update imageFileToAtlas map
-            imgPath = imgFile.toString();
             atlasLoc = atlasFile.toString() + "(" + x + "," + y + "-" + hexWidth + "," + hexHeight + ")";
-            imgFileToAtlasMap.put(imgPath, atlasLoc);
+            imgFileToAtlasMap.put(imgFile, atlasLoc);
             imagesStored.add(imgFile.toString());
 
             // Draw image in atlas

@@ -2,61 +2,86 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Magi Infantry Support Vehicle
 </Name>
+
 <Model>
 (Standard)
 </Model>
-<Tonnage>
-70
-</Tonnage>
+
+<year>
+2727
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 44
 43
 43
 40
-</Armor>
-<Front Equipment>
-ISMediumLaser
-ISMachine Gun
-ISMachine Gun
-</Front Equipment>
-<Right Equipment>
-ISMediumLaser
-</Right Equipment>
-<Left Equipment>
-ISMediumLaser
-</Left Equipment>
+</armor>
+
 <Body Equipment>
-ISMG Ammo (200)
+IS Ammo MG - Full
 ISCASE
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-2727
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
+
+<Front Equipment>
+Medium Laser
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+Medium Laser
+</Right Equipment>
+
+<Left Equipment>
+Medium Laser
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+TRO 3050 - Star League
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

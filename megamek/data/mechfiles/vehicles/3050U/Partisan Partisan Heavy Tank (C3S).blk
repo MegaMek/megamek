@@ -1,23 +1,23 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Partisan Heavy Tank
 </Name>
 
 <Model>
-(C3S)
+(C3)
 </Model>
 
 <year>
@@ -28,21 +28,17 @@ Partisan Heavy Tank
 IS Level 2
 </type>
 
-<tonnage>
-80.0
-</tonnage>
-
 <motion_type>
 Tracked
 </motion_type>
 
-<engine_type>
-1
-</engine_type>
-
 <cruiseMP>
 3
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 22
@@ -72,9 +68,17 @@ ISCASE
 </Rear Equipment>
 
 <Turret Equipment>
-Auto Cannon/5
-Auto Cannon/5
-Auto Cannon/5
-Auto Cannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
 </Turret Equipment>
+
+<source>
+TRO 3058 - Civil War
+</source>
+
+<tonnage>
+80.0
+</tonnage>
 

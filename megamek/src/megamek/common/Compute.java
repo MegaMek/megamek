@@ -1804,7 +1804,8 @@ public class Compute {
             // arm-mounted weapons have addidional trouble
             if ((weapon.getLocation() == Mech.LOC_RARM) || (weapon.getSecondLocation() == Mech.LOC_RARM)
                 || (weapon.getLocation() == Mech.LOC_LARM) || (weapon.getSecondLocation() == Mech.LOC_LARM)) {
-                if (l3ProneFiringArm == weapon.getLocation() || l3ProneFiringArm == weapon.getSecondLocation()) {
+                if (l3ProneFiringArm == weapon.getLocation()
+                        || (weapon.getSecondLocation() != Entity.NONE && l3ProneFiringArm == weapon.getSecondLocation())) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
                                          "Prone and propping up with this arm.");
                 }

@@ -28,6 +28,7 @@ v0.43.1-git
 + Issue #442: Tooltip colors still not quite right for firing vectors
 + Issue #507: Image atlas map has cross-platform issues
 + Corrected BV calculations for HarJel II/III, coolant pods, and interface cockpit.
++ Bug: Cannot fire arm-mounted weapons while prone.
 
 v0.43.0 (2017-02-13 03:30 UTC)
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

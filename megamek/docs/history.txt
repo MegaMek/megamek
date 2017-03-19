@@ -30,6 +30,7 @@ v0.43.1-git
 + Corrected BV calculations for HarJel II/III, coolant pods, and interface cockpit.
 + Issue #511: Fall height is wrong for falls when moving into a higher hex
 + Bug: Cannot fire arm-mounted weapons while prone.
++ Bug: ASF can use Silver Bullet Gauss Rifles/Ammo
 + Bug: Attack sprites/arrows no longer shown for sensor returns
 
 v0.43.0 (2017-02-13 03:30 UTC)

@@ -614,7 +614,7 @@ class EntitySprite extends Sprite {
      *
      * @return
      */
-    private boolean onlyDetectedBySensors() {
+    public boolean onlyDetectedBySensors() {
         boolean sensors = bv.game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = bv.game.getOptions().booleanOption(

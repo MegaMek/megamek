@@ -4246,8 +4246,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Adds an attack to the sprite list.
      */
     public synchronized void addAttack(AttackAction aa) {
-        // do not make a sprite unless we're aware of both entities
-        // this is not a great solution but better than a crash
+        // Don't make sprites for unknown entities and sensor returns
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
         if ((ae == null) || (t == null)
@@ -4255,6 +4254,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             || (t.getPosition() == null) || (ae.getPosition() == null)) {
             return;
         }
+        EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(ae.getId(),
+                ae.getSecondaryPositions().size() > 0 ? 0 : -1));
+        if (eSprite.onlyDetectedBySensors()) {
+            return;
+        }
+
         repaint(100);
         for (AttackSprite sprite : attackSprites) {
             // can we just add this attack to an existing one?

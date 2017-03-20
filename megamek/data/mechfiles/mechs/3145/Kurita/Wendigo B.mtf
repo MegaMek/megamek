@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:50
 Engine:300 XL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 Cockpit:Torso-Mounted Cockpit
 Gyro:Standard Gyro
@@ -34,26 +34,26 @@ RTR Armor:5
 RTC Armor:8
 
 Weapons:9
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Small Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
 ER Small Laser, Right Arm
 ER Small Laser, Head
 ER Small Laser, Head
 ER Small Laser, Head
-ER Small Laser, Left Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERMediumLaser
-CLERMediumLaser
-CLERSmallLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
 Clan Reflective
 Clan Reflective
 Clan Reflective
@@ -61,43 +61,43 @@ Clan Reflective
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERMediumLaser
-CLERMediumLaser
-CLERSmallLaser
-Clan Endo-Steel
-Clan Endo-Steel
-Clan Endo-Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 
 Center Torso:
@@ -117,10 +117,10 @@ Sensors
 Head:
 Sensors
 Sensors
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLECMSuite
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLECMSuite (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -133,8 +133,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -147,8 +147,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

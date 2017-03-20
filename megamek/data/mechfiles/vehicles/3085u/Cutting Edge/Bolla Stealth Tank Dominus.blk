@@ -2,72 +2,112 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Bolla Stealth Tank
 </Name>
+
 <Model>
 Dominus
 </Model>
-<Tonnage>
-60
-</Tonnage>
+
+<year>
+3074
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+troopspace:6.0
+</transporters>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 34
 32
 32
 30
 40
-</Armor>
-<Front Equipment>
-ISMachine Gun
-</Front Equipment>
-<Turret Equipment>
-ISLAC5
-ISLAC5
-ISHeavyFlamer
-</Turret Equipment>
-<transporters>
-TroopSpace:6
-</transporters>
+</armor>
+
 <Body Equipment>
-ISLAC5 Ammo
-ISLAC5 Ammo
-ISHeavyFlamer Ammo
-ISHeavyFlamer Ammo
-ISMG Ammo (200)
+IS Vehicular Stealth
+IS Vehicular Stealth
+IS Ammo LAC/5:OMNI
+IS Ammo LAC/5:OMNI
+IS Heavy Flamer Ammo:OMNI
+IS Heavy Flamer Ammo:OMNI
+IS Ammo MG - Full
 ISC3iUnit
-ISGuardianECM
+ISGuardianECMSuite
 </Body Equipment>
-<type>
-IS Level 4
-</type>
-<year>
-3074
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-22
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
-<omni>
-</omni>
-<Source>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Light Auto Cannon/5:OMNI
+Light Auto Cannon/5:OMNI
+Heavy Flamer:OMNI
+</Turret Equipment>
+
+<source>
 Jihad
-</Source>
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
+

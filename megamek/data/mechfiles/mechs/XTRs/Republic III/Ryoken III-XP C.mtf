@@ -48,13 +48,13 @@ Upper Arm Actuator
 Lower Arm Actuator
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-Clan Ammo ATM-9 ER
-Clan Ammo ATM-9
-Clan Ammo ATM-9 HE
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+Clan Ammo ATM-9 ER (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 HE (omnipod)
 
 Right Arm:
 Shoulder
@@ -64,11 +64,11 @@ Hand Actuator
 TSM
 TSM
 TSM
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 
 Left Torso:
 Fusion Engine
@@ -80,9 +80,9 @@ Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 
 Right Torso:
 Fusion Engine
@@ -93,9 +93,9 @@ Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 
 Center Torso:
@@ -108,9 +108,9 @@ Fusion Engine
 TSM
 TSM
 TSM
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 
 Head:
 Life Support

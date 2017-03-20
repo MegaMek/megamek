@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:26
@@ -32,23 +32,23 @@ RTR Armor:7
 RTC Armor:11
 
 Weapons:7
-ER Medium Laser, Left Torso
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
 Plasma Rifle, Left Arm
 Plasma Rifle, Right Arm
+ER Medium Laser, Left Torso
 SRM 6, Right Torso
 SRM 6, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifleAmmo (omnipod)
 ISAES
 ISAES
 ISAES
@@ -58,11 +58,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifleAmmo (omnipod)
 ISAES
 ISAES
 ISAES
@@ -71,11 +71,11 @@ ISAES
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-ISPlasmaRifleAmmo
-Radical Heat Sink System
-Radical Heat Sink System
-Radical Heat Sink System
+CLERMediumLaser (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+Radical Heat Sink System (omnipod)
+Radical Heat Sink System (omnipod)
+Radical Heat Sink System (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 IS Endo-Composite
@@ -85,13 +85,13 @@ IS Endo-Composite
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLSRM6
-CLSRM6
-Clan Ammo SRM-6
-Clan Ammo SRM-6
-Clan Ammo SRM-6
-Clan Ammo SRM-6
-ISCASEII
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+ISCASEII (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

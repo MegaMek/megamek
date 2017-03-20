@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+4
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -79,13 +83,13 @@ Aerodyne
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERPPC
-CLERLargeLaser
+CLERPPC:OMNI
+CLERLargeLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERPPC
-CLERLargeLaser
+CLERPPC:OMNI
+CLERLargeLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

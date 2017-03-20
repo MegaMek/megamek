@@ -9,8 +9,8 @@ Source:Jihad
 Rules Level:4
 
 Mass:55
-Engine:330 XL Engine
-Structure:Endo Steel
+Engine:330 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -42,12 +42,12 @@ TAG, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-SRT 4
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+SRT 4 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -56,12 +56,12 @@ Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-SRT 4
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+SRT 4 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -71,10 +71,10 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISUMU
-ISUMU
-ISUMU
-ISERMediumLaser
+ISUMU (omnipod)
+ISUMU (omnipod)
+ISUMU (omnipod)
+ISERMediumLaser (omnipod)
 ISMASC
 ISMASC
 ISMASC
@@ -85,13 +85,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISUMU
-ISUMU
-ISUMU
-ISSNPPC
-ISSNPPC
-ISERMediumLaser
-IS Ammo SRTorpedo-4
+ISUMU (omnipod)
+ISUMU (omnipod)
+ISUMU (omnipod)
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
+ISERMediumLaser (omnipod)
+IS Ammo SRTorpedo-4 (omnipod)
 -Empty-
 -Empty-
 
@@ -113,7 +113,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISTAG
+ISTAG (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

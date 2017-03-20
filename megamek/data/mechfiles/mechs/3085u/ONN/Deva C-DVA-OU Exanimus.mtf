@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:70
 Engine:280 Light Engine(IS)
-Structure:Endo Steel
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Heavy Duty Gyro
@@ -46,11 +46,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-Endo Steel
-Endo Steel
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -58,26 +58,26 @@ Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-LRT 15
-LRT 15
-LRT 15
-LRT 15
-LRT 15
-LRT 15
-IS Ammo LRTorpedo-15
-IS Ammo LRTorpedo-15
-Endo Steel
-Endo Steel
+LRT 15 (omnipod)
+LRT 15 (omnipod)
+LRT 15 (omnipod)
+LRT 15 (omnipod)
+LRT 15 (omnipod)
+LRT 15 (omnipod)
+IS Ammo LRTorpedo-15 (omnipod)
+IS Ammo LRTorpedo-15 (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISUMU
-ISERSmallLaser (R)
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISUMU (omnipod)
+ISERSmallLaser (R) (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -86,16 +86,16 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISUMU
-IS Ammo LRTorpedo-15
-IS Ammo LRTorpedo-15
-IS Ammo LRTorpedo-15
-IS Ammo LRTorpedo-15
+ISUMU (omnipod)
+IS Ammo LRTorpedo-15 (omnipod)
+IS Ammo LRTorpedo-15 (omnipod)
+IS Ammo LRTorpedo-15 (omnipod)
+IS Ammo LRTorpedo-15 (omnipod)
 ISC3iUnit
 ISC3iUnit
-ISCASE
-Endo Steel
-Endo Steel
+ISCASE (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -108,15 +108,15 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISUMU
-ISUMU
+ISUMU (omnipod)
+ISUMU (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISMASS
+ISMASS (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

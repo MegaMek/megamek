@@ -32,17 +32,17 @@ RTR Armor:5
 RTC Armor:6
 
 Weapons:2
-iATM 3, Right Arm
 iATM 3, Left Arm
+iATM 3, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLiATM3
-CLiATM3
-Clan Ammo iATM-3
+CLiATM3 (omnipod)
+CLiATM3 (omnipod)
+Clan Ammo iATM-3 (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -54,9 +54,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLiATM3
-CLiATM3
-Clan Ammo iATM-3
+CLiATM3 (omnipod)
+CLiATM3 (omnipod)
+Clan Ammo iATM-3 (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -85,8 +85,8 @@ CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-NovaCEWS
-CLModularArmor
+NovaCEWS (omnipod)
+CLModularArmor (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous

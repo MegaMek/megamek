@@ -8,15 +8,16 @@ Era:3059
 Rules Level:2
 
 Mass:75
-Engine:375 XL Engine
-Structure:Endo Steel
+Engine:375 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
+Base Chassis Heat Sinks:15
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:25
@@ -30,19 +31,19 @@ RTR Armor:7
 RTC Armor:9
 
 Weapons:6
-1 CLERPPC, Right Arm
-1 CLERPPC, Left Arm
-1 CLLRM10, Right Torso, Ammo:24
-1 CLLargePulseLaser, Right Torso
-1 CLLRM10, Left Torso
-1 CLFlamer, Center Torso
+ER PPC, Left Arm
+ER PPC, Right Arm
+LRM 10, Left Torso
+LRM 10, Right Torso
+Large Pulse Laser, Right Torso
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -54,9 +55,9 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -68,13 +69,13 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10
-CLLRM10 Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -82,15 +83,15 @@ CLDouble Heat Sink
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10
-CLLRM10 Ammo
-CLLargePulseLaser
-CLLargePulseLaser
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 
 Center Torso:
@@ -104,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-CLFlamer
+Clan Endo Steel
+CLFlamer (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -126,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,12 +141,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

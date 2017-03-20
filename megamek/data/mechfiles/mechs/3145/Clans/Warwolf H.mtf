@@ -32,9 +32,9 @@ RTR Armor:8
 RTC Armor:11
 
 Weapons:3
-Improved Heavy Large Laser, Right Torso
-Improved Heavy Large Laser, Left Torso
 Gauss Rifle, Right Arm
+Improved Heavy Large Laser, Left Torso
+Improved Heavy Large Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -53,41 +53,41 @@ Clan Reactive
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Clan Gauss Ammo
-Clan Gauss Ammo
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
 Clan Endo Steel
 Clan Reactive
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-Clan Coolant Pod
-Clan Coolant Pod
-CLCASEII
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+Clan Coolant Pod (omnipod)
+Clan Coolant Pod (omnipod)
+CLCASEII (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CL Super Charger
-CLCASEII
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CL Super Charger (omnipod)
+CLCASEII (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -103,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support

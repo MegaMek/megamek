@@ -9,8 +9,8 @@ Source:Jihad
 Rules Level:2
 
 Mass:70
-Engine:280 XL (Clan) Engine
-Structure:Endo Steel
+Engine:280 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -32,49 +32,49 @@ RTR Armor:10
 RTC Armor:12
 
 Weapons:6
-SRM 6, Right Arm
+Large Pulse Laser, Left Arm
 SRM 6, Left Arm
 ER PPC, Right Arm
-Large Pulse Laser, Left Arm
-SRM 6, Right Torso
+SRM 6, Right Arm
 SRM 6, Left Torso
+SRM 6, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 CLSRM6
-Clan Ammo SRM-6
-Clan Ammo SRM-6
-Endo Steel
-Endo Steel
+Clan Ammo SRM-6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 CLSRM6
-Clan Ammo SRM-6
-Endo Steel
-Endo Steel
+Clan Ammo SRM-6 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-CLSRM6
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+CLSRM6 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -84,16 +84,16 @@ CLSRM6
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-CLSRM6
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-Endo Steel
-Endo Steel
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+CLSRM6 (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

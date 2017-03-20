@@ -489,6 +489,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * The components of this entity that can transport other entities.
      */
     private Vector<Transporter> transports = new Vector<Transporter>();
+    
+    /**
+     * The components of this entity that can transport other entities and occupy
+     * pod space of an omni unit.
+     */
+    private Vector<Transporter> omniPodTransports = new Vector<Transporter>();
 
     /**
      * The ids of the MechWarriors this entity has picked up
@@ -6986,12 +6992,27 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param component - One of this new entity's <code>Transporter</code>s.
      */
     public void addTransporter(Transporter component) {
+        addTransporter(component, false);
+    }
+    
+    /**
+     * Add a transportation component to this Entity. Please note, this method
+     * should only be called during this entity's construction.
+     *
+     * @param component - One of this new entity's <code>Transporter</code>s.
+     * @param isOmniPod - Whether this is part of an omni unit's pod space.
+     */
+    public void addTransporter(Transporter component, boolean isOmniPod) {
         component.setGame(game);
         transports.add(component);
+        if (isOmniPod) {
+        	omniPodTransports.add(component);
+        }
     }
 
     public void removeTransporter(Transporter t) {
         transports.remove(t);
+        omniPodTransports.remove(t);
     }
 
     /**
@@ -7000,6 +7021,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void removeAllTransporters() {
         transports = new Vector<Transporter>();
+        omniPodTransports.clear();
     }
 
     /**
@@ -7464,6 +7486,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public Vector<Transporter> getTransports() {
         return transports;
     }
+    
+    public boolean isPodMountedTransport(Transporter t) {
+    	return omniPodTransports.contains(t);
+    }
 
     public Vector<Bay> getTransportBays() {
 
@@ -7707,6 +7733,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
             result.append(next.getUnusedString());
+            if (next instanceof TroopSpace && isOmni()) {
+            	if (omniPodTransports.contains(next)) {
+            		result.append(" (Pod)");
+            	} else {
+            		result.append(" (Fixed)");
+            	}
+            }
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
                 if (useBRTag) {
@@ -8933,6 +8966,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public double getTroopCarryingSpace() {
         double space = 0;
         for (Transporter t : transports) {
+            if (t instanceof TroopSpace) {
+                space += ((TroopSpace) t).totalSpace;
+            }
+        }
+        return space;
+    }
+
+    public double getPodMountedTroopCarryingSpace() {
+        double space = 0;
+        for (Transporter t : omniPodTransports) {
             if (t instanceof TroopSpace) {
                 space += ((TroopSpace) t).totalSpace;
             }

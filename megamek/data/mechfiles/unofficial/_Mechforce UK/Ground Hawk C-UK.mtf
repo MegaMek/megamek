@@ -8,15 +8,16 @@ Era:3055
 Rules Level:2
 
 Mass:30
-Engine:270 XL Engine
-Structure:Endo Steel
+Engine:270 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:9
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:10
 RA Armor:10
 LT Armor:8
@@ -29,19 +30,21 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:5
 
-Weapons:3
-1 CLLRM10, Right Arm, Ammo:24
-3 CLERMediumLaser, Left Arm
-1 CLLRM10, Right Torso
+Weapons:5
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+LRM 10, Right Arm
+LRM 10, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -53,8 +56,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM10
-CLLRM10 Ammo
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -65,28 +68,28 @@ CLLRM10 Ammo
 Left Torso:
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10
-CLLRM10 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -145,4 +148,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

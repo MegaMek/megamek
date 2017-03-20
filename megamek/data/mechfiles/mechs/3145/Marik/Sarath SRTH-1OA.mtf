@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:10
 Walk MP:5
 Jump MP:5
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 FLL Armor:24
 FRL Armor:24
 LT Armor:20
@@ -32,20 +32,20 @@ RTR Armor:4
 RTC Armor:7
 
 Weapons:6
-ER Small Laser, Head
+LRM 15, Right Torso
+LRM 15, Right Torso
+MML 3, Right Torso
+MML 3, Right Torso
 ER Small Laser, Center Torso
-LRM 15, Right Torso
-LRM 15, Right Torso
-MML 3, Right Torso
-MML 3, Right Torso
+ER Small Laser, Head
 
 Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-IS Ammo MML-3 LRM
+Jump Jet (omnipod)
+IS Ammo MML-3 LRM (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -58,8 +58,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-IS Ammo MML-3 SRM
+Jump Jet (omnipod)
+IS Ammo MML-3 SRM (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -71,8 +71,8 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Ammo LRM-15
-Clan Ammo LRM-15
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
 TSM
 TSM
 TSM
@@ -85,14 +85,14 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLRM15 (T)
-CLLRM15 (T)
-CLLRM15 (T)
-CLLRM15 (T)
-ISMML3 (T)
-ISMML3 (T)
-ISMML3 (T)
-ISMML3 (T)
+CLLRM15 (T) (omnipod)
+CLLRM15 (T) (omnipod)
+CLLRM15 (T) (omnipod)
+CLLRM15 (T) (omnipod)
+ISMML3 (T) (omnipod)
+ISMML3 (T) (omnipod)
+ISMML3 (T) (omnipod)
+ISMML3 (T) (omnipod)
 ISQuadTurret
 
 Center Torso:
@@ -106,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-CLERSmallLaser
+Jump Jet (omnipod)
+CLERSmallLaser (omnipod)
 
 Head:
 Life Support
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Clan Ammo LRM-15
+Jump Jet (omnipod)
+Clan Ammo LRM-15 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Clan Ammo LRM-15
+Jump Jet (omnipod)
+Clan Ammo LRM-15 (omnipod)
 -Empty-
 -Empty-
 -Empty-

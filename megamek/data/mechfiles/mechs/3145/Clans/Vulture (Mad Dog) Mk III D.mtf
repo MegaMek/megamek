@@ -32,15 +32,15 @@ RTR Armor:7
 RTC Armor:9
 
 Weapons:4
-Rotary AC/5, Left Torso
-Rotary AC/5, Right Torso
 Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Right Arm
+Rotary AC/5, Left Torso
+Rotary AC/5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -54,7 +54,7 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -68,30 +68,30 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 Ammo (omnipod)
+CLRotaryAC5 Ammo (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 Ammo (omnipod)
+CLRotaryAC5 Ammo (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -104,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo (omnipod)
+CLRotaryAC5 Ammo (omnipod)
 
 Head:
 Life Support

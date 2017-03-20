@@ -36,6 +36,10 @@ Wheeled
 troopspace:4.0
 </transporters>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
@@ -52,6 +56,10 @@ troopspace:4.0
 1
 </armor_tech>
 
+<omni>
+1
+</omni>
+
 <armor>
 34
 25
@@ -61,16 +69,16 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
-BeagleActiveProbe
-ISGuardianECMSuite
+BeagleActiveProbe:OMNI
+ISGuardianECMSuite:OMNI
 ISCASE
-IS LB 10-X Cluster Ammo
-IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo:OMNI
+IS LB 10-X AC Ammo:OMNI
 </Body Equipment>
 
 <Front Equipment>
-ISSmallPulseLaser
-ISSmallPulseLaser
+ISSmallPulseLaser:OMNI
+ISSmallPulseLaser:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -83,7 +91,7 @@ ISSmallPulseLaser
 </Rear Equipment>
 
 <Turret Equipment>
-ISLBXAC10
+ISLBXAC10:OMNI
 </Turret Equipment>
 
 <source>
@@ -94,8 +102,7 @@ TRO 3145 Free Worlds League - Early Republic
 45.0
 </tonnage>
 
-<omni>
-1
-</omni>
-
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

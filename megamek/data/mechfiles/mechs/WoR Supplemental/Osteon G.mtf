@@ -34,38 +34,38 @@ RTR Armor:12
 RTC Armor:12
 
 Weapons:6
-Arrow IV, Right Arm
-Arrow IV, Left Arm
+Arrow IV, Left Torso
+Arrow IV, Right Torso
 ER Medium Laser, Left Torso
-ER Medium Laser, Right Torso
 Medium Pulse Laser, Left Torso
+ER Medium Laser, Right Torso
 Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -73,13 +73,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLERMediumLaser
-CLMediumPulseLaser
-CLArrowIVAmmo
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLERMediumLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLArrowIVAmmo (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -87,13 +87,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLERMediumLaser
-CLMediumPulseLaser
-CLArrowIVAmmo
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLERMediumLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLArrowIVAmmo (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -115,9 +115,9 @@ Head:
 Sensors
 Sensors
 NovaCEWS
-CLArrowIVAmmo
-CLArrowIVAmmo
-CLArrowIVAmmo
+CLArrowIVAmmo (omnipod)
+CLArrowIVAmmo (omnipod)
+CLArrowIVAmmo (omnipod)
 -Empty-
 -Empty-
 -Empty-

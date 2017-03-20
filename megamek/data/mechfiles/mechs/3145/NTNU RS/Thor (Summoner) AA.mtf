@@ -4,7 +4,7 @@ AA
 
 Config:Biped Omnimech
 TechBase:Clan
-Era:3086	
+Era:3086
 Source:RS 3145 NTNU - Early Republic
 Rules Level:2
 
@@ -32,21 +32,21 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:3
-SRM 6, Left Torso
-ER Large Pulse Laser, Right Arm
 Gauss Rifle, Left Arm
+ER Large Pulse Laser, Right Arm
+SRM 6, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Clan Gauss Ammo
-Clan Gauss Ammo
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 
@@ -54,9 +54,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERLargePulseLaser
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -67,8 +67,8 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLSRM6
-Clan Ammo SRM-6
+CLSRM6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-

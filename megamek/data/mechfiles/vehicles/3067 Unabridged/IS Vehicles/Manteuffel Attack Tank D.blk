@@ -36,6 +36,14 @@ Tracked
 troopspace:8.0
 </transporters>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
+<transporters>
+troopspace:8.0
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
@@ -66,10 +74,10 @@ troopspace:8.0
 
 <Body Equipment>
 ISCASE
-ISAMS Ammo
-IS Ammo LRM-10
-IS Ammo LRM-10
-IS Ammo LRM-10
+ISAMS Ammo:OMNI
+IS Ammo LRM-10:OMNI
+IS Ammo LRM-10:OMNI
+IS Ammo LRM-10:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -85,13 +93,17 @@ IS Ammo LRM-10
 </Rear Equipment>
 
 <Turret Equipment>
-ISAntiMissileSystem
-LRM 10
-Light PPC
-Light PPC
+ISAntiMissileSystem:OMNI
+LRM 10:OMNI
+Light PPC:OMNI
+Light PPC:OMNI
 </Turret Equipment>
 
 <tonnage>
 70.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

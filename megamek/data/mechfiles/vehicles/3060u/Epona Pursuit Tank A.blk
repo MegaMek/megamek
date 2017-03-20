@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,17 +65,17 @@ Hover
 </armor>
 
 <Body Equipment>
-Clan Ammo LRM-20
-Clan Ammo LRM-20
-Clan Ammo LRM-20
-Clan Ammo LRM-20
-CLCASE
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
-CLERMediumLaser
-CLERMediumLaser
-CLTAG
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLTAG:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -88,8 +88,8 @@ CLTAG
 </Rear Equipment>
 
 <Turret Equipment>
-CLLRM20
-CLLRM20
+CLLRM20:OMNI
+CLLRM20:OMNI
 </Turret Equipment>
 
 <source>
@@ -99,4 +99,8 @@ Succession Wars
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>
 

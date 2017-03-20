@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:65
-Engine:390 XL (Clan) Engine
-Structure:Endo Steel
+Engine:390 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -36,8 +36,8 @@ ATM 9, Left Torso
 ER Medium Laser, Left Torso
 ATM 9, Right Torso
 ER Medium Laser, Right Torso
-Medium Pulse Laser, Center Torso (R)
-Medium Pulse Laser, Center Torso (R)
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
 Flamer, Head
 
 Front Left Leg:
@@ -45,8 +45,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -59,8 +59,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -71,30 +71,30 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-CLERMediumLaser
-Clan Ammo ATM-9
-Clan Ammo ATM-9 ER
-Endo Steel
-Endo Steel
-Endo Steel
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 ER (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-CLERMediumLaser
-Clan Ammo ATM-9
-Clan Ammo ATM-9 HE
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 HE (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -107,8 +107,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser (R)
-CLMediumPulseLaser (R)
+CLMediumPulseLaser (R) (omnipod)
+CLMediumPulseLaser (R) (omnipod)
 
 Head:
 Life Support
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

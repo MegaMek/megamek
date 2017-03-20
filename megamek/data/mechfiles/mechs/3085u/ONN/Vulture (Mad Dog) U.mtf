@@ -43,8 +43,8 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-CLMediumPulseLaser
+CLERMediumLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -57,8 +57,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-CLMediumPulseLaser
+CLERMediumLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -70,12 +70,12 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
-Clan Ammo LRTorpedo-15 Artemis V-capable
-Clan Ammo LRTorpedo-15 Artemis V-capable
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
 Clan HarJel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -84,12 +84,12 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
-Clan Ammo LRTorpedo-15 Artemis V-capable
-Clan Ammo LRTorpedo-15 Artemis V-capable
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
 Clan HarJel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -106,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLUMU
+CLUMU (omnipod)
 Clan HarJel
 
 Head:
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLUMU
-CLUMU
+CLUMU (omnipod)
+CLUMU (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLUMU
-CLUMU
+CLUMU (omnipod)
+CLUMU (omnipod)
 -Empty-
 -Empty-
 -Empty-

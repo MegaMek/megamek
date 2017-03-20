@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+8
+</omnipodheatsinks>
+
 <fuel>
 320
 </fuel>
@@ -76,28 +80,32 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLGaussRifle
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Gauss Ammo
-CLERMediumLaser
-CLERMediumLaser
+CLGaussRifle:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLHeavyLargeLaser
-CLERLargeLaser
+CLHeavyLargeLaser:OMNI
+CLERLargeLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLHeavyLargeLaser
-CLERLargeLaser
+CLHeavyLargeLaser:OMNI
+CLERLargeLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERSmallLaser
+CLERSmallLaser:OMNI
 </Aft Equipment>
 
 <source>

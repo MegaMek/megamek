@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:70
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -32,20 +32,20 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:7
-Medium Laser, Center Torso
-Medium Laser, Center Torso
-Particle Cannon, Left Arm
-LRM 10, Left Torso
-LRM 10, Right Torso
+PPC, Left Arm
 Ultra AC/5, Right Arm
+LRM 10, Left Torso
 C3 Master with TAG, Left Torso
+LRM 10, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Particle Cannon
-Particle Cannon
-Particle Cannon
+PPC (omnipod)
+PPC (omnipod)
+PPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,12 +57,12 @@ Particle Cannon
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-IS Ultra AC/5 Ammo
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+IS Ultra AC/5 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -72,13 +72,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-LRM 10
-LRM 10
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
+LRM 10 (omnipod)
+LRM 10 (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
 ISCASE
 -Empty-
 
@@ -86,10 +86,10 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-LRM 10
-LRM 10
-IS Ammo LRM-10
-IS Ammo LRM-10
+LRM 10 (omnipod)
+LRM 10 (omnipod)
+IS Ammo LRM-10 (omnipod)
+IS Ammo LRM-10 (omnipod)
 ISCASE
 -Empty-
 -Empty-

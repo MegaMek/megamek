@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:90
-Engine:360 XL (Clan) Engine
-Structure:Endo Steel
+Engine:360 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -43,26 +43,26 @@ ER Large Laser, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-Endo Steel
-Endo Steel
-Endo Steel
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-Endo Steel
+CLERLargeLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -71,30 +71,30 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLHAG40
-CLHAG40
-CLHAG40
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-Endo Steel
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-Endo Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-

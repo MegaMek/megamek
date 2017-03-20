@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:65
-Engine:325 XL (Clan) Engine
-Structure:Endo Steel
+Engine:325 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
@@ -32,23 +32,23 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:7
+ER PPC, Left Arm
 Large Pulse Laser, Left Arm
+ER PPC, Right Arm
 Large Pulse Laser, Right Arm
 Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Right Torso
-ER PPC, Left Arm
-ER PPC, Right Arm
 Clan TAG, Left Torso
+Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLLargePulseLaser
-CLLargePulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -57,12 +57,12 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLLargePulseLaser
-CLLargePulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -71,10 +71,10 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser
-CLTAG
-Endo Steel
-Ferro-Fibrous
+CLMediumPulseLaser (omnipod)
+CLTAG (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -85,9 +85,9 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser
-CLActiveProbe
-Endo Steel
+CLMediumPulseLaser (omnipod)
+CLActiveProbe (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

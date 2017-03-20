@@ -4,7 +4,7 @@ G
 
 Config:Biped Omnimech
 TechBase:Clan
-Era:3099	
+Era:3099
 Source:RS 3145 NTNU - Early Republic
 Rules Level:2
 
@@ -33,26 +33,26 @@ RTC Armor:10
 
 Weapons:9
 Improved Heavy Large Laser, Left Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-ER Medium Laser, Right Arm
-Streak SRM 4, Right Torso
-Streak SRM 4, Left Torso
-Streak SRM 4, Right Torso
-Streak SRM 4, Left Torso
 Light TAG, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+Streak SRM 4, Left Torso
+Streak SRM 4, Left Torso
+Streak SRM 4, Right Torso
+Streak SRM 4, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLLightTAG
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLLightTAG (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 
@@ -61,25 +61,25 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 Clan Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-Jump Jet
-Jump Jet
-CLStreakSRM4
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -87,13 +87,13 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-Jump Jet
-Jump Jet
-CLStreakSRM4
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -109,8 +109,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-CL Super Charger
+Jump Jet (omnipod)
+CL Super Charger (omnipod)
 
 Head:
 Life Support

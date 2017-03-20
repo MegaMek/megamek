@@ -5,12 +5,11 @@ BJ2-OX
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3074
-Jihad
 Rules Level:4
 
 Mass:50
-Engine:200 XL Engine
-Structure:Endo Steel
+Engine:200 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -45,13 +44,13 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Light PPC
-Light PPC
-PPC Capacitor
-ISStreakSRM4
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+PPC Capacitor (omnipod)
+ISStreakSRM4 (omnipod)
 
 Right Arm:
 Shoulder
@@ -59,41 +58,41 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Light PPC
-Light PPC
-PPC Capacitor
-ISStreakSRM4
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+PPC Capacitor (omnipod)
+ISStreakSRM4 (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Light PPC
-Light PPC
-PPC Capacitor
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light PPC (omnipod)
+Light PPC (omnipod)
+PPC Capacitor (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Light PPC
-Light PPC
-PPC Capacitor
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light PPC (omnipod)
+Light PPC (omnipod)
+PPC Capacitor (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -106,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Streak SRM 4 Ammo
-Endo Steel
+IS Streak SRM 4 Ammo (omnipod)
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-

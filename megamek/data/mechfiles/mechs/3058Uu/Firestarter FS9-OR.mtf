@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:4
 
 Mass:45
-Engine:270 XL Engine
-Structure:Endo Steel
+Engine:270 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -34,21 +34,21 @@ RTC Armor:7
 Weapons:5
 ER Large Laser, Left Arm
 ER Large Laser, Left Arm
-Flamer, Center Torso
-Flamer, Center Torso
 LRM 10, Right Arm
+Flamer, Center Torso
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERLargeLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLERLargeLaser (omnipod)
+CLERLargeLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -56,11 +56,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLRM10
-CLArtemisIV
-Endo Steel
-Endo Steel
-Endo Steel
+CLLRM10 (omnipod)
+CLArtemisIV (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -76,8 +76,8 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
@@ -90,8 +90,8 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Clan Ammo LRM-10 (Clan) Artemis-capable
-Clan Ammo LRM-10 (Clan) Artemis-capable
+Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
 -Empty-
 
 Center Torso:
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

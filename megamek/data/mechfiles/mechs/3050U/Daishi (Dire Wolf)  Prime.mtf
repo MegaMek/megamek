@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:100
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:22 Double
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -30,68 +31,72 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:14
 
-Weapons:7
-2 CLERLargeLaser, Left Arm
-2 CLMediumPulseLaser, Left Arm
-1 CLUltraAC5, Left Arm, Ammo:20
-1 CLLRM10, Left Torso, Ammo:12
-2 CLERLargeLaser, Right Arm
-2 CLMediumPulseLaser, Right Arm
-1 CLUltraAC5, Right Arm, Ammo:20
+Weapons:11
+ER Large Laser, Left Arm
+ER Large Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Ultra AC/5, Left Arm
+ER Large Laser, Right Arm
+ER Large Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Ultra AC/5, Right Arm
+LRM 10, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
-CLERLargeLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5 Ammo
+CLERLargeLaser (omnipod)
+CLERLargeLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
-CLERLargeLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5 Ammo
+CLERLargeLaser (omnipod)
+CLERLargeLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLLRM10
-CLLRM10 Ammo
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 
@@ -106,8 +111,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
@@ -128,8 +133,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -150,4 +155,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

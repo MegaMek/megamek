@@ -9,8 +9,8 @@ Source:Jihad
 Rules Level:4
 
 Mass:100
-Engine:300 XL (Clan) Engine
-Structure:Standard
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -32,40 +32,40 @@ RTR Armor:10
 RTC Armor:14
 
 Weapons:12
-SRT 6, Right Torso
-SRT 6, Right Torso
-SRT 6, Right Torso
-SRT 6, Left Torso
-SRT 6, Left Torso
-SRT 6, Left Torso
 ER PPC, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
 ER PPC, Right Arm
 Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Left Arm
-Medium Pulse Laser, Left Arm
+SRT 6, Left Torso
+SRT 6, Left Torso
+SRT 6, Left Torso
+SRT 6, Right Torso
+SRT 6, Right Torso
+SRT 6, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 Clan HarJel
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 Clan HarJel
 -Empty-
 -Empty-
@@ -78,12 +78,12 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLUMU
-CLSRT6
-CLSRT6
-CLSRT6
-Clan Ammo SRTorpedo-6
-Clan Ammo SRTorpedo-6
+CLUMU (omnipod)
+CLSRT6 (omnipod)
+CLSRT6 (omnipod)
+CLSRT6 (omnipod)
+Clan Ammo SRTorpedo-6 (omnipod)
+Clan Ammo SRTorpedo-6 (omnipod)
 Clan HarJel
 -Empty-
 
@@ -92,12 +92,12 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLUMU
-CLSRT6
-CLSRT6
-CLSRT6
-Clan Ammo SRTorpedo-6
-Clan Ammo SRTorpedo-6
+CLUMU (omnipod)
+CLSRT6 (omnipod)
+CLSRT6 (omnipod)
+CLSRT6 (omnipod)
+Clan Ammo SRTorpedo-6 (omnipod)
+Clan Ammo SRTorpedo-6 (omnipod)
 Clan HarJel
 -Empty-
 
@@ -112,14 +112,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLUMU
+CLUMU (omnipod)
 Clan HarJel
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLMASS
+CLMASS (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -148,8 +148,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

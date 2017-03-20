@@ -1,23 +1,24 @@
-Version:1.1
+Version:1.0
 Savage Coyote
 W
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3073
+Source:3067 Unabridged
 Rules Level:2
-source:3067 Unabridged
 
 Mass:85
-Engine:255 XL Fusion Engine
-Structure:Standard
+Engine:255 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Double
+Base Chassis Heat Sinks:10
 Walk MP:3
 Jump MP:5
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:25
 RA Armor:25
 LT Armor:26
@@ -30,109 +31,128 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:15
 
-Weapons:11
-1 CLLargePulseLaser, Right Arm
-1 CLLargePulseLaser, Left Arm
-1 CLLargePulseLaser, Left Torso
-1 CLLargePulseLaser, Right Torso
-1 CLLightTAG, Right Torso
-1 CLLightActiveProbe, Left Torso
-1 CLFlamer, Right Arm
-1 CLFlamer, Left Arm
-1 CLSmallPulseLaser, Right Arm
-1 CLSmallPulseLaser, Left Arm
-1 CLERMediumLaser, Head
+Weapons:10
+Large Pulse Laser, Left Arm
+Small Pulse Laser, Left Arm
+Flamer, Left Arm
+Large Pulse Laser, Right Arm
+Small Pulse Laser, Right Arm
+Flamer, Right Arm
+Large Pulse Laser, Left Torso
+Large Pulse Laser, Right Torso
+Light TAG, Right Torso
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLLargePulseLaser
-CLLargePulseLaser
-CLSmallPulseLaser
-CLFlamer
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+CLFlamer (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLLargePulseLaser
-CLLargePulseLaser
-CLSmallPulseLaser
-CLFlamer
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+CLFlamer (omnipod)
 
 Left Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLImprovedJump Jet
-CLImprovedJump Jet
-CLImprovedJump Jet
-CLImprovedJump Jet
-CLLargePulseLaser
-CLLargePulseLaser
-CLLightActiveProbe
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLightActiveProbe (omnipod)
 -Empty-
 
 Right Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLImprovedJump Jet
-CLImprovedJump Jet
-CLImprovedJump Jet
-CLImprovedJump Jet
-CLLargePulseLaser
-CLLargePulseLaser
-CLLightTAG
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLightTAG (omnipod)
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLImprovedJump Jet
-CLImprovedJump Jet
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

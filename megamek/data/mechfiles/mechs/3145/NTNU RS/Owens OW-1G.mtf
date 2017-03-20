@@ -4,7 +4,7 @@ OW-1G
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
-Era:3125	
+Era:3125
 Source:RS 3145 NTNU - Late Republic
 Rules Level:3
 
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:10
 Walk MP:8
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:10
 RA Armor:10
 LT Armor:12
@@ -52,11 +52,11 @@ Upper Arm Actuator
 Right Arm:
 Shoulder
 Upper Arm Actuator
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -102,7 +102,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Supercharger
+Supercharger (omnipod)
 -Empty-
 
 Head:

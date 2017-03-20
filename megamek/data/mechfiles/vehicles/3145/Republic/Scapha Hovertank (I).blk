@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,8 +65,8 @@ Hover
 </armor>
 
 <Body Equipment>
-ISTargeting Computer
-ISC3MasterUnit
+ISTargeting Computer:OMNI
+ISC3MasterUnit:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -82,7 +82,7 @@ ISC3MasterUnit
 </Rear Equipment>
 
 <Turret Equipment>
-TSEMP Cannon
+TSEMP Cannon:OMNI
 </Turret Equipment>
 
 <source>
@@ -92,4 +92,8 @@ TRO 3145 Republic of the Sphere - Late Republic
 <tonnage>
 40.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

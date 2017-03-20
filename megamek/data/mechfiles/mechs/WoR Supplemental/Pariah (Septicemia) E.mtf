@@ -32,14 +32,14 @@ RTR Armor:7
 RTC Armor:7
 
 Weapons:9
-ER Medium Laser, Left Torso
-ER Medium Laser, Right Torso
-ER Medium Laser, Right Arm
 ER Medium Laser, Left Arm
-ER Medium Laser, Right Torso
+ER Medium Laser, Right Arm
+ER PPC, Left Torso
+ER Medium Laser, Left Torso
 ER Medium Laser, Left Torso
 ER PPC, Right Torso
-ER PPC, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
 Light TAG, Right Torso
 
 Left Arm:
@@ -47,7 +47,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -61,7 +61,7 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -73,29 +73,29 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
-CLERMediumLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERPPC
-CLERPPC
-CLERMediumLaser
-CLERMediumLaser
-CLLightTAG
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLLightTAG (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 -Empty-
 
 Center Torso:
@@ -109,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-NovaCEWS
+NovaCEWS (omnipod)
 Sensors
 Life Support
 -Empty-

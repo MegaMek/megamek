@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -67,7 +67,7 @@ Hover
 <Body Equipment>
 ISAngelECMSuite
 ISDroneOperatingSystem
-ISC3SlaveUnit
+ISC3SlaveUnit:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -84,8 +84,8 @@ ISSRM2IOS
 </Rear Equipment>
 
 <Turret Equipment>
-BloodhoundActiveProbe
-ER Flamer
+BloodhoundActiveProbe:OMNI
+ER Flamer:OMNI
 </Turret Equipment>
 
 <source>
@@ -95,4 +95,8 @@ XTRO Republic I - Early Republic
 <tonnage>
 40.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

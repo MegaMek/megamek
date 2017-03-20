@@ -37,7 +37,7 @@ troopspace:5.0
 </transporters>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -84,9 +84,9 @@ troopspace:5.0
 </Rear Equipment>
 
 <Turret Equipment>
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
 </Turret Equipment>
 
 <source>
@@ -96,4 +96,8 @@ Succession Wars
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>
 

@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:45
-Engine:270 XL Engine
-Structure:Endo Steel
+Engine:270 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -47,29 +47,29 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumPulseLaser
-ISSmallPulseLaser
-Machine Gun
-Machine Gun
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISMediumPulseLaser (omnipod)
+ISSmallPulseLaser (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumPulseLaser
-ISSmallPulseLaser
-BeagleActiveProbe
-BeagleActiveProbe
-ISGuardianECMSuite
-ISGuardianECMSuite
-Endo Steel
-Endo Steel
-Endo Steel
+ISMediumPulseLaser (omnipod)
+ISSmallPulseLaser (omnipod)
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -81,9 +81,9 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-ISERMediumLaser
-Endo Steel
-Endo Steel
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -95,9 +95,9 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-IS Machine Gun Ammo - Half
-ISAMS Ammo
-ISCASE
+IS Machine Gun Ammo - Half (omnipod)
+ISAMS Ammo (omnipod)
+ISCASE (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -117,7 +117,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISAntiMissileSystem
+ISAntiMissileSystem (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -132,8 +132,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -146,8 +146,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:35
-Engine:245 XL Engine
-Structure:Endo Steel
+Engine:245 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Triple-Strength
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:9
 Walk MP:7
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:11
 RA Armor:11
 LT Armor:11
@@ -29,37 +30,40 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:5
 
-Weapons:5
-1 ISERPPC, Right Torso
-1 ISMediumLaser, Right Torso
-3 ISMediumLaser, Left Torso
-2 ISMediumLaser, Center Torso
-1 ISMediumLaser, Head
+Weapons:8
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+ER PPC, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -68,12 +72,12 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+TSM
+TSM
+TSM
 -Empty-
 -Empty-
 -Empty-
@@ -82,13 +86,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERPPC
-ISERPPC
-ISERPPC
-ISMediumLaser
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+Medium Laser (omnipod)
+TSM
+TSM
+TSM
 -Empty-
 -Empty-
 
@@ -103,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumLaser
-ISMediumLaser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISMediumLaser
+Medium Laser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -125,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,12 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

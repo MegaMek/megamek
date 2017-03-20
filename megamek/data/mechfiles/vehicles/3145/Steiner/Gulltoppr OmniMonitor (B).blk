@@ -32,6 +32,10 @@ IS Level 3
 Tracked
 </motion_type>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 2
 </cruiseMP>
@@ -39,6 +43,10 @@ Tracked
 <engine_type>
 2
 </engine_type>
+
+<omni>
+1
+</omni>
 
 <armor>
 136
@@ -52,17 +60,17 @@ Tracked
 </armor>
 
 <Body Equipment>
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISGuardianECMSuite
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
+ISC3MasterBoostedSystemUnit:OMNI
+ISC3MasterBoostedSystemUnit:OMNI
+ISGuardianECMSuite:OMNI
+ISLongTomCannonAmmo:OMNI
+ISLongTomCannonAmmo:OMNI
+ISLongTomCannonAmmo:OMNI
+ISLongTomCannonAmmo:OMNI
+ISLongTomCannonAmmo:OMNI
+ISLongTomCannonAmmo:OMNI
+ISLongTomCannonAmmo:OMNI
+ISLongTomCannonAmmo:OMNI
 ISCASE
 </Body Equipment>
 
@@ -85,11 +93,11 @@ ISCASE
 </Rear Equipment>
 
 <Rear Turret Equipment>
-ISLongTomCannon
+ISLongTomCannon:OMNI
 </Rear Turret Equipment>
 
 <Front Turret Equipment>
-ISLongTomCannon
+ISLongTomCannon:OMNI
 </Front Turret Equipment>
 
 <source>
@@ -100,7 +108,11 @@ TRO 3145 Lyran Commonwealth - Late Republic
 190.0
 </tonnage>
 
-<omni>
-1
-</omni>
+<baseChassisTurretWeight>
+2.5
+</baseChassisTurretWeight>
+
+<baseChassisTurret2Weight>
+3.0
+</baseChassisTurret2Weight>
 

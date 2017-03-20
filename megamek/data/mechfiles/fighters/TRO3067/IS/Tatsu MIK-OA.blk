@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+11
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -68,22 +72,22 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISERPPC
-ISERPPC
+ISERPPC:OMNI
+ISERPPC:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

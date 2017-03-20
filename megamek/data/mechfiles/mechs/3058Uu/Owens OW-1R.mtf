@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:4
 
 Mass:35
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Single
@@ -41,7 +41,7 @@ ER Medium Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -55,7 +55,7 @@ CLERMediumLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -84,9 +84,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-MRM 10
-MRM 10
-IS MRM 10 Ammo
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+IS MRM 10 Ammo (omnipod)
 ISTAG
 ISC3SlaveUnit
 -Empty-
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Sensors
 Life Support
 -Empty-

@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:30
-Engine:210 Light Engine
-Structure:Endo Steel
+Engine:210 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
@@ -54,27 +54,27 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERMediumLaser
-Light Machine Gun
-Light Machine Gun
-Light Machine Gun
-ISLMGA
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+ISERMediumLaser (omnipod)
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+ISLMGA (omnipod)
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Light Machine Gun
-Light Machine Gun
-Light Machine Gun
-ISLMGA
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+ISLMGA (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -82,26 +82,26 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Flamer
+Flamer (omnipod)
 ISC3iUnit
 ISC3iUnit
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
-Flamer
-IS Light Machine Gun Ammo - Half
-ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
+ISERSmallLaser (omnipod)
+Flamer (omnipod)
+IS Light Machine Gun Ammo - Half (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -123,7 +123,7 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISERMediumLaser
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -137,8 +137,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -151,8 +151,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

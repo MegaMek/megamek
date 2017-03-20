@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,66 +20,28 @@ Zugvogel Omni Support Aircraft
 A
 </Model>
 
-<Tonnage>
-200
-</Tonnage>
+<year>
+3086
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
-51
-51
-51
-51
-</Armor>
-
-<barrating>
-10
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
-
-<Nose Equipment>
-ISMediumVSPLaser
-ISHighResImager
-ISHyperspectralImager
-ISInfraredImager
-ISLookDownRadar
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISHighResImager
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISHighResImager
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISLBXAC2
-ISLBXAC2
-ISHighResImager
-</Aft Equipment>
-
-<Body Equipment>
-ISLBXAC2 Ammo
-ISLBXAC2 Ammo
-ISLBXAC2 CL Ammo
-ISC3MasterUnit
-CommsGear:10
-ISTankCockpitCommandConsole
-ISCASE
-Advanced Fire Control
-Armored Chassis
-STOLChassisMod
-</Body Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-7
+0
 </heatsinks>
 
 <sink_type>
@@ -90,33 +52,72 @@ STOLChassisMod
 369
 </fuel>
 
-<type>
-IS Level 3
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-3086
-</year>
+<omni>
+1
+</omni>
+
+<armor>
+51
+51
+51
+51
+</armor>
+
+<Nose Equipment>
+ISMediumVSPLaser:OMNI
+ISHighResImager:OMNI
+ISHypersprectralImager:OMNI
+ISInfraredImager:OMNI
+ISLookDownRadar:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISHighResImager:OMNI
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISHighResImager:OMNI
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISLBXAC2:OMNI
+ISLBXAC2:OMNI
+ISHighResImager:OMNI
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+IS LB 2-X AC Ammo:OMNI
+IS LB 2-X AC Ammo:OMNI
+IS LB 2-X Cluster Ammo:OMNI
+ISC3MasterUnit:OMNI
+Communications Equipment (10 ton):OMNI
+ISTankCockpitCommandConsole:OMNI
+ISCASE:OMNI
+Advanced Fire Control
+Armored Chassis
+STOLChassisMod
+</Body Equipment>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <source>
 TRO 3085
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+200.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0		
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<omni>
-</omni>

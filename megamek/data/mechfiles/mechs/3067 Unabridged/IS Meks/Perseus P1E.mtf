@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Perseus
 P1E
 
@@ -8,15 +8,16 @@ Era:3072
 Rules Level:3
 
 Mass:75
-Engine:300 XL Fusion Engine
-Structure:Endo-Steel
+Engine:300 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
+Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:21
 RA Armor:21
 LT Armor:24
@@ -29,101 +30,109 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:9
 
-Weapons:10
-1 ISGaussRifle, Right Arm, Ammo:16
-1 ISERSmallLaser, Head
-1 ISSRM6 (iOS), Center Torso
-1 ISCommunicationsEquipment, Right Torso
-1 ISBeagleActiveProbe, Left Torso
-1 ISERMediumLaser (R), Left Torso (R)
-1 ISVehicularGrenadeLauncher, Left Torso
-1 ISVehicularGrenadeLauncher, Left Torso
-1 ISLargeVSPLaser, Left Arm
-1 ISMediumVSPLaser, Left Arm
+Weapons:6
+Large VSP Laser, Left Arm
+Medium VSP Laser, Left Arm
+Gauss Rifle, Right Arm
+ER Medium Laser, Left Torso
+SRM 6 (I-OS), Center Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISMediumVSPLaser
-ISMediumVSPLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISMediumVSPLaser (omnipod)
+ISMediumVSPLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
-Engine
-Engine
-Engine
-ISVehicularGrenadeLauncher
-ISVehicularGrenadeLauncher
-ISERMediumLaser (R)
-ISBeagleActiveProbe
-ISBeagleActiveProbe
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser (R) (omnipod)
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
 
 Right Torso:
-Engine
-Engine
-Engine
-ISGauss Ammo
-ISGauss Ammo
-CommsGear:1
-CommsGear:1
-CommsGear:1
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Gauss Ammo (omnipod)
+IS Gauss Ammo (omnipod)
+Communications Equipment (1 ton) (omnipod)
+Communications Equipment (1 ton) (omnipod)
+Communications Equipment (1 ton) (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISSRM6 (iOS)
-ISSRM6 (iOS)
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSRM6IOS (omnipod)
+ISSRM6IOS (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -134,3 +143,11 @@ Lower Leg Actuator
 Foot Actuator
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

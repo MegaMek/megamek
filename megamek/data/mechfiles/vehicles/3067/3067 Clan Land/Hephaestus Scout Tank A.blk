@@ -37,7 +37,7 @@ troopspace:4.0
 </transporters>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -69,9 +69,9 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
-Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
 CLActiveProbe
-CLCASE
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -87,12 +87,16 @@ CLCASE
 </Rear Equipment>
 
 <Turret Equipment>
-CLLRM15
-CLArtemisIV
-CLERSmallLaser
+CLLRM15:OMNI
+CLArtemisIV:OMNI
+CLERSmallLaser:OMNI
 </Turret Equipment>
 
 <tonnage>
 30.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

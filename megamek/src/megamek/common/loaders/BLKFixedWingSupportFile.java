@@ -218,6 +218,9 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                 rearMount = false;
                 String equipName = element.trim();
 
+                boolean omniMounted = equipName.contains(":OMNI");
+                equipName = equipName.replace(":OMNI", "");
+
                 if (equipName.startsWith("(R) ")) {
                     rearMount = true;
                     equipName = equipName.substring(4);
@@ -254,6 +257,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
                 if (etype != null) {
                     try {
                         Mounted mount = t.addEquipment(etype, nLoc, rearMount);
+                        mount.setOmniPodMounted(omniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType) 
                                 && etype.hasFlag(WeaponType.F_VGL)) {

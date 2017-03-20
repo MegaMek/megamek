@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+3
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -76,17 +80,17 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISTargeting Computer
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+ISTargeting Computer:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-Large Laser
+Large Laser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-Large Laser
+Large Laser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

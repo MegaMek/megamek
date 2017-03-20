@@ -43,12 +43,12 @@ Light Machine Gun, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRM15
-CLLRM15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,11 +57,11 @@ Clan Ammo LRM-15
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -69,10 +69,10 @@ CLHeavyMediumLaser
 -Empty-
 
 Left Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLightMG
-CLLightMG
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLightMG (omnipod)
+CLLightMG (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -83,11 +83,11 @@ CLLightMG
 -Empty-
 
 Right Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLightMG
-CLLightMG
-Clan Light Machine Gun Ammo - Half
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLightMG (omnipod)
+CLLightMG (omnipod)
+Clan Light Machine Gun Ammo - Half (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -107,8 +107,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support

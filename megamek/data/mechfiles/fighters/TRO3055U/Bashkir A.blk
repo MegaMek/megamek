@@ -76,9 +76,13 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLMediumPulseLaser
-CLSRM6
-Clan Ammo SRM-6
+CLMediumPulseLaser:OMNI
+CLSRM6:OMNI
+Clan Ammo SRM-6:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 

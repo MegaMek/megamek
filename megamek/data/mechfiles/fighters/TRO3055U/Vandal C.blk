@@ -76,9 +76,9 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>

@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:45
-Engine:270 XL Engine
-Structure:Standard
+Engine:270 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:6
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:14
 RA Armor:14
 LT Armor:15
@@ -29,48 +30,54 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:8
 
-Weapons:4
-2 CLLRM10, Right Arm, Ammo:48
-2 CLLRM10, Left Arm
-3 CLMG, Right Torso, Ammo:100
-3 CLMG, Left Torso
+Weapons:10
+LRM 10, Left Arm
+LRM 10, Left Arm
+LRM 10, Right Arm
+LRM 10, Right Arm
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM10
-CLLRM10 Ammo
-CLLRM10
-CLLRM10 Ammo
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM10
-CLLRM10 Ammo
-CLLRM10
-CLLRM10 Ammo
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLMG
-CLMG
-CLMG
-Ferro-Fibrous
-Ferro-Fibrous
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -80,12 +87,12 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLMG
-CLMG
-CLMG
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLMG Ammo (100)
+Clan Machine Gun Ammo - Half (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -124,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +145,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -4,7 +4,7 @@ E
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
-Era:3140	
+Era:3140
 Source:RS 3145 NTNU - Dark Ages
 Rules Level:3
 
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:10
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:28
@@ -32,28 +32,28 @@ RTR Armor:8
 RTC Armor:11
 
 Weapons:11
-AMS, Head
-ER Medium Laser, Left Torso
-ER Medium Laser, Right Torso
-ER PPC, Right Arm
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Left Arm
 ER Large Laser, Left Arm
-Streak SRM 4, Right Torso
+ER PPC, Right Arm
 Streak SRM 4, Left Torso
 Streak SRM 4, Left Torso
+ER Medium Laser, Left Torso
 Streak SRM 4, Right Torso
-Large Pulse Laser, Left Arm
-Large Pulse Laser, Left Arm
+Streak SRM 4, Right Torso
+ER Medium Laser, Right Torso
+AMS, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLERLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLERLargeLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -61,13 +61,13 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -79,22 +79,22 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLStreakSRM4
-CLStreakSRM4
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 (omnipod)
 CLERMediumLaser
-IS Streak SRM 4 Ammo
+IS Streak SRM 4 Ammo (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM4
-CLStreakSRM4
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 (omnipod)
 CLERMediumLaser
-Radical Heat Sink System
-Radical Heat Sink System
-Radical Heat Sink System
+Radical Heat Sink System (omnipod)
+Radical Heat Sink System (omnipod)
+Radical Heat Sink System (omnipod)
 CLMASC
 CLMASC
 CLMASC
@@ -111,7 +111,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CL Super Charger
+CL Super Charger (omnipod)
 CLAMS Ammo
 
 Head:

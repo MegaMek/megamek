@@ -9,17 +9,18 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:30
-Engine:210 Light Engine
-Structure:Endo Steel
+Engine:210 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
 Walk MP:7
 Jump MP:0
 
-Armor:Light Ferro-Fibrous
+Armor:Light Ferro-Fibrous(Inner Sphere)
 LA Armor:10
 RA Armor:10
 LT Armor:11
@@ -34,12 +35,12 @@ RTC Armor:4
 
 Weapons:7
 Light PPC, Left Arm
-Light PPC, Right Arm
 ER Medium Laser, Left Arm
+Light PPC, Right Arm
 ER Medium Laser, Right Arm
-ER Small Laser, Head
 ER Small Laser, Left Torso
 ER Small Laser, Right Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
@@ -47,26 +48,26 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Light PPC
-Light PPC
-ISERMediumLaser
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+Light PPC (omnipod)
+Light PPC (omnipod)
+ISERMediumLaser (omnipod)
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Light PPC
-Light PPC
-ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light PPC (omnipod)
+Light PPC (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:
@@ -75,23 +76,23 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 ISC3iUnit
 ISC3iUnit
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
+ISERSmallLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -116,7 +117,7 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -130,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

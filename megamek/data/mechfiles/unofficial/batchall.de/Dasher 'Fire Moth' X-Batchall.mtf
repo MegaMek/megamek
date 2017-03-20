@@ -2,21 +2,22 @@ Version:1.0
 Dasher (Fire Moth)
 X-Batchall
 
-Config:Biped Omni
+Config:Biped Omnimech
 TechBase:Clan
 Era:3050
 Rules Level:2
 
 Mass:20
-Engine:200 XL Engine
-Structure:Endo Steel
-Myomer:MASC
+Engine:200 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
 Walk MP:10
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:3
 RA Armor:3
 LT Armor:4
@@ -29,23 +30,27 @@ RTL Armor:2
 RTR Armor:2
 RTC Armor:2
 
-Weapons:4
-5 CLSRM2, Right Arm, Ammo:50
-1 CLHeavyMediumLaser, Left Arm
-1 CLERSmallLaser, Right Torso
-1 CLERSmallLaser, Left Torso
+Weapons:8
+Heavy Medium Laser, Left Arm
+SRM 2, Right Arm
+SRM 2, Right Arm
+SRM 2, Right Arm
+SRM 2, Right Arm
+SRM 2, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -54,22 +59,22 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLSRM2
-CLSRM2
-CLSRM2
-CLSRM2
-CLSRM2
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLSRM2 (omnipod)
+CLSRM2 (omnipod)
+CLSRM2 (omnipod)
+CLSRM2 (omnipod)
+CLSRM2 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERSmallLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -80,11 +85,11 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
-CLSRM2 Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERSmallLaser (omnipod)
+Clan Ammo SRM-2 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -103,13 +108,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLMASC
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLTargeting Computer
+CLTargeting Computer (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -124,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -138,11 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

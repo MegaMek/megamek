@@ -9,13 +9,14 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:60
-Engine:240 Light Engine
-Structure:Standard
+Engine:240 Light Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:9
 Walk MP:4
 Jump MP:4
 
@@ -33,11 +34,11 @@ RTR Armor:6
 RTC Armor:9
 
 Weapons:7
+MRM 10, Left Arm
+MRM 10, Left Arm
+MRM 10, Left Arm
 Streak SRM 6, Right Arm
 Streak SRM 6, Right Arm
-MRM 10, Left Arm
-MRM 10, Left Arm
-MRM 10, Left Arm
 ER Medium Laser, Left Torso
 ER Medium Laser, Right Torso
 
@@ -48,47 +49,47 @@ Lower Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-MRM 10
-MRM 10
-MRM 10
-MRM 10
-MRM 10
-MRM 10
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+MRM 10 (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISStreakSRM6
-ISStreakSRM6
-ISStreakSRM6
-ISStreakSRM6
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+ISStreakSRM6 (omnipod)
+ISStreakSRM6 (omnipod)
+ISStreakSRM6 (omnipod)
+ISStreakSRM6 (omnipod)
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-ISERMediumLaser
-IS Streak SRM 6 Ammo
-IS MRM 10 Ammo
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISERMediumLaser (omnipod)
+IS Streak SRM 6 Ammo (omnipod)
+IS MRM 10 Ammo (omnipod)
 ISC3iUnit
 ISC3iUnit
-ISCASE
+ISCASE (omnipod)
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-ISERMediumLaser
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -116,8 +117,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISGuardianECMSuite
-ISGuardianECMSuite
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -130,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:70
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -32,19 +32,19 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:6
-Medium Laser, Center Torso
-Medium Laser, Center Torso
 ER Large Laser, Left Arm
+AC/20, Right Arm
 SRM 6, Left Torso
 SRM 6, Right Torso
-Autocannon/20, Right Arm
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISERLargeLaser
-ISERLargeLaser
+ISERLargeLaser (omnipod)
+ISERLargeLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -56,25 +56,25 @@ ISERLargeLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-SRM 6
-SRM 6
-IS Ammo SRM-6
-IS Ammo SRM-6
+SRM 6 (omnipod)
+SRM 6 (omnipod)
+IS Ammo SRM-6 (omnipod)
+IS Ammo SRM-6 (omnipod)
 ISCASE
 -Empty-
 -Empty-
@@ -85,11 +85,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-SRM 6
-SRM 6
-IS Ammo AC/20
-IS Ammo AC/20
-IS Ammo AC/20
+SRM 6 (omnipod)
+SRM 6 (omnipod)
+IS Ammo AC/20 (omnipod)
+IS Ammo AC/20 (omnipod)
+IS Ammo AC/20 (omnipod)
 ISCASE
 -Empty-
 -Empty-
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

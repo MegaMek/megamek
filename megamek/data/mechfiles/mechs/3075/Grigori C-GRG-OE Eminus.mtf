@@ -9,13 +9,14 @@ Source:TRO 3075
 Rules Level:4
 
 Mass:60
-Engine:240 Light Engine
-Structure:Standard
+Engine:240 Light Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
 
 Heat Sinks:12 Double
+Base Chassis Heat Sinks:9
 Walk MP:4
 Jump MP:0
 
@@ -33,13 +34,13 @@ RTR Armor:6
 RTC Armor:9
 
 Weapons:8
-Thunderbolt 15, Right Arm
 ER PPC, Left Arm
+Thunderbolt 15, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
 ER Medium Laser, Head
-ER Medium Laser, Left Torso
-ER Medium Laser, Left Torso
-ER Medium Laser, Right Torso
-ER Medium Laser, Right Torso
 ER Small Laser, Head
 
 Left Arm:
@@ -48,9 +49,9 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -61,23 +62,23 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Thunderbolt 15
-Thunderbolt 15
-Thunderbolt 15
-IS Ammo Thunderbolt-15
-IS Ammo Thunderbolt-15
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+Thunderbolt 15 (omnipod)
+Thunderbolt 15 (omnipod)
+Thunderbolt 15 (omnipod)
+IS Ammo Thunderbolt-15 (omnipod)
+IS Ammo Thunderbolt-15 (omnipod)
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERMediumLaser
-ISERMediumLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
 ISC3iUnit
 ISC3iUnit
 -Empty-
@@ -87,12 +88,12 @@ ISC3iUnit
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERMediumLaser
-ISERMediumLaser
-ISCASE
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -117,8 +118,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISERMediumLaser
-ISERSmallLaser
+ISERMediumLaser (omnipod)
+ISERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -131,8 +132,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +146,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

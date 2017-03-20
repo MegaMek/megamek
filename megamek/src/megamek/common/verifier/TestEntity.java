@@ -1030,8 +1030,8 @@ public abstract class TestEntity implements TestEntityOption {
                     turretWeight += m.getType().getTonnage(tank);
                 }
             }
-            turretWeight *= 0.1f;
-            turret2Weight *= 0.1f;
+            turretWeight *= 0.1;
+            turret2Weight *= 0.1;
             if (tank.isSupportVehicle()) {
                 if (getEntity().getWeight() < 5) {
                     turretWeight = TestEntity.ceil(turretWeight, Ceil.KILO);
@@ -1127,6 +1127,30 @@ public abstract class TestEntity implements TestEntityOption {
             	}
             }
             
+            if (mech.isOmni()) {
+                int total = 0;
+                int allocated = 0;
+                boolean compact = false;
+                for (Mounted m : mech.getMisc()) {
+                    if (m.getType().hasFlag(MiscType.F_HEAT_SINK)
+                                || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                                || m.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                        total++;
+                        compact |= m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK);
+                        if (m.getLocation() != Entity.LOC_NONE) {
+                            allocated++;
+                        }
+                    }
+                }
+                int required = total - (mech.isOmni()?
+                        mech.getEngine().getBaseChassisHeatSinks(compact) :
+                            mech.getEngine().integralHeatSinkCapacity(compact));
+                if (allocated < required) {
+                    illegal = true;
+                    buff.append("Only " + allocated + " of the required " + required + " heat sinks are allocated to critical slots.");
+                }
+            }
+            
             if (hasHarjelII && hasHarjelIII) {
                 illegal = true;
                 buff.append("Can't mix HarJel II and HarJel III\n");
@@ -1136,8 +1160,6 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("Cannot mount HarJel repair system on IndustrialMech\n");
                     illegal = true;
                 }
-                // note: should check for pod mount on Omni here, but we don't
-                // track equipment fixed vs pod-mount status
                 for (int loc = 0; loc < mech.locations(); ++loc) {
                     int count = 0;
                     for (Mounted m : mech.getMisc()) {
@@ -1585,6 +1607,15 @@ public abstract class TestEntity implements TestEntityOption {
                         + "(jump boosters are legal)");
             }
 
+        }
+        
+        if (getEntity().isOmni()) {
+            for (Mounted m : getEntity().getEquipment()) {
+                if (m.isOmniPodMounted() && m.getType().isOmniFixedOnly()) {
+                    illegal = true;
+                    buff.append(m.getType().getName() + " cannot be pod mounted.");
+                }
+            }
         }
         return illegal;
     }

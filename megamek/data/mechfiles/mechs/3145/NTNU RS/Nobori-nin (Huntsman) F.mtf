@@ -4,7 +4,7 @@ F
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
-Era:3132	
+Era:3132
 Source:RS 3145 NTNU - Dark Ages
 Rules Level:3
 
@@ -33,20 +33,20 @@ RTC Armor:7
 
 Weapons:4
 Improved Heavy Large Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
 LRM 15, Right Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLERMediumLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -54,25 +54,25 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRM15
-CLLRM15
-CLArtemisV
-CLArtemisV
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
-CLTargeting Computer
-CLTargeting Computer
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -83,12 +83,12 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-Clan Ammo LRM-15 (Clan) Artemis V-capable
-Clan Ammo LRM-15 (Clan) Artemis V-capable
-Radical Heat Sink System
-Radical Heat Sink System
-Radical Heat Sink System
-CLCASEII
+Clan Ammo LRM-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis V-capable (omnipod)
+Radical Heat Sink System (omnipod)
+Radical Heat Sink System (omnipod)
+Radical Heat Sink System (omnipod)
+CLCASEII (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous

@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+5
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -76,35 +80,43 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERPPC
-CLTargeting Computer
+CLERPPC:OMNI
+CLTargeting Computer:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLLRM15
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
-CLArtemisIV
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLLRM15:OMNI
+Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
+Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
+CLArtemisIV:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLLRM15
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
-CLArtemisIV
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLLRM15:OMNI
+Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
+Clan Ammo LRM-15 (Clan) Artemis-capable:OMNI
+CLArtemisIV:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERMediumLaser
-CLECMSuite
+CLERMediumLaser:OMNI
+CLECMSuite:OMNI
 </Aft Equipment>
 
 <source>

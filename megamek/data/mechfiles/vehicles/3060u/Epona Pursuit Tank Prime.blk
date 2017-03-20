@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,8 +65,8 @@ Hover
 </armor>
 
 <Body Equipment>
-Clan Streak SRM 4 Ammo
-CLCASE
+Clan Streak SRM 4 Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -82,11 +82,11 @@ CLCASE
 </Rear Equipment>
 
 <Turret Equipment>
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLStreakSRM4
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
+CLStreakSRM4:OMNI
 </Turret Equipment>
 
 <source>
@@ -96,4 +96,8 @@ Succession Wars
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>
 

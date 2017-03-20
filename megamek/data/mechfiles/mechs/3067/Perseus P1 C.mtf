@@ -1,24 +1,24 @@
-Version:1.1
+Version:1.0
 Perseus
 P1C
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3058
+Source:TRO 3067
 Rules Level:2
-source:TRO 3067
 
 Mass:75
-Engine:300 XL Fusion Engine
-Structure:Endo-Steel
+Engine:300 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
-Base Chassis Heat Sinks: 12
+Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:21
 RA Armor:21
 LT Armor:24
@@ -32,98 +32,110 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:7
-1 ISLightGaussRifle, Left Arm, Ammo:32
-1 ISUltraAC10, Right Arm, Ammo:30
-1 ISStreakSRM2, Head, Ammo:50
-1 ISERMediumLaser, Right Leg
-1 ISERMediumLaser, Right Leg
-1 ISERMediumLaser, Left Leg
-1 ISMediumPulseLaser (R), Center Torso (R)
+ER Medium Laser, Left Leg
+ER Medium Laser, Right Leg
+ER Medium Laser, Right Leg
+Light Gauss Rifle, Left Arm
+Ultra AC/10, Right Arm
+Medium Pulse Laser, Center Torso
+Streak SRM 2, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGauss Ammo
-ISLightGauss Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+IS Light Gauss Ammo (omnipod)
+IS Light Gauss Ammo (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
-Engine
-Engine
-Engine
-ISUltraAC10 Ammo
-ISStreakSRM2 Ammo
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ultra AC/10 Ammo (omnipod)
+IS Streak SRM 2 Ammo (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-Engine
-Engine
-Engine
-ISUltraAC10 Ammo
-ISUltraAC10 Ammo
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ultra AC/10 Ammo (omnipod)
+IS Ultra AC/10 Ammo (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISMediumPulseLaser (R)
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser (R) (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISStreakSRM2
+ISStreakSRM2 (omnipod)
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISERMediumLaser
+ISERMediumLaser (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 
 Right Leg:
@@ -131,5 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISERMediumLaser
-ISERMediumLaser
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

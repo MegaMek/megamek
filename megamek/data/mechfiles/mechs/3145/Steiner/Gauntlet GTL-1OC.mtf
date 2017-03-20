@@ -32,18 +32,18 @@ RTR Armor:5
 RTC Armor:10
 
 Weapons:3
-LAC/5, Right Arm
-Snub-Nose PPC, Right Arm
 TSEMP Cannon, Left Arm
+Snub-Nose PPC, Right Arm
+LAC/5, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Light Ferro-Fibrous
@@ -53,10 +53,10 @@ IS Light Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISSNPPC
-ISSNPPC
-Light Auto Cannon/5
-Light Auto Cannon/5
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
+Light Auto Cannon/5 (omnipod)
+Light Auto Cannon/5 (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Light Ferro-Fibrous
@@ -67,9 +67,9 @@ IS Light Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -81,9 +81,9 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-IS Ammo LAC/5
-IS Ammo LAC/5
-ISCASEII
+IS Ammo LAC/5 (omnipod)
+IS Ammo LAC/5 (omnipod)
+ISCASEII (omnipod)
 ISMASC
 ISMASC
 ISMASC

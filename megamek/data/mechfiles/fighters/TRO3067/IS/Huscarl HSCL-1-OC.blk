@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+1
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -68,24 +72,24 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISUltraAC20
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
+ISUltraAC20:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISUltraAC20
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
+ISUltraAC20:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

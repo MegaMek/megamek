@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:60
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -40,9 +40,9 @@ AMS, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISERPPC
-ISERPPC
-ISERPPC
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,9 +54,9 @@ ISERPPC
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISERPPC
-ISERPPC
-ISERPPC
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -72,8 +72,8 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISAntiMissileSystem
-ISAMS Ammo
+ISAntiMissileSystem (omnipod)
+ISAMS Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -86,8 +86,8 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISAntiMissileSystem
-ISAMS Ammo
+ISAntiMissileSystem (omnipod)
+ISAMS Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-

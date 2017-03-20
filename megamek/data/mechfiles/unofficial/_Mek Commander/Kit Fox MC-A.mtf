@@ -8,15 +8,16 @@ Era:3059
 Rules Level:2
 
 Mass:30
-Engine:180 XL Engine
-Structure:Standard
+Engine:180 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:10
 RA Armor:10
 LT Armor:10
@@ -30,17 +31,17 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:4
-1 CLUltraAC5, Right Arm, Ammo:20
-1 CLStreakSRM4, Left Arm, Ammo:25
-1 CLERMediumLaser, Right Torso
-1 CLERMediumLaser, Left Torso
+Streak SRM 4, Left Arm
+Ultra AC/5, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM4
-CLStreakSRM4 Ammo
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -52,10 +53,10 @@ CLStreakSRM4 Ammo
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5 Ammo
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,12 +67,12 @@ CLUltraAC5 Ammo
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -80,12 +81,12 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +103,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -146,4 +147,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

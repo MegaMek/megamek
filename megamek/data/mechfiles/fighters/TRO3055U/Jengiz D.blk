@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+9
+</omnipodheatsinks>
+
 <fuel>
 320
 </fuel>
@@ -76,33 +80,45 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLLRM20
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
-CLArtemisIV
+CLHeavyLargeLaser:OMNI
+CLHeavyLargeLaser:OMNI
+CLLRM20:OMNI
+Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
+CLArtemisIV:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERLargeLaser
-CLERMediumLaser
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLERLargeLaser:OMNI
+CLERMediumLaser:OMNI
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERLargeLaser
-CLERMediumLaser
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLERLargeLaser:OMNI
+CLERMediumLaser:OMNI
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERSmallLaser
+CLERSmallLaser:OMNI
 </Aft Equipment>
 
 <source>

@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:4
 
 Mass:90
-Engine:360 XL Engine
-Structure:Standard
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -34,29 +34,29 @@ RTC Armor:12
 Weapons:14
 B-Pod, Left Leg
 B-Pod, Right Leg
+Enhanced LRM 5, Left Arm
+Enhanced LRM 5, Left Arm
+Enhanced LRM 5, Left Arm
+Enhanced LRM 5, Right Arm
+Enhanced LRM 5, Right Arm
+Enhanced LRM 5, Right Arm
 ER Medium Laser, Left Torso
+Enhanced LRM 5, Left Torso
 ER Medium Laser, Right Torso
+Enhanced LRM 5, Right Torso
 Medium Pulse Laser, Center Torso
 ER Medium Laser, Center Torso
-Enhanced LRM 5, Right Arm
-Enhanced LRM 5, Right Arm
-Enhanced LRM 5, Right Arm
-Enhanced LRM 5, Left Arm
-Enhanced LRM 5, Left Arm
-Enhanced LRM 5, Left Arm
-Enhanced LRM 5, Left Torso
-Enhanced LRM 5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Enhanced LRM 5
-Enhanced LRM 5
-Enhanced LRM 5
-Enhanced LRM 5
-Enhanced LRM 5
-Enhanced LRM 5
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -68,22 +68,22 @@ Lower Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Enhanced LRM 5
-Enhanced LRM 5
-Enhanced LRM 5
-Enhanced LRM 5
-Enhanced LRM 5
-Enhanced LRM 5
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
-Enhanced LRM 5
-Enhanced LRM 5
-ISEnhancedLRM5 Ammo
-ISEnhancedLRM5 Ammo
+ISERMediumLaser (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+ISEnhancedLRM5 Ammo (omnipod)
+ISEnhancedLRM5 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -93,11 +93,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
-Enhanced LRM 5
-Enhanced LRM 5
-ISEnhancedLRM5 Ammo
-ISEnhancedLRM5 Ammo
+ISERMediumLaser (omnipod)
+Enhanced LRM 5 (omnipod)
+Enhanced LRM 5 (omnipod)
+ISEnhancedLRM5 Ammo (omnipod)
+ISEnhancedLRM5 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -114,14 +114,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser
-ISERMediumLaser
+ISMediumPulseLaser (omnipod)
+ISERMediumLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISC3SlaveUnit
+ISC3SlaveUnit (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -136,7 +136,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISBPod
+ISBPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -150,7 +150,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISBPod
+ISBPod (omnipod)
 -Empty-
 -Empty-
 -Empty-

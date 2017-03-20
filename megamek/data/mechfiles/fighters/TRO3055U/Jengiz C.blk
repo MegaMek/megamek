@@ -76,33 +76,49 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLLBXAC20
-Clan LB 20-X Cluster Ammo
-Clan LB 20-X Cluster Ammo
+CLLBXAC20:OMNI
+Clan LB 20-X Cluster Ammo:OMNI
+Clan LB 20-X Cluster Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLLBXAC20
-Clan LB 20-X Cluster Ammo
-Clan LB 20-X Cluster Ammo
+CLLBXAC20:OMNI
+Clan LB 20-X Cluster Ammo:OMNI
+Clan LB 20-X Cluster Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
-CLERSmallLaser
+CLStreakSRM4:OMNI
+Clan Streak SRM 4 Ammo:OMNI
+CLERSmallLaser:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
 CLCASE
 </Aft Equipment>
 

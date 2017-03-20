@@ -32,38 +32,38 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:10
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
 ER Large Pulse Laser, Right Arm
 iATM 12, Left Torso
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle Ammo
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle Ammo (omnipod)
 Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERLargePulseLaser
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -74,14 +74,14 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
@@ -111,7 +111,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-NovaCEWS
+NovaCEWS (omnipod)
 
 Head:
 Life Support

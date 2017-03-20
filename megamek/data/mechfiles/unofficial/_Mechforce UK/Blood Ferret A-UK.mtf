@@ -8,15 +8,16 @@ Era:3055
 Rules Level:2
 
 Mass:20
-Engine:160 XL Engine
-Structure:Endo Steel
-Myomer:MASC
+Engine:160 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:6
 Walk MP:8
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:5
 RA Armor:5
 LT Armor:6
@@ -30,13 +31,13 @@ RTR Armor:3
 RTC Armor:4
 
 Weapons:1
-1 CLERPPC, Left Arm
+ER PPC, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -63,8 +64,9 @@ Hand Actuator
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -72,21 +74,20 @@ CLDouble Heat Sink
 -Empty-
 -Empty-
 -Empty-
-Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
-Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -99,7 +100,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
+Clan Endo Steel
 CLMASC
 
 Head:
@@ -121,8 +122,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -135,12 +136,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

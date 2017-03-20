@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:65
 Engine:325 XL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
@@ -32,32 +32,32 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:6
+Ultra AC/20, Left Arm
 ER PPC, Right Arm
 ER Small Laser, Left Torso
 LRM 10, Right Torso
 LRM 10, Right Torso
 LRM 10, Right Torso
-Ultra AC/20, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -70,10 +70,10 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Endo-Steel
+CLERSmallLaser (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -84,12 +84,12 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10
-CLLRM10
-CLLRM10
-Clan Ammo LRM-10
-Clan Ammo LRM-10
-Clan Endo-Steel
+CLLRM10 (omnipod)
+CLLRM10 (omnipod)
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -106,7 +106,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Endo-Steel
+Clan Endo Steel
 Clan Ferro-Fibrous
 
 Head:
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

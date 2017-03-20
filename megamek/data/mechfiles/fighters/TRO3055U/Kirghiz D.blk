@@ -44,13 +44,13 @@ Aerodyne
 25
 </heatsinks>
 
-<omnipodheatsinks>
-5
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
+
+<omnipodheatsinks>
+5
+</omnipodheatsinks>
 
 <fuel>
 400
@@ -87,7 +87,11 @@ Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -99,7 +103,11 @@ Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
 Clan Ammo ATM-12:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

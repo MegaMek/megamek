@@ -33,26 +33,26 @@ RTR Armor:5
 RTC Armor:6
 
 Weapons:6
-Improved Heavy Medium Laser, Right Arm
-Improved Heavy Medium Laser, Right Arm
-Improved Heavy Medium Laser, Right Arm
-Improved Heavy Medium Laser, Center Torso
-Improved Heavy Medium Laser, Left Torso
 Ultra AC/20, Left Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Left Torso
+Improved Heavy Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
 
 Right Arm:
 Shoulder
@@ -61,12 +61,12 @@ Lower Arm Actuator
 TSM
 TSM
 TSM
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 
 Left Torso:
 Fusion Engine
@@ -78,9 +78,9 @@ Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CL Super Charger
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CL Super Charger (omnipod)
 
 Right Torso:
 Fusion Engine
@@ -91,10 +91,10 @@ Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-CLCASEII
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+CLCASEII (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -106,9 +106,9 @@ Fusion Engine
 TSM
 TSM
 TSM
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLECMSuite
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLECMSuite (omnipod)
 
 Head:
 Life Support

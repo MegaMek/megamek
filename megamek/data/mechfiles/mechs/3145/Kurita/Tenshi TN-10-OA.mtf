@@ -42,40 +42,40 @@ Large VSP Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISLargeVariableSpeedLaser
-ISLargeVariableSpeedLaser
-ISLargeVariableSpeedLaser
-ISLargeVariableSpeedLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISLargeVariableSpeedLaser
-ISLargeVariableSpeedLaser
-ISLargeVariableSpeedLaser
-ISLargeVariableSpeedLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-MRM 30
-MRM 30
-MRM 30
-MRM 30
-MRM 30
-ISApollo
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+ISApollo (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 -Empty-
@@ -84,12 +84,12 @@ IS Endo-Composite
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-IS MRM 30 Ammo
-IS MRM 30 Ammo
-ISCASEII
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS MRM 30 Ammo (omnipod)
+IS MRM 30 Ammo (omnipod)
+ISCASEII (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 -Empty-
@@ -104,10 +104,10 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLargeVariableSpeedLaser
-ISLargeVariableSpeedLaser
-ISLargeVariableSpeedLaser
-ISLargeVariableSpeedLaser
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
 
 Head:
 Life Support
@@ -128,7 +128,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Coolant Pod
+IS Coolant Pod (omnipod)
 IS Endo-Composite
 -Empty-
 -Empty-
@@ -142,7 +142,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Coolant Pod
+IS Coolant Pod (omnipod)
 IS Endo-Composite
 -Empty-
 -Empty-

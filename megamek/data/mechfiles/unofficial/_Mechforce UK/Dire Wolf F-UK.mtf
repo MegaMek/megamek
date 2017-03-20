@@ -8,15 +8,16 @@ Era:3050
 Rules Level:2
 
 Mass:100
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:19 Double
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -29,70 +30,77 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:14
 
-Weapons:7
-1 CLERLargeLaser, Right Arm
-3 CLStreakSRM6, Right Arm, Ammo:60
-1 CLERLargeLaser, Left Arm
-3 CLStreakSRM6, Left Arm
-4 CLMediumPulseLaser, Right Torso
-2 CLMediumPulseLaser, Left Torso
-1 CLAntiPersonnelPod, Right Leg
+Weapons:14
+ER Large Laser, Left Arm
+Streak SRM 6, Left Arm
+Streak SRM 6, Left Arm
+Streak SRM 6, Left Arm
+ER Large Laser, Right Arm
+Streak SRM 6, Right Arm
+Streak SRM 6, Right Arm
+Streak SRM 6, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-CLStreakSRM6 Ammo
+CLERLargeLaser (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-CLStreakSRM6 Ammo
+CLERLargeLaser (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -105,8 +113,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
@@ -127,8 +135,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -141,7 +149,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -149,4 +157,5 @@ CLAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-
+
 

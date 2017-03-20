@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:70
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -32,66 +32,66 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:5
-Ultra AC/10, Right Arm
 ER PPC, Left Arm
 ER Medium Laser, Left Arm
+Ultra AC/10, Right Arm
 Medium Laser, Center Torso
 Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
-ISERMediumLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERMediumLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISGuardianECMSuite
-ISGuardianECMSuite
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
 ISCASE
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
-ISC3iUnit
-ISC3iUnit
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Ultra AC/10 Ammo (omnipod)
+IS Ultra AC/10 Ammo (omnipod)
+IS Ultra AC/10 Ammo (omnipod)
+ISC3iUnit (omnipod)
+ISC3iUnit (omnipod)
 ISCASE
 
 Center Torso:

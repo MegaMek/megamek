@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:55
-Engine:330 XL Engine
-Structure:Endo Steel
+Engine:330 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -36,50 +36,50 @@ Light Machine Gun, Left Arm
 Light Machine Gun, Left Arm
 Light Machine Gun, Left Arm
 Light Machine Gun, Left Arm
-Light Machine Gun, Right Arm
-Light Machine Gun, Right Arm
-Light Machine Gun, Right Arm
-Light Machine Gun, Right Arm
-Plasma Rifle, Right Torso
-Medium Laser, Left Torso
-Medium Laser, Right Torso
 Light Machine Gun Array, Left Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
 Light Machine Gun Array, Right Arm
+Medium Laser, Left Torso
+Plasma Rifle, Right Torso
+Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Light Machine Gun
-Light Machine Gun
-Light Machine Gun
-Light Machine Gun
-ISLMGA
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+ISLMGA (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Light Machine Gun
-Light Machine Gun
-Light Machine Gun
-Light Machine Gun
-ISLMGA
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+Light Machine Gun (omnipod)
+ISLMGA (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser
-IS Light Machine Gun Ammo - Full
+Medium Laser (omnipod)
+IS Light Machine Gun Ammo - Full (omnipod)
 ISMASC
 ISMASC
 ISMASC
@@ -92,12 +92,12 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISPlasmaRifle
-ISPlasmaRifle
-Medium Laser
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-IS Light Machine Gun Ammo - Full
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+Medium Laser (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+IS Light Machine Gun Ammo - Full (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -135,8 +135,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -149,8 +149,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

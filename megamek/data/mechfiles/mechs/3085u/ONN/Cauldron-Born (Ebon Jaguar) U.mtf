@@ -9,8 +9,8 @@ Source:Jihad
 Rules Level:4
 
 Mass:65
-Engine:325 XL (Clan) Engine
-Structure:Endo Steel
+Engine:325 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -33,20 +33,20 @@ RTC Armor:9
 
 Weapons:6
 Large Pulse Laser, Left Arm
-LRT 15, Left Torso
 ER Small Laser, Left Arm
 Large Pulse Laser, Right Arm
-LRT 15, Right Torso
 ER Small Laser, Right Arm
+LRT 15, Left Torso
+LRT 15, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLERSmallLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLERSmallLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -56,11 +56,11 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLERSmallLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLERSmallLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -70,30 +70,30 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLUMU
-CLUMU
-CLUMU
-CLLRTorpedo15
-CLLRTorpedo15
-Clan Ammo LRTorpedo-15
-Endo Steel
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+Clan Ammo LRTorpedo-15 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLUMU
-CLUMU
-CLLRTorpedo15
-CLLRTorpedo15
-Clan Ammo LRTorpedo-15
-Endo Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+Clan Ammo LRTorpedo-15 (omnipod)
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

@@ -44,13 +44,13 @@ Aerodyne
 26
 </heatsinks>
 
-<omnipodheatsinks>
-6
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
+
+<omnipodheatsinks>
+6
+</omnipodheatsinks>
 
 <fuel>
 400
@@ -76,7 +76,11 @@ CLLRM20:OMNI
 Clan Ammo LRM-20:OMNI
 CLERPPC:OMNI
 CLERSmallLaser:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -85,7 +89,11 @@ CLLRM20:OMNI
 Clan Ammo LRM-20:OMNI
 Clan Ammo LRM-20:OMNI
 CLERPPC:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -94,7 +102,11 @@ CLLRM20:OMNI
 Clan Ammo LRM-20:OMNI
 Clan Ammo LRM-20:OMNI
 CLERPPC:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

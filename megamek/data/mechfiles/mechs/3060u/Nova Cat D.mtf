@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:70
-Engine:280 XL (Clan) Engine
-Structure:Endo Steel
+Engine:280 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:20 Double
@@ -40,58 +40,58 @@ Heavy Large Laser, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-Clan LB 10-X AC Ammo
-Clan LB 10-X Cluster Ammo
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -104,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:4
 
 Mass:60
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -41,10 +41,10 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -55,8 +55,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERLargeLaser
+CLERLargeLaser (omnipod)
+CLERLargeLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -72,8 +72,8 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Clan Streak SRM 6 Ammo
-Clan Streak SRM 6 Ammo
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -105,7 +105,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-ISC3SlaveUnit
+ISC3SlaveUnit (omnipod)
 
 Head:
 Life Support

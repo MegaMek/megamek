@@ -8,15 +8,16 @@ Era:3055
 Rules Level:2
 
 Mass:30
-Engine:270 XL Engine
-Structure:Endo Steel
+Engine:270 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:9
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:10
 RA Armor:10
 LT Armor:8
@@ -29,19 +30,23 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:5
 
-Weapons:2
-2 CLMediumPulseLaser, Right Arm
-4 CLERMediumLaser, Left Arm
+Weapons:6
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -52,8 +57,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -64,28 +69,28 @@ CLMediumPulseLaser
 Left Torso:
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -144,4 +149,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

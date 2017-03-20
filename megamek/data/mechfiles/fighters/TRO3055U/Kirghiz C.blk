@@ -74,7 +74,11 @@ Clan Ultra AC/20 Ammo:OMNI
 CLLargePulseLaser:OMNI
 CLLargePulseLaser:OMNI
 CLERSmallLaser:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

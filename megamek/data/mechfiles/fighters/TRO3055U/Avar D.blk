@@ -82,7 +82,11 @@ Clan Ammo ATM-9:OMNI
 Clan Ammo ATM-9:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

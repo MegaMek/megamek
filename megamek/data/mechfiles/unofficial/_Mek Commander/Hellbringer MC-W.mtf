@@ -8,15 +8,16 @@ Era:3059
 Rules Level:2
 
 Mass:65
-Engine:325 XL Engine
-Structure:Endo Steel
+Engine:325 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:13
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:17
 RA Armor:17
 LT Armor:21
@@ -30,49 +31,49 @@ RTR Armor:6
 RTC Armor:7
 
 Weapons:5
-1 CLGaussRifle, Right Arm, Ammo:32
-1 CLGaussRifle, Left Arm
-1 CLERMediumLaser, Right Torso
-1 CLStreakSRM4, Right Torso, Ammo:25
-1 CLERMediumLaser, Left Torso
+Gauss Rifle, Left Arm
+Gauss Rifle, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+Streak SRM 4, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLGauss Ammo
-CLGauss Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -81,14 +82,14 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLStreakSRM4
-CLStreakSRM4 Ammo
-CLGauss Ammo
-CLGauss Ammo
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -147,4 +148,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

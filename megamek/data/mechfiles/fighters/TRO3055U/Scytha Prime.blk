@@ -44,13 +44,13 @@ Aerodyne
 26
 </heatsinks>
 
-<omnipodheatsinks>
-6
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
+
+<omnipodheatsinks>
+6
+</omnipodheatsinks>
 
 <fuel>
 320
@@ -85,7 +85,11 @@ Clan Ultra AC/20 Ammo:OMNI
 Clan Ultra AC/20 Ammo:OMNI
 CLERSmallLaser:OMNI
 CLERLargeLaser:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

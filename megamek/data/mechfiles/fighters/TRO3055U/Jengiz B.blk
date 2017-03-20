@@ -82,7 +82,11 @@ Clan Gauss Ammo:OMNI
 Clan Gauss Ammo:OMNI
 CLERMediumLaser:OMNI
 CLERMediumLaser:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -90,7 +94,11 @@ CLERPPC:OMNI
 CLLRM20:OMNI
 CLArtemisIV:OMNI
 Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -98,7 +106,11 @@ CLERPPC:OMNI
 CLLRM20:OMNI
 CLArtemisIV:OMNI
 Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

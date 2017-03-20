@@ -36,6 +36,10 @@ Hover
 troopspace:5.0
 </transporters>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 9
 </cruiseMP>
@@ -77,7 +81,7 @@ CLHeavyMG:OMNI
 CLHeavyMG:OMNI
 CLHeavyMG:OMNI
 CLHeavyMG:OMNI
-CLHMGA:OMNI
+Clan Heavy Machine Gun Array:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -105,4 +109,8 @@ Jihad
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>
 

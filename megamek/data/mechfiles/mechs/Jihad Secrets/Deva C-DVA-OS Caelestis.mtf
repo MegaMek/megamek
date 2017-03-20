@@ -1,24 +1,25 @@
-Version:1.0
+Version:1.1
 Deva
 C-DVA-OS Caelestis
 
-Config:Biped Omni
+Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3075
 Rules Level:4
 
 Mass:70
-Engine:280 Light Engine
-Structure:Endo Steel
+Engine:280 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
-Gyro:Heavy Duty Gyro
 Cockpit:Small Cockpit
+Gyro:Heavy Duty Gyro
 
 Heat Sinks:14 Double
+Base Chassis Heat Sinks:11
 Walk MP:4
 Jump MP:0
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:22
 RA Armor:22
 LT Armor:20
@@ -31,65 +32,64 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:5
-1 Blazer Cannon, Right Arm
-1 Blazer Cannon, Left Arm
-1 ISImprovedC3CPU, Right Torso
-1 ISERSmallLaser, Center Torso
-1 ISLaserAntiMissileSystem, Head
+Weapons:4
+Blazer Cannon, Left Arm
+Blazer Cannon, Right Arm
+ER Small Laser, Center Torso
+Laser AMS, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Blazer Cannon
-Blazer Cannon
-Blazer Cannon
-Blazer Cannon
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Blazer Cannon
-Blazer Cannon
-Blazer Cannon
-Blazer Cannon
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISImprovedC3CPU
-ISImprovedC3CPU
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo Steel
-Endo Steel
+ISC3iUnit
+ISC3iUnit
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -105,16 +105,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Supercharger
-ISERSmallLaser
+Supercharger (omnipod)
+ISERSmallLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISLaserAntiMissileSystem
-ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem (omnipod)
+ISLaserAntiMissileSystem (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,11 +141,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

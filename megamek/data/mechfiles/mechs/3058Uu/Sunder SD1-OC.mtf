@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:90
-Engine:360 XL Engine
-Structure:Standard
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -41,16 +41,16 @@ Streak SRM 4, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-IS MRM 40 Ammo
-IS MRM 40 Ammo
-IS MRM 40 Ammo
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+IS MRM 40 Ammo (omnipod)
+IS MRM 40 Ammo (omnipod)
+IS MRM 40 Ammo (omnipod)
 
 Right Arm:
 Shoulder
@@ -59,19 +59,19 @@ Lower Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-MRM 30
-MRM 30
-MRM 30
-MRM 30
-MRM 30
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser
-ISC3SlaveUnit
+Medium Laser (omnipod)
+ISC3SlaveUnit (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -84,8 +84,8 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS MRM 30 Ammo
-IS MRM 30 Ammo
+IS MRM 30 Ammo (omnipod)
+IS MRM 30 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -105,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISStreakSRM4
-IS Streak SRM 4 Ammo
+ISStreakSRM4 (omnipod)
+IS Streak SRM 4 Ammo (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISStreakSRM4
+ISStreakSRM4 (omnipod)
 Sensors
 Life Support
 -Empty-

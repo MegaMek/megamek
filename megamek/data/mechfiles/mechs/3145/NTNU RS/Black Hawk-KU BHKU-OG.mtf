@@ -4,7 +4,7 @@ BHKU-OG
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
-Era:3089	
+Era:3089
 Source:RS 3145 NTNU - Early Republic
 Rules Level:2
 
@@ -32,19 +32,19 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:5
+Medium X-Pulse Laser, Left Arm
+Medium X-Pulse Laser, Left Arm
+Medium X-Pulse Laser, Left Arm
 Snub-Nose PPC, Right Arm
-Medium X-Pulse Laser, Left Arm
-Medium X-Pulse Laser, Left Arm
-Medium X-Pulse Laser, Left Arm
 TAG, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumXPulseLaser
-ISMediumXPulseLaser
-ISMediumXPulseLaser
+ISMediumXPulseLaser (omnipod)
+ISMediumXPulseLaser (omnipod)
+ISMediumXPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -55,8 +55,8 @@ ISMediumXPulseLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISSNPPC
-ISSNPPC
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -73,8 +73,8 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISAngelECMSuite
-ISAngelECMSuite
+ISAngelECMSuite (omnipod)
+ISAngelECMSuite (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -87,9 +87,9 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-BloodhoundActiveProbe
-BloodhoundActiveProbe
-BloodhoundActiveProbe
+BloodhoundActiveProbe (omnipod)
+BloodhoundActiveProbe (omnipod)
+BloodhoundActiveProbe (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISTAG
+ISTAG (omnipod)
 Sensors
 Life Support
 -Empty-

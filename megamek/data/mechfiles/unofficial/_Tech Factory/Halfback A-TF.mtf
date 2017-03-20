@@ -8,15 +8,16 @@ Era:3055
 Rules Level:2
 
 Mass:50
-Engine:300 XL Engine
-Structure:Endo Steel
-Myomer:MASC
+Engine:300 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:11 Double
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:16
 RA Armor:16
 LT Armor:17
@@ -29,33 +30,46 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:7
 
-Weapons:4
-1 CLERPPC, Right Arm
-6 CLSRM4, Left Arm, Ammo:75
-5 CLERSmallLaser, Right Torso
-5 CLERSmallLaser, Left Torso
+Weapons:17
+SRM 4, Left Arm
+SRM 4, Left Arm
+SRM 4, Left Arm
+SRM 4, Left Arm
+SRM 4, Left Arm
+SRM 4, Left Arm
+ER PPC, Right Arm
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLSRM4
-CLSRM4
-CLSRM4
-CLSRM4
-CLSRM4
-CLSRM4
-CLSRM4 Ammo
-CLSRM4 Ammo
-CLSRM4 Ammo
+CLSRM4 (omnipod)
+CLSRM4 (omnipod)
+CLSRM4 (omnipod)
+CLSRM4 (omnipod)
+CLSRM4 (omnipod)
+CLSRM4 (omnipod)
+Clan Ammo SRM-4 (omnipod)
+Clan Ammo SRM-4 (omnipod)
+Clan Ammo SRM-4 (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,30 +80,30 @@ CLDouble Heat Sink
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -109,7 +123,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -124,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +152,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -24,6 +24,7 @@ import java.math.BigInteger;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
@@ -171,6 +172,9 @@ public class EquipmentType implements ITechnology {
     protected double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
 
+    // For equipment that cannot be pod-mounted on an omni unit
+    protected boolean omniFixedOnly = false;
+
     /**
      * what modes can this equipment be in?
      */
@@ -286,7 +290,7 @@ public class EquipmentType implements ITechnology {
     public int getTechLevel(int date, boolean clan) {
         return techAdvancement.getTechLevel(date, clan);
     }
-    
+
     public double getTonnage(Entity entity) {
         return getTonnage(entity, Entity.LOC_NONE);
     }
@@ -434,6 +438,14 @@ public class EquipmentType implements ITechnology {
 
     public double getBV(Entity entity) {
         return bv;
+    }
+
+    /**
+     * @return - whether the equipment must be considered part of the base chassis when
+     *           mounted on an omni unit
+     */
+    public boolean isOmniFixedOnly() {
+        return omniFixedOnly;
     }
 
     /**
@@ -628,7 +640,7 @@ public class EquipmentType implements ITechnology {
         }
         return T_ARMOR_UNKNOWN;
     }
-    
+
     public static String getArmorTypeName(int armorType) {
         if ((armorType < 0) || (armorType >= armorNames.length)) {
             return "UNKNOWN";
@@ -643,7 +655,7 @@ public class EquipmentType implements ITechnology {
         return clan ? "Clan " + armorNames[armorType] : "IS "
                 + armorNames[armorType];
     }
-    
+
     public static int getStructureType(EquipmentType et) {
         if (et == null) {
             return T_STRUCTURE_UNKNOWN;
@@ -815,7 +827,7 @@ public class EquipmentType implements ITechnology {
     public int getTechBase() {
         return techAdvancement.getTechBase();
     }
-    
+
     public static String getEquipDateAsString(int date) {
         if (date == DATE_NONE) {
             return "-";

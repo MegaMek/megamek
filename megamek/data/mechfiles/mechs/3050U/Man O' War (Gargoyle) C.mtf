@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:80
-Engine:400 XL Engine
-Structure:Standard
+Engine:400 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
+Base Chassis Heat Sinks:16
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:23
 RA Armor:23
 LT Armor:24
@@ -30,23 +31,26 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:4
-1 CLUltraAC20, Left Arm, Ammo:10
-1 CLAntiPersonnelPod, Left Leg
-6 CLERMediumLaser, Right Arm
-2 CLAntiPersonnelPod, Right Leg
+Weapons:7
+Ultra AC/20, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
 -Empty-
 -Empty-
 
@@ -55,22 +59,22 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLUltraAC20 Ammo
-CLUltraAC20 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -81,9 +85,9 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -110,7 +114,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -125,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
-Ferro-Fibrous
+CLAntiPersonnelPod (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -139,12 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
+CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

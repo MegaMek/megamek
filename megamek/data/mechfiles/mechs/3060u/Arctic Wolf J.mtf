@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:40
-Engine:240 XL (Clan) Engine
-Structure:Endo Steel
+Engine:240 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -43,12 +43,12 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLStreakSRM4
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLStreakSRM4 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -57,11 +57,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM4
-CLPlasmaCannon
-CLPlasmaCannonAmmo
-Endo Steel
-Ferro-Fibrous
+CLStreakSRM4 (omnipod)
+CLPlasmaCannon (omnipod)
+CLPlasmaCannonAmmo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -70,13 +70,13 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
-CLActiveProbe
-Endo Steel
-Ferro-Fibrous
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+CLActiveProbe (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -84,13 +84,13 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
-CLECMSuite
-Endo Steel
-Ferro-Fibrous
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+CLECMSuite (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -113,7 +113,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

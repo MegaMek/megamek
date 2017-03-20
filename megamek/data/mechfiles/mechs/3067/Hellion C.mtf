@@ -1,24 +1,24 @@
-Version:1.1
+Version:1.0
 Hellion
 C
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3061
+Source:TRO 3067
 Rules Level:2
-source:TRO 3067
 
 Mass:30
-Engine:210 XL Fusion Engine
-Structure:Endo-Steel
-Myomer:CLMASC
+Engine:210 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:10 Double
-Base Chassis Heat Sinks: 10
+Base Chassis Heat Sinks:8
 Walk MP:7
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:10
 RA Armor:10
 LT Armor:10
@@ -32,81 +32,81 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:5
-1 CLERMediumLaser, Center Torso
-1 CLERMediumLaser, Left Torso
-1 CLERMediumLaser, Center Torso
-1 CLERMediumLaser, Right Torso
-1 CLATM6, Left Torso, Ammo:30
+ER Medium Laser, Left Torso
+ATM 6, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
-Ferro-Fibrous
-Endo-Steel
-Endo-Steel
 
 Left Torso:
-Engine
-Engine
-CLERMediumLaser
-CLATM6
-CLATM6
-CLATM6
-CLATM6 Ammo
-CLATM6 ER Ammo
-CLATM6 HE Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 ER (omnipod)
+Clan Ammo ATM-6 HE (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 CLMASC
-CLERMediumLaser
-CLTargeting Computer
+CLERMediumLaser (omnipod)
+CLTargeting Computer (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Endo-Steel
-Endo-Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLERMediumLaser
-CLERMediumLaser
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 
 Head:
 Life Support
@@ -115,19 +115,39 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

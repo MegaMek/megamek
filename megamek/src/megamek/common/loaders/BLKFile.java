@@ -454,8 +454,9 @@ public class BLKFile {
 
         int numLocs = t.locations();
         // Aeros have an extra special location called "wings" that we
-        //  don't want to consider
-        if (t instanceof Aero){
+        //  don't want to consider, but Fixed Wing Support vehicles have a "Body" location that will
+        // not index right if the wings locations is removed.
+        if (t instanceof Aero && !(t instanceof FixedWingSupport)){
             numLocs--;
         }
 
@@ -464,6 +465,9 @@ public class BLKFile {
                 blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
                 blk.writeBlockData("heatsinks", ((Aero)t).getHeatSinks());
                 blk.writeBlockData("sink_type", ((Aero)t).getHeatType());
+                if (((Aero)t).getPodHeatSinks() > 0) {
+                    blk.writeBlockData("omnipodheatsinks", ((Aero)t).getPodHeatSinks());
+                }
                 blk.writeBlockData("fuel", ((Aero)t).getFuel());
             }
             if(t.hasEngine()) {
@@ -514,8 +518,13 @@ public class BLKFile {
             }
             int armor_array[];
             if (t instanceof Aero){
-                armor_array = new int[numLocs];
-                for (int i = 0; i < numLocs; i++) {
+                if (t instanceof FixedWingSupport) {
+                    //exclude body and wings
+                    armor_array = new int[numLocs - 2];
+                } else {
+                    armor_array = new int[numLocs];
+                }
+                for (int i = 0; i < armor_array.length; i++) {
                     armor_array[i] = t.getOArmor(i);
                 }
             } else {
@@ -600,6 +609,10 @@ public class BLKFile {
         }
         if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
+        }
+        
+        if (t.isSupportVehicle() || (t instanceof FixedWingSupport)) {
+            blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
         }
 
         if (t.getFluff().getCapabilities().trim().length() > 0) {

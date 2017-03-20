@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:85
-Engine:255 Light Engine
-Structure:Standard
+Engine:255 Light Engine(IS)
+Structure:IS Standard
 Myomer:Triple-Strength
 Cockpit:Small Cockpit
 Gyro:Standard Gyro
@@ -41,19 +41,19 @@ Small Laser, Left Torso
 Light PPC, Right Torso
 Medium Pulse Laser, Right Torso
 Small Laser, Right Torso
-Flamer, Head
 Medium Pulse Laser, Head
+Flamer, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
 TSM
 TSM
 -Empty-
@@ -61,13 +61,13 @@ TSM
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -75,12 +75,12 @@ Heavy PPC
 Left Torso:
 Fusion Engine
 Fusion Engine
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-ISMediumPulseLaser
-Small Laser
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+ISMediumPulseLaser (omnipod)
+Small Laser (omnipod)
 ISC3iUnit
 ISC3iUnit
 -Empty-
@@ -89,14 +89,14 @@ ISC3iUnit
 Right Torso:
 Fusion Engine
 Fusion Engine
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Light PPC
-Light PPC
-ISMediumPulseLaser
-Small Laser
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+ISMediumPulseLaser (omnipod)
+Small Laser (omnipod)
 -Empty-
 -Empty-
 
@@ -111,16 +111,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Improved Jump Jet
-Improved Jump Jet
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISMediumPulseLaser
-Flamer
+ISMediumPulseLaser (omnipod)
+Flamer (omnipod)
 -Empty-
 -Empty-
 -Empty-

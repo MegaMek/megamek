@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:100
-Engine:300 Compact Engine
-Structure:Endo Steel
+Engine:300 Compact Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Compact Gyro
@@ -42,22 +42,22 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,29 +66,29 @@ Heavy PPC
 -Empty-
 
 Left Torso:
-Jump Jet
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Jump Jet (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
 Right Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Jump Jet
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -99,21 +99,21 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-Jump Jet
+Jump Jet (omnipod)
 ISC3iUnit
 ISC3iUnit
-ISGuardianECMSuite
-ISGuardianECMSuite
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISPlasmaRifle
-ISPlasmaRifle
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

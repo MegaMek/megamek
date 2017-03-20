@@ -84,12 +84,20 @@ CLERMediumLaser:OMNI
 CLUltraAC10:OMNI
 Clan Ultra AC/10 Ammo:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLUltraAC10:OMNI
 Clan Ultra AC/10 Ammo:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

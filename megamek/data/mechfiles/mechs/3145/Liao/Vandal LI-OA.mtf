@@ -42,11 +42,11 @@ SRM 4, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
-PPC Capacitor
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+PPC Capacitor (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -56,14 +56,14 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLaserAntiMissileSystem
-ISLaserAntiMissileSystem
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
-ISC3MasterBoostedSystemUnit
+ISLaserAntiMissileSystem (omnipod)
+ISLaserAntiMissileSystem (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
+ISC3MasterBoostedSystemUnit (omnipod)
 IS Endo Steel
 IS Endo Steel
 
@@ -72,8 +72,8 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Life Support
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 Supercharger
 IS Endo Steel
 IS Endo Steel
@@ -86,13 +86,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Life Support
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Jump Jet
-Jump Jet
-SRM 4
-IS Ammo SRM-4
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+SRM 4 (omnipod)
+IS Ammo SRM-4 (omnipod)
 ISCASEII
 
 Center Torso:

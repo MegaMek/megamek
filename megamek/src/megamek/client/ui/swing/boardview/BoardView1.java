@@ -4246,8 +4246,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Adds an attack to the sprite list.
      */
     public synchronized void addAttack(AttackAction aa) {
-        // do not make a sprite unless we're aware of both entities
-        // this is not a great solution but better than a crash
+        // Don't make sprites for unknown entities and sensor returns
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
         if ((ae == null) || (t == null)
@@ -4255,6 +4254,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             || (t.getPosition() == null) || (ae.getPosition() == null)) {
             return;
         }
+        EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(ae.getId(),
+                ae.getSecondaryPositions().size() > 0 ? 0 : -1));
+        if (eSprite.onlyDetectedBySensors()) {
+            return;
+        }
+
         repaint(100);
         for (AttackSprite sprite : attackSprites) {
             // can we just add this attack to an existing one?
@@ -4982,8 +4987,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         tileManager.clearHex(hex);
         tileManager.waitForHex(hex);
         clearShadowMap();
-        // Maybe have to set the hexes' theme
-        if (selectedTheme != null) {
+        // Maybe have to set the hexes' theme.  Null clientgui implies board editor - don't mess with theme
+        if ((selectedTheme != null) && (clientgui != null)) {
             if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
                 hex.setTheme("");
                 game.getBoard().setHex(b.getCoords(), hex);
@@ -5693,9 +5698,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check if it's on any attacks
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>"); //$NON-NLS-1$
+                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                 txt.append(aSprite.getTooltip().toString());
-                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+                txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
         }
 
@@ -5774,14 +5779,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             
-            txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>");
+            txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
             if (aaa.turnsTilHit == 1)
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", 
                         new Object[] { wpName, ammoName }));
             else
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", 
                         new Object[] { wpName, ammoName, aaa.turnsTilHit }));
-            txt.append("</TD></TR></TABLE>");
+            txt.append("</FONT></TD></TR></TABLE>");
         }
 
         // Artillery fire adjustment

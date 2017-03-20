@@ -9,15 +9,16 @@ Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:40
-Engine:320 XL Engine
-Structure:Endo Steel
+Engine:320 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:8
 Jump MP:8
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:13
@@ -30,28 +31,33 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:7
 
-Weapons:7
-4 CLHeavyMG, Left Arm, Ammo:100
-1 CLHMGA, Left Arm
-4 CLHeavyMG, Right Arm
-1 CLHMGA, Right Arm
-1 CLERMediumLaser, Left Torso
-1 CLERMediumLaser, Right Torso
-1 CLERMediumLaser, Center Torso
-
+Weapons:13
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun Array, Left Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun Array, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHMGA
-Ferro-Fibrous
-Ferro-Fibrous
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+Clan Heavy Machine Gun Array (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Arm:
@@ -59,25 +65,25 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHMGA
-CLHeavyMG Ammo (100)
-Ferro-Fibrous
-Ferro-Fibrous
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+Clan Heavy Machine Gun Array (omnipod)
+Clan Heavy Machine Gun Ammo - Full (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -87,11 +93,11 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -107,14 +113,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-Endo Steel
+CLERMediumLaser (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -151,4 +157,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

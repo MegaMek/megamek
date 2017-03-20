@@ -1,23 +1,25 @@
-Version:1.0
+Version:1.1
 Seraph
 C-SRP-OS Caelestis
 
-Config:Biped Omni
+Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3075
 Rules Level:4
 
 Mass:85
-Engine:255 Light Engine
-Structure:Standard
+Engine:255 Light Engine(IS)
+Structure:IS Standard
 Myomer:Triple-Strength
 Cockpit:Small Cockpit
+Gyro:Standard Gyro
 
 Heat Sinks:17 Double
+Base Chassis Heat Sinks:10
 Walk MP:3
 Jump MP:3
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:27
 RA Armor:27
 LT Armor:26
@@ -31,69 +33,69 @@ RTR Armor:9
 RTC Armor:13
 
 Weapons:7
-1 CLStreakLRM10, Right Arm, Ammo:24
-1 CLStreakLRM10, Left Arm
-1 CLStreakLRM10, Right Torso
-1 ISImprovedC3CPU, Left Torso
-2 CLMediumPulseLaser, Left Torso
-1 CLLargePulseLaser, Center Torso
-1 CLLargePulseLaser, Head
+Streak LRM 10, Left Arm
+Streak LRM 10, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Streak LRM 10, Right Torso
+Large Pulse Laser, Center Torso
+Large Pulse Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakLRM10
-CLStreakLRM10
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Triple Strength Myomer
-Triple Strength Myomer
+CLStreakLRM10 (omnipod)
+CLStreakLRM10 (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+TSM
+TSM
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakLRM10
-CLStreakLRM10
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-CLStreakLRM10 Ammo
+CLStreakLRM10 (omnipod)
+CLStreakLRM10 (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Clan Streak LRM 10 Ammo (omnipod)
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISImprovedC3CPU
-ISImprovedC3CPU
-Jump Jet
-Jump Jet
-CLMediumPulseLaser
-CLMediumPulseLaser
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISC3iUnit
+ISC3iUnit
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakLRM10
-CLStreakLRM10
-CLStreakLRM10 Ammo
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Jump Jet
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+CLStreakLRM10 (omnipod)
+CLStreakLRM10 (omnipod)
+Clan Streak LRM 10 Ammo (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -106,16 +108,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -128,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Triple Strength Myomer
-Triple Strength Myomer
+TSM
+TSM
 -Empty-
 -Empty-
 -Empty-
@@ -142,11 +144,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Triple Strength Myomer
-Triple Strength Myomer
+TSM
+TSM
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

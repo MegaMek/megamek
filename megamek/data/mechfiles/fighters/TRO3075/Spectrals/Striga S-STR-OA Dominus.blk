@@ -64,6 +64,10 @@ Aerodyne
 5
 </armor_tech>
 
+<omni>
+1
+</omni>
+
 <armor>
 100
 76
@@ -72,25 +76,25 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-Heavy PPC
+Heavy PPC:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISRotaryAC5
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISStreakSRM4
-IS Streak SRM 4 Ammo
-ISCASE
+ISRotaryAC5:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISStreakSRM4:OMNI
+IS Streak SRM 4 Ammo:OMNI
+ISCASE:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISRotaryAC5
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISStreakSRM4
+ISRotaryAC5:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISStreakSRM4:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -103,7 +107,4 @@ TRO 3075 - Jihad
 <tonnage>
 85.0
 </tonnage>
-
-<omni>
-</omni>
 

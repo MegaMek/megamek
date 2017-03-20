@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:25
-Engine:175 XL Engine
-Structure:Endo Steel
+Engine:175 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -50,7 +50,7 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Small Laser
+Small Laser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -61,10 +61,10 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Small Laser
-Endo Steel
-Endo Steel
-Endo Steel
+Small Laser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -73,13 +73,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISStreakSRM2
-IS Streak SRM 2 Ammo
-BeagleActiveProbe
-BeagleActiveProbe
-Endo Steel
-Endo Steel
-Endo Steel
+ISStreakSRM2 (omnipod)
+IS Streak SRM 2 Ammo (omnipod)
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -87,14 +87,14 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISStreakSRM2
-Machine Gun
-Machine Gun
-IS Machine Gun Ammo - Half
-ISTAG
-Endo Steel
-Endo Steel
-Endo Steel
+ISStreakSRM2 (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+IS Machine Gun Ammo - Half (omnipod)
+ISTAG (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISC3SlaveUnit
-ISStreakSRM2
+ISC3SlaveUnit (omnipod)
+ISStreakSRM2 (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

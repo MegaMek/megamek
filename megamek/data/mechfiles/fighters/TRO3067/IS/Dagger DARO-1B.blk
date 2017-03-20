@@ -76,24 +76,24 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISLBXAC10
-IS LB 10-X Cluster Ammo
-IS LB 10-X Cluster Ammo
+ISLBXAC10:OMNI
+IS LB 10-X Cluster Ammo:OMNI
+IS LB 10-X Cluster Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISERSmallLaser
-ISERSmallLaser
+ISERSmallLaser:OMNI
+ISERSmallLaser:OMNI
 </Aft Equipment>
 
 <source>

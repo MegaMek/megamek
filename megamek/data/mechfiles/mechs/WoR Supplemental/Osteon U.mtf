@@ -42,13 +42,13 @@ LRT 15, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
-Clan Ammo LRTorpedo-15 Artemis V-capable
-Clan Ammo LRTorpedo-15 Artemis V-capable
-Clan Ammo LRTorpedo-15 Artemis V-capable
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
+Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
 Clan HarJel
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -56,13 +56,13 @@ Clan Ferro-Lamellor
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
-Clan Ammo LRTorpedo-15 Artemis V-capable
-Clan Ammo LRTorpedo-15 Artemis V-capable
-Clan Ammo LRTorpedo-15 Artemis V-capable
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
+Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
 Clan HarJel
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -71,11 +71,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLUMU
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
 Clan HarJel
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -85,11 +85,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLUMU
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
 Clan HarJel
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -113,9 +113,9 @@ Head:
 Sensors
 Sensors
 NovaCEWS
-Clan Ammo LRTorpedo-15 Artemis V-capable
-Clan Ammo LRTorpedo-15 Artemis V-capable
-Clan Ammo LRTorpedo-15 Artemis V-capable
+Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 Artemis V-capable (omnipod)
 -Empty-
 -Empty-
 -Empty-

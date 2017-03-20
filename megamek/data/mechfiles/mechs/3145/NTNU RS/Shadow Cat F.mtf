@@ -4,7 +4,7 @@ F
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
-Era:3131	
+Era:3131
 Source:RS 3145 NTNU - Dark Ages
 Rules Level:3
 
@@ -32,9 +32,9 @@ RTR Armor:4
 RTC Armor:6
 
 Weapons:3
-Streak SRM 6, Right Torso
-ER PPC, Left Torso
 TSEMP Cannon, Right Arm
+ER PPC, Left Torso
+Streak SRM 6, Right Torso
 
 Left Arm:
 Shoulder
@@ -53,11 +53,11 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -68,8 +68,8 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -82,10 +82,10 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous

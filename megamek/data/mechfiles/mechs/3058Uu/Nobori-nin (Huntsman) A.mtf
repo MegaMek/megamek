@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:50
-Engine:250 XL (Clan) Engine
-Structure:Endo Steel
+Engine:250 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -41,12 +41,12 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLLRM10
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLRM10 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -54,13 +54,13 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLLBXAC2
-CLLBXAC2
-CLLBXAC2
-Endo Steel
-Endo Steel
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLBXAC2 (omnipod)
+CLLBXAC2 (omnipod)
+CLLBXAC2 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -68,27 +68,27 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
-Clan Ammo LRM-10
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ammo LRM-10 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
-Clan LB 2-X AC Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan LB 2-X AC Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -105,13 +105,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

@@ -1,23 +1,24 @@
-Version:1.1
+Version:1.0
 Hellion
 D
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3068
+Source:3067 Unabridged
 Rules Level:2
-source:3067 Unabridged
 
 Mass:30
-Engine:210 XL Fusion Engine
-Structure:Endo-Steel
-Myomer:CLMASC
+Engine:210 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
 Walk MP:7
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:10
 RA Armor:10
 LT Armor:10
@@ -31,22 +32,22 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:4
-1 CLLRM15, Right Torso, Ammo:16
-1 CLHeavyMediumLaser, Right Arm
-1 CLHeavyMediumLaser, Right Arm
-1 CLERLargeLaser, Left Arm
+ER Large Laser, Left Arm
+Heavy Medium Laser, Right Arm
+Heavy Medium Laser, Right Arm
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -55,21 +56,21 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-Endo-Steel
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -79,30 +80,30 @@ Endo-Steel
 -Empty-
 
 Right Torso:
-Engine
-Engine
-CLLRM15
-CLLRM15
-CLLRM15 Ammo
-CLLRM15 Ammo
+Fusion Engine
+Fusion Engine
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
 CLMASC
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -113,19 +114,39 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

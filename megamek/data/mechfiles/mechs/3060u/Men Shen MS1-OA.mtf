@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:55
-Engine:330 XL Engine
-Structure:Endo Steel
+Engine:330 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -41,25 +41,25 @@ TAG, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -84,14 +84,14 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-IS LB 10-X AC Ammo
-IS LB 10-X Cluster Ammo
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
+IS LB 10-X AC Ammo (omnipod)
+IS LB 10-X Cluster Ammo (omnipod)
 -Empty-
 
 Center Torso:
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISTAG
+ISTAG (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

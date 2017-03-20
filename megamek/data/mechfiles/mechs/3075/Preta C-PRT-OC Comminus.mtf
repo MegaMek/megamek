@@ -9,17 +9,18 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:45
-Engine:270 Light Engine
-Structure:Endo Steel
+Engine:270 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Standard Gyro
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:0
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:13
 RA Armor:13
 LT Armor:16
@@ -33,21 +34,21 @@ RTR Armor:5
 RTC Armor:7
 
 Weapons:5
-TAG, Left Torso
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
 Plasma Rifle, Right Arm
-Medium Pulse Laser, Left Arm
-Medium Pulse Laser, Left Arm
+TAG, Left Torso
 ER Small Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumPulseLaser
-ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -57,22 +58,22 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-Endo Steel
-Endo Steel
-Endo Steel
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISTAG
-Endo Steel
-Endo Steel
+ISTAG (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -84,9 +85,9 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
-Endo Steel
-Endo Steel
+ISERSmallLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -114,8 +115,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-BeagleActiveProbe
-BeagleActiveProbe
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -128,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

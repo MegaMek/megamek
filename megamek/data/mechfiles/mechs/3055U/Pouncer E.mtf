@@ -9,8 +9,8 @@ Source:TRO 3055 - Clan Invasion
 Rules Level:2
 
 Mass:40
-Engine:240 XL (Clan) Engine
-Structure:Endo Steel
+Engine:240 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -45,11 +45,11 @@ Lower Arm Actuator
 Hand Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-Ferro-Fibrous
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 
 Right Arm:
@@ -59,11 +59,11 @@ Lower Arm Actuator
 Hand Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-Ferro-Fibrous
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -71,13 +71,13 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLERMediumLaser
-CLERMicroLaser
-Clan Ammo ATM-9
-Clan Ammo ATM-9 ER
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMicroLaser (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 ER (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
@@ -87,12 +87,12 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
 Jump Jet
-CLERMicroLaser
-Clan Ammo ATM-9
-Clan Ammo ATM-9 HE
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMicroLaser (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 HE (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -106,13 +106,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

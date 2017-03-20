@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:85
-Engine:340 XL Engine
-Structure:Standard
+Engine:340 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -30,68 +31,71 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:5
-1 CLNarcBeacon, Center Torso, Ammo:6
-1 CLGaussRifle, Left Arm, Ammo:16
-3 CLERMediumLaser, Right Arm
-2 CLSRM6, Right Torso, Ammo:75
-1 CLERSmallLaser, Left Arm
+Weapons:8
+Gauss Rifle, Left Arm
+ER Small Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+SRM 6, Right Torso
+SRM 6, Right Torso
+Narc, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLERSmallLaser
-CLGauss Ammo
-CLGauss Ammo
-Ferro-Fibrous
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLERSmallLaser (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLSRM6 Ammo (Clan) Narc-capable
-CLSRM6 Ammo (Clan) Narc-capable
-CLSRM6 Ammo (Clan) Narc-capable
-CLSRM6 Ammo (Clan) Narc-capable
-CLSRM6 Ammo (Clan) Narc-capable
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ammo SRM-6 (Clan) Narc-capable (omnipod)
+Clan Ammo SRM-6 (Clan) Narc-capable (omnipod)
+Clan Ammo SRM-6 (Clan) Narc-capable (omnipod)
+Clan Ammo SRM-6 (Clan) Narc-capable (omnipod)
+Clan Ammo SRM-6 (Clan) Narc-capable (omnipod)
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLSRM6
-CLSRM6
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -104,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLNarcBeacon
-CLNarc Pods
+CLNarcBeacon (omnipod)
+CLNarc Pods (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -126,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -140,12 +144,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

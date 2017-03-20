@@ -43,10 +43,10 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLERMicroLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMicroLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -57,8 +57,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERMicroLaser
+CLERLargeLaser (omnipod)
+CLERMicroLaser (omnipod)
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -70,12 +70,12 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLUMU
-CLUMU
-CLLRT15
-CLLRT15
-CLArtemisIV
-Clan Ammo LRTorpedo-15 Artemis-capable
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRTorpedo-15 Artemis-capable (omnipod)
 Clan HarJel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -84,12 +84,12 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLUMU
-CLUMU
-CLLRT15
-CLLRT15
-CLArtemisIV
-Clan Ammo LRTorpedo-15 Artemis-capable
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRTorpedo-15 Artemis-capable (omnipod)
 Clan HarJel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous

@@ -9,8 +9,8 @@ Source:TRO 3058 - Succession Wars
 Rules Level:2
 
 Mass:40
-Engine:240 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:240 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -41,9 +41,9 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLSmallPulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -55,9 +55,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLSmallPulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,12 +66,12 @@ CLSmallPulseLaser
 -Empty-
 
 Left Torso:
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -80,12 +80,12 @@ Ferro-Fibrous
 -Empty-
 
 Right Torso:
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -104,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Head:
 Life Support

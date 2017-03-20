@@ -81,7 +81,11 @@ CLMG:OMNI
 CLMG:OMNI
 CLMGA:OMNI
 Clan Machine Gun Ammo - Half:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

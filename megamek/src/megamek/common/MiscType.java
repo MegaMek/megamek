@@ -527,7 +527,7 @@ public class MiscType extends EquipmentType {
     /** Creates new MiscType */
     public MiscType() {
     }
-
+    
     public int getBaseDamageAbsorptionRate() {
         return baseDamageAbsorptionRate;
     }
@@ -2073,6 +2073,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2093,6 +2094,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRAILER_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2114,6 +2116,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_MONOCYCLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2134,6 +2137,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_BICYCLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2154,6 +2158,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_HYDROFOIL).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2174,6 +2179,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_SUBMERSIBLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2194,6 +2200,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_CONVERTIBLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
@@ -2429,6 +2436,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_MASC).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
@@ -2452,6 +2460,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_MASC).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.omniFixedOnly = true;
         String[] saModes = { "Armed", "Off" };
         misc.setModes(saModes);
 
@@ -2565,6 +2574,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_TSM).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3028, 3050, 3055)
@@ -2585,6 +2595,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_INDUSTRIAL_TSM).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -3296,6 +3307,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_ARMORED_CHASSIS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -3316,6 +3328,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -4190,6 +4203,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_STEALTH).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
@@ -4218,6 +4232,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_STEALTH).or(F_TANK_EQUIPMENT)
                 .or(F_AERO_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         String[] saModes = { "Off", "On" };
         misc.setModes(saModes);
         misc.setInstantModeSwitch(false);
@@ -4317,6 +4332,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4340,6 +4356,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -4363,6 +4380,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS_PROTO).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4387,6 +4405,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_LIGHT_FERRO).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4410,6 +4429,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_HEAVY_FERRO).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4430,6 +4450,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT).or(F_FERRO_FIBROUS);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -4450,6 +4471,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT).or(F_FERRO_FIBROUS);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4471,6 +4493,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT).or(F_HEAVY_FERRO);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4492,6 +4515,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_AERO_EQUIPMENT).or(F_LIGHT_FERRO);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4514,6 +4538,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_FERRO_FIBROUS_PROTO).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4536,6 +4561,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_HARDENED_ARMOR).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(3047, 3076);
@@ -4557,6 +4583,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_HARDENED_ARMOR).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(3061, 3076);
@@ -4578,6 +4605,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_COMMERCIAL_ARMOR).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(2285, 2295, 2310);
@@ -4599,6 +4627,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_COMMERCIAL_ARMOR).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
@@ -4621,6 +4650,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.flags = misc.flags.or(F_FERRO_LAMELLOR).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(3070, 3109);
@@ -4642,6 +4672,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_INDUSTRIAL_ARMOR).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(2425, 2434, 2439);
@@ -4664,6 +4695,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_INDUSTRIAL_ARMOR).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
         misc.techAdvancement.setTechRating(RATING_C);
@@ -4689,6 +4721,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_PRIMITIVE_ARMOR).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(2425, 2434, 2439);
@@ -4710,6 +4743,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.industrial = true;
         misc.flags = misc.flags.or(F_PRIMITIVE_ARMOR).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(2425, 2434, 2439);
@@ -4732,6 +4766,7 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         misc.flags = misc.flags.or(F_HEAVY_INDUSTRIAL_ARMOR).or(
                 F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(2455, 2470, 2470);
@@ -4754,6 +4789,7 @@ public class MiscType extends EquipmentType {
         misc.industrial = true;
         misc.flags = misc.flags.or(F_HEAVY_INDUSTRIAL_ARMOR).or(
                 F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(2455, 2470, 2470);
@@ -4775,6 +4811,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_STEEL);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4797,6 +4834,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4820,6 +4858,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_STEEL_PROTO);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -4841,6 +4880,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_STEEL);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
@@ -4862,6 +4902,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -4884,6 +4925,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_REINFORCED);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(3057, DATE_NONE, 3084);
@@ -4905,6 +4947,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_REINFORCED);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(3065, DATE_NONE, 3084);
@@ -5270,6 +5313,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMPOSITE);
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(3061, DATE_NONE, 3082);
@@ -6074,6 +6118,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING)
                 .or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -6371,6 +6416,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 120000;
         misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -6390,6 +6436,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 120000;
         misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT)
                 .or(F_BA_EQUIPMENT).or(F_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -6410,6 +6457,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_ACTUATOR_ENHANCEMENT_SYSTEM).or(
                 F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = BV_VARIABLE;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -6838,6 +6886,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -6862,6 +6911,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_REFLECTIVE).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -6886,6 +6936,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -6910,6 +6961,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_REACTIVE).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -7947,6 +7999,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_BASIC_FIRECONTROL).or(
                 MiscType.F_SUPPORT_TANK_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
@@ -7963,6 +8016,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL).or(
                 MiscType.F_SUPPORT_TANK_EQUIPMENT.or(MiscType.F_TANK_EQUIPMENT));
+        misc.omniFixedOnly = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2284);
@@ -8092,6 +8146,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -8112,6 +8167,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -8131,6 +8187,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_AMPHIBIOUS).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -8150,6 +8207,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_SNOWMOBILE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         // TODO: implement game rules
 
@@ -8171,6 +8229,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -8191,6 +8250,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -8211,6 +8271,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -8230,6 +8291,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -8250,6 +8312,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -8270,6 +8333,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -8290,6 +8354,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -8307,6 +8372,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(2820, 3082, DATE_NONE);
@@ -8323,6 +8389,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(2450, 3082, DATE_NONE, 2801, 3051);
@@ -8339,6 +8406,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3055);
@@ -8355,6 +8423,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(3050, 3082, DATE_NONE);
@@ -8371,6 +8440,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(2820, 3082, DATE_NONE);
@@ -8387,6 +8457,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(2320, 3082, DATE_NONE, 2801, 3051);
@@ -8731,6 +8802,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_STOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -8748,6 +8820,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_VSTOL_CHASSIS)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.tankslots = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -8799,6 +8872,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(1950, DATE_NONE, 3079);
@@ -8817,6 +8891,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
         misc.techAdvancement.setClanAdvancement(2820, DATE_NONE, 3079);
@@ -8836,6 +8911,7 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_PINTLE_TURRET)
                 .or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
@@ -9230,6 +9306,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_PROTOMECH_EQUIPMENT).or(
                 F_ELECTRIC_DISCHARGE_ARMOR);
+        misc.omniFixedOnly = true;
         misc.bv = 32;
         String[] modes = { "not charging", "charging" };
         misc.setModes(modes);
@@ -9799,6 +9876,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.andNot(F_AERO_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
                 .or(F_PROP);
+        misc.omniFixedOnly = true;
         //Setting this Pre-Spaceflight
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
@@ -9815,6 +9893,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
+        misc.omniFixedOnly = true;
         //Setting this Pre-Spaceflight
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
@@ -9835,6 +9914,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_ANTI_PENETRATIVE_ABLATIVE)
                 .or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
                 .or(F_AERO_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -9854,6 +9934,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_HEAT_DISSIPATING).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
@@ -9873,6 +9954,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_HEAT_DISSIPATING).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -9892,6 +9974,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_IMPACT_RESISTANT).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -9912,6 +9995,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_BALLISTIC_REINFORCED).or(F_MECH_EQUIPMENT)
                 .or(F_AERO_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
@@ -9929,6 +10013,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 240000;
         misc.flags = misc.flags.or(F_HARJEL_II).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = -1;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_HARJEL_II_1F1R, S_HARJEL_II_2F0R, S_HARJEL_II_0F2R };
@@ -9949,6 +10034,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.cost = 360000;
         misc.flags = misc.flags.or(F_HARJEL_III).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = -2;
         misc.setInstantModeSwitch(true);
         String[] modes = { S_HARJEL_III_2F2R, S_HARJEL_III_4F0R, S_HARJEL_III_3F1R,
@@ -10283,6 +10369,7 @@ public class MiscType extends EquipmentType {
         misc.hittable = true;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_SCM).or(F_MECH_EQUIPMENT);
+        misc.omniFixedOnly = true;
         misc.bv = 0;
         // TODO: add game rules, BV rules are implemented
 

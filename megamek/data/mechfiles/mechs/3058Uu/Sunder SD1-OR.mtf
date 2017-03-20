@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:4
 
 Mass:90
-Engine:360 XL Engine
-Structure:Standard
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -45,13 +45,13 @@ ER Medium Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLERMediumLaser
-CLERMediumLaser
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -63,10 +63,10 @@ Lower Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 -Empty-
 -Empty-
 
@@ -74,11 +74,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan LB 10-X AC Ammo
-Clan LB 10-X Cluster Ammo
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -88,9 +88,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -109,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Sensors
 Life Support
 -Empty-

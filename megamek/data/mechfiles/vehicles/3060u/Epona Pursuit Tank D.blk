@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,15 +65,15 @@ Hover
 </armor>
 
 <Body Equipment>
-HAG/20 Ammo
-HAG/20 Ammo
-CLTargeting Computer
-CLCASE
+HAG/20 Ammo:OMNI
+HAG/20 Ammo:OMNI
+CLTargeting Computer:OMNI
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -86,8 +86,8 @@ CLERMediumLaser
 </Rear Equipment>
 
 <Turret Equipment>
-CLHAG20
-CLCASE
+CLHAG20:OMNI
+CLCASE:OMNI
 </Turret Equipment>
 
 <source>
@@ -97,4 +97,8 @@ Jihad
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>
 

@@ -866,7 +866,7 @@ public class Compute {
         boolean isWeaponInfantry = (wtype instanceof InfantryWeapon)
         		&& !wtype.hasFlag(WeaponType.F_TAG);
         boolean isSwarmOrLegAttack = (wtype instanceof InfantryAttack);
-        boolean isIndirect = (((wtype.getAmmoType() == AmmoType.T_LRM)
+        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM)
                                || (wtype.getAmmoType() == AmmoType.T_MML)
                                || (wtype.getAmmoType() == AmmoType.T_EXLRM)
                                || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
@@ -875,9 +875,9 @@ public class Compute {
                                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
                                || (wtype.getAmmoType() == AmmoType.T_IATM) 
                                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                               || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)) 
-                               && weapon.curMode().equals("Indirect"))
-                             || (wtype instanceof ArtilleryCannonWeapon);
+                               || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)
+                               || (wtype instanceof ArtilleryCannonWeapon)) 
+                               && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(
                 OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(
@@ -1114,7 +1114,6 @@ public class Compute {
             && LosEffects.calculateLos(game, ae.getId(), target).canSee()
             && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                 .canSee(game, ae, target))
-            && !(wtype instanceof ArtilleryCannonWeapon)
             && !(wtype instanceof MekMortarWeapon)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Indirect fire impossible with direct LOS");
@@ -1805,7 +1804,8 @@ public class Compute {
             // arm-mounted weapons have addidional trouble
             if ((weapon.getLocation() == Mech.LOC_RARM) || (weapon.getSecondLocation() == Mech.LOC_RARM)
                 || (weapon.getLocation() == Mech.LOC_LARM) || (weapon.getSecondLocation() == Mech.LOC_LARM)) {
-                if (l3ProneFiringArm == weapon.getLocation() || l3ProneFiringArm == weapon.getSecondLocation()) {
+                if (l3ProneFiringArm == weapon.getLocation()
+                        || (weapon.getSecondLocation() != Entity.NONE && l3ProneFiringArm == weapon.getSecondLocation())) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
                                          "Prone and propping up with this arm.");
                 }

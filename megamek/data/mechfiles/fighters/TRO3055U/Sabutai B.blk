@@ -84,7 +84,11 @@ CLLRM20:OMNI
 Clan Ammo LRM-20:OMNI
 CLLargePulseLaser:OMNI
 CLERSmallLaser:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -93,6 +97,10 @@ CLLRM20:OMNI
 Clan Ammo LRM-20:OMNI
 Clan Ammo LRM-20:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -101,6 +109,10 @@ CLLRM20:OMNI
 Clan Ammo LRM-20:OMNI
 Clan Ammo LRM-20:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

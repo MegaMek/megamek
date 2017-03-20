@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:35
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Single
@@ -40,7 +40,7 @@ Light PPC, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,7 +54,7 @@ ISERSmallLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -71,8 +71,8 @@ Fusion Engine
 Fusion Engine
 BeagleActiveProbe
 BeagleActiveProbe
-ISGuardianECMSuite
-ISGuardianECMSuite
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -104,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Light PPC
-Light PPC
+Light PPC (omnipod)
+Light PPC (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISTargeting Computer
+ISTargeting Computer (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -140,7 +140,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAntiPersonnelPod
+ISAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-

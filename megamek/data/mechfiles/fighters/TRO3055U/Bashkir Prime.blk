@@ -79,7 +79,11 @@ Aerodyne
 CLERSmallLaser:OMNI
 CLStreakSRM2:OMNI
 Clan Streak SRM 2 Ammo:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

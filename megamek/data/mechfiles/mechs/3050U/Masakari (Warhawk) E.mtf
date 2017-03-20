@@ -2,22 +2,23 @@ Version:1.0
 Masakari (Warhawk)
 E
 
-Config:Biped OmniMech
+Config:Biped Omnimech
 TechBase:Clan
 Era:3069
 Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:85
-Engine:340 XL Engine
-Structure:Standard
+Engine:340 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -30,34 +31,36 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:4
-3 CLPlasmaCannon, Left Arm, Ammo:40
-1 CLERPPC, Right Arm
-1 CLLargePulseLaser, Right Arm
-1 CLSRM6, Left Arm, Ammo:15
+Weapons:6
+Plasma Cannon, Left Arm
+Plasma Cannon, Left Arm
+Plasma Cannon, Left Arm
+SRM 6, Left Arm
+ER PPC, Right Arm
+Large Pulse Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLPlasmaCannon
-CLPlasmaCannon
-CLPlasmaCannon
-CLPlasmaCannon Ammo
-CLPlasmaCannon Ammo
-CLPlasmaCannon Ammo
-CLPlasmaCannon Ammo
-CLSRM6
-CLSRM6 Ammo
-Ferro-Fibrous
+CLPlasmaCannon (omnipod)
+CLPlasmaCannon (omnipod)
+CLPlasmaCannon (omnipod)
+CLPlasmaCannonAmmo (omnipod)
+CLPlasmaCannonAmmo (omnipod)
+CLPlasmaCannonAmmo (omnipod)
+CLPlasmaCannonAmmo (omnipod)
+CLSRM6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLLargePulseLaser
-CLLargePulseLaser
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -75,21 +78,21 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-Ferro-Fibrous
-Ferro-Fibrous
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -110,7 +113,7 @@ Head:
 Life Support
 Cockpit
 Sensors
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -147,3 +150,5 @@ CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
+
+

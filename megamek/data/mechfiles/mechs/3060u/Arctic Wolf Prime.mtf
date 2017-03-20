@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:40
-Engine:240 XL (Clan) Engine
-Structure:Endo Steel
+Engine:240 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -41,11 +41,11 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +55,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-Endo Steel
-Ferro-Fibrous
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -68,29 +68,29 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Jump Jet
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan Streak SRM 6 Ammo
-Endo Steel
-Ferro-Fibrous
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Jump Jet
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan Streak SRM 6 Ammo
-Endo Steel
-Ferro-Fibrous
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -111,7 +111,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

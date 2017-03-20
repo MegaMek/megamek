@@ -2,22 +2,23 @@ Version:1.0
 Daishi (Dire Wolf)
 D
 
-Config:Biped OmniMech
+Config:Biped Omnimech
 TechBase:Clan
 Era:3069
 Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:100
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -31,88 +32,88 @@ RTR Armor:10
 RTC Armor:14
 
 Weapons:6
-1 CLERSmallLaser, Head
-1 CLMediumPulseLaser, Center Torso
-1 CLMediumPulseLaser, Center Torso
-1 CLHAG40, Left Arm
-1 CLHAG40, Right Arm
-1 CLStreakSRM6, Left Torso
+HAG/40, Left Arm
+HAG/40, Right Arm
+Streak SRM 6, Left Torso
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
-CLHAG40
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
+CLHAG40 (omnipod)
 
 Left Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
+HAG/40 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLMediumPulseLaser
-CLMediumPulseLaser
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Head:
 Life Support
 Cockpit
 Sensors
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -149,3 +150,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+

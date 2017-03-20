@@ -4,7 +4,7 @@ I
 
 Config:Biped Omnimech
 TechBase:Mixed (Clan Chassis)
-Era:3132	
+Era:3132
 Source:RS 3145 NTNU - Dark Ages
 Rules Level:3
 
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:11
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:22
 RA Armor:22
 LT Armor:23
@@ -33,69 +33,69 @@ RTC Armor:8
 
 Weapons:8
 Improved Heavy Large Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+TSEMP Cannon, Left Arm
 Improved Heavy Large Laser, Right Arm
 Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Left Arm
 TSEMP Cannon, Right Arm
-TSEMP Cannon, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Center Torso:
 Fusion Engine

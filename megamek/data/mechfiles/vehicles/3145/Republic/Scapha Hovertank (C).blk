@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,8 +65,8 @@ Hover
 </armor>
 
 <Body Equipment>
-IS LB 10-X AC Ammo
-IS LB 10-X Cluster Ammo
+IS LB 10-X AC Ammo:OMNI
+IS LB 10-X Cluster Ammo:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -82,7 +82,7 @@ IS LB 10-X Cluster Ammo
 </Rear Equipment>
 
 <Turret Equipment>
-ISLBXAC10
+ISLBXAC10:OMNI
 </Turret Equipment>
 
 <source>
@@ -92,4 +92,8 @@ TRO 3145 Republic of the Sphere - Late Republic
 <tonnage>
 40.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

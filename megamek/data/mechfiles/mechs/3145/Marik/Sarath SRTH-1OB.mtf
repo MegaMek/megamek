@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:10
 Walk MP:5
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 FLL Armor:24
 FRL Armor:24
 LT Armor:20
@@ -32,22 +32,22 @@ RTR Armor:4
 RTC Armor:7
 
 Weapons:8
-ER Small Laser, Head
-ER Flamer, Right Torso
-ER Flamer, Right Torso
-ER Flamer, Right Torso
-ER Flamer, Right Torso
-Medium Laser, Right Torso
-Medium Laser, Right Torso
 Plasma Rifle, Right Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+ER Flamer, Right Torso
+ER Flamer, Right Torso
+ER Flamer, Right Torso
+ER Flamer, Right Torso
+ER Small Laser, Head
 
 Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons
-Talons
+Talons (omnipod)
+Talons (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -60,8 +60,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons
-Talons
+Talons (omnipod)
+Talons (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -73,9 +73,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 TSM
 TSM
 TSM
@@ -87,14 +87,14 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISPlasmaRifle (T)
-ISPlasmaRifle (T)
-Medium Laser (T)
-Medium Laser (T)
-ER Flamer (T)
-ER Flamer (T)
-ER Flamer (T)
-ER Flamer (T)
+ISPlasmaRifle (T) (omnipod)
+ISPlasmaRifle (T) (omnipod)
+Medium Laser (T) (omnipod)
+Medium Laser (T) (omnipod)
+ER Flamer (T) (omnipod)
+ER Flamer (T) (omnipod)
+ER Flamer (T) (omnipod)
+ER Flamer (T) (omnipod)
 ISQuadTurret
 
 Center Torso:
@@ -108,8 +108,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
 
 Head:
 Life Support
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons
-Talons
+Talons (omnipod)
+Talons (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons
-Talons
+Talons (omnipod)
+Talons (omnipod)
 -Empty-
 -Empty-
 -Empty-

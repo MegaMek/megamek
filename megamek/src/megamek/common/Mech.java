@@ -2833,11 +2833,13 @@ public abstract class Mech extends Entity {
             }
         }
     }
-
+    
     public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
-            int loc) throws LocationFullException {
+            int loc,  boolean omniPod) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         Mounted mounted2 = new Mounted(this, etype2);
+        mounted.setOmniPodMounted(omniPod);
+        mounted2.setOmniPodMounted(omniPod);
         // check criticals for space
         if (getEmptyCriticals(loc) < 1) {
             throw new LocationFullException(mounted.getName() + " and "
@@ -3538,6 +3540,12 @@ public abstract class Mech extends Entity {
                             || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM))) {
                 toSubtract = 1;
             }
+            
+            if (etype instanceof AmmoType
+                    && ((AmmoType)mounted.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
+                toSubtract = 1;
+            }
+
 
             if ((etype instanceof MiscType)
                     && etype.hasFlag(MiscType.F_BLUE_SHIELD)) {
@@ -5002,6 +5010,9 @@ public abstract class Mech extends Entity {
             finalBV *= cockpitMod;
         } else if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
             finalBV *= 0.95;
+        } else if (getCockpitType() == Mech.COCKPIT_INTERFACE) {
+            cockpitMod = 1.3;
+            finalBV *= cockpitMod;
         }
         finalBV = Math.round(finalBV);
         bvText.append("Total BV * Cockpit Modifier");
@@ -6503,7 +6514,7 @@ public abstract class Mech extends Entity {
                         cs.getMount2().getType().getInternalName());
             }
             if (m.isOmniPodMounted()) {
-            	toReturn.append(" ").append(MtfFile.OMNIPOD);
+                toReturn.append(" ").append(MtfFile.OMNIPOD);
             }
             return toReturn.toString();
         } else {
@@ -7598,7 +7609,7 @@ public abstract class Mech extends Entity {
         if ((getGyroType() == GYRO_HEAVY_DUTY)) {
             return 1.0;
         }
-        if (getGyroType() == GYRO_NONE) {
+        if (getGyroType() == GYRO_NONE && getCockpitType() != COCKPIT_INTERFACE) {
             return 0;
         }
         return 0.5;

@@ -1,24 +1,24 @@
-Version:1.1
+Version:1.0
 Savage Coyote
 C
 
 Config:Biped Omnimech
 TechBase:Clan
 Era:3064
+Source:TRO 3067
 Rules Level:2
-source:TRO 3067
 
 Mass:85
-Engine:255 XL Fusion Engine
-Structure:Standard
+Engine:255 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Double
-Base Chassis Heat Sinks: 14
+Base Chassis Heat Sinks:10
 Walk MP:3
 Jump MP:3
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:25
 RA Armor:25
 LT Armor:26
@@ -32,105 +32,125 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:8
-1 CLERLargeLaser, Left Arm
-1 CLERMediumLaser, Left Arm
-1 CLERLargeLaser, Right Arm
-1 CLERMediumLaser, Right Arm
-1 CLATM9, Right Torso, Ammo:35
-1 CLATM9, Left Torso
-1 CLERPPC, Left Torso
-1 CLERMediumLaser, Center Torso
+ER Large Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Large Laser, Right Arm
+ER Medium Laser, Right Arm
+ATM 9, Left Torso
+ER PPC, Left Torso
+ATM 9, Right Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERLargeLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLERLargeLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
 
 Left Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-Jump Jet
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-CLERPPC
-CLERPPC
-CLATM9 Ammo
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ammo ATM-9 (omnipod)
 
 Right Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-Jump Jet
-CLATM9
-CLATM9
-CLATM9
-CLATM9
-CLATM9 Ammo
-CLATM9 HE Ammo
-CLATM9 HE Ammo
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+CLATM9 (omnipod)
+Clan Ammo ATM-9 (omnipod)
+Clan Ammo ATM-9 HE (omnipod)
+Clan Ammo ATM-9 HE (omnipod)
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-Jump Jet
-CLERMediumLaser
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet (omnipod)
+CLERMediumLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLATM9 ER Ammo
+Clan Ammo ATM-9 ER (omnipod)
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

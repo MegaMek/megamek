@@ -84,7 +84,11 @@ Clan Ammo ATM-12:OMNI
 CLGaussRifle:OMNI
 Clan Gauss Ammo:OMNI
 Clan Gauss Ammo:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

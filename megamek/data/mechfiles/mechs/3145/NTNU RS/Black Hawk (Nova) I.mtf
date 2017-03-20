@@ -4,7 +4,7 @@ I
 
 Config:Biped Omnimech
 TechBase:Clan
-Era:3094	
+Era:3094
 Source:RS 3145 NTNU - Early Republic
 Rules Level:3
 
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:10
 Walk MP:5
 Jump MP:5
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:16
 RA Armor:16
 LT Armor:16
@@ -32,34 +32,34 @@ RTR Armor:8
 RTC Armor:8
 
 Weapons:6
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Left Arm
 ER PPC, Right Arm
-Improved Heavy Medium Laser, Left Arm
-Improved Heavy Medium Laser, Left Arm
-Improved Heavy Medium Laser, Left Arm
-Improved Heavy Medium Laser, Left Arm
-Improved Heavy Medium Laser, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -74,10 +74,10 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 
@@ -88,10 +88,10 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 

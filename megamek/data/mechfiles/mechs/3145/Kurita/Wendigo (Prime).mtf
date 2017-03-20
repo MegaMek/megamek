@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:50
 Engine:300 XL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 Cockpit:Torso-Mounted Cockpit
 Gyro:Standard Gyro
@@ -34,21 +34,21 @@ RTR Armor:5
 RTC Armor:8
 
 Weapons:7
-ER Medium Laser, Right Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Right Arm
 Streak SRM 6, Left Arm
-LRM 10, Head
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
 Ultra AC/2, Right Arm
+LRM 10, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLERMediumLaser
-CLERMediumLaser
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 Clan Reflective
 Clan Reflective
 Clan Reflective
@@ -59,13 +59,13 @@ Clan Reflective
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLUltraAC2
-CLUltraAC2
-Clan Endo-Steel
-Clan Endo-Steel
-Clan Endo-Steel
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -74,9 +74,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Streak SRM 6 Ammo
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 -Empty-
 -Empty-
@@ -88,9 +88,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Ultra AC/2 Ammo
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Ultra AC/2 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 -Empty-
 -Empty-
@@ -115,8 +115,8 @@ Sensors
 Head:
 Sensors
 Sensors
-CLLRM10
-Clan Ammo LRM-10
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -131,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

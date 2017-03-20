@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:60
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:19 Double
@@ -49,26 +49,26 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -80,12 +80,12 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 
 Right Torso:
 Fusion Engine
@@ -94,12 +94,12 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 
 Center Torso:
 Fusion Engine

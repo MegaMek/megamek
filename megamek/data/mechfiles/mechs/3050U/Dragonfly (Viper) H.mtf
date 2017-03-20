@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Dragonfly (Viper)
 H
 
@@ -9,16 +9,16 @@ Source:TRO 3050 - Civil War
 Rules Level:2
 
 Mass:40
-Engine:320 XL Fusion Engine
-Structure:Endo-Steel
+Engine:320 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:11 Double
-Base Chassis Heat Sinks: 10
+Base Chassis Heat Sinks:10
 Walk MP:8
 Jump MP:8
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:13
@@ -32,91 +32,97 @@ RTR Armor:7
 RTC Armor:7
 
 Weapons:7
-1 CLHeavyMediumLaser, Right Arm
-1 CLHeavyMediumLaser, Left Arm
-1 CLERMediumLaser, Right Torso
-1 CLERMediumLaser, Left Torso
-1 CLSmallPulseLaser, Right Torso
-1 CLSmallPulseLaser, Left Torso
-1 CLAntiMissileSystem, Left Torso
+Heavy Medium Laser, Left Arm
+Heavy Medium Laser, Right Arm
+AMS, Left Torso
+ER Medium Laser, Left Torso
+Small Pulse Laser, Left Torso
+ER Medium Laser, Right Torso
+Small Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLHeavyMediumLaser
-CLHeavyMediumLaser
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
-Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLHeavyMediumLaser
-CLHeavyMediumLaser
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
-Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 Jump Jet
-CLAntiMissileSystem
-CLERMediumLaser
-CLSmallPulseLaser
-Clan AMS Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Ferro-Fibrous
+CLAntiMissileSystem (omnipod)
+CLERMediumLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+CLAMS Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 Jump Jet
-CLERMediumLaser
-CLSmallPulseLaser
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
 -Empty-
-Endo-Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -125,6 +131,12 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -133,3 +145,11 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

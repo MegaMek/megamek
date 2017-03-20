@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -83,10 +83,10 @@ ISSRM2IOS
 </Rear Equipment>
 
 <Turret Equipment>
-ISMPod
-ISMPod
-ISMPod
-ISMPod
+ISMPod:OMNI
+ISMPod:OMNI
+ISMPod:OMNI
+ISMPod:OMNI
 </Turret Equipment>
 
 <source>
@@ -96,4 +96,8 @@ XTRO Republic I - Early Republic
 <tonnage>
 40.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

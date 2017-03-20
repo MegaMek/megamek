@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:50
-Engine:250 XL (Clan) Engine
-Structure:Endo Steel
+Engine:250 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -35,7 +35,7 @@ Weapons:7
 Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Left Arm
 Large Pulse Laser, Right Arm
-Clan Light TAG, Right Arm
+Light TAG, Right Arm
 ER Small Laser, Left Torso
 AMS, Left Torso
 ATM 6, Right Torso
@@ -44,57 +44,57 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLMediumPulseLaser
-CLMediumPulseLaser
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLLightTAG
-CLLightActiveProbe
-Endo Steel
-Endo Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLightTAG (omnipod)
+CLLightActiveProbe (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
-CLERSmallLaser
-CLAntiMissileSystem
-CLAMS Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERSmallLaser (omnipod)
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLATM6
-CLATM6
-CLATM6
-Clan Ammo ATM-6
-Clan Ammo ATM-6 ER
-Clan Ammo ATM-6 HE
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 ER (omnipod)
+Clan Ammo ATM-6 HE (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -108,13 +108,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

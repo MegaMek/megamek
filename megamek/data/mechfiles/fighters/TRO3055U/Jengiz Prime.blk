@@ -81,7 +81,11 @@ Clan LB 10-X Cluster Ammo:OMNI
 CLERPPC:OMNI
 CLMediumPulseLaser:OMNI
 CLERSmallLaser:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -89,7 +93,11 @@ CLLargePulseLaser:OMNI
 CLMediumPulseLaser:OMNI
 CLSRM6:OMNI
 Clan Ammo SRM-6:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -97,7 +105,11 @@ CLLargePulseLaser:OMNI
 CLMediumPulseLaser:OMNI
 CLSRM6:OMNI
 Clan Ammo SRM-6:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

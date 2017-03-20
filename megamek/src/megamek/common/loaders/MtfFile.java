@@ -719,8 +719,7 @@ public class MtfFile implements IMechLoader {
                                     throw new EntityLoadingException("must combine ammo or heatsinks in one slot");
                                 }
                             }
-                            mount = mech.addEquipment(etype, etype2, loc);
-                            mount.setOmniPodMounted(isOmniPod);
+                            mount = mech.addEquipment(etype, etype2, loc, isOmniPod);
                         }
                         // vehicular grenade launchers need to have their facing
                         // set

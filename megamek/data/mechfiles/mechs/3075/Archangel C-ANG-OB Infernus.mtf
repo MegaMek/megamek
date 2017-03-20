@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:100
-Engine:300 Compact Engine
-Structure:Endo Steel
+Engine:300 Compact Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Compact Gyro
@@ -43,57 +43,57 @@ Snub-Nose PPC, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Light PPC
-Light PPC
-Light PPC
-Light PPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
 
 Left Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
@@ -102,11 +102,11 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISSNPPC
-ISSNPPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
 ISC3iUnit
 ISC3iUnit
 
@@ -115,8 +115,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISSNPPC
-ISSNPPC
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

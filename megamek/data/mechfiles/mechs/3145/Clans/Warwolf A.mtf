@@ -32,13 +32,13 @@ RTR Armor:8
 RTC Armor:11
 
 Weapons:7
-ER Medium Laser, Head
-ER Large Laser, Center Torso
 ER PPC, Right Arm
 Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Center Torso
-Streak LRM 10, Right Torso
 Streak SRM 6, Left Torso
+Streak LRM 10, Right Torso
+ER Large Laser, Center Torso
+Medium Pulse Laser, Center Torso
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder
@@ -57,13 +57,13 @@ Clan Reactive
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
-CLMediumPulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLMediumPulseLaser (omnipod)
 Clan Endo Steel
 Clan Reactive
 -Empty-
@@ -71,12 +71,12 @@ Clan Reactive
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-CLCASEII
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+CLCASEII (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -85,12 +85,12 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLStreakLRM10
-CLStreakLRM10
-Clan Streak LRM 10 Ammo
-CLCASEII
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLStreakLRM10 (omnipod)
+CLStreakLRM10 (omnipod)
+Clan Streak LRM 10 Ammo (omnipod)
+CLCASEII (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERLargeLaser
-CLMediumPulseLaser
+CLERLargeLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Sensors
 Life Support
 -Empty-

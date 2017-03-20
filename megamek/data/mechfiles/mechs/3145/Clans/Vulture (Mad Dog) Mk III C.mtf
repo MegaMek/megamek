@@ -32,23 +32,23 @@ RTR Armor:7
 RTC Armor:9
 
 Weapons:12
-Micro Pulse Laser, Center Torso
-Micro Pulse Laser, Center Torso
-Micro Pulse Laser, Right Arm
 Micro Pulse Laser, Left Arm
+Micro Pulse Laser, Right Arm
+Streak SRM 6, Left Torso
+Streak SRM 6, Left Torso
 Streak SRM 6, Left Torso
 Streak SRM 6, Left Torso
 Streak SRM 6, Right Torso
 Streak SRM 6, Right Torso
 Streak SRM 6, Right Torso
-Streak SRM 6, Left Torso
 Streak SRM 6, Right Torso
-Streak SRM 6, Left Torso
+Micro Pulse Laser, Center Torso
+Micro Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLMicroPulseLaser
+CLMicroPulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -62,7 +62,7 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLMicroPulseLaser
+CLMicroPulseLaser (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -76,30 +76,30 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -112,8 +112,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMicroPulseLaser
-CLMicroPulseLaser
+CLMicroPulseLaser (omnipod)
+CLMicroPulseLaser (omnipod)
 
 Head:
 Life Support

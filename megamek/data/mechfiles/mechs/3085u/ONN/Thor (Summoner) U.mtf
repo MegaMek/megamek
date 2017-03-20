@@ -9,8 +9,8 @@ Source:Jihad
 Rules Level:2
 
 Mass:70
-Engine:350 XL (Clan) Engine
-Structure:Standard
+Engine:350 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -32,16 +32,16 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:3
-ER PPC, Right Arm
 ER PPC, Left Arm
+ER PPC, Right Arm
 LRT 15, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -53,9 +53,9 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -67,27 +67,27 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRTorpedo15
-CLLRTorpedo15
-Clan Ammo LRTorpedo-15
-Clan Ammo LRTorpedo-15
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+Clan Ammo LRTorpedo-15 (omnipod)
+Clan Ammo LRTorpedo-15 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -110,7 +110,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

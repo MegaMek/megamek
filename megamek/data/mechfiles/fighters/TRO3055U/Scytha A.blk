@@ -44,13 +44,13 @@ Aerodyne
 24
 </heatsinks>
 
-<omnipodheatsinks>
-4
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
+
+<omnipodheatsinks>
+4
+</omnipodheatsinks>
 
 <fuel>
 320
@@ -86,7 +86,11 @@ CLSRM6:OMNI
 Clan Ammo SRM-6:OMNI
 CLNarcBeacon:OMNI
 CLNarc Pods:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -95,6 +99,10 @@ Clan Ammo LRM-20:OMNI
 CLSRM6:OMNI
 CLERLargeLaser:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -103,12 +111,20 @@ Clan Ammo LRM-20:OMNI
 CLSRM6:OMNI
 CLERLargeLaser:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
 CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
 </Aft Equipment>
 
 <source>

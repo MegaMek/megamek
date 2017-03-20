@@ -4,7 +4,7 @@ D
 
 Config:Biped Omnimech
 TechBase:Clan
-Era:3119	
+Era:3119
 Source:RS 3145 NTNU - Late Republic
 Rules Level:2
 
@@ -32,24 +32,24 @@ RTR Armor:8
 RTC Armor:11
 
 Weapons:7
-AMS, Head
-ER Medium Laser, Right Torso
-ER Medium Laser, Left Torso
-Streak LRM 20, Left Torso
-Streak LRM 20, Right Torso
-Rotary AC/2, Right Arm
 Rotary AC/2, Left Arm
+Rotary AC/2, Right Arm
+Streak LRM 20, Left Torso
+ER Medium Laser, Left Torso
+Streak LRM 20, Right Torso
+ER Medium Laser, Right Torso
+AMS, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2 Ammo
-Clan Streak LRM 20 Ammo
-Clan Streak LRM 20 Ammo
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 Ammo (omnipod)
+Clan Streak LRM 20 Ammo (omnipod)
+Clan Streak LRM 20 Ammo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -57,13 +57,13 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2 Ammo
-Clan Streak LRM 20 Ammo
-Clan Streak LRM 20 Ammo
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 Ammo (omnipod)
+Clan Streak LRM 20 Ammo (omnipod)
+Clan Streak LRM 20 Ammo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -75,21 +75,21 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLStreakLRM20
-CLStreakLRM20
-CLStreakLRM20
-CLStreakLRM20
-CLStreakLRM20
+CLStreakLRM20 (omnipod)
+CLStreakLRM20 (omnipod)
+CLStreakLRM20 (omnipod)
+CLStreakLRM20 (omnipod)
+CLStreakLRM20 (omnipod)
 CLERMediumLaser
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakLRM20
-CLStreakLRM20
-CLStreakLRM20
-CLStreakLRM20
-CLStreakLRM20
+CLStreakLRM20 (omnipod)
+CLStreakLRM20 (omnipod)
+CLStreakLRM20 (omnipod)
+CLStreakLRM20 (omnipod)
+CLStreakLRM20 (omnipod)
 CLERMediumLaser
 CLMASC
 CLMASC
@@ -107,7 +107,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLRotaryAC2 Ammo
+CLRotaryAC2 Ammo (omnipod)
 CLAMS Ammo
 
 Head:

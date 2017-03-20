@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:75
-Engine:300 XL (Clan) Engine
-Structure:Endo Steel
+Engine:300 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:18 Double
@@ -32,72 +32,72 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:10
-Large Pulse Laser, Right Arm
 Large Pulse Laser, Left Arm
-Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+ATM 6, Left Torso
 Medium Pulse Laser, Center Torso
 Medium Pulse Laser, Center Torso
 SRM 6, Head
-ATM 6, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-Endo Steel
-Endo Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLATM6
-CLATM6
-CLATM6
-Clan Ammo ATM-6
-Clan Ammo ATM-6
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-Clan Ammo SRM-6
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -110,14 +110,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLSRM6
+CLSRM6 (omnipod)
 Sensors
 Life Support
 -Empty-

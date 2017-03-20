@@ -32,19 +32,19 @@ RTR Armor:8
 RTC Armor:11
 
 Weapons:3
-Laser AMS, Head
-ER Large Pulse Laser, Right Torso
 Ultra AC/10, Right Arm
+ER Large Pulse Laser, Right Torso
+Laser AMS, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Clan Reactive
 Clan Reactive
 Clan Reactive
@@ -53,13 +53,13 @@ Clan Reactive
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
 Clan Endo Steel
 Clan Reactive
 -Empty-
@@ -67,12 +67,12 @@ Clan Reactive
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-Jump Jet
-Jump Jet
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -81,13 +81,13 @@ Clan Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-Jump Jet
-Jump Jet
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERLargePulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -103,14 +103,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLLaserAntiMissileSystem
+CLLaserAntiMissileSystem (omnipod)
 Sensors
 Life Support
 -Empty-

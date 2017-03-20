@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:65
 Engine:325 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -39,11 +39,11 @@ Plasma Cannon, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLERMediumLaser
-Endo Steel
-Endo Steel
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -55,42 +55,42 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-CLPlasmaCannon
-CLPlasmaCannonAmmo
-Endo Steel
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+CLPlasmaCannon (omnipod)
+CLPlasmaCannonAmmo (omnipod)
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-CLECMSuite
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+CLECMSuite (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -103,14 +103,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -125,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

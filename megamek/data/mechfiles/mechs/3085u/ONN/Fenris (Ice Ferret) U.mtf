@@ -9,8 +9,8 @@ Source:Jihad
 Rules Level:4
 
 Mass:45
-Engine:360 XL (Clan) Engine
-Structure:Endo Steel
+Engine:360 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -33,17 +33,17 @@ RTC Armor:8
 
 Weapons:4
 ER Medium Laser, Left Arm
-SRT 4, Left Torso
-LRT 5, Right Arm
 ER Medium Laser, Left Arm
+LRT 5, Right Arm
+SRT 4, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -56,9 +56,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRTorpedo5
-Clan Ammo LRTorpedo-5
-Ferro-Fibrous
+CLLRT5 (omnipod)
+Clan Ammo LRTorpedo-5 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -68,26 +68,26 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLUMU
-CLUMU
-CLUMU
-CLSRT4
-Clan Ammo SRTorpedo-4
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLSRT4 (omnipod)
+Clan Ammo SRTorpedo-4 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLUMU
-CLUMU
-CLUMU
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLUMU (omnipod)
+CLUMU (omnipod)
+CLUMU (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -104,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLUMU
-Endo Steel
+CLUMU (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

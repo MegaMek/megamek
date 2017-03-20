@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:26
@@ -32,24 +32,24 @@ RTR Armor:7
 RTC Armor:11
 
 Weapons:8
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
 Streak SRM 6, Left Leg
-ER Small Pulse Laser, Left Torso
-Streak SRM 6, Right Torso
 Streak SRM 6, Right Leg
 LRM 20, Right Arm
+ER Small Pulse Laser, Left Torso
 C3 Master with TAG, Left Torso
+Streak SRM 6, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-IS Lance
-IS Lance
-IS Lance
-IS Lance
+IS Lance (omnipod)
+IS Lance (omnipod)
+IS Lance (omnipod)
+IS Lance (omnipod)
 ISAES
 ISAES
 ISAES
@@ -58,12 +58,12 @@ ISAES
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisV
-CLArtemisV
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
 ISAES
 ISAES
 ISAES
@@ -72,12 +72,12 @@ ISAES
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallPulseLaser
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
+CLERSmallPulseLaser (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 IS Endo-Composite
@@ -86,14 +86,14 @@ IS Endo-Composite
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan Streak SRM 6 Ammo
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-ISCASEII
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis V-capable (omnipod)
+ISCASEII (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLStreakSRM6
-CLStreakSRM6
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLStreakSRM6
-CLStreakSRM6
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
 -Empty-
 -Empty-
 -Empty-

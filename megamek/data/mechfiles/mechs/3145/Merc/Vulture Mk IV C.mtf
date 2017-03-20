@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:60
 Engine:300 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
@@ -32,35 +32,35 @@ RTR Armor:8
 RTC Armor:10
 
 Weapons:4
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-Improved Heavy Large Laser, Right Arm
 Gauss Rifle, Left Arm
+Improved Heavy Large Laser, Right Arm
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Ferro-Lamellor
-Ferro-Lamellor
-Ferro-Lamellor
-Ferro-Lamellor
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-Ferro-Lamellor
-Ferro-Lamellor
-Ferro-Lamellor
-Ferro-Lamellor
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
 -Empty-
 -Empty-
@@ -68,13 +68,13 @@ Ferro-Lamellor
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-Clan Gauss Ammo
-Clan Gauss Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -82,13 +82,13 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-Endo Steel
-Endo Steel
-Endo Steel
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -104,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Lamellor
-Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Lamellor
-Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
 -Empty-
 -Empty-

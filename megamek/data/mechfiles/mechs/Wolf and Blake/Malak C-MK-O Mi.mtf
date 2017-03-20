@@ -44,8 +44,8 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISMediumVSPLaser
-ISMediumVSPLaser
+ISMediumVSPLaser (omnipod)
+ISMediumVSPLaser (omnipod)
 IS Light Ferro-Fibrous
 IS Light Ferro-Fibrous
 -Empty-
@@ -55,8 +55,8 @@ IS Light Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumVSPLaser
-ISMediumVSPLaser
+ISMediumVSPLaser (omnipod)
+ISMediumVSPLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -74,7 +74,7 @@ ISC3iUnit
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Supercharger
+Supercharger (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -113,7 +113,7 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-

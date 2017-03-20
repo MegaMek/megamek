@@ -80,7 +80,11 @@ CLLRM20:OMNI
 Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
 Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
 CLArtemisIV:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

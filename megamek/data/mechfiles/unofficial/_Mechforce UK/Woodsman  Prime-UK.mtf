@@ -1,5 +1,5 @@
 Version:1.0
-Woodsman 
+Woodsman
 Prime-UK
 
 Config:Biped Omnimech
@@ -8,15 +8,16 @@ Era:3050
 Rules Level:2
 
 Mass:80
-Engine:400 XL Engine
-Structure:Endo Steel
+Engine:400 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
+Base Chassis Heat Sinks:12
 Walk MP:5
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:14
 RA Armor:14
 LT Armor:15
@@ -30,21 +31,21 @@ RTR Armor:9
 RTC Armor:10
 
 Weapons:4
-1 CLUltraAC10, Right Arm, Ammo:20
-1 CLLBXAC10, Left Arm, Ammo:20
-1 CLLRM20, Right Torso, Ammo:12
-1 CLERSmallLaser, Left Torso
+LB 10-X AC, Left Arm
+Ultra AC/10, Right Arm
+ER Small Laser, Left Torso
+LRM 20, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10 CL Ammo
-CLLBXAC10 Ammo
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -52,12 +53,12 @@ CLLBXAC10 Ammo
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10 Ammo
-CLUltraAC10 Ammo
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,7 +67,7 @@ CLUltraAC10 Ammo
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -80,12 +81,12 @@ CLERSmallLaser
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20 Ammo
-CLLRM20 Ammo
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+Clan Ammo LRM-20 (omnipod)
+Clan Ammo LRM-20 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +103,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -124,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +139,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

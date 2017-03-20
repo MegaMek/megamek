@@ -8,15 +8,16 @@ Era:3050
 Rules Level:2
 
 Mass:85
-Engine:340 XL Engine
-Structure:Standard
+Engine:340 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -29,67 +30,69 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:6
-1 CLERPPC, Right Arm
-2 CLStreakSRM6, Right Arm, Ammo:60
-1 CLERPPC, Left Arm
-2 CLStreakSRM6, Left Arm
-1 CLFlamer, Right Torso
-1 CLERMediumLaser, Center Torso
+Weapons:8
+ER PPC, Left Arm
+Streak SRM 6, Left Arm
+Streak SRM 6, Left Arm
+ER PPC, Right Arm
+Streak SRM 6, Right Arm
+Streak SRM 6, Right Arm
+Flamer, Right Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-CLStreakSRM6 Ammo
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-CLStreakSRM6 Ammo
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLFlamer
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLFlamer (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -104,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -126,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -140,12 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

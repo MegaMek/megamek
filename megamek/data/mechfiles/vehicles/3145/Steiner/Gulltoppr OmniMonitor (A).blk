@@ -32,6 +32,10 @@ Mixed (IS Chassis) Experimental
 Tracked
 </motion_type>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 2
 </cruiseMP>
@@ -39,6 +43,10 @@ Tracked
 <engine_type>
 2
 </engine_type>
+
+<omni>
+1
+</omni>
 
 <armor>
 136
@@ -52,21 +60,21 @@ Tracked
 </armor>
 
 <Body Equipment>
-CLTargeting Computer
-CLECMSuite
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-CLCASE
+CLTargeting Computer:OMNI
+CLECMSuite:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -88,17 +96,17 @@ CLCASE
 </Rear Equipment>
 
 <Rear Turret Equipment>
-CLGaussRifle
-CLGaussRifle
+CLGaussRifle:OMNI
+CLGaussRifle:OMNI
 </Rear Turret Equipment>
 
 <Front Turret Equipment>
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisV
-CLArtemisV
-CLArtemisV
+CLLRM20:OMNI
+CLLRM20:OMNI
+CLLRM20:OMNI
+CLArtemisV:OMNI
+CLArtemisV:OMNI
+CLArtemisV:OMNI
 </Front Turret Equipment>
 
 <source>
@@ -109,7 +117,11 @@ TRO 3145 Lyran Commonwealth - Late Republic
 190.0
 </tonnage>
 
-<omni>
-1
-</omni>
+<baseChassisTurretWeight>
+2.5
+</baseChassisTurretWeight>
+
+<baseChassisTurret2Weight>
+3.0
+</baseChassisTurret2Weight>
 

@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:30
 Engine:180 XL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
@@ -43,7 +43,7 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 CLECMSuite (omnipod)
-Clan Endo-Steel
+Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -56,7 +56,7 @@ Shoulder
 Upper Arm Actuator
 CLERLargeLaser (omnipod)
 CLERMediumLaser (omnipod)
-Clan Endo-Steel
+Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -74,8 +74,8 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLLRM10 (omnipod)
 Clan Ammo LRM-10 (omnipod)
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
@@ -86,9 +86,9 @@ CLDoubleHeatSink (omnipod)
 CLDoubleHeatSink (omnipod)
 CLLRM10 (omnipod)
 Clan Ammo LRM-10 (omnipod)
-Clan Endo-Steel
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-

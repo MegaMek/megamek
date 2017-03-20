@@ -44,13 +44,13 @@ Aerodyne
 12
 </heatsinks>
 
-<omnipodheatsinks>
-2
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
+
+<omnipodheatsinks>
+2
+</omnipodheatsinks>
 
 <fuel>
 240

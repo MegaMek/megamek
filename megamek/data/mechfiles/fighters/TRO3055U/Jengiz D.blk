@@ -44,13 +44,13 @@ Aerodyne
 29
 </heatsinks>
 
-<omnipodheatsinks>
-9
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
+
+<omnipodheatsinks>
+9
+</omnipodheatsinks>
 
 <fuel>
 320
@@ -86,7 +86,11 @@ CLLRM20:OMNI
 Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
 Clan Ammo LRM-20 (Clan) Artemis-capable:OMNI
 CLArtemisIV:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -94,7 +98,11 @@ CLERLargeLaser:OMNI
 CLERMediumLaser:OMNI
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -102,7 +110,11 @@ CLERLargeLaser:OMNI
 CLERMediumLaser:OMNI
 CLStreakSRM6:OMNI
 Clan Streak SRM 6 Ammo:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>

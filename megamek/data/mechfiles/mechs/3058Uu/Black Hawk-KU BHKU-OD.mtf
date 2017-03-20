@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:60
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -32,18 +32,18 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:2
-ER Large Laser, Right Arm
 LRM 20, Left Arm
+ER Large Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-LRM 20
-LRM 20
-LRM 20
-LRM 20
-LRM 20
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -53,8 +53,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISERLargeLaser
-ISERLargeLaser
+ISERLargeLaser (omnipod)
+ISERLargeLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -70,8 +70,8 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-IS Ammo LRM-20
-IS Ammo LRM-20
+IS Ammo LRM-20 (omnipod)
+IS Ammo LRM-20 (omnipod)
 -Empty-
 -Empty-
 -Empty-

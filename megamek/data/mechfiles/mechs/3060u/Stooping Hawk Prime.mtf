@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:55
-Engine:275 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:275 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -43,11 +43,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -57,20 +57,20 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
+CLERMediumLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-Jump Jet
-Jump Jet
-Ferro-Fibrous
-Ferro-Fibrous
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -81,17 +81,17 @@ Ferro-Fibrous
 -Empty-
 
 Right Torso:
-Jump Jet
-Jump Jet
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Endo Steel
-Endo Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Center Torso:
@@ -105,7 +105,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (omnipod)
 -Empty-
 
 Head:
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

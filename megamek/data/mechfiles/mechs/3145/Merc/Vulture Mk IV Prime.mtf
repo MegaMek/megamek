@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:60
 Engine:300 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -44,26 +44,26 @@ ER Small Pulse Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-Clan LB 5-X Cluster Ammo
-Ferro-Lamellor
-Ferro-Lamellor
-Ferro-Lamellor
-Ferro-Lamellor
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+Clan LB 5-X Cluster Ammo (omnipod)
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-Ferro-Lamellor
-Ferro-Lamellor
-Ferro-Lamellor
-Ferro-Lamellor
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
 -Empty-
 -Empty-
@@ -72,12 +72,12 @@ Ferro-Lamellor
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLSRM6
-CLSRM6
-Clan Ammo SRM-6
-Endo Steel
-Endo Steel
-Endo Steel
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -86,12 +86,12 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLSRM6
-CLSRM6
-Clan Ammo SRM-6
-Endo Steel
-Endo Steel
-Endo Steel
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERSmallPulseLaser
-CLERSmallPulseLaser
+CLERSmallPulseLaser (omnipod)
+CLERSmallPulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Lamellor
-Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Lamellor
-Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
 -Empty-
 -Empty-

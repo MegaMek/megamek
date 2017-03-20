@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:50
 Engine:250 Fusion Engine(IS)
-Structure:IS Endo-Steel
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:10
 Walk MP:5
 Jump MP:5
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:15
 RA Armor:15
 LT Armor:17
@@ -34,22 +34,22 @@ RTC Armor:8
 Weapons:8
 ATM 3, Left Leg
 ATM 3, Right Leg
-ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
 ER Medium Laser, Left Arm
 ER Medium Laser, Right Arm
-ER Medium Laser, Left Arm
-LRM 10, Right Torso
+ER Medium Laser, Right Arm
 LRM 10, Left Torso
+LRM 10, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -58,12 +58,12 @@ IS Endo-Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -72,10 +72,10 @@ IS Endo-Steel
 Left Torso:
 Jump Jet
 Jump Jet
-CLLRM10
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+CLLRM10 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -86,13 +86,13 @@ IS Endo-Steel
 Right Torso:
 Jump Jet
 Jump Jet
-CLLRM10
-Clan Ammo LRM-10
-Clan Ammo LRM-10
-Clan Ammo ATM-3
-Clan Ammo ATM-3
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ammo ATM-3 (omnipod)
+Clan Ammo ATM-3 (omnipod)
 ISCASE
-IS Endo-Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -109,13 +109,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-IS Endo-Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-IS Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLATM3
-CLATM3
+CLATM3 (omnipod)
+CLATM3 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLATM3
-CLATM3
+CLATM3 (omnipod)
+CLATM3 (omnipod)
 -Empty-
 -Empty-
 -Empty-

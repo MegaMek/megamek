@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Dasher (Fire Moth)
 (Aletha)
 
@@ -8,16 +8,16 @@ Era:3068
 Rules Level:2
 
 Mass:20
-Engine:200 XL Fusion Engine
-Structure:Endo-Steel
-Myomer:CLMASC
+Engine:200 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:10 Double
-Base Chassis Heat Sinks: 10
+Base Chassis Heat Sinks:8
 Walk MP:10
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:3
 RA Armor:3
 LT Armor:4
@@ -30,103 +30,122 @@ RTL Armor:2
 RTR Armor:2
 RTC Armor:2
 
-Weapons:5
-1 CLECMSuite, Left Torso
-1 CLERLargeLaser, Right Arm
-1 CLERSmallLaser, Left Arm
-1 CLERSmallLaser, Left Arm
-1 CLERSmallLaser, Left Arm
+Weapons:4
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+ER Large Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
-Endo-Steel
-Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
+CLERLargeLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Endo-Steel
-Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLECMSuite
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLECMSuite (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 CLMASC
-Endo-Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+Clan Endo Steel
 -Empty-
-Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+Clan Endo Steel
 -Empty-
-Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

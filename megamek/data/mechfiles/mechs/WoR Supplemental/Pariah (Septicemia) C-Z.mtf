@@ -32,34 +32,34 @@ RTR Armor:7
 RTC Armor:7
 
 Weapons:21
-Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Left Arm
-Plasma Cannon, Head
 Plasma Cannon, Left Arm
-AP Gauss Rifle, Left Torso
-AP Gauss Rifle, Left Torso
-AP Gauss Rifle, Right Torso
-AP Gauss Rifle, Right Torso
-AP Gauss Rifle, Right Torso
-AP Gauss Rifle, Left Torso
-Machine Gun, Left Torso
-Machine Gun, Left Torso
-Machine Gun, Left Torso
-Machine Gun, Right Torso
-Machine Gun, Right Torso
-Machine Gun, Right Torso
-Machine Gun Array, Left Torso
-Machine Gun Array, Right Torso
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
 Plasma Cannon, Right Arm
+AP Gauss Rifle, Left Torso
+AP Gauss Rifle, Left Torso
+AP Gauss Rifle, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun Array, Left Torso
+AP Gauss Rifle, Right Torso
+AP Gauss Rifle, Right Torso
+AP Gauss Rifle, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun Array, Right Torso
+Plasma Cannon, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLPlasmaCannon
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLPlasmaCannon (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -71,9 +71,9 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLPlasmaCannon
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLPlasmaCannon (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -85,30 +85,30 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLMG
-CLMG
-CLMG
-CLMGA
-NovaCEWS
-CLAPGaussRifle Ammo
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMGA (omnipod)
+NovaCEWS (omnipod)
+CLAPGaussRifle Ammo (omnipod)
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLMG
-CLMG
-CLMG
-CLMGA
-Clan Machine Gun Ammo - Half
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMGA (omnipod)
+Clan Machine Gun Ammo - Half (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -121,14 +121,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLPlasmaCannonAmmo
-CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo (omnipod)
+CLPlasmaCannonAmmo (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLPlasmaCannon
+CLPlasmaCannon (omnipod)
 Sensors
 Life Support
 -Empty-

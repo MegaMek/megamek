@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+2
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -68,29 +72,29 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISLBXAC10
-IS LB 10-X Cluster Ammo
-IS LB 10-X Cluster Ammo
+ISLBXAC10:OMNI
+IS LB 10-X Cluster Ammo:OMNI
+IS LB 10-X Cluster Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-LRM 15
-ISArtemisIV
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-ISERMediumLaser
-ISERMediumLaser
+LRM 15:OMNI
+ISArtemisIV:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-LRM 15
-ISArtemisIV
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-ISERMediumLaser
-ISERMediumLaser
+LRM 15:OMNI
+ISArtemisIV:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

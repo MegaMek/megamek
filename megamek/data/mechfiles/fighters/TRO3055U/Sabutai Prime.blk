@@ -44,13 +44,13 @@ Aerodyne
 21
 </heatsinks>
 
-<omnipodheatsinks>
-6
-</omnipodheatsinks>
-
 <sink_type>
 1
 </sink_type>
+
+<omnipodheatsinks>
+6
+</omnipodheatsinks>
 
 <fuel>
 240
@@ -83,7 +83,11 @@ Aerodyne
 CLGaussRifle:OMNI
 Clan Gauss Ammo:OMNI
 CLERSmallLaser:OMNI
-CLCASE:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>

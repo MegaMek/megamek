@@ -68,24 +68,24 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISStreakSRM6
-ISStreakSRM6
-IS Streak SRM 6 Ammo
-IS Streak SRM 6 Ammo
+ISStreakSRM6:OMNI
+ISStreakSRM6:OMNI
+IS Streak SRM 6 Ammo:OMNI
+IS Streak SRM 6 Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-MRM 40
-IS MRM 40 Ammo
-IS MRM 40 Ammo
-IS MRM 40 Ammo
+MRM 40:OMNI
+IS MRM 40 Ammo:OMNI
+IS MRM 40 Ammo:OMNI
+IS MRM 40 Ammo:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-MRM 40
-IS MRM 40 Ammo
-IS MRM 40 Ammo
-IS MRM 40 Ammo
+MRM 40:OMNI
+IS MRM 40 Ammo:OMNI
+IS MRM 40 Ammo:OMNI
+IS MRM 40 Ammo:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

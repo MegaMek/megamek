@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:30
-Engine:180 XL Engine
-Structure:Endo Steel
+Engine:180 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -34,8 +34,8 @@ RTC Armor:4
 Weapons:5
 Medium Laser, Left Arm
 Medium Laser, Right Arm
-SRM 4, Left Torso
 ER PPC, Left Torso
+SRM 4, Left Torso
 SRM 4, Right Torso
 
 Left Arm:
@@ -43,11 +43,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Medium Laser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Medium Laser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -57,11 +57,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Medium Laser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Medium Laser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -73,11 +73,11 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
-SRM 4
-IS Ammo SRM-4
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+SRM 4 (omnipod)
+IS Ammo SRM-4 (omnipod)
 -Empty-
 
 Right Torso:
@@ -90,7 +90,7 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-SRM 4
+SRM 4 (omnipod)
 -Empty-
 -Empty-
 
@@ -105,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

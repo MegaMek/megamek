@@ -34,6 +34,7 @@ Hover
 
 <transporters>
 troopspace:6.45
+standardseats:6.45:86
 cargobay:18.05:1
 </transporters>
 
@@ -44,6 +45,10 @@ cargobay:18.05:1
 <engine_type>
 6
 </engine_type>
+
+<fuel
+4
+</fuel>
 
 <armor>
 11
@@ -84,14 +89,9 @@ cargobay:18.05:1
 </Rear Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Succession Wars
 </source>
 
 <tonnage>
 80.0
 </tonnage>
-
-<range>
-1000
-</range>
-

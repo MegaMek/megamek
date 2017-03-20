@@ -32,6 +32,14 @@ IS Level 2
 Wheeled
 </motion_type>
 
+<transporters>
+cargobay:11.5:1
+</transporters>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 0
 </cruiseMP>
@@ -40,20 +48,16 @@ Wheeled
 8
 </engine_type>
 
+<omni>
+1
+</omni>
+
 <armor>
 8
 8
 8
 10
 </armor>
-
-<barrating>
-7
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
 
 <Body Equipment>
 Tractor
@@ -72,18 +76,19 @@ Trailer
 <Rear Equipment>
 </Rear Equipment>
 
-<transporters>
-cargobay:11.5:1
-</transporters>
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <source>
-HB HD
+HB:House Davion - Civil War
 </source>
 
 <tonnage>
 15.0
 </tonnage>
-
-<omni>
-</omni>
 

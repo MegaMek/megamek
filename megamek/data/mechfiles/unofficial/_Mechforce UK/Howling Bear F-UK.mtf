@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:75
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
+Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:24
@@ -30,68 +31,68 @@ RTR Armor:8
 RTC Armor:12
 
 Weapons:7
-1 CLLRM20, Right Arm, Ammo:48
-1 CLLRM20, Left Arm
-1 CLLRM20, Right Torso
-1 CLERMediumLaser, Right Torso
-1 CLLRM20, Left Torso
-1 CLERMediumLaser, Left Torso
-1 CLERSmallLaser, Head
+LRM 20, Left Arm
+LRM 20, Right Arm
+LRM 20, Left Torso
+ER Medium Laser, Left Torso
+LRM 20, Right Torso
+ER Medium Laser, Right Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
-Ferro-Fibrous
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -105,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -127,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -141,12 +142,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

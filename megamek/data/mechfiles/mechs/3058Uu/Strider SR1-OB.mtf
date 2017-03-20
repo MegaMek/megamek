@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:40
-Engine:240 Fusion Engine
-Structure:Endo Steel
+Engine:240 Fusion Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Single
@@ -38,8 +38,8 @@ LRM 10, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-LRM 10
-LRM 10
+LRM 10 (omnipod)
+LRM 10 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -52,8 +52,8 @@ LRM 10
 Right Arm:
 Shoulder
 Upper Arm Actuator
-LRM 10
-LRM 10
+LRM 10 (omnipod)
+LRM 10 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -64,28 +64,28 @@ LRM 10
 -Empty-
 
 Left Torso:
-IS Ammo LRM-10
+IS Ammo LRM-10 (omnipod)
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-IS Ammo LRM-10
+IS Ammo LRM-10 (omnipod)
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -125,7 +125,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +138,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

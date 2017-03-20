@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Drillson Heavy Hover Tank
@@ -24,33 +24,21 @@ Drillson Heavy Hover Tank
 3025
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<armor_tech>
-1
-</armor_tech>
-
-<tonnage>
-50.0
-</tonnage>
 
 <motion_type>
 Hover
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
-
 <cruiseMP>
 9
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
 
 <armor>
 24
@@ -86,4 +74,12 @@ SRM 2
 SRM 2
 Large Laser
 </Turret Equipment>
+
+<source>
+TRO 3039 - Succession Wars
+</source>
+
+<tonnage>
+50.0
+</tonnage>
 

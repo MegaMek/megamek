@@ -6,6 +6,7 @@
 
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /** This class describes a vehicle crew that has abandoned its vehicle and now
@@ -43,7 +44,7 @@ public class EjectedCrew extends Infantry {
         IGame tmpGame = originalRide.getGame();
         if (tmpGame != null
             && (!(this instanceof MechWarrior) 
-                    || tmpGame.getOptions().booleanOption("armed_mechwarriors"))) {
+                    || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
                 addEquipment(EquipmentType.get("InfantryAssaultRifle"),
                         Infantry.LOC_INFANTRY);
@@ -84,7 +85,7 @@ public class EjectedCrew extends Infantry {
         IGame tmpGame = game;
         if (tmpGame != null
             && (!(this instanceof MechWarrior) 
-                    || tmpGame.getOptions().booleanOption("armed_mechwarriors"))) {
+                    || tmpGame.getOptions().booleanOption(OptionsConstants.ADVANCED_ARMED_MECHWARRIORS))) {
             try {
                 addEquipment(EquipmentType.get("InfantryAssaultRifle"),
                         Infantry.LOC_INFANTRY);

@@ -40,6 +40,10 @@ Wheeled
 0
 </engine_type>
 
+<fuel>
+0
+</fuel>
+
 <armor>
 13
 11
@@ -85,7 +89,7 @@ cargobay:3:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Civil War
 </source>
 
 <tonnage>

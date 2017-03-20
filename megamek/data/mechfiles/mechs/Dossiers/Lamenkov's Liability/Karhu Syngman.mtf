@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Karhu
 (Syngman)
 
@@ -9,16 +9,16 @@ Source:TRO 3085/Lamenkov's Liability - Jihad
 Rules Level:4
 
 Mass:65
-Engine:325 XL Fusion Engine (Clan)
-Structure:Endo-Steel
+Engine:325 XL (Clan) Engine
+Structure:Clan Endo Steel
 Myomer:Standard
 
-Heat Sinks:15 Double (Clan)
-Base Chassis Heat Sinks: 12
+Heat Sinks:15 Double
+Base Chassis Heat Sinks:12
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous (Clan)
+Armor:Ferro-Fibrous(Clan)
 LA Armor:20
 RA Armor:20
 LT Armor:23
@@ -31,27 +31,23 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:10
 
-Weapons:7
-1 ISGuardianECM, Right Torso
-1 ISBeagleActiveProbe, Left Torso
-1 ISC3SlaveUnit, Left Torso
-1 Retractable Blade, Right Arm
-1 ISERMediumLaser, Left Arm
-1 ISHeavyPPC, Left Arm
-1 ISPlasmaRifle, Right Arm, Ammo:20
+Weapons:3
+Heavy PPC, Left Arm
+ER Medium Laser, Left Arm
+Plasma Rifle, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISERMediumLaser
-Endo-Steel
-Endo-Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+ISERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Arm:
@@ -59,77 +55,97 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISPlasmaRifle
-ISPlasmaRifle
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Endo-Steel
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Clan Endo Steel
 
 Left Torso:
-Engine
-Engine
-ISBeagleActiveProbe
-ISBeagleActiveProbe
-ISC3SlaveUnit
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
+ISC3SlaveUnit (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-ISPlasmaRifle Ammo
-ISPlasmaRifle Ammo
-ISGuardianECM
-ISGuardianECM
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

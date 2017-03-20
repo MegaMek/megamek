@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:65
-Engine:325 XL (Clan) Engine
-Structure:Endo Steel
+Engine:325 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
@@ -32,49 +32,49 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:5
-ER Medium Laser, Left Torso
-LRM 10, Left Torso
-SRM 2, Right Torso
-Gauss Rifle, Right Arm
 LB 5-X AC, Left Arm
+Gauss Rifle, Right Arm
+LRM 10, Left Torso
+ER Medium Laser, Left Torso
+SRM 2, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-Clan LB 5-X AC Ammo
-Clan LB 5-X Cluster Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+Clan LB 5-X AC Ammo (omnipod)
+Clan LB 5-X Cluster Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Ferro-Fibrous
-Ferro-Fibrous
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10
-CLERMediumLaser
-Clan Ammo LRM-10
-Clan Ammo LRM-10
-Endo Steel
-Ferro-Fibrous
+CLLRM10 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -83,11 +83,11 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLSRM2
-Clan Ammo SRM-2
-Clan Gauss Ammo
-Clan Gauss Ammo
-Endo Steel
+CLSRM2 (omnipod)
+Clan Ammo SRM-2 (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -105,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

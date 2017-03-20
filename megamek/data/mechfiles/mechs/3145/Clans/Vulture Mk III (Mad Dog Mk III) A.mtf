@@ -32,21 +32,21 @@ RTR Armor:7
 RTC Armor:9
 
 Weapons:8
-Medium Pulse Laser, Center Torso
-Medium Pulse Laser, Center Torso
-SRM 6, Left Torso
-SRM 6, Right Torso
-SRM 6, Left Torso
-SRM 6, Right Torso
-Ultra AC/5, Right Arm
 Ultra AC/5, Left Arm
+Ultra AC/5, Right Arm
+SRM 6, Left Torso
+SRM 6, Left Torso
+SRM 6, Right Torso
+SRM 6, Right Torso
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -58,9 +58,9 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -72,12 +72,12 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLSRM6
-CLSRM6
-Clan Ammo SRM-6
-Clan Ultra AC/5 Ammo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -86,12 +86,12 @@ Clan Ultra AC/5 Ammo
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLSRM6
-CLSRM6
-Clan Ammo SRM-6
-Clan Ultra AC/5 Ammo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -108,8 +108,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Head:
 Life Support

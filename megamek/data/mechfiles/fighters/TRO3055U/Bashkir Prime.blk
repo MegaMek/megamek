@@ -76,18 +76,22 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERSmallLaser
-CLStreakSRM2
-Clan Streak SRM 2 Ammo
+CLERSmallLaser:OMNI
+CLStreakSRM2:OMNI
+Clan Streak SRM 2 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERMediumLaser
+CLERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERMediumLaser
+CLERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

@@ -2,22 +2,23 @@ Version:1.0
 Mad Cat (Timber Wolf)
 F
 
-Config:Biped OmniMech
+Config:Biped Omnimech
 TechBase:Clan
 Era:3069
 Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:75
-Engine:375 XL Engine
-Structure:Endo Steel
+Engine:375 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
+Base Chassis Heat Sinks:15
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous Armor
+Armor:Ferro-Fibrous(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:25
@@ -31,26 +32,26 @@ RTR Armor:7
 RTC Armor:9
 
 Weapons:10
-1 CLERLargeLaser, Right Arm
-1 CLERLargeLaser, Left Arm
-1 CLERMediumLaser, Left Arm
-1 CLERMediumLaser, Right Arm
-1 CLERMediumLaser, Left Torso
-1 CLAPGaussRifle, Left Torso, Ammo:40
-1 CLAPGaussRifle, Right Torso
-1 CLAPGaussRifle, Center Torso
-1 CLLRM20, Left Torso, Ammo:12
-1 CLLRM20, Right Torso
+ER Large Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Large Laser, Right Arm
+ER Medium Laser, Right Arm
+LRM 20, Left Torso
+ER Medium Laser, Left Torso
+AP Gauss Rifle, Left Torso
+LRM 20, Right Torso
+AP Gauss Rifle, Right Torso
+AP Gauss Rifle, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLERMediumLaser
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -60,63 +61,63 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLERMediumLaser
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-Engine
-Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLERMediumLaser
-CLAPGaussRifle
-CLLRM20 Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLERMediumLaser (omnipod)
+CLAPGaussRifle (omnipod)
+Clan Ammo LRM-20 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLAPGaussRifle
-CLAPGaussRifle Ammo
-CLLRM20 Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle Ammo (omnipod)
+Clan Ammo LRM-20 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLAPGaussRifle
-Endo Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLAPGaussRifle (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
 Cockpit
 Sensors
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -131,8 +132,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -145,11 +146,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

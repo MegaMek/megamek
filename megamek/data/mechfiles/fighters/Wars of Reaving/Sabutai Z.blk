@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+1
+</omnipodheatsinks>
+
 <fuel>
 240
 </fuel>
@@ -76,35 +80,39 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERPPC
-NovaCEWS
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
+CLERPPC:OMNI
+NovaCEWS:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+Clan Ammo iATM-9:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLiATM9
-CLiATM9
+CLiATM9:OMNI
+CLiATM9:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLiATM9
-CLiATM9
+CLiATM9:OMNI
+CLiATM9:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

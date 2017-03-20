@@ -70,7 +70,7 @@ public class FindClubAction extends AbstractEntityAction {
         }
 
         // Check game options
-        if (game.getOptions().booleanOption("no_clan_physical")
+        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL)
             && entity.isClan()) {
             return false;
         }

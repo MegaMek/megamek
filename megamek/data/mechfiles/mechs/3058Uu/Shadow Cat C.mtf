@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:45
-Engine:270 XL (Clan) Engine
-Structure:Endo Steel
+Engine:270 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -42,12 +42,12 @@ Narc, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLATM6
-CLATM6
-CLATM6
-CLERMediumLaser
-Endo Steel
-Endo Steel
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -56,12 +56,12 @@ Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLATM6
-CLATM6
-CLATM6
-CLERMediumLaser
-Endo Steel
-Endo Steel
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -71,28 +71,28 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLERMediumLaser
-Clan Ammo ATM-6
-Clan Ammo ATM-6 ER
-Clan Ammo ATM-6 HE
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 ER (omnipod)
+Clan Ammo ATM-6 HE (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLNarcBeacon
-CLNarc Pods
-CLNarc Pods
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLNarcBeacon (omnipod)
+CLNarc Pods (omnipod)
+CLNarc Pods (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -113,7 +113,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-

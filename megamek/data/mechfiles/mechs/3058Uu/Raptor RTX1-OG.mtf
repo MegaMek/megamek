@@ -47,10 +47,10 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
 
 Right Arm:
 Shoulder
@@ -58,9 +58,9 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISSmallPulseLaser
-ISSmallPulseLaser
-ISSmallPulseLaser
+ISSmallPulseLaser (omnipod)
+ISSmallPulseLaser (omnipod)
+ISSmallPulseLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -84,7 +84,7 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel

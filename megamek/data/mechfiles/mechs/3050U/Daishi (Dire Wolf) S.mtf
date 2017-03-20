@@ -9,15 +9,16 @@ Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:100
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Double
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:3
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -30,73 +31,74 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:14
 
-Weapons:10
-1 CLLBXAC20, Right Arm, Ammo:20
-2 CLMediumPulseLaser, Right Torso
-1 CLMG, Right Torso, Ammo:200
-1 CLLargePulseLaser, Left Arm
-2 CLMediumPulseLaser, Left Torso
-1 CLMG, Left Torso
-1 CLStreakSRM4, Left Torso, Ammo:25
-1 CLStreakSRM4, Center Torso
-1 CLMediumPulseLaser, Head
-2 CLAntiPersonnelPod, Right Leg
+Weapons:11
+Large Pulse Laser, Left Arm
+LB 20-X AC, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Machine Gun, Left Torso
+Streak SRM 4, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Machine Gun, Right Torso
+Streak SRM 4, Center Torso
+Medium Pulse Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLLargePulseLaser
-CLLargePulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20 CL Ammo
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+Clan LB 20-X Cluster Ammo (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMG
-CLStreakSRM4
-CLStreakSRM4 Ammo
-Jump Jet
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMG (omnipod)
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+Jump Jet (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMG
-CLLBXAC20 Ammo
-CLLBXAC20 CL Ammo
-CLLBXAC20 Ammo
-CLMG Ammo (200)
-Jump Jet
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMG (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan LB 20-X Cluster Ammo (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan Machine Gun Ammo - Full (omnipod)
+Jump Jet (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -109,14 +111,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLStreakSRM4
-Jump Jet
+CLStreakSRM4 (omnipod)
+Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -131,8 +133,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -145,12 +147,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
+CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

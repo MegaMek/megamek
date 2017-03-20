@@ -35,8 +35,9 @@ import megamek.common.EquipmentType;
 import megamek.common.FixedWingSupport;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
-import megamek.common.IPlayer;
 import megamek.common.IHex;
+import megamek.common.ILocationExposureStatus;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
@@ -346,7 +347,7 @@ public class FireControl {
         if (targetState.isImmobile()) {
             toHitData.addModifier(TH_TAR_IMMOBILE);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
             && (targetState.getMovementType() == EntityMovementType.MOVE_NONE)
             && !targetState.isImmobile()
             && !((target instanceof Infantry) || (target instanceof VTOL) ||
@@ -559,7 +560,7 @@ public class FireControl {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AGM_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
             if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                 toHitData.addModifier(TH_PHY_LIGHT);
             } else if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
@@ -649,8 +650,9 @@ public class FireControl {
      * @return The to hit modifiers as a {@link ToHitData} object.
      */
     @StaticWrapper
-    protected ToHitData getInfantryRangeMods(int distance, InfantryWeapon weapon) {
-        return Compute.getInfantryRangeMods(distance, weapon);
+    protected ToHitData getInfantryRangeMods(int distance, InfantryWeapon weapon,
+    		InfantryWeapon secondary, boolean underwater) {
+        return Compute.getInfantryRangeMods(distance, weapon, secondary, underwater);
     }
 
     /**
@@ -768,8 +770,8 @@ public class FireControl {
             }
         }
         int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon),
-                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE),
-                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE));
+                                           game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE),
+                                           game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
             return new ToHitData(TH_OUT_OF_RANGE);
         } else if ((range == RangeType.RANGE_MINIMUM) && targetState.isAirborneAero()) {
@@ -863,7 +865,9 @@ public class FireControl {
                 toHit.addModifier((weaponType.getMinimumRange() - distance) + 1, TH_MINIMUM_RANGE);
             }
         } else {
-            toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType()));
+            toHit.append(getInfantryRangeMods(distance, (InfantryWeapon) weapon.getType(),
+            		isShooterInfantry?((Infantry)shooter).getSecondaryWeapon() : null,
+            				shooter.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET));
         }
 
         // let us not forget about heat
@@ -1289,7 +1293,7 @@ public class FireControl {
     }
 
     private boolean isSubCommander(Entity entity) {
-        int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus() + entity.getMDIniBonus();
+        int initBonus = entity.getHQIniBonus() + entity.getQuirkIniBonus();  //removed in IO + entity.getMDIniBonus()
         return entity.hasC3() || entity.hasTAG() || entity.hasBoostedC3() || entity.hasNovaCEWS() ||
                entity.isUsingSpotlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
                entity.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS) || entity.hasEiCockpit() ||

@@ -71,7 +71,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
      * Damage that the specified mech does with a club attack
      */
     public static int getDamageFor(Entity entity, Mounted club,
-                                   boolean targetInfantry) {
+            boolean targetInfantry) {
         MiscType mType = (MiscType) (club.getType());
         int nDamage = (int) Math.floor(entity.getWeight() / 5.0);
         if (mType.hasSubType(MiscType.S_SWORD)) {
@@ -89,11 +89,19 @@ public class ClubAttackAction extends PhysicalAttackAction {
             // Flails have constant damage, not variable like most.
             nDamage = 9;
         } else if (mType.hasSubType(MiscType.S_DUAL_SAW)) {
-            // Saws have constant damage, not variable like most.
-            nDamage = 7;
+            if (targetInfantry) {
+                nDamage = Compute.d6();
+            } else {
+                // Saws have constant damage, not variable like most.
+                nDamage = 7;
+            }
         } else if (mType.hasSubType(MiscType.S_CHAINSAW)) {
-            // Saws have constant damage, not variable like most.
-            nDamage = 5;
+            if (targetInfantry) {
+                nDamage = Compute.d6();
+            } else {
+                // Saws have constant damage, not variable like most.
+                nDamage = 5;
+            }
         } else if (mType.hasSubType(MiscType.S_BACKHOE)) {
             // Backhoes have constant damage, not variable like most.
             nDamage = 6;
@@ -121,9 +129,14 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 // when not active a vibro blade does normal sword damage
                 nDamage = (int) (Math.ceil(entity.getWeight() / 10.0) + 1.0);
             }
-        } else if (mType.hasSubType(MiscType.S_CHAIN_WHIP)
-                   || mType.hasSubType(MiscType.S_COMBINE)) {
+        } else if (mType.hasSubType(MiscType.S_CHAIN_WHIP)) {
             nDamage = 3;
+        } else if (mType.hasSubType(MiscType.S_COMBINE)) {
+            if (targetInfantry) {
+                nDamage = Compute.d6();
+            } else {
+                nDamage = 3;
+            }
         } else if (mType.hasSubType(MiscType.S_ROCK_CUTTER)) {
             nDamage = 5;
         } else if (mType.hasSubType(MiscType.S_SPOT_WELDER)) {
@@ -465,7 +478,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if (game.getOptions().booleanOption("clubs_punch")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_CLUBS_PUNCH)
             && (target instanceof Mech)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
             if ((attackerHeight == targetElevation) && !ae.isHullDown()) {

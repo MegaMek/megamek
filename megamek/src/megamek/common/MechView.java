@@ -22,10 +22,14 @@ package megamek.common;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import megamek.client.ui.Messages;
+import megamek.common.options.IOption;
+import megamek.common.options.PilotOptions;
 import megamek.common.weapons.BayWeapon;
 
 /**
@@ -93,6 +97,24 @@ public class MechView {
                         sLoadout.append("<br>");
                     }
                 }
+            }
+            
+            if (inf.getCrew() != null) {
+	            ArrayList<String> augmentations = new ArrayList<>();
+	            for (Enumeration<IOption> e = inf.getCrew().getOptions(PilotOptions.MD_ADVANTAGES);
+	            		e.hasMoreElements();) {
+	            	final IOption o = e.nextElement();
+	            	if (o.booleanValue()) {
+	            		augmentations.add(o.getDisplayableName());
+	            	}
+	            }
+	            if (augmentations.size() > 0) {
+	            	sLoadout.append("<b>Augmentations</b><br/>");
+	            	for (String aug : augmentations) {
+	            		sLoadout.append(aug).append("<br/>");
+	            	}
+	            	sLoadout.append("<br/>");
+	            }
             }
         }
         // sBasic.append(getFluffImage(entity)).append("<br>");
@@ -213,6 +235,10 @@ public class MechView {
             Aero a = (Aero) entity;
             sBasic.append(Messages.getString("MechView.HeatSinks")) //$NON-NLS-1$
                     .append(a.getHeatSinks());
+            if (a.getPodHeatSinks() > 0) {
+            	sBasic.append(" (").append(a.getPodHeatSinks()).append(" ")
+            		.append(Messages.getString("MechView.Pod")).append(")"); //$NON-NLS-1$
+            }
             if (a.getHeatCapacity() > a.getHeatSinks()) {
                 sBasic.append(" [") //$NON-NLS-1$
                         .append(a.getHeatCapacity()).append("]"); //$NON-NLS-1$
@@ -611,7 +637,11 @@ public class MechView {
             return "";
         }
         sWeapons.append("<table cellspacing=0 cellpadding=1 border=0>");
-        sWeapons.append("<tr><th align='left'>Weapons</th><th>&nbsp;&nbsp;Loc</th><th>&nbsp;&nbsp;Heat</th></tr>");
+        sWeapons.append("<tr><th align='left'>Weapons</th><th>&nbsp;&nbsp;Loc</th><th>&nbsp;&nbsp;Heat</th>");
+        if (entity.isOmni()) {
+        	sWeapons.append("<th>&nbsp;&nbsp;Omni</th>");
+        }
+        sWeapons.append("</tr>");
         for (Mounted mounted : entity.getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
 
@@ -668,6 +698,13 @@ public class MechView {
             }
             sWeapons.append("<td align='right'>").append(heat).append("</td>"); //$NON-NLS-1$ //$NON-NLS-2$
             
+            if (entity.isOmni()) {
+            	if (mounted.isOmniPodMounted()) {
+            		sWeapons.append("<td align='right'>").append(Messages.getString("MechView.Pod")); //$NON-NLS-1$
+            	} else {
+            		sWeapons.append("<td align='right'>").append(Messages.getString("MechView.Fixed")); //$NON-NLS-1$
+            	}
+            }
             if(wtype instanceof BayWeapon && bWeapDamaged > 0 && !showDetail) {
                 sWeapons.append("<td><font color='red'>("
                         + bWeapDamaged + Messages.getString("MechView.WeaponDamage") + ")</font><td>");
@@ -742,7 +779,11 @@ public class MechView {
             return "";
         }
         sAmmo.append("<table cellspacing=0 cellpadding=1 border=0>");
-        sAmmo.append("<tr><th align='left'>Ammo</th><th>&nbsp;&nbsp;Loc</th><th>&nbsp;&nbsp;Shots</th></tr>");
+        sAmmo.append("<tr><th align='left'>Ammo</th><th>&nbsp;&nbsp;Loc</th><th>&nbsp;&nbsp;Shots</th>");
+        if (entity.isOmni()) {
+        	sAmmo.append("<th>&nbsp;&nbsp;Omni</th>");
+        }
+        sAmmo.append("</tr>");
         for (Mounted mounted : entity.getAmmo()) {
             // Ignore ammo for one-shot launchers
             if ((mounted.getLinkedBy() != null)
@@ -759,10 +800,16 @@ public class MechView {
             if (mounted.getLocation() != Entity.LOC_NONE) {
                 sAmmo.append("<td>").append(mounted.getName()).append("</td>");
                 sAmmo.append("<td align='right'>")
-                        .append(entity.getLocationAbbr(mounted.getLocation()))
-                        .append("</td>");
+                        .append(entity.getLocationAbbr(mounted.getLocation())).append("</td>");
                 sAmmo.append("<td align='right'>")
                         .append(mounted.getBaseShotsLeft()).append("</td>");
+                if (entity.isOmni()) {
+                	if (mounted.isOmniPodMounted()) {
+                		sAmmo.append("<td align='right'>").append(Messages.getString("MechView.Pod")); //$NON-NLS-1$
+                	} else {
+                		sAmmo.append("<td align='right'>").append(Messages.getString("MechView.Fixed")); //$NON-NLS-1$
+                	}
+                }
             }
         }
         sAmmo.append("</table>");
@@ -788,7 +835,11 @@ public class MechView {
     private String getMisc() {
         StringBuffer sMisc = new StringBuffer();
         sMisc.append("<table cellspacing=0 cellpadding=1 border=0>");
-        sMisc.append("<tr><th align='left'>Equipment</th><th>&nbsp;&nbsp;Loc</th></tr>");
+        sMisc.append("<tr><th align='left'>Equipment</th><th>&nbsp;&nbsp;Loc</th>");
+        if (entity.isOmni()) {
+        	sMisc.append("<th>&nbsp;&nbsp;Omni</th>");
+        }
+        sMisc.append("</tr>");
         int nEquip = 0;
         for (Mounted mounted : entity.getMisc()) {
             String name = mounted.getName();
@@ -818,7 +869,7 @@ public class MechView {
             } else {
                 sMisc.append("<tr>");
             }
-            sMisc.append("<td>").append(mounted.getDesc()).append("</td>"); //$NON-NLS-1$
+            sMisc.append("<td>").append(mounted.getDesc()).append("</td>"); //$NON-NLS-1$            	
             if (entity.isClan()
                     && mounted.getType().getInternalName().substring(0, 2)
                             .equals("IS")) { //$NON-NLS-1$
@@ -830,8 +881,15 @@ public class MechView {
                 sMisc.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             sMisc.append("</td><td align='right'>")
-                    .append(entity.getLocationAbbr(mounted.getLocation()))
-                    .append("</td>"); //$NON-NLS-1$
+                    .append(entity.getLocationAbbr(mounted.getLocation())).append("</td>"); //$NON-NLS-1$
+            
+            if (entity.isOmni()) {
+            	if (mounted.isOmniPodMounted()) {
+            		sMisc.append("<td align='right'>").append(Messages.getString("MechView.Pod")); //$NON-NLS-1$
+            	} else {
+            		sMisc.append("<td align='right'>").append(Messages.getString("MechView.Fixed")); //$NON-NLS-1$
+            	}
+            }
 
             sMisc.append("</tr>"); //$NON-NLS-1$
         }
@@ -842,7 +900,7 @@ public class MechView {
 
         String capacity = entity.getUnusedString(true);
         if ((capacity != null) && (capacity.length() > 0)) {
-            sMisc.append("<br><b>").append(Messages.getString("MechView.CarringCapacity")).append("</b><br>") //$NON-NLS-1$
+            sMisc.append("<br><b>").append(Messages.getString("MechView.CarryingCapacity")).append("</b><br>") //$NON-NLS-1$
                     .append(capacity).append("<br>"); //$NON-NLS-1$
         }
         return sMisc.toString();

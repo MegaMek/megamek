@@ -33,7 +33,7 @@ Tracked
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -60,16 +60,17 @@ Tracked
 </armor>
 
 <Body Equipment>
-ISGuardianECMSuite
-ISAMS Ammo
-ISAMS Ammo
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
-ISLongTomCannonAmmo
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
+ISGuardianECMSuite:OMNI
+ISAMS Ammo:OMNI
+ISAMS Ammo:OMNI
+ISLongTomCannonAmmo:OMNI
+ISLongTomCannonAmmo:OMNI
+ISLongTomCannonAmmo:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -91,14 +92,14 @@ IS Gauss Ammo
 </Rear Equipment>
 
 <Rear Turret Equipment>
-ISLongTomCannon
-ISAntiMissileSystem
-ISAntiMissileSystem
+ISLongTomCannon:OMNI
+ISAntiMissileSystem:OMNI
+ISAntiMissileSystem:OMNI
 </Rear Turret Equipment>
 
 <Front Turret Equipment>
-ISGaussRifle
-ISGaussRifle
+ISGaussRifle:OMNI
+ISGaussRifle:OMNI
 </Front Turret Equipment>
 
 <source>
@@ -108,4 +109,12 @@ TRO 3145 Lyran Commonwealth - Late Republic
 <tonnage>
 190.0
 </tonnage>
+
+<baseChassisTurretWeight>
+2.5
+</baseChassisTurretWeight>
+
+<baseChassisTurret2Weight>
+3.0
+</baseChassisTurret2Weight>
 

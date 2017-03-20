@@ -76,12 +76,16 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLATM9
-CLATM9
-Clan Ammo ATM-9
-Clan Ammo ATM-9
-CLERMediumLaser
-CLERMediumLaser
+CLATM9:OMNI
+CLATM9:OMNI
+Clan Ammo ATM-9:OMNI
+Clan Ammo ATM-9:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 

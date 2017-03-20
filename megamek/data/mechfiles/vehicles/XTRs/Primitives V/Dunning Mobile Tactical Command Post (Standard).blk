@@ -1,0 +1,86 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Dunning Mobile Tactical Command Post
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2317
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+18
+18
+18
+10
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+Communications Equipment (7 ton)
+ISOffRoadChassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<transporters>
+troopspace:3
+</transporters>
+
+<source>
+XTRO Primitives V - Age of War
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

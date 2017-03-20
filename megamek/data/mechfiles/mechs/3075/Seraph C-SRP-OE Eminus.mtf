@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:3
 
 Mass:85
-Engine:255 Light Engine
-Structure:Standard
+Engine:255 Light Engine(IS)
+Structure:IS Standard
 Myomer:Triple-Strength
 Cockpit:Small Cockpit
 Gyro:Standard Gyro
@@ -69,30 +69,30 @@ Hand Actuator
 Left Torso:
 Fusion Engine
 Fusion Engine
-Thunderbolt 20
-Thunderbolt 20
-Thunderbolt 20
-Thunderbolt 20
-Thunderbolt 20
-IS Ammo Thunderbolt-20
-IS Ammo Thunderbolt-20
+Thunderbolt 20 (omnipod)
+Thunderbolt 20 (omnipod)
+Thunderbolt 20 (omnipod)
+Thunderbolt 20 (omnipod)
+Thunderbolt 20 (omnipod)
+IS Ammo Thunderbolt-20 (omnipod)
+IS Ammo Thunderbolt-20 (omnipod)
 ISC3iUnit
 ISC3iUnit
-ISCASE
+ISCASE (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Thunderbolt 20
-Thunderbolt 20
-Thunderbolt 20
-Thunderbolt 20
-Thunderbolt 20
-IS Ammo Thunderbolt-20
-IS Ammo Thunderbolt-20
-IS Ammo Thunderbolt-20
-IS Ammo Thunderbolt-20
-ISCASE
+Thunderbolt 20 (omnipod)
+Thunderbolt 20 (omnipod)
+Thunderbolt 20 (omnipod)
+Thunderbolt 20 (omnipod)
+Thunderbolt 20 (omnipod)
+IS Ammo Thunderbolt-20 (omnipod)
+IS Ammo Thunderbolt-20 (omnipod)
+IS Ammo Thunderbolt-20 (omnipod)
+IS Ammo Thunderbolt-20 (omnipod)
+ISCASE (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -113,8 +113,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISSNPPC
-ISSNPPC
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-

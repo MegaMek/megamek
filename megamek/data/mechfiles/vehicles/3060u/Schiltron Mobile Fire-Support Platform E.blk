@@ -2,75 +2,112 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Schiltron Mobile Fire-Support Platform
 </Name>
+
 <Model>
 E
 </Model>
-<Tonnage>
-80
-</Tonnage>
+
+<year>
+3068
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 46
 34
 34
 25
 40
-</Armor>
-<Turret Equipment>
-Light Auto Cannon/5
-Light Auto Cannon/5
-Light Auto Cannon/5
-</Turret Equipment>
-<Front Equipment>
-ISMML9
-ISMML9
-ISMML9
-</Front Equipment>
+</armor>
+
 <Body Equipment>
-ISC3MasterComputer
-ISGuardianECM
-IS Ammo LAC/5
-IS Ammo LAC/5
-IS Ammo LAC/5
-IS Ammo MML-9 LRM
-IS Ammo MML-9 LRM
-IS Ammo MML-9 LRM
-IS Ammo MML-9 SRM
-IS Ammo MML-9 SRM
-IS Ammo MML-9 SRM
+ISC3MasterUnit
+ISGuardianECMSuite
+IS Ammo LAC/5:OMNI
+IS Ammo LAC/5:OMNI
+IS Ammo LAC/5:OMNI
+IS Ammo MML-9 LRM:OMNI
+IS Ammo MML-9 LRM:OMNI
+IS Ammo MML-9 LRM:OMNI
+IS Ammo MML-9 SRM:OMNI
+IS Ammo MML-9 SRM:OMNI
+IS Ammo MML-9 SRM:OMNI
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3068
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+ISMML9:OMNI
+ISMML9:OMNI
+ISMML9:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Light Auto Cannon/5:OMNI
+Light Auto Cannon/5:OMNI
+Light Auto Cannon/5:OMNI
+</Turret Equipment>
+
 <source>
 Jihad
 </source>
+
+<tonnage>
+80.0
+</tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
+

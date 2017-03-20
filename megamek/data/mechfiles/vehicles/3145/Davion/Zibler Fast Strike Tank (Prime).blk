@@ -32,6 +32,10 @@ IS Level 2
 Hover
 </motion_type>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
@@ -48,6 +52,10 @@ Hover
 1
 </armor_tech>
 
+<omni>
+1
+</omni>
+
 <armor>
 30
 30
@@ -57,9 +65,9 @@ Hover
 </armor>
 
 <Body Equipment>
-ISC3SlaveUnit
-ISTargeting Computer
-IS Streak SRM 4 Ammo
+ISC3SlaveUnit:OMNI
+ISTargeting Computer:OMNI
+IS Streak SRM 4 Ammo:OMNI
 ISCASE
 </Body Equipment>
 
@@ -76,13 +84,13 @@ ISCASE
 </Rear Equipment>
 
 <Turret Equipment>
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-ISStreakSRM4
-ISStreakSRM4
-ISStreakSRM4
+Medium Laser:OMNI
+Medium Laser:OMNI
+Medium Laser:OMNI
+Medium Laser:OMNI
+ISStreakSRM4:OMNI
+ISStreakSRM4:OMNI
+ISStreakSRM4:OMNI
 </Turret Equipment>
 
 <source>
@@ -93,8 +101,7 @@ TRO 3145 Federated Suns - Early Republic
 50.0
 </tonnage>
 
-<omni>
-1
-</omni>
-
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

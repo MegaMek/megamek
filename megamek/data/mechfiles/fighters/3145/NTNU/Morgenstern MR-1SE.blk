@@ -76,24 +76,24 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-LRM 15
-ISTargeting Computer
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-ISArtemisIV
+LRM 15:OMNI
+ISTargeting Computer:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+ISArtemisIV:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-Large Re-engineered Laser
+Large Re-engineered Laser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-Large Re-engineered Laser
+Large Re-engineered Laser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISERMediumLaser
+ISERMediumLaser:OMNI
 </Aft Equipment>
 
 <source>

@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:45
-Engine:315 XL (Clan) Engine
-Structure:Endo Steel
+Engine:315 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -41,11 +41,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -53,26 +53,26 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLAntiMissileSystem
-CLAMS Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -82,10 +82,10 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-Clan LB 10-X Cluster Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+Clan LB 10-X Cluster Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

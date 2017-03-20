@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:90
-Engine:360 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:360 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
@@ -33,21 +33,21 @@ RTC Armor:13
 
 Weapons:6
 ATM 12, Left Arm
+Large Pulse Laser, Right Arm
+Medium Pulse Laser, Left Torso
 Medium Pulse Laser, Right Torso
 Medium Pulse Laser, Center Torso
 Medium Pulse Laser, Center Torso
-Medium Pulse Laser, Left Torso
-Large Pulse Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLATM12
-CLATM12
-CLATM12
-CLATM12
-CLATM12
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,8 +57,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -68,29 +68,29 @@ CLLargePulseLaser
 -Empty-
 
 Left Torso:
-CLMediumPulseLaser
-Clan Ammo ATM-12
-Clan Ammo ATM-12 ER
-Clan Ammo ATM-12 HE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLMediumPulseLaser (omnipod)
+Clan Ammo ATM-12 (omnipod)
+Clan Ammo ATM-12 ER (omnipod)
+Clan Ammo ATM-12 HE (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLMediumPulseLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

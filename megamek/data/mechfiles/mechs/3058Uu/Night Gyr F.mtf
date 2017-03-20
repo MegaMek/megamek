@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:75
-Engine:300 XL (Clan) Engine
-Structure:Endo Steel
+Engine:300 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -40,58 +40,58 @@ ER Medium Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-HAG/20 Ammo
-HAG/20 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+HAG/20 Ammo (omnipod)
+HAG/20 Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-Endo Steel
-Endo Steel
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-HAG/30 Ammo
-HAG/30 Ammo
-HAG/30 Ammo
-HAG/30 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -104,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-HAG/20 Ammo
-CLECMSuite
+HAG/20 Ammo (omnipod)
+CLECMSuite (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Sensors
 Life Support
 -Empty-

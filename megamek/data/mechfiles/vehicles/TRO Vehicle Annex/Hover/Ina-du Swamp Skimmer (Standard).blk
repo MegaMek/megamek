@@ -40,6 +40,10 @@ Hover
 6
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
 4
 4
@@ -77,13 +81,9 @@ standardseats:.3:4
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Succession Wars
 </source>
 
 <tonnage>
 10.0
 </tonnage>
-
-<range>
-1000
-</range>

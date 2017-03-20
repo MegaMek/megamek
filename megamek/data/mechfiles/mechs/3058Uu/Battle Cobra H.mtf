@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:40
-Engine:240 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:240 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -41,9 +41,9 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
+CLERLargeLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -55,39 +55,39 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -104,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Head:
 Life Support
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

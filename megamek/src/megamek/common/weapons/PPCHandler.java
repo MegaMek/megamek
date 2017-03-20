@@ -77,7 +77,7 @@ public class PPCHandler extends EnergyWeaponHandler {
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage(nRange);
 
-        if (game.getOptions().booleanOption("tacops_energy_weapons")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
                 && wtype.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
@@ -94,7 +94,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
 
         // Check for Altered Damage from Energy Weapons (TacOps, pg.83)
-        if (game.getOptions().booleanOption("tacops_altdmg")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
             if (nRange <= 1) {
                 toReturn++;
             } else if (nRange <= wtype.getMediumRange()) {
@@ -104,12 +104,12 @@ public class PPCHandler extends EnergyWeaponHandler {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             toReturn -= 1;
         }
         if (game.getOptions().booleanOption(
-                OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
@@ -143,7 +143,7 @@ public class PPCHandler extends EnergyWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
-        if (game.getOptions().booleanOption("tacops_ppc_inhibitors")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)
                 && wtype.hasModes()
                 && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;

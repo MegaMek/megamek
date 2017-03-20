@@ -1,5 +1,4 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
@@ -7,10 +6,6 @@
 <UnitType>
 SupportTank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Silverback Coastal Cutter
@@ -25,7 +20,7 @@ Silverback Coastal Cutter
 </year>
 
 <source>
-TRO VAr
+TRO VAr - Clan Invasion
 </source>
 
 <type>
@@ -48,6 +43,10 @@ CargoSpace:1:1
 1
 </engine_type>
 
+<fuel>
+4
+</fuel>
+
 <cruiseMP>
 8
 </cruiseMP>
@@ -57,7 +56,7 @@ CargoSpace:1:1
 4
 4
 2
-4
+3
 </armor>
 
 <barrating>
@@ -95,4 +94,3 @@ ISMG
 ISMG
 Searchlight
 </Turret Equipment>
-

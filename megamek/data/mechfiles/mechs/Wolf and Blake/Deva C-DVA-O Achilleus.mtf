@@ -1,25 +1,26 @@
-Version:1.0
+Version:1.1
 Deva
 C-DVA-O (Achilleus)
 
-Config:Biped Omni
+Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3071
 Source:Starterbook: Wolf & Blake - Jihad
 Rules Level:4
 
 Mass:70
-Engine:280 Light Engine
-Structure:Endo Steel
+Engine:280 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
-Gyro:Heavy Duty Gyro
 Cockpit:Small Cockpit
+Gyro:Heavy Duty Gyro
 
 Heat Sinks:14 Double
+Base Chassis Heat Sinks:11
 Walk MP:4
 Jump MP:0
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:22
 RA Armor:22
 LT Armor:20
@@ -33,63 +34,63 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:4
-1 ISLargeVSPLaser, Right Arm
-1 ISLargeVSPLaser, Left Arm
-1 ISImprovedC3CPU, Right Torso
-2 ISERMediumLaser, Head
+Large VSP Laser, Left Arm
+Large VSP Laser, Right Arm
+ER Medium Laser, Head
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISLargeVSPLaser
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISLargeVSPLaser
-ISLargeVSPLaser
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+ISLargeVSPLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Supercharger
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Supercharger (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISImprovedC3CPU
-ISImprovedC3CPU
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo Steel
-Endo Steel
+ISC3iUnit
+ISC3iUnit
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -113,8 +114,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISERMediumLaser
-ISERMediumLaser
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -127,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,11 +142,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

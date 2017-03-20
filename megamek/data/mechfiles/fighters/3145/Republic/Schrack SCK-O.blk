@@ -1,9 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,42 +20,25 @@ Schrack
 SCK-O
 </Model>
 
-<Tonnage>
-60
-</Tonnage>
+<year>
+3097
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<Armor>
-81
-61
-61
-45
-</Armor>
-
-<Nose Equipment>
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-ISImprovedHeavyGaussRifle
-ISStreakSRM2 Ammo
-ISImprovedHeavyGaussRifle Ammo
-ISImprovedHeavyGaussRifle Ammo
-ISImprovedHeavyGaussRifle Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISStreakSRM2
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISStreakSRM2
-</Right Wing Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -69,46 +52,56 @@ ISStreakSRM2
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<armor_tech>
-1
-</armor_tech>
-
-<year>
-3097
-</year>
-
-<source>
-TRO 3145 Republic of the Sphere - Early Republic
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 20
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<history>
-</history>
-
-<cockpit_type>
-0
-</cockpit_type>
+<armor_tech>
+1
+</armor_tech>
 
 <omni>
 1
 </omni>
+
+<armor>
+81
+61
+61
+45
+</armor>
+
+<Nose Equipment>
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
+ISImprovedHeavyGaussRifle:OMNI
+IS Streak SRM 2 Ammo:OMNI
+ISImprovedHeavyGauss Ammo:OMNI
+ISImprovedHeavyGauss Ammo:OMNI
+ISImprovedHeavyGauss Ammo:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISStreakSRM2:OMNI
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISStreakSRM2:OMNI
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3145 Republic of the Sphere - Early Republic
+</source>
+
+<tonnage>
+60.0
+</tonnage>
 

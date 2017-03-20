@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 J. Edgar Light Hover Tank
@@ -24,29 +24,21 @@ J. Edgar Light Hover Tank
 2722
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-25.0
-</tonnage>
 
 <motion_type>
 Hover
 </motion_type>
 
-<engine_type>
-0
-</engine_type>
-
 <cruiseMP>
 11
 </cruiseMP>
+
+<engine_type>
+0
+</engine_type>
 
 <armor>
 30
@@ -77,4 +69,12 @@ Medium Laser
 SRM 2
 SRM 2
 </Turret Equipment>
+
+<source>
+TRO 3039 - Star League
+</source>
+
+<tonnage>
+25.0
+</tonnage>
 

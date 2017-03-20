@@ -44,6 +44,7 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Terrains;
 import megamek.common.util.ImageUtil;
+import megamek.common.util.MegaMekFile;
 import megamek.common.util.StringUtil;
 
 /**
@@ -248,9 +249,10 @@ public class HexTileset {
     public int incDepth = 0;
 
     public void loadFromFile(String filename) throws IOException {
+        long startTime = System.currentTimeMillis();
         // make input stream for board
         Reader r = new BufferedReader(new FileReader(
-                new File(Configuration.hexesDir(), filename)
+                new MegaMekFile(Configuration.hexesDir(), filename).getFile()
         ));
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
@@ -311,6 +313,7 @@ public class HexTileset {
         }
         r.close();
         themes.add(TRANSPARENT_THEME);
+        long endTime = System.currentTimeMillis();
 
         System.out
                 .println("hexTileset: loaded " + bases.size() + 
@@ -321,6 +324,9 @@ public class HexTileset {
         System.out
                 .println("hexTileset: loaded " + ortho.size() + 
                         " ortho images"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (incDepth == 0) {
+            System.out.println("hexTileset loaded in " + (endTime - startTime) + "ms.");
+        }
         incDepth--;
     }
 
@@ -584,8 +590,8 @@ public class HexTileset {
             images = new Vector<Image>();
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = filenames.elementAt(i);
-                File imgFile = new File(Configuration.hexesDir(), filename);
-                Image image = ImageUtil.loadImageFromFile(imgFile.toString(), comp.getToolkit());
+                File imgFile = new MegaMekFile(Configuration.hexesDir(), filename).getFile();
+                Image image = ImageUtil.loadImageFromFile(imgFile.toString());
                 if(null != image) {
                     images.add(image);
                 } else {

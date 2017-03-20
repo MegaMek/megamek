@@ -119,6 +119,7 @@
      Razorback
 	 Mike V
      Dervishx5 (Jihad MapPack and Derv MapPack)
+	 DancefloorLandmine
   
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -215,6 +216,9 @@
   Camo Pack
   	 SeaVea
      Colonel Sanders Light (Folders noted with CSL)
+	 
+  Princess Behaviours
+	 Peter Farland
 
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>
@@ -238,6 +242,10 @@
       Wikimedia Commons, licensed under CC Attribution-Share Alike 2.5 Generic (http://creativecommons.org/licenses/by-sa/2.5/deed.en)
         data/images/widgets/hyades.jpg
       UI Materials licensed from EVILSYSTEM (http://www.evilsystem.eu/terms/).
+	- BigField (https://www.flickr.com/photos/wheatfields/557982013)
+	Attribution-NonCommercial-ShareAlike 2.0 Generic (CC BY-NC-SA 2.0)
+	data/images/hexes/largeTextures/BigField.jpg
+	Applied gimp make seemless filter, arrayed image into 4x4 tiles then shrunk to 800x600.
 	- BigMagma (https://sftextures.com/2015/05/27/lava-texture-with-small-red-stones/)
 	Attribution-ShareAlike 4.0 International License
 	data/images/hexes/largeTextures/BigMagma.jpg
@@ -254,14 +262,18 @@
 	- textureLunar (https://commons.wikimedia.org/wiki/File:M115693540_Jenner.png)
 	This file is in the public domain in the United States because it was solely created by NASA. NASA copyright policy states 		that "NASA material is not protected by copyright unless noted". (See Template:PD-USGov, NASA copyright policy page or JPL 		Image Use Policy.)
 	data/images/hexes/largeTextures/textureLunar.jpg
-	- textureMars (https://www.flickr.com/photos/europeanspaceagency/16792733801)
-	Copyright ESA/DLR/FU Berlin, CC BY-SA 3.0 IGO https://creativecommons.org/licenses/by-sa/3.0/igo/
-	Pixilated the image by three pixels then applied the Gimp "make seemless" map function for tiling, sized to 800x600
-	data/images/hexes/largeTextures/textureMars.jpg
 	- textureVolcano (https://pixabay.com/en/rock-pumus-volcanic-rock-1044181/)
 	 Creative Commons CC0
 	data/images/hexes/largeTextures/textureVolcano
-
+	-BigGrass (https://www.flickr.com/photos/99624358@N00/4290929736)
+	Creative Commons Attribution 2.0 Generic (CC BY 2.0) https://creativecommons.org/licenses/by/2.0/
+	Applied the make seemless map function for tiling, arranged four of the images together then shrank to 800x600.
+	data/images/hexes/largeTextures/BigGrass.jpg
+	-BigWater (https://www.flickr.com/photos/g_kat26/4063560162)
+	Creative Commons Attribution 2.0 Generic (CC BY 2.0) https://creativecommons.org/licenses/by/2.0/
+	Copied image three times and arrange into a 1600x1200 image, pixelated by 3 px, applied the make seemless map function, and then shrank to 800x600 adjusting brightness and contrast for depths.
+	data/images/hexes/largeTextures/BigWater.jpg
+	
   And Of Course...
      FASA, WizKids, FanPro and Catalyst Game Labs for creating and publishing the original game of
      BattleTech, a source of fun and inspiration to us all.

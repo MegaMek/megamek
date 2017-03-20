@@ -9,12 +9,12 @@ Source:TRO 3058 - Jihad
 Rules Level:3
 
 Mass:70
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
-Base Chassis Heat Sinks:11
+Base Chassis Heat Sinks:10
 Walk MP:4
 Jump MP:0
 
@@ -43,13 +43,13 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERMediumLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 
@@ -57,13 +57,13 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERMediumLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 
@@ -71,28 +71,28 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Thunderbolt 15
-Thunderbolt 15
-Thunderbolt 15
-IS Ammo Thunderbolt-15
-IS Ammo Thunderbolt-15
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Thunderbolt 15 (omnipod)
+Thunderbolt 15 (omnipod)
+Thunderbolt 15 (omnipod)
+IS Ammo Thunderbolt-15 (omnipod)
+IS Ammo Thunderbolt-15 (omnipod)
 ISCASE
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Thunderbolt 15
-Thunderbolt 15
-Thunderbolt 15
-IS Ammo Thunderbolt-15
-IS Ammo Thunderbolt-15
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Thunderbolt 15 (omnipod)
+Thunderbolt 15 (omnipod)
+Thunderbolt 15 (omnipod)
+IS Ammo Thunderbolt-15 (omnipod)
+IS Ammo Thunderbolt-15 (omnipod)
 ISCASE
 
 Center Torso:

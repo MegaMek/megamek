@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:85
-Engine:340 XL Engine
-Structure:Standard
+Engine:340 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -30,22 +31,23 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:4
-2 CLERLargeLaser, Left Arm
-1 CLStreakSRM6, Left Arm, Ammo:15
-1 CLLBXAC10, Right Arm, Ammo:20
-1 CLLRM15, Right Torso, Ammo:8
+Weapons:5
+ER Large Laser, Left Arm
+ER Large Laser, Left Arm
+Streak SRM 6, Left Arm
+LB 10-X AC, Right Arm
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERLargeLaser
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+CLERLargeLaser (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -53,44 +55,44 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10 CL Ammo
-CLLBXAC10 Ammo
-CLLRM15 Ammo
-Ferro-Fibrous
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLLRM15
-CLLRM15
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -110,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -125,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -139,12 +141,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

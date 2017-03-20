@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+7
+</omnipodheatsinks>
+
 <fuel>
 320
 </fuel>
@@ -76,17 +80,21 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLUltraAC20
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
+CLImprovedHeavyLargeLaser:OMNI
+CLImprovedHeavyLargeLaser:OMNI
+CLUltraAC20:OMNI
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
@@ -97,8 +105,8 @@ CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLTargeting Computer
-WatchdogECMSuite
+CLTargeting Computer:OMNI
+WatchdogECMSuite:OMNI
 </Aft Equipment>
 
 <source>

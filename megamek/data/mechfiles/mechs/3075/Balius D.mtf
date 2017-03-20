@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:65
-Engine:390 XL (Clan) Engine
-Structure:Endo Steel
+Engine:390 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -37,8 +37,8 @@ ER Medium Laser, Right Torso
 ER Medium Laser, Right Torso
 ER Medium Laser, Right Torso
 ER Medium Laser, Right Torso
-Medium Pulse Laser, Center Torso (R)
-Medium Pulse Laser, Center Torso (R)
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
 Flamer, Head
 
 Front Left Leg:
@@ -46,8 +46,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -60,8 +60,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -72,30 +72,30 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Jump Jet
-CLERPPC
-CLERPPC
-Endo Steel
-Endo Steel
-Endo Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Jump Jet
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -108,8 +108,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser (R)
-CLMediumPulseLaser (R)
+CLMediumPulseLaser (R) (omnipod)
+CLMediumPulseLaser (R) (omnipod)
 
 Head:
 Life Support
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

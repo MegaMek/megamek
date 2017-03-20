@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,63 +20,29 @@ Zugvogel Omni Support Aircraft
 B
 </Model>
 
-<Tonnage>
-200
-</Tonnage>
+<year>
+3086
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
-51
-51
-51
-51
-</Armor>
-
-<barrating>
-10
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
-
-<Left Wing Equipment>
-Searchlight
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-Searchlight
-</Right Wing Equipment>
-
-<Body Equipment>
-MASH core component
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-MASH Operation Theater
-Paramedic Equipment
-Paramedic Equipment
-Paramedic Equipment
-Paramedic Equipment
-FieldKitchen
-ISCASE
-Advanced Fire Control
-Armored Chassis
-STOLChassisMod
-</Body Equipment>
-
-<transporters>
-TroopSpace:4
-LightVehicleBay:1:1
-</transporters>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 0
@@ -90,33 +56,73 @@ LightVehicleBay:1:1
 369
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-3086
-</year>
+<omni>
+1
+</omni>
+
+<armor>
+51
+51
+51
+51
+</armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+Searchlight:OMNI
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Searchlight:OMNI
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+MASH core component:OMNI
+MASH Operation Theater:OMNI
+MASH Operation Theater:OMNI
+MASH Operation Theater:OMNI
+MASH Operation Theater:OMNI
+MASH Operation Theater:OMNI
+MASH Operation Theater:OMNI
+MASH Operation Theater:OMNI
+MASH Operation Theater:OMNI
+MASH Operation Theater:OMNI
+Paramedic Equipment:OMNI
+Paramedic Equipment:OMNI
+Paramedic Equipment:OMNI
+Paramedic Equipment:OMNI
+FieldKitchen:OMNI
+ISCASE:OMNI
+Advanced Fire Control
+Armored Chassis
+STOLChassisMod
+</Body Equipment>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <source>
 TRO 3085
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+200.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0		
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<omni>
-</omni>

@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:60
 Engine:240 Light Engine(IS)
-Structure:Standard
+Structure:IS Standard
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
@@ -49,8 +49,8 @@ Hand Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERSmallLaser
-ISERSmallLaser
+ISERSmallLaser (omnipod)
+ISERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -58,13 +58,13 @@ ISERSmallLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -72,26 +72,26 @@ Light Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISUMU
-ISUMU
-ISERMediumLaser
-BeagleActiveProbe
-BeagleActiveProbe
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISUMU (omnipod)
+ISUMU (omnipod)
+ISERMediumLaser (omnipod)
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
 ISC3iUnit
 ISC3iUnit
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISUMU
-ISUMU
-ISERPPC
-ISERPPC
-ISERPPC
-ISERMediumLaser
+ISUMU (omnipod)
+ISUMU (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -116,7 +116,7 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISMASS
+ISMASS (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

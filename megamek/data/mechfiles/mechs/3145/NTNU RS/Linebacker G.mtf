@@ -4,7 +4,7 @@ G
 
 Config:Biped Omnimech
 TechBase:Clan
-Era:3114	
+Era:3114
 Source:RS 3145 NTNU - Late Republic
 Rules Level:2
 
@@ -41,11 +41,11 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -55,11 +55,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -68,10 +68,10 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLTargeting Computer
-CLTargeting Computer
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -82,10 +82,10 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLStreakSRM2 (IOS)
-CLStreakSRM2 (IOS)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLStreakSRM2 (IOS) (omnipod)
+CLStreakSRM2 (IOS) (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -104,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CL Super Charger
+CL Super Charger (omnipod)
 Clan Endo Steel
 
 Head:

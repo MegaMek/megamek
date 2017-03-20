@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:90
-Engine:360 XL Engine
-Structure:Standard
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -60,15 +60,15 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-SRM 4
-SRM 4
-SRM 4
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo MG - Full
-IS Ammo MG - Full
+SRM 4 (omnipod)
+SRM 4 (omnipod)
+SRM 4 (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+IS Ammo MG - Full (omnipod)
+IS Ammo MG - Full (omnipod)
 
 Right Arm:
 Shoulder
@@ -76,11 +76,11 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
-Flamer
-Flamer
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+Flamer (omnipod)
+Flamer (omnipod)
 -Empty-
 -Empty-
 
@@ -88,13 +88,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Flamer
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo SRM-4
-IS Ammo SRM-4
+Flamer (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+IS Ammo SRM-4 (omnipod)
+IS Ammo SRM-4 (omnipod)
 -Empty-
 -Empty-
 
@@ -102,13 +102,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Flamer
-Machine Gun
-Machine Gun
-Machine Gun
-Machine Gun
-IS Ammo SRM-4
-IS Ammo SRM-4
+Flamer (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+IS Ammo SRM-4 (omnipod)
+IS Ammo SRM-4 (omnipod)
 -Empty-
 -Empty-
 
@@ -123,14 +123,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-SRM 4
-SRM 4
+SRM 4 (omnipod)
+SRM 4 (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-SRM 4
+SRM 4 (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -145,7 +145,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAntiPersonnelPod
+ISAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -159,7 +159,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISAntiPersonnelPod
+ISAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-

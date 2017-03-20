@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:50
-Engine:250 XL (Clan) Engine
-Structure:Endo Steel
+Engine:250 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -43,13 +43,13 @@ Flamer, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
-Clan Ultra AC/5 Ammo
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -57,10 +57,10 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
-Endo Steel
-Endo Steel
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -72,29 +72,29 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLLRM15
-CLLRM15
-CLERMediumLaser
-CLERSmallLaser
-Clan Ammo LRM-15
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLFlamer
-Clan Ammo LRM-20
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLFlamer (omnipod)
+Clan Ammo LRM-20 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -108,13 +108,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

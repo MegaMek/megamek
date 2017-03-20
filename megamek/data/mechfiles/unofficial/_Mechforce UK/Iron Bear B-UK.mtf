@@ -8,15 +8,16 @@ Era:3055
 Rules Level:2
 
 Mass:50
-Engine:300 XL Engine
-Structure:Endo Steel
+Engine:300 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
+Base Chassis Heat Sinks:12
 Walk MP:6
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:14
 RA Armor:14
 LT Armor:15
@@ -29,47 +30,48 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:7
 
-Weapons:4
-1 CLERPPC, Right Arm
-2 CLERMediumLaser, Left Arm
-1 CLLRM15, Right Torso, Ammo:16
-1 CLLRM15, Left Torso
+Weapons:5
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER PPC, Right Arm
+LRM 15, Left Torso
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
-Endo Steel
-Endo Steel
-Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
-Endo Steel
-Endo Steel
-Endo Steel
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM15
-CLLRM15
-CLArtemisIV
-CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -80,10 +82,10 @@ CLLRM15 Ammo (Clan) Artemis-capable
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM15
-CLLRM15
-CLArtemisIV
-CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -146,4 +148,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

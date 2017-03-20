@@ -9,14 +9,14 @@ Source:TRO 3075
 Rules Level:3
 
 Mass:70
-Engine:280 Light Engine
-Structure:Endo Steel
+Engine:280 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Heavy Duty Gyro
 
 Heat Sinks:13 Double
-Base Chassie Heat Sinks:11
+Base Chassis Heat Sinks:11
 Walk MP:4
 Jump MP:0
 
@@ -34,26 +34,26 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:7
-Light PPC, Right Torso
-Light PPC, Head
-Light PPC, Center Torso
-Light PPC, Left Torso
-ER Medium Laser, Right Torso
-ER Medium Laser, Right Torso
 Thunderbolt 15, Left Arm
+Light PPC, Left Torso
+Light PPC, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+Light PPC, Center Torso
+Light PPC, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Thunderbolt 15
-Thunderbolt 15
-Thunderbolt 15
-IS Ammo Thunderbolt-15
-IS Ammo Thunderbolt-15
-Endo Steel
-Endo Steel
+Thunderbolt 15 (omnipod)
+Thunderbolt 15 (omnipod)
+Thunderbolt 15 (omnipod)
+IS Ammo Thunderbolt-15 (omnipod)
+IS Ammo Thunderbolt-15 (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Arm:
@@ -61,11 +61,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -73,28 +73,28 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Light PPC
-Light PPC
-ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Light PPC
-Light PPC
-ISERMediumLaser
-ISERMediumLaser
+Light PPC (omnipod)
+Light PPC (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
 ISC3iUnit
 ISC3iUnit
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -109,16 +109,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Light PPC
-Light PPC
+Light PPC (omnipod)
+Light PPC (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-Light PPC
-Light PPC
+Light PPC (omnipod)
+Light PPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -131,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

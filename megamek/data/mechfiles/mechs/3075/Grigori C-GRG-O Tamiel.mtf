@@ -9,13 +9,14 @@ Source:TRO 3075
 Rules Level:4
 
 Mass:60
-Engine:240 Light Engine
-Structure:Standard
+Engine:240 Light Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:9
 Walk MP:4
 Jump MP:4
 
@@ -33,9 +34,9 @@ RTR Armor:6
 RTC Armor:9
 
 Weapons:3
-Thunderbolt 10, Left Torso
-Thunderbolt 10, Right Arm
 Snub-Nose PPC, Left Arm
+Thunderbolt 10, Right Arm
+Thunderbolt 10, Left Torso
 
 Left Arm:
 Shoulder
@@ -43,8 +44,8 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISSNPPC
-ISSNPPC
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -56,11 +57,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Thunderbolt 10
-Thunderbolt 10
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+Thunderbolt 10 (omnipod)
+Thunderbolt 10 (omnipod)
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -68,10 +69,10 @@ Light Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Thunderbolt 10
-Thunderbolt 10
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Thunderbolt 10 (omnipod)
+Thunderbolt 10 (omnipod)
 ISC3iUnit
 ISC3iUnit
 -Empty-
@@ -82,11 +83,11 @@ ISC3iUnit
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-IS Ammo Thunderbolt-10
-IS Ammo Thunderbolt-10
-ISCASE
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+IS Ammo Thunderbolt-10 (omnipod)
+IS Ammo Thunderbolt-10 (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -112,8 +113,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISGuardianECMSuite
-ISGuardianECMSuite
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -126,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

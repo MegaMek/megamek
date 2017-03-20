@@ -34,26 +34,26 @@ RTR Armor:7
 RTC Armor:7
 
 Weapons:9
-AP Gauss Rifle, Right Torso
-AP Gauss Rifle, Right Torso
-ER PPC, Right Arm
 ER PPC, Left Arm
-Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Left Arm
-Improved Heavy Medium Laser, Right Torso
-Improved Heavy Medium Laser, Right Torso
+ER PPC, Right Arm
+Medium Pulse Laser, Right Arm
 LB 10-X AC, Left Torso
+Improved Heavy Medium Laser, Right Torso
+Improved Heavy Medium Laser, Right Torso
+AP Gauss Rifle, Right Torso
+AP Gauss Rifle, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
-CLMediumPulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLMediumPulseLaser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -61,13 +61,13 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
-CLMediumPulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLMediumPulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -75,28 +75,28 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-Clan LB 10-X AC Ammo
-Clan LB 10-X Cluster Ammo
-CLAPGaussRifle Ammo
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
+CLAPGaussRifle Ammo (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLAPGaussRifle
-CLAPGaussRifle
-CLAngelECMSuite
-CLAngelECMSuite
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAngelECMSuite (omnipod)
+CLAngelECMSuite (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 
@@ -111,16 +111,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

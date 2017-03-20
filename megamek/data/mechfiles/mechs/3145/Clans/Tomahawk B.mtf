@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:100
 Engine:300 XL (Clan) Engine(IS)
-Structure:Clan Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:26 Double
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -32,78 +32,78 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:16
-Medium Pulse Laser, Left Torso
-Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Head
-Medium Pulse Laser, Left Arm
-ER Medium Laser, Left Torso
-ER Medium Laser, Left Torso
-ER Medium Laser, Right Torso
-ER Medium Laser, Left Torso
-ER Medium Laser, Right Torso
-ER Medium Laser, Right Torso
-ER Large Laser, Left Arm
-ER Large Laser, Right Arm
 ER PPC, Left Arm
+ER Large Laser, Left Arm
+Medium Pulse Laser, Left Arm
 ER PPC, Right Arm
+ER Large Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
 LRM 10, Left Torso
+Medium Pulse Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+Medium Pulse Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
-CLERLargeLaser
-CLMediumPulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERLargeLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
-CLERLargeLaser
-CLMediumPulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERLargeLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLMediumPulseLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLLRM10
-Clan Ammo LRM-10
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMediumPulseLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLMediumPulseLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMediumPulseLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -116,14 +116,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -138,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -152,8 +152,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

@@ -34,23 +34,23 @@ RTR Armor:7
 RTC Armor:7
 
 Weapons:6
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Right Torso
+Long Tom Cannon, Left Torso
 ER Large Laser, Right Arm
-Long Tom Cannon, Left Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -58,13 +58,13 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -72,27 +72,27 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
-CLLongTomCannon
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
+CLLongTomCannon (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLLongTomCannonAmmo
-CLLongTomCannonAmmo
-CLLongTomCannonAmmo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLLongTomCannonAmmo (omnipod)
+CLLongTomCannonAmmo (omnipod)
+CLLongTomCannonAmmo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -108,16 +108,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

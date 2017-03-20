@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -32,43 +32,43 @@ RTR Armor:8
 RTC Armor:11
 
 Weapons:9
+Ultra AC/10, Left Arm
+ER Large Laser, Left Arm
+Small Pulse Laser, Left Arm
+Ultra AC/10, Right Arm
+ER Large Laser, Right Arm
+Small Pulse Laser, Right Arm
 ER Medium Laser, Left Torso
 ER Medium Laser, Right Torso
 AMS, Head
-Ultra AC/10, Right Arm
-Ultra AC/10, Left Arm
-ER Large Laser, Right Arm
-ER Large Laser, Left Arm
-Small Pulse Laser, Right Arm
-Small Pulse Laser, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLERLargeLaser
-CLSmallPulseLaser
-Clan Ultra AC/10 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLERLargeLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLERLargeLaser
-CLSmallPulseLaser
-Clan Ultra AC/10 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLERLargeLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -77,26 +77,26 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 CLERMediumLaser
-Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 CLERMediumLaser
-Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo (omnipod)
 CLMASC
 CLMASC
 CLMASC
-Endo Steel
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -110,7 +110,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLAMS Ammo
-CLECMSuite
+CLECMSuite (omnipod)
 
 Head:
 Life Support

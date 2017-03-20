@@ -9,8 +9,8 @@ Source:TRO 3055 - Clan Invasion
 Rules Level:2
 
 Mass:40
-Engine:240 XL (Clan) Engine
-Structure:Endo Steel
+Engine:240 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -45,10 +45,10 @@ Lower Arm Actuator
 Hand Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLERLargeLaser
-CLSRM4
-Clan Ammo SRM-4
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+CLSRM4 (omnipod)
+Clan Ammo SRM-4 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -59,10 +59,10 @@ Lower Arm Actuator
 Hand Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLERLargeLaser
-CLSRM4
-Clan Ammo SRM-4
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+CLSRM4 (omnipod)
+Clan Ammo SRM-4 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -71,9 +71,9 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -87,11 +87,11 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 Jump Jet
 Jump Jet
-CLLRM10
-Clan Ammo LRM-10
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -106,13 +106,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

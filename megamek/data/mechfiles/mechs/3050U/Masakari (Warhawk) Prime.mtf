@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:85
-Engine:340 XL Engine
-Structure:Standard
+Engine:340 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -30,21 +31,23 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:3
-2 CLERPPC, Left Arm
-1 CLLRM10, Left Arm, Ammo:12
-2 CLERPPC, Right Arm
+Weapons:5
+ER PPC, Left Arm
+ER PPC, Left Arm
+LRM 10, Left Arm
+ER PPC, Right Arm
+ER PPC, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLERPPC
-CLERPPC
-CLLRM10
-CLLRM10 Ammo
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -52,11 +55,11 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLERPPC
-CLERPPC
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -66,29 +69,29 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -109,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -124,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +141,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

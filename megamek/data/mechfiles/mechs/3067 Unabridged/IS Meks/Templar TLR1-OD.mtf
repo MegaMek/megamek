@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Templar
 TLR1-OD
 
@@ -8,15 +8,16 @@ Era:3063
 Rules Level:4
 
 Mass:85
-Engine:340 XL Fusion Engine
-Structure:Endo-Steel
+Engine:340 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -30,20 +31,20 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:4
-1 ISLightGaussRifle, Right Torso, Ammo:32
-1 ISLightGaussRifle, Left Torso
-1 ISLargeXPulseLaser, Right Arm
-1 ISLargeXPulseLaser, Left Arm
+Large X-Pulse Laser, Left Arm
+Large X-Pulse Laser, Right Arm
+Light Gauss Rifle, Left Torso
+Light Gauss Rifle, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISLargeXPulseLaser
-ISLargeXPulseLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISLargeXPulseLaser (omnipod)
+ISLargeXPulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -52,9 +53,9 @@ Endo-Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLargeXPulseLaser
-ISLargeXPulseLaser
-Endo-Steel
+ISLargeXPulseLaser (omnipod)
+ISLargeXPulseLaser (omnipod)
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -64,67 +65,87 @@ Endo-Steel
 -Empty-
 
 Left Torso:
-Engine
-Engine
-Engine
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
 Right Torso:
-Engine
-Engine
-Engine
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
 ISCASE
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISLightGauss Ammo
-ISLightGauss Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Light Gauss Ammo (omnipod)
+IS Light Gauss Ammo (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

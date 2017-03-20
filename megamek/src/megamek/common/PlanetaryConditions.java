@@ -35,20 +35,23 @@ public class PlanetaryConditions implements Serializable {
     public static final int L_SIZE = lightNames.length;
 
     //Weather
-    public static final int WE_NONE        = 0;
-    public static final int WE_LIGHT_RAIN  = 1;
-    public static final int WE_MOD_RAIN    = 2;
-    public static final int WE_HEAVY_RAIN  = 3;
-    public static final int WE_DOWNPOUR    = 4;
-    public static final int WE_LIGHT_SNOW  = 5;
-    public static final int WE_MOD_SNOW    = 6;
-    public static final int WE_HEAVY_SNOW  = 7;
-    public static final int WE_SLEET       = 8;
-    public static final int WE_ICE_STORM   = 9;
-    public static final int WE_LIGHT_HAIL  = 10;
-    public static final int WE_HEAVY_HAIL  = 11;
-    private static String[] weatherNames = { "Clear", "Light Rain", "Moderate Rain", "Heavy Rain", "Torrential Downpour",
-                                             "Light Snowfall", "Moderate Snowfall", "Heavy Snowfall", "Sleet", "Ice Storm"};//,
+    public static final int WE_NONE             = 0;
+    public static final int WE_LIGHT_RAIN       = 1;
+    public static final int WE_MOD_RAIN         = 2;
+    public static final int WE_HEAVY_RAIN       = 3;
+    public static final int WE_GUSTING_RAIN     = 4;
+    public static final int WE_DOWNPOUR         = 5;
+    public static final int WE_LIGHT_SNOW       = 6;
+    public static final int WE_MOD_SNOW         = 7;
+    public static final int WE_SNOW_FLURRIES    = 8;
+    public static final int WE_HEAVY_SNOW       = 9;
+    public static final int WE_SLEET            = 10;
+    public static final int WE_BLIZZARD         = 11;
+    public static final int WE_ICE_STORM        = 12;
+    public static final int WE_LIGHT_HAIL       = 13;
+    public static final int WE_HEAVY_HAIL       = 14;
+    private static String[] weatherNames = { "Clear", "Light Rain", "Moderate Rain", "Heavy Rain", "Gusting Rain", "Torrential Downpour",
+                                             "Light Snowfall", "Moderate Snowfall", "Snow Flurries", "Heavy Snowfall", "Sleet", "Ice Storm"};//,
                                              //"Light Hail", "Heavy Hail"};
     public static final int WE_SIZE = weatherNames.length;
 
@@ -89,17 +92,22 @@ public class PlanetaryConditions implements Serializable {
 
     //misc
     private boolean blowingSand = false;
+    private boolean sandStorm = false;
+    private boolean runOnce = false;
 
     //set up the specific conditions
     private int lightConditions = WI_NONE;
     private int weatherConditions = WE_NONE;
+    private int oldWeatherConditions = WE_NONE;
     private int windStrength = WI_NONE;
     private int windDirection = -1;
     private boolean shiftWindDirection = false;
     private boolean shiftWindStrength = false;
+    private boolean isSleeting = false;
     private int atmosphere = ATMO_STANDARD;
     private int fog = FOG_NONE;
     private int temperature = 25;
+    private int oldTemperature = 25;
     private float gravity = (float)1.0;
     private boolean emi = false;
     private boolean terrainAffected = true;
@@ -278,7 +286,8 @@ public class PlanetaryConditions implements Serializable {
         }
         else if((weatherConditions == WE_MOD_RAIN) || (weatherConditions == WE_HEAVY_RAIN)
                 || (weatherConditions == WE_MOD_SNOW) || (weatherConditions == WE_HEAVY_SNOW)
-                || (weatherConditions == WE_SLEET)) {
+                || (weatherConditions == WE_SLEET) || (weatherConditions == WE_GUSTING_RAIN)
+                || (weatherConditions == WE_SNOW_FLURRIES) || (weatherConditions == WE_BLIZZARD)) {
             return 1;
         }
         else if(weatherConditions == WE_DOWNPOUR) {
@@ -293,7 +302,8 @@ public class PlanetaryConditions implements Serializable {
      * piloting penalty for weather
      */
     public int getWeatherPilotPenalty() {
-        if((weatherConditions == WE_HEAVY_RAIN) || (weatherConditions == WE_HEAVY_SNOW)) {
+        if((weatherConditions == WE_HEAVY_RAIN) || (weatherConditions == WE_HEAVY_SNOW)
+                || (weatherConditions == WE_GUSTING_RAIN) || (weatherConditions == WE_BLIZZARD)) {
             return 1;
         }
         else if(weatherConditions == WE_DOWNPOUR) {
@@ -375,9 +385,13 @@ public class PlanetaryConditions implements Serializable {
             switch (Compute.d6()) {
             case 1: // weaker
                 windStrength = Math.max(minWindStrength, --windStrength);
+                doSleetCheck();
+                doSandStormCheck();
                 break;
             case 6: // stronger
                 windStrength = Math.min(maxWindStrength, ++windStrength);
+                doSleetCheck();
+                doSandStormCheck();
                 break;
             }
         }
@@ -402,10 +416,12 @@ public class PlanetaryConditions implements Serializable {
             mod += 1;
         }
         if((weatherConditions == WE_HEAVY_RAIN) || (weatherConditions == WE_DOWNPOUR)
-                || (weatherConditions == WE_LIGHT_SNOW) || (weatherConditions == WE_MOD_SNOW)) {
+                || (weatherConditions == WE_LIGHT_SNOW) || (weatherConditions == WE_MOD_SNOW)
+                || (weatherConditions == WE_GUSTING_RAIN) || (weatherConditions == WE_SNOW_FLURRIES)) {
             mod += 2;
         }
-        if((weatherConditions == WE_HEAVY_SNOW) || (weatherConditions == WE_LIGHT_HAIL) || (weatherConditions == WE_HEAVY_HAIL)) {
+        if((weatherConditions == WE_HEAVY_SNOW) || (weatherConditions == WE_BLIZZARD)
+                || (weatherConditions == WE_LIGHT_HAIL) || (weatherConditions == WE_HEAVY_HAIL)) {
             mod += 3;
         }
         if((windStrength == WI_LIGHT_GALE) || (windStrength == WI_MOD_GALE)) {
@@ -430,21 +446,24 @@ public class PlanetaryConditions implements Serializable {
     public boolean putOutFire() {
         int roll = Compute.d6(2);
         switch(weatherConditions) {
-        case(WE_LIGHT_HAIL):
-        case(WE_LIGHT_RAIN):
-        case(WE_LIGHT_SNOW):
+        case (WE_LIGHT_HAIL):
+        case (WE_LIGHT_RAIN):
+        case (WE_LIGHT_SNOW):
             roll = roll + 1;
             break;
-        case(WE_HEAVY_HAIL):
-        case(WE_MOD_RAIN):
-        case(WE_MOD_SNOW):
+        case (WE_HEAVY_HAIL):
+        case (WE_MOD_RAIN):
+        case (WE_MOD_SNOW):
+        case WE_SNOW_FLURRIES:
             roll = roll + 2;
             break;
-        case(WE_HEAVY_RAIN):
-        case(WE_HEAVY_SNOW):
+        case (WE_HEAVY_RAIN):
+        case (WE_GUSTING_RAIN):
+        case (WE_HEAVY_SNOW):
+        case WE_BLIZZARD:
             roll = roll + 3;
             break;
-        case(WE_DOWNPOUR):
+        case (WE_DOWNPOUR):
             roll = roll + 4;
             break;
         default:
@@ -511,7 +530,9 @@ public class PlanetaryConditions implements Serializable {
     public int getMovementMods(Entity en) {
         int mod = 0;
 
-        //wind mods
+        // weather mods are calculated based on conditional effects ie extreme temperatures, wind
+
+        // wind mods
         switch(windStrength) {
         case(WI_LIGHT_GALE):
             if(!(en instanceof BattleArmor)
@@ -544,26 +565,7 @@ public class PlanetaryConditions implements Serializable {
             break;
         }
 
-        //weather mods (clarified in an email exchange with TPTB)
-        switch(weatherConditions) {
-        case(WE_LIGHT_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || ((en instanceof Aero) && !en.isAirborne())) {
-                mod -= 1;
-            }
-            break;
-        case(WE_MOD_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || ((en instanceof Aero) && !en.isAirborne())) {
-                mod -= 2;
-            }
-            break;
-        case(WE_HEAVY_SNOW):
-            if(((en instanceof Infantry) && !(en instanceof BattleArmor)) || (en instanceof Tank) || ((en instanceof Aero) && !en.isAirborne())) {
-                mod -= 3;
-            }
-            break;
-        }
-
-        //atmospheric pressure mods
+        // atmospheric pressure mods
         switch(atmosphere) {
         case(ATMO_THIN):
             if((en.getMovementMode() == EntityMovementMode.HOVER)
@@ -582,12 +584,10 @@ public class PlanetaryConditions implements Serializable {
             break;
         }
 
-        //temperature difference
+        // temperature difference
         if((en instanceof Tank) || (en instanceof Infantry) || (en instanceof Protomech)) {
             mod -= Math.abs(getTemperatureDifference(50,-30));
         }
-
-        //TODO: awaiting clarification on the effect of other weather on movement
 
         return mod;
     }
@@ -596,14 +596,14 @@ public class PlanetaryConditions implements Serializable {
      * is the given entity type doomed in these conditions?
      * @return a string given the reason for being doomed, null if not doomed
      */
-    public String whyDoomed(Entity en) {
-        if((atmosphere < ATMO_THIN) && en.doomedInVacuum()) {
+    public String whyDoomed(Entity en, IGame game) {
+        if ((atmosphere < ATMO_THIN) && en.doomedInVacuum()) {
             return "vacuum";
         }
-        if((windStrength == WI_TORNADO_F4) && !(en instanceof Mech)) {
+        if ((windStrength == WI_TORNADO_F4) && !(en instanceof Mech)) {
             return "tornado";
         }
-        if((windStrength == WI_TORNADO_F13)
+        if ((windStrength == WI_TORNADO_F13)
                 && (((en instanceof Infantry) && !(en instanceof BattleArmor))
                         || ((en.getMovementMode() == EntityMovementMode.HOVER)
                     || (en.getMovementMode() == EntityMovementMode.WIGE)
@@ -612,6 +612,12 @@ public class PlanetaryConditions implements Serializable {
         }
         if((windStrength == WI_STORM) && ((en instanceof Infantry) && !(en instanceof BattleArmor))) {
             return "storm";
+        }
+        if ((temperature > 50 || temperature < -30) && en.doomedInExtremeTemp()) {
+            if (Compute.isInBuilding(game, en)) {
+                return null;
+            }
+            return "extreme temperature";
         }
         return null;
     }
@@ -642,26 +648,33 @@ public class PlanetaryConditions implements Serializable {
 
         if ((lightConditions == L_PITCH_BLACK) && !Spotlight
                 && !targetIlluminated) {
-            if(isMechVee) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 3;
             }
-            if(isAero) {
+            if (isAero) {
                 return 5;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 4;
             }
             return 1;
         } else if (((lightConditions == L_MOONLESS) && !Spotlight && !targetIlluminated)
                 || ((lightConditions == L_FULL_MOON) && !Spotlight && !targetIlluminated)
+                || (weatherConditions == WE_BLIZZARD)
                 || ((weatherConditions == WE_HEAVY_SNOW) && (windStrength >= WI_STRONG_GALE))) {
-            if(isMechVee) {
+            if(isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 5;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 10;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 8;
             }
             return 2;
@@ -673,61 +686,76 @@ public class PlanetaryConditions implements Serializable {
                 || (weatherConditions == WE_HEAVY_HAIL)
                 || (fog == FOG_HEAVY)
                 || (blowingSand && (windStrength >= WI_MOD_GALE))) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 10;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 20;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 15;
             }
             return 5;
         } else if ((lightConditions == L_PITCH_BLACK) && !targetIlluminated) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 13;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 15;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 14;
             }
             return 6;
         } else if (((lightConditions > L_DAY) && !Spotlight && !targetIlluminated)
-                || (((weatherConditions == WE_HEAVY_SNOW) 
-                        || (weatherConditions == WE_MOD_SNOW)) 
-                            && (windStrength >= WI_MOD_GALE)) ) {
-            if(isMechVee) {
+                || (weatherConditions == WE_GUSTING_RAIN)
+                || (weatherConditions == WE_SNOW_FLURRIES)
+                || (weatherConditions == WE_MOD_SNOW) && (windStrength >= WI_MOD_GALE)) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 15;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 30;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 20;
             }
             return 8;
         } else if((lightConditions > L_DAY) && !targetIlluminated) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 25;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 40;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 30;
             }
             return 13;
         } else if ((weatherConditions == WE_MOD_SNOW)
                 || (weatherConditions == WE_MOD_RAIN)) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 20;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 50;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 25;
             }
             return 10;
@@ -735,24 +763,30 @@ public class PlanetaryConditions implements Serializable {
                 || (weatherConditions == WE_LIGHT_SNOW)
                 || (weatherConditions == WE_LIGHT_RAIN)
                 || (weatherConditions == WE_LIGHT_HAIL) || (fog == FOG_LIGHT)) {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 30;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 60;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 35;
             }
             return 15;
         } else {
-            if(isMechVee) {
+            if (isMechVee || (isAero && (en.getAltitude() < 2))) {
                 return 60;
             }
-            if(isAero) {
+            if (isAero && (en.getAltitude() > 9)) {
+                return 0;
+            }
+            if (isAero) {
                 return 120;
             }
-            if(isLargeCraft) {
+            if (isLargeCraft) {
                 return 70;
             }
             return 30;
@@ -906,5 +940,122 @@ public class PlanetaryConditions implements Serializable {
 
     public void setBlowingSand(boolean b) {
         blowingSand = b;
+    }
+
+    public void alterConditions(PlanetaryConditions conditions) {
+        lightConditions = conditions.lightConditions;
+        weatherConditions = conditions.weatherConditions;
+        windStrength = conditions.windStrength;
+        windDirection = conditions.windDirection;
+        shiftWindDirection = conditions.shiftWindDirection;
+        shiftWindStrength = conditions.shiftWindStrength;
+        minWindStrength = conditions.minWindStrength;
+        maxWindStrength = conditions.maxWindStrength;
+        atmosphere = conditions.atmosphere;
+        temperature = conditions.temperature;
+        gravity = conditions.gravity;
+        emi = conditions.emi;
+        fog = conditions.fog;
+        terrainAffected = conditions.terrainAffected;
+        blowingSand = conditions.blowingSand;
+        runOnce = conditions.runOnce;
+        
+        if (runOnce) {
+            setTempFromWeather();
+            setWindFromWeather();
+            setSandStorm();
+            runOnce = false;
+        }
+
+    }
+
+    private void setTempFromWeather() {
+        switch (weatherConditions) {
+            case WE_SLEET:
+            case WE_LIGHT_SNOW:
+                temperature = -40;
+                break;
+            case WE_MOD_SNOW:
+            case WE_SNOW_FLURRIES:
+            case WE_HEAVY_SNOW:
+            case WE_BLIZZARD:
+                temperature = -50;
+                break;
+            case WE_ICE_STORM:
+                temperature = -60;
+                break;
+        }
+    }
+
+    private void setWindFromWeather() {
+        switch (weatherConditions) {
+            case WE_SLEET:
+                windStrength = WI_MOD_GALE;
+                setSleet(true);
+                break;
+            case WE_ICE_STORM:
+            case WE_SNOW_FLURRIES:
+                windStrength = WI_MOD_GALE;
+                shiftWindStrength = false;
+                break;
+            case WE_GUSTING_RAIN:
+            case WE_BLIZZARD:
+                windStrength = WI_STRONG_GALE;
+                shiftWindStrength = false;
+                break;
+        }
+    }
+
+    public boolean isSleeting() {
+        return isSleeting;
+    }
+
+    public void setSleet(boolean sleet) {
+        isSleeting = sleet;
+    }
+
+    private void doSleetCheck() {
+        if (isSleeting && windStrength < WI_MOD_GALE) {
+            setSleet(false);
+            weatherConditions = WE_NONE;
+            oldWeatherConditions = WE_SLEET;
+            oldTemperature = temperature;
+            temperature = 25;
+        }
+        if (isSleeting() && windStrength > WI_MOD_GALE) {
+            shiftWindStrength = false;
+            windStrength = WI_MOD_GALE;
+        }
+        if ((oldWeatherConditions == WE_SLEET)
+                && (windStrength == WI_MOD_GALE)
+                && !isSleeting() ) {
+            setSleet(true);
+            temperature = oldTemperature;
+            oldWeatherConditions = WE_NONE;
+            oldTemperature = 25;
+            weatherConditions = WE_SLEET;
+        }
+    }
+
+    private void setSandStorm() {
+        if (blowingSand && windStrength < WI_MOD_GALE) {
+            windStrength = WI_MOD_GALE;
+            sandStorm = true;
+        }
+    }
+
+    private void doSandStormCheck() {
+        if (blowingSand && windStrength < WI_MOD_GALE) {
+            sandStorm = blowingSand;
+            blowingSand = false;
+        }
+        if (sandStorm && windStrength > WI_LIGHT_GALE) {
+            sandStorm = blowingSand;
+            blowingSand = true;
+        }
+    }
+
+    public void setRunOnce(boolean run) {
+        runOnce = true;
     }
 }

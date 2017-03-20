@@ -32,6 +32,14 @@ IS Level 2
 Wheeled
 </motion_type>
 
+<transporters>
+cargobay:3.0:1
+</transporters>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 6
 </cruiseMP>
@@ -40,25 +48,21 @@ Wheeled
 6
 </engine_type>
 
+<omni>
+1
+</omni>
+
 <armor>
 15
 10
 10
-10
+15
 </armor>
-
-<barrating>
-7
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
 
 <Body Equipment>
 Tractor
-FieldKitchen
-FieldKitchen
+FieldKitchen:OMNI
+FieldKitchen:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -71,22 +75,22 @@ FieldKitchen
 </Left Equipment>
 
 <Rear Equipment>
-Hitch
+Hitch:OMNI
 </Rear Equipment>
 
-<transporters>
-cargobay:3:1
-refrigeratedcargobay:2:1
-</transporters>
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <source>
-HB HD
+HB:House Davion - Civil War
 </source>
 
 <tonnage>
 30.0
 </tonnage>
-
-<omni>
-</omni>
 

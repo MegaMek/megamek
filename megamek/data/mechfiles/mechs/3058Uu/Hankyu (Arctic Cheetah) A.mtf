@@ -9,8 +9,8 @@ Source:TRO 3058 - Succession Wars
 Rules Level:2
 
 Mass:30
-Engine:240 XL (Clan) Engine
-Structure:Endo Steel
+Engine:240 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -42,11 +42,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLFlamer
-Endo Steel
-Ferro-Fibrous
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLFlamer (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -56,11 +56,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLSmallPulseLaser
-Endo Steel
-Ferro-Fibrous
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -68,12 +68,12 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Streak SRM 6 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -84,11 +84,11 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-Clan Streak SRM 6 Ammo
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -111,7 +111,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

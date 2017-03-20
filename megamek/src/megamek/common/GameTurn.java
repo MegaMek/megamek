@@ -24,6 +24,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Iterator;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * Represents a single turn within a phase of the game, where a specific player
  * has to declare his/her action. The default game turn allows a player to move
@@ -101,10 +103,10 @@ public class GameTurn implements Serializable {
             && !(useValidNonInfantryCheck &&
                  (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
                  && (((entity instanceof Infantry) && 
-                      game.getOptions().booleanOption("inf_move_later")) 
+                      game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) 
                     || 
                     ((entity instanceof Protomech) && 
-                     game.getOptions().booleanOption("protos_move_later"))) 
+                     game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER))) 
                  && game.checkForValidNonInfantryAndOrProtomechs(playerId));
     }    
 

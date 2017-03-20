@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Pegasus Scout Hover Tank
@@ -24,33 +24,25 @@ Pegasus Scout Hover Tank
 2873
 </year>
 
-<source>
-RS 3039 Unabriged
-</source>
-
 <type>
 IS Level 1
 </type>
-
-<tonnage>
-35.0
-</tonnage>
 
 <motion_type>
 Hover
 </motion_type>
 
 <transporters>
-cargobay:12:1
+cargobay:12.0:1
 </transporters>
-
-<engine_type>
-1
-</engine_type>
 
 <cruiseMP>
 8
 </cruiseMP>
+
+<engine_type>
+1
+</engine_type>
 
 <armor>
 26
@@ -77,4 +69,12 @@ cargobay:12:1
 
 <Turret Equipment>
 </Turret Equipment>
+
+<source>
+TRO 3039 - Succession Wars
+</source>
+
+<tonnage>
+35.0
+</tonnage>
 

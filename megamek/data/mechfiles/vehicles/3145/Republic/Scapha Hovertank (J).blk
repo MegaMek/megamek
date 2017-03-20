@@ -33,16 +33,12 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
 11
 </cruiseMP>
-
-<jumpMP>
-7
-</jumpMP>
 
 <engine_type>
 3
@@ -69,14 +65,14 @@ Hover
 </armor>
 
 <Body Equipment>
-ISGuardianECMSuite
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
-Jump Jet
+ISGuardianECMSuite:OMNI
+Jump Jet:OMNI
+Jump Jet:OMNI
+Jump Jet:OMNI
+Jump Jet:OMNI
+Jump Jet:OMNI
+Jump Jet:OMNI
+Jump Jet:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -92,9 +88,9 @@ Jump Jet
 </Rear Equipment>
 
 <Turret Equipment>
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
+ISMediumPulseLaser:OMNI
 </Turret Equipment>
 
 <source>
@@ -104,4 +100,8 @@ TRO 3145 Republic of the Sphere - Late Republic
 <tonnage>
 40.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:70
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -32,21 +32,21 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:6
-Medium Laser, Center Torso
-Medium Laser, Center Torso
 LRM 15, Left Arm
 LRM 15, Right Arm
 LRM 10, Left Torso
 LRM 10, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-LRM 15
-LRM 15
-LRM 15
-ISArtemisIV
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+ISArtemisIV (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,10 +57,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-LRM 15
-LRM 15
-LRM 15
-ISArtemisIV
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+ISArtemisIV (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -71,12 +71,12 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-LRM 10
-LRM 10
-ISArtemisIV
-IS Ammo LRM-10 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
+LRM 10 (omnipod)
+LRM 10 (omnipod)
+ISArtemisIV (omnipod)
+IS Ammo LRM-10 Artemis-capable (omnipod)
+IS Ammo LRM-15 Artemis-capable (omnipod)
+IS Ammo LRM-15 Artemis-capable (omnipod)
 ISCASE
 -Empty-
 -Empty-
@@ -85,12 +85,12 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-LRM 10
-LRM 10
-ISArtemisIV
-IS Ammo LRM-10 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
+LRM 10 (omnipod)
+LRM 10 (omnipod)
+ISArtemisIV (omnipod)
+IS Ammo LRM-10 Artemis-capable (omnipod)
+IS Ammo LRM-15 Artemis-capable (omnipod)
+IS Ammo LRM-15 Artemis-capable (omnipod)
 ISCASE
 -Empty-
 -Empty-

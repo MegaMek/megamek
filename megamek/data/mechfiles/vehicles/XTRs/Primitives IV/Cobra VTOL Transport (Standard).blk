@@ -44,6 +44,10 @@ troopspace:9.0
 1
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
 10
 8

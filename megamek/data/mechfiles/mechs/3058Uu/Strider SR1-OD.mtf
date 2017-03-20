@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:40
-Engine:240 Fusion Engine
-Structure:Endo Steel
+Engine:240 Fusion Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Single
@@ -42,8 +42,8 @@ Small Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumPulseLaser
-ISStreakSRM2
+ISMediumPulseLaser (omnipod)
+ISStreakSRM2 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -56,8 +56,8 @@ ISStreakSRM2
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumPulseLaser
-ISStreakSRM2
+ISMediumPulseLaser (omnipod)
+ISStreakSRM2 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -68,28 +68,28 @@ ISStreakSRM2
 -Empty-
 
 Left Torso:
-ISTAG
-ISC3SlaveUnit
+ISTAG (omnipod)
+ISC3SlaveUnit (omnipod)
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-IS Streak SRM 2 Ammo
+IS Streak SRM 2 Ammo (omnipod)
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-BeagleActiveProbe
-BeagleActiveProbe
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Small Laser
+Small Laser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -129,7 +129,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,7 +142,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

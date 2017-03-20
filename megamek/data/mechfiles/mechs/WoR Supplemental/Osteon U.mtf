@@ -34,21 +34,21 @@ RTR Armor:12
 RTC Armor:12
 
 Weapons:4
-LRT 15, Right Torso
-LRT 15, Left Torso
-LRT 15, Right Arm
 LRT 15, Left Arm
+LRT 15, Right Arm
+LRT 15, Left Torso
+LRT 15, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
 Clan HarJel
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -56,13 +56,13 @@ Clan Ferro-Lamellor
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
 Clan HarJel
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -71,32 +71,29 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLUMU
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
 Clan HarJel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
-Clan Ferro-Lamellor
-Clan Ferro-Lamellor
-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLUMU
-CLLRT15
-CLLRT15
-CLArtemisV
-CLArtemisV
+CLUMU (omnipod)
+CLLRT15 (omnipod)
+CLLRT15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
 Clan HarJel
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
 -Empty-
-Clan Ferro-Lamellor
-Clan Ferro-Lamellor
-
-
 
 Center Torso:
 Fusion Engine
@@ -116,9 +113,9 @@ Head:
 Sensors
 Sensors
 NovaCEWS
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
-Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRTorpedo-15 (Clan) Artemis V-capable (omnipod)
 -Empty-
 -Empty-
 -Empty-

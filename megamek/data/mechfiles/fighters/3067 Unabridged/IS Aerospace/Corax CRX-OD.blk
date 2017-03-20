@@ -68,17 +68,17 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-LRM 10
-IS Ammo LRM-10
-IS Ammo LRM-10
+LRM 10:OMNI
+IS Ammo LRM-10:OMNI
+IS Ammo LRM-10:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-Medium Laser
+Medium Laser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-Medium Laser
+Medium Laser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

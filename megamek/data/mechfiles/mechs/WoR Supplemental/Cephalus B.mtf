@@ -32,8 +32,8 @@ RTR Armor:4
 RTC Armor:4
 
 Weapons:2
-Light TAG, Right Torso
 Mech Taser, Left Torso
+Light TAG, Right Torso
 
 Left Arm:
 Shoulder
@@ -68,10 +68,10 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Mek Taser
-Mek Taser
-Mek Taser
-Taser Ammo
+Mek Taser (omnipod)
+Mek Taser (omnipod)
+Mek Taser (omnipod)
+Taser Ammo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Mek Null Signature System
@@ -82,7 +82,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLightTAG
+CLLightTAG (omnipod)
 Clan Endo Steel
 Mek Null Signature System
 Chameleon Light Polarization Shield

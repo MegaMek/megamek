@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+.045
+</fuel>
+
 <armor>
 1
 1
@@ -81,7 +85,7 @@ standardseats:.3:2
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Succession Wars
 </source>
 
 <tonnage>

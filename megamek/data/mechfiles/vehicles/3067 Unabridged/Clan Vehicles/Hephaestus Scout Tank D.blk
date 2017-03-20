@@ -37,7 +37,11 @@ troopspace:5.0
 </transporters>
 
 <transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
 
+<transporters>
+troopspace:1.0
 </transporters>
 
 <cruiseMP>
@@ -70,8 +74,8 @@ troopspace:5.0
 
 <Body Equipment>
 CLActiveProbe
-CLECMSuite
-CLAPGaussRifle Ammo
+CLECMSuite:OMNI
+CLAPGaussRifle Ammo:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -87,10 +91,10 @@ CLAPGaussRifle Ammo
 </Rear Equipment>
 
 <Turret Equipment>
-CLAPGaussRifle
-CLAPGaussRifle
-CLERMediumLaser
-CLERMediumLaser
+CLAPGaussRifle:OMNI
+CLAPGaussRifle:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
 </Turret Equipment>
 
 <source>
@@ -100,4 +104,8 @@ RS 3067U
 <tonnage>
 30.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

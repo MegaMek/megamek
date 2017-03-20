@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+8
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -68,28 +72,28 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISAntiMissileSystem
-ISAMS Ammo
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
+ISAntiMissileSystem:OMNI
+ISAMS Ammo:OMNI
+ISPlasmaRifle:OMNI
+ISPlasmaRifle:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERMediumLaser
-ISSNPPC
+ISERMediumLaser:OMNI
+ISSNPPC:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERMediumLaser
-ISSNPPC
+ISERMediumLaser:OMNI
+ISSNPPC:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISGuardianECMSuite
+ISGuardianECMSuite:OMNI
 </Aft Equipment>
 
 <source>

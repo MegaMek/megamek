@@ -49,4 +49,9 @@ public abstract class CapitalMissileWeapon extends AmmoWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new CapitalMissileHandler(toHit, waa, game, server);
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL_MISSILE;
+    }
 }

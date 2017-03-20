@@ -9,8 +9,8 @@ Source:TRO 3055 - Clan Invasion
 Rules Level:2
 
 Mass:65
-Engine:390 XL (Clan) Engine
-Structure:Endo Steel
+Engine:390 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -45,10 +45,10 @@ Flamer, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
-CLERMediumLaser
-Endo Steel
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -59,12 +59,12 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
-Clan Ultra AC/5 Ammo
-Endo Steel
-Ferro-Fibrous
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -73,11 +73,11 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser (R)
-Endo Steel
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (R) (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -87,12 +87,12 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLMG
-CLMG (R)
-CLFlamer (R)
-Clan Machine Gun Ammo - Half
-Endo Steel
-Ferro-Fibrous
+CLMG (omnipod)
+CLMG (R) (omnipod)
+CLFlamer (R) (omnipod)
+Clan Machine Gun Ammo - Half (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -109,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
+Clan Endo Steel
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -131,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

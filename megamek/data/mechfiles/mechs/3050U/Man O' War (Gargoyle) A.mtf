@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:80
-Engine:400 XL Engine
-Structure:Standard
+Engine:400 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
+Base Chassis Heat Sinks:16
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:23
 RA Armor:23
 LT Armor:24
@@ -30,23 +31,24 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:5
-2 CLERPPC, Right Arm
-1 CLLargePulseLaser, Left Arm
-1 CLMediumPulseLaser, Left Arm
-1 CLERMediumLaser, Left Arm
-1 CLERSmallLaser, Left Arm
+Weapons:6
+Large Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Small Laser, Left Arm
+ER PPC, Right Arm
+ER PPC, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLMediumPulseLaser
-CLERMediumLaser
-CLERSmallLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,10 +56,10 @@ CLERSmallLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -68,8 +70,8 @@ CLERPPC
 Left Torso:
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -82,8 +84,8 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -111,7 +113,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -126,7 +128,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,7 +142,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -148,4 +150,5 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:50
-Engine:200 XL Engine
-Structure:Endo Steel
+Engine:200 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -49,13 +49,13 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-Medium Laser
-Medium Laser
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 
 Right Arm:
 Shoulder
@@ -63,41 +63,41 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-ISUltraAC5
-Medium Laser
-Medium Laser
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+ISUltraAC5 (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Machine Gun
-Machine Gun
-IS Ultra AC/5 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+IS Ultra AC/5 Ammo (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Machine Gun
-Machine Gun
-IS Ultra AC/5 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Machine Gun (omnipod)
+Machine Gun (omnipod)
+IS Ultra AC/5 Ammo (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -110,14 +110,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Machine Gun Ammo - Half
-Endo Steel
+IS Machine Gun Ammo - Half (omnipod)
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-

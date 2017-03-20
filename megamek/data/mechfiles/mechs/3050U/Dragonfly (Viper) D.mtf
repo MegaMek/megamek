@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:40
-Engine:320 XL Engine
-Structure:Endo Steel
+Engine:320 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:8
 Jump MP:8
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:13
@@ -30,21 +31,22 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:7
 
-Weapons:4
-1 CLStreakSRM6, Left Arm, Ammo:15
-1 CLERSmallLaser, Left Torso
-2 CLERMediumLaser, Right Arm
-1 CLLRM5, Right Torso, Ammo:24
+Weapons:5
+Streak SRM 6, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ER Small Laser, Left Torso
+LRM 5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLStreakSRM6
-CLStreakSRM6
-Ferro-Fibrous
-Ferro-Fibrous
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +57,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -69,12 +71,12 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLERSmallLaser
-CLStreakSRM6 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLERSmallLaser (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -83,12 +85,12 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLLRM5
-CLLRM5 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLLRM5 (omnipod)
+Clan Ammo LRM-5 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -103,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
+Clan Endo Steel
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -147,4 +149,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

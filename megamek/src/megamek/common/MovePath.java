@@ -30,6 +30,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
@@ -318,11 +319,10 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // jumping into heavy woods is danger
-        if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
             IHex hex = game.getBoard().getHex(step.getPosition());
             if ((hex != null) && isJumping() && step.isEndPos(this)) {
-                PilotingRollData psr = entity.checkLandingInHeavyWoods(
-                        step.getMovementType(false), hex);
+                PilotingRollData psr = entity.checkLandingInHeavyWoods(step.getMovementType(false), hex);
                 if (psr.getValue() != PilotingRollData.CHECK_FALSE) {
                     step.setDanger(true);
                 }

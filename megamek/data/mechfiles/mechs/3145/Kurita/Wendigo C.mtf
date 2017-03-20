@@ -35,17 +35,17 @@ RTC Armor:8
 
 Weapons:5
 Streak LRM 15, Left Arm
+Improved Heavy Large Laser, Right Arm
 ER Small Laser, Left Torso
 Improved Heavy Medium Laser, Head
 Improved Heavy Medium Laser, Head
-Improved Heavy Large Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakLRM15
-CLStreakLRM15
-CLStreakLRM15
+CLStreakLRM15 (omnipod)
+CLStreakLRM15 (omnipod)
+CLStreakLRM15 (omnipod)
 Clan Reflective
 Clan Reflective
 Clan Reflective
@@ -57,9 +57,9 @@ Clan Reflective
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -72,9 +72,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLERSmallLaser
-Clan Streak LRM 15 Ammo
-Clan Streak LRM 15 Ammo
+CLERSmallLaser (omnipod)
+Clan Streak LRM 15 Ammo (omnipod)
+Clan Streak LRM 15 Ammo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Reflective
@@ -86,9 +86,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLDoubleHeatSink
-CLDoubleHeatSink
-CL Super Charger
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CL Super Charger (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Reflective
@@ -113,10 +113,10 @@ Sensors
 Head:
 Sensors
 Sensors
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

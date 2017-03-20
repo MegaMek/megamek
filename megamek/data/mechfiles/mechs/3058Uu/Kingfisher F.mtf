@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:90
-Engine:360 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:360 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
@@ -41,14 +41,14 @@ ER Large Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
 -Empty-
 -Empty-
 
@@ -56,9 +56,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -67,28 +67,28 @@ CLERMediumLaser
 -Empty-
 
 Left Torso:
-HAG/30 Ammo
-HAG/30 Ammo
-HAG/30 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -105,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERLargeLaser
-CLECMSuite
+CLERLargeLaser (omnipod)
+CLECMSuite (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

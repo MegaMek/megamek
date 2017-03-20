@@ -33,9 +33,9 @@ RTR Armor:5
 RTC Armor:6
 
 Weapons:6
-ER Large Pulse Laser, Right Arm
 ER Large Pulse Laser, Left Arm
 ER Medium Pulse Laser, Left Arm
+ER Large Pulse Laser, Right Arm
 ER Medium Pulse Laser, Right Arm
 SRM 6, Left Torso
 SRM 6, Right Torso
@@ -46,11 +46,11 @@ Upper Arm Actuator
 Lower Arm Actuator
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERMediumPulseLaser
-CLERMediumPulseLaser
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
 -Empty-
 -Empty-
 
@@ -61,11 +61,11 @@ Lower Arm Actuator
 TSM
 TSM
 TSM
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERMediumPulseLaser
-CLERMediumPulseLaser
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
 -Empty-
 
 Left Torso:
@@ -78,9 +78,9 @@ Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLSRM6
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLSRM6 (omnipod)
 
 Right Torso:
 Fusion Engine
@@ -91,9 +91,9 @@ Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLSRM6
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLSRM6 (omnipod)
 -Empty-
 
 Center Torso:
@@ -106,8 +106,8 @@ Fusion Engine
 TSM
 TSM
 TSM
-Clan Ammo SRM-6
-Clan Ammo SRM-6
+Clan Ammo SRM-6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
 -Empty-
 
 Head:

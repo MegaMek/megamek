@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:70
-Engine:350 XL Engine
-Structure:Standard
+Engine:350 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:14 Double
+Base Chassis Heat Sinks:14
 Walk MP:5
 Jump MP:5
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:17
 RA Armor:17
 LT Armor:22
@@ -31,20 +32,20 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:3
-1 CLLBXAC10, Left Arm, Ammo:10
-1 CLLRM15, Left Torso, Ammo:16
-1 CLERPPC, Right Arm
+LB 10-X AC, Left Arm
+ER PPC, Right Arm
+LRM 15, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10 CL Ammo
-Ferro-Fibrous
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -52,9 +53,9 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-Ferro-Fibrous
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -66,12 +67,12 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM15
-CLLRM15
-CLLRM15 Ammo
-CLLRM15 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -80,8 +81,8 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -109,7 +110,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -146,4 +147,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

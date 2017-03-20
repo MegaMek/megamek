@@ -33,7 +33,11 @@ Wheeled
 </motion_type>
 
 <transporters>
-cargobay:3:1
+cargobay:3.0:1
+</transporters>
+
+<transporters>
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -44,16 +48,16 @@ cargobay:3:1
 1
 </engine_type>
 
+<omni>
+1
+</omni>
+
 <armor>
 5
 5
 5
 3
 </armor>
-
-<barrating>
-4
-</barrating>
 
 <Body Equipment>
 ISOffRoadChassis
@@ -71,18 +75,19 @@ ISOffRoadChassis
 <Rear Equipment>
 </Rear Equipment>
 
-<source>
-TRO Var
-</source>
-
-<tonnage>
-7.0
-</tonnage>
+<barrating>
+4
+</barrating>
 
 <structural_tech_rating>
 4
 </structural_tech_rating>
 
-<omni>
-</omni>
+<source>
+TRO VAr - Clan Invasion
+</source>
+
+<tonnage>
+7.0
+</tonnage>
 

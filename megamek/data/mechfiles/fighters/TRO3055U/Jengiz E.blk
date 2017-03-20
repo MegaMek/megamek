@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+16
+</omnipodheatsinks>
+
 <fuel>
 320
 </fuel>
@@ -76,27 +80,27 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLECMSuite
-CLERSmallLaser
+CLECMSuite:OMNI
+CLERSmallLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERLargeLaser
-CLERLargeLaser
-CLERLargeLaser
+CLERLargeLaser:OMNI
+CLERLargeLaser:OMNI
+CLERLargeLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERLargeLaser
-CLERLargeLaser
-CLERLargeLaser
+CLERLargeLaser:OMNI
+CLERLargeLaser:OMNI
+CLERLargeLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLStreakSRM2 (IOS)
-CLStreakSRM2 (IOS)
-CLStreakSRM2 (IOS)
-CLStreakSRM2 (IOS)
+CLStreakSRM2 (IOS):OMNI
+CLStreakSRM2 (IOS):OMNI
+CLStreakSRM2 (IOS):OMNI
+CLStreakSRM2 (IOS):OMNI
 </Aft Equipment>
 
 <source>

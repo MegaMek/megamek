@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Koshi (Mist Lynx)
 P
 
@@ -9,16 +9,16 @@ Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:25
-Engine:175 XL Fusion Engine
-Structure:Endo-Steel
+Engine:175 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:11 Double
-Base Chassis Heat Sinks: 10
+Base Chassis Heat Sinks:7
 Walk MP:7
 Jump MP:6
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:4
 RA Armor:4
 LT Armor:7
@@ -31,86 +31,85 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:6
 
-Weapons:9
-1 CLActiveProbe, Head
-1 CLERMicroLaser, Left Arm
-1 CLERMicroLaser, Left Arm
-1 CLERMicroLaser, Right Arm
-1 CLERMicroLaser, Right Arm
-1 CLERLargeLaser, Right Arm
-1 CLMicroPulseLaser, Left Arm
-1 CLMicroPulseLaser, Right Arm
-1 CLMicroPulseLaser, Left Arm
+Weapons:8
+ER Micro Laser, Left Arm
+ER Micro Laser, Left Arm
+Micro Pulse Laser, Left Arm
+Micro Pulse Laser, Left Arm
+Micro Pulse Laser, Right Arm
+ER Micro Laser, Right Arm
+ER Micro Laser, Right Arm
+ER Large Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMicroLaser
-CLERMicroLaser
-CLMicroPulseLaser
-CLMicroPulseLaser
+CLERMicroLaser (omnipod)
+CLERMicroLaser (omnipod)
+CLMicroPulseLaser (omnipod)
+CLMicroPulseLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
-Endo-Steel
-Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMicroPulseLaser
-CLERMicroLaser
-CLERMicroLaser
-CLERLargeLaser
+CLMicroPulseLaser (omnipod)
+CLERMicroLaser (omnipod)
+CLERMicroLaser (omnipod)
+CLERLargeLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
-Endo-Steel
-Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-Endo-Steel
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Head:
 Life Support
@@ -119,19 +118,39 @@ Cockpit
 CLActiveProbe
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+Clan Endo Steel
 -Empty-
-Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+Clan Endo Steel
 -Empty-
-Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

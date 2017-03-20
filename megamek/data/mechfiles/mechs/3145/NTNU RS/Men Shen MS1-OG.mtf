@@ -32,17 +32,17 @@ RTR Armor:6
 RTC Armor:7
 
 Weapons:5
+Medium X-Pulse Laser, Left Arm
+Medium X-Pulse Laser, Left Arm
+TSEMP Cannon, Right Arm
 Streak SRM 4, Left Torso
 Streak SRM 4, Right Torso
-TSEMP Cannon, Right Arm
-Medium X-Pulse Laser, Left Arm
-Medium X-Pulse Laser, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumXPulseLaser
-ISMediumXPulseLaser
+ISMediumXPulseLaser (omnipod)
+ISMediumXPulseLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -55,11 +55,11 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -70,7 +70,7 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISStreakSRM4
+ISStreakSRM4 (omnipod)
 ISMASC
 ISMASC
 ISMASC
@@ -84,8 +84,8 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISStreakSRM4
-IS Streak SRM 4 Ammo
+ISStreakSRM4 (omnipod)
+IS Streak SRM 4 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-

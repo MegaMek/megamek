@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,10 +65,10 @@ Hover
 </armor>
 
 <Body Equipment>
-ISTargeting Computer
-ISAngelECMSuite
-BloodhoundActiveProbe
-ISSuperCharger
+ISTargeting Computer:OMNI
+ISAngelECMSuite:OMNI
+BloodhoundActiveProbe:OMNI
+Supercharger:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -84,8 +84,8 @@ ISSuperCharger
 </Rear Equipment>
 
 <Turret Equipment>
-Light PPC
-Light PPC
+Light PPC:OMNI
+Light PPC:OMNI
 </Turret Equipment>
 
 <source>
@@ -95,4 +95,8 @@ TRO 3145 Republic of the Sphere - Late Republic
 <tonnage>
 40.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

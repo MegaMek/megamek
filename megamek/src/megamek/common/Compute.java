@@ -138,7 +138,7 @@ public class Compute {
         Roll roll = random.d6(dice);
         if (Server.getServerInstance() != null) {
             if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption("rng_log")) {
+                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
                 Server.getServerInstance().reportRoll(roll);
             }
         }
@@ -152,7 +152,7 @@ public class Compute {
         Roll roll = random.d6(dice, keep);
         if (Server.getServerInstance() != null) {
             if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption("rng_log")) {
+                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
                 Server.getServerInstance().reportRoll(roll);
             }
         }
@@ -166,7 +166,7 @@ public class Compute {
         Roll roll = random.d6();
         if (Server.getServerInstance() != null) {
             if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption("rng_log")) {
+                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
                 Server.getServerInstance().reportRoll(roll);
             }
         }
@@ -598,7 +598,7 @@ public class Compute {
 
         // an easy check
         if (!game.getBoard().contains(dest)) {
-            if (game.getOptions().booleanOption("push_off_board")) {
+            if (game.getOptions().booleanOption(OptionsConstants.BASE_PUSH_OFF_BOARD)) {
                 return true;
             }
             return false;
@@ -808,7 +808,7 @@ public class Compute {
                         target, true);
                 ToHitData mods = los.losModifiers(game);
                 // If the target isn't spotted, can't target
-                if (game.getOptions().booleanOption("double_blind")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && !Compute.inVisualRange(game, los, other, target)
                     && !Compute.inSensorRange(game, los, other, target, null)) {
                     mods.addModifier(TargetRoll.IMPOSSIBLE,
@@ -863,9 +863,10 @@ public class Compute {
         int[] weaponRanges = wtype.getRanges(weapon);
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isAttackerBA = (ae instanceof BattleArmor);
-        boolean isWeaponInfantry = (wtype instanceof InfantryWeapon);
+        boolean isWeaponInfantry = (wtype instanceof InfantryWeapon)
+        		&& !wtype.hasFlag(WeaponType.F_TAG);
         boolean isSwarmOrLegAttack = (wtype instanceof InfantryAttack);
-        boolean isIndirect = (((wtype.getAmmoType() == AmmoType.T_LRM)
+        boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM)
                                || (wtype.getAmmoType() == AmmoType.T_MML)
                                || (wtype.getAmmoType() == AmmoType.T_EXLRM)
                                || (wtype.getAmmoType() == AmmoType.T_TBOLT_5)
@@ -874,13 +875,13 @@ public class Compute {
                                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
                                || (wtype.getAmmoType() == AmmoType.T_IATM) 
                                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                               || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)) 
-                               && weapon.curMode().equals("Indirect"))
-                             || (wtype instanceof ArtilleryCannonWeapon);
+                               || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)
+                               || (wtype instanceof ArtilleryCannonWeapon)) 
+                               && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(
-                OptionsConstants.AC_TAC_OPS_RANGE);
+                OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(
-                OptionsConstants.AC_TAC_OPS_LOS_RANGE);
+                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
 
         if (ae.isAirborne()) {
             useExtremeRange = true;
@@ -912,7 +913,7 @@ public class Compute {
         // TODO: See above, it should be coded elsewhere...
         //
         if (wtype.hasFlag(WeaponType.F_PPC)) {
-            if (game.getOptions().booleanOption("tacops_ppc_inhibitors")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
                 if ((weapon.curMode() != null)
                     && weapon.curMode().equals("Field Inhibitor OFF")) {
                     weaponRanges[RangeType.RANGE_MINIMUM] = 0;
@@ -922,7 +923,7 @@ public class Compute {
 
         // Hotloaded weapons
         if (weapon.isHotLoaded()
-            && game.getOptions().booleanOption("tacops_hotload")) {
+            && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
             weaponRanges[RangeType.RANGE_MINIMUM] = 0;
         }
 
@@ -1108,12 +1109,11 @@ public class Compute {
             c3spotter = ae; // no c3 when using indirect fire
         }
         if (isIndirect
-            && game.getOptions().booleanOption("indirect_fire")
-            && !game.getOptions().booleanOption("indirect_always_possible")
+            && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
+            && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
             && LosEffects.calculateLos(game, ae.getId(), target).canSee()
-            && (!game.getOptions().booleanOption("double_blind") || Compute
+            && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                 .canSee(game, ae, target))
-            && !(wtype instanceof ArtilleryCannonWeapon)
             && !(wtype instanceof MekMortarWeapon)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Indirect fire impossible with direct LOS");
@@ -1222,7 +1222,9 @@ public class Compute {
         // to figure out range, so overwrite whatever we have at this point
         if (isWeaponInfantry) {
             mods = Compute.getInfantryRangeMods(Math.min(distance, c3dist),
-                                                (InfantryWeapon) wtype);
+            		(InfantryWeapon) wtype,
+            		(ae instanceof Infantry)? ((Infantry)ae).getSecondaryWeapon() : null,
+            				weaponUnderwater);
 
             int rangeModifier = mods.getValue();
             if (rangeModifier == TargetRoll.AUTOMATIC_FAIL) {
@@ -1251,10 +1253,22 @@ public class Compute {
         return mods;
     }
 
-    public static ToHitData getInfantryRangeMods(int distance,
-                                                 InfantryWeapon wpn) {
+    /**
+     * Calculate the range modifiers for a conventional infantry attack.
+     * 
+     * @param distance - range to target
+     * @param wpn - the weapon used to calculate range -- secondary if 2/squad, otherwise primary
+     * @param secondary - the secondary weapon, if any. Range zero penalties apply even if primary is used for range
+     * @param underwater - underwater range is half, rounded down
+     * @return - all modifiers for range
+     */
+    public static ToHitData getInfantryRangeMods(int distance, InfantryWeapon wpn,
+    		InfantryWeapon secondary, boolean underwater) {
         ToHitData mods = new ToHitData();
         int range = wpn.getInfantryRange();
+        if (underwater) {
+        	range /= 2;
+        }
         int mod = 0;
 
         switch (range) {
@@ -1372,12 +1386,18 @@ public class Compute {
         }
 
         // a bunch of special conditions at range 0
+        // penalties due to point blank or encumbering apply for secondary weapon even if
+        // primary is used to determine range
         if (distance == 0) {
 
-            if (wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
+            if (wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)
+            		|| (secondary != null && secondary.hasFlag(WeaponType.F_INF_POINT_BLANK))) {
                 mods.addModifier(1, "point blank weapon");
             }
-            if (wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)) {
+            if (wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)
+            		|| (secondary != null
+            			&& (secondary.hasFlag(WeaponType.F_INF_ENCUMBER)
+            					|| secondary.getCrew() > 1))) {
                 mods.addModifier(1, "point blank support weapon");
             }
 
@@ -1740,9 +1760,10 @@ public class Compute {
             }
 
             // front leg-mounted weapons have addidional trouble
-            if ((weapon.getLocation() == Mech.LOC_RARM)
-                || (weapon.getLocation() == Mech.LOC_LARM)) {
-                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM
+            if ((weapon.getLocation() == Mech.LOC_RARM) || (weapon.getSecondLocation() == Mech.LOC_RARM)
+                || (weapon.getLocation() == Mech.LOC_LARM || (weapon.getSecondLocation() == Mech.LOC_LARM))) {
+                int otherArm = (weapon.getLocation() == Mech.LOC_RARM
+                		|| weapon.getSecondLocation() == Mech.LOC_RARM)? Mech.LOC_LARM
                                                                      : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker,
@@ -1763,7 +1784,7 @@ public class Compute {
 
             if (attacker.isLocationBad(Mech.LOC_RARM)
                 || attacker.isLocationBad(Mech.LOC_LARM)) {
-                if (game.getOptions().booleanOption("tacops_prone_fire")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PRONE_FIRE)) {
                     // Can fire with only one arm
                     if (attacker.isLocationBad(Mech.LOC_RARM)
                         && attacker.isLocationBad(Mech.LOC_LARM)) {
@@ -1781,15 +1802,17 @@ public class Compute {
             }
 
             // arm-mounted weapons have addidional trouble
-            if ((weapon.getLocation() == Mech.LOC_RARM)
-                || (weapon.getLocation() == Mech.LOC_LARM)) {
-                if (l3ProneFiringArm == weapon.getLocation()) {
+            if ((weapon.getLocation() == Mech.LOC_RARM) || (weapon.getSecondLocation() == Mech.LOC_RARM)
+                || (weapon.getLocation() == Mech.LOC_LARM) || (weapon.getSecondLocation() == Mech.LOC_LARM)) {
+                if (l3ProneFiringArm == weapon.getLocation()
+                        || (weapon.getSecondLocation() != Entity.NONE && l3ProneFiringArm == weapon.getSecondLocation())) {
                     return new ToHitData(TargetRoll.IMPOSSIBLE,
                                          "Prone and propping up with this arm.");
                 }
 
-                int otherArm = weapon.getLocation() == Mech.LOC_RARM ? Mech.LOC_LARM
-                                                                     : Mech.LOC_RARM;
+                int otherArm = (weapon.getLocation() == Mech.LOC_RARM
+                		|| weapon.getSecondLocation() == Mech.LOC_RARM)? Mech.LOC_LARM
+                														: Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 if (Compute.isFiringFromArmAlready(game, weaponId, attacker,
                                                    otherArm)) {
@@ -1990,7 +2013,7 @@ public class Compute {
                 // first front arc target is our primary.
                 // if first target is non-front, and either a later target or
                 // the current one is in front, use that instead.
-                if (!game.getOptions().booleanOption("no_forced_primary_targets")) {
+                if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_FORCED_PRIMARY_TARGETS)) {
                     Targetable pte = game.getTarget(prevAttack.getTargetType(),
                                                     prevAttack.getTargetId());
                     // in double blind play, we might not have the target in our
@@ -2057,7 +2080,7 @@ public class Compute {
         if (curInFrontArc || (attacker instanceof BattleArmor)) {
             mod--;
         }
-        if (attacker.getCrew().getOptions().booleanOption("multi_tasker")) {
+        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_MULTI_TASKER)) {
             mod--;
         }
         return new ToHitData(mod, "secondary target modifier");
@@ -2098,20 +2121,17 @@ public class Compute {
             return toHit;
         }
 
-        if ((movement == EntityMovementType.MOVE_WALK)
-            || (movement == EntityMovementType.MOVE_VTOL_WALK)
-            || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
+        if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)
+                || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
             toHit.addModifier(1, "attacker walked");
-        } else if ((movement == EntityMovementType.MOVE_RUN)
-                   || (movement == EntityMovementType.MOVE_VTOL_RUN)) {
+        } else if ((movement == EntityMovementType.MOVE_RUN) || (movement == EntityMovementType.MOVE_VTOL_RUN)) {
             toHit.addModifier(2, "attacker ran");
         } else if (movement == EntityMovementType.MOVE_SKID) {
             toHit.addModifier(3, "attacker ran and skidded");
         } else if (movement == EntityMovementType.MOVE_JUMP) {
-            if (entity.getCrew().getOptions().booleanOption("jumping_jack")) {
+            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_JUMPING_JACK)) {
                 toHit.addModifier(1, "attacker jumped");
-            } else if (entity.getCrew().getOptions()
-                             .booleanOption("hopping_jack")) {
+            } else if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_HOPPING_JACK)) {
                 toHit.addModifier(2, "attacker jumped");
             } else {
                 toHit.addModifier(3, "attacker jumped");
@@ -2165,13 +2185,12 @@ public class Compute {
     public static void modifyPhysicalBTHForAdvantages(Entity attacker,
                                                       Entity target, ToHitData toHit, IGame game) {
 
-        if (attacker.getCrew().getOptions().booleanOption("melee_specialist")
-            && (attacker instanceof Mech)) {
-            toHit.addModifier(-1, "melee specialist");
+        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_SPECIALIST)
+                && (attacker instanceof Mech)) {
+            toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
         }
 
-        if (attacker.getCrew().getOptions()
-                    .booleanOption("clan_pilot_training")) {
+        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_CLAN_PILOT_TRAINING)) {
             toHit.addModifier(1, "clan pilot training");
         }
 
@@ -2180,7 +2199,7 @@ public class Compute {
         if ((target != null)
             && (target instanceof Mech)
             && target.getCrew().getOptions()
-                     .booleanOption("dodge_maneuver") && (target.dodging)) {
+                     .booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER) && (target.dodging)) {
             toHit.addModifier(2, "target is dodging");
         }
     }
@@ -2195,7 +2214,7 @@ public class Compute {
             return new ToHitData();
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
             && (entity.mpUsed == 0)
             && !entity.isImmobile()
             && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {
@@ -2253,7 +2272,7 @@ public class Compute {
         }
 
         if ((game != null)
-            && game.getOptions().booleanOption("maxtech_movement_mods")) {
+            && game.getOptions().booleanOption(OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS)) {
             if ((distance >= 3) && (distance <= 4)) {
                 toHit.addModifier(1, "target moved 3-4 hexes");
             } else if ((distance >= 5) && (distance <= 6)) {
@@ -2383,7 +2402,7 @@ public class Compute {
             woodsText = "target in ultra heavy " + woodsText;
         }
 
-        if (!game.getOptions().booleanOption("tacops_woods_cover")
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
             && !isAboveWoodsAndSmoke
             && !((t.getTargetType() == Targetable.TYPE_HEX_CLEAR)
                  || (t.getTargetType() == Targetable.TYPE_HEX_IGNITE)
@@ -2471,7 +2490,7 @@ public class Compute {
             woodsText = "heavy " + woodsText;
         }
 
-        if (!game.getOptions().booleanOption("tacops_woods_cover")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)) {
             if ((woodsLevel == 1) && (eistatus != 2)) {
                 toHit.addModifier(1, woodsText);
             } else if (woodsLevel > 1) {
@@ -3163,12 +3182,12 @@ public class Compute {
                                 }
                                 if ((target instanceof Tank)
                                     && !(cgame.getOptions()
-                                              .booleanOption("vehicles_safe_from_infernos"))) {
+                                              .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS))) {
                                     ammo_multiple = 1.1;
                                 }
                                 if ((target instanceof Protomech)
                                     && !(cgame.getOptions()
-                                              .booleanOption("protos_safe_from_infernos"))) {
+                                              .booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS))) {
                                     ammo_multiple = 1.1;
                                 }
                             }
@@ -3783,7 +3802,7 @@ public class Compute {
 
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
-        if (game.getOptions().booleanOption("inclusive_sensor_range")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
 
@@ -3858,14 +3877,13 @@ public class Compute {
         }
 
         int check = ae.getSensorCheck();
-        if ((null != ae.getCrew())
-            && ae.getCrew().getOptions().booleanOption("sensor_geek")) {
+        if ((null != ae.getCrew()) && ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
             check -= 2;
         }
         if (null != te) {
             check += sensor.getModsForStealth(te);
             // Metal Content...
-            if (ae.getGame().getOptions().booleanOption("metal_content")) {
+            if (ae.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_METAL_CONTENT)) {
                 check += sensor.getModForMetalContent(ae, te);
             }
         }
@@ -4502,7 +4520,7 @@ public class Compute {
         }
 
         // MD Infantry with grappler/magnets get bonus
-        if (attacker.getCrew().getOptions().booleanOption("grappler")) {
+        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_ENHANCED)) {
             data.addModifier(-2, "MD Grapple/Magnet");
         }
 
@@ -4645,7 +4663,7 @@ public class Compute {
         // .php?Cat=&Board=ask&Number=632321&page=0&view=collapsed&sb=5&o=0&fpart=
         else if (!attacker.isEnemyOf(defender)
                  && !attacker.getGame().getOptions()
-                             .booleanOption("friendly_fire")) {
+                             .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             reason = "Can only swarm an enemy.";
         }
         // target is already swarmed
@@ -4820,6 +4838,11 @@ public class Compute {
         final int src2destDir = src.direction(dest);
         final int dest2srcDir = (src2destDir + 3) % 6;
         boolean result = false;
+
+        // Jumping shouldn't be considered to be moving on pavement
+        if (moveStep.isJumping()) {
+            return false;
+        }
 
         // We may be moving in the same hex.
         if (src.equals(dest)
@@ -5325,6 +5348,39 @@ public class Compute {
         return (int) damage;
     }
 
+    /**
+     * Used to get a human-readable string that represents the passed damage
+     * type.
+     *
+     * @param damageType
+     * @return
+     */
+    public static String getDamageTypeString(int damageType) {
+        switch (damageType) {
+            case WeaponType.WEAPON_DIRECT_FIRE:
+                return Messages.getString("WeaponType.DirectFire");
+            case WeaponType.WEAPON_CLUSTER_BALLISTIC:
+                return Messages.getString("WeaponType.BallisticCluster");
+            case WeaponType.WEAPON_PULSE:
+                return Messages.getString("WeaponType.Pulse");
+            case WeaponType.WEAPON_CLUSTER_MISSILE:
+            case WeaponType.WEAPON_CLUSTER_MISSILE_1D6:
+            case WeaponType.WEAPON_CLUSTER_MISSILE_2D6:
+            case WeaponType.WEAPON_CLUSTER_MISSILE_3D6:
+                return Messages.getString("WeaponType.Missile");
+            case WeaponType.WEAPON_BURST_HALFD6:
+            case WeaponType.WEAPON_BURST_1D6:
+            case WeaponType.WEAPON_BURST_2D6:
+            case WeaponType.WEAPON_BURST_3D6:
+            case WeaponType.WEAPON_BURST_4D6:
+            case WeaponType.WEAPON_BURST_5D6:
+            case WeaponType.WEAPON_BURST_6D6:
+            case WeaponType.WEAPON_BURST_7D6:
+            default:
+                return Messages.getString("WeaponType.Burst");
+        }
+    }
+
     public static int directBlowInfantryDamage(double damage, int mos,
             int damageType, boolean isNonInfantryAgainstMechanized,
             boolean isAttackThruBuilding) {
@@ -5347,106 +5403,82 @@ public class Compute {
             int damageType, boolean isNonInfantryAgainstMechanized,
             boolean isAttackThruBuilding, int attackerId, Vector<Report> vReport) {
 
+        int origDamageType = damageType;
         damageType += mos;
-
         double origDamage = damage;
-        int repNum = 9970;
         switch (damageType) {
             case WeaponType.WEAPON_DIRECT_FIRE:
                 damage /= 10;
-                repNum = 9970;
                 break;
             case WeaponType.WEAPON_CLUSTER_BALLISTIC:
                 damage /= 10;
                 damage++;
-                repNum = 9971;
                 break;
             case WeaponType.WEAPON_PULSE:
                 damage /= 10;
                 damage += 2;
-                repNum = 9972;
                 break;
             case WeaponType.WEAPON_CLUSTER_MISSILE:
                 damage /= 5;
-                repNum = 9973;
                 break;
             case WeaponType.WEAPON_CLUSTER_MISSILE_1D6:
                 damage /= 5;
                 damage += Compute.d6();
-                repNum = 9973;
                 break;
             case WeaponType.WEAPON_CLUSTER_MISSILE_2D6:
                 damage /= 5;
                 damage += Compute.d6(2);
-                repNum = 9973;
                 break;
             case WeaponType.WEAPON_CLUSTER_MISSILE_3D6:
                 damage /= 5;
                 damage += Compute.d6(3);
-                repNum = 9973;
                 break;
             case WeaponType.WEAPON_BURST_HALFD6:
                 damage = Compute.d6() / 2.0;
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_1D6:
                 damage = Compute.d6();
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_2D6:
                 damage = Compute.d6(2);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_3D6:
                 damage = Compute.d6(3);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_4D6:
                 damage = Compute.d6(4);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_5D6:
                 damage = Compute.d6(5);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_6D6:
                 damage = Compute.d6(6);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
             case WeaponType.WEAPON_BURST_7D6:
                 damage = Compute.d6(7);
-                repNum = 9974;
                 if (isAttackThruBuilding) {
                     damage *= 0.5;
-                    repNum = 9975;
                 }
                 break;
         }
@@ -5465,9 +5497,24 @@ public class Compute {
         }
         
         if (vReport != null) {
-            Report r = new Report(repNum);
+            Report r = new Report();
             r.subject = attackerId;
             r.indent(2);
+
+            r.add(getDamageTypeString(origDamageType));
+            if (origDamageType != damageType) {
+                if (isAttackThruBuilding) {
+                    r.messageId = 9973;
+                } else {
+                    r.messageId = 9972;
+                }
+                r.add(getDamageTypeString(damageType));
+            } else if (isAttackThruBuilding) {
+                r.messageId = 9971;
+            } else {
+                r.messageId = 9970;
+            }
+
             r.add((int)origDamage);
             r.add((int)damage);
             vReport.addElement(r);
@@ -5654,7 +5701,7 @@ public class Compute {
             return -1;
         }
 
-        if (!game.getOptions().booleanOption("return_flyover")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
             return -1;
         }
 

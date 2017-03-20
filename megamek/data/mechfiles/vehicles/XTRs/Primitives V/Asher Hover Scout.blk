@@ -1,0 +1,93 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Asher Hover Scout
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2298
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+11
+11
+11
+6
+10
+</armor>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+Advanced Fire Control
+IS Ammo MG - Full
+IS Vehicle Flamer Ammo
+ISLRM5 Ammo
+</Body Equipment>
+
+<Front Equipment>
+Vehicle Flamer
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+LRM 5
+LRM 5
+Machine Gun
+Machine Gun
+</Turret Equipment>
+
+<barrating>
+7
+</barrating>
+
+<source>
+XTRO Primitives V - Age of War
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

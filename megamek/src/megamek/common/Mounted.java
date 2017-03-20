@@ -172,6 +172,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * weapon mount?
      */
     private boolean isAPMMounted = false;
+    
+    /**
+     * Does this Mounted represent equipmented that is pod mounted in an omni unit?
+     */
+    private boolean omniPodMounted = false;
 
     // for Armored components
     private boolean armoredComponent = false;
@@ -1484,6 +1489,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setAPMMounted(boolean apmMounted) {
         isAPMMounted = apmMounted;
     }
+    
+    public boolean isOmniPodMounted() {
+    	return omniPodMounted;
+    }
+    
+    public void setOmniPodMounted(boolean omniPodMounted) {
+    	this.omniPodMounted = omniPodMounted;
+    }
 
     public boolean isWeaponGroup() {
         return weaponGroup;
@@ -1551,7 +1564,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if ((null == entity)
                 || (null == entity.getGame())
                 || !entity.getGame().getOptions()
-                        .booleanOption("stratops_quirks")) {
+                        .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
         return quirks.booleanOption(name);
@@ -1564,7 +1577,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         int count = 0;
 
         if ((null == entity) || (null == entity.game)
-                || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+                || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 
@@ -1591,7 +1604,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         StringBuffer qrk = new StringBuffer();
 
         if ((null == entity) || (null == entity.game)
-                || !entity.game.getOptions().booleanOption("stratops_quirks")) {
+                || !entity.game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return qrk.toString();
         }
 

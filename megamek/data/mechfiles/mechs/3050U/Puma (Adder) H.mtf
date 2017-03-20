@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Puma (Adder)
 H
 
@@ -9,16 +9,16 @@ Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:35
-Engine:210 XL Fusion Engine
-Structure:Endo-Steel
+Engine:210 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:16 Double
-Base Chassis Heat Sinks: 10
+Base Chassis Heat Sinks:8
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:12
@@ -32,100 +32,120 @@ RTR Armor:4
 RTC Armor:6
 
 Weapons:3
-1 CLFlamer, Center Torso
-1 CLHeavyLargeLaser, Right Arm
-1 CLHeavyLargeLaser, Left Arm
+Heavy Large Laser, Left Arm
+Heavy Large Laser, Right Arm
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
-Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLTargeting Computer
-CLTargeting Computer
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 CLFlamer
-Endo-Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

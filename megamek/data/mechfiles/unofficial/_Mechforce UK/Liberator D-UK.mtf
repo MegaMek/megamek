@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:65
-Engine:260 XL Engine
-Structure:Endo Steel
+Engine:260 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
+Base Chassis Heat Sinks:10
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:20
 RA Armor:20
 LT Armor:23
@@ -29,67 +30,71 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:10
 
-Weapons:4
-1 CLGaussRifle, Right Arm, Ammo:16
-1 CLLRM20, Left Arm, Ammo:12
-5 CLSRM6, Left Torso, Ammo:30
-1 CLNarcBeacon, Head, Ammo:6
+Weapons:8
+LRM 20, Left Arm
+Gauss Rifle, Right Arm
+SRM 6, Left Torso
+SRM 6, Left Torso
+SRM 6, Left Torso
+SRM 6, Left Torso
+SRM 6, Left Torso
+Narc, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20 Ammo (Clan) Narc-capable
-CLLRM20 Ammo (Clan) Narc-capable
-CLNarc Pods
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+Clan Ammo LRM-20 (Clan) Narc-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Narc-capable (omnipod)
+CLNarc Pods (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGauss Ammo
-CLGauss Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLSRM6
-CLSRM6
-CLSRM6
-CLSRM6
-CLSRM6
-CLSRM6 Ammo (Clan) Narc-capable
-CLSRM6 Ammo (Clan) Narc-capable
-Endo Steel
-Endo Steel
-Endo Steel
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+Clan Ammo SRM-6 (Clan) Narc-capable (omnipod)
+Clan Ammo SRM-6 (Clan) Narc-capable (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
-Endo Steel
-Endo Steel
-Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -102,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLNarcBeacon
+CLNarcBeacon (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -124,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +143,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -32,6 +32,10 @@ IS Level 3
 Hover
 </motion_type>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
@@ -48,6 +52,10 @@ Hover
 5
 </armor_tech>
 
+<omni>
+1
+</omni>
+
 <armor>
 30
 30
@@ -57,7 +65,8 @@ Hover
 </armor>
 
 <Body Equipment>
-ISC3BoostedSystemSlaveUnit
+ISC3BoostedSystemSlaveUnit:OMNI
+ISCASE
 </Body Equipment>
 
 <Front Equipment>
@@ -73,7 +82,7 @@ ISC3BoostedSystemSlaveUnit
 </Rear Equipment>
 
 <Turret Equipment>
-Heavy PPC
+Heavy PPC:OMNI
 </Turret Equipment>
 
 <source>
@@ -84,8 +93,7 @@ TRO 3145 Federated Suns - Early Republic
 50.0
 </tonnage>
 
-<omni>
-1
-</omni>
-
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

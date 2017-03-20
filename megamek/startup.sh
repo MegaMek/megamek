@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # MegaMek -
 # Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
@@ -22,7 +22,7 @@ MEGAMEK_DEFAULT_CLASSPATH="/usr/share/java"
 MEGAMEK_DEFAULT_CONFROOT="$HOME"
 MEGAMEK_DEFAULT_DATAPATH="/usr/share/MegaMek"
 
-MEGAMEK_ACTUAL_PATH=$(dirname $0)
+MEGAMEK_ACTUAL_PATH=$(dirname "${BASH_SOURCE[0]}")
 cd $MEGAMEK_ACTUAL_PATH
 
 

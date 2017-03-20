@@ -66,6 +66,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem fileBoardSave;
     private JMenuItem fileBoardSaveAs;
     private JMenuItem fileBoardSaveAsImage;
+    private JMenuItem fileBoardSaveAsImageUnits;
     /**
      * When we have a unit list, set this to <code>true</code>.
      */
@@ -286,9 +287,19 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         submenu.add(fileBoardSaveAs);
         fileBoardSaveAsImage = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileBoardSaveAsImage")); //$NON-NLS-1$
+        fileBoardSaveAsImage.setToolTipText(Messages
+                .getString("CommonMenuBar.fileBoardSaveAsImage.tooltip")); //$NON-NLS-1$
         fileBoardSaveAsImage.addActionListener(this);
         fileBoardSaveAsImage.setActionCommand("fileBoardSaveAsImage"); //$NON-NLS-1$
         submenu.add(fileBoardSaveAsImage);
+        fileBoardSaveAsImageUnits = new JMenuItem(Messages
+                .getString("CommonMenuBar.fileBoardSaveAsImageUnits")); //$NON-NLS-1$
+        fileBoardSaveAsImage.setToolTipText(Messages
+                .getString("CommonMenuBar.fileBoardSaveAsImageUnits.tooltip")); //$NON-NLS-1$
+        fileBoardSaveAsImageUnits.addActionListener(this);
+        fileBoardSaveAsImageUnits.setActionCommand("fileBoardSaveAsImageUnits"); //$NON-NLS-1$
+        submenu.add(fileBoardSaveAsImageUnits);
+
 
         // Create the Unit List sub-menu.
         submenu = new JMenu(Messages.getString("CommonMenuBar.UnitListMenu")); //$NON-NLS-1$
@@ -824,7 +835,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             fileGameConnect.setEnabled(false);
             replacePlayer.setEnabled(false);
             // We can only save in certain phases of the game.
-            if ((phase != IGame.Phase.PHASE_UNKNOWN) && (phase != IGame.Phase.PHASE_LOUNGE)
+            if ((phase != IGame.Phase.PHASE_UNKNOWN)
                     && (phase != IGame.Phase.PHASE_SELECTION)
                     && (phase != IGame.Phase.PHASE_EXCHANGE)
                     && (phase != IGame.Phase.PHASE_VICTORY)
@@ -869,6 +880,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             fileBoardSave.setEnabled(false);
             fileBoardSaveAs.setEnabled(false);
             fileBoardSaveAsImage.setEnabled(false);
+            fileBoardSaveAsImageUnits.setEnabled(false);
             // but the main window and map editor do
         } else {
             fileBoardNew.setEnabled(true);
@@ -884,6 +896,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             fileBoardSave.setEnabled(true);
             fileBoardSaveAs.setEnabled(true);
             fileBoardSaveAsImage.setEnabled(true);
+            fileBoardSaveAsImageUnits.setEnabled(true);
             viewMiniMap.setEnabled(true);
             viewZoomIn.setEnabled(true);
             viewZoomOut.setEnabled(true);
@@ -893,6 +906,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
             fileBoardSave.setEnabled(false);
             fileBoardSaveAs.setEnabled(false);
             fileBoardSaveAsImage.setEnabled(false);
+            fileBoardSaveAsImageUnits.setEnabled(false);
             viewMiniMap.setEnabled(false);
             viewZoomIn.setEnabled(false);
             viewZoomOut.setEnabled(false);

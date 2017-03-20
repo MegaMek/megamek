@@ -40,7 +40,9 @@ import megamek.common.Configuration;
 import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.UnitRole;
 import megamek.common.UnitType;
+import megamek.common.util.MegaMekFile;
 
 /**
  * Generates a random assignment table (RAT) dynamically based on a variety of criteria,
@@ -422,7 +424,8 @@ public class RATGenerator {
 				//Find the totals of the weight for the generated table 
 				double totalMRWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 				//Find the sum of the weight distribution values for all weight classes in use.
-				int totalWCDWeights = weightClasses.stream().mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
+				int totalWCDWeights = weightClasses.stream().filter(wc -> wcdIndex[wc] < wcd.size())
+				        .mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
 				
 				if (totalWCDWeights > 0) {
 					//Group all the models of the generated table by weight class.
@@ -752,7 +755,7 @@ public class RATGenerator {
 	}
 	
 	private void loadFactions() {
-		File file = new File(Configuration.forceGeneratorDir(), "factions.xml");
+		File file = new MegaMekFile(Configuration.forceGeneratorDir(), "factions.xml").getFile();
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
@@ -795,7 +798,7 @@ public class RATGenerator {
 		}
 		chassisIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
 		modelIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
-		File file = new File(Configuration.forceGeneratorDir(), era + ".xml");
+		File file = new MegaMekFile(Configuration.forceGeneratorDir(), era + ".xml").getFile();
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
@@ -909,7 +912,7 @@ public class RATGenerator {
 		}
 		cr.addModel(mr);
         if (wn.getAttributes().getNamedItem("unitRole") != null) {
-            mr.setUnitRole(FormationType.UnitRole.parseRole(wn.getAttributes().getNamedItem("unitRole").getTextContent()));
+            mr.setUnitRole(UnitRole.parseRole(wn.getAttributes().getNamedItem("unitRole").getTextContent()));
         }
         if (wn.getAttributes().getNamedItem("mechanized") != null) {
             mr.setMechanizedBA(Boolean.parseBoolean(wn.getAttributes().getNamedItem("mechanized").getTextContent()));
@@ -946,7 +949,8 @@ public class RATGenerator {
      */
     public void notifyListenersOfInitialization(){
         if (initialized){
-            for (ActionListener l : listeners){
+            // Possibility of adding a new listener during notification.
+            for (ActionListener l : new ArrayList<>(listeners)){
                 l.actionPerformed(new ActionEvent(
                         this,ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
             }

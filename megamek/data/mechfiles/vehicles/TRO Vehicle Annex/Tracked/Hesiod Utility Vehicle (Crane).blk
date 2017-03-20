@@ -32,6 +32,10 @@ IS Level 3
 Wheeled
 </motion_type>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 4
 </cruiseMP>
@@ -40,6 +44,10 @@ Wheeled
 1
 </engine_type>
 
+<omni>
+1
+</omni>
+
 <armor>
 5
 5
@@ -47,17 +55,12 @@ Wheeled
 3
 </armor>
 
-<barrating>
-4
-</barrating>
-
-
 <Body Equipment>
 ISOffRoadChassis
 </Body Equipment>
 
 <Front Equipment>
-Lift Hoist
+Lift Hoist:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -69,18 +72,19 @@ Lift Hoist
 <Rear Equipment>
 </Rear Equipment>
 
-<source>
-TRO Var
-</source>
-
-<tonnage>
-7.0
-</tonnage>
+<barrating>
+4
+</barrating>
 
 <structural_tech_rating>
 4
 </structural_tech_rating>
 
-<omni>
-</omni>
+<source>
+TRO VAr - Clan Invasion
+</source>
+
+<tonnage>
+7.0
+</tonnage>
 

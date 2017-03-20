@@ -395,6 +395,7 @@ public class PlanetaryConditionsDialog extends JDialog implements
         conditions.setGravity(Float.parseFloat(fldGrav.getText()));
         conditions.setEMI(cEMI.isSelected());
         conditions.setTerrainAffected(cTerrainAffected.isSelected());
+        conditions.setRunOnce(true);
 
         if (client != null) {
             send();
@@ -509,6 +510,24 @@ public class PlanetaryConditionsDialog extends JDialog implements
                                 JOptionPane.ERROR_MESSAGE);
                 return;
             }
+
+            // can't combine certain weather conditions with certain atmospheres
+            int weather = choWeather.getSelectedIndex();
+            if ((atmo == PlanetaryConditions.ATMO_VACUUM
+                    || atmo == PlanetaryConditions.ATMO_TRACE
+                    || atmo == PlanetaryConditions.ATMO_THIN)
+                    && (weather > PlanetaryConditions.WE_NONE)) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("PlanetaryConditionsDialog.VacuumWeather"),
+                                Messages
+                                        .getString("PlanetaryConditionsDialog.Incompatible"),
+                                JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
             setConditions();
             setVisible(false);
         } else if (e.getSource() == butCancel) {

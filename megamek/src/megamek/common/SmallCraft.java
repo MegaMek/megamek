@@ -14,6 +14,10 @@
  */
 package megamek.common;
 
+import java.util.Map;
+
+import megamek.common.options.OptionsConstants;
+
 /**
  * @author Jay Lawson
  */
@@ -622,7 +626,7 @@ public class SmallCraft extends Aero {
      */
     @Override
     public boolean hasActiveECM() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
         return getECMRange() >= 0;
@@ -636,7 +640,8 @@ public class SmallCraft extends Aero {
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
+                || !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
         if (!isMilitary()) {
@@ -694,6 +699,57 @@ public class SmallCraft extends Aero {
         return 3;
     }
     
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 4;
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        return getLocationAbbrs()[index];
+    }
+    
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        switch (index) {
+        case LOC_NOSE:
+            if (location == LOC_NOSE) {
+                return 1.0;
+            }
+            if (isSpheroid() && (location == LOC_LWING || location == LOC_RWING)
+                    && !rearMounted) {
+                return 0.5;
+            }
+            break;
+        case LOC_LWING:
+        case LOC_RWING:
+            if (index == location) {
+                if (isSpheroid()) {
+                    return 0.5;
+                }
+                if (!rearMounted) {
+                    return 1.0;
+                }
+            }
+            break;
+        case LOC_AFT:
+            if (location == LOC_AFT) {
+                return 1.0;
+            }
+            if (rearMounted && (location == LOC_LWING || location == LOC_RWING)) {
+                return isSpheroid()? 0.5 : 1.0;
+            }
+            break;
+        }
+        return 0;
+    }
+
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        specialAbilities.put(BattleForceSPA.LG, null);
+    }
+
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }

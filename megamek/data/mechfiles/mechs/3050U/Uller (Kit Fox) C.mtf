@@ -9,15 +9,16 @@ Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:30
-Engine:180 XL Engine
-Structure:Endo Steel
+Engine:180 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:7
 RA Armor:7
 LT Armor:8
@@ -30,28 +31,27 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:4
 
-Weapons:9
-1 CLERLargeLaser, Left Arm
-2 CLMG, Left Arm, Ammo:200
-1 CLSmallPulseLaser, Left Arm
-3 CLAntiMissileSystem, Right Arm, Ammo:96
-1 CLECMSuite, Right Arm
-1 CLTAG, Right Arm
-1 CLActiveProbe, Right Arm
-1 CLAntiPersonnelPod, Right Leg
-1 CLAntiPersonnelPod, Left Leg
+Weapons:8
+ER Large Laser, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Small Pulse Laser, Left Arm
+AMS, Right Arm
+AMS, Right Arm
+AMS, Right Arm
+Clan TAG, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
-CLMG
-CLMG
-CLSmallPulseLaser
-Endo Steel
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -60,41 +60,41 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLAntiMissileSystem
-CLAntiMissileSystem
-CLAntiMissileSystem
-CLECMSuite
-CLTAG
-CLActiveProbe
-Endo Steel
-Ferro-Fibrous
+CLAntiMissileSystem (omnipod)
+CLAntiMissileSystem (omnipod)
+CLAntiMissileSystem (omnipod)
+CLECMSuite (omnipod)
+CLTAG (omnipod)
+CLActiveProbe (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLMG Ammo (200)
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Machine Gun Ammo - Full (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLAMS Ammo
-CLAMS Ammo
-CLAMS Ammo
-CLAMS Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLAMS Ammo (omnipod)
+CLAMS Ammo (omnipod)
+CLAMS Ammo (omnipod)
+CLAMS Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -130,7 +130,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -144,7 +144,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -152,4 +152,5 @@ CLAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -32,45 +32,45 @@ RTR Armor:8
 RTC Armor:11
 
 Weapons:11
+ER PPC, Left Arm
+Large Pulse Laser, Left Arm
+ER PPC, Right Arm
+Large Pulse Laser, Right Arm
+LRM 10, Left Torso
+LRM 10, Left Torso
 ER Medium Laser, Left Torso
+LRM 10, Right Torso
+LRM 10, Right Torso
 ER Medium Laser, Right Torso
 AMS, Head
-ER PPC, Right Arm
-ER PPC, Left Arm
-Large Pulse Laser, Right Arm
-Large Pulse Laser, Left Arm
-LRM 10, Right Torso
-LRM 10, Right Torso
-LRM 10, Left Torso
-LRM 10, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLLargePulseLaser
-CLLargePulseLaser
-Clan Ammo LRM-10
-Clan Ammo LRM-10
-Clan Ammo LRM-10
-Endo Steel
-Endo Steel
-Endo Steel
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLLargePulseLaser
-CLLargePulseLaser
-Clan Ammo LRM-10
-Clan Ammo LRM-10
-Clan Ammo LRM-10
-Endo Steel
-Endo Steel
-Endo Steel
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -79,25 +79,25 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRM10
-CLLRM10
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM10 (omnipod)
+CLLRM10 (omnipod)
 CLERMediumLaser
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRM10
-CLLRM10
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM10 (omnipod)
+CLLRM10 (omnipod)
 CLERMediumLaser
 CLMASC
 CLMASC
 CLMASC
-Endo Steel
+Clan Endo Steel
 -Empty-
 
 Center Torso:
@@ -112,7 +112,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLAMS Ammo
-CLECMSuite
+CLECMSuite (omnipod)
 
 Head:
 Life Support

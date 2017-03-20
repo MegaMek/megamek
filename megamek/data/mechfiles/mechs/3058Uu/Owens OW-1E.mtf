@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:35
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Single
@@ -40,8 +40,8 @@ TAG, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumPulseLaser
-Medium Laser
+ISMediumPulseLaser (omnipod)
+Medium Laser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,8 +54,8 @@ Medium Laser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-MRM 10
-MRM 10
+MRM 10 (omnipod)
+MRM 10 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -83,7 +83,7 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS MRM 10 Ammo
+IS MRM 10 Ammo (omnipod)
 ISTAG
 ISC3SlaveUnit
 -Empty-

@@ -9,8 +9,8 @@ Source:TRO 3058 - Succession Wars
 Rules Level:2
 
 Mass:30
-Engine:240 XL (Clan) Engine
-Structure:Endo Steel
+Engine:240 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -44,10 +44,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLLRM5
-Endo Steel
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLLRM5 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -58,10 +58,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLLRM5
-Endo Steel
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLLRM5 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -70,14 +70,14 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Ammo LRM-5
-CLTAG
-CLECMSuite
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ammo LRM-5 (omnipod)
+CLTAG (omnipod)
+CLECMSuite (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -86,13 +86,13 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLFlamer
-Clan Ammo LRM-5
-CLActiveProbe
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLFlamer (omnipod)
+Clan Ammo LRM-5 (omnipod)
+CLActiveProbe (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -113,7 +113,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

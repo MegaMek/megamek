@@ -37,7 +37,7 @@ troopspace:4.0
 </transporters>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -70,7 +70,7 @@ troopspace:4.0
 
 <Body Equipment>
 CLActiveProbe
-CLECMSuite
+CLECMSuite:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -86,12 +86,16 @@ CLECMSuite
 </Rear Equipment>
 
 <Turret Equipment>
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLTAG
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
+CLTAG:OMNI
 </Turret Equipment>
 
 <tonnage>
 30.0
 </tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
 

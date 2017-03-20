@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:30
-Engine:210 Light Engine
-Structure:Endo Steel
+Engine:210 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
@@ -47,24 +47,24 @@ Hand Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Flamer
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Flamer (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:
@@ -73,26 +73,26 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-SRM 2
+SRM 2 (omnipod)
 ISC3iUnit
 ISC3iUnit
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Light PPC
-Light PPC
-IS Ammo SRM-2
-ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
+Light PPC (omnipod)
+Light PPC (omnipod)
+IS Ammo SRM-2 (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -114,7 +114,7 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISERMediumLaser
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

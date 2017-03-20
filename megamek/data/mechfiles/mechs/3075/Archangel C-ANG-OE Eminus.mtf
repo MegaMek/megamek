@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:100
-Engine:300 Compact Engine
-Structure:Endo Steel
+Engine:300 Compact Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Compact Gyro
@@ -44,58 +44,58 @@ ER Large Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 
 Left Torso:
-ISERSmallLaser
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISERSmallLaser (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERSmallLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERSmallLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -103,11 +103,11 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Light PPC
-Light PPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
 ISC3iUnit
 ISC3iUnit
 
@@ -116,8 +116,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISERLargeLaser
-ISERLargeLaser
+ISERLargeLaser (omnipod)
+ISERLargeLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

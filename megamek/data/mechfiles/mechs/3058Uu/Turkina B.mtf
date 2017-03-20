@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:95
-Engine:285 XL (Clan) Engine
-Structure:Standard
+Engine:285 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:25 Double
@@ -32,42 +32,42 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:8
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Left Arm
+ER Large Laser, Right Arm
+ER Large Laser, Right Arm
 ER Medium Laser, Left Torso
 ER Medium Laser, Right Torso
-ER Large Laser, Right Arm
-ER Large Laser, Right Arm
-Medium Pulse Laser, Head
 Medium Pulse Laser, Center Torso
-Large Pulse Laser, Left Arm
-Large Pulse Laser, Left Arm
+Medium Pulse Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLERLargeLaser
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERLargeLaser (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 
 Left Torso:
 Fusion Engine
@@ -76,12 +76,12 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 
 Right Torso:
 Fusion Engine
@@ -90,12 +90,12 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -109,13 +109,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

@@ -117,12 +117,12 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
             if (game.getOptions().booleanOption(
-                    OptionsConstants.AC_TAC_OPS_RANGE)
+                    OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
                     && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
                 toReturn -= 1;
             }
             if (game.getOptions().booleanOption(
-                    OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+                    OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                     && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
@@ -150,7 +150,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         // pain shunted infantry get half damage
         if ((target instanceof Infantry)
                 && ((Entity) target).getCrew().getOptions()
-                        .booleanOption("pain_shunt")) {
+                        .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             toReturn = Math.max(toReturn / 2, 1);
         }
         return toReturn;

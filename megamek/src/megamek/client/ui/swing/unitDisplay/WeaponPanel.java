@@ -11,7 +11,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -70,6 +69,7 @@ import megamek.common.WeaponComparatorNum;
 import megamek.common.WeaponComparatorRange;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.util.MegaMekFile;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -302,7 +302,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
             }
             if ((game != null)
-                    && game.getOptions().booleanOption("tacops_called_shots")) { //$NON-NLS-1$
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) { //$NON-NLS-1$
                 wn.append(' ');
                 wn.append(mounted.getCalledShot().getDisplayableName());
             }
@@ -857,7 +857,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         Image tile = getToolkit()
                 .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
+                        new MegaMekFile(Configuration.widgetsDir(), udSpec
                                 .getBackgroundTile()).toString());
         PMUtil.setImage(tile, this);
         int b = BackGroundDrawer.TILING_BOTH;
@@ -865,28 +865,28 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getTopLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getTopLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getBottomLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getBottomLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getLeftLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getLeftLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec.getRightLine())
+                new MegaMekFile(Configuration.widgetsDir(), udSpec.getRightLine())
                         .toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -895,7 +895,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit()
                 .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
+                        new MegaMekFile(Configuration.widgetsDir(), udSpec
                                 .getTopLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -903,7 +903,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_LEFT;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
+                new MegaMekFile(Configuration.widgetsDir(), udSpec
                         .getBottomLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -912,7 +912,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit()
                 .getImage(
-                        new File(Configuration.widgetsDir(), udSpec
+                        new MegaMekFile(Configuration.widgetsDir(), udSpec
                                 .getTopRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -920,7 +920,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
                 | BackGroundDrawer.HALIGN_RIGHT;
         tile = getToolkit().getImage(
-                new File(Configuration.widgetsDir(), udSpec
+                new MegaMekFile(Configuration.widgetsDir(), udSpec
                         .getBottomRightCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
@@ -946,7 +946,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         entity = en;
 
         // Check Game Options for max external heat
-        int max_ext_heat = game != null ? game.getOptions().intOption("max_external_heat") : 15;
+        int max_ext_heat = game != null ? game.getOptions().intOption(OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT) : 15;
         if (max_ext_heat < 0) {
             max_ext_heat = 15; // Standard value specified in TW p.159
         }
@@ -1047,7 +1047,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 // add heat from weapons fire to heat tracker
                 if (entity.usesWeaponBays()) {
                     // if using bay heat option then don't add total arc
-                    if (game.getOptions().booleanOption("heat_by_bay")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                         for (int wId : mounted.getBayWeapons()) {
                             currentHeatBuildup += entity.getEquipment(wId)
                                                         .getCurrentHeat();
@@ -1174,8 +1174,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
 
         // If MaxTech range rules are in play, display the extreme range.
-        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)) ||
-            (entity.isAirborne() || entity.usesWeaponBays())) { //$NON-NLS-1$
+        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
+                || (entity.isAirborne() || entity.usesWeaponBays())) { // $NON-NLS-1$
             wExtL.setVisible(true);
             wExtR.setVisible(true);
         } else {
@@ -1413,7 +1413,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         wArcHeatR.setText(Integer.toString(entity.getHeatInArc(
                 mounted.getLocation(), mounted.isRearMounted())));
 
-        if (wtype instanceof InfantryWeapon) {
+        if (wtype instanceof InfantryWeapon && !wtype.hasFlag(WeaponType.F_TAG)) {
             wDamageTrooperL.setVisible(true);
             wDamageTrooperR.setVisible(true);
             InfantryWeapon inftype = (InfantryWeapon) wtype;
@@ -1464,7 +1464,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             if (inftype.hasFlag(WeaponType.F_INF_BURST)) {
                 zeromods--;
             }
-            switch (inftype.getInfantryRange()) {
+            
+            int range = inftype.getInfantryRange();
+            if (entity.getLocationStatus(mounted.getLocation()) == ILocationExposureStatus.WET) {
+            	range /= 2;
+            }
+            switch (range) {
                 case 0:
                     wInfantryRange0L.setText("0");
                     wInfantryRange0R.setText("+" + zeromods);
@@ -1665,9 +1670,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 wMinL.setVisible(true);
                 wMinR.setVisible(true);
             }
-            if (((entity.getGame() != null) && entity.getGame().getOptions().booleanOption(OptionsConstants
-                                                                                                   .AC_TAC_OPS_RANGE))
-                || (entity.isAirborne() || entity.usesWeaponBays())) {
+            if (((entity.getGame() != null)
+                    && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
+                    || (entity.isAirborne() || entity.usesWeaponBays())) {
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);
             }
@@ -1696,7 +1701,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         } else if (wtype.hasFlag(WeaponType.F_ENERGY)
                    && wtype.hasModes()
                    && (unitDisplay.getClientGUI() != null) && unitDisplay.getClientGUI().getClient().getGame().getOptions().booleanOption(
-                "tacops_energy_weapons")) {
+                OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
             if (mounted.hasChargedCapacitor() != 0) {
                 if (mounted.hasChargedCapacitor() == 1) {
                     wDamR.setText(Integer.toString(Compute.dialDownDamage(
@@ -1930,6 +1935,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             int iR = inftype.getInfantryRange();
             ranges[0] = 
                     new int[] { 0, iR, iR * 2, iR * 3, 0 };
+            ranges[1] =
+            		new int[] { 0, iR / 2, (iR / 2) * 2, (iR / 2) * 3, 0 }; 
         }
 
         // Artillery gets fixed ranges, 100 as an arbitrary
@@ -2070,6 +2077,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             sb.append(m.getDesc().substring(0, ammoIndex));
             sb.append(m.getDesc().substring(ammoIndex + 4));
         }
+        if (m.isHotLoaded()) {
+            sb.append(Messages.getString("MechDisplay.isHotLoaded"));
+        }
         return sb.toString();
     }
 
@@ -2188,7 +2198,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             maxr = (int) changes[4];
         }
 
-        if (entity.getGame().getOptions().booleanOption("aero_sanity") && wtype.isCapital()) {
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY) && wtype.isCapital()) {
             avShort *= 10;
             avMed *= 10;
             avLong *= 10;
@@ -2406,7 +2416,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         avLong = mult * avLong;
         avExt = mult * avExt;
 
-        if (entity.getGame().getOptions().booleanOption("aero_sanity") && wtype.isCapital()) {
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY) && wtype.isCapital()) {
             avShort *= 10;
             avMed *= 10;
             avLong *= 10;

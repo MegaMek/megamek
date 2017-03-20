@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:20
 Engine:100 Fusion Engine(IS)
-Structure:IS Endo-Steel
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
@@ -34,9 +34,9 @@ RTR Armor:2
 RTC Armor:2
 
 Weapons:3
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
 Plasma Rifle, Right Arm
-ER Medium Laser, Left Arm
-ER Medium Laser, Left Arm
 
 Left Arm:
 Shoulder
@@ -44,11 +44,11 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERMediumLaser
-ISERMediumLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -58,11 +58,11 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISPlasmaRifle
-ISPlasmaRifle
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -73,8 +73,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -87,10 +87,10 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-IS Endo-Steel
-IS Endo-Steel
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

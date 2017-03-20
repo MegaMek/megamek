@@ -64,6 +64,10 @@ Aerodyne
 5
 </armor_tech>
 
+<omni>
+1
+</omni>
+
 <armor>
 40
 28
@@ -72,20 +76,20 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISLargePulseLaser
-ISLargePulseLaser
+ISLargePulseLaser:OMNI
+ISLargePulseLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERSmallLaser
+ISERSmallLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERSmallLaser
+ISERSmallLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISERSmallLaser
+ISERSmallLaser:OMNI
 </Aft Equipment>
 
 <source>
@@ -95,7 +99,4 @@ TRO 3075 - Jihad
 <tonnage>
 35.0
 </tonnage>
-
-<omni>
-</omni>
 

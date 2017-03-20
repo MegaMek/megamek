@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+.004
+</fuel>
+
 <armor>
 1
 1
@@ -77,13 +81,13 @@ InfantryHMG (PT)
 
 <transporters>
 cargobay:.145:1
+standardseats:.05:2
 </transporters>
 
 <source>
-HB HD
+HB:House Davion - Succession Wars
 </source>
 
 <tonnage>
 .5
 </tonnage>
-

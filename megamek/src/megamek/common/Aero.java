@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
+import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.PPCWeapon;
 
@@ -153,6 +154,10 @@ public class Aero extends Entity {
     private int heatSinksOriginal;
     private int heatSinks;
     private int heatType = HEAT_SINGLE;
+    
+    // Track how many heat sinks are pod-mounted for omnifighters; these are included in the total
+    // This is provided for campaign use; MM does not distribute damage between fixed and pod-mounted. 
+    private int podHeatSinks;
 
     // bombs
     public static final String SPACE_BOMB_ATTACK = "SpaceBombAttack";
@@ -474,7 +479,7 @@ public class Aero extends Entity {
 
     public void autoSetCapArmor() {
         double divisor = 10.0;
-        if((null != game) && game.getOptions().booleanOption("aero_sanity")) {
+        if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             divisor = 1.0;
         }
         capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
@@ -483,7 +488,7 @@ public class Aero extends Entity {
 
     public void autoSetFatalThresh() {
         int baseThresh = 2;
-        if((null != game) && game.getOptions().booleanOption("aero_sanity")) {
+        if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             baseThresh = 20;
         }
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
@@ -583,6 +588,14 @@ public class Aero extends Entity {
 
     public void setHeatType(int hstype) {
         heatType = hstype;
+    }
+    
+    public int getPodHeatSinks() {
+    	return podHeatSinks;
+    }
+    
+    public void setPodHeatSinks(int hs) {
+    	podHeatSinks = hs;
     }
 
     public void setLeftThrustHits(int hits) {
@@ -719,7 +732,7 @@ public class Aero extends Entity {
         setCurrentVelocity(getNextVelocity());
 
         // if using variable damage thresholds then autoset them
-        if (game.getOptions().booleanOption("variable_damage_thresh")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH)) {
             autoSetThresh();
             autoSetFatalThresh();
         }
@@ -754,7 +767,7 @@ public class Aero extends Entity {
         weaponBayList.removeAll(bombAttacksToRemove);
 
         // Add the space bomb attack
-        if (game.getOptions().booleanOption("stratops_space_bomb")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
                 && game.getBoard().inSpace()
                 && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
             try {
@@ -2465,12 +2478,12 @@ public class Aero extends Entity {
             prd.addModifier(1, "Modular Armor");
         }
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption("vdni") && !getCrew().getOptions().booleanOption("bvdni")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI) && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 
         // Small/torso-mounted cockpit penalty?
-        if ((getCockpitType() == Aero.COCKPIT_SMALL) && !getCrew().getOptions().booleanOption("bvdni")) {
+        if ((getCockpitType() == Aero.COCKPIT_SMALL) && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(1, "Small Cockpit");
         }
 
@@ -2497,7 +2510,15 @@ public class Aero extends Entity {
         r.addDesc(this);
         vDesc.addElement(r);
 
-        r = new Report(7035);
+        if (((getEntityType() & Entity.ETYPE_DROPSHIP) == 0)
+                || ((getEntityType() & Entity.ETYPE_SMALL_CRAFT) == 0)
+                || ((getEntityType() & Entity.ETYPE_FIGHTER_SQUADRON) == 0)
+                || ((getEntityType() & Entity.ETYPE_JUMPSHIP) == 0)
+                || ((getEntityType() & Entity.ETYPE_SPACE_STATION) == 0)) {
+            r = new Report(7036);
+        } else {
+            r = new Report(7030);
+        }
         r.type = Report.PUBLIC;
         r.newlines = 0;
         vDesc.addElement(r);
@@ -2615,8 +2636,8 @@ public class Aero extends Entity {
 
     public int getThresh(int loc) {
         if(isCapitalFighter()) {
-            if((null != game) && game.getOptions().booleanOption("aero_sanity")) {
-                if (game.getOptions().booleanOption("variable_damage_thresh")) {
+            if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH)) {
                     return (int)Math.round(getCapArmor() / 40.0)+1;
                 } else {
                     return (int)Math.round(getCap0Armor() / 40.0)+1;
@@ -2724,13 +2745,18 @@ public class Aero extends Entity {
     }
 
     @Override
+    public boolean doomedInExtremeTemp() {
+        return false;
+    }
+
+    @Override
     public boolean doomedInVacuum() {
         return false;
     }
 
     @Override
     public boolean doomedOnGround() {
-        return !game.getOptions().booleanOption("aero_ground_move");
+        return !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE);
     }
 
     @Override
@@ -3440,7 +3466,7 @@ public class Aero extends Entity {
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < bombChoices[type]; i++) {
                 if ((type == BombType.B_ALAMO)
-                        && !game.getOptions().booleanOption("at2_nukes")) {
+                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;
                 }
                 if ((type > BombType.B_TAG)
@@ -3525,7 +3551,9 @@ public class Aero extends Entity {
         super.setGameOptions();
 
         for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof EnergyWeapon) && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) && (game != null) && game.getOptions().booleanOption("tacops_energy_weapons")) {
+            if ((mounted.getType() instanceof EnergyWeapon)
+                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) && (game != null)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
 
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
@@ -3642,7 +3670,7 @@ public class Aero extends Entity {
      */
     @Override
     public int getECMRange() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !game.getBoard().inSpace()) {
             return super.getECMRange();
         }
         return Math.min(super.getECMRange(), 0);
@@ -3653,7 +3681,7 @@ public class Aero extends Entity {
      */
     @Override
     public double getECCMStrength() {
-        if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM) || !game.getBoard().inSpace()) {
             return super.getECCMStrength();
         }
         if (hasActiveECCM()) {
@@ -4081,11 +4109,108 @@ public class Aero extends Entity {
     }
 
     @Override
+    public void setAlphaStrikeMovement(Map<String,Integer> moves) {
+        moves.put(getMovementModeAsBattleForceString(), getWalkMP());
+    }
+
+    @Override
     public int getBattleForceArmorPoints() {
-        if (isCapitalScale()) {
+        if (isCapitalFighter()) {
             return (int) Math.round(getCapArmor() / 3.0);
         }
         return super.getBattleForceArmorPoints();
+    }
+    
+    @Override
+    public String getBattleForceDamageThresholdString() {
+        return "-" + (int)Math.ceil(getBattleForceArmorPoints() / 10.0);
+    }
+    
+    @Override
+    public int getBattleForceStructurePoints() {
+        return (int) Math.ceil(getSI() * 0.50);
+    }
+    
+    @Override
+    public int getNumBattleForceWeaponsLocations() {
+        return 2;
+    }
+
+    @Override
+    public double getBattleForceLocationMultiplier(int index, int location, boolean rearMounted) {
+        if ((index == 0 && location != LOC_AFT && !rearMounted)
+                || (index == 1 && (location == LOC_AFT || rearMounted))) {
+            return 1.0;            
+        }
+        return 0; 
+    }
+    
+    @Override
+    public String getBattleForceLocationName(int index) {
+        if (index == 1) {
+            return "REAR";
+        }
+        return "";
+    }
+    
+    /**
+     * We need to check whether the weapon is mounted in LOC_AFT in addition to isRearMounted()
+     */
+    public int getBattleForceTotalHeatGeneration(boolean allowRear) {
+        int totalHeat = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+            if (weapon instanceof BayWeapon) {
+                for (int index : mount.getBayWeapons()) {
+                    totalHeat += ((WeaponType)(getEquipment(index).getType())).getHeat();
+                }
+            }
+            if (weapon.hasFlag(WeaponType.F_ONESHOT)
+                || (allowRear && !mount.isRearMounted() && mount.getLocation() != LOC_AFT)
+                || (!allowRear && (mount.isRearMounted() || mount.getLocation() == LOC_AFT))) {
+                continue;
+            }
+            totalHeat += weapon.getHeat();
+        }
+
+        return totalHeat;
+    }
+    
+    @Override
+    public int getBattleForceTotalHeatGeneration(int location) {
+        int totalHeat = 0;
+
+        for (Mounted mount : getWeaponList()) {
+            WeaponType weapon = (WeaponType) mount.getType();
+            if (weapon.hasFlag(WeaponType.F_ONESHOT)
+                || getBattleForceLocationMultiplier(location, mount.getLocation(),
+                        mount.isRearMounted()) == 0) {
+                continue;
+            }
+            totalHeat += weapon.getHeat();
+        }
+
+        return totalHeat;        
+    }
+
+    @Override
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+        super.addBattleForceSpecialAbilities(specialAbilities);
+        for (Mounted m : getEquipment()) {
+            if (m.getType().hasFlag(MiscType.F_SPACE_MINE_DISPENSER)) {
+                specialAbilities.merge(BattleForceSPA.MDS, 1, Integer::sum);
+            }
+        }
+        if ((getEntityType() & (ETYPE_SMALL_CRAFT | ETYPE_JUMPSHIP | ETYPE_FIXED_WING_SUPPORT)) == 0) {
+            specialAbilities.put(BattleForceSPA.BOMB, getWeightClass() + 1);            
+        }
+        if ((getEntityType() & (ETYPE_JUMPSHIP | ETYPE_CONV_FIGHTER)) == 0) {
+            specialAbilities.put(BattleForceSPA.SPC, null);
+        }
+        if (isVSTOL()) {
+            specialAbilities.put(BattleForceSPA.VSTOL, null);
+        }
     }
 
     /**
@@ -4095,11 +4220,6 @@ public class Aero extends Entity {
      */
     public boolean isPrimitive() {
         return (getCockpitType() == Aero.COCKPIT_PRIMITIVE);
-    }
-
-    @Override
-    public int getBattleForceStructurePoints() {
-        return (int) Math.ceil(getSI() * 0.50);
     }
 
     @Override

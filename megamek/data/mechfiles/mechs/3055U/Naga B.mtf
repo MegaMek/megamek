@@ -9,8 +9,8 @@ Source:TRO 3055 - Succession Wars
 Rules Level:3
 
 Mass:80
-Engine:400 XL (Clan) Engine
-Structure:Endo Steel
+Engine:400 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -72,10 +72,10 @@ Fusion Engine
 Fusion Engine
 CLArrowIV
 CLArrowIV
-CLERMediumLaser
-CLArrowIVAmmo
-CLArrowIVAmmo
-Endo Steel
+CLERMediumLaser (omnipod)
+CLArrowIVAmmo (omnipod)
+CLArrowIVAmmo (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -86,11 +86,11 @@ Fusion Engine
 Fusion Engine
 CLArrowIV
 CLArrowIV
-CLERMediumLaser
-CLERSmallLaser
-CLArrowIVAmmo
-CLArrowIVAmmo
-Endo Steel
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLArrowIVAmmo (omnipod)
+CLArrowIVAmmo (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -106,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-Endo Steel
+CLERMediumLaser (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

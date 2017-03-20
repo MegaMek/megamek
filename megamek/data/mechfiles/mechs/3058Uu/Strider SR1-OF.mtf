@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:40
-Engine:240 Fusion Engine
-Structure:Endo Steel
+Engine:240 Fusion Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Single
@@ -40,7 +40,7 @@ Streak SRM 4, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Medium Laser
+Medium Laser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,7 +54,7 @@ Medium Laser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Medium Laser
+Medium Laser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,32 +66,32 @@ Medium Laser
 -Empty-
 
 Left Torso:
-Jump Jet
-Jump Jet
-Jump Jet
-ISStreakSRM4
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISStreakSRM4 (omnipod)
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
-Jump Jet
-Jump Jet
-Jump Jet
-ISStreakSRM4
-IS Streak SRM 4 Ammo
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISStreakSRM4 (omnipod)
+IS Streak SRM 4 Ammo (omnipod)
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -127,7 +127,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,7 +140,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

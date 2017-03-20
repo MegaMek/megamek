@@ -8,15 +8,16 @@ Era:3050
 Rules Level:2
 
 Mass:80
-Engine:400 XL Engine
-Structure:Standard
+Engine:400 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
+Base Chassis Heat Sinks:16
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:23
 RA Armor:23
 LT Armor:24
@@ -29,18 +30,21 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:4
-2 CLLargePulseLaser, Right Arm
-1 CLLargePulseLaser, Left Arm
-1 CLERSmallLaser, Right Torso
-3 CLERMediumLaser, Left Torso
+Weapons:7
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
+Large Pulse Laser, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Small Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -53,10 +57,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,21 +70,23 @@ CLLargePulseLaser
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
-Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
+CLERSmallLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -88,8 +94,6 @@ CLERSmallLaser
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
-Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -109,7 +113,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -124,7 +128,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +142,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -146,4 +150,5 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
 

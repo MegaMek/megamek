@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
 import megamek.server.SmokeCloud;
 
 
@@ -411,7 +412,7 @@ public class ComputeECM {
         
         
         // If ECCM is on, we may have to remove some ECM that is negated
-        if (game.getOptions().booleanOption("tacops_eccm") 
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM) 
                 && allEccmInfo.size() > 0) {
             Iterator<ECMInfo> ecmIterator = allEcmInfo.iterator();
             Iterator<ECMInfo> eccmIterator;

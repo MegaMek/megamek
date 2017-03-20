@@ -33,7 +33,7 @@ Tracked
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,16 +65,16 @@ Tracked
 </armor>
 
 <Body Equipment>
-ISC3MasterUnit
-IS Gauss Ammo
-IS Gauss Ammo
-IS Machine Gun Ammo - Half
+ISC3MasterUnit:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+IS Machine Gun Ammo - Half:OMNI
 ISCASE
 </Body Equipment>
 
 <Front Equipment>
-Machine Gun
-Machine Gun
+Machine Gun:OMNI
+Machine Gun:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -87,10 +87,14 @@ Machine Gun
 </Rear Equipment>
 
 <Turret Equipment>
-ISGaussRifle
+ISGaussRifle:OMNI
 </Turret Equipment>
 
 <tonnage>
 70.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:100
-Engine:300 Compact Engine
-Structure:Endo Steel
+Engine:300 Compact Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Compact Gyro
@@ -46,54 +46,54 @@ ER Small Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 
 Left Torso:
-Jump Jet
-ISMediumPulseLaser
-ISGuardianECMSuite
-ISGuardianECMSuite
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Jump Jet (omnipod)
+ISMediumPulseLaser (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Jump Jet
-ISMediumPulseLaser
-ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Jump Jet (omnipod)
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -105,11 +105,11 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Jump Jet
-ISSmallPulseLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+ISSmallPulseLaser (omnipod)
 ISC3iUnit
 ISC3iUnit
 
@@ -118,8 +118,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISMediumPulseLaser
-ISERSmallLaser
+ISMediumPulseLaser (omnipod)
+ISERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -132,8 +132,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -146,8 +146,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

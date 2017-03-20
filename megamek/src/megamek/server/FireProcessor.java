@@ -31,6 +31,7 @@ import megamek.common.PlanetaryConditions;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Terrains;
+import megamek.common.options.OptionsConstants;
 
 public class FireProcessor extends DynamicTerrainProcessor {
 
@@ -44,7 +45,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
     @Override
     void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         game = server.getGame();
-        if (game.getOptions().booleanOption("tacops_start_fire")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
             this.vPhaseReport = vPhaseReport;
             resolveFire();
             this.vPhaseReport = null;
@@ -147,7 +148,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         if ((currentHex.containsTerrain(Terrains.WOODS) || currentHex
                                 .containsTerrain(Terrains.JUNGLE))
                                 && game.getOptions().booleanOption(
-                                        "woods_burn_down")) {
+                                        OptionsConstants.ADVANCED_WOODS_BURN_DOWN)) {
                             burnReports = burnDownWoods(currentCoords);
                         }
                         //report and check for fire spread
@@ -198,20 +199,21 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     //check for any explosions
                     server.checkExplodeIndustrialZone(currentCoords, vPhaseReport);
 
-                    //Add smoke, unless tornado or optional rules
-                    boolean containsForest = (currentHex
-                            .containsTerrain(Terrains.WOODS) || currentHex
-                            .containsTerrain(Terrains.JUNGLE));
+                    // Add smoke, unless tornado or optional rules
+                    boolean containsForest = (currentHex.containsTerrain(Terrains.WOODS)
+                            || currentHex.containsTerrain(Terrains.JUNGLE));
                     boolean bInferno = currentHex.terrainLevel(Terrains.FIRE) == 2;
                     if ((game.getPlanetaryConditions().getWindStrength() < PlanetaryConditions.WI_TORNADO_F13)
-                            && !(game.getOptions().booleanOption(
-                                    "forest_fires_no_smoke")
+                            && !(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE)
                                     && containsForest && (bldg == null))) {
                         ArrayList<Coords> smokeList = new ArrayList<Coords>();
 
-                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, windDirection), Coords.yInDir(currentXCoord, currentYCoord, windDirection)));
-                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection+1)%6), Coords.yInDir(currentXCoord, currentYCoord, (windDirection+1)%6)));
-                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection+5)%6), Coords.yInDir(currentXCoord, currentYCoord, (windDirection+5)%6)));
+                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, windDirection),
+                                Coords.yInDir(currentXCoord, currentYCoord, windDirection)));
+                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection + 1) % 6),
+                                Coords.yInDir(currentXCoord, currentYCoord, (windDirection + 1) % 6)));
+                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection + 5) % 6),
+                                Coords.yInDir(currentXCoord, currentYCoord, (windDirection + 5) % 6)));
 
                         server.addSmoke(smokeList, windDirection, bInferno);
                         board.initializeAround(currentXCoord, currentYCoord);
@@ -229,7 +231,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         Vector<Report> burnReports = new Vector<>();
         int burnDamage = 5;
         try {
-            burnDamage = game.getOptions().intOption("woods_burn_down_amount");
+            burnDamage = game.getOptions().intOption(OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -330,7 +332,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         int windDir = game.getPlanetaryConditions().getWindDirection();
         int windStr = game.getPlanetaryConditions().getWindStrength();
         //if the breeze option is turned on, then treat wind strength like light gale if none
-        if(game.getOptions().booleanOption("breeze") && (windStr == PlanetaryConditions.WI_NONE)) {
+        if(game.getOptions().booleanOption(OptionsConstants.BASE_BREEZE) && (windStr == PlanetaryConditions.WI_NONE)) {
             windStr = PlanetaryConditions.WI_LIGHT_GALE;
         }
 

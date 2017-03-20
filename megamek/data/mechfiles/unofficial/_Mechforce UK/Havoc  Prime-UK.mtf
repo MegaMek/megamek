@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:90
-Engine:270 Fusion Engine
-Structure:Standard
+Engine:270 Fusion (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
+Base Chassis Heat Sinks:10
 Walk MP:3
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:30
 RA Armor:30
 LT Armor:28
@@ -29,24 +30,28 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:14
 
-Weapons:6
-1 CLLBXAC10, Right Arm, Ammo:20
-3 CLMediumPulseLaser, Left Arm
-1 CLLRM15, Right Torso, Ammo:8
-3 CLStreakSRM6, Left Torso, Ammo:15
-1 CLLargePulseLaser, Center Torso
-1 CLERSmallLaser, Head
+Weapons:10
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+LB 10-X AC, Right Arm
+Streak SRM 6, Left Torso
+Streak SRM 6, Left Torso
+Streak SRM 6, Left Torso
+LRM 15, Right Torso
+Large Pulse Laser, Center Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,44 +59,44 @@ CLDouble Heat Sink
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10 CL Ammo
-CLLBXAC10 Ammo
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
-CLLRM15
-CLLRM15
-CLArtemisIV
-CLLRM15 Ammo (Clan) Artemis-capable
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -104,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -126,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -140,12 +145,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

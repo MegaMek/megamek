@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:55
-Engine:385 XL (Clan) Engine
-Structure:Endo Steel
+Engine:385 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -38,12 +38,12 @@ LRM 20, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -52,12 +52,12 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-Endo Steel
-Endo Steel
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -66,11 +66,11 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Ammo LRM-20
-Clan Ammo LRM-20
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Ammo LRM-20 (omnipod)
+Clan Ammo LRM-20 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -80,10 +80,10 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Ammo LRM-20
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ammo LRM-20 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -124,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

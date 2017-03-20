@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Mad Cat (Timber Wolf)
 H
 
@@ -9,16 +9,16 @@ Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:75
-Engine:375 XL Fusion Engine
-Structure:Endo-Steel
+Engine:375 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:18 Double
-Base Chassis Heat Sinks: 15
+Base Chassis Heat Sinks:15
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:25
@@ -32,102 +32,122 @@ RTR Armor:7
 RTC Armor:9
 
 Weapons:5
-1 CLHeavyLargeLaser, Left Arm
-1 CLHeavyLargeLaser, Right Arm
-1 CLLRM20, Right Torso, Ammo:24
-1 CLLRM20, Left Torso
-1 CLERSmallLaser, Center Torso
+Heavy Large Laser, Left Arm
+Heavy Large Laser, Right Arm
+LRM 20, Left Torso
+LRM 20, Right Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
-Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
-Endo-Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLERSmallLaser
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -246,7 +246,12 @@ public class RulesetNode {
 			String property = assertions.getProperty((String)key);
 			switch ((String)key) {
 			case "unitType":
-				fd.setUnitType(ModelRecord.parseUnitType(property));
+			    int unitType = ModelRecord.parseUnitType(property);
+			    if (unitType < 0) {
+			        fd.setUnitType(null);
+			    } else {
+			        fd.setUnitType(unitType);
+			    }
 				break;
 			case "weightClass":
 				if (property.contains(",")) {

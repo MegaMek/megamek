@@ -45,6 +45,8 @@ public class InfantrySupportHeavyRecoillessRifleWeapon extends InfantryWeapon {
         infantryDamage = 0.57;
         infantryRange = 2;
         crew = 3;
+        rulesRefs =" 273, TM";
+        tonnage = .060;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
         techAdvancement.setTechRating(RATING_C);

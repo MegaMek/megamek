@@ -47,6 +47,7 @@ public class InfantrySupportHeavyRecoillessRifleInfernoWeapon extends InfantryWe
         infantryDamage = 0.34;
         infantryRange = 2;
         crew = 3;
+        tonnage = .060;
         rulesRefs =" 273, TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);

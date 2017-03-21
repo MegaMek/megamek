@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:70
-Engine:350 XL Engine
-Structure:Standard
+Engine:350 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Double
+Base Chassis Heat Sinks:14
 Walk MP:5
 Jump MP:5
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:17
 RA Armor:17
 LT Armor:22
@@ -31,53 +32,53 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:8
-1 CLERLargeLaser, Left Arm
-1 CLERMediumLaser, Left Arm
-1 CLMG, Left Torso
-1 CLAntiMissileSystem, Left Torso
-1 CLERLargeLaser, Right Arm
-1 CLERMediumLaser, Right Arm
-1 CLAntiMissileSystem, Right Torso, Ammo:48
-1 CLMG, Right Torso, Ammo:200
+ER Large Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Large Laser, Right Arm
+ER Medium Laser, Right Arm
+Machine Gun, Left Torso
+AMS, Left Torso
+AMS, Right Torso
+Machine Gun, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERLargeLaser
-CLERMediumLaser
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERLargeLaser
-CLERMediumLaser
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLMG
-CLAntiMissileSystem
-CLMG Ammo (200)
-CLAMS Ammo
-CLAMS Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+CLMG (omnipod)
+CLAntiMissileSystem (omnipod)
+Clan Machine Gun Ammo - Full (omnipod)
+CLAMS Ammo (omnipod)
+CLAMS Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -85,12 +86,12 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
-CLAntiMissileSystem
-CLMG
-Ferro-Fibrous
-Ferro-Fibrous
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLAntiMissileSystem (omnipod)
+CLMG (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -114,7 +115,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -151,4 +152,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

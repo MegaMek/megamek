@@ -2,74 +2,114 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
-Bolla Stealth Tank (RotS) 
+Bolla Stealth Tank (RotS)
 </Name>
+
 <Model>
 C
 </Model>
-<Tonnage>
-60
-</Tonnage>
+
+<year>
+3084
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 34
 32
 32
 30
 40
-</Armor>
-<Front Equipment>
-ISMachine Gun
-ISMachine Gun
-</Front Equipment>
-<Turret Equipment>
-ISLAC5
-ISStreakSRM6
-ISStreakSRM6
-ISTAG
-</Turret Equipment>
-<transporters>
-TroopSpace:4
-</transporters>
+</armor>
+
 <Body Equipment>
-ISLAC5 Ammo
-ISLAC5 Ammo
-ISStreakSRM6 Ammo
-ISStreakSRM6 Ammo
-ISMG Ammo (100)
-ISGuardianECM
+IS Vehicular Stealth
+IS Vehicular Stealth
+IS Ammo LAC/5:OMNI
+IS Ammo LAC/5:OMNI
+IS Streak SRM 6 Ammo:OMNI
+IS Streak SRM 6 Ammo:OMNI
+IS Machine Gun Ammo - Half
+ISGuardianECMSuite
 ISC3SlaveUnit
 </Body Equipment>
-<type>
-IS Level 4
-</type>
-<year>
-3084
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-22
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
-<omni>
-</omni>
-<Source>
+
+<Front Equipment>
+Machine Gun
+Machine Gun:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Light Auto Cannon/5:OMNI
+ISStreakSRM6:OMNI
+ISStreakSRM6:OMNI
+ISTAG:OMNI
+</Turret Equipment>
+
+<source>
 Dark Age
-</Source>
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
+

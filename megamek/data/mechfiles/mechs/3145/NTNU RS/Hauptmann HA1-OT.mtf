@@ -4,13 +4,13 @@ HA1-OT
 
 Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
-Era:3136	
+Era:3136
 Source:RS 3145 NTNU - Dark Ages
 Rules Level:3
 
 Mass:95
 Engine:285 Fusion Engine(IS)
-Structure:Clan Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:11 Double
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:11
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:32
 RA Armor:32
 LT Armor:30
@@ -32,10 +32,10 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:5
-Ultra AC/20, Left Torso
-Ultra AC/20, Right Torso
 TSEMP Cannon, Left Arm
 TSEMP Cannon, Right Arm
+Ultra AC/20, Left Torso
+Ultra AC/20, Right Torso
 ER Small Laser, Head
 
 Left Arm:
@@ -43,11 +43,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,41 +57,41 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-CLCASEII
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+CLCASEII (omnipod)
 
 Right Torso:
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
 ISCASE
 
 Center Torso:
@@ -112,7 +112,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 Sensors
 Life Support
 -Empty-

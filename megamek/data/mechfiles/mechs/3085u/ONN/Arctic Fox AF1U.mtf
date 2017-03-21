@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:30
 Engine:180 XL Engine(IS)
-Structure:Endo Steel
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -38,12 +38,12 @@ LRT 10, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Light PPC
-Light PPC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light PPC (omnipod)
+Light PPC (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -54,14 +54,14 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-LRT 10
-LRT 10
-ISArtemisIV
-IS Ammo LRTorpedo-10 Artemis-capable
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+LRT 10 (omnipod)
+LRT 10 (omnipod)
+ISArtemisIV (omnipod)
+IS Ammo LRTorpedo-10 Artemis-capable (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -70,9 +70,9 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISUMU
-ISUMU
-ISUMU
+ISUMU (omnipod)
+ISUMU (omnipod)
+ISUMU (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -87,8 +87,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISUMU
-ISUMU
+ISUMU (omnipod)
+ISUMU (omnipod)
 -Empty-
 
 Center Torso:
@@ -102,14 +102,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISMASS
+ISMASS (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -124,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

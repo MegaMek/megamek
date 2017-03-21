@@ -32,8 +32,8 @@ RTR Armor:4
 RTC Armor:4
 
 Weapons:2
-Light TAG, Right Torso
 ER Large Laser, Left Torso
+Light TAG, Right Torso
 
 Left Arm:
 Shoulder
@@ -68,9 +68,9 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Mek Null Signature System
@@ -82,7 +82,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLightTAG
+CLLightTAG (omnipod)
 Clan Endo Steel
 Mek Null Signature System
 Chameleon Light Polarization Shield

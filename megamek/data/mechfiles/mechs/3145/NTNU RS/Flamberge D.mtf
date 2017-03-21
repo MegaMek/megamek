@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:11
 Walk MP:4
 Jump MP:4
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:22
 RA Armor:22
 LT Armor:20
@@ -32,25 +32,25 @@ RTR Armor:10
 RTC Armor:12
 
 Weapons:8
+SRM 6, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+SRM 6, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
 Plasma Rifle, Left Torso
 Plasma Rifle, Right Torso
-Medium Pulse Laser, Left Arm
-Medium Pulse Laser, Left Arm
-Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Right Arm
-SRM 6, Left Arm
-SRM 6, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 CLSRM6
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -60,11 +60,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 CLSRM6
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -72,26 +72,26 @@ Clan Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-Jump Jet
-Jump Jet
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
-Clan Ammo SRM-6
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+Clan Ammo SRM-6 (omnipod)
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
-Clan Ammo SRM-6
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+Clan Ammo SRM-6 (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
@@ -108,8 +108,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
 
 Head:
 Life Support
@@ -130,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +144,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

@@ -16,8 +16,8 @@ v0.43.1-git
 + Issue #494 - Updated Princess Behaviors (Thanks pfarland and xStormforgex)
 + Issue #484 and fixes to image names.
 + Issue #490: Fixed princess documentation.
-+ Feature: Princess will now respond with "You are not my boss." if a player attempts to issue a command to an enemy
-    Princess instance.
++ Feature: Princess will now respond with "You are not my boss." if a player
+	attempts to issue a command to an enemy Princess instance.
 + Issue #198: Long tom cannons cannot switch to indirect firing mode
 + Issue #456: Cannot cancel hotloading of LRMs during battle
 + Issue #457: Hot loaded LRMs not working properly
@@ -27,11 +27,14 @@ v0.43.1-git
 + Issue #421: Toughness Text In Pilot Tab Spacing Issue
 + Issue #442: Tooltip colors still not quite right for firing vectors
 + Issue #507: Image atlas map has cross-platform issues
-+ Corrected BV calculations for HarJel II/III, coolant pods, and interface cockpit.
++ Corrected BV calculations for HarJel II/III, coolant pods, and interface
+	cockpit.
 + Issue #511: Fall height is wrong for falls when moving into a higher hex
 + Bug: Cannot fire arm-mounted weapons while prone.
 + Bug: ASF can use Silver Bullet Gauss Rifles/Ammo
 + Bug: Attack sprites/arrows no longer shown for sensor returns
++ Feature: Unit files distinguish between fixed and pod-mounted equipment in
+	omni units.
 + Issue #510: Reports related to geysers weren't marked public
 
 v0.43.0 (2017-02-13 03:30 UTC)

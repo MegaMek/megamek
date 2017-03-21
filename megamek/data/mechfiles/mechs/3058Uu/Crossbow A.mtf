@@ -9,8 +9,8 @@ Source:TRO 3058 - Succession Wars
 Rules Level:2
 
 Mass:65
-Engine:325 Fusion (Clan) Engine
-Structure:Standard
+Engine:325 Fusion (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -43,12 +43,12 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLMediumPulseLaser
-CLLRM5
-Clan Ammo LRM-5
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLMediumPulseLaser (omnipod)
+CLLRM5 (omnipod)
+Clan Ammo LRM-5 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,12 +57,12 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLMediumPulseLaser
-CLLRM5
-Clan Ammo LRM-5
-Clan Streak SRM 6 Ammo
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLMediumPulseLaser (omnipod)
+CLLRM5 (omnipod)
+Clan Ammo LRM-5 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-

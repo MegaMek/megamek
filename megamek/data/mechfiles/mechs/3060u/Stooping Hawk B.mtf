@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:55
-Engine:275 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:275 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -42,9 +42,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -56,23 +56,23 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM15
-CLLRM15
-CLArtemisIV
-Endo Steel
-Endo Steel
-Endo Steel
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
 Left Torso:
-CLLRM15
-CLLRM15
-CLArtemisIV
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -80,13 +80,13 @@ Ferro-Fibrous
 -Empty-
 
 Right Torso:
-CLLRM15
-CLLRM15
-CLArtemisIV
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Endo Steel
-Endo Steel
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -111,7 +111,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-CLERLargeLaser
+CLERLargeLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

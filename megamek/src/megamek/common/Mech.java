@@ -2833,11 +2833,13 @@ public abstract class Mech extends Entity {
             }
         }
     }
-
+    
     public Mounted addEquipment(EquipmentType etype, EquipmentType etype2,
-            int loc) throws LocationFullException {
+            int loc,  boolean omniPod) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         Mounted mounted2 = new Mounted(this, etype2);
+        mounted.setOmniPodMounted(omniPod);
+        mounted2.setOmniPodMounted(omniPod);
         // check criticals for space
         if (getEmptyCriticals(loc) < 1) {
             throw new LocationFullException(mounted.getName() + " and "
@@ -6269,7 +6271,7 @@ public abstract class Mech extends Entity {
             return MtfFile.EMPTY;
         }
         int type = cs.getType();
-        int index = cs.getIndex();
+        int index = cs.getIndex();        
         String armoredText = "";
 
         if (cs.isArmored()) {
@@ -6329,6 +6331,9 @@ public abstract class Mech extends Entity {
             if (cs.getMount2() != null) {
                 toReturn.append("|").append(
                         cs.getMount2().getType().getInternalName());
+            }
+            if (m.isOmniPodMounted()) {
+                toReturn.append(" ").append(MtfFile.OMNIPOD);
             }
             return toReturn.toString();
         } else {

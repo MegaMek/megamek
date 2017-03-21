@@ -1,23 +1,24 @@
-Version:1.1
+Version:1.0
 Perseus
 P1P
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3078
+Source:3067 Unabridged
 Rules Level:2
-source:3067 Unabridged
 
 Mass:75
-Engine:300 XL Fusion Engine
-Structure:Endo-Steel
+Engine:300 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
+Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:21
 RA Armor:21
 LT Armor:24
@@ -30,109 +31,128 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:9
 
-Weapons:11
-1 ISTAG, Head
-1 ISGuardianECM, Left Torso
-1 ISStreakSRM4, Center Torso, Ammo:25
-1 ISMRM20, Left Arm, Ammo:24
-1 ISRotaryAC5, Right Arm, Ammo:60
-1 ISERSmallLaser, Left Leg
-1 ISERSmallLaser, Left Leg
-1 ISERSmallLaser, Right Leg
-1 ISERSmallLaser, Right Leg
-1 ISPPC, Left Arm
-1 ISMediumLaser, Left Arm
+Weapons:10
+ER Small Laser, Left Leg
+ER Small Laser, Left Leg
+ER Small Laser, Right Leg
+ER Small Laser, Right Leg
+MRM 20, Left Arm
+PPC, Left Arm
+Medium Laser, Left Arm
+Rotary AC/5, Right Arm
+Streak SRM 4, Center Torso
+TAG, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISMRM20
-ISMRM20
-ISMRM20
-ISPPC
-ISPPC
-ISPPC
-ISMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+PPC (omnipod)
+PPC (omnipod)
+PPC (omnipod)
+Medium Laser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:
-Engine
-Engine
-Engine
-ISMRM20 Ammo
-ISMRM20 Ammo
-ISGuardianECM
-ISGuardianECM
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-ISCASE
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS MRM 20 Ammo (omnipod)
+IS MRM 20 Ammo (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+ISCASE (omnipod)
 
 Right Torso:
-Engine
-Engine
-Engine
-IS Rotary AC/5 Ammo
-IS Rotary AC/5 Ammo
-IS Rotary AC/5 Ammo
-ISStreakSRM4 Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-ISCASE
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+IS Streak SRM 4 Ammo (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+ISCASE (omnipod)
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISStreakSRM4
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISStreakSRM4 (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISTAG
+ISTAG (omnipod)
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISERSmallLaser
-ISERSmallLaser
+ISERSmallLaser (omnipod)
+ISERSmallLaser (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISERSmallLaser
-ISERSmallLaser
+ISERSmallLaser (omnipod)
+ISERSmallLaser (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

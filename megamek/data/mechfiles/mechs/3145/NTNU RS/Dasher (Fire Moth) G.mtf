@@ -4,7 +4,7 @@ G
 
 Config:Biped Omnimech
 TechBase:Clan
-Era:3098	
+Era:3098
 Source:RS 3145 NTNU - Early Republic
 Rules Level:2
 
@@ -32,20 +32,20 @@ RTR Armor:2
 RTC Armor:2
 
 Weapons:4
-Improved Heavy Medium Laser, Right Arm
+Improved Heavy Medium Laser, Left Arm
 Improved Heavy Medium Laser, Left Arm
 Improved Heavy Medium Laser, Right Arm
-Improved Heavy Medium Laser, Left Arm
+Improved Heavy Medium Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -56,10 +56,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -70,7 +70,7 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CL Super Charger
+CL Super Charger (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -84,8 +84,8 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLTargeting Computer
-Clan Coolant Pod
+CLTargeting Computer (omnipod)
+Clan Coolant Pod (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous

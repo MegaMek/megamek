@@ -9,14 +9,14 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:70
-Engine:280 Light Engine
-Structure:Endo Steel
+Engine:280 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Heavy Duty Gyro
 
 Heat Sinks:13 Double
-Base Chassie Heat Sinks:11
+Base Chassis Heat Sinks:11
 Walk MP:4
 Jump MP:4
 
@@ -37,64 +37,64 @@ Weapons:5
 ER Medium Laser, Left Arm
 ER Medium Laser, Left Arm
 ER Medium Laser, Left Arm
-ER Small Laser, Left Torso
 Ultra AC/20, Right Torso
+ER Small Laser, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-Endo Steel
-Endo Steel
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-ISERSmallLaser (R)
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Jump Jet (omnipod)
+ISERSmallLaser (R) (omnipod)
+IS Ultra AC/20 Ammo (omnipod)
+IS Ultra AC/20 Ammo (omnipod)
+IS Ultra AC/20 Ammo (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Jump Jet
-ISUltraAC20
-ISUltraAC20
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Jump Jet (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
 ISC3iUnit
 ISC3iUnit
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -107,16 +107,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISGuardianECMSuite
-ISGuardianECMSuite
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

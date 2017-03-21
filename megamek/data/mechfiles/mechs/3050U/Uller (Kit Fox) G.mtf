@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:30
 Engine:180 XL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
@@ -42,8 +42,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLECMSuite
-Clan Endo-Steel
+CLECMSuite (omnipod)
+Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -54,9 +54,9 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERLargeLaser
-CLERMediumLaser
-Clan Endo-Steel
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
 -Empty-
@@ -72,23 +72,23 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLLRM10
-Clan Ammo LRM-10
-Clan Endo-Steel
-Clan Endo-Steel
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLRM10
-Clan Ammo LRM-10
-Clan Endo-Steel
-Clan Endo-Steel
-Clan Endo-Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM10 (omnipod)
+Clan Ammo LRM-10 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

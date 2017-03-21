@@ -8,32 +8,35 @@ Era:3058
 Rules Level:2
 
 Mass:25
-Engine:275 XL Engine
-Structure:Endo Steel
-Myomer:MASC
+Engine:275 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:11
 Jump MP:0
 
-Armor:Ferro-Fibrous
-LA Armor:10
-RA Armor:10
+Armor:Ferro-Fibrous(Clan)
+FLL Armor:10
+FRL Armor:10
 LT Armor:8
 RT Armor:8
 CT Armor:12
 HD Armor:8
-LL Armor:10
-RL Armor:10
+RLL Armor:10
+RRL Armor:10
 RTL Armor:3
 RTR Armor:3
 RTC Armor:4
 
-Weapons:2
-2 CLERMediumLaser, Right Torso
-2 CLERMediumLaser, Left Torso
+Weapons:4
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -47,7 +50,7 @@ Foot Actuator
 -Empty-
 -Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -64,29 +67,29 @@ Foot Actuator
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -117,7 +120,7 @@ Life Support
 -Empty-
 -Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -131,7 +134,7 @@ Foot Actuator
 -Empty-
 -Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
@@ -144,4 +147,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

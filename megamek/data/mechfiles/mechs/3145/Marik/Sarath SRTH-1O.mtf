@@ -43,7 +43,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Spikes
+Spikes (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,7 +57,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Spikes
+Spikes (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -70,9 +70,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-BeagleActiveProbe
-BeagleActiveProbe
-Spikes
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
+Spikes (omnipod)
 TSM
 TSM
 TSM
@@ -84,15 +84,15 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Heavy PPC (T)
-Heavy PPC (T)
-Heavy PPC (T)
-Heavy PPC (T)
-Light PPC (T)
-Light PPC (T)
-ISERMediumLaser (T)
+Heavy PPC (T) (omnipod)
+Heavy PPC (T) (omnipod)
+Heavy PPC (T) (omnipod)
+Heavy PPC (T) (omnipod)
+Light PPC (T) (omnipod)
+Light PPC (T) (omnipod)
+ISERMediumLaser (T) (omnipod)
 ISQuadTurret
-Spikes
+Spikes (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -105,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
-Spikes
+ISERMediumLaser (omnipod)
+Spikes (omnipod)
 
 Head:
 Life Support

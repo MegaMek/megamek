@@ -118,6 +118,9 @@ public class BLKFile {
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
                 }
+                boolean isOmniMounted = equipName.toUpperCase().endsWith(":OMNI");
+                equipName = equipName.replace(":OMNI", "");
+                
                 int facing = -1;
                 if (equipName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
@@ -156,6 +159,7 @@ public class BLKFile {
                         Mounted mount = t.addEquipment(etype, nLoc, false,
                                 BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted);
+                        mount.setOmniPodMounted(isOmniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
@@ -450,8 +454,9 @@ public class BLKFile {
 
         int numLocs = t.locations();
         // Aeros have an extra special location called "wings" that we
-        //  don't want to consider
-        if (t instanceof Aero){
+        //  don't want to consider, but Fixed Wing Support vehicles have a "Body" location that will
+        // not index right if the wings locations is removed.
+        if (t instanceof Aero && !(t instanceof FixedWingSupport)){
             numLocs--;
         }
 
@@ -460,6 +465,9 @@ public class BLKFile {
                 blk.writeBlockData("cockpit_type", ((Aero)t).getCockpitType());
                 blk.writeBlockData("heatsinks", ((Aero)t).getHeatSinks());
                 blk.writeBlockData("sink_type", ((Aero)t).getHeatType());
+                if (((Aero)t).getPodHeatSinks() > 0) {
+                    blk.writeBlockData("omnipodheatsinks", ((Aero)t).getPodHeatSinks());
+                }
                 blk.writeBlockData("fuel", ((Aero)t).getFuel());
             }
             if(t.hasEngine()) {
@@ -510,8 +518,13 @@ public class BLKFile {
             }
             int armor_array[];
             if (t instanceof Aero){
-                armor_array = new int[numLocs];
-                for (int i = 0; i < numLocs; i++) {
+                if (t instanceof FixedWingSupport) {
+                    //exclude body and wings
+                    armor_array = new int[numLocs - 2];
+                } else {
+                    armor_array = new int[numLocs];
+                }
+                for (int i = 0; i < armor_array.length; i++) {
                     armor_array[i] = t.getOArmor(i);
                 }
             } else {
@@ -565,6 +578,9 @@ public class BLKFile {
             if (m.isSquadSupportWeapon()){
                 name += ":SSWM";
             }
+            if (m.isOmniPodMounted()) {
+            	name += ":OMNI";
+            }
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_BODY){
                 name += ":Body";
             }
@@ -593,6 +609,10 @@ public class BLKFile {
         }
         if (!t.hasPatchworkArmor() && t.hasBARArmor(1)) {
             blk.writeBlockData("barrating", t.getBARRating(1));
+        }
+        
+        if (t.isSupportVehicle() || (t instanceof FixedWingSupport)) {
+            blk.writeBlockData("structural_tech_rating", t.getStructuralTechRating());
         }
 
         if (t.getFluff().getCapabilities().trim().length() > 0) {
@@ -732,6 +752,8 @@ public class BLKFile {
             // Walk the array of transporters.
             for (String transporter : transporters) {
                 transporter = transporter.toLowerCase();
+            	boolean isPod = transporter.endsWith(":omni");
+            	transporter = transporter.replace(":omni", "");
                 // for bays, we have to save the baynumber in each bay, because
                 // one conceputal bay can contain several different ones
                 // we default to bay 1
@@ -740,7 +762,7 @@ public class BLKFile {
                 if (transporter.startsWith("troopspace:", 0)) {
                     // Everything after the ':' should be the space's size.
                     Double fsize = new Double(transporter.substring(11));
-                    e.addTransporter(new TroopSpace(fsize));
+                    e.addTransporter(new TroopSpace(fsize), isPod);
                 } else if (transporter.startsWith("cargobay:", 0)) {
                     String numbers = transporter.substring(9);
                     String temp[] = numbers.split(":");

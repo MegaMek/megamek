@@ -5,19 +5,20 @@ TLR1-OC
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3062
+Source:TRO 3067
 Rules Level:2
-source:TRO 3067
 
 Mass:85
-Engine:340 XL Engine
-Structure:Endo Steel
+Engine:340 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:4
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -30,68 +31,71 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:5
-1 ISLBXAC20, Right Arm, Ammo:15
-1 ISERPPC, Left Arm
-3 ISMediumPulseLaser, Left Arm
-2 ISMediumPulseLaser, Left Torso
-1 ISERMediumLaser, Left Torso
+Weapons:8
+ER PPC, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+LB 20-X AC, Right Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+ER Medium Laser, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISERPPC
-ISERPPC
-ISERPPC
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISMediumPulseLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-Endo-Steel
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISMediumPulseLaser
-ISMediumPulseLaser
-ISERMediumLaser
-Endo-Steel
-Endo-Steel
+Jump Jet (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-ISLBXAC20 (Split)
-ISLBXAC20 (Split)
-ISLBXAC20 CL Ammo
-ISLBXAC20 Ammo
-ISLBXAC20 CL Ammo
+Jump Jet (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+IS LB 20-X Cluster Ammo (omnipod)
+IS LB 20-X AC Ammo (omnipod)
+IS LB 20-X Cluster Ammo (omnipod)
 ISCASE
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -104,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -126,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,12 +144,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

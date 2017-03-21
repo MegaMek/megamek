@@ -9,8 +9,8 @@ Source:TRO 3058 - Succession Wars
 Rules Level:2
 
 Mass:90
-Engine:360 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:360 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
@@ -34,15 +34,15 @@ RTC Armor:13
 Weapons:4
 ER Large Laser, Left Arm
 ER Large Laser, Left Arm
-ER Large Laser, Center Torso
 Ultra AC/10, Right Arm
+ER Large Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERLargeLaser
+CLERLargeLaser (omnipod)
+CLERLargeLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,10 +54,10 @@ CLERLargeLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,13 +66,13 @@ CLUltraAC10
 -Empty-
 
 Left Torso:
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -82,14 +82,14 @@ Ferro-Fibrous
 Right Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -104,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERLargeLaser
+CLERLargeLaser (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

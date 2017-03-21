@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:4
 
 Mass:55
-Engine:385 XL (Clan) Engine
-Structure:Endo Steel
+Engine:385 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -39,13 +39,13 @@ Rotary AC/2, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLCASEII
-Ferro-Fibrous
-Ferro-Fibrous
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLCASEII (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -53,12 +53,12 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-Endo Steel
-Endo Steel
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -67,9 +67,9 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -81,12 +81,12 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLRotaryAC2 Ammo
-CLRotaryAC2 Ammo
-CLCASEII
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLRotaryAC2 Ammo (omnipod)
+CLRotaryAC2 Ammo (omnipod)
+CLCASEII (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -125,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +139,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

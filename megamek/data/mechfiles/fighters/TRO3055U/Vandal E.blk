@@ -76,22 +76,22 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLActiveProbe
+CLActiveProbe:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERMicroLaser
-CLERMicroLaser
+CLERMicroLaser:OMNI
+CLERMicroLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERMicroLaser
-CLERMicroLaser
+CLERMicroLaser:OMNI
+CLERMicroLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-RemoteSensorDispenser
-RemoteSensorDispenser
+RemoteSensorDispenser:OMNI
+RemoteSensorDispenser:OMNI
 </Aft Equipment>
 
 <source>

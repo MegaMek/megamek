@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:35
-Engine:245 XL Engine
-Structure:Endo Steel
+Engine:245 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Triple-Strength
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:9
 Walk MP:7
 Jump MP:7
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:11
 RA Armor:11
 LT Armor:11
@@ -29,70 +30,72 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:5
 
-Weapons:7
-1 ISMediumLaser, Left Arm
-2 ISMediumLaser, Right Torso
-1 ISSmallLaser, Right Torso
-2 ISMediumLaser, Left Torso
-1 ISSmallLaser, Left Torso
-1 ISSmallLaser, Center Torso
-1 ISMediumLaser, Head
+Weapons:9
+Medium Laser, Left Arm
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Small Laser, Left Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
+Small Laser, Right Torso
+Small Laser, Center Torso
+Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumLaser
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Medium Laser (omnipod)
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Hatchet
-Hatchet
-Hatchet
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Jump Jet
-ISMediumLaser
-ISMediumLaser
-ISSmallLaser
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Small Laser (omnipod)
+TSM
+TSM
+TSM
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Jump Jet
-ISMediumLaser
-ISMediumLaser
-ISSmallLaser
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Small Laser (omnipod)
+TSM
+TSM
+TSM
 
 Center Torso:
 Fusion Engine
@@ -105,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISSmallLaser
-Jump Jet
+Small Laser (omnipod)
+Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISMediumLaser
+Medium Laser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -127,8 +130,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,12 +144,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

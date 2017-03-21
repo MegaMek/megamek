@@ -32,6 +32,10 @@ IS Level 2
 Hover
 </motion_type>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 8
 </cruiseMP>
@@ -48,6 +52,10 @@ Hover
 1
 </armor_tech>
 
+<omni>
+1
+</omni>
+
 <armor>
 30
 30
@@ -57,8 +65,8 @@ Hover
 </armor>
 
 <Body Equipment>
-IS Ammo LAC/2
-IS Ammo LAC/2
+IS Ammo LAC/2:OMNI
+IS Ammo LAC/2:OMNI
 ISCASE
 </Body Equipment>
 
@@ -75,10 +83,10 @@ ISCASE
 </Rear Equipment>
 
 <Turret Equipment>
-Light Auto Cannon/2
-Light Auto Cannon/2
-Light Auto Cannon/2
-Light Auto Cannon/2
+Light Auto Cannon/2:OMNI
+Light Auto Cannon/2:OMNI
+Light Auto Cannon/2:OMNI
+Light Auto Cannon/2:OMNI
 </Turret Equipment>
 
 <source>
@@ -89,8 +97,7 @@ TRO 3145 Federated Suns - Early Republic
 50.0
 </tonnage>
 
-<omni>
-1
-</omni>
-
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
 

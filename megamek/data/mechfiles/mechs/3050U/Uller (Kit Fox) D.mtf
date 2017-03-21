@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:30
-Engine:180 XL Engine
-Structure:Endo Steel
+Engine:180 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:7
 RA Armor:7
 LT Armor:8
@@ -31,23 +32,23 @@ RTR Armor:4
 RTC Armor:4
 
 Weapons:4
-1 CLLRM15, Left Arm
-1 CLLRM15, Right Arm, Ammo:32
-1 CLLRM5, Left Arm, Ammo:24
-1 CLNarcBeacon, Right Arm, Ammo:6
+LRM 15, Left Arm
+LRM 5, Left Arm
+LRM 15, Right Arm
+Narc, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM15
-CLLRM15
-CLLRM5
-CLLRM15 Ammo (Clan) Narc-capable
-CLLRM15 Ammo (Clan) Narc-capable
-Endo Steel
-Ferro-Fibrous
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLLRM5 (omnipod)
+Clan Ammo LRM-15 (Clan) Narc-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Narc-capable (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Right Arm:
@@ -55,11 +56,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM15
-CLLRM15
-CLNarcBeacon
-Endo Steel
-Ferro-Fibrous
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLNarcBeacon (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -67,28 +68,28 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLLRM5 Ammo (Clan) Narc-capable
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ammo LRM-5 (Clan) Narc-capable (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM15 Ammo (Clan) Narc-capable
-CLLRM15 Ammo (Clan) Narc-capable
-CLNarc Pods
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ammo LRM-15 (Clan) Narc-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Narc-capable (omnipod)
+CLNarc Pods (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -103,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -147,4 +148,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

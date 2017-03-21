@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:40
-Engine:200 Fusion Engine
-Structure:Endo Steel
+Engine:200 Fusion Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:11 Double
@@ -39,12 +39,12 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLargePulseLaser
-ISLargePulseLaser
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+ISLargePulseLaser (omnipod)
+ISLargePulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -53,12 +53,12 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLargePulseLaser
-ISLargePulseLaser
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+ISLargePulseLaser (omnipod)
+ISLargePulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -67,29 +67,29 @@ Left Torso:
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -109,7 +109,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -124,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

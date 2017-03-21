@@ -33,7 +33,7 @@ Tracked
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -57,16 +57,16 @@ Tracked
 </armor>
 
 <Body Equipment>
-CLCASE
+CLCASE:OMNI
 Clan LB 10-X AC Ammo
 Clan LB 10-X AC Ammo
 Clan LB 10-X Cluster Ammo
-Clan Ammo LRM-20
-Clan Ammo LRM-20
-Clan Ammo LRM-20
-Clan Ammo LRM-20
-Clan Ammo LRM-20
-Clan Ammo LRM-20
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -84,9 +84,9 @@ CLLBXAC10
 </Rear Equipment>
 
 <Turret Equipment>
-CLLRM20
-CLLRM20
-CLLRM20
+CLLRM20:OMNI
+CLLRM20:OMNI
+CLLRM20:OMNI
 </Turret Equipment>
 
 <source>
@@ -96,4 +96,8 @@ RS 3067U
 <tonnage>
 95.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

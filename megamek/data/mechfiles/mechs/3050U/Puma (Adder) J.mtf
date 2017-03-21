@@ -9,15 +9,16 @@ Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:35
-Engine:210 XL Engine
-Structure:Endo Steel
+Engine:210 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:12
@@ -30,20 +31,23 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:6
 
-Weapons:3
-1 CLFlamer, Center Torso
-1 CLHAG20, Right Arm, Ammo:18
-4 CLAPGaussRifle, Left Arm, Ammo:40
+Weapons:6
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+HAG/20, Right Arm
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle Ammo
-Ferro-Fibrous
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle Ammo (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -52,25 +56,25 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20 Ammo
-CLHAG20 Ammo
-CLHAG20 Ammo
-Ferro-Fibrous
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+HAG/20 Ammo (omnipod)
+HAG/20 Ammo (omnipod)
+HAG/20 Ammo (omnipod)
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -80,11 +84,11 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -103,13 +107,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLFlamer
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -124,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -138,12 +142,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

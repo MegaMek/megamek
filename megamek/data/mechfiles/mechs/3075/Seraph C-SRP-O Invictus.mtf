@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:85
-Engine:255 Light Engine
-Structure:Standard
+Engine:255 Light Engine(IS)
+Structure:IS Standard
 Myomer:Triple-Strength
 Cockpit:Small Cockpit
 Gyro:Standard Gyro
@@ -36,8 +36,8 @@ RTC Armor:13
 Weapons:5
 Ultra AC/10, Right Arm
 MML 5, Left Torso
-MML 5, Right Torso
 Streak SRM 6, Left Torso
+MML 5, Right Torso
 Snub-Nose PPC, Head
 
 Left Arm:
@@ -45,56 +45,56 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
 TSM
 TSM
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
+ISUltraAC10 (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISMML5
-ISMML5
-ISMML5
-ISStreakSRM6
-ISStreakSRM6
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISMML5 (omnipod)
+ISMML5 (omnipod)
+ISMML5 (omnipod)
+ISStreakSRM6 (omnipod)
+ISStreakSRM6 (omnipod)
 ISC3iUnit
 ISC3iUnit
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISMML5
-ISMML5
-ISMML5
-IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
-IS Ultra AC/10 Ammo
-IS Ammo MML-5 LRM
-IS Ammo MML-5 SRM
-IS Streak SRM 6 Ammo
-ISCASE
+ISMML5 (omnipod)
+ISMML5 (omnipod)
+ISMML5 (omnipod)
+IS Ultra AC/10 Ammo (omnipod)
+IS Ultra AC/10 Ammo (omnipod)
+IS Ultra AC/10 Ammo (omnipod)
+IS Ammo MML-5 LRM (omnipod)
+IS Ammo MML-5 SRM (omnipod)
+IS Streak SRM 6 Ammo (omnipod)
+ISCASE (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -115,8 +115,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISSNPPC
-ISSNPPC
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-

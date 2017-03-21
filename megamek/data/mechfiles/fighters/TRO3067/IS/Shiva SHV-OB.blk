@@ -79,26 +79,26 @@ Aerodyne
 </Nose Equipment>
 
 <Left Wing Equipment>
-LRM 20
-ISArtemisIV
-LRM 20
-ISArtemisIV
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
+LRM 20:OMNI
+ISArtemisIV:OMNI
+LRM 20:OMNI
+ISArtemisIV:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-LRM 20
-ISArtemisIV
-LRM 20
-ISArtemisIV
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-ISCASE
+LRM 20:OMNI
+ISArtemisIV:OMNI
+LRM 20:OMNI
+ISArtemisIV:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
+IS Ammo LRM-20 Artemis-capable:OMNI
+ISCASE:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

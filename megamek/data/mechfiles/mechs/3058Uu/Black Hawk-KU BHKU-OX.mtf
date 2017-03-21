@@ -51,13 +51,13 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 -Empty-
 -Empty-
 
@@ -65,13 +65,13 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
-Medium Laser
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 -Empty-
 -Empty-
 
@@ -82,7 +82,7 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-IS Coolant Pod
+IS Coolant Pod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -96,7 +96,7 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-IS Coolant Pod
+IS Coolant Pod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -121,7 +121,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISC3SlaveUnit
+ISC3SlaveUnit (omnipod)
 Sensors
 Life Support
 -Empty-

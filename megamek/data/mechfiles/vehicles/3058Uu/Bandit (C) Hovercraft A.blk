@@ -37,7 +37,7 @@ troopspace:5.0
 </transporters>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -69,12 +69,12 @@ troopspace:5.0
 </armor>
 
 <Body Equipment>
-Clan Ammo SRM-2
-CLCASE
+Clan Ammo SRM-2:OMNI
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
-CLSRM2
+CLSRM2:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -87,8 +87,8 @@ CLSRM2
 </Rear Equipment>
 
 <Turret Equipment>
-CLERLargeLaser
-CLSRM2
+CLERLargeLaser:OMNI
+CLSRM2:OMNI
 </Turret Equipment>
 
 <source>
@@ -98,4 +98,8 @@ Succession Wars
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>
 

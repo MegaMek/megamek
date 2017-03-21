@@ -68,34 +68,50 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLLBXAC10
-Clan LB 10-X Cluster Ammo
-Clan LB 10-X Cluster Ammo
+CLLBXAC10:OMNI
+Clan LB 10-X Cluster Ammo:OMNI
+Clan LB 10-X Cluster Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLGaussRifle
-Clan Gauss Ammo
-Clan Gauss Ammo
-CLERLargeLaser
+CLGaussRifle:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+CLERLargeLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLGaussRifle
-Clan Gauss Ammo
-Clan Gauss Ammo
-CLERLargeLaser
+CLGaussRifle:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+CLERLargeLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERSmallLaser
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Clan Streak SRM 6 Ammo
+CLERSmallLaser:OMNI
+CLStreakSRM6:OMNI
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Aft Equipment>
 

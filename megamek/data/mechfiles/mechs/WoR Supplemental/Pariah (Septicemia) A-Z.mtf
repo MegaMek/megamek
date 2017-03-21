@@ -34,20 +34,20 @@ RTC Armor:7
 Weapons:9
 Improved Heavy Small Laser, Left Arm
 Improved Heavy Small Laser, Left Arm
-Improved Heavy Small Laser, Right Arm
-Improved Heavy Small Laser, Right Arm
-Improved Heavy Small Laser, Right Arm
 Improved Heavy Small Laser, Left Arm
+Improved Heavy Small Laser, Right Arm
+Improved Heavy Small Laser, Right Arm
+Improved Heavy Small Laser, Right Arm
 iATM 12, Left Torso
-iATM 12, Right Torso
 Light TAG, Left Torso
+iATM 12, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedSmallHeavyLaser
-CLImprovedSmallHeavyLaser
-CLImprovedSmallHeavyLaser
+CLImprovedSmallHeavyLaser (omnipod)
+CLImprovedSmallHeavyLaser (omnipod)
+CLImprovedSmallHeavyLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -59,9 +59,9 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLImprovedSmallHeavyLaser
-CLImprovedSmallHeavyLaser
-CLImprovedSmallHeavyLaser
+CLImprovedSmallHeavyLaser (omnipod)
+CLImprovedSmallHeavyLaser (omnipod)
+CLImprovedSmallHeavyLaser (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -73,29 +73,29 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLLightTAG
-Clan Ammo iATM-12
-Clan Ammo iATM-12
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLLightTAG (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
 -Empty-
 
 Center Torso:
@@ -109,14 +109,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-NovaCEWS
+NovaCEWS (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -131,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

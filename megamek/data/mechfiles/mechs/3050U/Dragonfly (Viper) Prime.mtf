@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:40
-Engine:320 XL Engine
-Structure:Endo Steel
+Engine:320 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:8
 Jump MP:8
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:13
@@ -30,21 +31,23 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:7
 
-Weapons:4
-1 CLSRM4, Left Arm, Ammo:25
-1 CLAntiMissileSystem, Left Torso, Ammo:24
-2 CLMediumPulseLaser, Right Arm
-2 CLMG, Right Torso, Ammo:100
+Weapons:6
+SRM 4, Left Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+AMS, Left Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLSRM4
-CLSRM4 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+CLSRM4 (omnipod)
+Clan Ammo SRM-4 (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +58,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -69,12 +72,12 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLAntiMissileSystem
-CLAMS Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -83,13 +86,13 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLMG
-CLMG
-CLMG Ammo (100)
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLMG (omnipod)
+CLMG (omnipod)
+Clan Machine Gun Ammo - Half (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -103,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
+Clan Endo Steel
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -147,4 +150,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -2,22 +2,23 @@ Version:1.0
 Man O' War (Gargoyle)
 G
 
-Config:Biped OmniMech
+Config:Biped Omnimech
 TechBase:Clan
 Era:3069
 Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:80
-Engine:400 XL Engine
-Structure:Standard
+Engine:400 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
+Base Chassis Heat Sinks:16
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous Armor
+Armor:Ferro-Fibrous(Clan)
 LA Armor:23
 RA Armor:23
 LT Armor:24
@@ -30,18 +31,23 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:3
-4 CLERMediumLaser, Left Torso
-1 CLLBXAC20, Right Arm, Ammo:15
-3 CLAPGaussRifle, Left Arm, Ammo:40
+Weapons:8
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+LB 20-X AC, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle Ammo
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -52,39 +58,39 @@ CLAPGaussRifle Ammo
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
 -Empty-
 
 Left Torso:
-Engine
-Engine
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Engine
-Engine
-CLLBXAC20 Ammo
-CLLBXAC20 Ammo
-CLLBXAC20 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+Fusion Engine
+Fusion Engine
+Clan LB 20-X AC Ammo (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -92,16 +98,16 @@ Ferro-Fibrous
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -109,7 +115,7 @@ Head:
 Life Support
 Cockpit
 Sensors
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -124,7 +130,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +144,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -146,3 +152,5 @@ Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
+
+

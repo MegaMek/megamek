@@ -9,15 +9,16 @@ Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:40
-Engine:320 XL Engine
-Structure:Endo Steel
+Engine:320 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:8
 Jump MP:8
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:13
@@ -30,22 +31,23 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:7
 
-Weapons:4
-1 CLPlasmaCannon, Left Arm, Ammo:10
-4 CLAPGaussRifle, Right Arm, Ammo:40
-1 CLHeavyMediumLaser, Left Torso
-1 CLLightActiveProbe, Center Torso
-
+Weapons:6
+Plasma Cannon, Left Arm
+AP Gauss Rifle, Right Arm
+AP Gauss Rifle, Right Arm
+AP Gauss Rifle, Right Arm
+AP Gauss Rifle, Right Arm
+Heavy Medium Laser, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLPlasmaCannon
-CLPlasmaCannon Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+CLPlasmaCannon (omnipod)
+CLPlasmaCannonAmmo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -54,13 +56,13 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle
-CLAPGaussRifle Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -70,12 +72,12 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -84,10 +86,10 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -104,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLightActiveProbe
-Endo Steel
+CLLightActiveProbe (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -148,4 +150,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

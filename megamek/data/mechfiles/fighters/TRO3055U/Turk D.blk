@@ -76,22 +76,30 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERLargeLaser
+CLERLargeLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLATM12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
+CLATM12:OMNI
+Clan Ammo ATM-12:OMNI
+Clan Ammo ATM-12:OMNI
+Clan Ammo ATM-12:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLATM12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
+CLATM12:OMNI
+Clan Ammo ATM-12:OMNI
+Clan Ammo ATM-12:OMNI
+Clan Ammo ATM-12:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 

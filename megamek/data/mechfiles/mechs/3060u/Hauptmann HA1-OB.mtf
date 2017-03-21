@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:95
-Engine:285 Fusion Engine
-Structure:Standard
+Engine:285 Fusion Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -42,13 +42,13 @@ Medium Pulse Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
-ISMediumPulseLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISMediumPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -56,43 +56,43 @@ ISMediumPulseLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
-ISMediumPulseLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISMediumPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-ISUltraAC20
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
-IS Ultra AC/20 Ammo
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
+IS Ultra AC/20 Ammo (omnipod)
+IS Ultra AC/20 Ammo (omnipod)
+IS Ultra AC/20 Ammo (omnipod)
 ISCASE
 
 Center Torso:
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISUltraAC20
-ISUltraAC20
+ISUltraAC20 (omnipod)
+ISUltraAC20 (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISMediumPulseLaser
+ISMediumPulseLaser (omnipod)
 Sensors
 Life Support
 -Empty-

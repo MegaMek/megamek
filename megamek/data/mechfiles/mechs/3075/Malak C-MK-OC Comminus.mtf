@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:30
-Engine:210 Light Engine
-Structure:Endo Steel
+Engine:210 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
@@ -50,25 +50,25 @@ Hand Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-BeagleActiveProbe
-BeagleActiveProbe
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+BeagleActiveProbe (omnipod)
+BeagleActiveProbe (omnipod)
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISERSmallLaser
-ISERSmallLaser
-ISERSmallLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISERSmallLaser (omnipod)
+ISERSmallLaser (omnipod)
+ISERSmallLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -76,27 +76,27 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERMediumLaser
+ISERMediumLaser (omnipod)
 ISC3iUnit
 ISC3iUnit
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
-ISBPod
-ISGuardianECMSuite
-ISGuardianECMSuite
-ISTargeting Computer
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Light Ferro-Fibrous
+ISERMediumLaser (omnipod)
+ISBPod (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+ISTargeting Computer (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Light Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -117,7 +117,7 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISTAG
+ISTAG (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -131,8 +131,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -145,8 +145,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

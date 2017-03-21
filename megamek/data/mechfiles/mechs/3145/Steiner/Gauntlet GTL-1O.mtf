@@ -32,14 +32,14 @@ RTR Armor:5
 RTC Armor:10
 
 Weapons:2
-Heavy PPC, Right Arm
 Thunderbolt 10, Left Arm
+Heavy PPC, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Thunderbolt 10
-Thunderbolt 10
+Thunderbolt 10 (omnipod)
+Thunderbolt 10 (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Light Ferro-Fibrous
@@ -52,10 +52,10 @@ IS Light Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Light Ferro-Fibrous
@@ -66,9 +66,9 @@ IS Light Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-IS Ammo Thunderbolt-10
-IS Ammo Thunderbolt-10
-ISCASE
+IS Ammo Thunderbolt-10 (omnipod)
+IS Ammo Thunderbolt-10 (omnipod)
+ISCASE (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -102,7 +102,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Supercharger
+Supercharger (omnipod)
 IS Light Ferro-Fibrous
 
 Head:

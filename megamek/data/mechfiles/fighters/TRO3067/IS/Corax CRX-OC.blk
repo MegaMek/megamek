@@ -68,9 +68,9 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-MRM 20
-IS MRM 20 Ammo
-IS MRM 20 Ammo
+MRM 20:OMNI
+IS MRM 20 Ammo:OMNI
+IS MRM 20 Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>

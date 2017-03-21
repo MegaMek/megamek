@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Woodsman
 Prime
 
@@ -8,16 +8,16 @@ Era:2866
 Rules Level:2
 
 Mass:75
-Engine:300 Fusion Engine
-Structure:Endo-Steel
-Myomer:CLMASC
+Engine:300 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:17 Double
-Base Chassis Heat Sinks: 12
+Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:22
 RA Armor:22
 LT Armor:23
@@ -31,51 +31,51 @@ RTR Armor:7
 RTC Armor:10
 
 Weapons:10
-1 CLERLargeLaser, Left Arm
-1 CLERLargeLaser, Right Arm
-1 CLERMediumLaser, Left Arm
-1 CLERMediumLaser, Right Arm
-1 CLERMediumLaser, Left Torso
-1 CLLRM15, Left Torso, Ammo:24
-1 CLLRM15, Right Torso
-1 CLMG, Center Torso, Ammo:200
-1 CLMG, Center Torso
-1 CLERSmallLaser, Right Torso
+ER Large Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Large Laser, Right Arm
+ER Medium Laser, Right Arm
+LRM 15, Left Torso
+ER Medium Laser, Left Torso
+LRM 15, Right Torso
+ER Small Laser, Right Torso
+Machine Gun, Center Torso
+Machine Gun, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERLargeLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Endo-Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERLargeLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Endo-Steel
 
 Left Torso:
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLLRM15
-CLLRM15
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLERMediumLaser (omnipod)
 CLMASC
 CLMASC
 CLMASC
@@ -85,53 +85,73 @@ CLMASC
 -Empty-
 
 Right Torso:
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLLRM15
-CLLRM15
-CLERSmallLaser
-CLLRM15 Ammo
-CLLRM15 Ammo
-CLLRM15 Ammo
-CLMG Ammo (100)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLERSmallLaser (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Machine Gun Ammo - Half (omnipod)
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-CLMG
-CLMG
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMG (omnipod)
+CLMG (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+Clan Endo Steel
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

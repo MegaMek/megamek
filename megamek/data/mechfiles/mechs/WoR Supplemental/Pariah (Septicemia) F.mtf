@@ -32,15 +32,15 @@ RTR Armor:7
 RTC Armor:7
 
 Weapons:2
-Arrow IV, Left Arm
-Arrow IV, Right Arm
+Arrow IV, Left Torso
+Arrow IV, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLArrowIV
-CLArrowIV
-CLArrowIV
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -52,9 +52,9 @@ Clan Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLArrowIV
-CLArrowIV
-CLArrowIV
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -66,30 +66,30 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIVAmmo
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIVAmmo (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIV
-CLArrowIVAmmo
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIV (omnipod)
+CLArrowIVAmmo (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -102,8 +102,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLArrowIVAmmo
-CLArrowIVAmmo
+CLArrowIVAmmo (omnipod)
+CLArrowIVAmmo (omnipod)
 
 Head:
 Life Support

@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:60
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -32,16 +32,16 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:12
-Medium Laser, Right Arm
-Medium Laser, Right Arm
-Medium Laser, Right Arm
-Medium Laser, Left Arm
-Medium Laser, Left Arm
-Medium Laser, Left Arm
 Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Left Arm
 Medium Pulse Laser, Right Arm
 Medium Pulse Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
 Small Laser, Left Torso
 Small Laser, Right Torso
 
@@ -49,11 +49,11 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumPulseLaser
-ISMediumPulseLaser
-Medium Laser
-Medium Laser
-Medium Laser
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -63,11 +63,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumPulseLaser
-ISMediumPulseLaser
-Medium Laser
-Medium Laser
-Medium Laser
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -80,10 +80,10 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Small Laser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Small Laser (omnipod)
 -Empty-
 -Empty-
 
@@ -94,10 +94,10 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Small Laser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Small Laser (omnipod)
 -Empty-
 -Empty-
 

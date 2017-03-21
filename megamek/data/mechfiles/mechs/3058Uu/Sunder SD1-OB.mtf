@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:90
-Engine:360 XL Engine
-Structure:Standard
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -32,27 +32,27 @@ RTR Armor:10
 RTC Armor:12
 
 Weapons:8
-LRM 10, Center Torso
 LRM 20, Left Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
 Medium Laser, Left Torso
-Medium Laser, Right Torso
-Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Right Arm
 C3 Master with TAG, Left Torso
+Medium Laser, Right Torso
 C3 Master with TAG, Right Torso
+LRM 10, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-LRM 20
-LRM 20
-LRM 20
-LRM 20
-LRM 20
-IS Ammo LRM-20
-IS Ammo LRM-20
-IS Ammo LRM-20
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+IS Ammo LRM-20 (omnipod)
+IS Ammo LRM-20 (omnipod)
+IS Ammo LRM-20 (omnipod)
 -Empty-
 
 Right Arm:
@@ -62,8 +62,8 @@ Lower Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -73,13 +73,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser
-IS Ammo LRM-10
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
+Medium Laser (omnipod)
+IS Ammo LRM-10 (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
 -Empty-
 -Empty-
 
@@ -87,13 +87,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser
-IS Ammo LRM-10
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
+Medium Laser (omnipod)
+IS Ammo LRM-10 (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
 -Empty-
 -Empty-
 
@@ -108,8 +108,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-LRM 10
-LRM 10
+LRM 10 (omnipod)
+LRM 10 (omnipod)
 
 Head:
 Life Support

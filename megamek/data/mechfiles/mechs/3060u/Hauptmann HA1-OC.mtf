@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:95
-Engine:285 Fusion Engine
-Structure:Standard
+Engine:285 Fusion Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:13 Double
@@ -44,10 +44,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISMediumPulseLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISMediumPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -58,41 +58,41 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERMediumLaser
-ISERMediumLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-LRM 20
-LRM 20
-LRM 20
-LRM 20
-LRM 20
-ISArtemisIV
-ISGuardianECMSuite
-ISGuardianECMSuite
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+ISArtemisIV (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+ISHeavyGauss Ammo (omnipod)
+ISHeavyGauss Ammo (omnipod)
+ISHeavyGauss Ammo (omnipod)
+ISHeavyGauss Ammo (omnipod)
 
 Right Torso:
-ISHeavyGaussRifle
-ISHeavyGaussRifle
-ISHeavyGaussRifle
-ISHeavyGaussRifle
-ISHeavyGaussRifle
-ISHeavyGaussRifle
-ISHeavyGaussRifle
-ISHeavyGaussRifle
-ISHeavyGaussRifle
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
+ISHeavyGaussRifle (omnipod)
+ISHeavyGaussRifle (omnipod)
+ISHeavyGaussRifle (omnipod)
+ISHeavyGaussRifle (omnipod)
+ISHeavyGaussRifle (omnipod)
+ISHeavyGaussRifle (omnipod)
+ISHeavyGaussRifle (omnipod)
+ISHeavyGaussRifle (omnipod)
+ISHeavyGaussRifle (omnipod)
+IS Ammo LRM-20 Artemis-capable (omnipod)
+IS Ammo LRM-20 Artemis-capable (omnipod)
 ISCASE
 
 Center Torso:
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISHeavyGaussRifle
-ISHeavyGaussRifle
+ISHeavyGaussRifle (omnipod)
+ISHeavyGaussRifle (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 Sensors
 Life Support
 -Empty-

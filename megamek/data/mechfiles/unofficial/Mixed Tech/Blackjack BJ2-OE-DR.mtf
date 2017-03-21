@@ -8,15 +8,16 @@ Era:3059
 Rules Level:4
 
 Mass:50
-Engine:200 XL Engine
-Structure:Endo Steel
+Engine:200 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
 Walk MP:4
 Jump MP:4
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:14
 RA Armor:14
 LT Armor:18
@@ -29,24 +30,26 @@ RTL Armor:6
 RTR Armor:6
 RTC Armor:9
 
-Weapons:4
-1 CLLargePulseLaser, Right Arm
-3 CLMediumPulseLaser, Right Arm
-1 CLGaussRifle, Left Arm, Ammo:16
-1 ISERSmallLaser, Center Torso
+Weapons:6
+Gauss Rifle, Left Arm
+Large Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
 -Empty-
 
 Right Arm:
@@ -54,39 +57,39 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-CLLargePulseLaser
-CLLargePulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLGauss Ammo
-CLGauss Ammo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -102,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
-Endo-Steel
+ISERSmallLaser (omnipod)
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -146,4 +149,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

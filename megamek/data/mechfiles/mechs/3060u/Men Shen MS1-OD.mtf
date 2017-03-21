@@ -9,12 +9,12 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:55
-Engine:330 XL Engine
-Structure:Endo Steel
+Engine:330 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:11 Double
-Base Chassis Heat Sinks:11
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:0
 
@@ -41,12 +41,12 @@ ER PPC, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-SRM 4
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+SRM 4 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -55,12 +55,12 @@ Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-SRM 4
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+SRM 4 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -70,9 +70,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser
-ISMediumPulseLaser
-IS Ammo SRM-4
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+IS Ammo SRM-4 (omnipod)
 ISMASC
 ISMASC
 ISMASC
@@ -84,12 +84,12 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

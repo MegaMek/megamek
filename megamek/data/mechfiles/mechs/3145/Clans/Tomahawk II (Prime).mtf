@@ -14,11 +14,11 @@ Structure:Clan Endo-Composite
 Myomer:Standard
 
 Heat Sinks:16 Double
-Base Chassis Heat Sinks:11
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -32,68 +32,68 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:7
-ER Large Laser, Left Arm
-ER Large Laser, Head
-ER Large Laser, Right Arm
-HAG/30, Right Arm
 HAG/30, Left Arm
+ER Large Laser, Left Arm
+HAG/30, Right Arm
+ER Large Laser, Right Arm
 Medium Pulse Laser, Left Torso
 Medium Pulse Laser, Right Torso
+ER Large Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLERLargeLaser
-CLCASEII
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLERLargeLaser (omnipod)
+CLCASEII (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLERLargeLaser
-CLCASEII
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLERLargeLaser (omnipod)
+CLCASEII (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLMediumPulseLaser
-HAG/30 Ammo
-HAG/30 Ammo
-HAG/30 Ammo
-HAG/30 Ammo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMediumPulseLaser (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+-Empty-
+-Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLMediumPulseLaser
-HAG/30 Ammo
-HAG/30 Ammo
-HAG/30 Ammo
-HAG/30 Ammo
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLMediumPulseLaser (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
 -Empty-
 
 Center Torso:
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERLargeLaser
+CLERLargeLaser (omnipod)
 Sensors
 Life Support
 -Empty-

@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:50
-Engine:250 XL (Clan) Engine
-Structure:Endo Steel
+Engine:250 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -47,26 +47,26 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLStreakSRM6
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLUltraAC2
-CLUltraAC2
-Clan Ultra AC/2 Ammo
-Endo Steel
-Endo Steel
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+Clan Ultra AC/2 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -75,27 +75,27 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLAntiMissileSystem
-CLAMS Ammo
-CLFlamer
-CLTAG
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+CLFlamer (omnipod)
+CLTAG (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Jump Jet
-CLLRM10
-CLArtemisIV
-Clan Ammo LRM-10 (Clan) Artemis-capable
-CLActiveProbe
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM10 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
+CLActiveProbe (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -111,13 +111,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -133,7 +133,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -147,7 +147,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
 -Empty-
 -Empty-
 -Empty-

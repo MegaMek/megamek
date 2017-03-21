@@ -76,26 +76,30 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLGaussRifle
-CLGaussRifle
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Gauss Ammo
-Clan Gauss Ammo
+CLGaussRifle:OMNI
+CLGaussRifle:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+Clan Gauss Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERLargeLaser
+CLERLargeLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERLargeLaser
+CLERLargeLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERMediumLaser
-CLMediumPulseLaser
+CLERMediumLaser:OMNI
+CLMediumPulseLaser:OMNI
 </Aft Equipment>
 
 <source>

@@ -14,11 +14,11 @@ Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
-Base Chassis Heat Sinks:0
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -32,72 +32,72 @@ RTR Armor:10
 RTC Armor:14
 
 Weapons:10
-Streak SRM 2, Head
-ATM 6, Right Torso
+Large Pulse Laser, Left Arm
+Heavy Medium Laser, Left Arm
+Ultra AC/10, Right Arm
+LB 5-X AC, Right Arm
 LRM 15, Left Torso
 SRM 4, Left Torso
-LB 5-X AC, Right Arm
-Ultra AC/10, Right Arm
+ATM 6, Right Torso
 ER Micro Laser, Center Torso
 ER Micro Laser, Center Torso
-Heavy Medium Laser, Left Arm
-Large Pulse Laser, Left Arm
+Streak SRM 2, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-CLLBXAC5
-Clan Ultra AC/10 Ammo
-Clan Ultra AC/10 Ammo
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+CLLBXAC5 (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLLRM15
-CLLRM15
-CLArtemisIV
-CLSRM4
-CLArtemisIV
-Clan Ammo LRM-15 (Clan) Artemis-capable
-Clan Ammo SRM-4 (Clan) Artemis-capable
-Clan Streak SRM 2 Ammo
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+CLSRM4 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ammo SRM-4 (Clan) Artemis-capable (omnipod)
+Clan Streak SRM 2 Ammo (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLATM6
-CLATM6
-CLATM6
-Clan Ammo ATM-6
-Clan Ammo ATM-6 ER
-Clan Ammo ATM-6 HE
-Clan LB 5-X AC Ammo
-Clan LB 5-X Cluster Ammo
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 ER (omnipod)
+Clan Ammo ATM-6 HE (omnipod)
+Clan LB 5-X AC Ammo (omnipod)
+Clan LB 5-X Cluster Ammo (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -110,14 +110,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMicroLaser
-CLERMicroLaser
+CLERMicroLaser (omnipod)
+CLERMicroLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLStreakSRM2
+CLStreakSRM2 (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -146,8 +146,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

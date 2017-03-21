@@ -68,36 +68,40 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLUltraAC20
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-CLLargePulseLaser
-CLLargePulseLaser
-CLERSmallLaser
+CLUltraAC20:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+Clan Ultra AC/20 Ammo:OMNI
+CLLargePulseLaser:OMNI
+CLLargePulseLaser:OMNI
+CLERSmallLaser:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERPPC
+CLERPPC:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERPPC
+CLERPPC:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERLargeLaser
-CLERLargeLaser
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
+CLERLargeLaser:OMNI
+CLERLargeLaser:OMNI
+Cargo (1 ton):OMNI
+Cargo (1 ton):OMNI
+Cargo (1 ton):OMNI
+Cargo (1 ton):OMNI
+Cargo (1 ton):OMNI
+Cargo (1 ton):OMNI
+Cargo (1 ton):OMNI
+Cargo (1 ton):OMNI
+Cargo (1 ton):OMNI
+Cargo (1 ton):OMNI
 </Aft Equipment>
 
 <source>

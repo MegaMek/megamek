@@ -68,34 +68,42 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLActiveProbe
-CLECMSuite
-CLLargePulseLaser
-CLLargePulseLaser
+CLActiveProbe:OMNI
+CLECMSuite:OMNI
+CLLargePulseLaser:OMNI
+CLLargePulseLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLHAG40
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
+CLHAG40:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLHAG40
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
-HAG/40 Ammo
+CLHAG40:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+HAG/40 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERSmallLaser
+CLERSmallLaser:OMNI
 </Aft Equipment>
 
 <source>

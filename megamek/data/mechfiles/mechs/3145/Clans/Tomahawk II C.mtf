@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -32,71 +32,71 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:9
+LRM 15, Left Arm
+LRM 15, Left Arm
+LRM 15, Right Arm
+LRM 15, Right Arm
 Large Pulse Laser, Left Torso
-Large Pulse Laser, Center Torso
-Large Pulse Laser, Right Torso
 LRM 15, Left Torso
+Large Pulse Laser, Right Torso
 LRM 15, Right Torso
-LRM 15, Right Arm
-LRM 15, Left Arm
-LRM 15, Right Arm
-LRM 15, Left Arm
+Large Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM15
-CLLRM15
-CLLRM15
-CLLRM15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-CLCASEII
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+CLCASEII (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM15
-CLLRM15
-CLLRM15
-CLLRM15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-CLCASEII
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+CLCASEII (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLLRM15
-CLLRM15
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLLRM15
-CLLRM15
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -109,8 +109,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 
 Head:
 Life Support

@@ -2,68 +2,96 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Heimdall Ground Monitor Tank
 </Name>
+
 <Model>
 Prime
 </Model>
-<Tonnage>
-95
-</Tonnage>
+
+<year>
+3063
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
 106
 70
 70
 47
 59
-</Armor>
-<Turret Equipment>
-CLHeavyLargeLaser
-CLStreakSRM4
-CLStreakSRM4
-CLStreakSRM4
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+Clan LB 10-X Cluster Ammo
+Clan LB 10-X AC Ammo
+Clan LB 10-X Cluster Ammo
+Clan Streak SRM 4 Ammo:OMNI
+Clan Streak SRM 4 Ammo:OMNI
+Clan Streak SRM 4 Ammo:OMNI
+CLCASE:OMNI
+</Body Equipment>
+
 <Front Equipment>
 CLLBXAC10
 CLLBXAC10
 </Front Equipment>
-<Body Equipment>
-CLLBXAC10 CL Ammo
-CLLBXAC10 Ammo
-CLLBXAC10 CL Ammo
-CLStreakSRM4 Ammo
-CLStreakSRM4 Ammo
-CLStreakSRM4 Ammo
-CLCASE
-</Body Equipment>
-<type>
-Clan
-</type>
-<year>
-3063
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
-<omni>
-</omni>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLHeavyLargeLaser:OMNI
+CLStreakSRM4:OMNI
+CLStreakSRM4:OMNI
+CLStreakSRM4:OMNI
+</Turret Equipment>
+
+<tonnage>
+95.0
+</tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
+

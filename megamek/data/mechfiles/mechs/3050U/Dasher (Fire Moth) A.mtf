@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:20
-Engine:200 XL Engine
-Structure:Endo Steel
-Myomer:MASC
+Engine:200 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:8
 Walk MP:10
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:3
 RA Armor:3
 LT Armor:4
@@ -30,21 +31,20 @@ RTL Armor:2
 RTR Armor:2
 RTC Armor:2
 
-Weapons:4
-1 CLAntiMissileSystem, Left Arm, Ammo:24
-1 CLTAG, Right Arm
-1 CLActiveProbe, Right Arm
-1 CLStreakSRM4, Right Torso, Ammo:25
+Weapons:3
+AMS, Left Arm
+Clan TAG, Right Arm
+Streak SRM 4, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLAntiMissileSystem
-CLAMS Ammo
-Endo Steel
-Ferro-Fibrous
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +55,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLTAG
-CLActiveProbe
-Endo Steel
-Ferro-Fibrous
+CLTAG (omnipod)
+CLActiveProbe (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -67,11 +67,11 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -81,13 +81,13 @@ Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLStreakSRM4
-CLStreakSRM4 Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -104,13 +104,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLMASC
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -125,7 +125,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -139,7 +139,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -147,4 +147,5 @@ Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
 

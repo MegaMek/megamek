@@ -2,64 +2,96 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Badger (C) Tracked Transport
 </Name>
+
 <Model>
 H
 </Model>
-<Tonnage>
-30
-</Tonnage>
+
+<year>
+3062
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:5.0
+</transporters>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 6
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
 20
 18
 18
 14
 18
-</Armor>
-<Turret Equipment>
-CLHeavyMediumLaser
-CLStreakSRM2
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
-CLTargeting Computer
-CLStreakSRM2 Ammo
-CLCASE
+CLTargeting Computer:OMNI
+Clan Streak SRM 2 Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
-<transporters>
-TroopSpace:5
-</transporters>
-<type>
-Clan Level 2
-</type>
-<year>
-3062
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLHeavyMediumLaser:OMNI
+CLStreakSRM2:OMNI
+</Turret Equipment>
+
 <source>
 Civil War
 </source>
+
+<tonnage>
+30.0
+</tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
+

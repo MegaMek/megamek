@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:50
 Engine:200 XL Engine(IS)
-Structure:Endo Steel
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -48,11 +48,11 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-LRT 5
-LRT 5
-LRT 5
-IS Ammo LRTorpedo-5
-IS Ammo LRTorpedo-5
+LRT 5 (omnipod)
+LRT 5 (omnipod)
+LRT 5 (omnipod)
+IS Ammo LRTorpedo-5 (omnipod)
+IS Ammo LRTorpedo-5 (omnipod)
 IS HarJel
 -Empty-
 
@@ -62,11 +62,11 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-LRT 5
-LRT 5
-LRT 5
-ISERSmallLaser
-IS Ammo LRTorpedo-5
+LRT 5 (omnipod)
+LRT 5 (omnipod)
+LRT 5 (omnipod)
+ISERSmallLaser (omnipod)
+IS Ammo LRTorpedo-5 (omnipod)
 IS HarJel
 -Empty-
 
@@ -74,29 +74,29 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Light PPC
-Light PPC
+Light PPC (omnipod)
+Light PPC (omnipod)
 IS HarJel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Light PPC
-Light PPC
+Light PPC (omnipod)
+Light PPC (omnipod)
 IS HarJel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -110,13 +110,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 IS HarJel
-Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -155,3 +155,4 @@ Jump Jet
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\Blackjack Omni 3058U.jpg
+

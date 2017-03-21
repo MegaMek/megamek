@@ -1,24 +1,25 @@
-Version:1.0
+Version:1.1
 Archangel
 C-ANG-OS Caelestis
 
-Config:Biped Omni
+Config:Biped Omnimech
 TechBase:Mixed (IS Chassis)
 Era:3075
 Rules Level:4
 
 Mass:100
-Engine:300 Compact Engine
-Structure:Endo Steel
+Engine:300 Compact Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
-Gyro:Compact Gyro
 Cockpit:Small Cockpit
+Gyro:Compact Gyro
 
 Heat Sinks:17 Double
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -31,25 +32,27 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:16
 
-Weapons:5
-1 Thunderbolt 10, Right Arm, Ammo:6
-1 Blazer Cannon, Left Torso
-1 Blazer Cannon, Right Torso
-2 CLERSmallLaser, Left Arm
-1 ISImprovedC3CPU, Center Torso
-2 CLERMediumLaser, Center Torso
-2 ISERFlamer, Head
+Weapons:9
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+Thunderbolt 10, Right Arm
+Blazer Cannon, Left Torso
+Blazer Cannon, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
+ER Flamer, Head
+ER Flamer, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERSmallLaser
-CLERSmallLaser
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -59,42 +62,42 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Thunderbolt 10
-Thunderbolt 10
-ISThunderbolt10 Ammo
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+Thunderbolt 10 (omnipod)
+Thunderbolt 10 (omnipod)
+IS Ammo Thunderbolt-10 (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 
 Left Torso:
-Blazer Cannon
-Blazer Cannon
-Blazer Cannon
-Blazer Cannon
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-Blazer Cannon
-Blazer Cannon
-Blazer Cannon
-Blazer Cannon
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+Blazer Cannon (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -102,21 +105,21 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISImprovedC3CPU
-ISImprovedC3CPU
-CLERMediumLaser
-CLERMediumLaser
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISC3iUnit
+ISC3iUnit
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISERFlamer
-ISERFlamer
+ER Flamer (omnipod)
+ER Flamer (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -129,8 +132,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -143,11 +146,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

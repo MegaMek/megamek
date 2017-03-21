@@ -9,15 +9,16 @@ Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:30
-Engine:180 XL Engine
-Structure:Endo Steel
+Engine:180 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:7
 RA Armor:7
 LT Armor:8
@@ -30,19 +31,20 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:4
 
-Weapons:2
-1 CLHAG20, Right Arm, Ammo:12
-2 CLMediumPulseLaser, Left Arm
+Weapons:3
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+HAG/20, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLMediumPulseLaser
-CLMediumPulseLaser
-Endo Steel
-Ferro-Fibrous
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -51,39 +53,39 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20 Ammo
-CLHAG20 Ammo
-Endo Steel
-Ferro-Fibrous
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+HAG/20 Ammo (omnipod)
+HAG/20 Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -101,14 +103,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -145,4 +147,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

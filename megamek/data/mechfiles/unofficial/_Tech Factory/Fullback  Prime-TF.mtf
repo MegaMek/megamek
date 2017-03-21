@@ -8,15 +8,16 @@ Era:3055
 Rules Level:2
 
 Mass:90
-Engine:360 XL Engine
-Structure:Endo Steel
+Engine:360 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:18 Double
+Base Chassis Heat Sinks:14
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:30
 RA Armor:30
 LT Armor:28
@@ -30,67 +31,67 @@ RTR Armor:10
 RTC Armor:12
 
 Weapons:5
-1 CLERPPC, Right Arm
-1 CLGaussRifle, Left Arm, Ammo:16
-1 CLLRM20, Right Torso, Ammo:24
-1 CLLRM20, Left Torso
-1 CLERMediumLaser, Center Torso
+Gauss Rifle, Left Arm
+ER PPC, Right Arm
+LRM 20, Left Torso
+LRM 20, Right Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
-CLGauss Ammo
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Endo Steel
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Gauss Ammo (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM20 Ammo (Clan) Artemis-capable
-CLLRM20 Ammo (Clan) Artemis-capable
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERPPC
-CLERPPC
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
-Endo Steel
 -Empty-
 
 Left Torso:
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
--Empty-
-CLGauss Ammo
-Endo Steel
-Endo Steel
--Empty-
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Fusion Engine
 Fusion Engine
+-Empty-
+-Empty-
 
 Right Torso:
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Fusion Engine
+Fusion Engine
 -Empty-
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo Steel
-Endo Steel
-Fusion Engine
-Fusion Engine
 
 Center Torso:
 Fusion Engine
@@ -103,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -125,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -139,12 +140,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

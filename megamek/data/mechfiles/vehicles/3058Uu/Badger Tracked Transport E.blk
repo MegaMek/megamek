@@ -2,75 +2,101 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Badger Tracked Transport
 </Name>
+
 <Model>
 E
 </Model>
-<Tonnage>
-30
-</Tonnage>
+
+<year>
+3008
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 6
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
 20
 18
 18
 14
 18
-</Armor>
-<Turret Equipment>
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-ISSmallLaser
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
 <Front Equipment>
-ISSmallLaser
+Small Laser:OMNI
 </Front Equipment>
+
 <Right Equipment>
-ISSmallLaser
+Small Laser:OMNI
 </Right Equipment>
+
 <Left Equipment>
-ISSmallLaser
+Small Laser:OMNI
 </Left Equipment>
+
 <Rear Equipment>
-ISSmallLaser
+Small Laser:OMNI
 </Rear Equipment>
-<transporters>
-TroopSpace:4
-</transporters>
-<type>
-IS Level 2
-</type>
-<year>
-3008
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
-<omni>
-</omni>
+
+<Turret Equipment>
+Small Laser:OMNI
+Small Laser:OMNI
+Small Laser:OMNI
+Small Laser:OMNI
+Small Laser:OMNI
+Small Laser:OMNI
+</Turret Equipment>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+30.0
+</tonnage>
+
+<baseChassisTurretWeight>
+0.5
+</baseChassisTurretWeight>
+

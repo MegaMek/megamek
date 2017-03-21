@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -45,30 +45,30 @@ AMS, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLERLargeLaser
-CLSmallPulseLaser
-Clan Ultra AC/10 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLERLargeLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLUltraAC10
-CLERLargeLaser
-CLSmallPulseLaser
-Clan Ultra AC/10 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLERLargeLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -77,26 +77,26 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 CLERMediumLaser
-Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 CLERMediumLaser
-Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo (omnipod)
 CLMASC
 CLMASC
 CLMASC
-Endo Steel
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -110,7 +110,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLAMS Ammo
-Liquid Storage (1 ton)
+Liquid Storage (1 ton) (omnipod)
 
 Head:
 Life Support

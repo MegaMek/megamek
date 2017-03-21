@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Loki (Hellbringer)
 H
 
@@ -9,16 +9,16 @@ Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:65
-Engine:325 XL Fusion Engine
-Structure:Standard
+Engine:325 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:13 Double
-Base Chassis Heat Sinks: 13
+Base Chassis Heat Sinks:13
 Walk MP:5
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:11
 RA Armor:11
 LT Armor:14
@@ -31,25 +31,22 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:8
 
-Weapons:11
-1 CLERPPC, Right Arm
-1 CLHeavyLargeLaser, Left Arm
-1 CLUltraAC5, Right Torso, Ammo:40
-1 CLHeavySmallLaser, Left Torso
-1 CLHeavySmallLaser, Left Torso
-1 CLHeavySmallLaser, Left Torso
-1 CLHeavySmallLaser, Left Torso
-1 CLAntiPersonnelPod, Left Leg
-1 CLAntiPersonnelPod, Right Leg
-1 CLActiveProbe, Left Torso
-1 CLLRM15, Left Torso, Ammo:16
+Weapons:8
+Heavy Large Laser, Left Arm
+ER PPC, Right Arm
+Heavy Small Laser, Left Torso
+Heavy Small Laser, Left Torso
+Heavy Small Laser, Left Torso
+Heavy Small Laser, Left Torso
+LRM 15, Left Torso
+Ultra AC/5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHeavyLargeLaser
-CLHeavyLargeLaser
-CLHeavyLargeLaser
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -61,8 +58,8 @@ CLHeavyLargeLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -73,27 +70,27 @@ CLERPPC
 -Empty-
 
 Left Torso:
-Engine
-Engine
-CLHeavySmallLaser
-CLHeavySmallLaser
-CLHeavySmallLaser
-CLHeavySmallLaser
-CLActiveProbe
-CLLRM15
-CLLRM15
-CLLRM15 Ammo
-CLLRM15 Ammo
+Fusion Engine
+Fusion Engine
+CLHeavySmallLaser (omnipod)
+CLHeavySmallLaser (omnipod)
+CLHeavySmallLaser (omnipod)
+CLHeavySmallLaser (omnipod)
+CLActiveProbe (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
 -Empty-
 
 Right Torso:
-Engine
-Engine
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5 Ammo
-CLUltraAC5 Ammo
+Fusion Engine
+Fusion Engine
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -101,16 +98,16 @@ CLUltraAC5 Ammo
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 -Empty-
 -Empty-
 
@@ -121,13 +118,25 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 
 Right Leg:
@@ -135,5 +144,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLAntiPersonnelPod
+CLAntiPersonnelPod (omnipod)
 -Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

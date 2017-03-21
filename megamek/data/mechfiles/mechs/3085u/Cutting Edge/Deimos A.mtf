@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:85
 Engine:255 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:16 Double
@@ -32,43 +32,43 @@ RTR Armor:8
 RTC Armor:11
 
 Weapons:9
-AMS, Head
-ER Medium Laser, Right Torso
-ER Medium Laser, Left Torso
-LB 10-X AC, Right Arm
 LB 10-X AC, Left Arm
+LB 10-X AC, Right Arm
 ER PPC, Left Torso
-ER PPC, Right Torso
+ER Medium Laser, Left Torso
 Medium Pulse Laser, Left Torso
+ER PPC, Right Torso
+ER Medium Laser, Right Torso
 Medium Pulse Laser, Right Torso
+AMS, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-Clan LB 10-X AC Ammo
-Clan LB 10-X Cluster Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-Clan LB 10-X AC Ammo
-Clan LB 10-X Cluster Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -77,26 +77,26 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 CLERMediumLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 CLERMediumLaser
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 CLMASC
 CLMASC
 CLMASC
-Endo Steel
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -110,7 +110,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 CLAMS Ammo
-CLECMSuite
+CLECMSuite (omnipod)
 
 Head:
 Life Support

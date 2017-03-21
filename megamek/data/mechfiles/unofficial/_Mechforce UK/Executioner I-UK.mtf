@@ -8,15 +8,16 @@ Era:3060
 Rules Level:2
 
 Mass:95
-Engine:380 XL Engine
-Structure:Standard
-Myomer:MASC
+Engine:380 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
 
 Heat Sinks:16 Double
+Base Chassis Heat Sinks:15
 Walk MP:4
 Jump MP:4
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:32
 RA Armor:32
 LT Armor:20
@@ -29,24 +30,25 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:9
 
-Weapons:6
-1 CLLargePulseLaser, Right Arm
-1 CLLargePulseLaser, Left Arm
-2 CLMediumPulseLaser, Right Torso
-2 CLMediumPulseLaser, Left Torso
-1 CLAntiMissileSystem, Center Torso, Ammo:24
-1 CLECMSuite, Head
+Weapons:7
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+AMS, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -56,11 +58,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -68,12 +70,12 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -86,10 +88,10 @@ CLMASC
 CLMASC
 CLMASC
 CLMASC
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 
@@ -104,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLAntiMissileSystem
-CLAMS Ammo
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLECMSuite
+CLECMSuite (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -148,4 +150,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -34,36 +34,36 @@ RTR Armor:12
 RTC Armor:12
 
 Weapons:4
-ER Large Laser, Head
-ER Medium Laser, Head
 HAG/20, Left Arm
 HAG/20, Right Arm
+ER Large Laser, Head
+ER Medium Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-HAG/20 Ammo
-HAG/20 Ammo
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+HAG/20 Ammo (omnipod)
+HAG/20 Ammo (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-CLHAG20
-HAG/20 Ammo
-HAG/20 Ammo
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+CLHAG20 (omnipod)
+HAG/20 Ammo (omnipod)
+HAG/20 Ammo (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
@@ -71,11 +71,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 -Empty-
@@ -85,8 +85,8 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 -Empty-
@@ -113,8 +113,8 @@ Head:
 Sensors
 Sensors
 NovaCEWS
-CLERLargeLaser
-CLERMediumLaser
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-

@@ -9,8 +9,8 @@ Source:TRO 3058 - Succession Wars
 Rules Level:2
 
 Mass:65
-Engine:325 Fusion (Clan) Engine
-Structure:Standard
+Engine:325 Fusion (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -39,13 +39,13 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
 -Empty-
 -Empty-
 
@@ -53,13 +53,13 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
 -Empty-
 -Empty-
 

@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:40
-Engine:240 Fusion Engine
-Structure:Endo Steel
+Engine:240 Fusion Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Single
@@ -40,10 +40,10 @@ ER Small Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISMML7
-ISMML7
-ISMML7
-ISMML7
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,10 +54,10 @@ ISMML7
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMML7
-ISMML7
-ISMML7
-ISMML7
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -66,28 +66,28 @@ ISMML7
 -Empty-
 
 Left Torso:
-IS Ammo MML-7 LRM
+IS Ammo MML-7 LRM (omnipod)
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-IS Ammo MML-7 SRM
+IS Ammo MML-7 SRM (omnipod)
 ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -104,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
-ISERSmallLaser
+ISERSmallLaser (omnipod)
+ISERSmallLaser (omnipod)
 
 Head:
 Life Support
@@ -127,7 +127,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Heat Sink
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,7 +140,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

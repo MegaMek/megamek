@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:35
-Engine:175 XL (Clan) Engine
-Structure:Endo Steel
+Engine:175 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -32,21 +32,21 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:16
-Heavy Machine Gun Array, Left Arm
-Heavy Machine Gun, Left Arm
-Heavy Machine Gun, Left Arm
-Heavy Machine Gun, Left Arm
-Heavy Machine Gun, Left Arm
 Medium Pulse Laser, Left Arm
-Heavy Machine Gun Array, Right Arm
-Heavy Machine Gun, Right Arm
-Heavy Machine Gun, Right Arm
-Heavy Machine Gun, Right Arm
-Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Heavy Machine Gun Array, Left Arm
 Medium Pulse Laser, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+Heavy Machine Gun Array, Right Arm
 B-Pod, Left Torso
-B-Pod, Right Torso
 Streak SRM 4, Right Torso
+B-Pod, Right Torso
 Medium Pulse Laser, Head
 
 Left Arm:
@@ -55,12 +55,12 @@ Upper Arm Actuator
 Lower Arm Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLMediumPulseLaser
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHMGA
+CLMediumPulseLaser (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+Clan Heavy Machine Gun Array (omnipod)
 -Empty-
 
 Right Arm:
@@ -69,41 +69,41 @@ Upper Arm Actuator
 Lower Arm Actuator
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLMediumPulseLaser
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHMGA
+CLMediumPulseLaser (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+CLHeavyMG (omnipod)
+Clan Heavy Machine Gun Array (omnipod)
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Jump Jet
-Clan Heavy Machine Gun Ammo - Full
-CLBPod
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Clan Heavy Machine Gun Ammo - Full (omnipod)
+CLBPod (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-Jump Jet
-Jump Jet
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
-CLBPod
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+CLBPod (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -116,14 +116,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -138,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -152,8 +152,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

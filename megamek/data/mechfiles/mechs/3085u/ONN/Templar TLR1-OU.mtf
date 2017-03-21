@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:85
 Engine:340 XL Engine(IS)
-Structure:Endo Steel
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -44,57 +44,57 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-LRT 10
-LRT 10
-LRT 10
-LRT 10
+LRT 10 (omnipod)
+LRT 10 (omnipod)
+LRT 10 (omnipod)
+LRT 10 (omnipod)
 IS HarJel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISLargePulseLaser
-ISLargePulseLaser
-SRT 6
-SRT 6
-ISMediumPulseLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISLargePulseLaser (omnipod)
+ISLargePulseLaser (omnipod)
+SRT 6 (omnipod)
+SRT 6 (omnipod)
+ISMediumPulseLaser (omnipod)
 IS HarJel
-Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISUMU
-ISUMU
-ISC3SlaveUnit
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISUMU (omnipod)
+ISUMU (omnipod)
+ISC3SlaveUnit (omnipod)
 IS HarJel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISUMU
-ISUMU
-IS Ammo LRTorpedo-10
-IS Ammo LRTorpedo-10
-IS Ammo SRTorpedo-6
+ISUMU (omnipod)
+ISUMU (omnipod)
+IS Ammo LRTorpedo-10 (omnipod)
+IS Ammo LRTorpedo-10 (omnipod)
+IS Ammo SRTorpedo-6 (omnipod)
 IS HarJel
 ISCASE
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -153,3 +153,4 @@ Endo Steel
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\TRO3067_Templar.jpg
+

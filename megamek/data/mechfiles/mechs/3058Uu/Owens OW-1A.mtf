@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:35
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Single
@@ -42,7 +42,7 @@ Small Pulse Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISStreakSRM2
+ISStreakSRM2 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -56,7 +56,7 @@ ISStreakSRM2
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISStreakSRM2
+ISStreakSRM2 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -71,7 +71,7 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Streak SRM 2 Ammo
+IS Streak SRM 2 Ammo (omnipod)
 BeagleActiveProbe
 BeagleActiveProbe
 -Empty-
@@ -85,7 +85,7 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Ammo MG - Full
+IS Ammo MG - Full (omnipod)
 ISTAG
 ISC3SlaveUnit
 -Empty-
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Machine Gun
-Machine Gun
+Machine Gun (omnipod)
+Machine Gun (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISSmallPulseLaser
+ISSmallPulseLaser (omnipod)
 Sensors
 Life Support
 -Empty-

@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:70
 Engine:280 XL Engine(IS)
-Structure:Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -44,36 +44,36 @@ Medium Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-LRT 15
-LRT 15
-LRT 15
-ISArtemisIV
-SRT 4
-ISArtemisIV
-IS Ammo SRTorpedo-4 Artemis-capable
-IS Ammo LRTorpedo-15 Artemis-capable
-IS Ammo LRTorpedo-15 Artemis-capable
+LRT 15 (omnipod)
+LRT 15 (omnipod)
+LRT 15 (omnipod)
+ISArtemisIV (omnipod)
+SRT 4 (omnipod)
+ISArtemisIV (omnipod)
+IS Ammo SRTorpedo-4 Artemis-capable (omnipod)
+IS Ammo LRTorpedo-15 Artemis-capable (omnipod)
+IS Ammo LRTorpedo-15 Artemis-capable (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-LRT 15
-LRT 15
-LRT 15
-ISArtemisIV
-SRT 4
-ISArtemisIV
-IS Ammo SRTorpedo-4 Artemis-capable
-IS Ammo LRTorpedo-15 Artemis-capable
-IS Ammo LRTorpedo-15 Artemis-capable
+LRT 15 (omnipod)
+LRT 15 (omnipod)
+LRT 15 (omnipod)
+ISArtemisIV (omnipod)
+SRT 4 (omnipod)
+ISArtemisIV (omnipod)
+IS Ammo SRTorpedo-4 Artemis-capable (omnipod)
+IS Ammo LRTorpedo-15 Artemis-capable (omnipod)
+IS Ammo LRTorpedo-15 Artemis-capable (omnipod)
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISSmallPulseLaser
+ISSmallPulseLaser (omnipod)
 ISCASE
 -Empty-
 -Empty-
@@ -87,11 +87,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
-ISC3MasterUnit
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
 ISCASE
 -Empty-
 -Empty-

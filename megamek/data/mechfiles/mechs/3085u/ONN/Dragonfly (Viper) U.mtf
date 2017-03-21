@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:40
 Engine:320 XL (Clan) Engine
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -41,11 +41,11 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Hatchet
-Hatchet
-Hatchet
-Ferro-Fibrous
-Ferro-Fibrous
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +55,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -69,12 +69,12 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLAntiMissileSystem
-CLAMS Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -83,11 +83,11 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLECMSuite
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
+CLECMSuite (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -103,14 +103,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Liquid Storage (1 ton)
-Endo Steel
+Liquid Storage (1 ton) (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

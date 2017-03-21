@@ -1,23 +1,24 @@
-Version:1.1
+Version:1.0
 Templar
 TLR1-OG
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3069
+Source:3067 Unabridged
 Rules Level:2
-source:3067 Unabridged
 
 Mass:85
-Engine:340 XL Fusion Engine
-Structure:Endo-Steel
+Engine:340 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -30,24 +31,23 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:6
-1 ISC3SlaveUnit, Center Torso
-1 ISLBXAC2, Right Arm, Ammo:45
-1 ISLBXAC2, Left Torso
-1 ISLBXAC2, Right Torso
-1 ISLightGaussRifle, Right Arm, Ammo:16
-1 ISERPPC, Left Arm
+Weapons:5
+ER PPC, Left Arm
+Light Gauss Rifle, Right Arm
+LB 2-X AC, Right Arm
+LB 2-X AC, Left Torso
+LB 2-X AC, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISERPPC
-ISERPPC
-ISERPPC
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -55,79 +55,99 @@ Endo-Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLBXAC2
-ISLBXAC2
-ISLBXAC2
-ISLBXAC2
-Endo-Steel
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLBXAC2 (omnipod)
+ISLBXAC2 (omnipod)
+ISLBXAC2 (omnipod)
+ISLBXAC2 (omnipod)
+IS Endo Steel
 
 Left Torso:
-Engine
-Engine
-Engine
-ISLBXAC2
-ISLBXAC2
-ISLBXAC2
-ISLBXAC2
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC2 (omnipod)
+ISLBXAC2 (omnipod)
+ISLBXAC2 (omnipod)
+ISLBXAC2 (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Engine
-Engine
-Engine
-ISLBXAC2
-ISLBXAC2
-ISLBXAC2
-ISLBXAC2
-ISLBXAC2 Ammo
-ISLightGauss Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC2 (omnipod)
+ISLBXAC2 (omnipod)
+ISLBXAC2 (omnipod)
+ISLBXAC2 (omnipod)
+IS LB 2-X AC Ammo (omnipod)
+IS Light Gauss Ammo (omnipod)
 ISCASE
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISC3SlaveUnit
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISC3SlaveUnit (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:2
 
 Mass:30
-Engine:180 XL Engine
-Structure:Endo Steel
+Engine:180 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -43,28 +43,28 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMML7
-ISMML7
-ISMML7
-ISMML7
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMML7
-ISMML7
-ISMML7
-ISMML7
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -73,10 +73,10 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERMediumLaser
-ISERMediumLaser
-ISERMediumLaser
-IS Ammo MML-7 LRM
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
+IS Ammo MML-7 LRM (omnipod)
 -Empty-
 -Empty-
 
@@ -90,7 +90,7 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-IS Ammo MML-7 SRM
+IS Ammo MML-7 SRM (omnipod)
 -Empty-
 -Empty-
 
@@ -105,8 +105,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Head:
 Life Support
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

@@ -2,63 +2,99 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Manteuffel Attack Tank
 </Name>
+
 <Model>
 B
 </Model>
-<Tonnage>
-70
-</Tonnage>
+
+<year>
+3062
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 56
 40
 40
 25
 45
-</Armor>
-<Turret Equipment>
-ISMediumLaser
-ISERSmallLaser
-</Turret Equipment>
-<Front Equipment>
-ISHeavyGaussRifle
-</Front Equipment>
+</armor>
+
 <Body Equipment>
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
+ISHeavyGauss Ammo:OMNI
+ISHeavyGauss Ammo:OMNI
+ISHeavyGauss Ammo:OMNI
+ISHeavyGauss Ammo:OMNI
 ISCASE
 </Body Equipment>
-<type>
-IS
-</type>
-<year>
-3062
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+ISHeavyGaussRifle:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser:OMNI
+ISERSmallLaser:OMNI
+</Turret Equipment>
+
+<tonnage>
+70.0
+</tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
+

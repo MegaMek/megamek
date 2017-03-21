@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:90
-Engine:360 XL Engine
-Structure:Standard
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -33,23 +33,23 @@ RTC Armor:12
 
 Weapons:7
 Gauss Rifle, Left Arm
+ER PPC, Right Arm
 Medium Pulse Laser, Left Torso
 Medium Pulse Laser, Right Torso
-ER PPC, Right Arm
+LRM 5, Center Torso
+LRM 5, Center Torso
 LRM 5, Head
-LRM 5, Center Torso
-LRM 5, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -60,9 +60,9 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -72,9 +72,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser
-IS Gauss Ammo
-IS Gauss Ammo
+ISMediumPulseLaser (omnipod)
+IS Gauss Ammo (omnipod)
+IS Gauss Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -86,9 +86,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser
-IS Ammo LRM-5
-IS Ammo LRM-5
+ISMediumPulseLaser (omnipod)
+IS Ammo LRM-5 (omnipod)
+IS Ammo LRM-5 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-LRM 5
-LRM 5
+LRM 5 (omnipod)
+LRM 5 (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-LRM 5
+LRM 5 (omnipod)
 Sensors
 Life Support
 -Empty-

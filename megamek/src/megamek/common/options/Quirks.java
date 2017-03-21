@@ -233,7 +233,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_MAINTAIN)
                     || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)    
+                    || qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)
                     || qName.equals(OptionsConstants.QUIRK_NEG_HARD_PILOT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN)
                     || qName.equals(OptionsConstants.QUIRK_NEG_LOW_ARMS)
@@ -277,6 +277,8 @@ public class Quirks extends AbstractOptions {
                 } else {
                     return false;
                 }
+            } else if (en.hasEngine() && en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
+                return false;
             } else if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
@@ -298,8 +300,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)                    
+                    || qName.equals(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)                  
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_NO_TWIST)
@@ -317,10 +318,6 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_3)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_4)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)) {
-                return false;
-            }
-            
-            if(en.hasEngine() && !en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                 return false;
             }
             

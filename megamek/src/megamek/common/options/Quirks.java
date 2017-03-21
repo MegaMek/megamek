@@ -142,7 +142,6 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_OVERSIZED, false);
         
         //quirks not implemented yet
-        //Cooling System Flaws
         //Exposed Weapon Linkage (weapon-specific, sort of)
         //Gas Hog
         //Large Dropship (no docking)

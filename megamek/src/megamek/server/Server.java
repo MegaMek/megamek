@@ -13546,6 +13546,7 @@ public class Server implements Runnable {
                     m.setJammed(false);
                     ((Tank) entity).getJammedWeapons().remove(m);
                     Report r = new Report(3034);
+                    r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(m.getName());
                     addReport(r);

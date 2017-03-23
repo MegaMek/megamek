@@ -13316,8 +13316,8 @@ public class Server implements Runnable {
                     }
                 }
                 for (int dist = 1; dist <= maxDist; dist++) {
-                    for (int dir = 0; dir <= 5; dir++) {
-                        Coords pos = e.getPosition().translated(dir, dist);
+                    List<Coords> coords = Compute.coordsAtRange(e.getPosition(), dist);
+                    for (Coords pos : coords) {
                         // Check that we're in the right arc
                         if (Compute.isInArc(game, e.getId(), e
                                 .getEquipmentNum(ams),
@@ -23057,8 +23057,8 @@ public class Server implements Runnable {
         }
         vDesc.addAll(reports);
         for (int dist = 1; dist < maxDist; dist++) {
-            for (int dir = 0; dir < 6; dir++) {
-                Coords c = position.translated(dir, dist);
+            List<Coords> coords = Compute.coordsAtRange(position, dist);
+            for (Coords c : coords) {
                 hex = game.getBoard().getHex(c);
                 if ((hex != null) && hex.hasTerrainfactor()) {
                     r = new Report(3384);

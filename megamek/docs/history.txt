@@ -12,6 +12,7 @@ v0.42.2-git
 + Issue #511: Fall height is wrong for falls when moving into a higher hex
 + Bug: ASF can use Silver Bullet Gauss Rifles/Ammo
 + Issue #510: Reports related to geysers weren't marked public
++ Issue #440: Explosions greater than 1 hex ring away not affecting all hexes
 
 v0.42.1 (2017-02-13 03:30 UTC)
 + Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

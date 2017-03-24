@@ -158,8 +158,7 @@ public class BLKFile {
                     try {
                         Mounted mount = t.addEquipment(etype, nLoc, false,
                                 BattleArmor.MOUNT_LOC_NONE, false, false,
-                                isTurreted, isPintleTurreted);
-                        mount.setOmniPodMounted(isOmniMounted);
+                                isTurreted, isPintleTurreted, isOmniMounted);
                         // Need to set facing for VGLs
                         if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {

@@ -25527,6 +25527,7 @@ public class Server implements Runnable {
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE)
                 && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
+                && !((t instanceof VTOL) || (t instanceof GunEmplacement))
                 && !t.getOverThresh()) {
             r = new Report(6006);
             r.subject = t.getId();

@@ -9761,8 +9761,8 @@ public class Server implements Runnable {
             r.indent(2);
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
-            createSmoke(tempcoords, 2, 3);
-            hex = game.getBoard().getHex(coords);
+            createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
+            hex = game.getBoard().getHex(tempcoords);
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
             sendChangedHex(tempcoords);
@@ -9797,6 +9797,7 @@ public class Server implements Runnable {
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
             createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
+            hex = game.getBoard().getHex(tempcoords);
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
             sendChangedHex(tempcoords);

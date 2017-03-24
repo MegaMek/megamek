@@ -15,6 +15,7 @@ v0.42.2-git
 + Issue #440: Explosions greater than 1 hex ring away not affecting all hexes
 + Issue #488: Chat window not disabling some hotkeys in targeting phase
 + Issue #466: Themed hexes can revert to no theme on explosions
++ Bug: Fuel tank magnitude terrain type not removed from collapsed buildings
 
 v0.42.1 (2017-02-13 03:30 UTC)
 + Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

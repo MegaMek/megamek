@@ -1261,6 +1261,7 @@ public class Board implements Serializable, IBoard {
         curHex.removeTerrain(Terrains.FUEL_TANK);
         curHex.removeTerrain(Terrains.FUEL_TANK_CF);
         curHex.removeTerrain(Terrains.FUEL_TANK_ELEV);
+        curHex.removeTerrain(Terrains.FUEL_TANK_MAGN);
         curHex.removeTerrain(Terrains.BRIDGE);
         curHex.removeTerrain(Terrains.BRIDGE_CF);
         curHex.removeTerrain(Terrains.BRIDGE_ELEV);

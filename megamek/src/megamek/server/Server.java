@@ -4505,6 +4505,10 @@ public class Server implements Runnable {
                // Handle zip lines
                 PilotingRollData psr = getEjectModifiers(game, unit, false,
                         unit.getPosition(), "Anti-mek skill");
+                // Factor in Elevation
+                if (unloader.getElevation() > 0) {
+                    psr.addModifier(unloader.getElevation(), "elevation");
+                }
                 int roll = Compute.d6(2);
 
                 // Report ziplining

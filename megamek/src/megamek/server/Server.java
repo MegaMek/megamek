@@ -9762,8 +9762,8 @@ public class Server implements Runnable {
             r.indent(2);
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
-            createSmoke(tempcoords, 2, 3);
-            hex = game.getBoard().getHex(coords);
+            createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
+            hex = game.getBoard().getHex(tempcoords);
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
             sendChangedHex(tempcoords);
@@ -9798,6 +9798,7 @@ public class Server implements Runnable {
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
             createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
+            hex = game.getBoard().getHex(tempcoords);
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
             sendChangedHex(tempcoords);
@@ -13317,8 +13318,8 @@ public class Server implements Runnable {
                     }
                 }
                 for (int dist = 1; dist <= maxDist; dist++) {
-                    for (int dir = 0; dir <= 5; dir++) {
-                        Coords pos = e.getPosition().translated(dir, dist);
+                    List<Coords> coords = Compute.coordsAtRange(e.getPosition(), dist);
+                    for (Coords pos : coords) {
                         // Check that we're in the right arc
                         if (Compute.isInArc(game, e.getId(), e
                                 .getEquipmentNum(ams),
@@ -13546,6 +13547,7 @@ public class Server implements Runnable {
                     m.setJammed(false);
                     ((Tank) entity).getJammedWeapons().remove(m);
                     Report r = new Report(3034);
+                    r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(m.getName());
                     addReport(r);
@@ -23057,8 +23059,8 @@ public class Server implements Runnable {
         }
         vDesc.addAll(reports);
         for (int dist = 1; dist < maxDist; dist++) {
-            for (int dir = 0; dir < 6; dir++) {
-                Coords c = position.translated(dir, dist);
+            List<Coords> coords = Compute.coordsAtRange(position, dist);
+            for (Coords c : coords) {
                 hex = game.getBoard().getHex(c);
                 if ((hex != null) && hex.hasTerrainfactor()) {
                     r = new Report(3384);
@@ -25526,6 +25528,7 @@ public class Server implements Runnable {
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE)
                 && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
+                && !((t instanceof VTOL) || (t instanceof GunEmplacement))
                 && !t.getOverThresh()) {
             r = new Report(6006);
             r.subject = t.getId();

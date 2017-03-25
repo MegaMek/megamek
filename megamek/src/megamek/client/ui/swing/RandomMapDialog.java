@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -340,6 +341,8 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             return;
         }
 
+        // Cache the selected boards, so we can restore them
+        ArrayList<String> selectedBoards = mapSettings.getBoardsSelectedVector();
         // Load the file.  If there is an error, log it and return.
         try(InputStream is = new FileInputStream(selectedFile)) {
             mapSettings = MapSettings.getInstance(is);
@@ -347,6 +350,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
             e.printStackTrace();
             return;
         }
+        mapSettings.setBoardsSelectedVector(selectedBoards);
 
         // Pass the loaded settings into the two different views.
         basicPanel.setMapSettings(mapSettings);

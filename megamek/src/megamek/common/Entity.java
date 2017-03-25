@@ -3113,7 +3113,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public Mounted addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted) throws LocationFullException {
         return addEquipment(etype, loc, rearMounted,
-                            BattleArmor.MOUNT_LOC_NONE, false, false);
+                            BattleArmor.MOUNT_LOC_NONE, false, false, false, false, false);
     }
 
     /**
@@ -3123,7 +3123,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted) throws LocationFullException {
         return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
-                            isTurreted, false);
+                            isTurreted, false, false, false);
     }
 
     public Mounted addEquipment(EquipmentType etype, int loc,
@@ -3131,19 +3131,28 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 boolean isTurreted, boolean isSponsonTurreted)
             throws LocationFullException {
         return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
-                            isTurreted, isSponsonTurreted, false);
+                            isTurreted, isSponsonTurreted, false, false);
     }
 
     public Mounted addEquipment(EquipmentType etype, int loc,
+            boolean rearMounted, int baMountLoc, boolean isArmored,
+            boolean isTurreted, boolean isSponsonTurreted,
+            boolean isPintleTurreted) throws LocationFullException {
+        return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
+                isTurreted, isSponsonTurreted, isPintleTurreted, false);        
+    }
+    
+    public Mounted addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted, boolean isSponsonTurreted,
-                                boolean isPintleTurreted) throws LocationFullException {
+                                boolean isPintleTurreted, boolean isOmniPodded) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         mounted.setArmored(isArmored);
         mounted.setBaMountLoc(baMountLoc);
         mounted.setMechTurretMounted(isTurreted);
         mounted.setSponsonTurretMounted(isSponsonTurreted);
         mounted.setPintleTurretMounted(isPintleTurreted);
+        mounted.setOmniPodMounted(isOmniPodded);
         addEquipment(mounted, loc, rearMounted);
         return mounted;
     }
@@ -3244,6 +3253,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
                     && (AmmoType.getOneshotAmmo(mounted) != null)) {
                 Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
+                m.setOmniPodMounted(mounted.isOmniPodMounted());
                 m.setShotsLeft(1);
                 mounted.setLinked(m);
                 // Oneshot ammo will be identified by having a location

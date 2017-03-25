@@ -405,7 +405,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Coords firstLOS;
     
     /** stores the theme last selected to override all hex themes */
-    private String selectedTheme = "";
+    private String selectedTheme = null;
 
     // selected entity and weapon for artillery display
     Entity selectedEntity = null;
@@ -4988,7 +4988,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         tileManager.waitForHex(hex);
         clearShadowMap();
         // Maybe have to set the hexes' theme.  Null clientgui implies board editor - don't mess with theme
-        if ((selectedTheme != null) && (clientgui != null)) {
+        if ((selectedTheme != null) && !selectedTheme.equals("(Original Theme)") && (clientgui != null)) {
             if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
                 hex.setTheme("");
                 game.getBoard().setHex(b.getCoords(), hex);

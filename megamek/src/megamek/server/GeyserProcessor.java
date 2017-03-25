@@ -60,7 +60,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
             } else {
                 IHex hex = server.getGame().getBoard().getHex(g.position);
                 if (hex.terrainLevel(Terrains.GEYSER) == 2) {
-                    r = new Report(5275);
+                    r = new Report(5275, Report.PUBLIC);
                     r.add(g.position.getBoardNum());
                     vPhaseReport.add(r);
                     hex.removeTerrain(Terrains.GEYSER);
@@ -68,7 +68,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                     server.getHexUpdateSet().add(g.position);
                 } else if (Compute.d6() == 1) {
                     if (hex.terrainLevel(Terrains.GEYSER) == 3) {
-                        r = new Report(5285);
+                        r = new Report(5285, Report.PUBLIC);
                         r.add(g.position.getBoardNum());
                         vPhaseReport.add(r);
                         hex.removeAllTerrains();
@@ -80,7 +80,7 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                             server.doMagmaDamage(e, true);
                         }
                     } else {
-                        r = new Report(5280);
+                        r = new Report(5280, Report.PUBLIC);
                         r.add(g.position.getBoardNum());
                         vPhaseReport.add(r);
                         hex.removeTerrain(Terrains.GEYSER);

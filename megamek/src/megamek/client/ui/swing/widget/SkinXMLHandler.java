@@ -104,6 +104,8 @@ public class SkinXMLHandler {
     public static final String BACKGROUND_IMAGE = "background_image"; //$NON-NLS-1$
     public static final String SHOW_SCROLL_BARS = "show_scroll_bars"; //$NON-NLS-1$
     public static final String SHOULD_BOLD = "should_bold_mouseover"; //$NON-NLS-1$
+    public static final String FONT_NAME = "font_name"; //$NON-NLS-1$
+    public static final String FONT_SIZE = "font_size"; //$NON-NLS-1$
 
     // Unit Display Skin Specification XML tags
     public static final String GeneralTabIdle = "tab_general_idle"; //$NON-NLS-1$
@@ -277,6 +279,20 @@ public class SkinXMLHandler {
                 if (shouldBoldEle != null) {
                     skinSpec.shouldBoldMouseOver = Boolean
                             .parseBoolean(shouldBoldEle.getTextContent());
+                }
+
+                // Parse font name
+                Element fontNameEle = (Element) borderList
+                        .getElementsByTagName(FONT_NAME).item(0);
+                if (fontNameEle != null) {
+                    skinSpec.fontName = fontNameEle.getTextContent();
+                }
+
+                // Parse font size
+                Element fontSizeEle = (Element) borderList
+                        .getElementsByTagName(FONT_SIZE).item(0);
+                if (fontSizeEle != null) {
+                    skinSpec.fontSize = Integer.parseInt(fontSizeEle.getTextContent());
                 }
 
                 // Parse font colors
@@ -722,6 +738,20 @@ public class SkinXMLHandler {
         out.write("\t\t<" + SHOULD_BOLD + ">");
         out.write(((Boolean)skinSpec.shouldBoldMouseOver).toString());
         out.write("</" + SHOULD_BOLD + ">\n");
+
+        // Write font name
+        if (skinSpec.fontName != null) {
+            out.write("\t\t<" + FONT_NAME + ">");
+            out.write(skinSpec.fontName);
+            out.write("</" + FONT_NAME + ">\n");
+        }
+
+        // Write font name
+        if (skinSpec.fontName != null) {
+            out.write("\t\t<" + FONT_SIZE + ">");
+            out.write(skinSpec.fontSize);
+            out.write("</" + FONT_SIZE + ">\n");
+        }
 
         // Close UI_ELEMENT tag
         out.write("\t</" + UI_ELEMENT + ">\n\n");

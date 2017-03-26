@@ -203,7 +203,17 @@ public class SkinSpecification {
      * particularly for the board view. 
      */
     public boolean showScrollBars = false;
+
+    /**
+     * Specify a non-standard font, or null to use default.
+     */
+    public String fontName = null;
     
+    /**
+     * Specify a non-standard font size.  Only used when a non-standard font name is specified.
+     */
+    public int fontSize = 12;
+
     /**
      * Used to specify if the font should be bolded on mouseover.  Used for buttons.
      */

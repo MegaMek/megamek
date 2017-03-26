@@ -82,6 +82,11 @@ public class MegamekButton extends JButton {
     boolean isBGTiled = true;
 
     /**
+     * Determines if the button should bold the button text on mouseover.
+     */
+    boolean shouldBold = true;
+
+    /**
      * The color of the button text.
      */
     private Color buttonColor;
@@ -154,6 +159,7 @@ public class MegamekButton extends JButton {
         } else {
             activeColor = defaultActiveColor;
         }
+        shouldBold = skinSpec.shouldBoldMouseOver;
     }
 
     /**
@@ -262,10 +268,12 @@ public class MegamekButton extends JButton {
         if (this.isEnabled()) {
             if (isMousedOver) {
                 Font font = textLabel.getFont();
-                // same font but bold
-                Font boldFont = new Font(font.getFontName(), Font.BOLD,
-                        font.getSize() + 2);
-                textLabel.setFont(boldFont);
+                if (shouldBold) {
+                    // same font but bold
+                    Font boldFont = new Font(font.getFontName(), Font.BOLD,
+                            font.getSize() + 2);
+                    textLabel.setFont(boldFont);
+                }
                 textLabel.setForeground(activeColor);
             } else {
                 textLabel.setForeground(buttonColor);

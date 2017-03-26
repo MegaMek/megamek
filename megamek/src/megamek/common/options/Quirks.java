@@ -57,6 +57,9 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_PILOT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EXT_TWIST, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_FINE_MANIPULATORS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_GOOD_REP_1, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_GOOD_REP_2, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_HEAD_EJECT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_HYPER_ACTUATOR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_COM, false);
@@ -69,16 +72,22 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_LOW_PROFILE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MOD_WEAPONS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MULTI_TRAC, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_NIMBLE_JUMPER,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_POWER_REVERSE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_PRO_ACTUATOR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1,false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_IS,false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_UBIQUITOUS_CLAN,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VERSTIGAL_HANDS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR, false);
 
         
@@ -93,7 +102,8 @@ public class Quirks extends AbstractOptions {
 
         // negative quirks
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_BAD_REP, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_BAD_REP_IS, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_BAD_REP_CLAN, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_MAINTAIN, false);
@@ -221,7 +231,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_BAD_REP)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_BAD_REP_CLAN)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_MAINTAIN)
@@ -542,7 +552,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_TARG_L)
                     || qName.equals(OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L)
                     || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_BAD_REP)
+                    || qName.equals(OptionsConstants.QUIRK_NEG_BAD_REP_CLAN)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_MAINTAIN)
                     || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE)
                     || qName.equals(OptionsConstants.QUIRK_NEG_HARD_PILOT)

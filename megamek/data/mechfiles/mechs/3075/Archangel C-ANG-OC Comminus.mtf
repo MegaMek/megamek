@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:100
-Engine:300 Compact Engine
-Structure:Endo Steel
+Engine:300 Compact Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Compact Gyro
@@ -38,20 +38,20 @@ MRM 40, Left Arm
 MRM 40, Right Arm
 ER Medium Laser, Left Torso
 ER Medium Laser, Right Torso
-ER Small Laser, Center Torso (R)
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
 -Empty-
 
 Right Arm:
@@ -59,42 +59,42 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
-MRM 40
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
+MRM 40 (omnipod)
 -Empty-
 
 Left Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERMediumLaser
-IS MRM 40 Ammo
-IS MRM 40 Ammo
-ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERMediumLaser (omnipod)
+IS MRM 40 Ammo (omnipod)
+IS MRM 40 Ammo (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERMediumLaser
-IS MRM 40 Ammo
-IS MRM 40 Ammo
-ISCASE
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERMediumLaser (omnipod)
+IS MRM 40 Ammo (omnipod)
+IS MRM 40 Ammo (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -102,10 +102,10 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERSmallLaser (R)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERSmallLaser (R) (omnipod)
 ISC3iUnit
 ISC3iUnit
 -Empty-
@@ -115,8 +115,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISGuardianECMSuite
-ISGuardianECMSuite
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

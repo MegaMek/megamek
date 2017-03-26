@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:55
-Engine:385 XL (Clan) Engine
-Structure:Endo Steel
+Engine:385 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -40,25 +40,25 @@ ER Medium Laser, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLATM12
-CLATM12
-CLATM12
-CLATM12
-CLATM12
-Clan Ammo ATM-12
-Clan Ammo ATM-12 ER
-Clan Ammo ATM-12 HE
-Ferro-Fibrous
-Ferro-Fibrous
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+Clan Ammo ATM-12 (omnipod)
+Clan Ammo ATM-12 ER (omnipod)
+Clan Ammo ATM-12 HE (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-Endo Steel
-Endo Steel
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -68,9 +68,9 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -82,9 +82,9 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

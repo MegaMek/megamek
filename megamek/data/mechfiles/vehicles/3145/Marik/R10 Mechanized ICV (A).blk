@@ -36,6 +36,10 @@ Wheeled
 troopspace:4.0
 </transporters>
 
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
@@ -52,6 +56,10 @@ troopspace:4.0
 1
 </armor_tech>
 
+<omni>
+1
+</omni>
+
 <armor>
 34
 25
@@ -61,14 +69,14 @@ troopspace:4.0
 </armor>
 
 <Body Equipment>
-IS Ammo LAC/5
-IS Ammo LAC/5
+IS Ammo LAC/5:OMNI
+IS Ammo LAC/5:OMNI
 ISCASE
 </Body Equipment>
 
 <Front Equipment>
-Medium Laser
-Medium Laser
+Medium Laser:OMNI
+Medium Laser:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -81,10 +89,10 @@ Medium Laser
 </Rear Equipment>
 
 <Turret Equipment>
-Light Auto Cannon/5
-Light Auto Cannon/5
-Medium Laser
-Medium Laser
+Light Auto Cannon/5:OMNI
+Light Auto Cannon/5:OMNI
+Medium Laser:OMNI
+Medium Laser:OMNI
 </Turret Equipment>
 
 <source>
@@ -95,8 +103,7 @@ TRO 3145 Free Worlds League - Early Republic
 45.0
 </tonnage>
 
-<omni>
-1
-</omni>
-
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

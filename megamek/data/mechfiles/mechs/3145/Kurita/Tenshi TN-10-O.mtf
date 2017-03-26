@@ -46,56 +46,56 @@ Light PPC, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+IS Gauss Ammo (omnipod)
+IS Gauss Ammo (omnipod)
+IS Gauss Ammo (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Light PPC
-Light PPC
-Light PPC
-Light PPC
-Light PPC
-Light PPC
-Light PPC
-Light PPC
-Light PPC
-Light PPC
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISGuardianECMSuite
-ISGuardianECMSuite
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 
@@ -108,10 +108,10 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Supercharger
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Supercharger (omnipod)
 
 Head:
 Life Support
@@ -132,7 +132,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-RL10
+RL10 (omnipod)
 IS Endo-Composite
 -Empty-
 -Empty-
@@ -146,7 +146,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-RL10
+RL10 (omnipod)
 IS Endo-Composite
 -Empty-
 -Empty-

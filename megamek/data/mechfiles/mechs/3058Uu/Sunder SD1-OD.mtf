@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:90
-Engine:360 XL Engine
-Structure:Standard
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -32,23 +32,23 @@ RTR Armor:10
 RTC Armor:12
 
 Weapons:3
-LB 20-X AC, Left Arm
-Particle Cannon, Right Arm
-Particle Cannon, Right Arm
+LB 20-X AC, Left Torso
+PPC, Right Arm
+PPC, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
 
 Right Arm:
 Shoulder
@@ -56,22 +56,22 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Particle Cannon
-Particle Cannon
-Particle Cannon
-Particle Cannon
-Particle Cannon
-Particle Cannon
+PPC (omnipod)
+PPC (omnipod)
+PPC (omnipod)
+PPC (omnipod)
+PPC (omnipod)
+PPC (omnipod)
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-ISLBXAC20
-IS LB 20-X AC Ammo
-IS LB 20-X Cluster Ammo
+Jump Jet (omnipod)
+ISLBXAC20 (omnipod)
+IS LB 20-X AC Ammo (omnipod)
+IS LB 20-X Cluster Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -82,7 +82,7 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -103,7 +103,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (omnipod)
 -Empty-
 
 Head:

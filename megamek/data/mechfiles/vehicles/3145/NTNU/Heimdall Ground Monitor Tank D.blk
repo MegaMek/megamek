@@ -33,7 +33,7 @@ Tracked
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -57,13 +57,13 @@ Tracked
 </armor>
 
 <Body Equipment>
-CLLargeChemLaserAmmo
-CLLargeChemLaserAmmo
-CLLargeChemLaserAmmo
+CLLargeChemLaserAmmo:OMNI
+CLLargeChemLaserAmmo:OMNI
+CLLargeChemLaserAmmo:OMNI
 Clan LB 10-X AC Ammo
 Clan LB 10-X AC Ammo
 Clan LB 10-X Cluster Ammo
-CLCASE
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -81,11 +81,11 @@ CLLBXAC10
 </Rear Equipment>
 
 <Turret Equipment>
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLLargeChemLaser
-CLLargeChemLaser
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLLargeChemLaser:OMNI
+CLLargeChemLaser:OMNI
 </Turret Equipment>
 
 <source>
@@ -95,4 +95,8 @@ RS 3145 NTNU - Early Republic
 <tonnage>
 95.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

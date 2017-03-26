@@ -33,26 +33,26 @@ RTR Armor:5
 RTC Armor:6
 
 Weapons:7
+Rotary AC/2, Left Arm
 ER Medium Laser, Right Arm
 ER Small Laser, Left Torso
 ER Small Laser, Left Torso
-ER Micro Laser, Center Torso
-ER Micro Laser, Center Torso
-Rotary AC/2, Left Arm
 Bombast Laser, Right Torso
+ER Micro Laser, Center Torso
+ER Micro Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2
-CLRotaryAC2 Ammo
-CLRotaryAC2 Ammo
-CLCASEII
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 (omnipod)
+CLRotaryAC2 Ammo (omnipod)
+CLRotaryAC2 Ammo (omnipod)
+CLCASEII (omnipod)
 -Empty-
 
 Right Arm:
@@ -63,10 +63,10 @@ Hand Actuator
 TSM
 TSM
 TSM
-IS Lance
-IS Lance
-IS Lance
-CLERMediumLaser
+IS Lance (omnipod)
+IS Lance (omnipod)
+IS Lance (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 
 Left Torso:
@@ -79,8 +79,8 @@ Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
 -Empty-
 
 Right Torso:
@@ -92,9 +92,9 @@ Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-Bombast Laser
-Bombast Laser
-Bombast Laser
+Bombast Laser (omnipod)
+Bombast Laser (omnipod)
+Bombast Laser (omnipod)
 -Empty-
 
 Center Torso:
@@ -107,8 +107,8 @@ Fusion Engine
 TSM
 TSM
 TSM
-CLERMicroLaser
-CLERMicroLaser
+CLERMicroLaser (omnipod)
+CLERMicroLaser (omnipod)
 -Empty-
 
 Head:

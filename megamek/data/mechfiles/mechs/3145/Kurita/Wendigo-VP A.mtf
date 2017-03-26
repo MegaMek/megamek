@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:50
 Engine:250 XL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 Cockpit:Torso-Mounted Cockpit
 Gyro:Standard Gyro
@@ -34,21 +34,21 @@ RTR Armor:5
 RTC Armor:8
 
 Weapons:5
-AP Gauss Rifle, Right Arm
-AP Gauss Rifle, Left Arm
-AP Gauss Rifle, Head
 ER Large Laser, Left Arm
+AP Gauss Rifle, Left Arm
 ER Large Laser, Right Arm
+AP Gauss Rifle, Right Arm
+AP Gauss Rifle, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLAPGaussRifle
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLAPGaussRifle (omnipod)
 Clan Reflective
 Clan Reflective
 Clan Reflective
@@ -57,43 +57,43 @@ Clan Reflective
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargeLaser
-CLAPGaussRifle
-Clan Endo-Steel
-Clan Endo-Steel
-Clan Endo-Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargeLaser (omnipod)
+CLAPGaussRifle (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Life Support
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 Clan Reflective
 
 Center Torso:
@@ -113,10 +113,10 @@ Sensors
 Head:
 Sensors
 Sensors
-CLAPGaussRifle
-CLAPGaussRifle Ammo
-CLTargeting Computer
-CLTargeting Computer
+CLAPGaussRifle (omnipod)
+CLAPGaussRifle Ammo (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

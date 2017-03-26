@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+3
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -76,31 +80,43 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLHAG30
-HAG/30 Ammo
-HAG/30 Ammo
-HAG/30 Ammo
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-CLTargeting Computer
+CLHAG30:OMNI
+HAG/30 Ammo:OMNI
+HAG/30 Ammo:OMNI
+HAG/30 Ammo:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLERMediumLaser:OMNI
+CLTargeting Computer:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLStreakSRM6
-Clan Streak SRM 6 Ammo
+CLStreakSRM6:OMNI
+Clan Streak SRM 6 Ammo:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLECMSuite
+CLECMSuite:OMNI
 </Aft Equipment>
 
 <source>

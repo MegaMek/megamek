@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:40
 Engine:280 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -32,21 +32,21 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:6
-Small Pulse Laser, Right Torso
-Small Pulse Laser, Right Torso
-Streak SRM 4, Right Torso
-Streak SRM 4, Right Arm
 Streak SRM 4, Left Arm
+Streak SRM 4, Right Arm
 Streak SRM 4, Left Torso
+Streak SRM 4, Right Torso
+Small Pulse Laser, Right Torso
+Small Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM4
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLStreakSRM4 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -57,10 +57,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM4
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLStreakSRM4 (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -72,12 +72,12 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLStreakSRM4
-Clan Streak SRM 4 Ammo
-Clan Streak SRM 4 Ammo
-CLActiveProbe
-Endo Steel
-Endo Steel
+CLStreakSRM4 (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+CLActiveProbe (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
@@ -86,12 +86,12 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLStreakSRM4
-CLSmallPulseLaser
-CLSmallPulseLaser
-CLECMSuite
-Endo Steel
-Endo Steel
+CLStreakSRM4 (omnipod)
+CLSmallPulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+CLECMSuite (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
@@ -107,13 +107,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -129,7 +129,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -143,7 +143,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

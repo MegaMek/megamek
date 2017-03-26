@@ -34,20 +34,20 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:5
-ATM 3, Left Torso
-ATM 3, Right Torso
 ER Medium Laser, Left Arm
 ER Medium Laser, Left Arm
 Micro Pulse Laser, Left Arm
+ATM 3, Left Torso
+ATM 3, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERMediumLaser
-CLERMediumLaser
-CLMicroPulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLMicroPulseLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 IS Stealth
@@ -73,10 +73,10 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLATM3
-CLATM3
-CL Super Charger
-CLTargeting Computer
+CLATM3 (omnipod)
+CLATM3 (omnipod)
+CL Super Charger (omnipod)
+CLTargeting Computer (omnipod)
 Clan Endo Steel
 IS Stealth
 IS Stealth
@@ -87,10 +87,10 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLATM3
-CLATM3
-Clan Ammo ATM-3
-CLCASEII
+CLATM3 (omnipod)
+CLATM3 (omnipod)
+Clan Ammo ATM-3 (omnipod)
+CLCASEII (omnipod)
 Clan Endo Steel
 IS Stealth
 IS Stealth

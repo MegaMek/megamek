@@ -34,19 +34,19 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:6
-Large Pulse Laser, Right Arm
 Large Pulse Laser, Left Arm
 Medium Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
 Medium Pulse Laser, Right Arm
-MML 7, Right Torso
 MML 7, Left Torso
+MML 7, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISLargePulseLaser
-ISLargePulseLaser
-ISMediumPulseLaser
+ISLargePulseLaser (omnipod)
+ISLargePulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -58,9 +58,9 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLargePulseLaser
-ISLargePulseLaser
-ISMediumPulseLaser
+ISLargePulseLaser (omnipod)
+ISLargePulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -72,10 +72,10 @@ ISMediumPulseLaser
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISMML7
-ISMML7
-ISMML7
-ISMML7
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -86,12 +86,12 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISMML7
-ISMML7
-ISMML7
-ISMML7
-IS Ammo MML-7 LRM
-IS Ammo MML-7 SRM
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+IS Ammo MML-7 LRM (omnipod)
+IS Ammo MML-7 SRM (omnipod)
 ISCASE
 IS Endo Steel
 IS Endo Steel

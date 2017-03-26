@@ -407,7 +407,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Coords firstLOS;
     
     /** stores the theme last selected to override all hex themes */
-    private String selectedTheme = "";
+    private String selectedTheme = null;
 
     // selected entity and weapon for artillery display
     Entity selectedEntity = null;
@@ -2366,8 +2366,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (hex != null) {
                         drawOrthograph(c, g);
                         if (!saveBoardImage) {
-                            drawIsometricWreckSpritesForHex(c, g,
-                                    isometricWreckSprites);
+                            if (GUIPreferences.getInstance().getShowWrecks()) {
+                                drawIsometricWreckSpritesForHex(c, g,
+                                        isometricWreckSprites);
+                            }
                             drawIsometricSpritesForHex(c, g, isometricSprites);
                         }
                     }
@@ -4246,8 +4248,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Adds an attack to the sprite list.
      */
     public synchronized void addAttack(AttackAction aa) {
-        // do not make a sprite unless we're aware of both entities
-        // this is not a great solution but better than a crash
+        // Don't make sprites for unknown entities and sensor returns
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
         if ((ae == null) || (t == null)
@@ -4255,6 +4256,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             || (t.getPosition() == null) || (ae.getPosition() == null)) {
             return;
         }
+        EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(ae.getId(),
+                ae.getSecondaryPositions().size() > 0 ? 0 : -1));
+        if (eSprite.onlyDetectedBySensors()) {
+            return;
+        }
+
         repaint(100);
         for (AttackSprite sprite : attackSprites) {
             // can we just add this attack to an existing one?
@@ -4982,6 +4989,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         tileManager.clearHex(hex);
         tileManager.waitForHex(hex);
         clearShadowMap();
+        // Maybe have to set the hexes' theme.  Null clientgui implies board editor - don't mess with theme
+        if ((selectedTheme != null) && !selectedTheme.equals("(Original Theme)") && (clientgui != null)) {
+            if (selectedTheme.equals("(No Theme)") && (hex.getTheme() != null) && !hex.getTheme().equals("")) {
+                hex.setTheme("");
+                game.getBoard().setHex(b.getCoords(), hex);
+            } else if (!selectedTheme.equals(hex.getTheme())) {
+                hex.setTheme(selectedTheme);
+                game.getBoard().setHex(b.getCoords(), hex);
+            }
+        }
         repaint();
     }
 
@@ -5504,7 +5521,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
     
-            txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD>"); //$NON-NLS-1$
+            txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
             
             txt.append(Messages.getString("BoardView1.Tooltip.Hex", //$NON-NLS-1$
                     new Object[] { mcoords.getBoardNum(), mhex.getLevel() }));
@@ -5528,7 +5545,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                 }
             }
-            txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+            txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             
             // Distance from the selected unit and a planned movement end point
             if ((selectedEntity != null) && 
@@ -5536,7 +5553,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 int distance = selectedEntity
                         .getPosition()
                         .distance(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>"); //$NON-NLS-1$
+                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                 if (distance == 1) {
                     txt.append(Messages.getString("BoardView1.Tooltip.Distance1")); //$NON-NLS-1$
                 } else {
@@ -5555,19 +5572,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                 new Object[] { disPM }));
                     }
                 }
-                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+                txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
             
             // Fuel Tank
             if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD>"); //$NON-NLS-1$
+                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                 txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
                         mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                         bldg.toString(),
                         bldg.getCurrentCF(mcoords),
                 }));
-                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+                txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
             
             // Building
@@ -5575,7 +5592,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
                 // in the map editor, the building might not exist
                 if (bldg != null) {
-                    txt.append("<TABLE BORDER=0 BGCOLOR=#CCCC99 width=100%><TR><TD>"); //$NON-NLS-1$
+                    txt.append("<TABLE BORDER=0 BGCOLOR=#CCCC99 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                     txt.append(Messages.getString("BoardView1.Tooltip.Building", new Object[] { //$NON-NLS-1$
                             mhex.terrainLevel(Terrains.BLDG_ELEV),
                             bldg.toString(),
@@ -5588,20 +5605,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         txt.append(Messages
                                 .getString("BoardView1.Tooltip.BldgBasementCollapsed")); //$NON-NLS-1$
                     }
-                    txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+                    txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
                 }
             }
             
             // Bridge
             if (mhex.containsTerrain(Terrains.BRIDGE)) {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD>"); //$NON-NLS-1$
+                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                 txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV),
                         bldg.toString(),
                         bldg.getCurrentCF(mcoords),
                 }));
-                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+                txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
 
             if (game.containsMinefield(mcoords)) {
@@ -5699,9 +5716,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check if it's on any attacks
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>"); //$NON-NLS-1$
+                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">"); //$NON-NLS-1$
                 txt.append(aSprite.getTooltip().toString());
-                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+                txt.append("</FONT></TD></TR></TABLE>"); //$NON-NLS-1$
             }
         }
 
@@ -5780,14 +5797,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             
-            txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>");
+            txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD><FONT color=\"black\">");
             if (aaa.turnsTilHit == 1)
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", 
                         new Object[] { wpName, ammoName }));
             else
                 txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", 
                         new Object[] { wpName, ammoName, aaa.turnsTilHit }));
-            txt.append("</TD></TR></TABLE>");
+            txt.append("</FONT></TD></TR></TABLE>");
         }
 
         // Artillery fire adjustment

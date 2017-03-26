@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:35
-Engine:245 XL Engine
-Structure:Endo Steel
+Engine:245 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:9
 Walk MP:7
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:11
 RA Armor:11
 LT Armor:11
@@ -29,21 +30,23 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:6
 
-Weapons:2
-2 CLStreakSRM6, Right Arm, Ammo:45
-2 CLStreakSRM6, Left Arm
+Weapons:4
+Streak SRM 6, Left Arm
+Streak SRM 6, Left Arm
+Streak SRM 6, Right Arm
+Streak SRM 6, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-CLStreakSRM6
-CLStreakSRM6
-Endo Steel
-Endo Steel
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
@@ -51,22 +54,22 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-CLStreakSRM6
-CLStreakSRM6
-Endo Steel
-Endo Steel
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -78,9 +81,9 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -100,14 +103,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLStreakSRM6 Ammo
+Clan Streak SRM 6 Ammo (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -122,8 +125,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -136,12 +139,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

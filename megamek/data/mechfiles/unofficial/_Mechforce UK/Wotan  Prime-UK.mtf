@@ -8,15 +8,16 @@ Era:3055
 Rules Level:2
 
 Mass:60
-Engine:300 XL Engine
-Structure:Endo Steel
-Myomer:MASC
+Engine:300 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:11 Double
+Base Chassis Heat Sinks:10
 Walk MP:5
 Jump MP:5
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:19
 RA Armor:19
 LT Armor:21
@@ -29,68 +30,70 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:7
 
-Weapons:5
-2 CLStreakSRM6, Right Arm, Ammo:45
-2 CLStreakSRM6, Left Arm
-1 CLERLargeLaser, Right Torso
-1 CLStreakSRM6, Left Torso
-1 CLERSmallLaser, Head
+Weapons:7
+Streak SRM 6, Left Arm
+Streak SRM 6, Left Arm
+Streak SRM 6, Right Arm
+Streak SRM 6, Right Arm
+Streak SRM 6, Left Torso
+ER Large Laser, Right Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 Ammo
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Endo Steel
-Endo Steel
-Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERLargeLaser
-CLTargeting Computer
+CLERLargeLaser (omnipod)
+CLTargeting Computer (omnipod)
 CLMASC
 CLMASC
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
-Endo Steel
-Endo Steel
-Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -103,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Endo Steel
+Jump Jet (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -125,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -139,12 +142,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

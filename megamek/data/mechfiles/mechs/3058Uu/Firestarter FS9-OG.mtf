@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:45
-Engine:270 XL Engine
-Structure:Endo Steel
+Engine:270 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -43,27 +43,27 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Medium Laser
-Medium Laser
-Medium Laser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+Medium Laser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLBXAC5
-ISLBXAC5
-ISLBXAC5
-ISLBXAC5
-ISLBXAC5
-Endo Steel
-Endo Steel
-Endo Steel
+ISLBXAC5 (omnipod)
+ISLBXAC5 (omnipod)
+ISLBXAC5 (omnipod)
+ISLBXAC5 (omnipod)
+ISLBXAC5 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -77,8 +77,8 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
@@ -91,9 +91,9 @@ ISDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-IS LB 5-X AC Ammo
-IS LB 5-X Cluster Ammo
-ISCASE
+IS LB 5-X AC Ammo (omnipod)
+IS LB 5-X Cluster Ammo (omnipod)
+ISCASE (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

@@ -31,6 +31,8 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.Infantry;
 import megamek.common.LocationFullException;
+import megamek.common.MiscType;
+import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
@@ -81,11 +83,17 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             throw new EntityLoadingException("Could not find movement block.");
         }
         String sMotion = dataFile.getDataAsString("motion_type")[0];
+        t.setMicrolite(sMotion.equalsIgnoreCase("microlite"));
         EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);
         if (nMotion == EntityMovementMode.NONE) {
             throw new EntityLoadingException("Invalid movement type: " + sMotion);
         }
-        t.setMovementMode(nMotion);
+        if (nMotion == EntityMovementMode.INF_UMU
+        		&& sMotion.toLowerCase().contains("motorized")) {
+        	t.setMotorizedScuba();
+        } else {
+        	t.setMovementMode(nMotion);
+        }
 
         // get primary and secondary weapons
         if (dataFile.exists("secondn")) {
@@ -128,6 +136,24 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
                 throw new EntityLoadingException(ex.getMessage());
             }
         }
+        //TAG infantry have separate attacks for primary and secondary weapons.
+        if (null != stype && stype.hasFlag(WeaponType.F_TAG)) {
+        	t.setSpecializations(t.getSpecializations() | Infantry.TAG_TROOPS);
+            try {
+                t.addEquipment(ptype, Infantry.LOC_INFANTRY);
+            } catch (LocationFullException ex) {
+                throw new EntityLoadingException(ex.getMessage());
+            }
+        }
+        
+        if (dataFile.exists("armorKit")) {
+            String kitName = dataFile.getDataAsString("armorKit")[0];
+            EquipmentType kit = EquipmentType.get(kitName);
+            if ((null == kit) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
+                throw new EntityLoadingException(kitName + " is not an infantry armor kit");
+            }
+            t.setArmorKit(kit);
+        }
 
         if (dataFile.exists("dest")) {
             t.setDEST(true);
@@ -136,6 +162,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             t.setSpecializations(Integer.valueOf(dataFile
                     .getDataAsString("specialization")[0]));
         }
+        
         if (dataFile.exists("encumberingarmor")) {
             t.setArmorEncumbering(true);
         }
@@ -190,7 +217,21 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         } else {
             t.setAntiMekSkill(Infantry.ANTI_MECH_SKILL_UNTRAINED);
         }
-
+        
+        /* Some units (mostly Manei Domini) have cybernetics/prosthetics as part of the official
+         * unit description.
+         */
+        if (dataFile.exists("augmentation")) {
+        	String[] augmentations = dataFile.getDataAsString("augmentation");
+        	for (String aug : augmentations) {
+        		try {
+        			t.getCrew().getOptions().getOption(aug).setValue(true);
+        		} catch (NullPointerException ex) {
+        			throw new EntityLoadingException("Could not locate pilot option " + aug);
+        		}
+        	}
+        }
+        
         return t;
     }
 }

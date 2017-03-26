@@ -76,22 +76,22 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISGaussRifle
-ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
-IS Gauss Ammo
-Medium Laser
-Medium Laser
+ISGaussRifle:OMNI
+ISGaussRifle:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+Medium Laser:OMNI
+Medium Laser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-Large Laser
+Large Laser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-Large Laser
+Large Laser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+1
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -64,6 +68,10 @@ Aerodyne
 5
 </armor_tech>
 
+<omni>
+1
+</omni>
+
 <armor>
 40
 28
@@ -72,21 +80,21 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-LRM 15
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-ISArtemisIV
-ISCASE
+LRM 15:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+IS Ammo LRM-15 Artemis-capable:OMNI
+ISArtemisIV:OMNI
+ISCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERMediumLaser
-ISERMediumLaser
+ISERMediumLaser:OMNI
+ISERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -100,5 +108,3 @@ TRO 3075 - Jihad
 35.0
 </tonnage>
 
-<omni>
-</omni>

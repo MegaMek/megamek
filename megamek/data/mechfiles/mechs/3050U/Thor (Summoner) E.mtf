@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Thor (Summoner)
 E
 
@@ -9,16 +9,16 @@ Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:70
-Engine:350 XL Fusion Engine
-Structure:Standard
+Engine:350 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:14 Double
-Base Chassis Heat Sinks: 14
+Base Chassis Heat Sinks:14
 Walk MP:5
 Jump MP:5
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:17
 RA Armor:17
 LT Armor:22
@@ -32,15 +32,16 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:3
-1 CLERPPC, Left Arm
-1 CLATM12, Right Arm, Ammo:15
-1 CLATM6, Right Arm, Ammo:30
+ER PPC, Left Arm
+ATM 12, Right Arm
+ATM 6, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -48,25 +49,26 @@ CLERPPC
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLATM12
-CLATM12
-CLATM12
-CLATM12
-CLATM12
-CLATM6
-CLATM6
-CLATM6
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
-Ferro-Fibrous
 
 Left Torso:
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -75,34 +77,32 @@ Engine
 -Empty-
 -Empty-
 -Empty-
-Ferro-Fibrous
-Ferro-Fibrous
 
 Right Torso:
-Engine
-Engine
-CLATM6 Ammo
-CLATM6 ER Ammo
-CLATM6 HE Ammo
-CLATM12 Ammo
-CLATM12 ER Ammo
-CLATM12 HE Ammo
+Fusion Engine
+Fusion Engine
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 ER (omnipod)
+Clan Ammo ATM-6 HE (omnipod)
+Clan Ammo ATM-12 (omnipod)
+Clan Ammo ATM-12 ER (omnipod)
+Clan Ammo ATM-12 HE (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
-Ferro-Fibrous
-Ferro-Fibrous
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Jump Jet
 -Empty-
 
@@ -110,9 +110,15 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -121,6 +127,12 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -129,3 +141,11 @@ Lower Leg Actuator
 Foot Actuator
 Jump Jet
 Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

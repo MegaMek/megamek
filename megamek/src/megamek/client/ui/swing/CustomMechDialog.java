@@ -87,6 +87,7 @@ import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestInfantry;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
@@ -1379,6 +1380,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             } else if (entity instanceof BattleArmor) {
                 testEntity = new TestBattleArmor((BattleArmor) entity,
                         verifier.baOption, null);
+            } else if (entity instanceof Infantry) {
+                testEntity = new TestInfantry((Infantry) entity,
+                        verifier.infOption, null);
             }
             int gameTL = TechConstants.getGameTechLevel(client.getGame(),
                     entity.isClan());

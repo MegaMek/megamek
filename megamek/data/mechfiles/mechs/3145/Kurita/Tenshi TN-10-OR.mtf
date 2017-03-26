@@ -20,7 +20,7 @@ Base Chassis Heat Sinks:11
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:32
 RA Armor:32
 LT Armor:30
@@ -34,22 +34,22 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:7
-ER Medium Laser, Center Torso
-ER Medium Laser, Right Arm
 ER Medium Laser, Left Arm
-Extended LRM 20, Right Torso
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
 Extended LRM 20, Left Torso
-ER Medium Laser, Right Arm
-ER Medium Laser, Left Arm
+Extended LRM 20, Right Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-IS Ammo Extended LRM-20
-IS Ammo Extended LRM-20
-IS Ammo Extended LRM-20
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+IS Ammo Extended LRM-20 (omnipod)
+IS Ammo Extended LRM-20 (omnipod)
+IS Ammo Extended LRM-20 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -59,11 +59,11 @@ IS Ammo Extended LRM-20
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERMediumLaser
-CLERMediumLaser
-IS Ammo Extended LRM-20
-IS Ammo Extended LRM-20
-IS Ammo Extended LRM-20
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+IS Ammo Extended LRM-20 (omnipod)
+IS Ammo Extended LRM-20 (omnipod)
+IS Ammo Extended LRM-20 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -73,28 +73,28 @@ IS Ammo Extended LRM-20
 Left Torso:
 Fusion Engine
 Fusion Engine
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
 IS Endo-Composite
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
-Extended LRM 20
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
+Extended LRM 20 (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 
@@ -107,10 +107,10 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-CLERMediumLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+CLERMediumLaser (omnipod)
 
 Head:
 Life Support

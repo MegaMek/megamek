@@ -5,115 +5,146 @@ CLR-03-OB
 Config:Quad Omnimech
 TechBase:Inner Sphere
 Era:3138
-Rules Level:4
 Source:TRO 3145 Republic of the Sphere - Dark Ages
+Rules Level:4
 
 Mass:15
-Engine:240 XXL Fusion Engine
-Structure:Endo-Steel
-Gyro:XL Gyro
+Engine:240 XXL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
 Cockpit:Small Cockpit
-Myomer:ISMASC
+Gyro:XL Gyro
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:9
 Walk MP:16
 Jump MP:0
 
-Armor:Standard Armor
-LA Armor:1
-RA Armor:1
+Armor:Standard(Inner Sphere)
+FLL Armor:1
+FRL Armor:1
 LT Armor:4
 RT Armor:4
 CT Armor:5
 HD Armor:4
-LL Armor:1
-RL Armor:1
+RLL Armor:1
+RRL Armor:1
 RTL Armor:1
 RTR Armor:1
 RTC Armor:1
 
-Weapons:1
-1 ISAngelECM, Head
+Weapons:0
 
-Left Arm:
+Front Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Arm:
+Front Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
-Engine
-Engine
-Engine
-Engine
-Engine
-Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISMASC
-Endo-Steel
-Endo-Steel
-
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-Engine
-Engine
-Engine
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISDroneOperatingSystem
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISAngelECM
-ISAngelECM
+ISAngelECMSuite (omnipod)
+ISAngelECMSuite (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Left Leg:
+Rear Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
-Right Leg:
+Rear Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

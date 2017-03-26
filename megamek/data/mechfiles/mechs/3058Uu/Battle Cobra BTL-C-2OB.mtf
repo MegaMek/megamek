@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:40
-Engine:200 Fusion Engine
-Structure:Endo Steel
+Engine:200 Fusion Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -41,57 +41,57 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-MRM 10
-MRM 10
-MRM 10
-MRM 10
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-MRM 10
-MRM 10
-MRM 10
-MRM 10
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+MRM 10 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Left Torso:
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-IS MRM 10 Ammo
-IS MRM 10 Ammo
-IS MRM 10 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS MRM 10 Ammo (omnipod)
+IS MRM 10 Ammo (omnipod)
+IS MRM 10 Ammo (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -111,7 +111,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+IS Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

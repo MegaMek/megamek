@@ -8,15 +8,16 @@ Era:3055
 Rules Level:2
 
 Mass:55
-Engine:330 XL Engine
-Structure:Endo Steel
+Engine:330 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:18
 RA Armor:18
 LT Armor:17
@@ -29,22 +30,24 @@ RTL Armor:9
 RTR Armor:9
 RTC Armor:11
 
-Weapons:5
-2 CLLRM10, Right Torso, Ammo:48
-1 CLERMediumLaser, Right Torso
-2 CLLRM10, Left Torso
-1 CLERMediumLaser, Left Torso
-1 CLERSmallLaser, Head
+Weapons:7
+LRM 10, Left Torso
+LRM 10, Left Torso
+ER Medium Laser, Left Torso
+LRM 10, Right Torso
+LRM 10, Right Torso
+ER Medium Laser, Right Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM10 Ammo (Clan) Artemis-capable
-CLLRM10 Ammo (Clan) Artemis-capable
-Endo Steel
-Endo Steel
+Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +58,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLLRM10 Ammo (Clan) Artemis-capable
-CLLRM10 Ammo (Clan) Artemis-capable
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -67,30 +70,30 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10
-CLArtemisIV
-CLLRM10
-CLArtemisIV
-CLERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLLRM10 (omnipod)
+CLArtemisIV (omnipod)
+CLLRM10 (omnipod)
+CLArtemisIV (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM10
-CLArtemisIV
-CLLRM10
-CLArtemisIV
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM10 (omnipod)
+CLArtemisIV (omnipod)
+CLLRM10 (omnipod)
+CLArtemisIV (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -103,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -139,12 +142,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

@@ -9,8 +9,8 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:85
-Engine:255 Light Engine
-Structure:Standard
+Engine:255 Light Engine(IS)
+Structure:IS Standard
 Myomer:Triple-Strength
 Cockpit:Small Cockpit
 Gyro:Standard Gyro
@@ -45,25 +45,25 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
 TSM
 TSM
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -71,30 +71,30 @@ Heavy PPC
 Left Torso:
 Fusion Engine
 Fusion Engine
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-ISMediumPulseLaser
-ISERMediumLaser
-ISTAG
-ISPlasmaRifleAmmo
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+ISMediumPulseLaser (omnipod)
+ISERMediumLaser (omnipod)
+ISTAG (omnipod)
+ISPlasmaRifleAmmo (omnipod)
 ISC3iUnit
 ISC3iUnit
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-Improved Jump Jet
-ISPlasmaRifleAmmo
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -107,16 +107,16 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Improved Jump Jet
-Improved Jump Jet
+IS Improved Jump Jet (omnipod)
+IS Improved Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
 Sensors
-ISPlasmaRifle
-ISPlasmaRifle
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
 -Empty-
 -Empty-
 -Empty-

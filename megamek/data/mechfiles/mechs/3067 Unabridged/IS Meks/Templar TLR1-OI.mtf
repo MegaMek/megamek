@@ -1,23 +1,24 @@
-Version:1.1
+Version:1.0
 Templar
 TLR1-OI
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3080
+Source:3067 Unabridged
 Rules Level:2
-source:3067 Unabridged
 
 Mass:85
-Engine:340 XL Fusion Engine
-Structure:Endo-Steel
+Engine:340 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:15 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -30,102 +31,121 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:4
-1 ISC3SlaveUnit, Center Torso
-1 ISHeavyPPC, Left Torso
-1 ISHeavyPPC, Left Arm
-1 ISGaussRifle, Right Arm, Ammo:16
+Weapons:3
+Heavy PPC, Left Arm
+Gauss Rifle, Right Arm
+Heavy PPC, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-ISGaussRifle
-Endo-Steel
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+ISGaussRifle (omnipod)
+IS Endo Steel
 -Empty-
 -Empty-
 
 Left Torso:
-Engine
-Engine
-Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-Engine
-Engine
-Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISGauss Ammo
-ISGauss Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS Gauss Ammo (omnipod)
+IS Gauss Ammo (omnipod)
 ISCASE
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISC3SlaveUnit
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISC3SlaveUnit (omnipod)
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

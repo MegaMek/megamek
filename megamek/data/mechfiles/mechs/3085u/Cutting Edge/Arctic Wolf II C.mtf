@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:40
 Engine:280 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -32,19 +32,19 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:4
-ER Large Laser, Right Arm
 ER Large Laser, Left Arm
-SRM 4, Right Torso
+ER Large Laser, Right Arm
 SRM 4, Left Torso
+SRM 4, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -55,10 +55,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -68,27 +68,27 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
 Jump Jet
-CLSRM4
-Clan Ammo SRM-4
-Clan Ammo SRM-4
-Endo Steel
-Endo Steel
+CLSRM4 (omnipod)
+Clan Ammo SRM-4 (omnipod)
+Clan Ammo SRM-4 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
 Jump Jet
-CLSRM4
-Endo Steel
-Endo Steel
+CLSRM4 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -105,13 +105,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -127,7 +127,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -141,7 +141,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

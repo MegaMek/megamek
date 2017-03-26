@@ -37,7 +37,7 @@ troopspace:5.0
 </transporters>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -69,13 +69,13 @@ troopspace:5.0
 </armor>
 
 <Body Equipment>
-CLTargeting Computer
-Clan Streak SRM 4 Ammo
-CLCASE
+CLTargeting Computer:OMNI
+Clan Streak SRM 4 Ammo:OMNI
+CLCASE:OMNI
 </Body Equipment>
 
 <Front Equipment>
-CLMediumPulseLaser
+CLMediumPulseLaser:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -88,8 +88,8 @@ CLMediumPulseLaser
 </Rear Equipment>
 
 <Turret Equipment>
-CLHeavyMediumLaser
-CLStreakSRM4
+CLHeavyMediumLaser:OMNI
+CLStreakSRM4:OMNI
 </Turret Equipment>
 
 <source>
@@ -99,4 +99,8 @@ Civil War
 <tonnage>
 50.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>
 

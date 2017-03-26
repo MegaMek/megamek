@@ -43,6 +43,9 @@
 
 	<!-- This is the relative path to the 'data' directory -->
 	<property name="dataclasspath" value="." />
+	
+	<!-- Location of the list of atlased images -->
+	<property name="atlasedImages" value="${pkgdir}/atlasedImages.txt" />
 
 	<!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
 	<pathconvert pathsep=" " property="jarclasspath">
@@ -256,7 +259,14 @@
 	</target>
 
 	<target name="nix-tar" description="Create a compressed tar file of the unix distribution">
-		<tar destfile="${nixdist}.tar.gz" basedir="${nixdist}" compression="gzip" longfile="gnu" />
+		<tar destfile="${nixdist}.tar.gz" compression="gzip"  longfile="gnu">
+			<tarfileset dir="${nixdist}" filemode="755">
+				<include name="**/*.sh"/>
+			</tarfileset>
+			<tarfileset dir="${nixdist}">
+				<exclude name="**/*.sh"/>
+			</tarfileset>
+		</tar>
 	</target>
 
 	<target name="nix-clean">
@@ -378,9 +388,9 @@
     <target name="createImageAtlases" description="Run the image atlas creator, which will package images in the units and hexes directories into atlases.">
         <java  dir="${pkgdir}" classname="megamek.utils.CreateImageAtlases" fork="true">
             <classpath>
-                <pathelement path="${builddir}" />
-                <fileset dir="${libdir}" includes="*.jar" />
-                <pathelement path="${propdir}" />
+                <pathelement path="${pkgdir}/${builddir}" />
+                <fileset dir="${pkgdir}/${libdir}" includes="*.jar" />
+                <pathelement path="${pkgdir}/${propdir}" />
             </classpath>
         </java>
     </target>

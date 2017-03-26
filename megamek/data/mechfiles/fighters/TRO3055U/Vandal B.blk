@@ -76,18 +76,18 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser:OMNI
+CLERSmallLaser:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser:OMNI
+CLERSmallLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser:OMNI
+CLERSmallLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

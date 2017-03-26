@@ -3473,7 +3473,7 @@ public class Game implements Serializable, IGame {
         if (null == conditions) {
             System.err.println("Can't set the planetary conditions to null!");
         } else {
-            planetaryConditions = conditions;
+            planetaryConditions.alterConditions(conditions);
             processGameEvent(new GameSettingsChangeEvent(this));
         }
     }

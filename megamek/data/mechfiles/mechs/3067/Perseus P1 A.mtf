@@ -1,24 +1,24 @@
-Version:1.1
+Version:1.0
 Perseus
 P1A
 
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3058
+Source:TRO 3067
 Rules Level:2
-source:TRO 3067
 
 Mass:75
-Engine:300 XL Fusion Engine
-Structure:Endo-Steel
+Engine:300 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
-Base Chassis Heat Sinks: 12
+Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:21
 RA Armor:21
 LT Armor:24
@@ -31,84 +31,83 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:9
 
-Weapons:7
-1 ISLRM20, Right Arm, Ammo:24
-1 ISLRM20, Left Arm
-1 ISSRM6, Right Torso, Ammo:30
-1 ISGuardianECM, Left Leg
-1 ISTAG, Right Leg
-1 ISMediumPulseLaser, Center Torso
-1 ISMediumPulseLaser, Center Torso
+Weapons:6
+TAG, Right Leg
+LRM 20, Left Arm
+LRM 20, Right Arm
+SRM 6, Right Torso
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
-ISArtemisIV
-Endo-Steel
-Endo-Steel
-Endo-Steel
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+ISArtemisIV (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
-ISLRM20
-ISArtemisIV
-Endo-Steel
-Endo-Steel
-Endo-Steel
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+LRM 20 (omnipod)
+ISArtemisIV (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
-Engine
-Engine
-Engine
-ISLRM20 Ammo Artemis-capable
-ISLRM20 Ammo Artemis-capable
-ISLRM20 Ammo Artemis-capable
-ISLRM20 Ammo Artemis-capable
-ISCASE
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo LRM-20 Artemis-capable (omnipod)
+IS Ammo LRM-20 Artemis-capable (omnipod)
+IS Ammo LRM-20 Artemis-capable (omnipod)
+IS Ammo LRM-20 Artemis-capable (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-Engine
-Engine
-Engine
-ISSRM6
-ISSRM6
-ISArtemisIV
-ISSRM6 Ammo Artemis-capable
-ISCASE
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6 (omnipod)
+SRM 6 (omnipod)
+ISArtemisIV (omnipod)
+IS Ammo SRM-6 Artemis-capable (omnipod)
+ISCASE (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISMediumPulseLaser
-ISMediumPulseLaser
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
 
 Head:
 Life Support
@@ -117,19 +116,39 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISGuardianECM
-ISGuardianECM
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISTAG
-ISSRM6 Ammo Artemis-capable
+ISTAG (omnipod)
+IS Ammo SRM-6 Artemis-capable (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:70
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -32,20 +32,20 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:7
-Medium Laser, Center Torso
-Medium Laser, Center Torso
 ER Medium Laser, Left Arm
 ER Medium Laser, Left Arm
+Light Gauss Rifle, Right Arm
 MRM 20, Left Torso
 MRM 20, Right Torso
-Light Gauss Rifle, Right Arm
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISERMediumLaser
-ISERMediumLaser
+ISERMediumLaser (omnipod)
+ISERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -57,11 +57,11 @@ ISERMediumLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
-ISLightGaussRifle
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
+ISLightGaussRifle (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -72,13 +72,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-MRM 20
-MRM 20
-MRM 20
-IS MRM 20 Ammo
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+IS MRM 20 Ammo (omnipod)
 ISCASE
 -Empty-
 
@@ -86,14 +86,14 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-MRM 20
-MRM 20
-MRM 20
-IS MRM 20 Ammo
-IS Light Gauss Ammo
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+IS MRM 20 Ammo (omnipod)
+IS Light Gauss Ammo (omnipod)
 ISCASE
 
 Center Torso:
@@ -114,7 +114,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISC3SlaveUnit
+ISC3SlaveUnit (omnipod)
 Sensors
 Life Support
 -Empty-

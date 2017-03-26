@@ -54,13 +54,13 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
 IS Endo Steel
 IS Endo Steel
 -Empty-
@@ -69,11 +69,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMML7
-ISMML7
-ISMML7
-ISMML7
-ISArtemisIV
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISArtemisIV (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -83,11 +83,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-IS Ammo MML-7 LRM Artemis-capable
-IS Ammo MML-7 SRM Artemis-capable
-ISGuardianECMSuite
-ISGuardianECMSuite
-ISCASEII
+IS Ammo MML-7 LRM Artemis-capable (omnipod)
+IS Ammo MML-7 SRM Artemis-capable (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+ISCASEII (omnipod)
 IS Endo Steel
 -Empty-
 -Empty-
@@ -102,9 +102,9 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
 -Empty-
 
 Head:

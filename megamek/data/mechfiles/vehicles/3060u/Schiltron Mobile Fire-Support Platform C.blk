@@ -2,62 +2,101 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Schiltron Mobile Fire-Support Platform
 </Name>
+
 <Model>
 C
 </Model>
-<Tonnage>
-80
-</Tonnage>
+
+<year>
+3059
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 46
 34
 34
 25
 40
-</Armor>
-<Turret Equipment>
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-ISLargeLaser
-</Turret Equipment>
+</armor>
+
 <Body Equipment>
-ISC3MasterComputer
-ISGuardianECM
+ISC3MasterUnit
+ISGuardianECMSuite
 </Body Equipment>
-<type>
-IS Level 2
-</type>
-<year>
-3059
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Wheeled
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Large Laser:OMNI
+Large Laser:OMNI
+Large Laser:OMNI
+Large Laser:OMNI
+</Turret Equipment>
+
 <source>
 Clan Invasion
 </source>
+
+<tonnage>
+80.0
+</tonnage>
+
+<baseChassisTurretWeight>
+2.0
+</baseChassisTurretWeight>
+

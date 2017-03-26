@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:90
-Engine:360 XL Engine
-Structure:Standard
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -32,28 +32,28 @@ RTR Armor:10
 RTC Armor:12
 
 Weapons:8
+AC/20, Left Arm
 Large Laser, Right Arm
 Large Laser, Right Arm
 Medium Laser, Left Torso
 Medium Laser, Right Torso
+SRM 4, Center Torso
+SRM 4, Center Torso
 SRM 4, Head
-SRM 4, Center Torso
-SRM 4, Center Torso
-Autocannon/20, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
-Autocannon/20
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
+Autocannon/20 (omnipod)
 
 Right Arm:
 Shoulder
@@ -62,10 +62,10 @@ Lower Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Large Laser
-Large Laser
-Large Laser
-Large Laser
+Large Laser (omnipod)
+Large Laser (omnipod)
+Large Laser (omnipod)
+Large Laser (omnipod)
 -Empty-
 -Empty-
 
@@ -73,9 +73,9 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser
-IS Ammo AC/20
-IS Ammo SRM-4
+Medium Laser (omnipod)
+IS Ammo AC/20 (omnipod)
+IS Ammo SRM-4 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -87,9 +87,9 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Medium Laser
-IS Ammo AC/20
-IS Ammo SRM-4
+Medium Laser (omnipod)
+IS Ammo AC/20 (omnipod)
+IS Ammo SRM-4 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-SRM 4
-SRM 4
+SRM 4 (omnipod)
+SRM 4 (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-SRM 4
+SRM 4 (omnipod)
 Sensors
 Life Support
 -Empty-

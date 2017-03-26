@@ -2,61 +2,93 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Bandit Hovercraft
 </Name>
+
 <Model>
 F
 </Model>
-<Tonnage>
-50
-</Tonnage>
+
+<year>
+3008
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 9
 </cruiseMP>
-<Armor>
+
+<engine_type>
+0
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
 42
 40
 40
 32
 22
-</Armor>
-<Turret Equipment>
-ISLargeLaser
-</Turret Equipment>
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
 <Front Equipment>
-ISMediumLaser
+Medium Laser:OMNI
 </Front Equipment>
-<transporters>
-TroopSpace:4
-</transporters>
-<type>
-IS Level 2
-</type>
-<year>
-3008
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-Hover
-</motion_type>
-<omni>
-</omni>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Large Laser:OMNI
+</Turret Equipment>
+
 <source>
 Succession Wars
 </source>
+
+<tonnage>
+50.0
+</tonnage>
+
+<baseChassisTurretWeight>
+1.0
+</baseChassisTurretWeight>
+

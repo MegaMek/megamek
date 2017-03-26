@@ -35,14 +35,11 @@ public class PilotOptions extends AbstractOptions {
     public void initialize() {
         IBasicOptionGroup adv = addGroup("adv", LVL3_ADVANTAGES); //$NON-NLS-1$
 
-        // addOption(adv, OptionsConstants.PILOT_ANIMAL_MIMIC, false);
-        // //$NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false);
-        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_ANIMAL_MIMIC, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_CROSS_COUNTRY, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_DODGE_MANEUVER, false); // $NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_DUST_OFF, false); //$NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_HVY_LIFTER, false);
-        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_HVY_LIFTER, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_HOPPER, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_HOPPING_JACK, false); // $NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_HOT_DOG, false); // $NON-NLS-1$
@@ -50,23 +47,17 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_MANEUVERING_ACE, false); // $NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_MELEE_MASTER, false); // $NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_MELEE_SPECIALIST, false); // $NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_NATURAL_GRACE, false);
-        // //$NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_RIDE_WASH, false);
-        // //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_APTITUDE_PILOTING, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_NATURAL_GRACE, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_RIDE_WASH, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_SHAKY_STICK, false); // $NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_SLUGGER, false); //$NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_SPEED_DEMON, false);
-        // //$NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_STAND_ASIDE, false);
-        // //$NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_SWORDSMAN, false);
-        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_SPEED_DEMON, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_STAND_ASIDE, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_SWORDSMAN, false); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.PILOT_TM_, false); //$NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false);
-        // //$NON-NLS-1$
-        // addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false);
-        // //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_WIND_WALKER, false); //$NON-NLS-1$
+        // addOption(adv, OptionsConstants.PILOT_ZWEIHANDER, false); //$NON-NLS-1$
 
         // Gunnery Abilities
         // addOption(adv, OptionsConstants.GUNNERY_BLOOD_STALKER, false); //$NON-NLS-1$
@@ -78,6 +69,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.GUNNERY_SPECIALIST, new Vector<String>()); //$NON-NLS-1$
         // addOption(adv, OptionsConstants.GUNNERY_MARKSMAN, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.GUNNERY_MULTI_TASKER, false); //$NON-NLS-1$
+        addOption(adv, OptionsConstants.PILOT_APTITUDE_GUNNERY, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.GUNNERY_RANGE_MASTER,  new Vector<String>()); //$NON-NLS-1$
@@ -138,12 +130,9 @@ public class PilotOptions extends AbstractOptions {
         //TODO - -1 bonus when spotting for LRMs and moving through mines.
         addOption(md, OptionsConstants.MD_BOOST_COMM_IMPLANT, false); // $NON-NLS-1$
         //TODO - -1 bonus when spotting for LRMs and moving through mines. 
-
         addOption(md, OptionsConstants.MD_CYBER_IMP_AUDIO, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_CYBER_IMP_VISUAL, false); //$NON-NLS-1$
-
         addOption(md, OptionsConstants.MD_CYBER_IMP_LASER, false); //$NON-NLS-1$
-  
         addOption(md, OptionsConstants.MD_MM_IMPLANTS, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_ENH_MM_IMPLANTS, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_FILTRATION, false); //$NON-NLS-1$
@@ -155,12 +144,18 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false); //$NON-NLS-1$  
         addOption(md, OptionsConstants.MD_VDNI, false); // $NON-NLS-1$
         addOption(md, OptionsConstants.MD_BVDNI, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PROTO_DNI, false); // $NON-NLS-1$
         //Prosthetic Limbs (not MD Exclusive)
         addOption(md, OptionsConstants.MD_PL_ENHANCED, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_IENHANCED, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_EXTRA_LIMBS, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_TAIL, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_PL_MASC, false); // NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_GLIDER, false); // NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_FLIGHT, false); // NON-NLS-1$
+        addOption(md, OptionsConstants.MD_SUICIDE_IMPLANTS, false);// NON-NLS-1$ 
+        
         //TODO - Prototype DNI IO pg 83
-        //SUICIDE CHARGE IO pg 83
-
     }
 
     /*

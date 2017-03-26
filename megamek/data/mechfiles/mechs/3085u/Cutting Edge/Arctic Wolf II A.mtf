@@ -10,11 +10,11 @@ Rules Level:2
 
 Mass:40
 Engine:280 XL (Clan) Engine(IS)
-Structure:Endo Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:11 Double
-Base Chassis Heat Sinks:11
+Base Chassis Heat Sinks:10
 Walk MP:7
 Jump MP:7
 
@@ -42,10 +42,10 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -56,10 +56,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERMediumLaser
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -69,15 +69,15 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Jump Jet
 Jump Jet
-CLLRM15
-CLLRM15
-CLSmallPulseLaser
-Endo Steel
-Endo Steel
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Torso:
@@ -85,13 +85,13 @@ Fusion Engine
 Fusion Engine
 Jump Jet
 Jump Jet
-CLLRM15
-CLLRM15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Clan Ammo LRM-15
-Endo Steel
-Endo Steel
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Center Torso:
@@ -106,13 +106,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -128,7 +128,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -142,7 +142,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 Jump Jet
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -151,3 +151,4 @@ Ferro-Fibrous
 -Empty-
 
 imagefile:.\data\images\fluff\Mech\Arctic Wolf II.jpg
+

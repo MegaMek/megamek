@@ -8,15 +8,16 @@ Era:3060
 Rules Level:4
 
 Mass:75
-Engine:375 XL Engine
-Structure:Endo Steel
+Engine:375 XL (Clan) Engine
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:15 Double
+Base Chassis Heat Sinks:15
 Walk MP:5
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:25
@@ -29,27 +30,40 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:9
 
-Weapons:8
-1 CLLargePulseLaser, Right Arm
-4 CLMG, Right Arm, Ammo:200
-1 CLLargePulseLaser, Left Arm
-4 CLMG, Left Arm
-5 CLStreakSRM2, Right Torso, Ammo:50
-1 ISC3SlaveUnit, Right Torso
-5 CLStreakSRM2, Left Torso
-1 CLFlamer, Center Torso
+Weapons:21
+Large Pulse Laser, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Machine Gun, Left Arm
+Large Pulse Laser, Right Arm
+Machine Gun, Right Arm
+Machine Gun, Right Arm
+Machine Gun, Right Arm
+Machine Gun, Right Arm
+Streak SRM 2, Left Torso
+Streak SRM 2, Left Torso
+Streak SRM 2, Left Torso
+Streak SRM 2, Left Torso
+Streak SRM 2, Left Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Right Torso
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLMG
-CLMG
-CLMG
-CLMG
-Ferro-Fibrous
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
@@ -57,43 +71,43 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLMG
-CLMG
-CLMG
-CLMG
-Ferro-Fibrous
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM2
-CLStreakSRM2
-CLStreakSRM2
-CLStreakSRM2
-CLStreakSRM2
-CLStreakSRM2 Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLStreakSRM2 (omnipod)
+CLStreakSRM2 (omnipod)
+CLStreakSRM2 (omnipod)
+CLStreakSRM2 (omnipod)
+CLStreakSRM2 (omnipod)
+Clan Streak SRM 2 Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLStreakSRM2
-CLStreakSRM2
-CLStreakSRM2
-CLStreakSRM2
-CLStreakSRM2
-CLMG Ammo (200)
-ISC3SlaveUnit
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLStreakSRM2 (omnipod)
+CLStreakSRM2 (omnipod)
+CLStreakSRM2 (omnipod)
+CLStreakSRM2 (omnipod)
+CLStreakSRM2 (omnipod)
+Clan Machine Gun Ammo - Full (omnipod)
+ISC3SlaveUnit (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -106,14 +120,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLFlamer
-Endo Steel
+CLFlamer (omnipod)
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -128,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,12 +156,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

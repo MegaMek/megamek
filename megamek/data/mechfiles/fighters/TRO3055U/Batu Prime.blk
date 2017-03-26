@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+2
+</omnipodheatsinks>
+
 <fuel>
 240
 </fuel>
@@ -76,22 +80,22 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERLargeLaser
-CLTargeting Computer
+CLERLargeLaser:OMNI
+CLTargeting Computer:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERMediumLaser
+CLERMediumLaser:OMNI
 </Aft Equipment>
 
 <source>

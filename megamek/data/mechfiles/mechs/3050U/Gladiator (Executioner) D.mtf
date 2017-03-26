@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:95
-Engine:380 XL Engine
-Structure:Standard
-Myomer:MASC
+Engine:380 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
 
 Heat Sinks:19 Double
+Base Chassis Heat Sinks:15
 Walk MP:4
 Jump MP:4
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:32
 RA Armor:32
 LT Armor:20
@@ -30,40 +31,46 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:9
 
-Weapons:6
-2 CLSRM6, Left Arm, Ammo:45
-1 CLLargePulseLaser, Right Arm
-3 CLMediumPulseLaser, Right Arm
-3 CLSmallPulseLaser, Right Arm
-2 CLSmallPulseLaser, Right Torso
-1 CLERSmallLaser, Left Torso
+Weapons:12
+SRM 6, Left Arm
+SRM 6, Left Arm
+Large Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Small Pulse Laser, Right Arm
+Small Pulse Laser, Right Arm
+Small Pulse Laser, Right Arm
+ER Small Laser, Left Torso
+Small Pulse Laser, Right Torso
+Small Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLSRM6
-CLSRM6
-CLSRM6 Ammo
-CLSRM6 Ammo
-CLSRM6 Ammo
-Ferro-Fibrous
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLMediumPulseLaser
-CLSmallPulseLaser
-CLSmallPulseLaser
-CLSmallPulseLaser
-Ferro-Fibrous
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -73,9 +80,9 @@ CLMASC
 CLMASC
 CLMASC
 CLMASC
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLERSmallLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -83,16 +90,16 @@ CLERSmallLaser
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLSmallPulseLaser
-CLSmallPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLSmallPulseLaser (omnipod)
+CLSmallPulseLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -105,14 +112,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -149,4 +156,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

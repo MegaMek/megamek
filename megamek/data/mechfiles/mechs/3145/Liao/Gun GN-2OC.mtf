@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:20
 Engine:100 Fusion Engine(IS)
-Structure:IS Endo-Steel
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
@@ -34,8 +34,8 @@ RTR Armor:2
 RTC Armor:2
 
 Weapons:2
-ER Large Laser, Right Arm
 TAG, Left Arm
+ER Large Laser, Right Arm
 
 Left Arm:
 Shoulder
@@ -43,10 +43,10 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISTAG
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+ISTAG (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -57,11 +57,11 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISERLargeLaser
-ISERLargeLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+ISERLargeLaser (omnipod)
+ISERLargeLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -72,11 +72,11 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-BloodhoundActiveProbe
-BloodhoundActiveProbe
-BloodhoundActiveProbe
-IS Endo-Steel
-IS Endo-Steel
+BloodhoundActiveProbe (omnipod)
+BloodhoundActiveProbe (omnipod)
+BloodhoundActiveProbe (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
@@ -86,10 +86,10 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISAngelECMSuite
-ISAngelECMSuite
-IS Endo-Steel
-IS Endo-Steel
+ISAngelECMSuite (omnipod)
+ISAngelECMSuite (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-IS Endo-Steel
-IS Endo-Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

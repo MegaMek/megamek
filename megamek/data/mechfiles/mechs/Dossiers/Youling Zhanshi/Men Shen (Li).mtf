@@ -9,8 +9,8 @@ Source:BattleTech Dossiers: Youling Zhanshi - Jihad
 Rules Level:2
 
 Mass:55
-Engine:330 XL Engine
-Structure:Endo Steel
+Engine:330 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -41,13 +41,13 @@ LRM 15, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumPulseLaser
-ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -55,13 +55,13 @@ Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMediumPulseLaser
-ISMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+ISMediumPulseLaser (omnipod)
+ISMediumPulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -84,11 +84,11 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-LRM 15
-LRM 15
-LRM 15
-ISArtemisIV
-IS Ammo LRM-15 Artemis-capable
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+ISArtemisIV (omnipod)
+IS Ammo LRM-15 Artemis-capable (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

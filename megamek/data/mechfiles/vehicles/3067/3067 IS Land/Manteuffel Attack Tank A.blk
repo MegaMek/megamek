@@ -2,66 +2,102 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Manteuffel Attack Tank
 </Name>
+
 <Model>
 A
 </Model>
-<Tonnage>
-70
-</Tonnage>
+
+<year>
+3062
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 5
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 56
 40
 40
 25
 45
-</Armor>
-<Turret Equipment>
-ISUltraAC20
-</Turret Equipment>
-<Front Equipment>
-ISMediumLaser
-ISMediumLaser
-ISERSmallLaser
-</Front Equipment>
+</armor>
+
 <Body Equipment>
-ISUltraAC20 Ammo
-ISUltraAC20 Ammo
-ISUltraAC20 Ammo
-ISUltraAC20 Ammo
-ISUltraAC20 Ammo
-ISC3SlaveUnit
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+IS Ultra AC/20 Ammo:OMNI
+ISC3SlaveUnit:OMNI
 ISCASE
 </Body Equipment>
-<type>
-IS
-</type>
-<year>
-3062
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+Medium Laser:OMNI
+Medium Laser:OMNI
+ISERSmallLaser:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISUltraAC20:OMNI
+</Turret Equipment>
+
+<tonnage>
+70.0
+</tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
+

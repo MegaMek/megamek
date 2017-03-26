@@ -2,69 +2,103 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Tank
 </UnitType>
+
 <Name>
 Kamayari
 </Name>
+
 <Model>
 B-UK
 </Model>
-<Tonnage>
-90
-</Tonnage>
+
+<year>
+3058
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+BattleArmorHandles - troopers:-1
+</transporters>
+
 <cruiseMP>
 3
 </cruiseMP>
-<Armor>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 50
 45
 45
 25
 50
-</Armor>
-<Turret Equipment>
-ISGaussRifle
-ISGaussRifle
-</Turret Equipment>
-<Front Equipment>
-ISLRM15
-ISMediumLaser
-</Front Equipment>
-<Rear Equipment>
-ISSmallLaser
-</Rear Equipment>
+</armor>
+
 <Body Equipment>
-ISGauss Ammo
-ISGauss Ammo
-ISGauss Ammo
-ISGauss Ammo
-ISLRM15 Ammo
-ISLRM15 Ammo
-ISC3MasterComputer
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
+IS Ammo LRM-15:OMNI
+IS Ammo LRM-15:OMNI
+ISC3MasterUnit:OMNI
 </Body Equipment>
-<type>
-IS
-</type>
-<year>
-3058
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-1
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-Tracked
-</motion_type>
-<omni>
-</omni>
+
+<Front Equipment>
+LRM 15:OMNI
+Medium Laser:OMNI
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Small Laser:OMNI
+</Rear Equipment>
+
+<Turret Equipment>
+ISGaussRifle:OMNI
+ISGaussRifle:OMNI
+</Turret Equipment>
+
+<tonnage>
+90.0
+</tonnage>
+
+<baseChassisTurretWeight>
+3.0
+</baseChassisTurretWeight>
+

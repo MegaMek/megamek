@@ -76,24 +76,28 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLMG
-CLMG
-CLMG
-CLMGA
-Clan Machine Gun Ammo - Half
+CLMG:OMNI
+CLMG:OMNI
+CLMG:OMNI
+CLMGA:OMNI
+Clan Machine Gun Ammo - Half:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser:OMNI
+CLERSmallLaser:OMNI
+CLERSmallLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser:OMNI
+CLERSmallLaser:OMNI
+CLERSmallLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

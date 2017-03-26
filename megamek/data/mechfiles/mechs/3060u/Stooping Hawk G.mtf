@@ -9,8 +9,8 @@ Source:TRO 3060
 Rules Level:3
 
 Mass:55
-Engine:275 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:275 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -33,23 +33,23 @@ RTC Armor:7
 
 Weapons:7
 ER Medium Laser, Left Arm
-ER Medium Laser, Right Arm
-ProtoMech AC/4, Right Torso
-ProtoMech AC/4, Right Torso
-ProtoMech AC/4, Left Torso
-ER Medium Laser, Right Arm
 ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+ProtoMech AC/4, Left Torso
+ProtoMech AC/4, Right Torso
+ProtoMech AC/4, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -59,42 +59,41 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERMediumLaser
-CLERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLProtoMechAC4
-CLProtoMechAC4
-CLProtoMechAC4
-CLProtoAC4Ammo
-Ferro-Fibrous
-Ferro-Fibrous
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLProtoMechAC4 (omnipod)
+CLProtoMechAC4 (omnipod)
+CLProtoMechAC4 (omnipod)
+Clan ProtoMech AC/4 Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-
 
 Right Torso:
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLProtoMechAC4
-CLProtoMechAC4
-CLProtoMechAC4
-CLProtoMechAC4
-CLProtoMechAC4
-CLProtoMechAC4
-CLProtoAC4Ammo
-Endo Steel
-Endo Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLProtoMechAC4 (omnipod)
+CLProtoMechAC4 (omnipod)
+CLProtoMechAC4 (omnipod)
+CLProtoMechAC4 (omnipod)
+CLProtoMechAC4 (omnipod)
+CLProtoMechAC4 (omnipod)
+Clan ProtoMech AC/4 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Center Torso:
@@ -130,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

@@ -9,8 +9,8 @@ Source:TRO 3058 - Clan Invasion
 Rules Level:2
 
 Mass:75
-Engine:300 XL (Clan) Engine
-Structure:Endo Steel
+Engine:300 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -33,67 +33,67 @@ RTC Armor:10
 
 Weapons:6
 LRM 20, Left Arm
+LRM 20, Right Arm
 LRM 20, Left Torso
 LRM 20, Right Torso
-LRM 20, Right Arm
 Large Pulse Laser, Center Torso
 Medium Pulse Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Clan Ammo LRM-20 (Clan) Artemis-capable
-Endo Steel
-Endo Steel
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-20 (Clan) Artemis-capable (omnipod)
+Clan Endo Steel
+Clan Endo Steel
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLLRM20
-CLLRM20
-CLLRM20
-CLLRM20
-CLArtemisIV
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLLRM20 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLMediumPulseLaser
+CLMediumPulseLaser (omnipod)
 Sensors
 Life Support
 -Empty-

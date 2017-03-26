@@ -32,19 +32,19 @@ RTR Armor:5
 RTC Armor:10
 
 Weapons:4
-MML 7, Left Torso
-MML 7, Right Torso
 Light PPC, Left Arm
 Light PPC, Right Arm
+MML 7, Left Torso
+MML 7, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Light PPC
-Light PPC
-IS Ammo MML-7 LRM
-IS Ammo MML-7 SRM
-ISCASEII
+Light PPC (omnipod)
+Light PPC (omnipod)
+IS Ammo MML-7 LRM (omnipod)
+IS Ammo MML-7 SRM (omnipod)
+ISCASEII (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Light Ferro-Fibrous
@@ -54,11 +54,11 @@ IS Light Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Light PPC
-Light PPC
-IS Ammo MML-7 LRM
-IS Ammo MML-7 SRM
-ISCASEII
+Light PPC (omnipod)
+Light PPC (omnipod)
+IS Ammo MML-7 LRM (omnipod)
+IS Ammo MML-7 SRM (omnipod)
+ISCASEII (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Light Ferro-Fibrous
@@ -68,10 +68,10 @@ IS Light Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISMML7
-ISMML7
-ISMML7
-ISMML7
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -82,10 +82,10 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISMML7
-ISMML7
-ISMML7
-ISMML7
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
+ISMML7 (omnipod)
 ISMASC
 ISMASC
 ISMASC

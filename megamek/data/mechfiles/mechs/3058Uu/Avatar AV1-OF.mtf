@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:70
-Engine:280 XL Engine
-Structure:Standard
+Engine:280 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -32,64 +32,64 @@ RTR Armor:8
 RTC Armor:9
 
 Weapons:4
-Medium Laser, Center Torso
-Medium Laser, Center Torso
 ER PPC, Left Arm
-LB 20-X AC, Right Arm
+LB 20-X AC, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
-ISLBXAC20
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-IS LB 20-X AC Ammo
-IS LB 20-X Cluster Ammo
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+IS LB 20-X AC Ammo (omnipod)
+IS LB 20-X Cluster Ammo (omnipod)
 ISCASE
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISLBXAC20
-ISLBXAC20
-IS LB 20-X AC Ammo
-IS LB 20-X Cluster Ammo
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISLBXAC20 (omnipod)
+ISLBXAC20 (omnipod)
+IS LB 20-X AC Ammo (omnipod)
+IS LB 20-X Cluster Ammo (omnipod)
 ISCASE
 -Empty-
 
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

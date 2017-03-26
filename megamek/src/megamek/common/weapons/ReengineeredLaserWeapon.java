@@ -50,4 +50,9 @@ public class ReengineeredLaserWeapon extends LaserWeapon {
 
         return new ReengineeredLaserWeaponHandler(toHit, waa, game, server);
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_REL;
+    }
 }

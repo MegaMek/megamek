@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:75
 Engine:375 XXL (Clan) Engine(IS)
-Structure:Clan Endo-Steel
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
@@ -42,8 +42,8 @@ Streak SRM 6, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -56,8 +56,8 @@ Clan Ferro-Lamellor
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
@@ -72,12 +72,12 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 (R)
-CLStreakSRM6 (R)
-Clan Streak SRM 6 Ammo
-Clan Endo-Steel
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (R) (omnipod)
+CLStreakSRM6 (R) (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
 -Empty-
 -Empty-
 
@@ -86,14 +86,14 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLStreakSRM6
-CLStreakSRM6
-CLStreakSRM6 (R)
-CLStreakSRM6 (R)
-Clan Streak SRM 6 Ammo
-Clan Endo-Steel
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (R) (omnipod)
+CLStreakSRM6 (R) (omnipod)
+Clan Streak SRM 6 Ammo (omnipod)
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -106,14 +106,14 @@ Gyro (armored)
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Clan Endo-Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -128,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Clan Endo-Steel
-Clan Endo-Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

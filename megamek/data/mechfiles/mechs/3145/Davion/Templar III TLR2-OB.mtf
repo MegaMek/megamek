@@ -34,22 +34,22 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:8
-ER Small Laser, Center Torso
-Small X-Pulse Laser, Right Torso
-Small X-Pulse Laser, Right Torso
-Small X-Pulse Laser, Left Torso
-Small X-Pulse Laser, Right Torso
-Small X-Pulse Laser, Left Torso
-Small X-Pulse Laser, Right Torso
 ER PPC, Left Torso
+Small X-Pulse Laser, Left Torso
+Small X-Pulse Laser, Left Torso
+Small X-Pulse Laser, Right Torso
+Small X-Pulse Laser, Right Torso
+Small X-Pulse Laser, Right Torso
+Small X-Pulse Laser, Right Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Chain Whip
-Chain Whip
+Chain Whip (omnipod)
+Chain Whip (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -62,25 +62,25 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Hatchet
-Hatchet
-Hatchet
-Hatchet
-Hatchet
-Hatchet
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
+Hatchet (omnipod)
 -Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-ISERPPC
-ISERPPC
-ISERPPC
-ISSmallXPulseLaser
-ISSmallXPulseLaser
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISSmallXPulseLaser (omnipod)
+ISSmallXPulseLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -88,12 +88,12 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-ISSmallXPulseLaser
-ISSmallXPulseLaser
-ISSmallXPulseLaser
-ISSmallXPulseLaser
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISSmallXPulseLaser (omnipod)
+ISSmallXPulseLaser (omnipod)
+ISSmallXPulseLaser (omnipod)
+ISSmallXPulseLaser (omnipod)
 ISCASE
 IS Endo Steel
 IS Endo Steel
@@ -110,8 +110,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
-Supercharger
+ISERSmallLaser (omnipod)
+Supercharger (omnipod)
 
 Head:
 Life Support

@@ -656,7 +656,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     @Override
                     public boolean shouldPerformAction() {
                         if (clientgui.bv.getChatterBoxActive()
-                                || clientgui.bv.getChatterBoxActive()
                                 || !display.isVisible()
                                 || display.isIgnoringEvents()) {
                             return false;
@@ -1085,6 +1084,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         Entity result = null;
         boolean done = false;
+        int count = 0;
         // Loop until we hit an exit criteria
         //  Default is one iteration, but may need to skip invalid or allies
         while (!done) {
@@ -1099,6 +1099,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 lastTargetID = visibleTargets.length - 1;
             } else if (lastTargetID >= visibleTargets.length) {
                 lastTargetID = 0;
+            }
+            //If we've cycled through all visible targets without finding a valid one, stop looping
+            count++;
+            if (count > visibleTargets.length) {
+            	return null;
             }
             // Store target
             result = visibleTargets[lastTargetID];

@@ -157,9 +157,15 @@ public final class TroopSpace implements Transporter {
      */
     @Override
     public boolean unload(Entity unit) {
+       // If this unit isn't loaded, nothing to do
+        if (!troops.containsKey(unit.getId())) {
+            return false;
+        }
+
         // Remove the unit if we are carrying it.
         boolean retval = false;
         double unloadWeight = 0;
+
         if (unit != null) {
             unloadWeight = troops.get(unit.getId());
         }

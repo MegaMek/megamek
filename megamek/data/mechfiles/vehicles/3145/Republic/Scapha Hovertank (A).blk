@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -65,9 +65,9 @@ Hover
 </armor>
 
 <Body Equipment>
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
+ISRotaryAC5 Ammo:OMNI
 </Body Equipment>
 
 <Front Equipment>
@@ -83,7 +83,7 @@ ISRotaryAC5 Ammo
 </Rear Equipment>
 
 <Turret Equipment>
-ISRotaryAC5
+ISRotaryAC5:OMNI
 </Turret Equipment>
 
 <source>
@@ -93,4 +93,8 @@ TRO 3145 Republic
 <tonnage>
 40.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

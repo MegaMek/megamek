@@ -1030,8 +1030,8 @@ public abstract class TestEntity implements TestEntityOption {
                     turretWeight += m.getType().getTonnage(tank);
                 }
             }
-            turretWeight *= 0.1f;
-            turret2Weight *= 0.1f;
+            turretWeight *= 0.1;
+            turret2Weight *= 0.1;
             if (tank.isSupportVehicle()) {
                 if (getEntity().getWeight() < 5) {
                     turretWeight = TestEntity.ceil(turretWeight, Ceil.KILO);
@@ -1101,6 +1101,56 @@ public abstract class TestEntity implements TestEntityOption {
         }
         if (getEntity() instanceof Mech) {
             Mech mech = (Mech) getEntity();
+            
+            if (mech.isSuperHeavy()) {
+            	switch (mech.hasEngine()? mech.getEngine().getEngineType() : Engine.NONE) {
+            	case Engine.NORMAL_ENGINE:
+            	case Engine.LARGE_ENGINE:
+            		break;
+            	case Engine.XL_ENGINE:
+            	case Engine.XXL_ENGINE:
+            	case Engine.COMPACT_ENGINE:
+            	case Engine.LIGHT_ENGINE:
+            		if (mech.isIndustrial()) {
+            			buff.append("Superheavy industrialMechs can only use standard or large fusion engine\n");
+            			illegal = true;
+            		}
+            		break;
+            	default:
+            		buff.append("Superheavy Mechs must use some type of fusion engine\n");
+            		illegal = true;
+            	}
+            	
+            	if (mech.getArmoredComponentBV() > 0) {
+            		buff.append("Superheavy Mechs cannot have armored components\n");
+            		illegal = true;
+            	}
+            }
+            
+            if (mech.isOmni()) {
+                int total = 0;
+                int allocated = 0;
+                boolean compact = false;
+                for (Mounted m : mech.getMisc()) {
+                    if (m.getType().hasFlag(MiscType.F_HEAT_SINK)
+                                || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                                || m.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+                        total++;
+                        compact |= m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK);
+                        if (m.getLocation() != Entity.LOC_NONE) {
+                            allocated++;
+                        }
+                    }
+                }
+                int required = total - (mech.isOmni()?
+                        mech.getEngine().getBaseChassisHeatSinks(compact) :
+                            mech.getEngine().integralHeatSinkCapacity(compact));
+                if (allocated < required) {
+                    illegal = true;
+                    buff.append("Only " + allocated + " of the required " + required + " heat sinks are allocated to critical slots.");
+                }
+            }
+            
             if (hasHarjelII && hasHarjelIII) {
                 illegal = true;
                 buff.append("Can't mix HarJel II and HarJel III\n");
@@ -1110,8 +1160,6 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("Cannot mount HarJel repair system on IndustrialMech\n");
                     illegal = true;
                 }
-                // note: should check for pod mount on Omni here, but we don't
-                // track equipment fixed vs pod-mount status
                 for (int loc = 0; loc < mech.locations(); ++loc) {
                     int count = 0;
                     for (Mounted m : mech.getMisc()) {
@@ -1281,7 +1329,22 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("RISC emergency coolant system must be mounted in location with engine crit\n");
                     illegal = true;
                 }
-            }
+                
+                if (mech.isSuperHeavy()
+                		&& (m.getType().hasFlag(MiscType.F_TSM)
+                				|| m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)
+                				|| m.getType().hasFlag(MiscType.F_SCM)
+                				|| m.getType().hasFlag(MiscType.F_MASC)
+                				|| m.getType().hasFlag(MiscType.F_JUMP_JET)
+                				|| m.getType().hasFlag(MiscType.F_MECHANICAL_JUMP_BOOSTER)
+                				|| m.getType().hasFlag(MiscType.F_UMU)
+                				|| m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)
+                				|| m.getType().hasFlag(MiscType.F_MODULAR_ARMOR)
+                				|| m.getType().hasFlag(MiscType.F_PARTIAL_WING))) {
+                	buff.append("Superheavy may not mount " + m.getType().getName() + "\n");
+                	illegal = true;
+                }
+            }                
 
             if (mech.hasNullSig()) {
                 if (mech.hasStealth()) {
@@ -1544,6 +1607,15 @@ public abstract class TestEntity implements TestEntityOption {
                         + "(jump boosters are legal)");
             }
 
+        }
+        
+        if (getEntity().isOmni()) {
+            for (Mounted m : getEntity().getEquipment()) {
+                if (m.isOmniPodMounted() && m.getType().isOmniFixedOnly()) {
+                    illegal = true;
+                    buff.append(m.getType().getName() + " cannot be pod mounted.");
+                }
+            }
         }
         return illegal;
     }

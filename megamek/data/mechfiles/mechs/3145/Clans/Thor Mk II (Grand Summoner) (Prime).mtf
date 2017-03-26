@@ -32,22 +32,22 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:7
+Ultra AC/5, Left Arm
 ER Medium Laser, Left Arm
+Ultra AC/5, Right Arm
 ER Medium Laser, Right Arm
+LRM 15, Left Torso
 ER Medium Laser, Left Torso
 ER Medium Laser, Right Torso
-Ultra AC/5, Right Arm
-Ultra AC/5, Left Arm
-LRM 15, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
-CLERMediumLaser
-Clan Ultra AC/5 Ammo
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -57,11 +57,11 @@ Clan Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC5
-CLUltraAC5
-CLUltraAC5
-CLERMediumLaser
-Clan Ultra AC/5 Ammo
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLUltraAC5 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ultra AC/5 Ammo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -71,11 +71,11 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM15
-CLLRM15
-CLERMediumLaser
-Clan Ammo LRM-15
-Clan Ammo LRM-15
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLERMediumLaser (omnipod)
+Clan Ammo LRM-15 (omnipod)
+Clan Ammo LRM-15 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -85,7 +85,7 @@ Clan Ammo LRM-15
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
+CLERMediumLaser (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 -Empty-
@@ -107,7 +107,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
+Jump Jet (omnipod)
 Clan Endo Steel
 
 Head:
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-

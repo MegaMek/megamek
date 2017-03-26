@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:50
 Engine:250 Fusion Engine(IS)
-Structure:IS Endo-Steel
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:10
 Walk MP:5
 Jump MP:5
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:15
 RA Armor:15
 LT Armor:17
@@ -38,12 +38,12 @@ LAC/5, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -52,12 +52,12 @@ IS Endo-Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Light Auto Cannon/5
-Light Auto Cannon/5
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+Light Auto Cannon/5 (omnipod)
+Light Auto Cannon/5 (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -66,12 +66,12 @@ IS Endo-Steel
 Left Torso:
 Jump Jet
 Jump Jet
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -80,10 +80,10 @@ IS Endo-Steel
 Right Torso:
 Jump Jet
 Jump Jet
-IS Ammo LAC/5
-IS Ammo LAC/5
+IS Ammo LAC/5 (omnipod)
+IS Ammo LAC/5 (omnipod)
 ISCASE
-IS Endo-Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -103,13 +103,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-IS Endo-Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-IS Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-

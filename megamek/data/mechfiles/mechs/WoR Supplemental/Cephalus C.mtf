@@ -32,8 +32,8 @@ RTR Armor:4
 RTC Armor:4
 
 Weapons:2
-Flamer, Right Torso
 Plasma Cannon, Left Torso
+Flamer, Right Torso
 
 Left Arm:
 Shoulder
@@ -68,9 +68,9 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLPlasmaCannon
-CLPlasmaCannonAmmo
-CLPlasmaCannonAmmo
+CLPlasmaCannon (omnipod)
+CLPlasmaCannonAmmo (omnipod)
+CLPlasmaCannonAmmo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Mek Null Signature System
@@ -82,7 +82,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLFlamer
+CLFlamer (omnipod)
 Clan Endo Steel
 Mek Null Signature System
 Chameleon Light Polarization Shield

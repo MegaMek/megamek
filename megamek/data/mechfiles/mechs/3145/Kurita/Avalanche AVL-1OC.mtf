@@ -10,7 +10,7 @@ Rules Level:3
 
 Mass:50
 Engine:250 Fusion Engine(IS)
-Structure:IS Endo-Steel
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -32,23 +32,23 @@ RTR Armor:7
 RTC Armor:8
 
 Weapons:6
-ER Medium Laser, Left Arm
-ER Medium Laser, Right Arm
-Small X-Pulse Laser, Right Torso
-Small X-Pulse Laser, Left Torso
 LAC/5, Left Arm
+ER Medium Laser, Left Arm
 LAC/5, Right Arm
+ER Medium Laser, Right Arm
+Small X-Pulse Laser, Left Torso
+Small X-Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Light Auto Cannon/5
-Light Auto Cannon/5
-ISERMediumLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+Light Auto Cannon/5 (omnipod)
+Light Auto Cannon/5 (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -56,13 +56,13 @@ IS Endo-Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Light Auto Cannon/5
-Light Auto Cannon/5
-ISERMediumLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+Light Auto Cannon/5 (omnipod)
+Light Auto Cannon/5 (omnipod)
+ISERMediumLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -70,10 +70,10 @@ IS Endo-Steel
 Left Torso:
 Jump Jet
 Jump Jet
-ISSmallXPulseLaser
-IS Endo-Steel
-IS Endo-Steel
-IS Endo-Steel
+ISSmallXPulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -84,11 +84,11 @@ IS Endo-Steel
 Right Torso:
 Jump Jet
 Jump Jet
-ISSmallXPulseLaser
-IS Ammo LAC/5
-IS Ammo LAC/5
+ISSmallXPulseLaser (omnipod)
+IS Ammo LAC/5 (omnipod)
+IS Ammo LAC/5 (omnipod)
 ISCASE
-IS Endo-Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -107,13 +107,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-IS Endo-Steel
+IS Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-IS Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-

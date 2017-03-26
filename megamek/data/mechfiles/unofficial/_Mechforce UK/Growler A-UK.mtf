@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:35
-Engine:315 XL Engine
-Structure:Standard
-Myomer:MASC
+Engine:315 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:9
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:12
 RA Armor:12
 LT Armor:11
@@ -29,12 +30,10 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:6
 
-Weapons:5
-1 CLTAG, Right Torso
-1 CLECMSuite, Right Torso
-1 CLERMediumLaser, Right Torso
-1 CLActiveProbe, Left Torso
-1 CLERMediumLaser, Left Torso
+Weapons:3
+ER Medium Laser, Left Torso
+Clan TAG, Right Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -68,8 +67,8 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 CLMASC
-CLActiveProbe
-CLERMediumLaser
+CLActiveProbe (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -81,9 +80,9 @@ CLERMediumLaser
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLTAG
-CLECMSuite
-CLERMediumLaser
+CLTAG (omnipod)
+CLECMSuite (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -147,4 +146,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

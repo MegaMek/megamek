@@ -9,15 +9,16 @@ Source:TRO 3050 - Succession Wars
 Rules Level:2
 
 Mass:100
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
+Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -30,23 +31,27 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:14
 
-Weapons:6
-1 CLERSmallLaser, Center Torso
-2 CLERPPC, Left Arm
-2 CLMediumPulseLaser, Left Arm
-2 CLUltraAC2, Left Torso
-1 CLLBXAC10, Right Arm, Ammo:20
-2 CLUltraAC2, Right Torso, Ammo:90
+Weapons:10
+ER PPC, Left Arm
+ER PPC, Left Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+LB 10-X AC, Right Arm
+Ultra AC/2, Left Torso
+Ultra AC/2, Left Torso
+Ultra AC/2, Right Torso
+Ultra AC/2, Right Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERPPC
-CLERPPC
-CLERPPC
-CLERPPC
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -55,13 +60,13 @@ CLMediumPulseLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10
-CLLBXAC10 CL Ammo
-CLLBXAC10 Ammo
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+Clan LB 10-X Cluster Ammo (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -69,13 +74,13 @@ CLLBXAC10 Ammo
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2 Ammo
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+Clan Ultra AC/2 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -83,13 +88,13 @@ CLUltraAC2 Ammo
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2
-CLUltraAC2 Ammo
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+Clan Ultra AC/2 Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -105,7 +110,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 -Empty-
 
 Head:
@@ -127,8 +132,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 -Empty-
 -Empty-
 -Empty-
@@ -149,4 +154,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

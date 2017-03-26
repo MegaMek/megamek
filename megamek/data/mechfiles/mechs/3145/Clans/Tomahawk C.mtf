@@ -10,7 +10,7 @@ Rules Level:2
 
 Mass:100
 Engine:300 XL (Clan) Engine(IS)
-Structure:Clan Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:23 Double
@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:12
 Walk MP:3
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -32,68 +32,68 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:7
-ER Small Laser, Head
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
+Large Pulse Laser, Right Arm
 ATM 12, Left Torso
 ATM 12, Right Torso
-Large Pulse Laser, Left Arm
-Large Pulse Laser, Left Arm
-Large Pulse Laser, Right Arm
-Large Pulse Laser, Right Arm
+ER Small Laser, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
-CLLargePulseLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLATM12
-CLATM12
-CLATM12
-CLATM12
-CLATM12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+Clan Ammo ATM-12 (omnipod)
+Clan Ammo ATM-12 (omnipod)
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLATM12
-CLATM12
-CLATM12
-CLATM12
-CLATM12
-Clan Ammo ATM-12
-Clan Ammo ATM-12
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+CLATM12 (omnipod)
+Clan Ammo ATM-12 (omnipod)
+Clan Ammo ATM-12 (omnipod)
 -Empty-
 
 Center Torso:
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLERSmallLaser
+CLERSmallLaser (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+1
+</omnipodheatsinks>
+
 <fuel>
 320
 </fuel>
@@ -76,37 +80,45 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLERSmallLaser
-CLLightActiveProbe
+CLERSmallLaser:OMNI
+CLLightActiveProbe:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLLRM20
-CLArtemisV
-CLLRM20
-CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLLRM20:OMNI
+CLArtemisV:OMNI
+CLLRM20:OMNI
+CLArtemisV:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
 CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLLRM20
-CLArtemisV
-CLLRM20
-CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLLRM20:OMNI
+CLArtemisV:OMNI
+CLLRM20:OMNI
+CLArtemisV:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+Clan Ammo LRM-20 (Clan) Artemis V-capable:OMNI
+CLCASE:OMNI
+CLCASE:OMNI
+CLCASE
+CLCASE
 CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLERMediumLaser
-CLAngelECMSuite
+CLERMediumLaser:OMNI
+CLAngelECMSuite:OMNI
 </Aft Equipment>
 
 <source>

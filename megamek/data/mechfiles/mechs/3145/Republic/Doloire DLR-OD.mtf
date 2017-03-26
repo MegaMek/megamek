@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:26
@@ -32,26 +32,26 @@ RTR Armor:7
 RTC Armor:11
 
 Weapons:10
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-TSEMP Cannon, Left Torso
-TSEMP Cannon, Right Torso
-Streak SRM 4, Right Arm
-Streak SRM 4, Right Arm
-Streak SRM 4, Right Arm
-Streak SRM 4, Right Arm
 ER Micro Laser, Left Leg
 ER Micro Laser, Right Leg
+Streak SRM 4, Right Arm
+Streak SRM 4, Right Arm
+Streak SRM 4, Right Arm
+Streak SRM 4, Right Arm
+TSEMP Cannon, Left Torso
+TSEMP Cannon, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISLargeVibroblade
-ISLargeVibroblade
-ISLargeVibroblade
-ISLargeVibroblade
+ISLargeVibroblade (omnipod)
+ISLargeVibroblade (omnipod)
+ISLargeVibroblade (omnipod)
+ISLargeVibroblade (omnipod)
 ISAES
 ISAES
 ISAES
@@ -62,10 +62,10 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLStreakSRM4
-CLStreakSRM4
-CLStreakSRM4
-CLStreakSRM4
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 (omnipod)
+CLStreakSRM4 (omnipod)
 ISAES
 ISAES
 ISAES
@@ -74,12 +74,12 @@ ISAES
 Left Torso:
 Fusion Engine
 Fusion Engine
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-Supercharger
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+Supercharger (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 IS Endo-Composite
@@ -88,14 +88,14 @@ IS Endo-Composite
 Right Torso:
 Fusion Engine
 Fusion Engine
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-TSEMP Cannon
-Clan Streak SRM 4 Ammo
-Clan Streak SRM 4 Ammo
-ISCASEII
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+TSEMP Cannon (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+Clan Streak SRM 4 Ammo (omnipod)
+ISCASEII (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 
@@ -132,7 +132,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLERMicroLaser
+CLERMicroLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -146,7 +146,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLERMicroLaser
+CLERMicroLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-

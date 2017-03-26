@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Templar
 TLR1-OH
 
@@ -8,15 +8,16 @@ Era:3080
 Rules Level:3
 
 Mass:85
-Engine:340 XL Fusion Engine
-Structure:Endo-Steel
+Engine:340 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
+Base Chassis Heat Sinks:13
 Walk MP:4
 Jump MP:4
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:28
 RA Armor:28
 LT Armor:26
@@ -29,104 +30,123 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:10
 
-Weapons:6
-1 ISLightPPC, Right Torso
-1 ISLightPPC, Left Torso
-1 ISERFlamer, Right Arm
-1 ISC3SlaveUnit, Left Torso
-1 ISMRM30, Right Arm, Ammo:32
-1 ISMRM30, Left Arm
+Weapons:5
+MRM 30, Left Arm
+MRM 30, Right Arm
+ER Flamer, Right Arm
+Light PPC, Left Torso
+Light PPC, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISMRM30
-ISMRM30
-ISMRM30
-ISMRM30
-ISMRM30
-ISApollo
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+ISApollo (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISMRM30
-ISMRM30
-ISMRM30
-ISMRM30
-ISMRM30
-ISApollo
-ISERFlamer
-Endo-Steel
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+MRM 30 (omnipod)
+ISApollo (omnipod)
+ER Flamer (omnipod)
+IS Endo Steel
 -Empty-
 -Empty-
 
 Left Torso:
-Engine
-Engine
-Engine
-Jump Jet
-Jump Jet
-ISLightPPC
-ISLightPPC
-ISTargeting Computer
-ISTargeting Computer
-ISC3SlaveUnit
-Endo-Steel
-Endo-Steel
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISC3SlaveUnit (omnipod)
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-Engine
-Engine
-Engine
-ISLightPPC
-ISLightPPC
-ISMRM30 Ammo
-ISMRM30 Ammo
-ISMRM30 Ammo
-ISMRM30 Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Light PPC (omnipod)
+Light PPC (omnipod)
+IS MRM 30 Ammo (omnipod)
+IS MRM 30 Ammo (omnipod)
+IS MRM 30 Ammo (omnipod)
+IS MRM 30 Ammo (omnipod)
 ISCASE
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-Jump Jet
-Jump Jet
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+IS Endo Steel
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

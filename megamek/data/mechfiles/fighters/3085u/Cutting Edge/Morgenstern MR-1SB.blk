@@ -76,25 +76,25 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISImprovedHeavyGaussRifle
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISImprovedHeavyGauss Ammo
-ISMML5
-IS Ammo MML-5 SRM
-IS Ammo MML-5 LRM
+ISImprovedHeavyGaussRifle:OMNI
+ISImprovedHeavyGauss Ammo:OMNI
+ISImprovedHeavyGauss Ammo:OMNI
+ISImprovedHeavyGauss Ammo:OMNI
+ISMML5:OMNI
+IS Ammo MML-5 SRM:OMNI
+IS Ammo MML-5 LRM:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERMediumLaser
+ISERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERMediumLaser
+ISERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISERMediumLaser
+ISERMediumLaser:OMNI
 </Aft Equipment>
 
 <source>

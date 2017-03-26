@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+5
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -76,20 +80,20 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISHeavyGaussRifle
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
+ISHeavyGaussRifle:OMNI
+ISHeavyGauss Ammo:OMNI
+ISHeavyGauss Ammo:OMNI
+ISHeavyGauss Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERLargeLaser
-ISERLargeLaser
+ISERLargeLaser:OMNI
+ISERLargeLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERLargeLaser
-ISERLargeLaser
+ISERLargeLaser:OMNI
+ISERLargeLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

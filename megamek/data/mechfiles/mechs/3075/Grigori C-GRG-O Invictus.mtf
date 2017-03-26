@@ -9,13 +9,14 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:60
-Engine:240 Light Engine
-Structure:Standard
+Engine:240 Light Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:XL Gyro
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:9
 Walk MP:4
 Jump MP:0
 
@@ -46,22 +47,22 @@ Hand Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Retractable Blade
-Retractable Blade
-Retractable Blade
-Retractable Blade
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
+Retractable Blade (omnipod)
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-MRM 20
-MRM 20
-MRM 20
-Light Ferro-Fibrous
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+MRM 20 (omnipod)
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -69,10 +70,10 @@ Light Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-LRM 15
-LRM 15
-LRM 15
-ISStreakSRM4
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+LRM 15 (omnipod)
+ISStreakSRM4 (omnipod)
 ISC3iUnit
 ISC3iUnit
 -Empty-
@@ -83,11 +84,11 @@ ISC3iUnit
 Right Torso:
 Fusion Engine
 Fusion Engine
-IS MRM 20 Ammo
-IS Ammo LRM-15
-IS Ammo LRM-15
-IS Streak SRM 4 Ammo
-ISCASE
+IS MRM 20 Ammo (omnipod)
+IS Ammo LRM-15 (omnipod)
+IS Ammo LRM-15 (omnipod)
+IS Streak SRM 4 Ammo (omnipod)
+ISCASE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -113,8 +114,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-Light PPC
-Light PPC
+Light PPC (omnipod)
+Light PPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -127,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +142,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Light Ferro-Fibrous
-Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

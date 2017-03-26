@@ -34,4 +34,9 @@ public abstract class SubCapitalLaserWeapon extends EnergyWeapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_ENERGY);
 
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_SUBCAPITAL;
+    }
 }

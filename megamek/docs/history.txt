@@ -1,6 +1,87 @@
 VERSION HISTORY:
 ----------------
-v0.41.27-git
+v0.43.1-git
++ Feature: Added checks for null crew when checking for MD enhancements
++ Feature: Merge pull request #486 from pheonixstorm/SPA-Update
++ Issue #476: VTOL armor diagram changes color incorrectly?
++ Feature: Added checks for illegal superheavy mech equipment.
++ Feature: Added specialized infantry to verifier.
++ Feature: Added infantry specializations to cost calculation.
++ Feature: Fixed max platoon size test in verifier.
++ Feature: Show BV calculations for conventional infantry.
++ Feature: Added infantry BV calculations from TacOps.
++ Feature: Added infantry specializations to weight calculations.
++ Feature: Added anti-mek equipment back to infantry weight calculations.
++ Data: New Sprites and New Maps (Thanks DancefloorLandmine)
++ Issue #494 - Updated Princess Behaviors (Thanks pfarland and xStormforgex)
++ Issue #484 and fixes to image names.
++ Issue #490: Fixed princess documentation.
++ Feature: Princess will now respond with "You are not my boss." if a player
+	attempts to issue a command to an enemy Princess instance.
++ Issue #198: Long tom cannons cannot switch to indirect firing mode
++ Issue #456: Cannot cancel hotloading of LRMs during battle
++ Issue #457: Hot loaded LRMs not working properly
++ Issue #499: Map Editor Theme Broken
++ Issue #487: Issues with startup.sh 
++ Issue #464: Incorrect titles for ASF and BA in the end-of-battle text
++ Issue #421: Toughness Text In Pilot Tab Spacing Issue
++ Issue #442: Tooltip colors still not quite right for firing vectors
++ Issue #507: Image atlas map has cross-platform issues
++ Corrected BV calculations for HarJel II/III, coolant pods, and interface
+	cockpit.
++ Issue #511: Fall height is wrong for falls when moving into a higher hex
++ Bug: Cannot fire arm-mounted weapons while prone.
++ Bug: ASF can use Silver Bullet Gauss Rifles/Ammo
++ Bug: Attack sprites/arrows no longer shown for sensor returns
++ Feature: Unit files distinguish between fixed and pod-mounted equipment in
+	omni units.
++ Issue #510: Reports related to geysers weren't marked public
++ Issue #440: Explosions greater than 1 hex ring away not affecting all hexes
++ Issue #488: Chat window not disabling some hotkeys in targeting phase
++ Issue #466: Themed hexes can revert to no theme on explosions
++ Bug: Fuel tank magnitude terrain type not removed from collapsed buildings
++ Issue #473: Vehicle threshold report erroneously added for VTOLs
++ Issue #430: Smoke artillery only affecting center hex
++ Issue #458: Map selection changes when loading generated map settings
++ Issue #471: TacOps zip-lining didn't factor in elevation
++ Issue #454: Physical attacks and friendly units
++ Data: Unit fixes and new Sprites.
++ Data: Fixing some unit validation errors.
++ Issue #513: Infantry killed by Inferno ammo not giving kill credit
++ PR #515: Show %BV remaining in round reports
+
+v0.43.0 (2017-02-13 03:30 UTC)
++Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for
+	BA SRM4(OS) and BA LBX
++ Issue #467: Princess bot NPEs in physical attacks phase
++ Issue #427: Firing weapons split across arm/torso while prone
++ Data: Some unit fixes, and new maps from DancefloorLandmine
++ Data: Sprite fixes and new Sprites.
++ Data: More Sprite/Unit/Board Fixes
++ Infantry armor kits.
++ Mechanized VTOL infantry.
++ Infantry specializations: SCUBA, TAG.
++ Conventional infantry augmentations (e.g. Manei Domini) can be set in unit file. Note that not all options are implemented.
++ Random generation using formation building rules from Campaign Operations.
++ Adding some references to missing MD Infantry stuff. Names only not implemented for play.
+
+v0.42.0 (2017-01-01 14:00 UTC)
++ Issue #441: Fled units not being saved at the end of the game
++ Data/Feature: Turret Project Part 3 - Major additions to the number and 
+	types of turret. Sprites still in progress.
++ Issue #444: Client dies during the fire phase
+
+v0.41.28 (2016-12-18 17:35 UTC)
++ Issue #437: Issues with tooltip foreground colors
++ Issue #438: "Show Wrecks" graphics option ignored in isometric mode
++ Bug: Natural Aptitude Pilot/Gunnery restored.
++ Data/Feature: Turret Project Part 2 - Major additions to the number and 
+	types of turret. Sprites still in progress.
++ Data: New Sprites.
++ Issue #434: Hex updates from server don't respect client set hex theme
++ Fixed ordering issues in official tilesets
+
+v0.41.27 (2016-12-07 03:00 UTC)
 + Feature: Can save board image with units (renders the same as seen on screen)
 + Feature: PhaseDisplay buttons can now use tooltip text defined in i18n files
 + Bug: Manually targeting doesn't update next target id
@@ -38,6 +119,9 @@ v0.41.27-git
 + Issue #291: Rapids terrain validation & no PSR mods to hover, wige, vtol
 + Issue #399: Isometric bridges not darkened by night overlay
 + Issue #358: DFA against targets that jumped displaces to top of buildings
++ Data: New Sprites
++ Data/Feature: Turret Project Part 1 - Major additions to the number and 
+	types of turret. Sprites still in progress.
 	
 v0.41.26 (2016-11-02 02:00 UTC)
 + Data: New Sprites.

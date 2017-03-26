@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,28 +20,56 @@ Zugvogel Omni Support Aircraft
 C
 </Model>
 
-<Tonnage>
-200
-</Tonnage>
+<year>
+3086
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+troopspace:12.0
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
-51
-51
-51
-51
-</Armor>
+<cockpit_type>
+0
+</cockpit_type>
 
-<barrating>
-10
-</barrating>
+<heatsinks>
+0
+</heatsinks>
 
-<structural_tech_rating>
-4
-</structural_tech_rating>
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+369
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
+51
+51
+51
+51
+</armor>
 
 <Nose Equipment>
 </Nose Equipment>
@@ -53,64 +81,35 @@ C
 </Right Wing Equipment>
 
 <Aft Equipment>
-Searchlight
+Searchlight:OMNI
 </Aft Equipment>
 
+<Wings Equipment>
+</Wings Equipment>
+
 <Body Equipment>
-ISMobileFieldBase
-ISMobileFieldBase
-Lift Hoist
-ISCASE
+ISMobileFieldBase:OMNI
+ISMobileFieldBase:OMNI
+Lift Hoist:OMNI
+ISCASE:OMNI
 Advanced Fire Control
 Armored Chassis
 STOLChassisMod
 </Body Equipment>
 
-<transporters>
-TroopSpace:12
-cargobay:20:1
-</transporters>
+<barrating>
+10
+</barrating>
 
-<heatsinks>
-0
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
-
-<fuel>
-369
-</fuel>
-
-<type>
-IS Level 3
-</type>
-
-<year>
-3086
-</year>
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <source>
 TRO 3085
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+200.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0		
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<omni>
-</omni>

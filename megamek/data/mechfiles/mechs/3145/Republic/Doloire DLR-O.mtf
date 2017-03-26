@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:26
@@ -32,18 +32,18 @@ RTR Armor:7
 RTC Armor:11
 
 Weapons:5
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
-Large Pulse Laser, Right Arm
 Large Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
 Gauss Rifle, Right Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 ISAES
 ISAES
 ISAES
@@ -56,8 +56,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLargePulseLaser
-CLLargePulseLaser
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
 ISAES
 ISAES
 ISAES
@@ -69,12 +69,12 @@ ISAES
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-ISAngelECMSuite
-ISAngelECMSuite
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+ISAngelECMSuite (omnipod)
+ISAngelECMSuite (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 IS Endo-Composite
@@ -83,14 +83,14 @@ IS Endo-Composite
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-CLGaussRifle
-Clan Gauss Ammo
-Clan Gauss Ammo
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 -Empty-
 -Empty-
 -Empty-

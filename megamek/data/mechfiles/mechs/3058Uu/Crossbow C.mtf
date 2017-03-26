@@ -9,8 +9,8 @@ Source:TRO 3058 - Civil War
 Rules Level:2
 
 Mass:65
-Engine:325 Fusion (Clan) Engine
-Structure:Standard
+Engine:325 Fusion (Clan) Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -40,12 +40,12 @@ Heavy Machine Gun, Right Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLATM6
-CLATM6
-CLATM6
-Clan Ammo ATM-6
-Clan Ammo ATM-6 ER
-Clan Ammo ATM-6 HE
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 ER (omnipod)
+Clan Ammo ATM-6 HE (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -54,19 +54,19 @@ Clan Ammo ATM-6 HE
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLATM6
-CLATM6
-CLATM6
-Clan Ammo ATM-6
-Clan Ammo ATM-6 ER
-Clan Ammo ATM-6 HE
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 ER (omnipod)
+Clan Ammo ATM-6 HE (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLHeavyMG
+CLHeavyMG (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -80,9 +80,9 @@ CLHeavyMG
 -Empty-
 
 Right Torso:
-CLHeavyMG
-Clan Heavy Machine Gun Ammo - Full
-CLECMSuite
+CLHeavyMG (omnipod)
+Clan Heavy Machine Gun Ammo - Full (omnipod)
+CLECMSuite (omnipod)
 -Empty-
 -Empty-
 -Empty-

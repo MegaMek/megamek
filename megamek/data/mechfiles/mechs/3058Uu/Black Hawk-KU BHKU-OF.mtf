@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:60
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -39,10 +39,10 @@ Light PPC, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Heavy PPC
-Heavy PPC
-Heavy PPC
-Heavy PPC
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
+Heavy PPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -53,10 +53,10 @@ Heavy PPC
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Light PPC
-Light PPC
-Light PPC
-Light PPC
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
+Light PPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -110,7 +110,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISC3SlaveUnit
+ISC3SlaveUnit (omnipod)
 Sensors
 Life Support
 -Empty-

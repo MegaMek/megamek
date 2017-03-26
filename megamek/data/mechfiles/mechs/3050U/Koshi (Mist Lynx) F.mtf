@@ -9,15 +9,16 @@ Source:TRO 3050 - Civil War
 Rules Level:2
 
 Mass:25
-Engine:175 XL Engine
-Structure:Endo Steel
+Engine:175 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
 Walk MP:7
 Jump MP:6
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:4
 RA Armor:4
 LT Armor:7
@@ -30,27 +31,28 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:6
 
-Weapons:7
-1 CLActiveProbe, Head
-1 CLHeavyMediumLaser, Left Arm
-2 CLHeavySmallLaser, Left Arm
-1 CLLightTAG, Left Arm
-2 CLHeavyMediumLaser, Right Arm
-2 CLHeavySmallLaser, Right Arm
-1 CLECMSuite, Right Torso
+Weapons:8
+Heavy Medium Laser, Left Arm
+Heavy Small Laser, Left Arm
+Heavy Small Laser, Left Arm
+Light TAG, Left Arm
+Heavy Medium Laser, Right Arm
+Heavy Medium Laser, Right Arm
+Heavy Small Laser, Right Arm
+Heavy Small Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavySmallLaser
-CLHeavySmallLaser
-CLLightTAG
-Endo Steel
-Ferro-Fibrous
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavySmallLaser (omnipod)
+CLHeavySmallLaser (omnipod)
+CLLightTAG (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 -Empty-
 
 Right Arm:
@@ -58,42 +60,42 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavyMediumLaser
-CLHeavySmallLaser
-CLHeavySmallLaser
-Endo Steel
-Ferro-Fibrous
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavySmallLaser (omnipod)
+CLHeavySmallLaser (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDouble Heat Sink
-CLDouble Heat Sink
+CLDoubleHeatSink
+CLDoubleHeatSink
 Jump Jet
 Jump Jet
 Jump Jet
-CLECMSuite
-CLTargeting Computer
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+CLECMSuite (omnipod)
+CLTargeting Computer (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -106,8 +108,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
 
 Head:
 Life Support
@@ -128,7 +130,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,7 +144,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -150,4 +152,5 @@ Endo Steel
 -Empty-
 -Empty-
 -Empty-
+
 

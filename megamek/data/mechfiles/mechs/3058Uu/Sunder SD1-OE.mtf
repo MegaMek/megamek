@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:90
-Engine:360 XL Engine
-Structure:Standard
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:15 Double
@@ -42,12 +42,12 @@ ER Medium Laser, Head
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
+ISLBXAC10 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -59,10 +59,10 @@ Upper Arm Actuator
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-ISSNPPC
-ISSNPPC
-ISSNPPC
-ISSNPPC
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -71,11 +71,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISStreakSRM6
-ISStreakSRM6
-IS Streak SRM 6 Ammo
-IS LB 10-X AC Ammo
-IS LB 10-X Cluster Ammo
+ISStreakSRM6 (omnipod)
+ISStreakSRM6 (omnipod)
+IS Streak SRM 6 Ammo (omnipod)
+IS LB 10-X AC Ammo (omnipod)
+IS LB 10-X Cluster Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISStreakSRM6
-ISStreakSRM6
+ISStreakSRM6 (omnipod)
+ISStreakSRM6 (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISERMediumLaser
+ISERMediumLaser (omnipod)
 Sensors
 Life Support
 -Empty-

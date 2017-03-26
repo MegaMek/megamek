@@ -78,9 +78,8 @@ PintleTurret
 </Rear Equipment>
 
 <transporters>
-cargobay:.387:1
+cargobay:.383:1
 troopspace:.6
-standardseats:.6:8
 </transporters>
 
 <source>

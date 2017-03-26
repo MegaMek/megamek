@@ -34,18 +34,18 @@ RTC Armor:7
 Weapons:7
 ER Medium Laser, Left Arm
 ER Medium Laser, Right Arm
-ER Small Laser, Left Torso
-ER Small Laser, Right Torso
-ER Small Laser, Left Torso
-ER Small Laser, Right Torso
 ER PPC, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+ER Small Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Spot Welder
-CLERMediumLaser
+Spot Welder (omnipod)
+CLERMediumLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -58,8 +58,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Spot Welder
-CLERMediumLaser
+Spot Welder (omnipod)
+CLERMediumLaser (omnipod)
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -71,30 +71,30 @@ Clan Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-CLERPPC
-CLERPPC
-CLERSmallLaser
-CLERSmallLaser
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-Clan Improved Jump Jet
-CLERSmallLaser
-CLERSmallLaser
-Liquid Storage (1 ton)
-Liquid Storage (1 ton)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+Liquid Storage (1 ton) (omnipod)
+Liquid Storage (1 ton) (omnipod)
 
 Center Torso:
 Fusion Engine
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Clan Improved Jump Jet
-Clan Improved Jump Jet
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLECMSuite
+CLECMSuite (omnipod)
 Sensors
 Life Support
 -Empty-
@@ -129,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons
-Talons
+Talons (omnipod)
+Talons (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -143,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Talons
-Talons
+Talons (omnipod)
+Talons (omnipod)
 -Empty-
 -Empty-
 -Empty-

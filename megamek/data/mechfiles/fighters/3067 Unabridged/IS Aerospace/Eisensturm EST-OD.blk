@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+4
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -76,31 +80,31 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
-ISTargeting Computer
-IS Ammo MML-7 SRM Artemis-capable
+ISPlasmaRifle:OMNI
+ISPlasmaRifle:OMNI
+ISPlasmaRifle:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISPlasmaRifleAmmo:OMNI
+ISTargeting Computer:OMNI
+IS Ammo MML-7 SRM Artemis-capable:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISMML7
-ISArtemisIV
-IS Ammo MML-7 LRM Artemis-capable
+ISMML7:OMNI
+ISArtemisIV:OMNI
+IS Ammo MML-7 LRM Artemis-capable:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISMML7
-ISArtemisIV
-IS Ammo MML-7 LRM Artemis-capable
+ISMML7:OMNI
+ISArtemisIV:OMNI
+IS Ammo MML-7 LRM Artemis-capable:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISERMediumLaser
+ISERMediumLaser:OMNI
 </Aft Equipment>
 
 <source>

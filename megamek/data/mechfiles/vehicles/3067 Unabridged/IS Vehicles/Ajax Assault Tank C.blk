@@ -33,7 +33,7 @@ Tracked
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -58,19 +58,19 @@ Tracked
 
 <Body Equipment>
 ISCASE
-ISTargeting Computer
-ISGuardianECMSuite
-IS Streak SRM 6 Ammo
-IS Streak SRM 6 Ammo
-IS MRM 40 Ammo
-IS MRM 40 Ammo
+ISTargeting Computer:OMNI
+ISGuardianECMSuite:OMNI
+IS Streak SRM 6 Ammo:OMNI
+IS Streak SRM 6 Ammo:OMNI
+IS MRM 40 Ammo:OMNI
+IS MRM 40 Ammo:OMNI
 </Body Equipment>
 
 <Front Equipment>
-ISStreakSRM6
-ISStreakSRM6
-ISStreakSRM6
-MRM 40
+ISStreakSRM6:OMNI
+ISStreakSRM6:OMNI
+ISStreakSRM6:OMNI
+MRM 40:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -83,11 +83,15 @@ MRM 40
 </Rear Equipment>
 
 <Turret Equipment>
-PPC
-ISStreakSRM6
+PPC:OMNI
+ISStreakSRM6:OMNI
 </Turret Equipment>
 
 <tonnage>
 90.0
 </tonnage>
+
+<baseChassisTurretWeight>
+3.5
+</baseChassisTurretWeight>
 

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,59 +20,29 @@ Zugvogel Omni Support Aircraft
 E
 </Model>
 
-<Tonnage>
-200
-</Tonnage>
+<year>
+3086
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<transporters>
+troopspace:48.0
+</transporters>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
-51
-51
-51
-51
-</Armor>
-
-<barrating>
-10
-</barrating>
-
-<structural_tech_rating>
-4
-</structural_tech_rating>
-
-<Nose Equipment>
-ISMML5
-ISMML5
-ISAntiMissileSystem
-ISAntiMissileSystem
-</Nose Equipment>
-
-<Aft Equipment>
-ISRotaryAC2
-ISAntiMissileSystem
-ISAntiMissileSystem
-</Aft Equipment>
-
-<Body Equipment>
-ISMML5 LRM Ammo
-ISMML5 SRM Ammo
-ISRotaryAC2 Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISAMS Ammo
-ISCASE
-ISGuardianECMSuite
-Advanced Fire Control
-Armored Chassis
-STOLChassisMod
-</Body Equipment>
-
-<transporters>
-TroopSpace:48
-</transporters>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 0
@@ -86,33 +56,70 @@ TroopSpace:48
 369
 </fuel>
 
-<type>
-IS Level 2
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-3086
-</year>
+<omni>
+1
+</omni>
+
+<armor>
+51
+51
+51
+51
+</armor>
+
+<Nose Equipment>
+ISMML5:OMNI
+ISMML5:OMNI
+ISAntiMissileSystem:OMNI
+ISAntiMissileSystem:OMNI
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISRotaryAC2:OMNI
+ISAntiMissileSystem:OMNI
+ISAntiMissileSystem:OMNI
+</Aft Equipment>
+
+<Wings Equipment>
+</Wings Equipment>
+
+<Body Equipment>
+IS Ammo MML-5 LRM:OMNI
+IS Ammo MML-5 SRM:OMNI
+ISRotaryAC2 Ammo:OMNI
+ISAMS Ammo:OMNI
+ISAMS Ammo:OMNI
+ISAMS Ammo:OMNI
+ISCASE:OMNI
+ISGuardianECMSuite:OMNI
+Advanced Fire Control
+Armored Chassis
+STOLChassisMod
+</Body Equipment>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <source>
 TRO 3085
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+200.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0		
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
-
-<omni>
-</omni>

@@ -33,7 +33,7 @@ Tracked
 </motion_type>
 
 <transporters>
-
+BattleArmorHandles - troopers:-1
 </transporters>
 
 <cruiseMP>
@@ -57,10 +57,10 @@ Tracked
 </armor>
 
 <Body Equipment>
-CLCASE
-HAG/20 Ammo
-HAG/20 Ammo
-HAG/20 Ammo
+CLCASE:OMNI
+HAG/20 Ammo:OMNI
+HAG/20 Ammo:OMNI
+HAG/20 Ammo:OMNI
 Clan LB 10-X AC Ammo
 Clan LB 10-X AC Ammo
 Clan LB 10-X Cluster Ammo
@@ -69,7 +69,7 @@ Clan LB 10-X Cluster Ammo
 <Front Equipment>
 CLLBXAC10
 CLLBXAC10
-CLMediumPulseLaser
+CLMediumPulseLaser:OMNI
 </Front Equipment>
 
 <Right Equipment>
@@ -82,9 +82,9 @@ CLMediumPulseLaser
 </Rear Equipment>
 
 <Turret Equipment>
-CLHAG20
-CLMediumPulseLaser
-CLMediumPulseLaser
+CLHAG20:OMNI
+CLMediumPulseLaser:OMNI
+CLMediumPulseLaser:OMNI
 </Turret Equipment>
 
 <source>
@@ -94,4 +94,8 @@ RS 3067U
 <tonnage>
 95.0
 </tonnage>
+
+<baseChassisTurretWeight>
+1.5
+</baseChassisTurretWeight>
 

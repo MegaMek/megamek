@@ -34,21 +34,21 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:6
-ER Small Laser, Center Torso
-ER Medium Laser, Right Torso
-ER Medium Laser, Left Torso
 Large Re-engineered Laser, Left Arm
 Rotary AC/5, Right Arm
 Streak SRM 6, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Large Re-engineered Laser
-Large Re-engineered Laser
-Large Re-engineered Laser
-Large Re-engineered Laser
-Large Re-engineered Laser
+Large Re-engineered Laser (omnipod)
+Large Re-engineered Laser (omnipod)
+Large Re-engineered Laser (omnipod)
+Large Re-engineered Laser (omnipod)
+Large Re-engineered Laser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -58,12 +58,12 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -72,9 +72,9 @@ ISRotaryAC5
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISStreakSRM6
-ISStreakSRM6
-ISERMediumLaser
+ISStreakSRM6 (omnipod)
+ISStreakSRM6 (omnipod)
+ISERMediumLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -86,11 +86,11 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-IS Streak SRM 6 Ammo
+ISERMediumLaser (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+IS Streak SRM 6 Ammo (omnipod)
 ISCASE
 IS Endo Steel
 IS Endo Steel
@@ -108,7 +108,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
+ISERSmallLaser (omnipod)
 -Empty-
 
 Head:

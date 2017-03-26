@@ -117,4 +117,8 @@ public class MinefieldTarget implements Targetable {
     public int getAltitude() {
         return 0;
     }
+
+    public boolean isEnemyOf(Entity other) {
+        return true;
+    }
 }

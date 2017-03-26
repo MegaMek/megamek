@@ -76,24 +76,28 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLNarcBeacon
-CLNarc Pods
-CLERMediumLaser
-Clan Ammo SRM-6
-Clan Ammo SRM-6
+CLNarcBeacon:OMNI
+CLNarc Pods:OMNI
+CLERMediumLaser:OMNI
+Clan Ammo SRM-6:OMNI
+Clan Ammo SRM-6:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLSRM6
-CLSRM6
-CLERMediumLaser
+CLSRM6:OMNI
+CLSRM6:OMNI
+CLERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLSRM6
-CLSRM6
-CLERMediumLaser
+CLSRM6:OMNI
+CLSRM6:OMNI
+CLERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

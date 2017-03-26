@@ -34,6 +34,7 @@ public abstract class ArtilleryCannonWeapon extends AmmoWeapon {
 
     public ArtilleryCannonWeapon() {
         super();
+        setModes(new String[] { "", "Indirect" });
         damage = DAMAGE_ARTILLERY;
         flags = flags.or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON)
                 .or(F_TANK_WEAPON);

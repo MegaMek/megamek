@@ -191,6 +191,9 @@ public class EquipmentType {
     protected double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
 
+    // For equipment that cannot be pod-mounted on an omni unit
+    protected boolean omniFixedOnly = false;
+
     // fluffy stuff
     protected int techRating = RATING_C;
     protected int[] availRating = { RATING_E, RATING_E, RATING_E, RATING_E };
@@ -432,6 +435,14 @@ public class EquipmentType {
 
     public double getBV(Entity entity) {
         return bv;
+    }
+
+    /**
+     * @return - whether the equipment must be considered part of the base chassis when
+     *           mounted on an omni unit
+     */
+    public boolean isOmniFixedOnly() {
+        return omniFixedOnly;
     }
 
     /**

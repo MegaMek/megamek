@@ -34,7 +34,7 @@ import megamek.server.commands.JoinTeamCommand;
 
 public class ChatProcessor {
 
-    protected boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
+    boolean shouldBotAcknowledgeDefeat(String message, BotClient bot) {
         boolean result = false;
         if (!StringUtil.isNullOrEmpty(message) &&
             (message.contains("declares individual victory at the end of the turn.")
@@ -59,7 +59,7 @@ public class ChatProcessor {
         return result;
     }
 
-    protected boolean shouldBotAcknowledgeVictory(String message, BotClient bot) {
+    boolean shouldBotAcknowledgeVictory(String message, BotClient bot) {
         boolean result = false;
 
         if (!StringUtil.isNullOrEmpty(message) &&
@@ -200,7 +200,7 @@ public class ChatProcessor {
         return null;
     }
 
-    protected void additionalPrincessCommands(GamePlayerChatEvent chatEvent, Princess princess) {
+    void additionalPrincessCommands(GamePlayerChatEvent chatEvent, Princess princess) {
         final String METHOD_NAME = "additionalPrincessCommands(GamePlayerChatEvent, Princess, IPlayer)";
 
         // Commands should be sent in this format:
@@ -293,6 +293,9 @@ public class ChatProcessor {
         int speakerTeam = speakerPlayer.getTeam();
         int princessTeam = princessPlayer.getTeam();
         if (princessTeam != speakerTeam) {
+            msg = "You are not my boss. [wrong team]";
+            princess.sendChat(msg);
+            princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg);
             return;
         }
 

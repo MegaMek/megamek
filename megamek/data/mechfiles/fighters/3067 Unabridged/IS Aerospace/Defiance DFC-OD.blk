@@ -68,16 +68,16 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-Thunderbolt 10
-IS Ammo Thunderbolt-10
+Thunderbolt 10:OMNI
+IS Ammo Thunderbolt-10:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISLargeVSPLaser
+ISLargeVSPLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISLargeVSPLaser
+ISLargeVSPLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>

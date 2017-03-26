@@ -1872,6 +1872,7 @@ public class Server implements Runnable {
             r.messageId = 7016;
             r.add(Server.getColorForPlayer(player));
             r.add(player.getBV());
+            r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000) / 100));
             r.add(player.getInitialBV());
             r.add(player.getFledBV());
             addReport(r);
@@ -2545,6 +2546,7 @@ public class Server implements Runnable {
                     r.messageId = 7016;
                     r.add(Server.getColorForPlayer(player));
                     r.add(player.getBV());
+                    r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000) / 100));
                     r.add(player.getInitialBV());
                     r.add(player.getFledBV());
                     addReport(r);
@@ -4505,6 +4507,10 @@ public class Server implements Runnable {
                // Handle zip lines
                 PilotingRollData psr = getEjectModifiers(game, unit, false,
                         unit.getPosition(), "Anti-mek skill");
+                // Factor in Elevation
+                if (unloader.getElevation() > 0) {
+                    psr.addModifier(unloader.getElevation(), "elevation");
+                }
                 int roll = Compute.d6(2);
 
                 // Report ziplining
@@ -9762,8 +9768,8 @@ public class Server implements Runnable {
             r.indent(2);
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
-            createSmoke(tempcoords, 2, 3);
-            hex = game.getBoard().getHex(coords);
+            createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
+            hex = game.getBoard().getHex(tempcoords);
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
             sendChangedHex(tempcoords);
@@ -9798,6 +9804,7 @@ public class Server implements Runnable {
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
             createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
+            hex = game.getBoard().getHex(tempcoords);
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
             sendChangedHex(tempcoords);
@@ -10286,6 +10293,7 @@ public class Server implements Runnable {
                         vPhaseReport.add(r);
                     } else {
                         vPhaseReport.addAll(destroyEntity(te, "damage", false));
+                        creditKill(te, ae);
                         Report.addNewline(vPhaseReport);
                     }
                 } else {
@@ -11796,8 +11804,6 @@ public class Server implements Runnable {
             srcHex = swapHex;
             src = origDest;
             dest = origSrc;
-            // Adjust elevation, since it's relative to the surface of srcHex
-            entitySrcElevation -= (destHex.getLevel() - srcHex.getLevel());
         } else {
             src = origSrc;
             dest = origDest;
@@ -13319,8 +13325,8 @@ public class Server implements Runnable {
                     }
                 }
                 for (int dist = 1; dist <= maxDist; dist++) {
-                    for (int dir = 0; dir <= 5; dir++) {
-                        Coords pos = e.getPosition().translated(dir, dist);
+                    List<Coords> coords = Compute.coordsAtRange(e.getPosition(), dist);
+                    for (Coords pos : coords) {
                         // Check that we're in the right arc
                         if (Compute.isInArc(game, e.getId(), e
                                 .getEquipmentNum(ams),
@@ -13548,6 +13554,7 @@ public class Server implements Runnable {
                     m.setJammed(false);
                     ((Tank) entity).getJammedWeapons().remove(m);
                     Report r = new Report(3034);
+                    r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(m.getName());
                     addReport(r);
@@ -19887,7 +19894,7 @@ public class Server implements Runnable {
                 // example...
                 continue;
             }
-            String reason = game.getPlanetaryConditions().whyDoomed(entity);
+            String reason = game.getPlanetaryConditions().whyDoomed(entity, game);
             if (null != reason) {
                 r = new Report(6015);
                 r.subject = entity.getId();
@@ -23059,8 +23066,8 @@ public class Server implements Runnable {
         }
         vDesc.addAll(reports);
         for (int dist = 1; dist < maxDist; dist++) {
-            for (int dir = 0; dir < 6; dir++) {
-                Coords c = position.translated(dir, dist);
+            List<Coords> coords = Compute.coordsAtRange(position, dist);
+            for (Coords c : coords) {
                 hex = game.getBoard().getHex(c);
                 if ((hex != null) && hex.hasTerrainfactor()) {
                     r = new Report(3384);
@@ -25528,6 +25535,7 @@ public class Server implements Runnable {
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE)
                 && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
+                && !((t instanceof VTOL) || (t instanceof GunEmplacement))
                 && !t.getOverThresh()) {
             r = new Report(6006);
             r.subject = t.getId();
@@ -28821,7 +28829,8 @@ public class Server implements Runnable {
                 m.setPendingDump(mode == -1);
             // a mode change for ammo means dumping or hotloading
             } else if ((m.getType() instanceof AmmoType)
-                && !m.getType().hasInstantModeSwitch() && (mode <= 0)) {
+                && !m.getType().hasInstantModeSwitch() && (mode < 0
+                            || mode == 0 && m.isPendingDump())) {
                 m.setPendingDump(mode == -1);
             } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted()
                        && (mode <= 0)) {
@@ -32479,6 +32488,7 @@ public class Server implements Runnable {
         }
 
         if ((game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)
+                || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_BLIZZARD)
                 || ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) && (game
                         .getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE))) {
             rollTarget.addModifier(3, "Really Bad Weather");

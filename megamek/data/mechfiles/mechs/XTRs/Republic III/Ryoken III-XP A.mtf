@@ -52,12 +52,12 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 Clan Ferro-Lamellor
-CLERLargeLaser
-CLERMediumLaser
-CLERMediumLaser
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
 Clan Ferro-Lamellor
 
 Right Arm:
@@ -67,11 +67,11 @@ Lower Arm Actuator
 Hand Actuator
 TSM
 TSM
-CLERLargeLaser
-CLERMediumLaser
-CLERMediumLaser
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 TSM
 
 Left Torso:
@@ -84,9 +84,9 @@ Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
 
 Right Torso:
 Fusion Engine
@@ -97,9 +97,9 @@ Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
-CLERSmallLaser
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
 -Empty-
 
 Center Torso:
@@ -112,9 +112,9 @@ Fusion Engine
 TSM
 TSM
 TSM
-Radical Heat Sink System
-Radical Heat Sink System
-Radical Heat Sink System
+Radical Heat Sink System (omnipod)
+Radical Heat Sink System (omnipod)
+Radical Heat Sink System (omnipod)
 
 Head:
 Life Support

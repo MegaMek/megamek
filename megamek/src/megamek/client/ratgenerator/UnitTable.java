@@ -42,13 +42,13 @@ public class UnitTable {
 
     private static final int CACHE_SIZE = 32;
 
-    private static LinkedHashMap<CacheKey,UnitTable> cache =
-            new LinkedHashMap<CacheKey, UnitTable>(CACHE_SIZE, 0.75f, true) {
+    private static LinkedHashMap<Parameters,UnitTable> cache =
+            new LinkedHashMap<Parameters, UnitTable>(CACHE_SIZE, 0.75f, true) {
 
         private static final long serialVersionUID = -8016095510116134800L;
 
         @Override
-        protected boolean removeEldestEntry(Map.Entry<CacheKey, UnitTable> entry) {
+        protected boolean removeEldestEntry(Map.Entry<Parameters, UnitTable> entry) {
             return size() >= CACHE_SIZE;
         }
     };
@@ -72,23 +72,16 @@ public class UnitTable {
      * 							the configuration based on the faction actually deploying
      * @return - a table containing the available units and their relative weights
      */
-    public static synchronized UnitTable findTable(FactionRecord faction, int unitType, int year,
+    public static UnitTable findTable(FactionRecord faction, int unitType, int year,
             String rating, Collection<Integer> weightClasses, int networkMask,
             Collection<EntityMovementMode> movementModes,
             Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
         Objects.requireNonNull(faction);
-        CacheKey key = new CacheKey(faction, unitType, year, rating, weightClasses, networkMask,
+        Parameters params = new Parameters(faction, unitType, year, rating, weightClasses, networkMask,
                 movementModes, roles, roleStrictness, deployingFaction);
-        UnitTable retVal = cache.get(key);
-        if (retVal == null) {
-            retVal = new UnitTable(key);
-            if (retVal.hasUnits()) {
-                cache.put(key, retVal);
-            }
-        }
-        return retVal;
+        return findTable(params);
     }
-
+    
     /**
      * deployingFaction not specified, uses main faction.
      *
@@ -102,7 +95,27 @@ public class UnitTable {
                 movementModes, roles, roleStrictness, faction);
     }
 
-    private CacheKey key;
+    /**
+     * Checks cache for a unit table with the given parameters. If none is found, generates
+     * one and adds to the cache using a copy of the Parameters object as a key.
+     * 
+     * @param params - the parameters to use in generating the table.
+     * @return a generated table matching the parameters
+     */
+    public static synchronized UnitTable findTable(Parameters params) {
+        Objects.requireNonNull(params);
+        UnitTable retVal = cache.get(params);
+        if (retVal == null) {
+            retVal = new UnitTable(params);
+            if (retVal.hasUnits()) {
+                //Use a copy of the params for the cache key to prevent changing it.
+                cache.put((Parameters)params.copy(), retVal);
+            }
+        }
+        return retVal;
+    }
+
+    private Parameters key;
     private List<TableEntry> salvageTable = new ArrayList<TableEntry>();
     private List<TableEntry> unitTable = new ArrayList<TableEntry>();
 
@@ -117,7 +130,7 @@ public class UnitTable {
      *
      * @param key - a structure providing the parameters for generating the table
      */
-    protected UnitTable(CacheKey key) {
+    protected UnitTable(Parameters key) {
         this.key = key;
         /**
          * Generate the RAT, then go through it to build the NavigableMaps that
@@ -376,7 +389,7 @@ public class UnitTable {
      * key for the cache.
      *
      */
-    private static class CacheKey {
+    public static final class Parameters implements Cloneable {
         private FactionRecord faction;
         private int unitType;
         private int year;
@@ -388,7 +401,7 @@ public class UnitTable {
         private int roleStrictness;
         private FactionRecord deployingFaction;
 
-        public CacheKey(FactionRecord faction, int unitType, int year,
+        public Parameters(FactionRecord faction, int unitType, int year,
                 String rating, Collection<Integer> weightClasses, int networkMask,
                 Collection<EntityMovementMode> movementModes,
                 Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
@@ -396,10 +409,13 @@ public class UnitTable {
             this.unitType = unitType;
             this.year = year;
             this.rating = rating;
-            this.weightClasses = weightClasses;
+            this.weightClasses = weightClasses == null?
+                    new ArrayList<>() : new ArrayList<>(weightClasses);
             this.networkMask = networkMask;
-            this.movementModes = movementModes == null? EnumSet.noneOf(EntityMovementMode.class) : movementModes;
-            this.roles = movementModes == null? EnumSet.noneOf(MissionRole.class) : roles;
+            this.movementModes = movementModes == null || movementModes.isEmpty()?
+                    EnumSet.noneOf(EntityMovementMode.class) : EnumSet.copyOf(movementModes);
+            this.roles = roles == null || roles.isEmpty()?
+                    EnumSet.noneOf(MissionRole.class) : EnumSet.copyOf(roles);
             this.roleStrictness = roleStrictness;
             this.deployingFaction = deployingFaction == null? faction : deployingFaction;
         }
@@ -436,10 +452,10 @@ public class UnitTable {
             if (obj == null) {
                 return false;
             }
-            if (!(obj instanceof CacheKey)) {
+            if (!(obj instanceof Parameters)) {
                 return false;
             }
-            CacheKey other = (CacheKey) obj;
+            Parameters other = (Parameters) obj;
             if (deployingFaction == null) {
                 if (other.deployingFaction != null) {
                     return false;
@@ -501,40 +517,87 @@ public class UnitTable {
             return faction;
         }
 
+        public void setFaction(FactionRecord faction) {
+            this.faction = faction;
+        }
+
         public int getUnitType() {
             return unitType;
+        }
+
+        public void setUnitType(int unitType) {
+            this.unitType = unitType;
         }
 
         public int getYear() {
             return year;
         }
 
+        public void setYear(int year) {
+            this.year = year;
+        }
+
         public String getRating() {
             return rating;
+        }
+
+        public void setRating(String rating) {
+            this.rating = rating;
         }
 
         public Collection<Integer> getWeightClasses() {
             return weightClasses;
         }
 
+        public void setWeightClasses(Collection<Integer> weightClasses) {
+            this.weightClasses = weightClasses;
+        }
+
         public int getNetworkMask() {
             return networkMask;
+        }
+
+        public void setNetworkMask(int networkMask) {
+            this.networkMask = networkMask;
         }
 
         public Collection<EntityMovementMode> getMovementModes() {
             return movementModes;
         }
 
+        public void setMovementModes(Collection<EntityMovementMode> movementModes) {
+            this.movementModes = movementModes;
+        }
+
         public Collection<MissionRole> getRoles() {
             return roles;
+        }
+
+        public void setRoles(Collection<MissionRole> roles) {
+            this.roles = roles;
         }
 
         public int getRoleStrictness() {
             return roleStrictness;
         }
 
+        public void setRoleStrictness(int roleStrictness) {
+            this.roleStrictness = roleStrictness;
+        }
+
         public FactionRecord getDeployingFaction() {
             return deployingFaction;
         }
+
+        public void setDeployingFaction(FactionRecord deployingFaction) {
+            this.deployingFaction = deployingFaction;
+        }
+
+        public Parameters copy() {
+            return new Parameters(faction, unitType, year,
+                rating, weightClasses, networkMask, movementModes,
+                roles, roleStrictness, deployingFaction);
+        }
+        
     }
 }

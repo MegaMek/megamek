@@ -46,7 +46,7 @@ ISMG
 ISMG
 ISMG
 ISMG
-ISMG Ammo
+ISMG Ammo (200)
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -56,14 +56,14 @@ ISMG
 ISMG
 ISMG
 ISMG
-ISMG Ammo
+ISMG Ammo (200)
 (R) Autocannon/5 Primitive
 (R) ISAC5p Ammo
 (R) ISMG
 (R) ISMG
 (R) ISMG
 (R) ISMG
-(R) ISMG Ammo
+(R) ISMG Ammo (200)
 </Left Side Equipment>
 
 <Right Side Equipment>
@@ -73,14 +73,14 @@ ISMG
 ISMG
 ISMG
 ISMG
-ISMG Ammo
+ISMG Ammo (200)
 (R) Autocannon/5 Primitive
 (R) ISAC5p Ammo
 (R) ISMG
 (R) ISMG
 (R) ISMG
 (R) ISMG
-(R) ISMG Ammo
+(R) ISMG Ammo (200)
 </Right Side Equipment>
 
 <Aft Equipment>
@@ -90,7 +90,7 @@ ISMG
 ISMG
 ISMG
 ISMG
-ISMG Ammo
+ISMG Ammo (200)
 </Aft Equipment>
 
 <structural_integrity>

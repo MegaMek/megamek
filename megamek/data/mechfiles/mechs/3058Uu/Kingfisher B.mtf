@@ -9,8 +9,8 @@ Source:TRO 3058 - Succession Wars
 Rules Level:2
 
 Mass:90
-Engine:360 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:360 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
@@ -32,22 +32,22 @@ RTR Armor:10
 RTC Armor:13
 
 Weapons:8
-Ultra AC/20, Right Arm
 ER Large Laser, Left Arm
-ER Medium Laser, Right Torso
 ER Medium Laser, Left Arm
-ER Medium Laser, Left Torso
-ER Medium Laser, Left Torso
 ER Small Laser, Left Arm
+Ultra AC/20, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
 AMS, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLERLargeLaser
-CLERMediumLaser
-CLERSmallLaser
+CLERLargeLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERSmallLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -58,27 +58,27 @@ CLERSmallLaser
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
-CLUltraAC20
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
+CLUltraAC20 (omnipod)
 -Empty-
 -Empty-
 
 Left Torso:
-CLERMediumLaser
-CLERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -86,15 +86,15 @@ Ferro-Fibrous
 Right Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLERMediumLaser
-Clan Ultra AC/20 Ammo
-Clan Ultra AC/20 Ammo
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumLaser (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Ultra AC/20 Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -108,14 +108,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLAntiMissileSystem
-CLAMS Ammo
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

@@ -515,6 +515,7 @@ public class EntityListFile {
         ArrayList<Entity> living = new ArrayList<Entity>();
         ArrayList<Entity> allied = new ArrayList<Entity>();
         ArrayList<Entity> salvage = new ArrayList<Entity>();
+        ArrayList<Entity> retreated = new ArrayList<Entity>();
         ArrayList<Entity> devastated = new ArrayList<Entity>();
         Hashtable<String, String> kills = new Hashtable<String, String>();        
 
@@ -541,6 +542,8 @@ public class EntityListFile {
             	living.add(ent);
             } else if (!ent.getOwner().isEnemyOf(client.getLocalPlayer())) {
             	allied.add(ent);
+            } else {
+            	retreated.add(ent);
             }
         }
 
@@ -620,6 +623,21 @@ public class EntityListFile {
             }
             // Finish writing.
             output.write(indentStr(1) + "</salvage>");
+            output.write(CommonConstants.NL);
+        }
+
+        if(!retreated.isEmpty()) {
+            output.write(CommonConstants.NL);
+            output.write(indentStr(1) + "<retreated>");
+            output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            try {
+                writeEntityList(output, retreated);
+            } catch(IOException exception) {
+                throw exception;
+            }
+            // Finish writing.
+            output.write(indentStr(1) + "</retreated>");
             output.write(CommonConstants.NL);
         }
 

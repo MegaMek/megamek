@@ -8,15 +8,16 @@ Era:3058
 Rules Level:2
 
 Mass:40
-Engine:280 XL Engine
-Structure:Endo Steel
+Engine:280 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:13 Double
+Base Chassis Heat Sinks:10
 Walk MP:7
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:10
 RA Armor:10
 LT Armor:15
@@ -29,23 +30,24 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:7
 
-Weapons:6
-1 CLLBXAC2, Right Arm, Ammo:45
-1 CLERLargeLaser, Left Arm
-1 CLERMediumLaser, Right Torso
-1 CLAntiMissileSystem, Right Torso, Ammo:24
-1 CLERMediumLaser, Left Torso
-2 CLERSmallLaser, Center Torso
+Weapons:7
+ER Large Laser, Left Arm
+LB 2-X AC, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
+AMS, Right Torso
+ER Small Laser, Center Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLERLargeLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERLargeLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -54,10 +56,10 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC2
-CLLBXAC2
-CLLBXAC2
-CLLBXAC2 CL Ammo
+CLLBXAC2 (omnipod)
+CLLBXAC2 (omnipod)
+CLLBXAC2 (omnipod)
+Clan LB 2-X Cluster Ammo (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -68,28 +70,28 @@ CLLBXAC2 CL Ammo
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLERMediumLaser (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLERMediumLaser
-CLAntiMissileSystem
-CLAMS Ammo
-CLDouble Heat Sink
-CLDouble Heat Sink
-Endo Steel
-Endo Steel
-Endo Steel
+CLERMediumLaser (omnipod)
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 
@@ -104,8 +106,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERSmallLaser
-CLERSmallLaser
+CLERSmallLaser (omnipod)
+CLERSmallLaser (omnipod)
 
 Head:
 Life Support
@@ -126,8 +128,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -140,12 +142,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

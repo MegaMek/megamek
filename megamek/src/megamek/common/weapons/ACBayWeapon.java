@@ -64,4 +64,9 @@ public class ACBayWeapon extends AmmoBayWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new ACBayHandler(toHit, waa, game, server);
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_AC;
+    }
 }

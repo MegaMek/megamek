@@ -33,43 +33,43 @@ RTC Armor:10
 
 Weapons:4
 iATM 9, Left Arm
-iATM 9, Right Arm
 Improved Heavy Medium Laser, Left Arm
+iATM 9, Right Arm
 Improved Heavy Medium Laser, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLiATM9
-CLiATM9
-CLiATM9
-CLiATM9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLiATM9
-CLiATM9
-CLiATM9
-CLiATM9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-Clan Ammo iATM-9
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+CLiATM9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
+Clan Ammo iATM-9 (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -82,9 +82,9 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CL Super Charger
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CL Super Charger (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 Clan Ferro-Fibrous
@@ -111,7 +111,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-NovaCEWS
+NovaCEWS (omnipod)
 Sensors
 Life Support
 -Empty-

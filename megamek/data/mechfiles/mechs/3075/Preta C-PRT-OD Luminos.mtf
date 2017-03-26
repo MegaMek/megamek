@@ -9,17 +9,18 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:45
-Engine:270 Light Engine
-Structure:Endo Steel
+Engine:270 Light Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 Cockpit:Small Cockpit
 Gyro:Standard Gyro
 
 Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
 Walk MP:6
 Jump MP:6
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:13
 RA Armor:13
 LT Armor:16
@@ -33,10 +34,10 @@ RTR Armor:5
 RTC Armor:7
 
 Weapons:5
-Medium Pulse Laser, Right Torso
 Medium Pulse Laser, Left Torso
-Small Pulse Laser, Right Torso
 Small Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Small Pulse Laser, Right Torso
 Snub-Nose PPC, Head
 
 Left Arm:
@@ -44,9 +45,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -58,9 +59,9 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -70,13 +71,13 @@ Endo Steel
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Jump Jet
-ISMediumPulseLaser
-ISSmallPulseLaser
-Endo Steel
-Endo Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISMediumPulseLaser (omnipod)
+ISSmallPulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -84,13 +85,13 @@ Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-Jump Jet
-ISMediumPulseLaser
-ISSmallPulseLaser
-Endo Steel
-Endo Steel
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+ISMediumPulseLaser (omnipod)
+ISSmallPulseLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -114,8 +115,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISSNPPC
-ISSNPPC
+ISSNPPC (omnipod)
+ISSNPPC (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -128,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

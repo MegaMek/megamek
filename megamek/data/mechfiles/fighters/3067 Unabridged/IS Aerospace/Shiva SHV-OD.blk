@@ -76,25 +76,25 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISLightGaussRifle
-IS Light Gauss Ammo
+ISLightGaussRifle:OMNI
+IS Light Gauss Ammo:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
+ISGaussRifle:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISGaussRifle
-IS Gauss Ammo
-IS Gauss Ammo
+ISGaussRifle:OMNI
+IS Gauss Ammo:OMNI
+IS Gauss Ammo:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISGuardianECMSuite
-ISMediumVSPLaser
+ISGuardianECMSuite:OMNI
+ISMediumVSPLaser:OMNI
 </Aft Equipment>
 
 <source>

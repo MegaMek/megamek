@@ -2088,7 +2088,9 @@ public class MoveStep implements Serializable {
         }
 
         if ((getEntity().getMovementMode() == EntityMovementMode.BIPED_SWIM)
-                || (getEntity().getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
+                || (getEntity().getMovementMode() == EntityMovementMode.QUAD_SWIM)
+                || ((getEntity() instanceof Infantry
+                		&& getEntity().getMovementMode() == EntityMovementMode.SUBMARINE))) {
             tmpWalkMP = entity.getActiveUMUCount();
         }
 
@@ -2571,6 +2573,7 @@ public class MoveStep implements Serializable {
         // 0 MP infantry units can move 1 hex
         if (isInfantry
                 && (getEntity().getWalkMP() == 0)
+                && (moveMode != EntityMovementMode.SUBMARINE)
                 && getEntity().getPosition().equals(prev)
                 && (getEntity().getPosition().distance(getPosition()) == 1)
                 && (!isJumping())) {
@@ -2721,7 +2724,7 @@ public class MoveStep implements Serializable {
 
         // Infantry (except mechanized) pay 1 less MP to enter woods and Jungle
         if (isInfantry && !isMechanizedInfantry
-                && (destHex.containsTerrain(Terrains.WOODS) || destHex.containsTerrain(Terrains.JUNGLE))
+                && destHex.containsTerrain(Terrains.WOODS)
                 && !isPavementStep) {
             mp--;
         }

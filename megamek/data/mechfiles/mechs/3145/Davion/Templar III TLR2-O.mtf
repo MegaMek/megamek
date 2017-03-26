@@ -34,24 +34,24 @@ RTR Armor:10
 RTC Armor:10
 
 Weapons:7
-ER PPC, Right Arm
 ER PPC, Left Arm
-ER Medium Laser, Right Arm
 ER Medium Laser, Left Arm
-ER Small Laser, Center Torso
-ER Small Laser, Center Torso
+ER PPC, Right Arm
+ER Medium Laser, Right Arm
 SRM 4, Right Torso
+ER Small Laser, Center Torso
+ER Small Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
-ISERMediumLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERMediumLaser (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -59,25 +59,25 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISERPPC
-ISERPPC
-ISERPPC
-ISERMediumLaser
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERPPC (omnipod)
+ISERMediumLaser (omnipod)
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
+ISTargeting Computer (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -87,11 +87,11 @@ IS Endo Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-SRM 4
-IS Ammo SRM-4
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+ISDoubleHeatSink (omnipod)
+SRM 4 (omnipod)
+IS Ammo SRM-4 (omnipod)
 ISCASE
 IS Endo Steel
 IS Endo Steel
@@ -109,8 +109,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
-ISERSmallLaser
+ISERSmallLaser (omnipod)
+ISERSmallLaser (omnipod)
 
 Head:
 Life Support

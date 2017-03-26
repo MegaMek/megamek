@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:2
 
 Mass:25
-Engine:200 XL (Clan) Engine
-Structure:Endo Steel
+Engine:200 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -51,11 +51,11 @@ ER Large Laser, Center Torso
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLERSmallLaser
-CLERMicroLaser
-Endo Steel
-Endo Steel
-Endo Steel
+CLERSmallLaser (omnipod)
+CLERMicroLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -65,11 +65,11 @@ Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLERSmallLaser
-CLERMicroLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERSmallLaser (omnipod)
+CLERMicroLaser (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -79,29 +79,29 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLMG
-CLMG
-CLMG
-CLMG
-CLMGA
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMGA (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLMG
-CLMG
-CLMG
-CLMG
-CLMGA
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMG (omnipod)
+CLMGA (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -115,14 +115,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERLargeLaser
-Clan Machine Gun Ammo - Full
+CLERLargeLaser (omnipod)
+Clan Machine Gun Ammo - Full (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-CLActiveProbe
+CLActiveProbe (omnipod)
 Sensors
 Life Support
 -Empty-

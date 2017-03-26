@@ -32,38 +32,38 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:6
+HAG/30, Left Arm
 ER Large Pulse Laser, Right Arm
 ER Medium Laser, Right Arm
 ER Medium Laser, Right Arm
 iATM 12, Left Torso
 iATM 12, Right Torso
-HAG/30, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-CLHAG30
-HAG/30 Ammo
-HAG/30 Ammo
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+CLHAG30 (omnipod)
+HAG/30 Ammo (omnipod)
+HAG/30 Ammo (omnipod)
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERLargePulseLaser
-CLERMediumLaser
-CLERMediumLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERLargePulseLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
 -Empty-
 -Empty-
 
@@ -72,27 +72,27 @@ Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
-CLCASEII
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+CLCASEII (omnipod)
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-CLiATM12
-Clan Ammo iATM-12
-Clan Ammo iATM-12
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+CLiATM12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
+Clan Ammo iATM-12 (omnipod)
 -Empty-
 
 Center Torso:
@@ -106,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-NovaCEWS
+NovaCEWS (omnipod)
 Sensors
 Life Support
 -Empty-

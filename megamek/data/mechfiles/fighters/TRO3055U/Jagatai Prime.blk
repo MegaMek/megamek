@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+2
+</omnipodheatsinks>
+
 <fuel>
 320
 </fuel>
@@ -76,24 +80,28 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-CLLRM20
-Clan Ammo LRM-20
-Clan Ammo LRM-20
+CLLRM20:OMNI
+Clan Ammo LRM-20:OMNI
+Clan Ammo LRM-20:OMNI
+CLCASE
+CLCASE
+CLCASE
+CLCASE
 CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
-CLERPPC
-CLLargePulseLaser
+CLERPPC:OMNI
+CLLargePulseLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-CLERPPC
-CLLargePulseLaser
+CLERPPC:OMNI
+CLLargePulseLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLLargePulseLaser
+CLLargePulseLaser:OMNI
 </Aft Equipment>
 
 <source>

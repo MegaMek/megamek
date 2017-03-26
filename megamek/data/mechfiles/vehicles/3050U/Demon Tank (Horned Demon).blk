@@ -1,16 +1,16 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
 <UnitType>
 Tank
 </UnitType>
-
-<blockversion>
-1
-</blockversion>
 
 <Name>
 Demon Tank
@@ -28,25 +28,17 @@ Demon Tank
 IS Level 2
 </type>
 
-<tonnage>
-60.0
-</tonnage>
-
 <motion_type>
 Wheeled
 </motion_type>
 
-<armor_type>
-0
-</armor_type>
+<cruiseMP>
+4
+</cruiseMP>
 
 <engine_type>
 0
 </engine_type>
-
-<cruiseMP>
-4
-</cruiseMP>
 
 <armor>
 52
@@ -81,4 +73,12 @@ Medium Laser
 <Turret Equipment>
 ISGaussRifle
 </Turret Equipment>
+
+<source>
+TRO 3050 - Star League
+</source>
+
+<tonnage>
+60.0
+</tonnage>
 

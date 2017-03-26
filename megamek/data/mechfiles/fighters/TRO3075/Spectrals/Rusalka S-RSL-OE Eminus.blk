@@ -48,6 +48,10 @@ Aerodyne
 1
 </sink_type>
 
+<omnipodheatsinks>
+6
+</omnipodheatsinks>
+
 <fuel>
 400
 </fuel>
@@ -64,6 +68,10 @@ Aerodyne
 -1
 </armor_tech>
 
+<omni>
+1
+</omni>
+
 <armor>
 70
 50
@@ -72,24 +80,24 @@ Aerodyne
 </armor>
 
 <Nose Equipment>
-ISLightGaussRifle
-IS Light Gauss Ammo
-IS Light Gauss Ammo
-ISCASE
+ISLightGaussRifle:OMNI
+IS Light Gauss Ammo:OMNI
+IS Light Gauss Ammo:OMNI
+ISCASE:OMNI
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISERLargeLaser
-ISERMediumLaser
+ISERLargeLaser:OMNI
+ISERMediumLaser:OMNI
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISERLargeLaser
-ISERMediumLaser
+ISERLargeLaser:OMNI
+ISERMediumLaser:OMNI
 </Right Wing Equipment>
 
 <Aft Equipment>
-Small Laser
+Small Laser:OMNI
 </Aft Equipment>
 
 <source>
@@ -99,7 +107,4 @@ TRO 3075 - Jihad
 <tonnage>
 65.0
 </tonnage>
-
-<omni>
-</omni>
 

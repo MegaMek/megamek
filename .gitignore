@@ -4,3 +4,4 @@
 /bin/
 /.settings/
 /logs/
+.DS_Store

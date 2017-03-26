@@ -9,8 +9,8 @@ Source:TRO 3058 - Jihad
 Rules Level:4
 
 Mass:90
-Engine:360 Fusion (Clan) Engine
-Structure:Endo Steel
+Engine:360 Fusion (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:17 Double
@@ -44,12 +44,12 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -58,42 +58,42 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLLRM15
-CLLRM15
-CLArtemisV
-CLArtemisV
-Clan Ammo LRM-15 (Clan) Artemis V-capable
-Clan Ammo LRM-15 (Clan) Artemis V-capable
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisV (omnipod)
+CLArtemisV (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis V-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis V-capable (omnipod)
 -Empty-
 -Empty-
 -Empty-
 
 Left Torso:
-CLTargeting Computer
-CLTargeting Computer
-CLTargeting Computer
-CLERMediumPulseLaser
-CLERMediumPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLTargeting Computer (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLERMediumPulseLaser
-CLERMediumPulseLaser
-CLECMSuite
-Endo Steel
-Endo Steel
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+CLERMediumPulseLaser (omnipod)
+CLERMediumPulseLaser (omnipod)
+CLECMSuite (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -107,14 +107,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLERPPC
-CLERPPC
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

@@ -254,6 +254,9 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     armored = true;
                     critName = critName.substring(4);
                 }
+                
+                boolean isOmniMounted = critName.endsWith(":OMNI");
+                critName.replace(":OMNI", "");
                 int facing = -1;
                 if (critName.toUpperCase().endsWith("(FL)")) {
                     facing = 5;
@@ -298,6 +301,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                         Mounted mount = mech.addEquipment(etype, loc,
                                 rearMounted, BattleArmor.MOUNT_LOC_NONE, false,
                                 turretMounted);
+                        mount.setOmniPodMounted(isOmniMounted);
                         if ((etype instanceof WeaponType) && etype.hasFlag(WeaponType.F_VGL)) {
                             // vehicular grenade launchers need to have their
                             // facing set

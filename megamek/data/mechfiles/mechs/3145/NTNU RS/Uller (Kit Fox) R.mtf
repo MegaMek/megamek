@@ -4,7 +4,7 @@ R
 
 Config:Biped Omnimech
 TechBase:Clan
-Era:3121	
+Era:3121
 Source:RS 3145 NTNU - Late Republic
 Rules Level:3
 
@@ -32,28 +32,28 @@ RTR Armor:4
 RTC Armor:4
 
 Weapons:2
-Streak SRM 6, Right Arm
 Rotary AC/5, Left Arm
+Streak SRM 6, Right Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
-CLRotaryAC5
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
+CLRotaryAC5 (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLStreakSRM6
-CLStreakSRM6
+CLStreakSRM6 (omnipod)
+CLStreakSRM6 (omnipod)
 Clan Endo Steel
 Clan Ferro-Fibrous
 -Empty-
@@ -70,8 +70,8 @@ CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo (omnipod)
+CLRotaryAC5 Ammo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Ferro-Fibrous
@@ -80,7 +80,7 @@ Clan Ferro-Fibrous
 Right Torso:
 Fusion Engine
 Fusion Engine
-Clan Streak SRM 6 Ammo
+Clan Streak SRM 6 Ammo (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel

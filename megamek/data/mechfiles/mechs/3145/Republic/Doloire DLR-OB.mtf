@@ -18,7 +18,7 @@ Base Chassis Heat Sinks:12
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:26
@@ -32,21 +32,21 @@ RTR Armor:7
 RTC Armor:11
 
 Weapons:5
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
 ER PPC, Left Arm
 ER PPC, Left Arm
 Rotary AC/5, Right Arm
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLERPPC
-CLERPPC
-CLERPPC
-CLERPPC
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
 ISAES
 ISAES
 ISAES
@@ -55,12 +55,12 @@ ISAES
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
+ISRotaryAC5 (omnipod)
 ISAES
 ISAES
 ISAES
@@ -69,12 +69,12 @@ ISAES
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 IS Endo-Composite
@@ -83,13 +83,13 @@ IS Endo-Composite
 Right Torso:
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISCASEII
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+ISRotaryAC5 Ammo (omnipod)
+ISCASEII (omnipod)
 IS Endo-Composite
 IS Endo-Composite
 -Empty-

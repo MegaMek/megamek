@@ -33,7 +33,7 @@ Hover
 </motion_type>
 
 <cruiseMP>
-0
+8
 </cruiseMP>
 
 <engine_type>
@@ -84,7 +84,7 @@ ISMagshotGR
 </Turret Equipment>
 
 <source>
-TR0:Prototypes
+TRO:Prototypes
 </source>
 
 <tonnage>

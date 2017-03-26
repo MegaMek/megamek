@@ -35,9 +35,9 @@ RTC Armor:6
 
 Weapons:4
 Plasma Rifle, Right Arm
-ER Medium Laser, Center Torso
-ER Medium Laser, Center Torso
 LRM 10, Left Torso
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -56,10 +56,10 @@ IS Endo Steel
 Right Arm:
 Shoulder
 Upper Arm Actuator
-ISPlasmaRifle
-ISPlasmaRifle
-ISPlasmaRifleAmmo
-ISPlasmaRifleAmmo
+ISPlasmaRifle (omnipod)
+ISPlasmaRifle (omnipod)
+ISPlasmaRifleAmmo (omnipod)
+ISPlasmaRifleAmmo (omnipod)
 IS Endo Steel
 IS Endo Steel
 -Empty-
@@ -71,11 +71,11 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-LRM 10
-LRM 10
-ISArtemisIV
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+LRM 10 (omnipod)
+LRM 10 (omnipod)
+ISArtemisIV (omnipod)
 IS Endo Steel
 IS Endo Steel
 IS Endo Steel
@@ -85,13 +85,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-Jump Jet
-IS Ammo LRM-10 Artemis-capable
-IS Ammo LRM-10 Artemis-capable
-ISGuardianECMSuite
-ISGuardianECMSuite
-ISCASEII
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+IS Ammo LRM-10 Artemis-capable (omnipod)
+IS Ammo LRM-10 Artemis-capable (omnipod)
+ISGuardianECMSuite (omnipod)
+ISGuardianECMSuite (omnipod)
+ISCASEII (omnipod)
 IS Endo Steel
 -Empty-
 
@@ -104,10 +104,10 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
-ISERMediumLaser
-ISERMediumLaser (R)
-ISC3SlaveUnit
+Jump Jet (omnipod)
+ISERMediumLaser (omnipod)
+ISERMediumLaser (R) (omnipod)
+ISC3SlaveUnit (omnipod)
 
 Head:
 Life Support

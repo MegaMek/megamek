@@ -206,14 +206,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // If at least one valid spotter, then get the benefits thereof.
         if (null != bestSpotter) {
             int foMod = 0;
-            if (bestSpotter.getCrew().getOptions().booleanOption(OptionsConstants.MISC_FORWARD_OBSERVER
-)) {
-                foMod = bestSpotter.getCrew().getGunnery() - 4;
+            if (bestSpotter.getCrew().getOptions().booleanOption(OptionsConstants.MISC_FORWARD_OBSERVER)) {
+                foMod = -1;
             }
             int mod = (bestSpotter.getCrew().getGunnery() - 4) / 2;
-            if (foMod < 0) {
-                mod += foMod;
-            }
+            mod += foMod;
             toHit.addModifier(mod, "Spotting modifier");
         }
 

@@ -1,0 +1,8 @@
+December 31st/2016
+
+The units in this folder are original unshaded units.  The are either the sprites made prior to ColonelSandersLight script. 
+
+Also in here will be unshaded units with the _original tag, sprite artists are required to submit two versions of their sprite. 
+The first is a shaded one from the scripts folder, the second is a unshaded version that is stored in this folder.
+
+-Hammer

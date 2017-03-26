@@ -16,7 +16,7 @@ Cockpit:Standard Cockpit
 Gyro:XL Gyro
 
 Heat Sinks:14 Double
-Base Chassis Heat Sinks:12
+Base Chassis Heat Sinks:10
 Walk MP:10
 Jump MP:0
 
@@ -42,11 +42,11 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
+CLImprovedHeavyLargeLaser (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 IS Stealth
@@ -57,8 +57,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-CLDoubleHeatSink
-CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
@@ -71,10 +71,10 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 Clan Endo Steel
 IS Stealth
 IS Stealth
@@ -85,10 +85,10 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLDoubleHeatSink
-CLDoubleHeatSink
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
+CLImprovedMediumHeavyLaser (omnipod)
 Clan Endo Steel
 IS Stealth
 IS Stealth

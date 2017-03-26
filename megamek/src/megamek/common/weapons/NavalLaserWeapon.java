@@ -31,4 +31,9 @@ public abstract class NavalLaserWeapon extends EnergyWeapon {
         this.atClass = CLASS_CAPITAL_LASER;
         this.capital = true;
     }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL;
+    }
 }

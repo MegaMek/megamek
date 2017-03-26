@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.BattleForceElement;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 
@@ -51,4 +52,25 @@ public class CLFussilade extends ATMWeapon {
 
     }
 
+    @Override
+    public double getBattleForceDamage(int range) {
+        double damage = 0;
+        if (range <= getLongRange()) {
+            damage = getRackSize();
+            if (range < BattleForceElement.MEDIUM_RANGE) {
+                damage *= 3;
+            } else if (range < BattleForceElement.LONG_RANGE) {
+                damage *= 2;
+            }
+            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
+                damage = adjustBattleForceDamageForMinRange(damage);
+            }
+        }
+        return damage / 10.0;
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_IATM;
+    }
 }

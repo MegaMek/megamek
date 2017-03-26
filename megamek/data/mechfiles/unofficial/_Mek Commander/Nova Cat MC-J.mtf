@@ -8,15 +8,16 @@ Era:3059
 Rules Level:2
 
 Mass:70
-Engine:280 XL Engine
-Structure:Endo Steel
-Myomer:MASC
+Engine:280 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
 
 Heat Sinks:11 Double
+Base Chassis Heat Sinks:11
 Walk MP:4
 Jump MP:4
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Clan)
 LA Armor:20
 RA Armor:20
 LT Armor:21
@@ -30,54 +31,54 @@ RTR Armor:6
 RTC Armor:8
 
 Weapons:6
-1 CLLBXAC20, Right Arm, Ammo:20
-1 CLLBXAC20, Left Arm
-1 CLMediumPulseLaser, Right Torso
-1 CLMediumPulseLaser, Left Torso
-1 CLMediumPulseLaser, Center Torso
-1 CLFlamer, Center Torso
+LB 20-X AC, Left Arm
+LB 20-X AC, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Center Torso
+Flamer, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-Ferro-Fibrous
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-CLLBXAC20
-Ferro-Fibrous
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+Clan Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser
-CLLBXAC20 CL Ammo
-CLLBXAC20 Ammo
-Endo Steel
-Ferro-Fibrous
-Endo Steel
-Ferro-Fibrous
-Endo Steel
-Ferro-Fibrous
-Endo Steel
+CLMediumPulseLaser (omnipod)
+Clan LB 20-X Cluster Ammo (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -85,13 +86,13 @@ Fusion Engine
 CLMASC
 CLMASC
 CLMASC
-CLMediumPulseLaser
-CLLBXAC20 CL Ammo
-CLLBXAC20 Ammo
-Ferro-Fibrous
-Endo Steel
-Ferro-Fibrous
-Endo Steel
+CLMediumPulseLaser (omnipod)
+Clan LB 20-X Cluster Ammo (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -104,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-CLMediumPulseLaser
-CLFlamer
+CLMediumPulseLaser (omnipod)
+CLFlamer (omnipod)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+Clan Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -126,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
@@ -140,12 +141,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+Jump Jet (omnipod)
+Jump Jet (omnipod)
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
 

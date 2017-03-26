@@ -103,6 +103,7 @@ public class SkinXMLHandler {
     public static final String LEFT_LINE = "line_left"; //$NON-NLS-1$
     public static final String BACKGROUND_IMAGE = "background_image"; //$NON-NLS-1$
     public static final String SHOW_SCROLL_BARS = "show_scroll_bars"; //$NON-NLS-1$
+    public static final String SHOULD_BOLD = "should_bold_mouseover"; //$NON-NLS-1$
 
     // Unit Display Skin Specification XML tags
     public static final String GeneralTabIdle = "tab_general_idle"; //$NON-NLS-1$
@@ -244,9 +245,9 @@ public class SkinXMLHandler {
                         continue;
                     }
                     
-                    skinSpec = parseBorderTag(border);
+                    skinSpec = parseBorderTag(name, border);
                 } else { // Plain skin, no icons
-                    skinSpec = new SkinSpecification();
+                    skinSpec = new SkinSpecification(name);
                     skinSpec.noBorder = noBorder;
                 }
                 
@@ -262,14 +263,22 @@ public class SkinXMLHandler {
                     }
                 }
                 
-                // Pase show scroll bars
+                // Parse show scroll bars
                 Element showScrollEle = (Element) borderList
                         .getElementsByTagName(SHOW_SCROLL_BARS).item(0);
                 if (showScrollEle != null) {
                     skinSpec.showScrollBars = Boolean
                             .parseBoolean(showScrollEle.getTextContent());
                 }
-                
+
+                // Parse show should bold
+                Element shouldBoldEle = (Element) borderList
+                        .getElementsByTagName(SHOULD_BOLD).item(0);
+                if (shouldBoldEle != null) {
+                    skinSpec.shouldBoldMouseOver = Boolean
+                            .parseBoolean(shouldBoldEle.getTextContent());
+                }
+
                 // Parse font colors
                 NodeList fontColors = borderList
                         .getElementsByTagName(FONT_COLOR);
@@ -325,8 +334,8 @@ public class SkinXMLHandler {
      * @param border
      * @return
      */
-    private static SkinSpecification parseBorderTag(Element border){
-        SkinSpecification skinSpec = new SkinSpecification();
+    private static SkinSpecification parseBorderTag(String compName, Element border){
+        SkinSpecification skinSpec = new SkinSpecification(compName);
 
         // Parse Corner Icons
         skinSpec.tr_corner = border.getElementsByTagName(TR_CORNER).
@@ -709,6 +718,11 @@ public class SkinXMLHandler {
         out.write(((Boolean)skinSpec.showScrollBars).toString());
         out.write("</" + SHOW_SCROLL_BARS + ">\n");
 
+        // Write should bold mouseover
+        out.write("\t\t<" + SHOULD_BOLD + ">");
+        out.write(((Boolean)skinSpec.shouldBoldMouseOver).toString());
+        out.write("</" + SHOULD_BOLD + ">\n");
+
         // Close UI_ELEMENT tag
         out.write("\t</" + UI_ELEMENT + ">\n\n");
     }
@@ -855,7 +869,7 @@ public class SkinXMLHandler {
             if (!rv) {
                 // This will return a blank skin spec file, which will act like
                 // a plain skin.
-                return new SkinSpecification();
+                return new SkinSpecification("Plain");
             }
         }
         
@@ -894,7 +908,7 @@ public class SkinXMLHandler {
                 return ;
             }
         }
-        SkinSpecification newSpec = new SkinSpecification();
+        SkinSpecification newSpec = new SkinSpecification(component);
         skinSpecs.put(component, newSpec);
     }
 

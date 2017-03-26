@@ -1872,6 +1872,7 @@ public class Server implements Runnable {
             r.messageId = 7016;
             r.add(Server.getColorForPlayer(player));
             r.add(player.getBV());
+            r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000) / 100));
             r.add(player.getInitialBV());
             r.add(player.getFledBV());
             addReport(r);
@@ -2545,6 +2546,7 @@ public class Server implements Runnable {
                     r.messageId = 7016;
                     r.add(Server.getColorForPlayer(player));
                     r.add(player.getBV());
+                    r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000) / 100));
                     r.add(player.getInitialBV());
                     r.add(player.getFledBV());
                     addReport(r);

@@ -10291,6 +10291,7 @@ public class Server implements Runnable {
                         vPhaseReport.add(r);
                     } else {
                         vPhaseReport.addAll(destroyEntity(te, "damage", false));
+                        creditKill(te, ae);
                         Report.addNewline(vPhaseReport);
                     }
                 } else {

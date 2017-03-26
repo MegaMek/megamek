@@ -99,6 +99,8 @@ public class MegamekButton extends JButton {
      */
     private Color disabledColor;
 
+    private Font specificFont;
+
     /**
      *
      * @param text
@@ -160,6 +162,10 @@ public class MegamekButton extends JButton {
             activeColor = defaultActiveColor;
         }
         shouldBold = skinSpec.shouldBoldMouseOver;
+
+        if (skinSpec.fontName != null) {
+            specificFont = new Font(skinSpec.fontName, Font.PLAIN, skinSpec.fontSize);
+        }
     }
 
     /**
@@ -265,9 +271,13 @@ public class MegamekButton extends JButton {
 
         JLabel textLabel = new JLabel(getText(), SwingConstants.CENTER);
         textLabel.setSize(getSize());
+        if (specificFont != null) {
+            textLabel.setFont(specificFont);
+        }
         if (this.isEnabled()) {
             if (isMousedOver) {
                 Font font = textLabel.getFont();
+                System.out.println("Font size: " + font.getSize());
                 if (shouldBold) {
                     // same font but bold
                     Font boldFont = new Font(font.getFontName(), Font.BOLD,

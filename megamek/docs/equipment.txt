@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
 Type,Tech Base,Rules,Name,Aliases
 W,2300-Inner Sphere3071-Inner Sphere,2300-IS_Box_Set3071-IS_Box_Set,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,2290-Inner Sphere3071-Inner Sphere,2290-IS_Experimental3071-IS_Experimental,Medium Laser Prototype,IS Medium Laser Prototype,ISMediumLaserPrototype,

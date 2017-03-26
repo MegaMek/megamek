@@ -18,7 +18,11 @@ package megamek.client.ui.swing;
 import static megamek.common.Compute.d6;
 
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -91,6 +95,9 @@ public class MegaMekGUI implements IMegaMekGUI {
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
+
+    private static final String FILENAME_BT_CLASSIC_FONT = "btclassic/BTLogo_old.ttf"; //$NON-NLS-1$
+
     private JFrame frame;
     private Client client;
     private Server server;
@@ -111,6 +118,16 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Contruct a MegaMek, and display the main menu in the specified frame.
      */
     private void createGUI() {
+        try {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            File btFontFile = new MegaMekFile(Configuration.fontsDir(), FILENAME_BT_CLASSIC_FONT).getFile();
+            Font btFont = Font.createFont(Font.TRUETYPE_FONT, btFontFile);
+            System.out.println("Loaded Font: " + btFont.getName());
+            ge.registerFont(btFont);
+        } catch (IOException | FontFormatException e) {
+            System.out.println("Error Registering BT Classic Font! Error: " + e.getMessage());
+        }
+
         createController();
 
         // Set a couple of things to make the Swing GUI look more "Mac-like" on

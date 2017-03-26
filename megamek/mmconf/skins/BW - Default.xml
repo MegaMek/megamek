@@ -171,6 +171,50 @@
 	</UI_Element>
 
 	<UI_Element>
+		<name>MainMenuBorder</name>
+        <no_border>true</no_border>
+		<!-- Specification of border images -->
+		<background_image>../misc/megamek-splash-bw.jpg</background_image>
+		<background_image>Bloodwolf/Parts/phase/background.png</background_image>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+	</UI_Element>
+
+	<UI_Element>
+		<name>MainMenuButton</name>
+		<no_border>true</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left></corner_top_left>
+			<corner_top_right></corner_top_right>
+			<corner_bottom_left></corner_bottom_left>
+			<corner_bottom_right></corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>SpaceD/buttonNormal_cropped.png</background_image>
+		<background_image>SpaceD/buttonPushed_cropped.png</background_image>
+		<tile_background>false</tile_background>
+		<font_color>#ffffff</font_color>
+		<font_color>#ffffff</font_color>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+		<should_bold_mouseover>false</should_bold_mouseover>
+	</UI_Element>
+
+	<UI_Element>
 		<name>defaultButton</name>
 		<no_border>true</no_border>
 		<!-- Specification of border images -->

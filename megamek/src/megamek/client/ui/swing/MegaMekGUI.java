@@ -247,6 +247,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         frame.getContentPane().removeAll();
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
+        frame.setResizable(false);
 
         MegamekButton hostB;
         MegamekButton connectB;

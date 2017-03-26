@@ -257,8 +257,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         MegamekButton scenB;
         MegamekButton loadB;
         MegamekButton quitB;
-        JLabel labVersion = new JLabel();
-        labVersion.setText(Messages.getString("MegaMek.Version") + MegaMek.VERSION); //$NON-NLS-1$
+        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMek.VERSION, JLabel.CENTER); //$NON-NLS-1$
+        labVersion.setPreferredSize(new Dimension(250,15));
         if (skinSpec.fontColors.size() > 0) {
             labVersion.setForeground(skinSpec.fontColors.get(0));
         }
@@ -331,26 +331,22 @@ public class MegaMekGUI implements IMegaMekGUI {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         frame.getContentPane().setLayout(gridbag);
+        // Left Column
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(10, 5, 10, 10);
-        c.ipadx = 10;
-        c.ipady = 5;
-        c.gridx = 0;
-        c.gridy = 0;
+        c.ipadx = 10; c.ipady = 5;
+        c.gridx = 0;  c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 0.6;
-        c.weighty = 1.0;
+        c.weightx = 0.0; c.weighty = 1.0;
         c.gridwidth = 1;
         c.gridheight = 9;
         addBag(panTitle, gridbag, c);
+        // Right Column
         c.insets = new Insets(4, 4, 1, 1);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.4;
-        c.weighty = 1.0;
-        c.gridx = 1;
+        c.weightx = 1.0; c.weighty = 1.0;
+        c.ipadx = 0; c.ipady = 0;
         c.gridheight = 1;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridy = 0;
+        c.gridx = 1; c.gridy = 0;
         addBag(labVersion, gridbag, c);
         c.gridy++;
         addBag(hostB, gridbag, c);

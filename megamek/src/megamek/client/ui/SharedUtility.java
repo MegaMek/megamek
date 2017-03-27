@@ -380,6 +380,10 @@ public class SharedUtility {
                         && !((Infantry) targ).isMechanized()) {
                     rollTarget = Server.getEjectModifiers(game, (Entity) targ,
                             false, entity.getPosition(), "zip lining");
+                    // Factor in Elevation
+                    if (entity.getElevation() > 0) {
+                        rollTarget.addModifier(entity.getElevation(), "elevation");
+                    }
                     checkNag(rollTarget, nagReport, psrList);
                 }
             }

@@ -1872,6 +1872,7 @@ public class Server implements Runnable {
             r.messageId = 7016;
             r.add(Server.getColorForPlayer(player));
             r.add(player.getBV());
+            r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000) / 100));
             r.add(player.getInitialBV());
             r.add(player.getFledBV());
             addReport(r);
@@ -2545,6 +2546,7 @@ public class Server implements Runnable {
                     r.messageId = 7016;
                     r.add(Server.getColorForPlayer(player));
                     r.add(player.getBV());
+                    r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000) / 100));
                     r.add(player.getInitialBV());
                     r.add(player.getFledBV());
                     addReport(r);
@@ -4505,6 +4507,10 @@ public class Server implements Runnable {
                // Handle zip lines
                 PilotingRollData psr = getEjectModifiers(game, unit, false,
                         unit.getPosition(), "Anti-mek skill");
+                // Factor in Elevation
+                if (unloader.getElevation() > 0) {
+                    psr.addModifier(unloader.getElevation(), "elevation");
+                }
                 int roll = Compute.d6(2);
 
                 // Report ziplining
@@ -10287,6 +10293,7 @@ public class Server implements Runnable {
                         vPhaseReport.add(r);
                     } else {
                         vPhaseReport.addAll(destroyEntity(te, "damage", false));
+                        creditKill(te, ae);
                         Report.addNewline(vPhaseReport);
                     }
                 } else {

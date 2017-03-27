@@ -291,7 +291,9 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         extinct = merged;
     }
     
-    private class DateRange implements Comparable<DateRange> {
+    private static class DateRange implements Serializable, Comparable<DateRange> {
+        private static final long serialVersionUID = 3144194494591950878L;
+        
         Integer start = null;
         Integer end = null;
         boolean startApproximate = false;

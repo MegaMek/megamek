@@ -100,12 +100,14 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
                 int reportNr = mineDelivery ? 3197 : 3195;
                 Report r = new Report(reportNr, whoReport);
                 r.subject = subjectId;
+                r.player = ae.getOwnerId();
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
             } else {
                 // misses and scatters off-board
                 Report r = new Report(3200);
                 r.subject = subjectId;
+                r.player = ae.getOwnerId();
                 vPhaseReport.addElement(r);
                 return true;
             }

@@ -25,6 +25,7 @@ v0.42.2-git
 + Issue #513: Infantry killed by Inferno ammo not giving kill credit
 + Issue #70: Engine explosions not igniting center hex
 + Issue #348: Selecting lance move options does not disable individual init
++ Issue #225: Bad String in Round Report for Thunder LRMs
 
 v0.42.1 (2017-02-13 03:30 UTC)
 + Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

@@ -128,8 +128,9 @@ public final class ImageUtil {
 
             ImageProducer prod;
             prod = new FilteredImageSource(img.getSource(), filter);
-            return ImageUtil.createAcceleratedImage(
-                    Toolkit.getDefaultToolkit().createImage(prod));
+            ToolkitImage result = (ToolkitImage)Toolkit.getDefaultToolkit().createImage(prod);
+            waitUntilLoaded(result);
+            return ImageUtil.createAcceleratedImage(result);
         }
     }
 
@@ -196,25 +197,8 @@ public final class ImageUtil {
             if(null == result) {
                 return null;
             }
-            FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            // Check to see if the image is loaded
-            int infoFlags = result.check(observer);
-            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
-                // Image not loaded, wait for it to load
-                long startTime = System.currentTimeMillis();
-                long maxRuntime = 10000;
-                long runTime = 0;
-                result.preload(observer);
-                while (!observer.isLoaded() && runTime < maxRuntime) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException ex) {
-                        // Do nothing
-                    }
-                    runTime = System.currentTimeMillis() - startTime;
-                }
-            }
-            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
+            boolean isAnimated = waitUntilLoaded(result);
+            return isAnimated ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
         }
     }
 
@@ -275,24 +259,7 @@ public final class ImageUtil {
             if(null == base) {
                 return null;
             }
-            FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            // Check to see if the image is loaded
-            int infoFlags = base.check(observer);
-            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
-                // Image not loaded, wait for it to load
-                long startTime = System.currentTimeMillis();
-                long maxRuntime = 10000;
-                long runTime = 0;
-                base.preload(observer);
-                while (!observer.isLoaded() && runTime < maxRuntime) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException ex) {
-                        // Do nothing
-                    }
-                    runTime = System.currentTimeMillis() - startTime;
-                }
-            }
+            waitUntilLoaded(base);
             BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
             Graphics2D g2d = result.createGraphics();
             g2d.drawImage(base, 0, 0, result.getWidth(), result.getHeight(),
@@ -340,6 +307,34 @@ public final class ImageUtil {
             }
             return super.loadImage(imgFileToAtlasMap.get(fn));
         }
+    }
+
+    /**
+     * Wait until the given toolkit image is fully loaded and return if the image is animated.
+     *
+     * @param result  Returns true if the given image is animated.
+     * @return
+     */
+    private static boolean waitUntilLoaded(ToolkitImage result) {
+        FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
+        // Check to see if the image is loaded
+        int infoFlags = result.check(observer);
+        if ((infoFlags & ImageObserver.ALLBITS) == 0) {
+            // Image not loaded, wait for it to load
+            long startTime = System.currentTimeMillis();
+            long maxRuntime = 10000;
+            long runTime = 0;
+            result.preload(observer);
+            while (!observer.isLoaded() && runTime < maxRuntime) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    // Do nothing
+                }
+                runTime = System.currentTimeMillis() - startTime;
+            }
+        }
+        return observer.isAnimated();
     }
 
     private static class FinishedLoadingObserver implements ImageObserver {

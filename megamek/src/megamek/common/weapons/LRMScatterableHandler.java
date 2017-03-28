@@ -67,7 +67,7 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
         int whoReport = Report.PUBLIC;
         // only report to player if mine delivery
         if (mineDelivery) {
-            whoReport = Report.PLAYER;
+            whoReport = Report.HIDDEN;
         }
         int density = atype.getRackSize();
         if (amType == AmmoType.M_THUNDER_AUGMENTED) {

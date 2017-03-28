@@ -22815,7 +22815,7 @@ public class Server implements Runnable {
             int[] damages = {(int) Math.floor(damage_orig / 10),
                              (int) Math.floor(damage_orig / 20)};
             doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5,
-                        te.getId());
+                        te.getId(), false);
             Report.addNewline(vDesc);
             r = new Report(5410, Report.PUBLIC);
             r.subject = te.getId();
@@ -22978,7 +22978,7 @@ public class Server implements Runnable {
             Vector<Report> vDesc, Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 10),
                 (engineRating / 20), (engineRating / 40) };
-        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1);
+        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1, true);
     }
 
     /**
@@ -23004,7 +23004,7 @@ public class Server implements Runnable {
             myDamages[x] = myDamages[x - 1] - degredation;
         }
         doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter,
-                vDesc, vUnits, 5, excludedUnitId);
+                vDesc, vUnits, 5, excludedUnitId, false);
     }
 
     /**
@@ -23012,7 +23012,7 @@ public class Server implements Runnable {
      */
     public void doExplosion(int[] damages, boolean autoDestroyInSameHex,
             Coords position, boolean allowShelter, Vector<Report> vDesc,
-            Vector<Integer> vUnits, int clusterAmt, int excludedUnitId) {
+            Vector<Integer> vUnits, int clusterAmt, int excludedUnitId, boolean engineExplosion) {
         if (vDesc == null) {
             vDesc = new Vector<Report>();
         }
@@ -23049,6 +23049,20 @@ public class Server implements Runnable {
         // We need to damage terrain
         int maxDist = damages.length;
         IHex hex = game.getBoard().getHex(position);
+        // Center hex starts on fire for engine explosions
+        if (engineExplosion && (hex != null) && !hex.containsTerrain(Terrains.FIRE)) {
+            r = new Report(5136);
+            r.indent(2);
+            r.type = Report.PUBLIC;
+            r.add(position.getBoardNum());
+            vDesc.add(r);
+            Vector<Report> reports = new Vector<Report>();
+            ignite(position, Terrains.FIRE_LVL_NORMAL, reports);
+            for (Report report : reports) {
+                report.indent();
+            }
+            vDesc.addAll(reports);
+        }
         if ((hex != null) && hex.hasTerrainfactor()) {
             r = new Report(3384);
             r.indent(2);
@@ -23062,6 +23076,8 @@ public class Server implements Runnable {
             report.indent(3);
         }
         vDesc.addAll(reports);
+
+        // Handle surrounding coords
         for (int dist = 1; dist < maxDist; dist++) {
             List<Coords> coords = Compute.coordsAtRange(position, dist);
             for (Coords c : coords) {

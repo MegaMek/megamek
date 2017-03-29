@@ -320,7 +320,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      */
     @Override
     public void ready() {
-        Entity en = ce();
+        final IGame game = clientgui.getClient().getGame();
+        final Entity en = ce();
 
         if ((en instanceof Dropship) && !en.isAirborne()) {
             ArrayList<Coords> crushedBuildingLocs = new ArrayList<Coords>();
@@ -330,8 +331,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 secondaryPositions.add(en.getPosition().translated(dir));
             }
             for (Coords pos : secondaryPositions) {
-                Building bld = clientgui.getClient().getGame().getBoard()
-                        .getBuildingAt(pos);
+                Building bld = game.getBoard().getBuildingAt(pos);
                 if (bld != null) {
                     crushedBuildingLocs.add(pos);
                 }
@@ -346,6 +346,20 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 return;
             }
         }
+
+        // Check nag for doomed planetary conditions
+        String reason = game.getPlanetaryConditions().whyDoomed(en, game);
+        if ((reason != null) && GUIPreferences.getInstance().getNagForDoomed()) {
+                String title = Messages.getString("DeploymentDisplay.ConfirmDoomed.title"); //$NON-NLS-1$
+                String body = Messages.getString("DeploymentDisplay.ConfirmDoomed.message", new Object[]{reason}); //$NON-NLS-1$
+                ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+                if (!response.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForDoomed(false);
+                }
+                if (!response.getAnswer()) {
+                    return;
+                }
+            }
 
         disableButtons();
 

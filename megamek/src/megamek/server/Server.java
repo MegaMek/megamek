@@ -19889,9 +19889,8 @@ public class Server implements Runnable {
         Report r;
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
-            if ((null == entity.getPosition()) || entity.isOffBoard()) {
-                // If it's not on the board - aboard something else, for
-                // example...
+            if ((null == entity.getPosition()) && !entity.isOffBoard() || (entity.getTransportId() != Entity.NONE)) {
+                // Ignore transported units, and units that don't have a position for some unknown reason
                 continue;
             }
             String reason = game.getPlanetaryConditions().whyDoomed(entity, game);

@@ -54,6 +54,7 @@ v0.43.1-git
 + Issue #348: Selecting lance move options does not disable individual init
 + Issue #225: Bad String in Round Report for Thunder LRMs
 + Deploying doomed units now nags the user (ie, infantry in a vacuum)
++ Issue #408: Offboard units not checked for planetary conditions (ie, vacuum)
 
 v0.43.0 (2017-02-13 03:30 UTC)
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

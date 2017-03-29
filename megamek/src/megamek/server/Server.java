@@ -12615,6 +12615,7 @@ public class Server implements Runnable {
         entity.setDone(true);
         entity.setDeployed(true);
         entityUpdate(entity.getId());
+        addReport(doSetLocationsExposure(entity, hex, false, entity.getElevation()));
     }
 
     /**

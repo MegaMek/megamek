@@ -11267,32 +11267,23 @@ public class Server implements Runnable {
                 && (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getPlanetaryConditions().isVacuum()) {
-                        entity.setLocationStatus(loop,
-                                                 ILocationExposureStatus.VACUUM);
+                        entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                     } else {
-                        entity.setLocationStatus(loop,
-                                                 ILocationExposureStatus.NORMAL);
+                        entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
                     }
                 }
-                entity.setLocationStatus(Mech.LOC_RLEG,
-                                         ILocationExposureStatus.WET);
-                entity.setLocationStatus(Mech.LOC_LLEG,
-                                         ILocationExposureStatus.WET);
+                entity.setLocationStatus(Mech.LOC_RLEG, ILocationExposureStatus.WET);
+                entity.setLocationStatus(Mech.LOC_LLEG, ILocationExposureStatus.WET);
                 vPhaseReport.addAll(breachCheck(entity, Mech.LOC_RLEG, hex));
                 vPhaseReport.addAll(breachCheck(entity, Mech.LOC_LLEG, hex));
                 if (entity instanceof QuadMech) {
-                    entity.setLocationStatus(Mech.LOC_RARM,
-                                             ILocationExposureStatus.WET);
-                    entity.setLocationStatus(Mech.LOC_LARM,
-                                             ILocationExposureStatus.WET);
-                    vPhaseReport
-                            .addAll(breachCheck(entity, Mech.LOC_RARM, hex));
-                    vPhaseReport
-                            .addAll(breachCheck(entity, Mech.LOC_LARM, hex));
+                    entity.setLocationStatus(Mech.LOC_RARM, ILocationExposureStatus.WET);
+                    entity.setLocationStatus(Mech.LOC_LARM, ILocationExposureStatus.WET);
+                    vPhaseReport.addAll(breachCheck(entity, Mech.LOC_RARM, hex));
+                    vPhaseReport.addAll(breachCheck(entity, Mech.LOC_LARM, hex));
                 }
                 if (entity instanceof TripodMech) {
-                    entity.setLocationStatus(Mech.LOC_CLEG,
-                            ILocationExposureStatus.WET);
+                    entity.setLocationStatus(Mech.LOC_CLEG, ILocationExposureStatus.WET);
                     vPhaseReport.addAll(breachCheck(entity, Mech.LOC_CLEG, hex));
                 }
             } else {
@@ -11304,11 +11295,9 @@ public class Server implements Runnable {
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
                 if (game.getPlanetaryConditions().isVacuum()) {
-                    entity.setLocationStatus(loop,
-                                             ILocationExposureStatus.VACUUM);
+                    entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                 } else {
-                    entity.setLocationStatus(loop,
-                                             ILocationExposureStatus.NORMAL);
+                    entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
                 }
             }
         }
@@ -12495,8 +12484,8 @@ public class Server implements Runnable {
      * specified entities inside of it too. Also, check that the deployment is
      * valid.
      */
-    private void processDeployment(Entity entity, Coords coords, int nFacing,
-                                   int elevation, Vector<Entity> loadVector, boolean assaultDrop) {
+    private void processDeployment(Entity entity, Coords coords, int nFacing, int elevation, Vector<Entity> loadVector,
+            boolean assaultDrop) {
 
         for (Entity loaded : loadVector) {
             if (loaded.getTransportId() != Entity.NONE) {

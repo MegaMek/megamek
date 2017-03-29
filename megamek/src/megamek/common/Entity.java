@@ -2874,10 +2874,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param allowChange allow change of breached locations
      */
     public void setLocationStatus(int loc, int status, boolean allowChange) {
-        if (allowChange || (exposure[loc] > ILocationExposureStatus.BREACHED)) { // can't
-            // change
-            // BREACHED
-            // status
+        if (allowChange || (exposure[loc] > ILocationExposureStatus.BREACHED)) { // can't change BREACHED status
             exposure[loc] = status;
         }
     }

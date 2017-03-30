@@ -263,35 +263,35 @@ public class MegaMekGUI implements IMegaMekGUI {
             labVersion.setForeground(skinSpec.fontColors.get(0));
         }
         hostB = new MegamekButton(Messages.getString("MegaMek.hostNewGame.label"), //$NON-NLS-1$
-                SkinSpecification.UIComponents.MainMenuButton.getComp());
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         hostB.setActionCommand("fileGameNew"); //$NON-NLS-1$
         hostB.addActionListener(actionListener);
         scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"), //$NON-NLS-1$
-                SkinSpecification.UIComponents.MainMenuButton.getComp());
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         scenB.setActionCommand("fileGameScenario"); //$NON-NLS-1$
         scenB.addActionListener(actionListener);
         loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"), //$NON-NLS-1$
-                SkinSpecification.UIComponents.MainMenuButton.getComp());
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         loadB.setActionCommand("fileGameOpen"); //$NON-NLS-1$
         loadB.addActionListener(actionListener);
         connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"), //$NON-NLS-1$
-                SkinSpecification.UIComponents.MainMenuButton.getComp());
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         connectB.setActionCommand("fileGameConnect"); //$NON-NLS-1$
         connectB.addActionListener(actionListener);
         botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"), //$NON-NLS-1$
-                SkinSpecification.UIComponents.MainMenuButton.getComp());
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         botB.setActionCommand("fileGameConnectBot"); //$NON-NLS-1$
         botB.addActionListener(actionListener);
         editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"), //$NON-NLS-1$
-                SkinSpecification.UIComponents.MainMenuButton.getComp());
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         editB.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         editB.addActionListener(actionListener);
         skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"), //$NON-NLS-1$
-                SkinSpecification.UIComponents.MainMenuButton.getComp());
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         skinEditB.setActionCommand("fileSkinNew"); //$NON-NLS-1$
         skinEditB.addActionListener(actionListener);
         quitB = new MegamekButton(Messages.getString("MegaMek.Quit.label"), //$NON-NLS-1$
-                SkinSpecification.UIComponents.MainMenuButton.getComp());
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         quitB.setActionCommand("quit"); //$NON-NLS-1$
         quitB.addActionListener(actionListener);
 

@@ -23,6 +23,8 @@ public class OptionsConstants {
     public static final String QUIRK_POS_ANTI_AIR = "anti_air"; //$NON-NLS-1$
     public static final String QUIRK_POS_ATMO_FLYER= "atmo_flyer"; //$NON-NLS-1$
     public static final String QUIRK_POS_BATTLE_COMP = "battle_computer"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BARREL_FIST_LA = "barrel_fists_la"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BARREL_FIST_RA = "barrel_fists_ra"; //$NON-NLS-1$
     public static final String QUIRK_POS_BATTLE_FIST = "battle_fists"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMBAT_COMPUTER= "combat_computer"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMMAND_MECH = "command_mech"; //$NON-NLS-1$

@@ -1,0 +1,1340 @@
+<Weapon>
+	<baseType>ISSRM6</baseType> <!-- The base equipment type this equipment is based on. Incompatible to weaponHandler field and supercedes it if both are specified. Behaviour of the equipment will be based from this base equipment. If there are unspecified fields it will use the ones from this base equipment. Takes MM equipment class names, see appendix I. NOTE: this field is case sensitive. -->
+	<weaponHandler>SRMHandler</weaponHandler> <!-- Weapon handler to use when this weapon is fired. Incompatible to baseType field and will be superceded if both are specified. You are recommended to set all fields is specifying weapon handler instead of base weapon, as in this case the defaults won't make sense. See Appendix II for all support weapon handlers. NOTE: this field is case sensitive. -->
+
+	<name>SRM Special</name>
+	<shortName>SRMSp</shortName> <!-- For RS printing -->
+	<lookupName> <!-- Name(s) of this weapon in MTF/BLK files. Do not use any names existing in vanilla MM or custom weapon will not load. -->
+		<name>ISSRMSpecial</name>
+		<name>IS SRM Special</name>
+		<name>IS SRM-Special</name>
+	</lookupName>
+	<tonnage>1.0</tonnage>
+	<criticals>3</criticals>
+	<tankSlots>1</tankSlots>
+	<explosive>false</explosive> <!-- Will this weapon explode if critted -->
+	<hittable>true</hittable> <!-- If false, reroll critical hits -->
+	<spreadable>false</spreadable> <!-- Can crits be spread over locations? -->
+	<toHitModifier>1</toHitModifier>
+	<bv>98.0</bv>
+	<cost>140000.0</cost> <!-- In C-bills -->
+	<techLevel>IS<techLevel> <!-- IS/Inner Sphere for inner sphere, CL/Clan for clan. Tech level is always unofficial. -->
+	<techRating>C</techRating> <!-- Accepts on of A,B,C,D,E,F,X -->
+	<availRating>C,C,C</availRating> <!-- Availability rating in Star League, Succession Wars, and Clan Invasion eras, accepts one of A,B,C,D,E,F,X -->
+	<introDate>2370</introDate>
+	<extinctDate>2800</extinctDate> <!-- Put -1 if this weapon never go extinct -->
+	<reintroDate>3040</reintroDate> <!-- Put -1 if this weapon is never reintroduced after extinct -->
+	<instantModeSwitch>false</instantModeSwitch>
+	<heat>6</heat>
+	<damage>20</damage> <!-- cluster/by_clustertable for missles, variable for variable damage, artillery for artillery damage -->
+	<damageShort>25</damageShort> <!-- for variable damage only, short range damage -->
+	<damageMedium>20</damageMedium> <!-- for variable damage only, medium range damage -->
+	<damageLong>15</damageLong> <!-- for variable damage only, long range damage -->
+	<explosionDamage>20</explosionDamage> <!-- If critted, damage dealt to the carrier -->
+	<rackSize>20</rackSize> <!-- Missile rack size or AC size -->
+	<ammoType>SRM</ammoType> <!-- See Appendix III for ammo types -->
+	<minimumRange>2</minimumRange>
+	<shortRange>4</shortRange>
+	<mediumRange>8</mediumRange>
+	<longRange>12</longRange>
+	<extremeRange>16</extremeRange>
+	<waterShortRange>4</waterShortRange> <!-- range of the weapon when carrier is underwater -->
+	<waterMediumRange>8</waterMediumRange>
+	<waterLongRange>12</waterLongRange>
+	<waterExtremeRange>16</waterExtremeRange>
+	<infDamageClass>CLUSTER_MISSILE_1D6</infDamageClass> <!-- Kind of damage dealt when attacking infantry. See Appendix IV for types -->
+	<shortAV>5.0</shortAV> <!-- AT2 damage -->
+	<medAV>4.0</medAV>
+	<longAV>3.0</longAV>
+	<extAV>2.0</extAV>
+	<maxRange>medium</maxRange> <!-- short, medium, long, ext -->
+	<capital>false</capital>
+	<subCapital>false</subCapital>
+	<atClass>SRM</atClass> <!-- See Appendix V for AT classes -->
+	<flags> <!-- Extra specialties appended to base type. See Appendix VI for flags -->
+		<flag>NO_FIRES</flag>
+		<flag>DIRECT_FIRE</flag>
+	</flags>
+</Weapon>
+
+<!-- Appendix I : MM equipment class names -->
+<!--
+ACBayWeapon
+AlamoMissileWeapon
+AltitudeBombAttack
+ArtilleryBayWeapon
+ASEWMissileWeapon
+ASMissileWeapon
+ATMBayWeapon
+ATMWeapon
+BombArrowIV
+BombISRL10
+BombTAG
+CapitalACBayWeapon
+CapitalGaussBayWeapon
+CapitalLaserBayWeapon
+CapitalMDBayWeapon
+CapitalMissileBayWeapon
+CapitalMissileWeapon
+CapitalPPCBayWeapon
+CLAAAMissileWeapon
+CLAMS
+CLAPGaussRifle
+CLAR10BayWeapon
+CLAR10Weapon
+CLArrowIV
+CLATM12
+CLATM3
+CLATM6
+CLATM9
+CLBarracudaWeapon
+CLBPod
+CLERFlamer
+CLERLargeLaser
+CLERLargePulseLaser
+CLERMediumLaser
+CLERMediumLaserPrototype
+CLERMediumPulseLaser
+CLERMicroLaser
+CLERPPC
+CLERSmallLaser
+CLERSmallLaserPrototype
+CLERSmallPulseLaser
+CLFireExtinguisher
+CLFlamer
+CLFluidGun
+CLFussilade
+CLGaussRifle
+CLHAG20
+CLHAG30
+CLHAG40
+CLHeavyFlamer
+CLHeavyLargeLaser
+CLHeavyMediumLaser
+CLHeavyMG
+CLHeavyMGA
+CLHeavySmallLaser
+CLIATM12
+CLIATM3
+CLIATM6
+CLIATM9
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyMediumLaser
+CLImprovedHeavySmallLaser
+CLKillerWhaleWeapon
+CLLAAMissileWeapon
+CLLargeChemicalLaser
+CLLargePulseLaser
+CLLaserAMS
+CLLB10XAC
+CLLB20XAC
+CLLB20XACPrototype
+CLLB2XAC
+CLLB2XACPrototype
+CLLB5XAC
+CLLB5XACPrototype
+CLLightMG
+CLLightMGA
+CLLightTAG
+CLLongTom
+CLLongTomCannon
+CLLRM1
+CLLRM10
+CLLRM10IOS
+CLLRM10OS
+CLLRM11
+CLLRM12
+CLLRM13
+CLLRM14
+CLLRM15
+CLLRM15IOS
+CLLRM15OS
+CLLRM16
+CLLRM17
+CLLRM18
+CLLRM19
+CLLRM1OS
+CLLRM2
+CLLRM20
+CLLRM20IOS
+CLLRM20OS
+CLLRM2OS
+CLLRM3
+CLLRM3OS
+CLLRM4
+CLLRM4OS
+CLLRM5
+CLLRM5IOS
+CLLRM5OS
+CLLRM6
+CLLRM7
+CLLRM8
+CLLRM9
+CLLRT1
+CLLRT10
+CLLRT10IOS
+CLLRT10OS
+CLLRT11
+CLLRT12
+CLLRT13
+CLLRT14
+CLLRT15
+CLLRT15IOS
+CLLRT15OS
+CLLRT16
+CLLRT17
+CLLRT18
+CLLRT19
+CLLRT2
+CLLRT20
+CLLRT20IOS
+CLLRT20OS
+CLLRT3
+CLLRT4
+CLLRT5
+CLLRT5IOS
+CLLRT5OS
+CLLRT6
+CLLRT7
+CLLRT8
+CLLRT9
+CLMantaRayWeapon
+CLMediumChemicalLaser
+CLMediumPulseLaser
+CLMekMortar1
+CLMekMortar2
+CLMekMortar4
+CLMekMortar8
+CLMG
+CLMGA
+CLMicroPulseLaser
+CLMPod
+CLNailGun
+CLNarc
+CLNarcIOS
+CLNarcOS
+CLNGaussWeaponHeavy
+CLNGaussWeaponLight
+CLNGaussWeaponMedium
+CLNL35Weapon
+CLNL45Weapon
+CLNL55Weapon
+CLNPPCWeaponHeavy
+CLNPPCWeaponLight
+CLNPPCWeaponMedium
+CLPiranhaWeapon
+CLPlasmaCannon
+CLPlasmaRifle
+CLProtoMechAC2
+CLProtoMechAC4
+CLProtoMechAC8
+CLPrototypeRL10
+CLPrototypeRL15
+CLPrototypeRL20
+CLRAC10
+CLRAC2
+CLRAC20
+CLRAC5
+CLRivetGun
+CLSCCWeaponHeavy
+CLSCCWeaponLight
+CLSCCWeaponMedium
+CLSCL1Weapon
+CLSCL2Weapon
+CLSCL3Weapon
+CLSmallChemicalLaser
+CLSmallLaser
+CLSmallPulseLaser
+CLSniper
+CLSniperCannon
+CLSRM1
+CLSRM1OS
+CLSRM2
+CLSRM2IOS
+CLSRM2OS
+CLSRM3
+CLSRM3OS
+CLSRM4
+CLSRM4IOS
+CLSRM4OS
+CLSRM5
+CLSRM5OS
+CLSRM6
+CLSRM6IOS
+CLSRM6OS
+CLSRT2
+CLSRT2IOS
+CLSRT2OS
+CLSRT4
+CLSRT4IOS
+CLSRT4OS
+CLSRT6
+CLSRT6IOS
+CLSRT6OS
+CLStingrayWeapon
+CLStreakLRM10
+CLStreakLRM10IOS
+CLStreakLRM10OS
+CLStreakLRM15
+CLStreakLRM15IOS
+CLStreakLRM15OS
+CLStreakLRM20
+CLStreakLRM20IOS
+CLStreakLRM20OS
+CLStreakLRM5
+CLStreakLRM5IOS
+CLStreakLRM5OS
+CLStreakSRM1
+CLStreakSRM2
+CLStreakSRM2IOS
+CLStreakSRM2OS
+CLStreakSRM3
+CLStreakSRM4
+CLStreakSRM4IOS
+CLStreakSRM4OS
+CLStreakSRM4Prototype
+CLStreakSRM5
+CLStreakSRM6
+CLStreakSRM6IOS
+CLStreakSRM6OS
+CLStreakSRM6Prototype
+CLSwordfishWeapon
+CLTAG
+CLThumper
+CLThumperCannon
+CLUAC10
+CLUAC10Prototype
+CLUAC2
+CLUAC20
+CLUAC20Prototype
+CLUAC2Prototype
+CLUAC5
+CLVehicleFlamer
+CLVehicularGrenadeLauncher
+CLWERPPC
+CLWhiteSharkWeapon
+DiveBombAttack
+InfantryAttack
+ISAAAMissileWeapon
+ISAC10
+ISAC10i
+ISAC10Primitive
+ISAC15
+ISAC2
+ISAC20
+ISAC20Primitive
+ISAC2Primitive
+ISAC5
+ISAC5Primitive
+ISAMS
+ISAR10BayWeapon
+ISAR10Weapon
+ISArrowIV
+ISBarracudaTWeapon
+ISBarracudaWeapon
+ISBinaryLaserCannon
+ISBombastLaser
+ISBPod
+ISC3M
+ISC3MBS
+ISC3RemoteSensorLauncher
+ISCenturionWeaponSystem
+ISCruiseMissile120
+ISCruiseMissile50
+ISCruiseMissile70
+ISCruiseMissile90
+ISEHERPPC
+ISEnhancedLRM10
+ISEnhancedLRM15
+ISEnhancedLRM20
+ISEnhancedLRM5
+ISERFlamer
+ISERLargeLaser
+ISERLargeLaserPrototype
+ISERMediumLaser
+ISERPPC
+ISERSmallLaser
+ISExtendedLRM10
+ISExtendedLRM15
+ISExtendedLRM20
+ISExtendedLRM5
+ISFireExtinguisher
+ISFlamer
+ISFluidGun
+ISGAC2
+ISGAC4
+ISGAC6
+ISGAC8
+ISGaussRifle
+ISGaussRiflePrototype
+ISHeavyFlamer
+ISHeavyMG
+ISHeavyMGA
+ISHeavyPPC
+ISHeavyRifle
+ISHERPPC
+ISHGaussRifle
+ISHVAC10
+ISHVAC2
+ISHVAC5
+ISIHGaussRifle
+ISImprovedNarc
+ISImprovedNarcOS
+ISKillerWhaleWeapon
+ISKrakenWeapon
+ISLAAMissileWeapon
+ISLAC10
+ISLAC2
+ISLAC20
+ISLAC5
+ISLargeLaser
+ISLargeLaserPrimitive
+ISLargePulseLaser
+ISLargePulseLaserPrototype
+ISLargeReengineeredLaser
+ISLargeVariableSpeedPulseLaser
+ISLargeXPulseLaser
+ISLaserAMS
+ISLaserAMSTHB
+ISLB10XAC
+ISLB10XACPrototype
+ISLB20XAC
+ISLB2XAC
+ISLB5XAC
+ISLGaussRifle
+ISLightMG
+ISLightMGA
+ISLightPPC
+ISLightRifle
+ISLightTAG
+ISLongTom
+ISLongTomCannon
+ISLRM1
+ISLRM10
+ISLRM10IOS
+ISLRM10OS
+ISLRM10Primitive
+ISLRM15
+ISLRM15IOS
+ISLRM15OS
+ISLRM15Primitive
+ISLRM1OS
+ISLRM2
+ISLRM20
+ISLRM20IOS
+ISLRM20OS
+ISLRM20Primitive
+ISLRM2OS
+ISLRM3
+ISLRM3OS
+ISLRM4
+ISLRM4OS
+ISLRM5
+ISLRM5IOS
+ISLRM5OS
+ISLRM5Primitive
+ISLRT10
+ISLRT10IOS
+ISLRT10OS
+ISLRT15
+ISLRT15IOS
+ISLRT15OS
+ISLRT20
+ISLRT20IOS
+ISLRT20OS
+ISLRT5
+ISLRT5IOS
+ISLRT5OS
+ISMagshotGaussRifle
+ISMantaRayWeapon
+ISMassDriverHeavy
+ISMassDriverLight
+ISMassDriverMedium
+ISMediumLaser
+ISMediumLaserPrimitive
+ISMediumPulseLaser
+ISMediumPulseLaserPrototype
+ISMediumReengineeredLaser
+ISMediumRifle
+ISMediumVariableSpeedPulseLaser
+ISMediumXPulseLaser
+ISMekMortar1
+ISMekMortar2
+ISMekMortar4
+ISMekMortar8
+ISMekTaser
+ISMG
+ISMGA
+ISMML3
+ISMML5
+ISMML7
+ISMML9
+ISMPod
+ISMRM1
+ISMRM10
+ISMRM10IOS
+ISMRM10OS
+ISMRM1OS
+ISMRM2
+ISMRM20
+ISMRM20IOS
+ISMRM20OS
+ISMRM2OS
+ISMRM3
+ISMRM30
+ISMRM30IOS
+ISMRM30OS
+ISMRM3OS
+ISMRM4
+ISMRM40
+ISMRM40IOS
+ISMRM40OS
+ISMRM4OS
+ISMRM5
+ISMRM5OS
+ISNailGun
+ISNarc
+ISNarcIOS
+ISNarcOS
+ISNGaussWeaponHeavy
+ISNGaussWeaponLight
+ISNGaussWeaponMedium
+ISNL35Weapon
+ISNL45Weapon
+ISNL55Weapon
+ISNPPCWeaponHeavy
+ISNPPCWeaponLight
+ISNPPCWeaponMedium
+ISPiranhaWeapon
+ISPlasmaRifle
+ISPPC
+ISPPCPrimitive
+ISPrimRL15
+ISRAC2
+ISRAC5
+ISRailGun
+ISRivetGun
+ISRL1
+ISRL10
+ISRL15
+ISRL2
+ISRL20
+ISRL3
+ISRL4
+ISRL5
+ISSCCWeaponHeavy
+ISSCCWeaponLight
+ISSCCWeaponMedium
+ISSCL1Weapon
+ISSCL2Weapon
+ISSCL3Weapon
+ISSilverBulletGauss
+ISSmallLaser
+ISSmallLaserPrimitive
+ISSmallPulseLaser
+ISSmallPulseLaserPrototype
+ISSmallReengineeredLaser
+ISSmallVariableSpeedPulseLaser
+ISSmallXPulseLaser
+ISSniper
+ISSniperCannon
+ISSnubNosePPC
+ISSRM1
+ISSRM1OS
+ISSRM2
+ISSRM2IOS
+ISSRM2OS
+ISSRM2Primitive
+ISSRM3
+ISSRM3OS
+ISSRM4
+ISSRM4IOS
+ISSRM4OS
+ISSRM4Primitive
+ISSRM5
+ISSRM5OS
+ISSRM6
+ISSRM6IOS
+ISSRM6OS
+ISSRM6Primitive
+ISSRT2
+ISSRT2IOS
+ISSRT2OS
+ISSRT4
+ISSRT4IOS
+ISSRT4OS
+ISSRT6
+ISSRT6IOS
+ISSRT6OS
+ISStingrayWeapon
+ISStreakSRM2
+ISStreakSRM2IOS
+ISStreakSRM2OS
+ISStreakSRM4
+ISStreakSRM4IOS
+ISStreakSRM4OS
+ISStreakSRM6
+ISStreakSRM6IOS
+ISStreakSRM6OS
+ISSwordfishWeapon
+ISTAG
+ISTHBLB20XAC
+ISTHBLB2XAC
+ISTHBLB5XAC
+ISTHBUAC10
+ISTHBUAC2
+ISTHBUAC20
+ISThumper
+ISThumperCannon
+ISThunderBolt10
+ISThunderBolt15
+ISThunderBolt20
+ISThunderBolt5
+ISTSEMPCannon
+ISTSEMPOneShot
+ISUAC10
+ISUAC2
+ISUAC20
+ISUAC5
+ISUAC5Prototype
+ISVehicleFlamer
+ISVehicularGrenadeLauncher
+ISWhiteSharkWeapon
+KillerWhaleTWeapon
+KrakenTWeapon
+LaserBayWeapon
+LBXBayWeapon
+LegAttack
+LRMBayWeapon
+MiscBayWeapon
+MMLBayWeapon
+MRMBayWeapon
+NAC10Weapon
+NAC20Weapon
+NAC25Weapon
+NAC30Weapon
+NAC35Weapon
+NAC40Weapon
+NailRivetGunWeapon
+NarcWeapon
+NavalACWeapon
+NavalGaussWeapon
+NavalLaserWeapon
+NavalPPCWeapon
+PlasmaBayWeapon
+PlasmaMFUKWeapon
+PointDefenseBayWeapon
+PPCBayWeapon
+PrimRLWeapon
+PulseLaserBayWeapon
+RLBayWeapon
+SCCBayWeapon
+SCLBayWeapon
+ScreenLauncherBayWeapon
+ScreenLauncherWeapon
+SpaceBombAttack
+SRMBayWeapon
+StopSwarmAttack
+SubCapitalCannonWeapon
+SubCapitalLaserWeapon
+SubCapitalMissileBayWeapon
+SubCapitalMissileWeapon
+SwarmAttack
+SwarmWeaponAttack
+WhiteSharkTWeapon
+CLAdvancedSRM1
+CLAdvancedSRM1OS
+CLAdvancedSRM2
+CLAdvancedSRM2OS
+CLAdvancedSRM3
+CLAdvancedSRM3OS
+CLAdvancedSRM4
+CLAdvancedSRM4OS
+CLAdvancedSRM5
+CLAdvancedSRM5OS
+CLAdvancedSRM6
+CLAdvancedSRM6OS
+CLBAAPGaussRifle
+CLBABearhunterSuperheavyAC
+CLBABearhunterSuperheavyACi
+CLBACompactNarc
+CLBAERMediumLaser
+CLBAERMediumPulseLaser
+CLBAERMicroLaser
+CLBAERSmallLaser
+CLBAERSmallPulseLaser
+CLBAFlamer
+CLBAHeavyFlamer
+CLBAHeavyGrenadeLauncher
+CLBAHeavyMediumLaser
+CLBAHeavyMG
+CLBAHeavyRecoillessRifle
+CLBAHeavySmallLaser
+CLBALBX
+CLBALightMG
+CLBALightRecoillessRifle
+CLBALightTAG
+CLBALRM1
+CLBALRM1OS
+CLBALRM2
+CLBALRM2OS
+CLBALRM3
+CLBALRM3OS
+CLBALRM4
+CLBALRM4OS
+CLBALRM5
+CLBALRM5OS
+CLBAMediumPulseLaser
+CLBAMediumRecoillessRifle
+CLBAMG
+CLBAMicroBomb
+CLBAMicroPulseLaser
+CLBASmallLaser
+CLBASmallPulseLaser
+CLBASRM1
+CLBASRM1OS
+CLBASRM2
+CLBASRM2OS
+CLBASRM3
+CLBASRM3OS
+CLBASRM4
+CLBASRM4OS
+CLBASRM5
+CLBASRM5OS
+CLBASRM6
+CLBASRM6OS
+CLBASupportPPC
+ISBACompactNarc
+ISBADavidLightGaussRifle
+ISBAERMediumLaser
+ISBAERSmallLaser
+ISBAFiredrakeNeedler
+ISBAFlamer
+ISBAGrandMaulerGaussCannon
+ISBAGrenadeLauncher
+ISBAHeavyFlamer
+ISBAHeavyGrenadeLauncher
+ISBAHeavyMG
+ISBAHeavyMortar
+ISBAHeavyRecoillessRifle
+ISBAKingDavidLightGaussRifle
+ISBALightMG
+ISBALightMortar
+ISBALightRecoillessRifle
+ISBALightTAG
+ISBALRM1
+ISBALRM1OS
+ISBALRM2
+ISBALRM2OS
+ISBALRM3
+ISBALRM3OS
+ISBALRM4
+ISBALRM4OS
+ISBALRM5
+ISBALRM5OS
+ISBAMagshotGaussRifle
+ISBAMediumLaser
+ISBAMediumPulseLaser
+ISBAMediumRecoillessRifle
+ISBAMediumVariableSpeedPulseLaser
+ISBAMG
+ISBAMicroGrenadeLauncher
+ISBAMRM1
+ISBAMRM1OS
+ISBAMRM2
+ISBAMRM2OS
+ISBAMRM3
+ISBAMRM3OS
+ISBAMRM4
+ISBAMRM4OS
+ISBAMRM5
+ISBAMRM5OS
+ISBAPlasmaRifle
+ISBAPopUpMineLauncher
+ISBARL1
+ISBARL2
+ISBARL3
+ISBARL4
+ISBARL5
+ISBASmallLaser
+ISBASmallPulseLaser
+ISBASmallVariableSpeedPulseLaser
+ISBASRM1
+ISBASRM1OS
+ISBASRM2
+ISBASRM2OS
+ISBASRM3
+ISBASRM3OS
+ISBASRM4
+ISBASRM4OS
+ISBASRM5
+ISBASRM5OS
+ISBASRM6
+ISBASRM6OS
+ISBASupportPPC
+ISBATaser
+ISBATsunamiGaussRifle
+ISBATubeArtillery
+InfantryArchaicAxeWeapon
+InfantryArchaicBasicCrossbowWeapon
+InfantryArchaicBlackjackWeapon
+InfantryArchaicBokkenWeapon
+InfantryArchaicCarbonReinforcedNailsWeapon
+InfantryArchaicClanNeuralWhipWeapon
+InfantryArchaicClanVibroKatanaWeapon
+InfantryArchaicClanVibroSwordWeapon
+InfantryArchaicCompoundBowWeapon
+InfantryArchaicDaggerWeapon
+InfantryArchaicDaikyuBowWeapon
+InfantryArchaicDaoWeapon
+InfantryArchaicDoubleStunStaffWeapon
+InfantryArchaicHankyuBowWeapon
+InfantryArchaicHatchetWeapon
+InfantryArchaicHeavyCrossbowWeapon
+InfantryArchaicImprovisedClubWeapon
+InfantryArchaicKatanaWeapon
+InfantryArchaicLongBowWeapon
+InfantryArchaicMedusaWhipWeapon
+InfantryArchaicMiniStunstickWeapon
+InfantryArchaicMonowireWeapon
+InfantryArchaicNeuralLashWeapon
+InfantryArchaicNeuralWhipWeapon
+InfantryArchaicNoDachiWeapon
+InfantryArchaicNunchakuWeapon
+InfantryArchaicPolearmWeapon
+InfantryArchaicShortBowWeapon
+InfantryArchaicShurikenWeapon
+InfantryArchaicSingleStunStaffWeapon
+InfantryArchaicStaffWeapon
+InfantryArchaicStunstickWeapon
+InfantryArchaicSwordWeapon
+InfantryArchaicVibroAxeWeapon
+InfantryArchaicVibroBladeWeapon
+InfantryArchaicVibroKatanaWeapon
+InfantryArchaicVibroSwordWeapon
+InfantryArchaicWakizashiWeapon
+InfantryArchaicWhipWeapon
+InfantryGrenadeInfernoWeapon
+InfantryGrenadeMicroWeapon
+InfantryGrenadeMiniInfernoWeapon
+InfantryGrenadeMiniWeapon
+InfantryGrenadeRAGWeapon
+InfantryGrenadeStandardWeapon
+InfantryLightSRMInfernoWeapon
+InfantryLightSRMWeapon
+InfantryLRMWeapon
+InfantryPistolAutoPistolWeapon
+InfantryPistolBlazerPistolWeapon
+InfantryPistolClanERLaserPistolWeapon
+InfantryPistolClanGaussPistolWeapon
+InfantryPistolClanMakeshiftPistolWeapon
+InfantryPistolClanPulseLaserPistolWeapon
+InfantryPistolCoventryHandrocketGyrojetPistolWeapon
+InfantryPistolDartGunWeapon
+InfantryPistolFlamerPistolWeapon
+InfantryPistolFlarePistolWeapon
+InfantryPistolGyrojetPistolWeapon
+InfantryPistolHawkEagleAutoPistolWeapon
+InfantryPistolHoldoutGyrojetPistolWeapon
+InfantryPistolHoldOutLaserPistolWeapon
+InfantryPistolHoldoutNeedlerPistolWeapon
+InfantryPistolHoldoutPistolWeapon
+InfantryPistolLaserPistolWeapon
+InfantryPistolMagnumAutoPistolWeapon
+InfantryPistolMagnumRevolverWeapon
+InfantryPistolMakeshiftPistolWeapon
+InfantryPistolMandrakeGaussPistolWeapon
+InfantryPistolMauserAutoPistolWeapon
+InfantryPistolMauserNeedlerPistolWeapon
+InfantryPistolNakjimaLaserPistolWeapon
+InfantryPistolNambuAutoPistolWeapon
+InfantryPistolNeedlerPistolWeapon
+InfantryPistolPaintGunPistolWeapon
+InfantryPistolPulseLaserPistolWeapon
+InfantryPistolRevolverWeapon
+InfantryPistolSeaEagleNeedlerPistolWeapon
+InfantryPistolSerrekAutoPistolWeapon
+InfantryPistolSonicStunnerWeapon
+InfantryPistolSpitballGasPistolWeapon
+InfantryPistolSternsnachtPistolWeapon
+InfantryPistolSternsnachtPythonAutoPistolWeapon
+InfantryPistolSunbeamLaserPistolWeapon
+InfantryPistolSunbeamNovaLaserPistolWeapon
+InfantryPistolTKEnforcerAutoPistolWeapon
+InfantryPistolTranqGunWeapon
+InfantryPistolWhiteDwarfLaserPistolWeapon
+InfantryPortableMGWeapon
+InfantryRifleAutoRifleWeapon
+InfantryRifleBlazerRifleWeapon
+InfantryRifleBoltActionSniperWeapon
+InfantryRifleBoltActionWeapon
+InfantryRifleClanERLaserWeapon
+InfantryRifleClanMauser960LaserWeapon
+InfantryRifleClanMauserIICIASInfernoWeapon
+InfantryRifleClanMauserIICIASWeapon
+InfantryRifleClanPulseLaserWeapon
+InfantryRifleEbonyAssaultLaserWeapon
+InfantryRifleElephantGunWeapon
+InfantryRifleFederatedBarrettM42BInfernoWeapon
+InfantryRifleFederatedBarrettM42BWeapon
+InfantryRifleFederatedBarrettM61ALaserInfernoWeapon
+InfantryRifleFederatedBarrettM61ALaserWeapon
+InfantryRifleFederatedLongWeapon
+InfantryRifleGyrojetWeapon
+InfantryRifleGyroslugCarbineWeapon
+InfantryRifleGyroslugRifleWeapon
+InfantryRifleHeavyGyrojetGunWeapon
+InfantryRifleImperatorAX22AssaultWeapon
+InfantryRifleIntekLaserWeapon
+InfantryRifleLaserWeapon
+InfantryRifleMagnaLaserWeapon
+InfantryRifleMakeshiftWeapon
+InfantryRifleMarxXXLaserWeapon
+InfantryRifleMauser1200LSSWeapon
+InfantryRifleMauser960LaserWeapon
+InfantryRifleMauserG150Weapon
+InfantryRifleMaxellPL10LaserWeapon
+InfantryRifleMGFlechetteNeedlerWeapon
+InfantryRifleMinolta9000Weapon
+InfantryRifleNeedlerWeapon
+InfantryRiflePulseLaserWeapon
+InfantryRifleRadiumLaserSniperWeapon
+InfantryRifleShredderHeavyNeedlerWeapon
+InfantryRifleStarKingGyroslugCarbineWeapon
+InfantryRifleSunbeamStarfireERLaserWeapon
+InfantryRifleThunderstrokeIIWeapon
+InfantryRifleThunderstrokeWeapon
+InfantryRifleTKAssaultWeapon
+InfantryRifleZeusHeavyWeapon
+InfantryShotgunAutomaticWeapon
+InfantryShotgunAvengerCCWWeapon
+InfantryShotgunBuccaneerGelGunWeapon
+InfantryShotgunCeresCrowdbusterWeapon
+InfantryShotgunCombatWeapon
+InfantryShotgunDoubleBarrelWeapon
+InfantryShotgunPumpActionWeapon
+InfantryShotgunSawnoffDoubleBarrelWeapon
+InfantryShotgunSawnoffPumpActionWeapon
+InfantrySMGClanGaussWeapon
+InfantrySMGGuntherMP20Weapon
+InfantrySMGImperator2894A1Weapon
+InfantrySMGKA23SubgunWeapon
+InfantrySMGMartialEagleMachinePistolWeapon
+InfantrySMGMydronAutoPistolWeapon
+InfantrySMGRorynexRM3XXIWeapon
+InfantrySMGRuganWeapon
+InfantrySMGStettaAutoPistolWeapon
+InfantrySMGWeapon
+InfantrySupportAutoGrenadeLauncherInfernoWeapon
+InfantrySupportAutoGrenadeLauncherWeapon
+InfantrySupportClanBearhunterAutocannonWeapon
+InfantrySupportClanERHeavyLaserWeapon
+InfantrySupportClanERLaserWeapon
+InfantrySupportClanSemiPortableERLaserWeapon
+InfantrySupportClanSemiPortableHeavyLaserWeapon
+InfantrySupportClanSemiPortablePulseLaserWeapon
+InfantrySupportCompactGrenadeLauncherWeapon
+InfantrySupportDavidLightGaussRifleWeapon
+InfantrySupportDragonsbaneDisposablePulseLaserWeapon
+InfantrySupportERHeavyLaserWeapon
+InfantrySupportERLaserWeapon
+InfantrySupportFiredrakeNeedlerWeapon
+InfantrySupportGrandMaulerGaussCannonWeapon
+InfantrySupportGrenadeLauncherInfernoWeapon
+InfantrySupportGrenadeLauncherWeapon
+InfantrySupportHeavyAutoGrenadeLauncherInfernoWeapon
+InfantrySupportHeavyAutoGrenadeLauncherWeapon
+InfantrySupportHeavyFlamerWeapon
+InfantrySupportHeavyGrenadeLauncherInfernoWeapon
+InfantrySupportHeavyGrenadeLauncherWeapon
+InfantrySupportHeavyLaserWeapon
+InfantrySupportHeavyMachineGunWeapon
+InfantrySupportHeavyMortarInfernoWeapon
+InfantrySupportHeavyMortarWeapon
+InfantrySupportHeavyPPCWeapon
+InfantrySupportHeavyPulseLaserWeapon
+InfantrySupportHeavyRecoillessRifleInfernoWeapon
+InfantrySupportHeavyRecoillessRifleWeapon
+InfantrySupportHeavySRMInfernoWeapon
+InfantrySupportHeavySRMWeapon
+InfantrySupportHellboreAssaultLaserWeapon
+InfantrySupportKingDavidLightGaussRifleWeapon
+InfantrySupportLaserWeapon
+InfantrySupportLAWWeapon
+InfantrySupportLightMachineGunWeapon
+InfantrySupportLightMortarInfernoWeapon
+InfantrySupportLightMortarWeapon
+InfantrySupportLightRecoillessRifleInfernoWeapon
+InfantrySupportLightRecoillessRifleWeapon
+InfantrySupportMagshotGaussRifleWeapon
+InfantrySupportMediumRecoillessRifleInfernoWeapon
+InfantrySupportMediumRecoillessRifleWeapon
+InfantrySupportMk1LightAAWeapon
+InfantrySupportMk2PortableAAWeapon
+InfantrySupportOneShotMRMWeapon
+InfantrySupportPortableAutocannonWeapon
+InfantrySupportPortableFlamerWeapon
+InfantrySupportPortablePlasmaWeapon
+InfantrySupportPortablePPCWeapon
+InfantrySupportPulseLaserWeapon
+InfantrySupportSemiPortableLaserWeapon
+InfantrySupportSemiPortableMachineGunWeapon
+InfantrySupportStandardSRMInfernoWeapon
+InfantrySupportStandardSRMWeapon
+InfantrySupportTsunamiHeavyGaussRifleWeapon
+InfantrySupportUltraHeavyLaserWeapon
+InfantrySupportVLAWWeapon
+InfantryTWFlamerWeapon
+InfantryWeapon
+-->
+
+<!-- Appendix II : Weapon handlers -->
+<!--
+ACAPHandler
+ACBayHandler
+ACFlakHandler
+ACFlechetteHandler
+ACIncendiaryHandler
+ACTracerHandler
+ACWeaponHandler
+AdvancedSRMHandler
+AmmoBayWeaponHandler
+AmmoWeaponHandler
+AR10Handler
+ArtilleryBayWeaponDirectFireHandler
+ArtilleryBayWeaponDirectHomingHandler
+ArtilleryBayWeaponIndirectFireHandler
+ArtilleryBayWeaponIndirectHomingHandler
+ArtilleryCannonWeaponHandler
+ArtilleryWeaponDirectFireHandler
+ArtilleryWeaponDirectHomingHandler
+ArtilleryWeaponIndirectFireHandler
+ArtilleryWeaponIndirectHomingHandler
+ATMHandler
+AttackHandler
+BarracudaHandler
+BarracudaTHandler
+BayWeaponHandler
+BombastLaserWeaponHandler
+BombAttackHandler
+BPodHandler
+CapitalMissileBayHandler
+CapitalMissileHandler
+CenturionWeaponSystemHandler
+ChemicalLaserHandler
+CLIATMHandler
+CLLBXPrototypeHandler
+EnergyWeaponHandler
+FireExtinguisherHandler
+FlamerHandler
+FlamerHeatHandler
+FluidGunCoolHandler
+GRHandler
+HAGWeaponHandler
+HGRHandler
+HVACWeaponHandler
+InsulatedLaserWeaponHandler
+KillerWhaleHandler
+KillerWhaleTHandler
+KrakenHandler
+KrakenTHandler
+LBXHandler
+LegAttackHandler
+LRMAntiTSMHandler
+LRMDeadFireHandler
+LRMFollowTheLeaderHandler
+LRMFragHandler
+LRMHandler
+LRMScatterableHandler
+LRMSmokeWarheadHandler
+LRMSwarmHandler
+LRMSwarmIHandler
+MantaRayHandler
+MechTaserHandler
+MekMortarHandler
+MGAWeaponHandler
+MGHandler
+MicroBombHandler
+MissileWeaponHandler
+MPodHandler
+MRMHandler
+NailRivetGunHandler
+NarcExplosiveHandler
+NarcHandler
+PiranhaHandler
+PlasmaBayWeaponHandler
+PlasmaCannonHandler
+PlasmaMFUKWeaponHandler
+PlasmaRifleHandler
+PopUpMineLauncherHandler
+PPCHandler
+PrimitiveACWeaponHandler
+PrototypeACWeaponHandler
+PrototypeCLUltraWeaponHandler
+PrototypeGaussHandler
+PrototypeISUltraWeaponHandler
+PrototypeLaserHandler
+PrototypeLBXHandler
+PrototypeRLHandler
+PrototypeStreakHandler
+PulseLaserWeaponHandler
+RACHandler
+RapidfireACWeaponHandler
+RapidfireHVACWeaponHandler
+ReengineeredLaserWeaponHandler
+RifleWeaponHandler
+RLHandler
+SantaAnnaHandler
+ScreenLauncherBayHandler
+ScreenLauncherHandler
+SmallPulseLaserPrototypeHandler
+SpaceBombAttackHandler
+SRMAntiTSMHandler
+SRMAXHandler
+SRMDeadFireHandler
+SRMFragHandler
+SRMHandler
+SRMInfernoHandler
+SRMSmokeWarheadHandler
+SRMTandemChargeHandler
+StingrayHandler
+StopSwarmAttackHandler
+StreakHandler
+StreakLRMHandler
+SwarmAttackHandler
+SwarmWeaponAttackHandler
+SwordfishHandler
+TAGHandler
+TeleMissileHandler
+ThunderBoltWeaponHandler
+TSEMPHandler
+UltraWeaponHandler
+VariableSpeedPulseLaserWeaponHandler
+VehicleFlamerCoolHandler
+VehicleFlamerHandler
+VehicleFlamerHeatHandler
+VGLWeaponHandler
+WeaponHandler
+WhiteSharkHandler
+WhiteSharkTHandler
+InfantryHeatWeaponHandler
+InfantryWeaponHandler
+BALBXHandler
+BAMGHandler
+BATaserHandler
+-->
+
+<!-- Appendix III : Ammo types -->
+<!--
+NA = -1;
+AC = 1;
+VEHICLE_FLAMER = 2;
+MG = 3;
+MG_HEAVY = 4;
+MG_LIGHT = 5;
+GAUSS = 6;
+LRM = 7;
+LRM_TORPEDO = 8;
+SRM = 9;
+SRM_TORPEDO = 10;
+SRM_STREAK = 11;
+MRM = 12;
+NARC = 13;
+AMS = 14;
+ARROW_IV = 15;
+LONG_TOM = 16;
+SNIPER = 17;
+THUMPER = 18;
+AC_LBX = 19;
+AC_ULTRA = 20;
+GAUSS_LIGHT = 21;
+GAUSS_HEAVY = 22;
+AC_ROTARY = 23;
+SRM_ADVANCED = 24;
+BA_MICRO_BOMB = 25;
+LRM_TORPEDO_COMBO = 26;
+MINE = 27;
+ATM = 28; // Clan ATM missile systems
+ROCKELAUNCHER = 29;
+INARC = 30;
+LRM_STREAK = 31;
+AC_LBX_THB = 32;
+AC_ULTRA_THB = 33;
+LAC = 34;
+HEAVY_FLAMER = 35;
+COOLANPOD = 36; // not really ammo, but explodes and is depleted
+EXLRM = 37;
+APGAUSS = 38;
+MAGSHOT = 39;
+PXLRM = 40;
+HSRM = 41;
+MRM_STREAK = 42;
+MPOD = 43;
+HAG = 44;
+MML = 45;
+PLASMA = 46;
+SBGAUSS = 47;
+RAIL_GUN = 48;
+TBOL5 = 49;
+TBOL10 = 50;
+TBOL15 = 51;
+TBOL20 = 52;
+NAC = 53;
+LIGHNGAUSS = 54;
+MED_NGAUSS = 55;
+HEAVY_NGAUSS = 56;
+KILLER_WHALE = 57;
+WHITE_SHARK = 58;
+BARRACUDA = 59;
+KRAKEN_T = 60;
+AR10 = 61;
+SCREEN_LAUNCHER = 62;
+ALAMO = 63;
+IGAUSS_HEAVY = 64;
+CHEMICAL_LASER = 65;
+HYPER_VELOCITY = 66;
+MEK_MORTAR = 67;
+CRUISE_MISSILE = 68;
+BPOD = 69;
+SCC = 70;
+MANTA_RAY = 71;
+SWORDFISH = 72;
+STINGRAY = 73;
+PIRANHA = 74;
+TASER = 75;
+BOMB = 76;
+AAA_MISSILE = 77;
+AS_MISSILE = 78;
+ASEW_MISSILE = 79;
+LAA_MISSILE = 80;
+RL_BOMB = 81;
+ARROW_IV_BOMB = 82;
+FLUID_GUN = 83;
+SNIPER_CANNON = 84;
+THUMPER_CANNON = 85;
+LONG_TOM_CANNON = 86;
+NAIL_RIVEGUN = 87;
+ACi = 88;
+KRAKENM = 89;
+PAC = 90;
+NLRM = 91;
+RIFLE = 92;
+VGL = 93;
+C3_REMOTE_SENSOR = 94;
+AC_PRIMITIVE = 95;
+LRM_PRIMITIVE = 96;
+SRM_PRIMITIVE = 97;
+BA_TUBE = 98;
+IATM = 99;
+LMASS = 100;
+MMASS = 101;
+HMASS = 102;
+-->
+
+<!-- Appendix IV : Infantry Damage Types -->
+<!--
+DIRECT_FIRE = 0;
+CLUSTER_BALLISTIC = 1;
+PULSE = 2;
+CLUSTER_MISSILE = 3;
+CLUSTER_MISSILE_1D6 = 4;
+CLUSTER_MISSILE_2D6 = 5;
+CLUSTER_MISSILE_3D6 = 6;
+BURST_HALFD6 = 7;
+BURST_1D6 = 8;
+BURST_2D6 = 9;
+BURST_3D6 = 10;
+BURST_4D6 = 11;
+BURST_5D6 = 12;
+BURST_6D6 = 13;
+BURST_7D6 = 14;
+-->
+
+<!-- Appendix V : Weapon classes for AT2 -->
+<!--
+NONE = 0;
+LASER = 1;
+POINT_DEFENSE = 2;
+PPC = 3;
+PULSE_LASER = 4;
+ARTILLERY = 5;
+PLASMA = 6;
+AC = 7;
+LBX_AC = 8;
+LRM = 9;
+SRM = 10;
+MRM = 11;
+MML = 12;
+ATM = 13;
+ROCKET_LAUNCHER = 14;
+CAPITAL_LASER = 15;
+CAPITAL_PPC = 16;
+CAPITAL_AC = 17;
+CAPITAL_GAUSS = 18;
+CAPITAL_MISSILE = 19;
+AR10 = 20;
+SCREEN = 21;
+SUB_CAPITAL_CANNON = 22;
+CAPITAL_MD = 23;
+-->
+
+<!-- Appendix VI : Equipment extra flags -->
+<!--
+DIRECT_FIRE = 1 // marks any weapon affected by a targetting computer
+FLAMER = 2
+LASER = 4 // Glaze armor
+PPC = 8
+AUTO_TARGET = 16 // for weapons that target Automatically (AMS)
+NO_FIRES = 32 //can not start fires
+SOLO_ATTACK = 128 //must be only weapon attacking
+VGL = 256
+MG = 512 // MGL for rapid fire setup
+INFERNO = 1024 //Inferno weapon
+INFANTRY = 2048 // Infantry caliber weapon, damage based on # of men shooting
+MISSILE_HITS = 8192 // use missile rules for # of hits
+ONESHOT = 16384
+ARTILLERY = 32768
+BALLISTIC = 65536 //for Gunnery/Ballistic
+ENERGY = 131072 //for Gunnery/Energy
+MISSILE = 262144 //for Gunnery/Missile
+PLASMA = 524288 //fires
+INCENDIARY_NEEDLES = 1048576
+PROTOTYPE = 2097152 // War of 3039 prototypes
+HEATASDICE = 4194304 // Variable heat, heat is listed in dice, not points
+AMS = 8388608
+INFANTRY_ONLY = 33554432 // may only target Infantry
+TAG = 67108864
+C3M = 134217728 //C3 Master with Target Acquisition gear
+PLASMA_MFUK = 268435456 //Plasma Rifle
+EXTINGUISHER = 536870912 //fire Extinguisher
+PULSE = 1073741824
+BURST_FIRE = 2147483648 // Full Damage vs. Infantry
+MGA = 4294967296 //Machine Gun Array
+NO_AIM = 8589934592
+BOMBAST_LASER = 17179869184
+CRUISE_MISSILE = 34359738368
+B_POD = 68719476736
+TASER = 137438953472
+ANTI_SHIP = 274877906944 //Anti-ship missiles
+SPACE_BOMB = 549755813888
+M_POD = 1099511627776
+DIVE_BOMB = 2199023255552
+ALT_BOMB = 4398046511104
+BA_WEAPON = 8796093022208 // Currently only used by MML
+MECH_WEAPON = 17592186044416
+AERO_WEAPON = 35184372088832
+PROTO_WEAPON = 70368744177664
+TANK_WEAPON = 140737488355328
+INFANTRY_ATTACK = 281474976710656
+INBURST = 562949953421312
+INAA = 1125899906842624
+INNONPENETRATING = 2251799813685248
+INPOINT_BLANK = 4503599627370496
+INSUPPORT = 9007199254740992
+INENCUMBER = 18014398509481984
+INARCHAIC = 36028797018963968
+C3MBS = 72057594037927936 // C3 Master Booster System
+TSEMP = 144115188075855872
+MASS_DRIVER = 288230376151711744 //Naval Mass Drivers
+CWS = 576460752303423488
+-->

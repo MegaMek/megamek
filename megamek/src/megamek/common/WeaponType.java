@@ -14,7 +14,10 @@
  */
 package megamek.common;
 
+import java.io.File;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import megamek.common.weapons.*;
 import megamek.common.weapons.battlearmor.*;
@@ -29,6 +32,10 @@ import megamek.common.weapons.infantry.*;
  * for all weapons of this type.
  */
 public class WeaponType extends EquipmentType {
+
+    private static final String CUSTOM_WEAPON_PATH = "data" + File.separator + "equipments"
+            + File.separator + "weapons";
+
     public static final int DAMAGE_BY_CLUSTERTABLE = -2;
     public static final int DAMAGE_VARIABLE = -3;
     public static final int DAMAGE_SPECIAL = -4;
@@ -649,6 +656,8 @@ public class WeaponType extends EquipmentType {
      * Add all the types of weapons we can create to the list
      */
     public static void initializeTypes() {
+        loadCustomWeapons();
+
         // Laser types
         EquipmentType.addType(new ISMediumLaser());
         EquipmentType.addType(new ISMediumLaserPrimitive());
@@ -1726,6 +1735,14 @@ public class WeaponType extends EquipmentType {
 
     public boolean isSplitable() {
         return criticals >= 8;
+    }
+
+    public static void loadCustomWeapons() {
+        List<WeaponType> weapons = new ArrayList<WeaponType>();
+        WeaponLoader.loadCustomWeapons(weapons, new File(CUSTOM_WEAPON_PATH));
+        for (WeaponType wt : weapons) {
+            EquipmentType.addType(wt);
+        }
     }
 
 }

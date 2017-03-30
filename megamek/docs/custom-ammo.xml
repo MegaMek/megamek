@@ -1,0 +1,251 @@
+<Weapon>
+	<name>SRM Special Ammo</name>
+	<shortName>SRMSp</shortName> <!-- For RS printing -->
+	<lookupName> <!-- Name(s) of this weapon in MTF/BLK files -->
+		<Name>ISSRMSpecial Ammo</Name>
+		<Name>IS SRM Special Ammo</Name>
+		<Name>IS Ammo SRM-Special</Name>
+	</lookupName>
+	<tonnage>1.0</tonnage>
+	<criticals>1</criticals>
+	<tankSlots>1</tankSlots>
+	<explosive>true</explosive> <!-- Will this weapon explode if critted -->
+	<hittable>true</hittable> <!-- If false, reroll critical hits -->
+	<spreadable>false</spreadable> <!-- Can crits be spread over locations? -->
+	<toHitModifier>1</toHitModifier>
+	<bv>11.0</bv>
+	<cost>27000.0</cost> <!-- In C-bills -->
+	<techLevel>IS<techLevel> <!-- IS/Inner Sphere for inner sphere, CL/Clan for clan. Tech level is always unofficial. -->
+	<TechRating>B</techRating> <!-- Accepts on of A,B,C,D,E,F,X -->
+	<availRating>B,B,B</availRating> <!-- Availability rating in Star League, Succession Wars, and Clan Invasion eras, accepts one of A,B,C,D,E,F,X -->
+	<introDate>2370</introDate>
+	<extinctDate>2800</extinctDate> <!-- Put -1 if this weapon never go extinct -->
+	<reintroDate>3040</reintroDate> <!-- Put -1 if this weapon is never reintroduced after extinct -->
+	<instantModeSwitch>false</instantModeSwitch>
+	<damagePerShot>2</damagePerShot>
+	<rackSize>20</rackSize> <!-- Only weapon of matching rack size and ammo type can use this ammo -->
+	<ammoType>SRM</ammoType> <!-- See Appendix I for ammo types. Specifying certain ammo types will create all the special ammos for that type. -->
+	<munitionType> <!-- See Appendix II for muniton types -->
+		<Type>PRECISION</Type>
+		<Type>ARMOR_PIERCING</Type>
+	</munitionType>
+	<shots>10</shots>
+	<flags> <!-- Extra specialties appended to base type. See Appendix III for flags -->
+		<flag>HOTLOAD</flag>
+	</flags>
+</Weapon>
+
+<!-- Appendix I : Ammo types -->
+<!--
+NA = -1;
+AC = 1;
+VEHICLE_FLAMER = 2;
+MG = 3;
+MG_HEAVY = 4;
+MG_LIGHT = 5;
+GAUSS = 6;
+LRM = 7;
+LRM_TORPEDO = 8;
+SRM = 9;
+SRM_TORPEDO = 10;
+SRM_STREAK = 11;
+MRM = 12;
+NARC = 13;
+AMS = 14;
+ARROW_IV = 15;
+LONG_TOM = 16;
+SNIPER = 17;
+THUMPER = 18;
+AC_LBX = 19;
+AC_ULTRA = 20;
+GAUSS_LIGHT = 21;
+GAUSS_HEAVY = 22;
+AC_ROTARY = 23;
+SRM_ADVANCED = 24;
+BA_MICRO_BOMB = 25;
+LRM_TORPEDO_COMBO = 26;
+MINE = 27;
+ATM = 28; // Clan ATM missile systems
+ROCKELAUNCHER = 29;
+INARC = 30;
+LRM_STREAK = 31;
+AC_LBX_THB = 32;
+AC_ULTRA_THB = 33;
+LAC = 34;
+HEAVY_FLAMER = 35;
+COOLANPOD = 36; // not really ammo, but explodes and is depleted
+EXLRM = 37;
+APGAUSS = 38;
+MAGSHOT = 39;
+PXLRM = 40;
+HSRM = 41;
+MRM_STREAK = 42;
+MPOD = 43;
+HAG = 44;
+MML = 45;
+PLASMA = 46;
+SBGAUSS = 47;
+RAIL_GUN = 48;
+TBOL5 = 49;
+TBOL10 = 50;
+TBOL15 = 51;
+TBOL20 = 52;
+NAC = 53;
+LIGHNGAUSS = 54;
+MED_NGAUSS = 55;
+HEAVY_NGAUSS = 56;
+KILLER_WHALE = 57;
+WHITE_SHARK = 58;
+BARRACUDA = 59;
+KRAKEN_T = 60;
+AR10 = 61;
+SCREEN_LAUNCHER = 62;
+ALAMO = 63;
+IGAUSS_HEAVY = 64;
+CHEMICAL_LASER = 65;
+HYPER_VELOCITY = 66;
+MEK_MORTAR = 67;
+CRUISE_MISSILE = 68;
+BPOD = 69;
+SCC = 70;
+MANTA_RAY = 71;
+SWORDFISH = 72;
+STINGRAY = 73;
+PIRANHA = 74;
+TASER = 75;
+BOMB = 76;
+AAA_MISSILE = 77;
+AS_MISSILE = 78;
+ASEW_MISSILE = 79;
+LAA_MISSILE = 80;
+RL_BOMB = 81;
+ARROW_IV_BOMB = 82;
+FLUID_GUN = 83;
+SNIPER_CANNON = 84;
+THUMPER_CANNON = 85;
+LONG_TOM_CANNON = 86;
+NAIL_RIVEGUN = 87;
+ACi = 88;
+KRAKENM = 89;
+PAC = 90;
+NLRM = 91;
+RIFLE = 92;
+VGL = 93;
+C3_REMOTE_SENSOR = 94;
+AC_PRIMITIVE = 95;
+LRM_PRIMITIVE = 96;
+SRM_PRIMITIVE = 97;
+BA_TUBE = 98;
+IATM = 99;
+LMASS = 100;
+MMASS = 101;
+HMASS = 102;
+-->
+
+<!-- Appendix II : Munition types -->
+<!--
+// M_STANDARD can be used for anything.
+STANDARD = 0;
+
+// AC Munition Types
+CLUSTER = 1
+ARMOR_PIERCING = 2
+FLECHETTE = 4
+INCENDIARY_AC = 8
+PRECISION = 16
+TRACER = 32
+FLAK = 64
+
+// ATM Munition Types
+EXTENDED_RANGE = 128
+HIGH_EXPLOSIVE = 256
+IATIMP = 144115188075855872
+IATIIW = 288230376151711744
+
+// LRM & SRM Munition Types
+FRAGMENTATION = 512
+LISTEN_KILL = 1024
+ANTI_TSM = 2048
+NARC_CAPABLE = 4096
+ARTEMIS_CAPABLE = 8192
+DEAD_FIRE = 16384
+HEAT_SEEKING = 32768
+TANDECHARGE = 65536
+ARTEMIS_V_CAPABLE = 131072
+SMOKE_WARHEAD = 262144
+
+// LRM Munition Types
+// Incendiary is special, though...
+FLARE = 1048576
+SEMIGUIDED = 2097152
+SWARM = 4194304
+SWARI = 8388608
+THUNDER = 16777216
+THUNDER_AUGMENTED = 33554432
+THUNDER_INFERNO = 67108864
+THUNDER_VIBRABOMB = 134217728
+THUNDER_ACTIVE = 268435456
+FOLLOW_THE_LEADER = 536870912
+MULTI_PURPOSE = 1073741824
+
+// SRM Munition Types
+INFERNO = 2147483648
+AX_HEAD = 4294967296
+
+// SRM, MRM and LRM
+TORPEDO = 8589934592
+
+// iNarc Munition Types
+NARC_EX = 17179869184
+ECM = 34359738368
+HAYWIRE = 68719476736
+NEMESIS = 137438953472
+
+EXPLOSIVE = 274877906944
+
+// Arrow IV Munition Types
+HOMING = 549755813888
+FASCAM = 1099511627776
+INFERNO_IV = 2199023255552
+VIBRABOMB_IV = 4398046511104
+SMOKE = 8796093022208
+LASER_INHIB = 17592186044416
+
+// Nuclear Munitions
+DAVY_CROCKETT_M = 35184372088832
+SANTA_ANNA = 70368744177664
+
+// tele-missile
+TELE = 140737488355328
+
+// fluid gun
+WATER = 281474976710656
+PAINT_OBSCURANT = 562949953421312
+OIL_SLICK = 1125899906842624
+ANTI_FLAME_FOAM = 2251799813685248
+CORROSIVE = 4503599627370496
+COOLANT = 9007199254740992
+
+// vehicular grenade launcher
+CHAFF = 18014398509481984
+INCENDIARY = 36028797018963968
+SMOKEGRENADE = 72057594037927936
+-->
+
+<!-- Appendix III : Ammo extra flags -->
+<!--
+MG = 1
+BATTLEARMOR = 2 // only used by BA squads
+PROTOMECH = 4 // only used by Protomechs
+HOTLOAD = 8 // Ammo can be hotloaded
+ENCUMBERING = 16 // BA can't jump or make antimech until dumped
+MML_LRM = 32 // LRM type
+AR10_WHITE_SHARK = 64 // White shark type
+AR10_KILLER_WHALE = 128 // Killer whale type
+AR10_BARRACUDA = 256 // barracuda type
+NUCLEAR = 512 // Nuclear missle
+TELE_MISSILE = 1024 // Tele-Missile
+CAP_MISSILE = 2048 // Tele-Missile
+SPACE_BOMB = 4096 // can be used to space bomb
+GROUND_BOMB = 8192 // can be used to ground bomb
+-->

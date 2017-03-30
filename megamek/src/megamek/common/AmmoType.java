@@ -15,6 +15,7 @@
 
 package megamek.common;
 
+import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -23,8 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+
 @SuppressWarnings("unchecked")
 public class AmmoType extends EquipmentType {
+
+    private static final String CUSTOM_AMMO_PATH = "data" + File.separator + "equipments"
+            + File.separator + "ammo";
+
     // ammo types
     public static final int T_NA = -1;
     public static final int T_AC = 1;
@@ -514,6 +520,146 @@ public class AmmoType extends EquipmentType {
         ArrayList<MunitionMutator> munitions = new ArrayList<MunitionMutator>();
 
         AmmoType base = null;
+
+        List<AmmoType> custom = loadCustomAmmo();
+        for (AmmoType at : custom) {
+            if (at.ammoType == AmmoType.T_SRM
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL
+                    && at.flags.and(AmmoType.F_BATTLEARMOR).equals(BigInteger.ZERO)) {
+                srmAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_SRM
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL
+                    && at.flags.and(AmmoType.F_BATTLEARMOR).equals(BigInteger.ZERO)) {
+                clanSrmAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_SRM
+                    && at.flags.and(AmmoType.F_BATTLEARMOR).equals(BigInteger.ONE)) {
+                baSrmAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_LRM
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL
+                    && at.flags.and(AmmoType.F_BATTLEARMOR).equals(BigInteger.ZERO)) {
+                lrmAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_LRM
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL
+                    && at.flags.and(AmmoType.F_BATTLEARMOR).equals(BigInteger.ZERO)) {
+                clanLrmAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_LRM
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL
+                    && at.flags.and(AmmoType.F_BATTLEARMOR).equals(BigInteger.ONE)) {
+                isBaLrmAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_LRM
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL
+                    && at.flags.and(AmmoType.F_BATTLEARMOR).equals(BigInteger.ONE)) {
+                clanBaLrmAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_NLRM) {
+                enhancedlrmAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_AC) {
+                acAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_ARROW_IV
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                arrowAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_ARROW_IV
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL) {
+                clanArrowAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_THUMPER
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                thumperAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_THUMPER_CANNON
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                thumperCannonAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_SNIPER
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                sniperAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_SNIPER_CANNON
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                sniperCannonAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_LONG_TOM
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                longTomAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_LONG_TOM_CANNON
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                longTomCannonAmmos.add(at);
+            }
+            if ((at.ammoType == AmmoType.T_THUMPER || at.ammoType == AmmoType.T_THUMPER_CANNON
+                    || at.ammoType == AmmoType.T_SNIPER || at.ammoType == AmmoType.T_SNIPER_CANNON
+                    || at.ammoType == AmmoType.T_LONG_TOM || at.ammoType == AmmoType.T_LONG_TOM_CANNON)
+                    &&
+                    at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL) {
+                clanArtyAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_MEK_MORTAR
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                mortarAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_MEK_MORTAR
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL) {
+                clanMortarAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_LRM_TORPEDO
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                lrtAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_LRM_TORPEDO
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                clanLrtAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_SRM_TORPEDO
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                srtAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_SRM_TORPEDO
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                clanSrtAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_VGL
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                vglAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_VGL
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL) {
+                clanVGLAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_VEHICLE_FLAMER
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                vehicleFlamerAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_VEHICLE_FLAMER
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL) {
+                clanVehicleFlamerAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_HEAVY_FLAMER
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                heavyFlamerAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_HEAVY_FLAMER
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL) {
+                clanHeavyFlamerAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_FLUID_GUN
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_IS_UNOFFICIAL) {
+                fluidGunAmmos.add(at);
+            }
+            if (at.ammoType == AmmoType.T_FLUID_GUN
+                    && at.getTechLevel(Integer.MAX_VALUE) == TechConstants.T_CLAN_UNOFFICIAL) {
+                clanFluidGunAmmos.add(at);
+            }
+
+        }
 
         // all level 1 ammo
         base = AmmoType.createISVehicleFlamerAmmo();
@@ -12660,5 +12806,14 @@ public class AmmoType extends EquipmentType {
             return false;
         }
         return true;
+    }
+
+    public static List<AmmoType> loadCustomAmmo() {
+        List<AmmoType> ammo = new ArrayList<AmmoType>();
+        AmmoLoader.loadCustomAmmo(ammo, new File(CUSTOM_AMMO_PATH));
+        for (AmmoType at : ammo) {
+            EquipmentType.addType(at);
+        }
+        return ammo;
     }
 }

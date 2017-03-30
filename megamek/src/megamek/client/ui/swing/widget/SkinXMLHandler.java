@@ -873,9 +873,12 @@ public class SkinXMLHandler {
         out.write("\t\t</" + BORDER + ">\n");
     }
 
-
     public static SkinSpecification getSkin(String component){
-        return getSkin(component,false);
+        return getSkin(component,false, false);
+    }
+
+    public static SkinSpecification getSkin(String component, boolean defaultToPlain){
+        return getSkin(component, defaultToPlain, false);
     }
 
     /**
@@ -889,11 +892,15 @@ public class SkinXMLHandler {
     /**
      * Get a <code>SkinSpecification</code> for a given component.
      * 
-     * @param component  The name of the component to get skin info for.
-     * @return           
+     * @param component
+     *            The name of the component to get skin info for.
+     * @param defaultToPlain
+     *            Determines if a default component should be used if no match,
+     *            or a plain component
+     * @return
      */
     public synchronized static SkinSpecification getSkin(String component, 
-            boolean isBtn){
+            boolean defaultToPlain, boolean isBtn){
         if (skinSpecs == null ){
             boolean rv = initSkinXMLHandler();
             if (!rv) {
@@ -905,7 +912,9 @@ public class SkinXMLHandler {
         
         SkinSpecification spec = skinSpecs.get(component);
         if (spec == null){
-            if (isBtn){
+            if (defaultToPlain) {
+                spec = new SkinSpecification("Plain"); //$NON-NLS-1$
+            } else if (isBtn){
                 spec = skinSpecs.get(UIComponents.DefaultButton.getComp());
             } else {
                 spec = skinSpecs.get(UIComponents.DefaultUIElement.getComp());

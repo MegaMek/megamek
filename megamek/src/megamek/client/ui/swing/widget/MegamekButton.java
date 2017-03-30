@@ -102,6 +102,18 @@ public class MegamekButton extends JButton {
     private Font specificFont;
 
     /**
+    *
+    * @param text
+    *            The button text
+    * @param component
+    *            The name of the SkinSpecification entry
+    */
+   public MegamekButton(String text, String component, boolean defaultToPlain) {
+       super(text);
+       initialize(component, defaultToPlain);
+   }
+
+    /**
      *
      * @param text
      *            The button text
@@ -141,7 +153,18 @@ public class MegamekButton extends JButton {
      *            String key to get the SkinSpecification.
      */
     private void initialize(String component) {
-        SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, true);
+        initialize(component, false);
+    }
+
+    /**
+     * Initialize the state of the button, using the SkinSpecification linked to
+     * the given string.
+     *
+     * @param component
+     *            String key to get the SkinSpecification.
+     */
+    private void initialize(String component, boolean defaultToPlain) {
+        SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, defaultToPlain, true);
         setBorder(new MegamekBorder(skinSpec));
         loadIcon(skinSpec);
         isBGTiled = skinSpec.tileBackground;

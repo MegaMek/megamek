@@ -30,10 +30,7 @@ v0.42.2-git
 + Deploying doomed units now nags the user (ie, infantry in a vacuum)
 + Issue #408: Offboard units not checked for planetary conditions (ie, vacuum)
 + Issue #394: No location exposure check on deployment
-+ Issue #487: Carriage returns in startup.sh causing issues
-+ Removed BLDG_CF & BRIDGE_CF from board validator (these aren't strictly
-	required, as they have default values if not defined)
-+ Issue #529: Movement Interruption with Dialog Box Ends Turn
++ Data: Turret Rats pt1 Thanks Bloodwolf. New Maps.
 
 v0.42.1 (2017-02-13 03:30 UTC)
 + Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

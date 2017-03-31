@@ -83,13 +83,15 @@ import megamek.common.logging.Logger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
-public class MegaMekGUI implements IMegaMekGUI {
+public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
     private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg"; //$NON-NLS-1$
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
@@ -129,6 +131,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         createController();
+
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
         // Set a couple of things to make the Swing GUI look more "Mac-like" on
         // Macs
@@ -204,7 +208,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         showMainMenu();
 
         // set visible on middle of screen
-        frame.pack();
         frame.setLocationRelativeTo(null);
         // init the cache
         MechSummaryCache.getInstance();
@@ -310,6 +313,7 @@ public class MegaMekGUI implements IMegaMekGUI {
             }
         } else {
             splashFilename = FILENAME_MEGAMEK_SPLASH;
+            backgroundIcon = null;
         }
         // initialize splash image
         Image imgSplash = frame.getToolkit()
@@ -366,6 +370,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         c.insets = new Insets(4, 4, 5, 1);
         addBag(quitB, gridbag, c);
         frame.validate();
+        frame.pack();
     }
 
     /**
@@ -1111,4 +1116,13 @@ public class MegaMekGUI implements IMegaMekGUI {
             }
         }
     };
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update to reflect new skin
+        if (e.getName().equals(GUIPreferences.SKIN_FILE)) {
+            showMainMenu();
+            frame.repaint();
+        }
+    }
 }

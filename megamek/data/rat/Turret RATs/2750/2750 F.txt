@@ -1,0 +1,178 @@
+Turrets 2750 F
+Beagle Active Probe Bunker,1
+TAG Turret (Dual),2
+TAG Turret (Single),3
+Rocket Launcher/1 Turret (Single),4
+Rocket Launcher/2 Turret (Single),5
+Rocket Launcher/3 Turret (Single),6
+Rocket Launcher/4 Turret (Single),7
+MG Turret (Single),8
+Flamer Turret (Single),9
+Rocket Launcher/5 Turret (Single),10
+Small Laser Turret (Single),11
+MG Turret (Dual),12
+Flamer Turret (Dual),13
+Small Pulse Laser Turret (Single),14
+MG Turret (Triple),15
+Flamer Turret (Triple),16
+Rocket Launcher/10 Turret (Single),17
+Small Laser Turret (Dual),18
+MG Turret (Quad),19
+Rocket Launcher/15 Turret (Single),20
+'Mech Mortar/1 Battery (Single),21
+Mech Mortar/2 Battery (Single),22
+Flamer Turret (Quad),23
+Rocket Launcher/20 Turret (Single),24
+SRM2 Turret (Single),25
+Small Pulse Laser Turret (Dual),26
+Small Laser Turret (Triple),27
+SRM2 Turret (w/ Artemis IV) (Single),28
+Light Rifle Turret (Single),29
+Narc Turret (Single),30
+'Mech Mortar/1 Battery (Dual),31
+Mech Mortar/2 Battery (Dual),32
+Small Laser Turret (Quad),33
+Small Pulse Laser Turret (Triple),34
+'Mech Mortar/1 Battery (Triple),35
+SRM4 Turret (Single),36
+Medium Laser Turret (Single),37
+Streak SRM2 Turret (Single),38
+SRM2 Turret (Dual),39
+Small Pulse Laser Turret (Quad),40
+Light Rifle Turret (Dual),41
+AC/2 Turret (Single),42
+SRM2 Turret (w/ Artemis IV) (Dual),43
+SRM4 Turret (w/ Artemis IV) (Single),44
+Narc Turret (Dual),45
+'Mech Mortar/4 Battery (Single),46
+'Mech Mortar/2 Battery (Triple),47
+Medium Rifle Turret (Single),48
+Thumper Artillery Turret (Single),49
+LRM/5 Turret (Single),50
+ECM Turret (Guardian),51
+SRM2 Turret (Triple),52
+SRM6 Turret (Single),53
+Light Rifle Turret (Triple),54
+LRM/5 Turret (w/ Artemis IV) (Single),55
+SRM2 Turret (w/ Artemis IV) (Triple),56
+SRM6 Turret (w/ Artemis IV) (Single),57
+AMS Turret (Single),58
+AC/2 Turret (Dual),59
+'Mech Mortar/4 Battery (Dual),60
+Medium Laser Turret (Dual),61
+SRM2 Turret (Quad),62
+Streak SRM2 Turret (Dual),63
+AC/5 Turret (Single),64
+SRM4 Turret (Dual),65
+Medium Pulse Laser Turret (Single),66
+Heavy Rifle Turret (Single),67
+'Mech Mortar/4 Battery (Triple),68
+SRM2 Turret (w/ Artemis IV) (Quad),69
+SRM4 Turret (w/ Artemis IV) (Dual),70
+Medium Rifle Turret (Dual),71
+Large Laser Turret (Single),72
+'Mech Mortar/8 Battery (Single),73
+AC/2 Turret (Triple),74
+SRM4 Turret (Triple),75
+Streak SRM2 Turret (Triple),76
+Thumper Artillery Turret (Dual),77
+Medium Laser Turret (Triple),78
+LRM/5 Turret (Dual),79
+SRM6 Turret (Dual),80
+LRM/10 Turret (Single),81
+AC/10 Turret (Single),82
+SRM4 Turret (w/ Artemis IV) (Triple),83
+LRM/5 Turret (w/ Artemis IV) (Dual),84
+Large Re-engineered Laser Turret (Single),85
+AC/5 Turret (Dual),86
+UAC/5 Turret (Single),87
+Snub-Nosed PPC (Single),88
+SRM6 Turret (w/ Artemis IV) (Dual),89
+LRM/10 Turret (w/ Artemis IV) (Single),88
+'Mech Mortar/8 Battery (Dual),87
+AMS Turret (Dual),86
+SRM4 Turret (Quad),85
+PPC Turret (Single),84
+Medium Rifle Turret (Triple),83
+Thumper Artillery Turret (Triple),82
+Streak SRM2 Turret (Quad),81
+Medium Laser Turret (Quad),80
+LRM/5 Turret (Triple),79
+Sniper Artillery Turret (Single),78
+SRM4 Turret (w/ Artemis IV) (Quad),77
+Heavy Rifle Turret (Dual),76
+SRM6 Turret (Triple),75
+AC/20 Turret (Single),74
+'Mech Mortar/8 Battery (Triple),73
+Medium Pulse Laser Turret (Dual),72
+LRM/5 Turret (w/ Artemis IV) (Triple),71
+LRM/15 Turret (w/ Artemis IV) (Single),70
+AC/5 Turret (Triple),69
+Large Laser Turret (Dual),68
+LRM/15 Turret (Single),67
+ER Large Laser Turret (Single),66
+SRM6 Turret (w/ Artemis IV) (Triple),65
+LRM/5 Turret (Quad),64
+LB-10-X Turret (Single),63
+Large Pulse Laser Turret (Single),62
+LRM/10 Turret (Dual),61
+Sniper Artillery Turret (Dual),60
+SRM6 Turret (Quad),59
+AC/10 Turret (Dual),58
+LRM/5 Turret (w/ Artemis IV) (Quad),57
+Heavy Rifle Turret (Triple),56
+LRM/10 Turret (w/ Artemis IV) (Dual),55
+Large Re-engineered Laser Turret (Dual),54
+Snub-Nosed PPC (Dual),53
+Medium Pulse Laser Turret (Triple),52
+UAC/5 Turret (Dual),51
+SRM6 Turret (w/ Artemis IV) (Quad),50
+PPC Turret (Dual),49
+Sniper Artillery Turret (Triple),48
+Large Laser Turret (Triple),47
+Arrow IV Artillery Turret (Single),46
+LRM/10 Turret (Triple),45
+LB-10-X Turret (Dual),44
+LRM/15 Turret (Dual),43
+ER PPC Turret (Single),42
+AC/10 Turret (Triple),41
+LRM/20 Turret (Single),40
+AC/20 Turret (Dual),39
+Medium Pulse Laser Turret (Quad),38
+UAC/5 Turret (Triple),37
+LRM/10 Turret (w/ Artemis IV) (Triple),36
+LRM/15 Turret (w/ Artemis IV) (Dual),35
+LRM/20 Turret (w/ Artemis IV) (Single),34
+Large Re-engineered Laser Turret (Triple),33
+Large Laser Turret (Quad),32
+ER Large Laser Turret (Dual),31
+Snub-Nosed PPC (Triple),30
+LRM/10 Turret (Quad),29
+PPC Turret (Triple),28
+Large Pulse Laser Turret (Dual),27
+Gauss Turret (Single),26
+LB-10-X Turret (Triple),25
+LRM/10 Turret (w/ Artemis IV) (Quad),24
+LRM/15 Turret (Triple),23
+AC/20 Turret (Triple),22
+Large Re-engineered Laser Turret (Quad),21
+LRM/20 Turret (Dual),20
+LRM/15 Turret (w/ Artemis IV) (Triple),19
+LRM/20 Turret (w/ Artemis IV) (Dual),18
+ER Large Laser Turret (Triple),17
+Arrow IV Artillery Turret (Dual),16
+Large Pulse Laser Turret (Triple),15
+LRM/15 Turret (Quad),14
+ER PPC Turret (Dual),13
+Long Tom Artillery Turret (Single),12
+LRM/20 Turret (Triple),11
+LRM/15 Turret (w/ Artemis IV) (Quad),10
+Gauss Turret (Dual),9
+ER Large Laser Turret (Quad),8
+LRM/20 Turret (w/ Artemis IV) (Triple),7
+Arrow IV Artillery Turret (Triple),6
+Large Pulse Laser Turret (Quad),5
+LRM/20 Turret (Quad),4
+Long Tom Artillery Turret (Dual),3
+ER PPC Turret (Triple),2
+Arrow IV Artillery Turret (Quad),1

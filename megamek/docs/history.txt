@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.43.1-git
+v0.43.1 (2017-02-13 01:15 UTC)
 + Feature: Added checks for null crew when checking for MD enhancements
 + Feature: Merge pull request #486 from pheonixstorm/SPA-Update
 + Issue #476: VTOL armor diagram changes color incorrectly?

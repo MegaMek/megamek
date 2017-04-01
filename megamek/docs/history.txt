@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-v0.43.1-git
+v0.43.2-git
+
+v0.43.1 (2017-03-31 01:15 UTC)
 + Feature: Added checks for null crew when checking for MD enhancements
 + Feature: Merge pull request #486 from pheonixstorm/SPA-Update
 + Issue #476: VTOL armor diagram changes color incorrectly?
@@ -49,6 +51,14 @@ v0.43.1-git
 + Data: Fixing some unit validation errors.
 + Issue #513: Infantry killed by Inferno ammo not giving kill credit
 + PR #515: Show %BV remaining in round reports
++ Issue #385: Freeze When Zooming Out With LargeTexture.tileset
++ Issue #70: Engine explosions not igniting center hex
++ Issue #348: Selecting lance move options does not disable individual init
++ Issue #225: Bad String in Round Report for Thunder LRMs
++ Deploying doomed units now nags the user (ie, infantry in a vacuum)
++ Issue #408: Offboard units not checked for planetary conditions (ie, vacuum)
++ Issue #394: No location exposure check on deployment
++ Data: Turret Rats pt1 Thanks Bloodwolf. New Maps.
 
 v0.43.0 (2017-02-13 03:30 UTC)
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

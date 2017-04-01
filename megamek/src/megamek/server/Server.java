@@ -11270,32 +11270,23 @@ public class Server implements Runnable {
                 && (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getPlanetaryConditions().isVacuum()) {
-                        entity.setLocationStatus(loop,
-                                                 ILocationExposureStatus.VACUUM);
+                        entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                     } else {
-                        entity.setLocationStatus(loop,
-                                                 ILocationExposureStatus.NORMAL);
+                        entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
                     }
                 }
-                entity.setLocationStatus(Mech.LOC_RLEG,
-                                         ILocationExposureStatus.WET);
-                entity.setLocationStatus(Mech.LOC_LLEG,
-                                         ILocationExposureStatus.WET);
+                entity.setLocationStatus(Mech.LOC_RLEG, ILocationExposureStatus.WET);
+                entity.setLocationStatus(Mech.LOC_LLEG, ILocationExposureStatus.WET);
                 vPhaseReport.addAll(breachCheck(entity, Mech.LOC_RLEG, hex));
                 vPhaseReport.addAll(breachCheck(entity, Mech.LOC_LLEG, hex));
                 if (entity instanceof QuadMech) {
-                    entity.setLocationStatus(Mech.LOC_RARM,
-                                             ILocationExposureStatus.WET);
-                    entity.setLocationStatus(Mech.LOC_LARM,
-                                             ILocationExposureStatus.WET);
-                    vPhaseReport
-                            .addAll(breachCheck(entity, Mech.LOC_RARM, hex));
-                    vPhaseReport
-                            .addAll(breachCheck(entity, Mech.LOC_LARM, hex));
+                    entity.setLocationStatus(Mech.LOC_RARM, ILocationExposureStatus.WET);
+                    entity.setLocationStatus(Mech.LOC_LARM, ILocationExposureStatus.WET);
+                    vPhaseReport.addAll(breachCheck(entity, Mech.LOC_RARM, hex));
+                    vPhaseReport.addAll(breachCheck(entity, Mech.LOC_LARM, hex));
                 }
                 if (entity instanceof TripodMech) {
-                    entity.setLocationStatus(Mech.LOC_CLEG,
-                            ILocationExposureStatus.WET);
+                    entity.setLocationStatus(Mech.LOC_CLEG, ILocationExposureStatus.WET);
                     vPhaseReport.addAll(breachCheck(entity, Mech.LOC_CLEG, hex));
                 }
             } else {
@@ -11307,11 +11298,9 @@ public class Server implements Runnable {
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
                 if (game.getPlanetaryConditions().isVacuum()) {
-                    entity.setLocationStatus(loop,
-                                             ILocationExposureStatus.VACUUM);
+                    entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                 } else {
-                    entity.setLocationStatus(loop,
-                                             ILocationExposureStatus.NORMAL);
+                    entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
                 }
             }
         }
@@ -12498,8 +12487,8 @@ public class Server implements Runnable {
      * specified entities inside of it too. Also, check that the deployment is
      * valid.
      */
-    private void processDeployment(Entity entity, Coords coords, int nFacing,
-                                   int elevation, Vector<Entity> loadVector, boolean assaultDrop) {
+    private void processDeployment(Entity entity, Coords coords, int nFacing, int elevation, Vector<Entity> loadVector,
+            boolean assaultDrop) {
 
         for (Entity loaded : loadVector) {
             if (loaded.getTransportId() != Entity.NONE) {
@@ -12626,6 +12615,7 @@ public class Server implements Runnable {
         entity.setDone(true);
         entity.setDeployed(true);
         entityUpdate(entity.getId());
+        addReport(doSetLocationsExposure(entity, hex, false, entity.getElevation()));
     }
 
     /**
@@ -19889,9 +19879,8 @@ public class Server implements Runnable {
         Report r;
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
-            if ((null == entity.getPosition()) || entity.isOffBoard()) {
-                // If it's not on the board - aboard something else, for
-                // example...
+            if ((null == entity.getPosition()) && !entity.isOffBoard() || (entity.getTransportId() != Entity.NONE)) {
+                // Ignore transported units, and units that don't have a position for some unknown reason
                 continue;
             }
             String reason = game.getPlanetaryConditions().whyDoomed(entity, game);
@@ -22818,7 +22807,7 @@ public class Server implements Runnable {
             int[] damages = {(int) Math.floor(damage_orig / 10),
                              (int) Math.floor(damage_orig / 20)};
             doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5,
-                        te.getId());
+                        te.getId(), false);
             Report.addNewline(vDesc);
             r = new Report(5410, Report.PUBLIC);
             r.subject = te.getId();
@@ -22981,7 +22970,7 @@ public class Server implements Runnable {
             Vector<Report> vDesc, Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 10),
                 (engineRating / 20), (engineRating / 40) };
-        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1);
+        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1, true);
     }
 
     /**
@@ -23007,7 +22996,7 @@ public class Server implements Runnable {
             myDamages[x] = myDamages[x - 1] - degredation;
         }
         doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter,
-                vDesc, vUnits, 5, excludedUnitId);
+                vDesc, vUnits, 5, excludedUnitId, false);
     }
 
     /**
@@ -23015,7 +23004,7 @@ public class Server implements Runnable {
      */
     public void doExplosion(int[] damages, boolean autoDestroyInSameHex,
             Coords position, boolean allowShelter, Vector<Report> vDesc,
-            Vector<Integer> vUnits, int clusterAmt, int excludedUnitId) {
+            Vector<Integer> vUnits, int clusterAmt, int excludedUnitId, boolean engineExplosion) {
         if (vDesc == null) {
             vDesc = new Vector<Report>();
         }
@@ -23052,6 +23041,20 @@ public class Server implements Runnable {
         // We need to damage terrain
         int maxDist = damages.length;
         IHex hex = game.getBoard().getHex(position);
+        // Center hex starts on fire for engine explosions
+        if (engineExplosion && (hex != null) && !hex.containsTerrain(Terrains.FIRE)) {
+            r = new Report(5136);
+            r.indent(2);
+            r.type = Report.PUBLIC;
+            r.add(position.getBoardNum());
+            vDesc.add(r);
+            Vector<Report> reports = new Vector<Report>();
+            ignite(position, Terrains.FIRE_LVL_NORMAL, reports);
+            for (Report report : reports) {
+                report.indent();
+            }
+            vDesc.addAll(reports);
+        }
         if ((hex != null) && hex.hasTerrainfactor()) {
             r = new Report(3384);
             r.indent(2);
@@ -23065,6 +23068,8 @@ public class Server implements Runnable {
             report.indent(3);
         }
         vDesc.addAll(reports);
+
+        // Handle surrounding coords
         for (int dist = 1; dist < maxDist; dist++) {
             List<Coords> coords = Compute.coordsAtRange(position, dist);
             for (Coords c : coords) {

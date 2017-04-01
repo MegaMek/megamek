@@ -18,6 +18,11 @@ package megamek.client.ui.swing;
 import static megamek.common.Compute.d6;
 
 import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -29,6 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -39,12 +45,12 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
@@ -59,6 +65,9 @@ import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.IGame;
@@ -74,17 +83,23 @@ import megamek.common.logging.Logger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.MegaMekFile;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
-public class MegaMekGUI implements IMegaMekGUI {
-    private static final String FILENAME_MEGAMEK_SPLASH = "megamek-splash.jpg"; //$NON-NLS-1$
+public class MegaMekGUI  implements IPreferenceChangeListener, IMegaMekGUI {
+    private static final String FILENAME_MEGAMEK_SPLASH = "../misc/megamek-splash.jpg"; //$NON-NLS-1$
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
+
+    private static final String FILENAME_BT_CLASSIC_FONT = "btclassic/BTLogo_old.ttf"; //$NON-NLS-1$
+
     private JFrame frame;
     private Client client;
     private Server server;
@@ -95,6 +110,8 @@ public class MegaMekGUI implements IMegaMekGUI {
 
     private MegaMekController controller;
 
+    BufferedImage backgroundIcon = null;
+
     public void start(String[] args) {
         createGUI();
     }
@@ -103,7 +120,19 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Contruct a MegaMek, and display the main menu in the specified frame.
      */
     private void createGUI() {
+        try {
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            File btFontFile = new MegaMekFile(Configuration.fontsDir(), FILENAME_BT_CLASSIC_FONT).getFile();
+            Font btFont = Font.createFont(Font.TRUETYPE_FONT, btFontFile);
+            System.out.println("Loaded Font: " + btFont.getName());
+            ge.registerFont(btFont);
+        } catch (IOException | FontFormatException e) {
+            System.out.println("Error Registering BT Classic Font! Error: " + e.getMessage());
+        }
+
         createController();
+
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
 
         // Set a couple of things to make the Swing GUI look more "Mac-like" on
         // Macs
@@ -134,8 +163,31 @@ public class MegaMekGUI implements IMegaMekGUI {
                 quit();
             }
         });
-        frame.setBackground(SystemColor.menu);
-        frame.setForeground(SystemColor.menuText);
+
+        frame.setContentPane(new JPanel() {
+            private static final long serialVersionUID = 5174313603291016012L;
+
+            protected void paintComponent(Graphics g) {
+                if (backgroundIcon == null){
+                    super.paintComponent(g);
+                    return;
+                }
+                int w = getWidth();
+                int h = getHeight();
+                int iW = backgroundIcon.getWidth();
+                int iH = backgroundIcon.getHeight();
+                // If the image isn't loaded, prevent an infinite loop
+                if ((iW < 1) || (iH < 1)) {
+                    return;
+                }
+                for (int x = 0; x < w; x+=iW){
+                    for (int y = 0; y < h; y+=iH){
+                        g.drawImage(backgroundIcon, x, y,null);
+                    }
+                }
+            }
+        });
+
         List<Image> iconList = new ArrayList<Image>();
         iconList.add(frame.getToolkit().getImage(
                 new MegaMekFile(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
@@ -156,7 +208,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         showMainMenu();
 
         // set visible on middle of screen
-        frame.pack();
         frame.setLocationRelativeTo(null);
         // init the cache
         MechSummaryCache.getInstance();
@@ -194,47 +245,79 @@ public class MegaMekGUI implements IMegaMekGUI {
      * Display the main menu.
      */
     private void showMainMenu() {
-        JButton hostB;
-        JButton connectB;
-        JButton botB;
-        JButton editB;
-        JButton skinEditB;
-        JButton scenB;
-        JButton loadB;
-        JButton quitB;
-        JLabel labVersion = new JLabel();
-        labVersion
-                .setText(Messages.getString("MegaMek.Version") + MegaMek.VERSION); //$NON-NLS-1$
-        hostB = new JButton(Messages.getString("MegaMek.hostNewGame.label")); //$NON-NLS-1$
+        SkinSpecification skinSpec = SkinXMLHandler.getSkin(SkinSpecification.UIComponents.MainMenuBorder.getComp(),
+                true);
+        frame.getContentPane().removeAll();
+        frame.setBackground(SystemColor.menu);
+        frame.setForeground(SystemColor.menuText);
+        frame.setResizable(false);
+
+        MegamekButton hostB;
+        MegamekButton connectB;
+        MegamekButton botB;
+        MegamekButton editB;
+        MegamekButton skinEditB;
+        MegamekButton scenB;
+        MegamekButton loadB;
+        MegamekButton quitB;
+        JLabel labVersion = new JLabel(Messages.getString("MegaMek.Version") + MegaMek.VERSION, JLabel.CENTER); //$NON-NLS-1$
+        labVersion.setPreferredSize(new Dimension(250,15));
+        if (skinSpec.fontColors.size() > 0) {
+            labVersion.setForeground(skinSpec.fontColors.get(0));
+        }
+        hostB = new MegamekButton(Messages.getString("MegaMek.hostNewGame.label"), //$NON-NLS-1$
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         hostB.setActionCommand("fileGameNew"); //$NON-NLS-1$
         hostB.addActionListener(actionListener);
-        scenB = new JButton(Messages.getString("MegaMek.hostScenario.label")); //$NON-NLS-1$
+        scenB = new MegamekButton(Messages.getString("MegaMek.hostScenario.label"), //$NON-NLS-1$
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         scenB.setActionCommand("fileGameScenario"); //$NON-NLS-1$
         scenB.addActionListener(actionListener);
-        loadB = new JButton(Messages.getString("MegaMek.hostSavedGame.label")); //$NON-NLS-1$
+        loadB = new MegamekButton(Messages.getString("MegaMek.hostSavedGame.label"), //$NON-NLS-1$
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         loadB.setActionCommand("fileGameOpen"); //$NON-NLS-1$
         loadB.addActionListener(actionListener);
-        connectB = new JButton(Messages.getString("MegaMek.Connect.label")); //$NON-NLS-1$
+        connectB = new MegamekButton(Messages.getString("MegaMek.Connect.label"), //$NON-NLS-1$
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         connectB.setActionCommand("fileGameConnect"); //$NON-NLS-1$
         connectB.addActionListener(actionListener);
-        botB = new JButton(Messages.getString("MegaMek.ConnectAsBot.label")); //$NON-NLS-1$
+        botB = new MegamekButton(Messages.getString("MegaMek.ConnectAsBot.label"), //$NON-NLS-1$
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         botB.setActionCommand("fileGameConnectBot"); //$NON-NLS-1$
         botB.addActionListener(actionListener);
-        editB = new JButton(Messages.getString("MegaMek.MapEditor.label")); //$NON-NLS-1$
+        editB = new MegamekButton(Messages.getString("MegaMek.MapEditor.label"), //$NON-NLS-1$
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         editB.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         editB.addActionListener(actionListener);
-        skinEditB = new JButton(Messages.getString("MegaMek.SkinEditor.label")); //$NON-NLS-1$
+        skinEditB = new MegamekButton(Messages.getString("MegaMek.SkinEditor.label"), //$NON-NLS-1$
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         skinEditB.setActionCommand("fileSkinNew"); //$NON-NLS-1$
-        skinEditB.addActionListener(actionListener);        
-        quitB = new JButton(Messages.getString("MegaMek.Quit.label")); //$NON-NLS-1$
+        skinEditB.addActionListener(actionListener);
+        quitB = new MegamekButton(Messages.getString("MegaMek.Quit.label"), //$NON-NLS-1$
+                SkinSpecification.UIComponents.MainMenuButton.getComp(), true);
         quitB.setActionCommand("quit"); //$NON-NLS-1$
         quitB.addActionListener(actionListener);
 
+        String splashFilename;
+        if (skinSpec.hasBackgrounds()) {
+            splashFilename = skinSpec.backgrounds.get(0);
+            if (skinSpec.backgrounds.size() > 1) {
+                File file = new MegaMekFile(Configuration.widgetsDir(),
+                        skinSpec.backgrounds.get(1)).getFile();
+                if (!file.exists()){
+                    System.err.println("MainMenu Error: background icon doesn't exist: "
+                            + file.getAbsolutePath());
+                } else {
+                    backgroundIcon = (BufferedImage) ImageUtil.loadImageFromFile(file.toString());
+                }
+            }
+        } else {
+            splashFilename = FILENAME_MEGAMEK_SPLASH;
+            backgroundIcon = null;
+        }
         // initialize splash image
         Image imgSplash = frame.getToolkit()
-                .getImage(
-                        new MegaMekFile(Configuration.miscImagesDir(),
-                                FILENAME_MEGAMEK_SPLASH).toString());
+                .getImage(new MegaMekFile(Configuration.widgetsDir(), splashFilename).toString());
 
         // wait for splash image to load completely
         MediaTracker tracker = new MediaTracker(frame);
@@ -252,25 +335,22 @@ public class MegaMekGUI implements IMegaMekGUI {
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         frame.getContentPane().setLayout(gridbag);
+        // Left Column
         c.anchor = GridBagConstraints.WEST;
-        c.insets = new Insets(4, 4, 1, 1);
-        c.ipadx = 10;
-        c.ipady = 5;
-        c.gridx = 0;
-        c.gridy = 0;
+        c.insets = new Insets(10, 5, 10, 10);
+        c.ipadx = 10; c.ipady = 5;
+        c.gridx = 0;  c.gridy = 0;
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
+        c.weightx = 0.0; c.weighty = 1.0;
         c.gridwidth = 1;
         c.gridheight = 9;
         addBag(panTitle, gridbag, c);
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = .05;
-        c.weighty = 1.0;
-        c.gridx = 1;
+        // Right Column
+        c.insets = new Insets(4, 4, 1, 1);
+        c.weightx = 1.0; c.weighty = 1.0;
+        c.ipadx = 0; c.ipady = 0;
         c.gridheight = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridy = 0;
+        c.gridx = 1; c.gridy = 0;
         addBag(labVersion, gridbag, c);
         c.gridy++;
         addBag(hostB, gridbag, c);
@@ -287,8 +367,10 @@ public class MegaMekGUI implements IMegaMekGUI {
         c.gridy++;
         addBag(skinEditB, gridbag, c);
         c.gridy++;
+        c.insets = new Insets(4, 4, 5, 1);
         addBag(quitB, gridbag, c);
         frame.validate();
+        frame.pack();
     }
 
     /**
@@ -1034,4 +1116,13 @@ public class MegaMekGUI implements IMegaMekGUI {
             }
         }
     };
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        // Update to reflect new skin
+        if (e.getName().equals(GUIPreferences.SKIN_FILE)) {
+            showMainMenu();
+            frame.repaint();
+        }
+    }
 }

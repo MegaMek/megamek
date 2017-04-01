@@ -82,6 +82,11 @@ public class MegamekButton extends JButton {
     boolean isBGTiled = true;
 
     /**
+     * Determines if the button should bold the button text on mouseover.
+     */
+    boolean shouldBold = true;
+
+    /**
      * The color of the button text.
      */
     private Color buttonColor;
@@ -93,6 +98,20 @@ public class MegamekButton extends JButton {
      * The color of the button text when the button is disabled.
      */
     private Color disabledColor;
+
+    private Font specificFont;
+
+    /**
+    *
+    * @param text
+    *            The button text
+    * @param component
+    *            The name of the SkinSpecification entry
+    */
+   public MegamekButton(String text, String component, boolean defaultToPlain) {
+       super(text);
+       initialize(component, defaultToPlain);
+   }
 
     /**
      *
@@ -134,7 +153,18 @@ public class MegamekButton extends JButton {
      *            String key to get the SkinSpecification.
      */
     private void initialize(String component) {
-        SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, true);
+        initialize(component, false);
+    }
+
+    /**
+     * Initialize the state of the button, using the SkinSpecification linked to
+     * the given string.
+     *
+     * @param component
+     *            String key to get the SkinSpecification.
+     */
+    private void initialize(String component, boolean defaultToPlain) {
+        SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, defaultToPlain, true);
         setBorder(new MegamekBorder(skinSpec));
         loadIcon(skinSpec);
         isBGTiled = skinSpec.tileBackground;
@@ -153,6 +183,11 @@ public class MegamekButton extends JButton {
             activeColor = skinSpec.fontColors.get(2);
         } else {
             activeColor = defaultActiveColor;
+        }
+        shouldBold = skinSpec.shouldBoldMouseOver;
+
+        if (skinSpec.fontName != null) {
+            specificFont = new Font(skinSpec.fontName, Font.PLAIN, skinSpec.fontSize);
         }
     }
 
@@ -259,13 +294,19 @@ public class MegamekButton extends JButton {
 
         JLabel textLabel = new JLabel(getText(), SwingConstants.CENTER);
         textLabel.setSize(getSize());
+        if (specificFont != null) {
+            textLabel.setFont(specificFont);
+        }
         if (this.isEnabled()) {
             if (isMousedOver) {
                 Font font = textLabel.getFont();
-                // same font but bold
-                Font boldFont = new Font(font.getFontName(), Font.BOLD,
-                        font.getSize() + 2);
-                textLabel.setFont(boldFont);
+                System.out.println("Font size: " + font.getSize());
+                if (shouldBold) {
+                    // same font but bold
+                    Font boldFont = new Font(font.getFontName(), Font.BOLD,
+                            font.getSize() + 2);
+                    textLabel.setFont(boldFont);
+                }
                 textLabel.setForeground(activeColor);
             } else {
                 textLabel.setForeground(buttonColor);

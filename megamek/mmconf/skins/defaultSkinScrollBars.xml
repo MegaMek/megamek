@@ -230,4 +230,15 @@
     <font_color>#ffffff</font_color>
   </UI_Element>
 
+  <UI_Element>
+      <name>MainMenuButton</name>
+      <plain/>
+  </UI_Element>
+  
+    <!-- Defines default buttons -->
+  <UI_Element>
+      <name>MainMenuBorder</name>
+      <plain/>
+  </UI_Element>
+
 </skin>

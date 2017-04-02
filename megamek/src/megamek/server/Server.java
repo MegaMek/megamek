@@ -21143,20 +21143,15 @@ public class Server implements Runnable {
 
         // Find out if Human TRO plays a part it crit bonus
         Entity ae = game.getEntity(hit.getAttackerId());
-        if (ae != null) {
-            if (!ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).isEmpty() && !areaSatArty) {
-                if ((te instanceof Mech) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_MECH)) {
-                    critBonus += 1;
-                }
-                if ((te instanceof Aero) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_AERO)) {
-                    critBonus += 1;
-                }
-                if ((te instanceof Tank) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_VEE)) {
-                    critBonus += 1;
-                }
-                if ((te instanceof BattleArmor) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_BA)) {
-                    critBonus += 1;
-                }
+        if ((ae != null) && !ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).isEmpty() && !areaSatArty) {
+            if ((te instanceof Mech) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_MECH)) {
+                critBonus += 1;
+            } else if ((te instanceof Aero) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_AERO)) {
+                critBonus += 1;
+            } else if ((te instanceof Tank) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_VEE)) {
+                critBonus += 1;
+            } else if ((te instanceof BattleArmor) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_BA)) {
+                critBonus += 1;
             }
         }
 

@@ -23,6 +23,8 @@ public class OptionsConstants {
     public static final String QUIRK_POS_ANTI_AIR = "anti_air"; //$NON-NLS-1$
     public static final String QUIRK_POS_ATMO_FLYER= "atmo_flyer"; //$NON-NLS-1$
     public static final String QUIRK_POS_BATTLE_COMP = "battle_computer"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BARREL_FIST_LA = "barrel_fists_la"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BARREL_FIST_RA = "barrel_fists_ra"; //$NON-NLS-1$
     public static final String QUIRK_POS_BATTLE_FIST = "battle_fists"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMBAT_COMPUTER= "combat_computer"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMMAND_MECH = "command_mech"; //$NON-NLS-1$
@@ -37,7 +39,6 @@ public class OptionsConstants {
     public static final String QUIRK_POS_FINE_MANIPULATORS= "fine_manipulators"; //$NON-NLS-1$
     public static final String QUIRK_POS_GOOD_REP_1= "good_rep_1"; //$NON-NLS-1$
     public static final String QUIRK_POS_GOOD_REP_2= "good_rep_2"; //$NON-NLS-1$
-    public static final String QUIRK_POS_HEAD_EJECT= "head_eject"; //$NON-NLS-1$
     public static final String QUIRK_POS_HYPER_ACTUATOR= "hyper_actuator"; //$NON-NLS-1$
     public static final String QUIRK_POS_IMP_COM= "imp_com"; //$NON-NLS-1$
     public static final String QUIRK_POS_IMP_LIFE_SUPPORT= "imp_life_support"; //$NON-NLS-1$

@@ -41,6 +41,10 @@ public class ImageAtlasMap {
     public ImageAtlasMap() {
     }
 
+    private  ImageAtlasMap(Map<String, String> map) {
+        imgFileToAtlasMap = map;
+    }
+
     /**
      * 
      * @param value
@@ -105,6 +109,7 @@ public class ImageAtlasMap {
      * 
      * @return
      */
+    @SuppressWarnings("unchecked")
     public static ImageAtlasMap readFromFile() {
         if (!Configuration.imageFileAtlasMapFile().exists()) {
             return null;
@@ -113,7 +118,7 @@ public class ImageAtlasMap {
         ImageAtlasMap map;
         try (InputStream is = new FileInputStream(Configuration.imageFileAtlasMapFile())) {
             XStream xstream = new XStream();
-            map = (ImageAtlasMap) xstream.fromXML(is);
+            map = new ImageAtlasMap((Map<String, String>) xstream.fromXML(is));
         } catch (FileNotFoundException e) {
             map = null;
             e.printStackTrace();

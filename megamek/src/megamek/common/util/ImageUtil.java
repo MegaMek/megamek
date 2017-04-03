@@ -28,18 +28,12 @@ import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.thoughtworks.xstream.XStream;
-
+import megamek.client.ui.swing.util.ImageAtlasMap;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
-import megamek.common.Configuration;
 import megamek.common.Coords;
 import sun.awt.image.ToolkitImage;
 
@@ -255,7 +249,9 @@ public final class ImageUtil {
                 return null;
             }
             String baseName = fileName.substring(0, tileStart);
-            ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseName);
+            File baseFile = new File(baseName);
+            System.out.println("Loading atlas: " + baseFile);
+            ToolkitImage base = (ToolkitImage) Toolkit.getDefaultToolkit().getImage(baseFile.getPath());
             if(null == base) {
                 return null;
             }
@@ -279,33 +275,19 @@ public final class ImageUtil {
      */
     public static class AtlasImageLoader extends TileMapImageLoader {
 
-        Map<File, String> imgFileToAtlasMap;
+        ImageAtlasMap imgFileToAtlasMap;
 
-        @SuppressWarnings("unchecked")
         public AtlasImageLoader() {
-            if (!Configuration.imageFileAtlasMapFile().exists()) {
-                imgFileToAtlasMap = null;
-                return;
-            }
-
-            try (InputStream is = new FileInputStream(Configuration.imageFileAtlasMapFile())) {
-                XStream xstream = new XStream();
-                imgFileToAtlasMap = (Map<File, String>) xstream.fromXML(is);
-            } catch (FileNotFoundException e) {
-                imgFileToAtlasMap = null;
-                e.printStackTrace();
-            } catch (IOException e) {
-                imgFileToAtlasMap = null;
-                e.printStackTrace();
-            }
+            imgFileToAtlasMap = ImageAtlasMap.readFromFile();
         }
 
         public Image loadImage(String fileName) {
             File fn = new File(fileName);
-            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(fn)) {
+            Path p = fn.toPath();
+            if ((imgFileToAtlasMap == null) || !imgFileToAtlasMap.containsKey(p)) {
                 return null;
             }
-            return super.loadImage(imgFileToAtlasMap.get(fn));
+            return super.loadImage(imgFileToAtlasMap.get(p));
         }
     }
 

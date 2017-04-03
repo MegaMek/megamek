@@ -30,7 +30,14 @@ import com.thoughtworks.xstream.XStream;
 import megamek.common.Configuration;
 
 /**
+ * Class to encapsulate a map that maps old image paths to the subsequent location in an image atlas.  This allows us
+ * to keep the old mechsets while still packaging the images into an atlas.
  * 
+ * There's a potential cross-platform path issue as the Java <code>File</code> class uses the current system's file
+ * system to do file comparisons.  If we write windows-style path strings to a file and read that in with UNIX, it can
+ * cause comparisons to fail.  Because of this, the internal map is stored with filepaths represented as strings, but
+ * they are passed in as paths which then are expicitly converted to UNIX-style filepaths.
+ *
  * @author arlith
  *
  */
@@ -46,7 +53,8 @@ public class ImageAtlasMap {
     }
 
     /**
-     * 
+     * Insert new values into the atlas map, using Paths which get converted to UNIX-style path strings.
+     *
      * @param value
      * @param key
      */
@@ -55,7 +63,8 @@ public class ImageAtlasMap {
     }
 
     /**
-     * 
+     * Return true if the atlas map contains the given path, which is converted to UNIX-style path strings.
+     *
      * @param key
      * @return
      */
@@ -64,7 +73,8 @@ public class ImageAtlasMap {
     }
 
     /**
-     * 
+     * Internal convenience method for converting a <code>Path</code> to UNIX-style path strings.
+     *
      * @param p
      * @return
      */

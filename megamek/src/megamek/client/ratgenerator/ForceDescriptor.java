@@ -20,10 +20,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import megamek.client.ratgenerator.UnitTable;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -90,6 +90,7 @@ public class ForceDescriptor {
 	private Integer unitType;
 	private HashSet<EntityMovementMode> movementModes;
 	private HashSet<MissionRole> roles;
+	private FormationType formationType;
 	private String rating;
 	private Integer experience;
 	private Integer rankSystem;
@@ -119,6 +120,7 @@ public class ForceDescriptor {
 		year = 3067;
 		movementModes = new HashSet<EntityMovementMode>();
 		roles = new HashSet<MissionRole>();
+		formationType = null;
 		experience = EXP_REGULAR;
 		models = new HashSet<String>();
 		chassis = new HashSet<String>();
@@ -193,9 +195,46 @@ public class ForceDescriptor {
 	}
 	*/
 	
+	public boolean generateFormation(List<ForceDescriptor> subs, int networkMask) {
+	    if (null == formationType) {
+	        return false;
+	    }
+	    
+        Map<UnitTable.Parameters, Integer> paramCount = new HashMap<>();
+	    for (ForceDescriptor sub : subs) {
+	        paramCount.merge(new UnitTable.Parameters(sub.getFactionRec(),
+                    sub.getUnitType(), sub.getYear(), sub.getRating(), null, networkMask,
+                    java.util.EnumSet.noneOf(EntityMovementMode.class),
+                    java.util.EnumSet.noneOf(MissionRole.class), 0, sub.getFactionRec()), 1, Integer::sum);
+	    }
+	    
+	    List<UnitTable.Parameters> params = new ArrayList<>();
+	    List<Integer> numUnits = new ArrayList<>();
+	    for (Map.Entry<UnitTable.Parameters, Integer> e : paramCount.entrySet()) {
+	        params.add(e.getKey());
+	        numUnits.add(e.getValue());
+	    }
+	    List<MechSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false);
+	    if (unitList.isEmpty()) {
+	        return false;
+	    } else {
+	        assert unitList.size() == subs.size();
+	        for (int i = 0; i < unitList.size(); i++) {
+	            ModelRecord mr = RATGenerator.getInstance().getModelRecord(unitList.get(i).getName());
+	            subs.get(i).setUnit(mr);
+	        }
+	    }
+	    return true;
+	}
+	
 	public void generateLance(List<ForceDescriptor> subs) {
 		if (subs.size() == 0) {
 			return;
+		}
+		//If the formation type is set, use it instead. If the formation cannot be generated,
+		//continue with the generic method.
+		if (null != formationType && generateFormation(subs, ModelRecord.NETWORK_NONE)) {
+		    return;
 		}
 		ModelRecord unit = null;
 		if (chassis.size() > 0 || models.size() > 0) {
@@ -1192,6 +1231,7 @@ public class ForceDescriptor {
 		retVal.movementModes.addAll(movementModes);
 		retVal.roles.addAll(roles);
 		retVal.roles.remove("command");
+		retVal.formationType = formationType;
 		retVal.models.addAll(models);
 		retVal.chassis.addAll(chassis);
 		retVal.variants.addAll(variants);

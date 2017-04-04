@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -501,7 +502,8 @@ public class FormationType {
 	        } else {
 	        	combinations = findCombinations(cUnits);
 	        }
-	        List<MechSummary> list = new ArrayList<>();
+	        //Group units by param index so they can be returned in the order requested.
+	        Map<Integer,List<MechSummary>> list = new TreeMap<>();
 	        final int POS_C3S = 0;
 	        final int POS_C3M = 1;
 	        final int POS_C3MM = 2;
@@ -559,7 +561,7 @@ public class FormationType {
 	    					while (groups.size() > 0) {
 	    						int gIndex = Compute.randomInt(groups.size());
 	    						list.clear();
-    							List<MechSummary> found = new ArrayList<>();
+    							Map<Integer,List<MechSummary>> found = new TreeMap<>();
 	    						Map<Integer,Integer> workingCombo = new HashMap<>(combo);
 	    						for (Map<Integer,Integer> g : groups.get(gIndex)) {
 	    							/* The first unit selected may lead to a dead end, if the constraints
@@ -589,20 +591,23 @@ public class FormationType {
 		    										if (base == null) {
 		    											base = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
 		    											if (base != null) {
-		    												found.add(base);
+                                                            found.putIfAbsent(tableIndex, new ArrayList<>());
+                                                            found.get(tableIndex).add(base);
 		    											}
 		    										} else {
 		    											final MechSummary b = base;
 		    											MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
 		    													&& groupingCriteria.matches(ms, b));
 		    											if (unit != null) {
-		    												found.add(unit);
+		    											    found.putIfAbsent(tableIndex, new ArrayList<>());
+                                                            found.get(tableIndex).add(base);
 		    											}
 		    										}
 		    									}
 		    								}
 		    							}
-		    							if (found.size() < g.values().stream().mapToInt(Integer::intValue).sum()) {
+		    							if (found.values().stream().mapToInt(List::size).sum()
+		    							        < g.values().stream().mapToInt(Integer::intValue).sum()) {
 		    								found.clear();
 		    								base = null;
 		    								int mask = (1 << otherCriteria.size()) - 1;
@@ -615,7 +620,10 @@ public class FormationType {
 		    								break;
 		    							}
 	    							}
-		    						list.addAll(found);
+	    							for (Map.Entry<Integer, List<MechSummary>> e : found.entrySet()) {
+	    							    list.putIfAbsent(e.getKey(), new ArrayList<>());
+	    							    list.get(e.getKey()).addAll(e.getValue());
+	    							}
 		    						for (Integer k : g.keySet()) {
 		    							workingCombo.merge(k, -g.get(k), Integer::sum);
 		    						}
@@ -635,15 +643,18 @@ public class FormationType {
 	    								for (int j = 0; j < workingCombo.get(i); j++) {
 	    									MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
 	    									if (unit != null) {
-	    										list.add(unit);
+	    									    list.putIfAbsent(tableIndex, new ArrayList<>());
+	    										list.get(tableIndex).add(unit);
 	    									}
 	    								}
 	    							}
 	    						}
-	    						if (list.size() < cUnits) {
+	    						List<MechSummary> retVal = list.values().stream()
+	    						        .flatMap(l -> l.stream()).collect(Collectors.toList());
+	    						if (retVal.size() < cUnits) {
 	    							groups.remove(gIndex);
 	    						} else {
-	    							return list;
+	    							return retVal;
 	    						}
 	    					}
 	    				} else {
@@ -661,21 +672,26 @@ public class FormationType {
     							for (int j = 0; j < combo.get(i); j++) {
     								MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms));
     								if (unit != null) {
-    									list.add(unit);
+    								    list.putIfAbsent(tableIndex, new ArrayList<>());
+    									list.get(tableIndex).add(unit);
     								}
     							}
 	    					}
 	    				}
-	        			if (list.size() < cUnits) {
-	        				unitTypeGroupings.remove(utIndex);
-	        			} else {
-	        				return list;
-	        			}
+                        List<MechSummary> retVal = list.values().stream()
+                                .flatMap(l -> l.stream()).collect(Collectors.toList());
+                        if (retVal.size() < cUnits) {
+                            unitTypeGroupings.remove(utIndex);
+                        } else {
+                            return retVal;
+                        }
 	    			}
-					if (list.size() < cUnits) {
+                    List<MechSummary> retVal = list.values().stream()
+                            .flatMap(l -> l.stream()).collect(Collectors.toList());
+                    if (retVal.size() < cUnits) {
 						networkGroupings.remove(networkIndex);
 					} else {
-						return list;
+						return retVal;
 					}
 	    		}
 	    		combinations.remove(index);

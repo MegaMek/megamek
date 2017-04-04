@@ -697,8 +697,7 @@ public class MtfFile implements IMechLoader {
                         if (etype2 == null) {
                             mount = mech.addEquipment(etype, loc, rearMounted,
                                                       BattleArmor.MOUNT_LOC_NONE, isArmored,
-                                                      isTurreted);
-                            mount.setOmniPodMounted(isOmniPod);
+                                                      isTurreted, false, false, isOmniPod);
                         } else {
                             if (etype instanceof AmmoType) {
                                 if (!(etype2 instanceof AmmoType) || (((AmmoType) etype).getAmmoType() != ((AmmoType) etype2).getAmmoType())) {

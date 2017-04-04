@@ -4,8 +4,9 @@ ED-X2 ForestryMech
 
 Config:Biped
 TechBase:Inner Sphere
-Era:2715
+Era:2715 
 Rules Level:2
+Source:RS OK - Star League
 
 Mass:30
 Engine:90 I.C.E. Engine

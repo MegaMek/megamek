@@ -21,6 +21,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1546,29 +1547,41 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * @param pos - the <code>Coords</code> containing targets.
      */
     private Targetable chooseTarget(Coords pos) {
-
+        final IGame game = clientgui.getClient().getGame();
         // Assume that we have *no* choice.
         Targetable choice = null;
 
         // Get the available choices.
-        Iterator<Entity> choices = clientgui.getClient().getGame()
-                                               .getEntities(pos);
+        Iterator<Entity> choices = game.getEntities(pos);
 
         // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<Targetable>();
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
         while (choices.hasNext()) {
             choice = choices.next();
-            if (!ce().equals(choice)) {
+            if (!ce().equals(choice) && (friendlyFire || choice.isEnemyOf(ce()))) {
                 targets.add(choice);
             }
         }
+        targets.sort(new Comparator<Targetable>(){
+
+            @Override
+            public int compare(Targetable o1, Targetable o2) {
+                boolean enemy1 = o1.isEnemyOf(ce());
+                boolean enemy2 = o2.isEnemyOf(ce());
+                if (enemy1 && enemy2) {
+                    return 0;
+                } else if (enemy1 && !enemy2) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }});
 
         // Is there a building in the hex?
-        Building bldg = clientgui.getClient().getGame().getBoard()
-                                 .getBuildingAt(pos);
+        Building bldg = game.getBoard().getBuildingAt(pos);
         if (bldg != null) {
-            targets.add(new BuildingTarget(pos, clientgui.getClient().getGame()
-                                                         .getBoard(), false));
+            targets.add(new BuildingTarget(pos, game.getBoard(), false));
         }
 
         // Is the attacker targeting its own hex?
@@ -1583,10 +1596,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         // Do we have a single choice?
         if (targets.size() == 1) {
-
             // Return that choice.
             choice = targets.get(0);
-
         }
 
         // If we have multiple choices, display a selection dialog.

@@ -227,6 +227,7 @@
      Netzilla and Xotl (Classic Battletech Forums)
      Dave Nawton <hammer-gs@users.sourceforge.net>
 	 Greekfire.
+	 Bloodwolf
 
   Translations
      Jörg Harder <joergharder@t-online.de>

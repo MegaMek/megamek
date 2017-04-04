@@ -66,7 +66,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.43.1-git"; //$NON-NLS-1$
+    public static String VERSION = "0.43.2-git"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator

@@ -1872,6 +1872,7 @@ public class Server implements Runnable {
             r.messageId = 7016;
             r.add(Server.getColorForPlayer(player));
             r.add(player.getBV());
+            r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000) / 100));
             r.add(player.getInitialBV());
             r.add(player.getFledBV());
             addReport(r);
@@ -2545,6 +2546,7 @@ public class Server implements Runnable {
                     r.messageId = 7016;
                     r.add(Server.getColorForPlayer(player));
                     r.add(player.getBV());
+                    r.add(Double.toString(Math.round((double) player.getBV() / player.getInitialBV() * 10000) / 100));
                     r.add(player.getInitialBV());
                     r.add(player.getFledBV());
                     addReport(r);
@@ -4505,6 +4507,10 @@ public class Server implements Runnable {
                // Handle zip lines
                 PilotingRollData psr = getEjectModifiers(game, unit, false,
                         unit.getPosition(), "Anti-mek skill");
+                // Factor in Elevation
+                if (unloader.getElevation() > 0) {
+                    psr.addModifier(unloader.getElevation(), "elevation");
+                }
                 int roll = Compute.d6(2);
 
                 // Report ziplining
@@ -9762,8 +9768,8 @@ public class Server implements Runnable {
             r.indent(2);
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
-            createSmoke(tempcoords, 2, 3);
-            hex = game.getBoard().getHex(coords);
+            createSmoke(tempcoords, SmokeCloud.SMOKE_HEAVY, 3);
+            hex = game.getBoard().getHex(tempcoords);
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
             sendChangedHex(tempcoords);
@@ -9798,6 +9804,7 @@ public class Server implements Runnable {
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
             createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
+            hex = game.getBoard().getHex(tempcoords);
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
             sendChangedHex(tempcoords);
@@ -10286,6 +10293,7 @@ public class Server implements Runnable {
                         vPhaseReport.add(r);
                     } else {
                         vPhaseReport.addAll(destroyEntity(te, "damage", false));
+                        creditKill(te, ae);
                         Report.addNewline(vPhaseReport);
                     }
                 } else {
@@ -11262,32 +11270,23 @@ public class Server implements Runnable {
                 && (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getPlanetaryConditions().isVacuum()) {
-                        entity.setLocationStatus(loop,
-                                                 ILocationExposureStatus.VACUUM);
+                        entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                     } else {
-                        entity.setLocationStatus(loop,
-                                                 ILocationExposureStatus.NORMAL);
+                        entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
                     }
                 }
-                entity.setLocationStatus(Mech.LOC_RLEG,
-                                         ILocationExposureStatus.WET);
-                entity.setLocationStatus(Mech.LOC_LLEG,
-                                         ILocationExposureStatus.WET);
+                entity.setLocationStatus(Mech.LOC_RLEG, ILocationExposureStatus.WET);
+                entity.setLocationStatus(Mech.LOC_LLEG, ILocationExposureStatus.WET);
                 vPhaseReport.addAll(breachCheck(entity, Mech.LOC_RLEG, hex));
                 vPhaseReport.addAll(breachCheck(entity, Mech.LOC_LLEG, hex));
                 if (entity instanceof QuadMech) {
-                    entity.setLocationStatus(Mech.LOC_RARM,
-                                             ILocationExposureStatus.WET);
-                    entity.setLocationStatus(Mech.LOC_LARM,
-                                             ILocationExposureStatus.WET);
-                    vPhaseReport
-                            .addAll(breachCheck(entity, Mech.LOC_RARM, hex));
-                    vPhaseReport
-                            .addAll(breachCheck(entity, Mech.LOC_LARM, hex));
+                    entity.setLocationStatus(Mech.LOC_RARM, ILocationExposureStatus.WET);
+                    entity.setLocationStatus(Mech.LOC_LARM, ILocationExposureStatus.WET);
+                    vPhaseReport.addAll(breachCheck(entity, Mech.LOC_RARM, hex));
+                    vPhaseReport.addAll(breachCheck(entity, Mech.LOC_LARM, hex));
                 }
                 if (entity instanceof TripodMech) {
-                    entity.setLocationStatus(Mech.LOC_CLEG,
-                            ILocationExposureStatus.WET);
+                    entity.setLocationStatus(Mech.LOC_CLEG, ILocationExposureStatus.WET);
                     vPhaseReport.addAll(breachCheck(entity, Mech.LOC_CLEG, hex));
                 }
             } else {
@@ -11299,11 +11298,9 @@ public class Server implements Runnable {
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
                 if (game.getPlanetaryConditions().isVacuum()) {
-                    entity.setLocationStatus(loop,
-                                             ILocationExposureStatus.VACUUM);
+                    entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                 } else {
-                    entity.setLocationStatus(loop,
-                                             ILocationExposureStatus.NORMAL);
+                    entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
                 }
             }
         }
@@ -12490,8 +12487,8 @@ public class Server implements Runnable {
      * specified entities inside of it too. Also, check that the deployment is
      * valid.
      */
-    private void processDeployment(Entity entity, Coords coords, int nFacing,
-                                   int elevation, Vector<Entity> loadVector, boolean assaultDrop) {
+    private void processDeployment(Entity entity, Coords coords, int nFacing, int elevation, Vector<Entity> loadVector,
+            boolean assaultDrop) {
 
         for (Entity loaded : loadVector) {
             if (loaded.getTransportId() != Entity.NONE) {
@@ -12618,6 +12615,7 @@ public class Server implements Runnable {
         entity.setDone(true);
         entity.setDeployed(true);
         entityUpdate(entity.getId());
+        addReport(doSetLocationsExposure(entity, hex, false, entity.getElevation()));
     }
 
     /**
@@ -13317,8 +13315,8 @@ public class Server implements Runnable {
                     }
                 }
                 for (int dist = 1; dist <= maxDist; dist++) {
-                    for (int dir = 0; dir <= 5; dir++) {
-                        Coords pos = e.getPosition().translated(dir, dist);
+                    List<Coords> coords = Compute.coordsAtRange(e.getPosition(), dist);
+                    for (Coords pos : coords) {
                         // Check that we're in the right arc
                         if (Compute.isInArc(game, e.getId(), e
                                 .getEquipmentNum(ams),
@@ -13546,6 +13544,7 @@ public class Server implements Runnable {
                     m.setJammed(false);
                     ((Tank) entity).getJammedWeapons().remove(m);
                     Report r = new Report(3034);
+                    r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(m.getName());
                     addReport(r);
@@ -18835,6 +18834,15 @@ public class Server implements Runnable {
                 entity.heatBuildup -= reduce;
             }
 
+            if ((entity instanceof Mech) && entity.hasQuirk(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)
+                    && ((Mech) entity).isCoolingFlawActive()) {
+                int flaw = 5;
+                r = new Report(5021);
+                r.subject = entity.getId();
+                r.add(flaw);
+                addReport(r);
+                entity.heatBuildup += flaw;
+            }
             // if heatbuildup is negative due to temperature, set it to 0
             // for prettier turnreports
             if (entity.heatBuildup < 0) {
@@ -19560,9 +19568,8 @@ public class Server implements Runnable {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return;
         }
-        // Only applies to units that track heat.
-        if (!((entity instanceof Mech) || ((entity instanceof Aero) && !((entity instanceof SmallCraft) || (entity
-                instanceof Jumpship))))) {
+        // Only applies to Mechs.
+        if (!(entity instanceof Mech)) {
             return;
         }
 
@@ -19585,16 +19592,18 @@ public class Server implements Runnable {
 
             final Entity entity = i.next();
 
-            // Only applies to units that track heat.
-            if (!((entity instanceof Mech)
-                    || ((entity instanceof Aero)
-                            && !((entity instanceof SmallCraft)
-                                    || (entity instanceof Jumpship))))) {
+            // Only applies to Mechs.
+            if (!(entity instanceof Mech)) {
                 continue;
             }
 
             // Check for existence of flawed cooling quirk.
             if (!entity.hasQuirk(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)) {
+                continue;
+            }
+
+            // Check for active Cooling Flaw
+            if (((Mech) entity).isCoolingFlawActive()) {
                 continue;
             }
 
@@ -19630,7 +19639,7 @@ public class Server implements Runnable {
         out.add(r);
         if (roll >= 10) {
             Report s = new Report(9805);
-            entity.heatBuildup += 5;
+            ((Mech) entity).setCoolingFlawActive(true);
             out.add(s);
         }
 
@@ -19880,9 +19889,8 @@ public class Server implements Runnable {
         Report r;
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
-            if ((null == entity.getPosition()) || entity.isOffBoard()) {
-                // If it's not on the board - aboard something else, for
-                // example...
+            if ((null == entity.getPosition()) && !entity.isOffBoard() || (entity.getTransportId() != Entity.NONE)) {
+                // Ignore transported units, and units that don't have a position for some unknown reason
                 continue;
             }
             String reason = game.getPlanetaryConditions().whyDoomed(entity, game);
@@ -22809,7 +22817,7 @@ public class Server implements Runnable {
             int[] damages = {(int) Math.floor(damage_orig / 10),
                              (int) Math.floor(damage_orig / 20)};
             doExplosion(damages, false, te.getPosition(), true, vDesc, null, 5,
-                        te.getId());
+                        te.getId(), false);
             Report.addNewline(vDesc);
             r = new Report(5410, Report.PUBLIC);
             r.subject = te.getId();
@@ -22972,7 +22980,7 @@ public class Server implements Runnable {
             Vector<Report> vDesc, Vector<Integer> vUnits) {
         int[] myDamages = { engineRating, (engineRating / 10),
                 (engineRating / 20), (engineRating / 40) };
-        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1);
+        doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1, true);
     }
 
     /**
@@ -22998,7 +23006,7 @@ public class Server implements Runnable {
             myDamages[x] = myDamages[x - 1] - degredation;
         }
         doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter,
-                vDesc, vUnits, 5, excludedUnitId);
+                vDesc, vUnits, 5, excludedUnitId, false);
     }
 
     /**
@@ -23006,7 +23014,7 @@ public class Server implements Runnable {
      */
     public void doExplosion(int[] damages, boolean autoDestroyInSameHex,
             Coords position, boolean allowShelter, Vector<Report> vDesc,
-            Vector<Integer> vUnits, int clusterAmt, int excludedUnitId) {
+            Vector<Integer> vUnits, int clusterAmt, int excludedUnitId, boolean engineExplosion) {
         if (vDesc == null) {
             vDesc = new Vector<Report>();
         }
@@ -23043,6 +23051,20 @@ public class Server implements Runnable {
         // We need to damage terrain
         int maxDist = damages.length;
         IHex hex = game.getBoard().getHex(position);
+        // Center hex starts on fire for engine explosions
+        if (engineExplosion && (hex != null) && !hex.containsTerrain(Terrains.FIRE)) {
+            r = new Report(5136);
+            r.indent(2);
+            r.type = Report.PUBLIC;
+            r.add(position.getBoardNum());
+            vDesc.add(r);
+            Vector<Report> reports = new Vector<Report>();
+            ignite(position, Terrains.FIRE_LVL_NORMAL, reports);
+            for (Report report : reports) {
+                report.indent();
+            }
+            vDesc.addAll(reports);
+        }
         if ((hex != null) && hex.hasTerrainfactor()) {
             r = new Report(3384);
             r.indent(2);
@@ -23056,9 +23078,11 @@ public class Server implements Runnable {
             report.indent(3);
         }
         vDesc.addAll(reports);
+
+        // Handle surrounding coords
         for (int dist = 1; dist < maxDist; dist++) {
-            for (int dir = 0; dir < 6; dir++) {
-                Coords c = position.translated(dir, dist);
+            List<Coords> coords = Compute.coordsAtRange(position, dist);
+            for (Coords c : coords) {
                 hex = game.getBoard().getHex(c);
                 if ((hex != null) && hex.hasTerrainfactor()) {
                     r = new Report(3384);
@@ -24238,7 +24262,7 @@ public class Server implements Runnable {
                     r = new Report(9120);
                     r.subject = a.getId();
                     int boomTarget = 9;
-                    if (a.hasQuirk("fragile_fuel")) {
+                    if (a.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                         boomTarget = 7;
                     }
                     if (a.isLargeCraft() && a.isClan()
@@ -25526,6 +25550,7 @@ public class Server implements Runnable {
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE)
                 && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
+                && !((t instanceof VTOL) || (t instanceof GunEmplacement))
                 && !t.getOverThresh()) {
             r = new Report(6006);
             r.subject = t.getId();
@@ -25535,7 +25560,7 @@ public class Server implements Runnable {
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType),
                                       true, damage, false));
         if ((critType != Tank.CRIT_NONE) && t.hasEngine() && !t.getEngine().isFusion()
-            && t.hasQuirk("fragile_fuel") && (Compute.d6(2) > 9)) {
+            && t.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL) && (Compute.d6(2) > 9)) {
             // BOOM!!
             vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0,
                     Tank.CRIT_FUEL_TANK), true, damage, false));

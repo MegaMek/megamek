@@ -596,7 +596,7 @@ public class MiscType extends EquipmentType {
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                 return Math.ceil((entity.getWeight() / 20.0f) * 2.0f) / 2.0;
             } else {
-                return Math.ceil((entity.getWeight() * 0.07f * 2.0f)) / 2.0;
+                return Math.round((entity.getWeight() * 0.07) * 2.0) / 2.0;
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMECH_EQUIPMENT)) {
             return Math.ceil((entity.getWeight() / 5.0f) * 2.0f) / 2.0;
@@ -5082,6 +5082,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:2");
         misc.tonnage = 2;
         misc.criticals = 2;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5107,6 +5108,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:3");
         misc.tonnage = 3;
         misc.criticals = 3;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5132,6 +5134,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:4");
         misc.tonnage = 4;
         misc.criticals = 4;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5157,6 +5160,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:5");
         misc.tonnage = 5;
         misc.criticals = 5;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5182,6 +5186,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:6");
         misc.tonnage = 6;
         misc.criticals = 6;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5207,6 +5212,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:7");
         misc.tonnage = 7;
         misc.criticals = 7;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5232,6 +5238,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:8");
         misc.tonnage = 8;
         misc.criticals = 8;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5257,6 +5264,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:9");
         misc.tonnage = 9;
         misc.criticals = 9;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5282,6 +5290,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:10");
         misc.tonnage = 10;
         misc.criticals = 10;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5307,6 +5316,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:11");
         misc.tonnage = 11;
         misc.criticals = 11;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5332,6 +5342,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:12");
         misc.tonnage = 12;
         misc.criticals = 12;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5357,6 +5368,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:13");
         misc.tonnage = 13;
         misc.criticals = 13;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5382,6 +5394,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:14");
         misc.tonnage = 14;
         misc.criticals = 14;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -5407,6 +5420,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("CommsGear:15");
         misc.tonnage = 15;
         misc.criticals = 15;
+        misc.tankslots =1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
@@ -8307,6 +8321,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
+        misc.tankslots =0;
         misc.flags = misc.flags.or(MiscType.F_BASIC_FIRECONTROL).or(
                 MiscType.F_SUPPORT_TANK_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
@@ -8325,6 +8340,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
+        misc.tankslots =0;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL).or(
                 MiscType.F_SUPPORT_TANK_EQUIPMENT.or(MiscType.F_TANK_EQUIPMENT));
         misc.omniFixedOnly = true;

@@ -511,6 +511,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             } else {
                 optionComp.setEditable(false);
             }
+        } else if (option.getName().equals(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
+            // Disable if any lance movement is on
+            if (!options.getOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT).booleanValue() 
+                    && !options.getOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT).booleanValue()) {
+                optionComp.setEditable(editable);
+            } else {
+                optionComp.setEditable(false);
+            }
         } else {
             optionComp.setEditable(editable);
         }
@@ -606,7 +614,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 comp_i.setEditable(!state);
             }
         }
-        if (option.getName().equals(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) { // $NON-NLS-1$
+        if (option.getName().equals(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             comps = optionComps.get(OptionsConstants.INIT_PROTOS_MOVE_EVEN); // $NON-NLS-1$
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(false);
@@ -653,6 +661,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 comp_i.setSelected(false);
             }
             comps = optionComps.get(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT);
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
+            }
+        }
+        if (option.getName().equals(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
+                || option.getName().equals(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)) {
+            comps = optionComps.get(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE);
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);

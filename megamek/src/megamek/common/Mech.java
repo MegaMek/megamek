@@ -275,6 +275,9 @@ public abstract class Mech extends Entity {
 
     protected int nCoolantSystemMOS = 0;
 
+    // Cooling System Flaws quirk
+    private boolean coolingFlawActive = false;
+
     /**
      * Construct a new, blank, mech.
      */
@@ -8303,6 +8306,13 @@ public abstract class Mech extends Entity {
         return nCoolantSystemMOS;
     }
 
+    public boolean isCoolingFlawActive() {
+        return coolingFlawActive;
+    }
+
+    public void setCoolingFlawActive(boolean flawActive) {
+        coolingFlawActive = flawActive;
+    }
 
     /**
      * Used to determine the draw priority of different Entity subclasses.

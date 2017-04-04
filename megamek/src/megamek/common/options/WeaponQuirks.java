@@ -57,16 +57,21 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false);
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPN_POS_DIRECT_TORSO_MOUNT, false); //$NON-NLS-1$
     }
     
+    //TODO
     //unimplemented
     //ammo feed problem
     //EM Interference
     //jettison-capable Weapon
     //non-functional
+    //Directional Torso Mount BMM pg 85
+    //Barrel Fist BMM pg 85
 
     /*
      * (non-Javadoc)

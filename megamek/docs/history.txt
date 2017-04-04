@@ -1,6 +1,11 @@
 VERSION HISTORY:
 ----------------
-v0.43.1-git
+v0.43.2-git
++ PR #518: Implemented quirks: Stabilized weapon, barrel fist
++ Pr #518: Updated quirks for errata: Improved sensors, cooling system flaw,
+	fragile fuel tank
+
+v0.43.1 (2017-03-31 01:15 UTC)
 + Feature: Added checks for null crew when checking for MD enhancements
 + Feature: Merge pull request #486 from pheonixstorm/SPA-Update
 + Issue #476: VTOL armor diagram changes color incorrectly?
@@ -16,8 +21,8 @@ v0.43.1-git
 + Issue #494 - Updated Princess Behaviors (Thanks pfarland and xStormforgex)
 + Issue #484 and fixes to image names.
 + Issue #490: Fixed princess documentation.
-+ Feature: Princess will now respond with "You are not my boss." if a player attempts to issue a command to an enemy
-    Princess instance.
++ Feature: Princess will now respond with "You are not my boss." if a player
+	attempts to issue a command to an enemy Princess instance.
 + Issue #198: Long tom cannons cannot switch to indirect firing mode
 + Issue #456: Cannot cancel hotloading of LRMs during battle
 + Issue #457: Hot loaded LRMs not working properly
@@ -27,12 +32,36 @@ v0.43.1-git
 + Issue #421: Toughness Text In Pilot Tab Spacing Issue
 + Issue #442: Tooltip colors still not quite right for firing vectors
 + Issue #507: Image atlas map has cross-platform issues
-+ Corrected BV calculations for HarJel II/III, coolant pods, and interface cockpit.
++ Corrected BV calculations for HarJel II/III, coolant pods, and interface
+	cockpit.
 + Issue #511: Fall height is wrong for falls when moving into a higher hex
 + Bug: Cannot fire arm-mounted weapons while prone.
 + Bug: ASF can use Silver Bullet Gauss Rifles/Ammo
 + Bug: Attack sprites/arrows no longer shown for sensor returns
-+ Feature: Unit files distinguish between fixed and pod-mounted equipment in omni units.
++ Feature: Unit files distinguish between fixed and pod-mounted equipment in
+	omni units.
++ Issue #510: Reports related to geysers weren't marked public
++ Issue #440: Explosions greater than 1 hex ring away not affecting all hexes
++ Issue #488: Chat window not disabling some hotkeys in targeting phase
++ Issue #466: Themed hexes can revert to no theme on explosions
++ Bug: Fuel tank magnitude terrain type not removed from collapsed buildings
++ Issue #473: Vehicle threshold report erroneously added for VTOLs
++ Issue #430: Smoke artillery only affecting center hex
++ Issue #458: Map selection changes when loading generated map settings
++ Issue #471: TacOps zip-lining didn't factor in elevation
++ Issue #454: Physical attacks and friendly units
++ Data: Unit fixes and new Sprites.
++ Data: Fixing some unit validation errors.
++ Issue #513: Infantry killed by Inferno ammo not giving kill credit
++ PR #515: Show %BV remaining in round reports
++ Issue #385: Freeze When Zooming Out With LargeTexture.tileset
++ Issue #70: Engine explosions not igniting center hex
++ Issue #348: Selecting lance move options does not disable individual init
++ Issue #225: Bad String in Round Report for Thunder LRMs
++ Deploying doomed units now nags the user (ie, infantry in a vacuum)
++ Issue #408: Offboard units not checked for planetary conditions (ie, vacuum)
++ Issue #394: No location exposure check on deployment
++ Data: Turret Rats pt1 Thanks Bloodwolf. New Maps.
 
 v0.43.0 (2017-02-13 03:30 UTC)
 +Issues #47/#48 from MML Tracker - Critical Slot allocations wrong for

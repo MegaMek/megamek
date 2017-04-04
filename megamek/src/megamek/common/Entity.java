@@ -2874,10 +2874,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param allowChange allow change of breached locations
      */
     public void setLocationStatus(int loc, int status, boolean allowChange) {
-        if (allowChange || (exposure[loc] > ILocationExposureStatus.BREACHED)) { // can't
-            // change
-            // BREACHED
-            // status
+        if (allowChange || (exposure[loc] > ILocationExposureStatus.BREACHED)) { // can't change BREACHED status
             exposure[loc] = status;
         }
     }
@@ -2976,7 +2973,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public Mounted addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted) throws LocationFullException {
         return addEquipment(etype, loc, rearMounted,
-                            BattleArmor.MOUNT_LOC_NONE, false, false);
+                            BattleArmor.MOUNT_LOC_NONE, false, false, false, false, false);
     }
 
     /**
@@ -2986,7 +2983,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted) throws LocationFullException {
         return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
-                            isTurreted, false);
+                            isTurreted, false, false, false);
     }
 
     public Mounted addEquipment(EquipmentType etype, int loc,
@@ -2994,19 +2991,28 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 boolean isTurreted, boolean isSponsonTurreted)
             throws LocationFullException {
         return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
-                            isTurreted, isSponsonTurreted, false);
+                            isTurreted, isSponsonTurreted, false, false);
     }
 
     public Mounted addEquipment(EquipmentType etype, int loc,
+            boolean rearMounted, int baMountLoc, boolean isArmored,
+            boolean isTurreted, boolean isSponsonTurreted,
+            boolean isPintleTurreted) throws LocationFullException {
+        return addEquipment(etype, loc, rearMounted, baMountLoc, isArmored,
+                isTurreted, isSponsonTurreted, isPintleTurreted, false);        
+    }
+    
+    public Mounted addEquipment(EquipmentType etype, int loc,
                                 boolean rearMounted, int baMountLoc, boolean isArmored,
                                 boolean isTurreted, boolean isSponsonTurreted,
-                                boolean isPintleTurreted) throws LocationFullException {
+                                boolean isPintleTurreted, boolean isOmniPodded) throws LocationFullException {
         Mounted mounted = new Mounted(this, etype);
         mounted.setArmored(isArmored);
         mounted.setBaMountLoc(baMountLoc);
         mounted.setMechTurretMounted(isTurreted);
         mounted.setSponsonTurretMounted(isSponsonTurreted);
         mounted.setPintleTurretMounted(isPintleTurreted);
+        mounted.setOmniPodMounted(isOmniPodded);
         addEquipment(mounted, loc, rearMounted);
         return mounted;
     }
@@ -3106,6 +3112,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
                     && (AmmoType.getOneshotAmmo(mounted) != null)) {
                 Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
+                m.setOmniPodMounted(mounted.isOmniPodMounted());
                 m.setShotsLeft(1);
                 mounted.setLinked(m);
                 // Oneshot ammo will be identified by having a location
@@ -4683,11 +4690,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // check for quirks
-        // TODO: assuming the range of this active probe is 2
-        // http://www.classicbattletech.com/forums/index.php/topic,52961.new.html#new
         int quirkBonus = 0;
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)) {
-            quirkBonus = 2;
+            if (isClan()) {
+                quirkBonus = 5;
+            } else {
+                quirkBonus = 4;
+            }
         }
 
         // check for SPA
@@ -4700,6 +4709,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP)
                 && !m.isInoperable()) {
+                
+                // Quirk bonus is only 2 if equiped with BAP
+                if (quirkBonus > 0) {
+                    quirkBonus = 2;
+                }
                 // System.err.println("BAP type name: "+m.getName()+"
                 // internalName: "+((MiscType)m.getType()).internalName);
                 // in space the range of all BAPs is given by the mode

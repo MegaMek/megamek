@@ -102,8 +102,18 @@ public interface Targetable extends Serializable {
     
     // Make sure Targetable implements both
     @Override
-    boolean equals(Object obj);
-    
+    public boolean equals(Object obj);
+
+    /**
+     * Determines if this target should be considered the enemy of the supplied player.  Targets that aren't owned by
+     * any player, such as buildings or terrain, are always considered enemies, since this will most often be used to
+     * determine if something is valid to be shot at.
+     *
+     * @param other
+     * @return
+     */
+    public boolean isEnemyOf(Entity other);
+
     @Override
     int hashCode();
 }

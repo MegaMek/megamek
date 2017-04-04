@@ -35,6 +35,8 @@ public class SkinSpecification {
         PhaseDisplay("PhaseDisplayBorder"),
         PhaseDisplayDoneButton("PhaseDisplayDoneButton"),
         PhaseDisplayButton("PhaseDisplayButton"),
+        MainMenuButton("MainMenuButton"),
+        MainMenuBorder("MainMenuBorder"),
         ChatLounge("ChatLoungeBorder"),
         ChatLoungeDoneButton("ChatLoungeDoneButton"),
         UnitDisplay("UnitDisplay"),
@@ -108,6 +110,11 @@ public class SkinSpecification {
     public static final int MAX_NUM_COLORS = 3;
 
     /**
+     * The name of the component this SkinSpec is for.  This helps identify the skin spec, particularly for debugging.
+     */
+    private String compName;
+
+    /**
      * Path to an image to be used in the top left corner.
      */
     public String tl_corner;
@@ -137,7 +144,7 @@ public class SkinSpecification {
      * that image should be tiled or just drawn once.
      */
     public ArrayList<Boolean> topShouldTile;
-    
+
     /**
      * Path to images to be used along the right edge.
      */
@@ -196,8 +203,24 @@ public class SkinSpecification {
      * particularly for the board view. 
      */
     public boolean showScrollBars = false;
+
+    /**
+     * Specify a non-standard font, or null to use default.
+     */
+    public String fontName = null;
     
-    public SkinSpecification(){
+    /**
+     * Specify a non-standard font size.  Only used when a non-standard font name is specified.
+     */
+    public int fontSize = 12;
+
+    /**
+     * Used to specify if the font should be bolded on mouseover.  Used for buttons.
+     */
+    public boolean shouldBoldMouseOver = true;
+
+    public SkinSpecification(String compName){
+        this.compName = compName;
         tl_corner = tr_corner = bl_corner = br_corner = "";
         topEdge = new ArrayList<String>();
         rightEdge = new ArrayList<String>();
@@ -266,5 +289,8 @@ public class SkinSpecification {
         return true;
     }
 
+    public String toString() {
+        return "SkinSpec for " + compName;
+    }
 
 }

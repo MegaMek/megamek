@@ -5,6 +5,7 @@ v0.43.2-git
 + Pr #518: Updated quirks for errata: Improved sensors, cooling system flaw,
 	fragile fuel tank
 + Issue #526: Further image atlas packaging bugs
++ Issue #526: Updating Unit Image files that have errors.
 
 v0.43.1 (2017-03-31 01:15 UTC)
 + Feature: Added checks for null crew when checking for MD enhancements

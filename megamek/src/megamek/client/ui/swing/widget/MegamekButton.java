@@ -300,7 +300,6 @@ public class MegamekButton extends JButton {
         if (this.isEnabled()) {
             if (isMousedOver) {
                 Font font = textLabel.getFont();
-                System.out.println("Font size: " + font.getSize());
                 if (shouldBold) {
                     // same font but bold
                     Font boldFont = new Font(font.getFontName(), Font.BOLD,

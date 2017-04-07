@@ -18834,6 +18834,15 @@ public class Server implements Runnable {
                 entity.heatBuildup -= reduce;
             }
 
+            if ((entity instanceof Mech) && entity.hasQuirk(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)
+                    && ((Mech) entity).isCoolingFlawActive()) {
+                int flaw = 5;
+                r = new Report(5021);
+                r.subject = entity.getId();
+                r.add(flaw);
+                addReport(r);
+                entity.heatBuildup += flaw;
+            }
             // if heatbuildup is negative due to temperature, set it to 0
             // for prettier turnreports
             if (entity.heatBuildup < 0) {
@@ -19559,9 +19568,8 @@ public class Server implements Runnable {
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return;
         }
-        // Only applies to units that track heat.
-        if (!((entity instanceof Mech) || ((entity instanceof Aero) && !((entity instanceof SmallCraft) || (entity
-                instanceof Jumpship))))) {
+        // Only applies to Mechs.
+        if (!(entity instanceof Mech)) {
             return;
         }
 
@@ -19584,16 +19592,18 @@ public class Server implements Runnable {
 
             final Entity entity = i.next();
 
-            // Only applies to units that track heat.
-            if (!((entity instanceof Mech)
-                    || ((entity instanceof Aero)
-                            && !((entity instanceof SmallCraft)
-                                    || (entity instanceof Jumpship))))) {
+            // Only applies to Mechs.
+            if (!(entity instanceof Mech)) {
                 continue;
             }
 
             // Check for existence of flawed cooling quirk.
             if (!entity.hasQuirk(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)) {
+                continue;
+            }
+
+            // Check for active Cooling Flaw
+            if (((Mech) entity).isCoolingFlawActive()) {
                 continue;
             }
 
@@ -19629,7 +19639,7 @@ public class Server implements Runnable {
         out.add(r);
         if (roll >= 10) {
             Report s = new Report(9805);
-            entity.heatBuildup += 5;
+            ((Mech) entity).setCoolingFlawActive(true);
             out.add(s);
         }
 
@@ -24252,7 +24262,7 @@ public class Server implements Runnable {
                     r = new Report(9120);
                     r.subject = a.getId();
                     int boomTarget = 9;
-                    if (a.hasQuirk("fragile_fuel")) {
+                    if (a.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                         boomTarget = 7;
                     }
                     if (a.isLargeCraft() && a.isClan()
@@ -25550,7 +25560,7 @@ public class Server implements Runnable {
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType),
                                       true, damage, false));
         if ((critType != Tank.CRIT_NONE) && t.hasEngine() && !t.getEngine().isFusion()
-            && t.hasQuirk("fragile_fuel") && (Compute.d6(2) > 9)) {
+            && t.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL) && (Compute.d6(2) > 9)) {
             // BOOM!!
             vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0,
                     Tank.CRIT_FUEL_TANK), true, damage, false));

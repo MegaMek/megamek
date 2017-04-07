@@ -4834,11 +4834,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // check for quirks
-        // TODO: assuming the range of this active probe is 2
-        // http://www.classicbattletech.com/forums/index.php/topic,52961.new.html#new
         int quirkBonus = 0;
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)) {
-            quirkBonus = 2;
+            if (isClan()) {
+                quirkBonus = 5;
+            } else {
+                quirkBonus = 4;
+            }
         }
 
         // check for SPA
@@ -4851,6 +4853,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP)
                 && !m.isInoperable()) {
+                
+                // Quirk bonus is only 2 if equiped with BAP
+                if (quirkBonus > 0) {
+                    quirkBonus = 2;
+                }
                 // System.err.println("BAP type name: "+m.getName()+"
                 // internalName: "+((MiscType)m.getType()).internalName);
                 // in space the range of all BAPs is given by the mode

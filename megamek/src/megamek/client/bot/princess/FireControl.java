@@ -226,6 +226,8 @@ public class FireControl {
             new TargetRollModifier(-1, "accurate weapon quirk");
     protected static final TargetRollModifier TH_INACCURATE_WEAP =
             new TargetRollModifier(1, "inaccurate weapon quirk");
+    protected static final TargetRollModifier TH_STABLE_WEAP =
+            new TargetRollModifier(1, "stabilized weapon quirk");
     protected static final TargetRollModifier TH_RNG_LARGE =
             new TargetRollModifier(-1, "target large vehicle or superheavy mech");
     protected static final TargetRollModifier TH_AIR_STRIKE_PATH =
@@ -954,6 +956,9 @@ public class FireControl {
         }
         if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_INACCURATE)) {
             toHit.addModifier(TH_INACCURATE_WEAP);
+        }
+        if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON) && (shooter.moved == EntityMovementType.MOVE_RUN)) {
+            toHit.addModifier(TH_STABLE_WEAP);
         }
 
         return toHit;

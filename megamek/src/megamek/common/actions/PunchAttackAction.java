@@ -261,8 +261,9 @@ public class PunchAttackAction extends PhysicalAttackAction {
                 ae.hasSystem(Mech.ACTUATOR_HAND, armLoc);
         // Missing hand actuator is not cumulative with missing actuator,
         //  but critical damage is cumulative
-        if (!hasClaws && !hasHandActuator &&
-            hasLowerArmActuator) {
+        if (!hasClaws && !hasHandActuator && hasLowerArmActuator
+                && (((arm == PunchAttackAction.RIGHT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_RA))
+                        || (arm == PunchAttackAction.LEFT) && !ae.hasQuirk(OptionsConstants.QUIRK_POS_BARREL_FIST_LA))) {
             toHit.addModifier(1, "Hand actuator missing");
             // Check for present but damaged hand actuator
         } else if (hasHandActuator && !hasClaws &&

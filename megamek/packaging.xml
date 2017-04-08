@@ -257,6 +257,9 @@
 				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
+		<fixcrlf srcdir="${localdir}" eol="lf">
+			<include name="**/*.sh"/>
+		</fixcrlf>
 	</target>
 
 	<target name="nix-tar" description="Create a compressed tar file of the unix distribution">

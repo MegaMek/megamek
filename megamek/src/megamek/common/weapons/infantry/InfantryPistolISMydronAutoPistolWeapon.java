@@ -44,10 +44,10 @@ public class InfantryPistolISMydronAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.14;
         infantryRange = 0;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2602, 2612, 2700);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_B, RATING_B, RATING_B });
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2607, 2612, 2700, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FS)
+		        .setProductionFactions(F_FS).setTechRating(RATING_C)
+		        .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B);
     }
 }
 

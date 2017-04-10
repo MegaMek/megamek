@@ -44,9 +44,10 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.17;
         infantryRange = 0;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3000, 3010, 3050);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_C, RATING_B });
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3005, 3010, 3050, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_F, RATING_C, RATING_B);
+
     }
 }

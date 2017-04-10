@@ -46,9 +46,9 @@ public class InfantrySupportISPortableAutocannonWeapon extends InfantryWeapon {
         infantryRange = 1;
         crew = 2;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2100, 2255, 2300);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_D, RATING_D, RATING_C });
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2255, 2300, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false).setProductionFactions(F_TA).setTechRating(RATING_C)
+		        .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C);
+
     }
 }

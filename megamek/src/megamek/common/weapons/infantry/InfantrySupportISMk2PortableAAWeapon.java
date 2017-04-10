@@ -51,11 +51,11 @@ public class InfantrySupportISMk2PortableAAWeapon extends InfantryWeapon {
         longRange = 6;
         extremeRange = 8;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2498, 2510, 2590, 2790, 3056);
-        techAdvancement.setApproximate(true, false, false,false,false);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2498, 2510, 2590, 2790, 3056)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH).setReintroductionFactions(F_FW).setTechRating(RATING_D)
+		        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D);
+
     }
 }
 

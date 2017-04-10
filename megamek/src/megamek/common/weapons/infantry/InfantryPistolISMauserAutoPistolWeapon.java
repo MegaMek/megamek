@@ -44,9 +44,10 @@ public class InfantryPistolISMauserAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.17;
         infantryRange = 0;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2485, 2495, 2550);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_B, RATING_C, RATING_B });
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2490, 2495, 2550, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_C)
+		        .setAvailability(RATING_C, RATING_B, RATING_C, RATING_B);
+
     }
 }

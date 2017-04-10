@@ -44,9 +44,10 @@ public class InfantryPistolISNambuAutoPistolWeapon extends InfantryWeapon {
         infantryDamage = 0.21;
         infantryRange = 0;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2530, 2540, 2600);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_B, RATING_C, RATING_C, RATING_C });
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2535, 2540, 2600, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
+		        .setProductionFactions(F_DC).setTechRating(RATING_C)
+		        .setAvailability(RATING_B, RATING_C, RATING_C, RATING_C);
+
     }
 }

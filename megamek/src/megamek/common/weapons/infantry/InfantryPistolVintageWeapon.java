@@ -45,9 +45,9 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
         infantryDamage = 0.11;
         infantryRange = 1;
         rulesRefs =" 273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_D, RATING_D, RATING_E });
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false).setTechRating(RATING_C)
+		        .setAvailability(RATING_C, RATING_D, RATING_D, RATING_E);
+
     }
 }

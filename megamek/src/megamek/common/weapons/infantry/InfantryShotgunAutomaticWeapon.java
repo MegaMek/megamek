@@ -44,9 +44,9 @@ public class InfantryShotgunAutomaticWeapon extends InfantryWeapon {
         infantryDamage = 0.23;
         infantryRange = 0;
         rulesRefs =" 273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        techAdvancement.setTechRating(RATING_A);
-        techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false).setTechRating(RATING_C)
+		        .setAvailability(RATING_B, RATING_B, RATING_C, RATING_C);
+
     }
 }

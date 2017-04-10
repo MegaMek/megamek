@@ -43,9 +43,10 @@ public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWea
         infantryDamage = 0.28;
         infantryRange = 0;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3043, 3051, 3068);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3048, 3051, 3068, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_FS, F_LC).setTechRating(RATING_C)
+		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B);
+
     }
 }

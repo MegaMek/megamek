@@ -1,5 +1,6 @@
 VERSION HISTORY:
 ----------------
+
 v0.42.2-git
 + Issue #476: VTOL armor diagram changes color incorrectly?
 + Issue #198: Long tom cannons cannot switch to indirect firing mode
@@ -30,6 +31,8 @@ v0.42.2-git
 + Issue #408: Offboard units not checked for planetary conditions (ie, vacuum)
 + Issue #394: No location exposure check on deployment
 + Issue #487: Carriage returns in startup.sh causing issues
++ Removed BLDG_CF & BRIDGE_CF from board validator (these aren't strictly
+	required, as they have default values if not defined)
 + Issue #529: Movement Interruption with Dialog Box Ends Turn
 
 v0.42.1 (2017-02-13 03:30 UTC)

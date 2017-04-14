@@ -891,7 +891,7 @@ public class Jumpship extends Aero {
         }
 
         // fuel tanks
-        cost += (200 * getFuel()) / getFuelPerTon();
+        cost += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
         // armor
         cost += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);

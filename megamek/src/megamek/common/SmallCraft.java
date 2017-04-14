@@ -563,7 +563,7 @@ public class SmallCraft extends Aero {
         cost += (500 * getOriginalWalkMP() * weight) / 100.0;
 
         // fuel tanks
-        cost += (200 * getFuel()) / 80.0;
+        cost += (200 * getFuel()) / 80.0 * 1.02;
 
         // armor
         cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);

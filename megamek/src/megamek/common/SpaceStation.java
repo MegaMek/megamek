@@ -70,7 +70,7 @@ public class SpaceStation extends Jumpship {
         }
 
         // fuel tanks
-        cost += 200 * getFuel() / getFuelPerTon();
+        cost += 200 * getFuel() / getFuelPerTon() * 1.02;
 
         // armor
         cost += getArmorWeight(locations() - 2) * EquipmentType.getArmorCost(armorType[0]);

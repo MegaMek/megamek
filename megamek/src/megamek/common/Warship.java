@@ -180,7 +180,7 @@ public class Warship extends Jumpship {
 
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[22];
+        double[] costs = new double[23];
         int costIdx = 0;
         double cost = 0;
 

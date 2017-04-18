@@ -204,7 +204,7 @@ public class Warship extends Jumpship {
         // Drive Unit
         costs[costIdx++] += 500 * getOriginalWalkMP() * (weight / 100.0);
         // Engine
-        costs[costIdx++] += 1000 * weight * 0.06;
+        costs[costIdx++] += 1000 * getOriginalWalkMP() * weight * 0.06;
         // Engine Control Unit
         costs[costIdx++] += 1000;
 
@@ -221,7 +221,7 @@ public class Warship extends Jumpship {
         // Tankage
         driveCost[driveIdx++] += 50000 * getKFIntegrity();
         // Sail
-        driveCost[driveIdx++] += 50000 * (30 + (weight / 7500));
+        driveCost[driveIdx++] += 50000 * (30 + (weight / 20000));
         // Charging System
         driveCost[driveIdx++] += 500000 + (200000 * getDocks()); 
         
@@ -237,7 +237,7 @@ public class Warship extends Jumpship {
         costs[costIdx++] += driveCosts;
 
         // K-F Drive Support Systems
-        costs[costIdx++] += 20000000 * (50 + weight / 10);
+        costs[costIdx++] += 20000000 * (50 + weight / 10000);
 
         // Additional Ships Systems
         // Attitude Thrusters

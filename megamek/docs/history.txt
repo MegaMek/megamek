@@ -9,6 +9,7 @@ v0.43.2-git
 + Issue #487: Carriage returns in startup.sh causing issues
 + Removed BLDG_CF & BRIDGE_CF from board validator (these aren't strictly
 	required, as they have default values if not defined)
++ Issue #529: Movement Interruption with Dialog Box Ends Turn
 
 v0.43.1 (2017-03-31 01:15 UTC)
 + Feature: Added checks for null crew when checking for MD enhancements

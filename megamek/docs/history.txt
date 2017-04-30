@@ -5,7 +5,6 @@ v0.43.2-git
 + PR #518: Updated quirks for errata: Improved sensors, cooling system flaw,
 	fragile fuel tank
 + Issue #526: Further image atlas packaging bugs
-+ Issue #526: Updating Unit Image files that have errors.
 + Issue #487: Carriage returns in startup.sh causing issues
 + Removed BLDG_CF & BRIDGE_CF from board validator (these aren't strictly
 	required, as they have default values if not defined)

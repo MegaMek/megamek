@@ -9085,8 +9085,8 @@ public class Server implements Runnable {
         // Need to check here if the 'Mech actually went from non-prone to prone
         // here because 'fellDuringMovement' is sometimes abused just to force
         // another turn and so doesn't reliably tell us.
-        boolean continueTurnFromFall = !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT)
-                && (entity instanceof Mech) && !wasProne && entity.isProne()
+        boolean continueTurnFromFall = !(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT)
+                    && (entity instanceof Mech) && !wasProne && entity.isProne())
                 && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
                 && !turnOver && (entity.mpUsed < entity.getRunMP())
                 && (overallMoveType != EntityMovementType.MOVE_JUMP);

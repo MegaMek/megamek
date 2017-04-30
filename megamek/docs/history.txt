@@ -2,7 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.43.2-git
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist
-+ Pr #518: Updated quirks for errata: Improved sensors, cooling system flaw,
++ PR #518: Updated quirks for errata: Improved sensors, cooling system flaw,
 	fragile fuel tank
 + Issue #526: Further image atlas packaging bugs
 + Issue #526: Updating Unit Image files that have errors.
@@ -29,8 +29,8 @@ v0.43.1 (2017-03-31 01:15 UTC)
 + Issue #490: Fixed princess documentation.
 + Feature: Princess will now respond with "You are not my boss." if a player
 	attempts to issue a command to an enemy Princess instance.
-+ Issue #198: Long tom cannons cannot switch to indirect firing mode
-+ Issue #456: Cannot cancel hotloading of LRMs during battle
++ Issue #198: Long Tom cannons cannot switch to indirect firing mode
++ Issue #456: Cannot cancel hot loading of LRMs during battle
 + Issue #457: Hot loaded LRMs not working properly
 + Issue #499: Map Editor Theme Broken
 + Issue #487: Issues with startup.sh 

@@ -2,14 +2,14 @@ VERSION HISTORY:
 ----------------
 v0.43.2-git
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist
-+ Pr #518: Updated quirks for errata: Improved sensors, cooling system flaw,
++ PR #518: Updated quirks for errata: Improved sensors, cooling system flaw,
 	fragile fuel tank
 + Issue #526: Further image atlas packaging bugs
-+ Issue #526: Updating Unit Image files that have errors.
 + Issue #487: Carriage returns in startup.sh causing issues
 + Removed BLDG_CF & BRIDGE_CF from board validator (these aren't strictly
 	required, as they have default values if not defined)
 + Issue #529: Movement Interruption with Dialog Box Ends Turn
++ Data: New Sprites, Unit Fixes and RAT Fixes.
 
 v0.43.1 (2017-03-31 01:15 UTC)
 + Feature: Added checks for null crew when checking for MD enhancements
@@ -29,8 +29,8 @@ v0.43.1 (2017-03-31 01:15 UTC)
 + Issue #490: Fixed princess documentation.
 + Feature: Princess will now respond with "You are not my boss." if a player
 	attempts to issue a command to an enemy Princess instance.
-+ Issue #198: Long tom cannons cannot switch to indirect firing mode
-+ Issue #456: Cannot cancel hotloading of LRMs during battle
++ Issue #198: Long Tom cannons cannot switch to indirect firing mode
++ Issue #456: Cannot cancel hot loading of LRMs during battle
 + Issue #457: Hot loaded LRMs not working properly
 + Issue #499: Map Editor Theme Broken
 + Issue #487: Issues with startup.sh 

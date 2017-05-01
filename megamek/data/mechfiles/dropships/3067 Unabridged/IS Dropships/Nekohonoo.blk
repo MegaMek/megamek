@@ -254,7 +254,7 @@ spheroid
 <transporters>
 ASFBay:6:2
 SmallCraftBay:9:2
-BattleArmorBay:27:4
+BattleArmorBay:27:2
 CargoBay:1388:2
 </transporters>
 

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.43.2-git
+v0.43.2 2017-05-1 22:00 UTC)
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist
 + PR #518: Updated quirks for errata: Improved sensors, cooling system flaw,
 	fragile fuel tank

@@ -1,7 +1,6 @@
 VERSION HISTORY:
 ----------------
-
-v0.42.2-git
+v0.42.2 (2017-05-1 01:00 UTC)
 + Issue #476: VTOL armor diagram changes color incorrectly?
 + Issue #198: Long tom cannons cannot switch to indirect firing mode
 + Issue #456: Cannot cancel hotloading of LRMs during battle

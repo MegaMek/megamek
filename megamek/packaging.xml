@@ -257,7 +257,7 @@
 				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
-		<fixcrlf srcdir="${localdir}" eol="lf">
+		<fixcrlf srcdir="${nixdist}" eol="lf">
 			<include name="**/*.sh"/>
 		</fixcrlf>
 	</target>

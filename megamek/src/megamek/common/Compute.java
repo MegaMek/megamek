@@ -2041,7 +2041,12 @@ public class Compute {
 
         // # of targets, +1 for the passed target
         int countTargets = 1 + targIds.size();
-
+        
+        int maxPrimary = 1;
+        //Tripods and QuadVees with dedicated gunnery can target up to three units before incurring a penalty
+        if (attacker.getCrew() instanceof MultiCrew && attacker.getCrew().isGunnerActive()) {
+            maxPrimary = 3;
+        }
         if (game.getOptions().booleanOption("tacops_tank_crews")
             && (attacker instanceof Tank)) {
 
@@ -2054,10 +2059,11 @@ public class Compute {
             }
             // If we are a tank, we can have Crew Size - 1 targets before 
             //  incurring a secondary target penalty (or crew size - 2 secondary 
-            //  targets without penalty) 
-            if (countTargets <= attacker.getCrew().getSize() - 1) {
-                return null; // no modifier
-            }
+            //  targets without penalty)
+            maxPrimary =  attacker.getCrew().getSize() - 1;
+        }
+        if (countTargets <= maxPrimary) {
+            return null; // no modifier
         }
 
         if ((primaryTarget == Entity.NONE)

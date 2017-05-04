@@ -18483,7 +18483,11 @@ public class Server implements Runnable {
                             r.subject = entity.getId();
                             r.addDesc(entity);
                             r.add(shutdown);
-                            r.add(sdroll);
+                            if (entity.getCrew().isTechOfficerActive()) {
+                                r.add((sdroll - 2) + "(+2)");
+                            } else {
+                                r.add(sdroll);
+                            }
                             if (sdroll >= shutdown) {
                                 // avoided
                                 r.choose(true);
@@ -18565,7 +18569,11 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(boom);
-                    r.add(boomroll);
+                    if (entity.getCrew().isTechOfficerActive()) {
+                        r.add((boomroll - 2) + "(+2)");
+                    } else {
+                        r.add(boomroll);
+                    }
                     if (boomroll >= boom) {
                         // mech is ok
                         r.choose(true);

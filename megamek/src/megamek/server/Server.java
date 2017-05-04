@@ -20630,6 +20630,7 @@ public class Server implements Runnable {
         }
         return vReport;
     }
+    
 
     /**
      * Inflict damage on a pilot
@@ -20638,10 +20639,23 @@ public class Server implements Runnable {
      * @param damage The <code>int</code> amount of damage.
      */
     public Vector<Report> damageCrew(Entity en, int damage) {
+        return damageCrew(en, damage, false);
+    }
+
+    /**
+     * Inflict damage on a pilot
+     *
+     * @param en            The <code>Entity</code> who's pilot gets damaged.
+     * @param damage        The <code>int</code> amount of damage.
+     * @param pilotFeedback Whether the damage is due to neurohelmet feedback and only damages the pilot
+     *                      in a multi-crewed cockpit.
+     */
+    public Vector<Report> damageCrew(Entity en, int damage, boolean pilotFeedback) {
         Vector<Report> vDesc = new Vector<Report>();
         Crew crew = en.getCrew();
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
+            crew.applyDamage(damage, pilotFeedback);
             crew.setHits(crew.getHits() + damage);
             if (Crew.DEATH > crew.getHits()) {
                 r = new Report(6025);
@@ -26884,7 +26898,7 @@ public class Server implements Runnable {
             pilotDamage = 0;
         }
         if (!en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
-            vDesc.addAll(damageCrew(en, pilotDamage));
+            vDesc.addAll(damageCrew(en, pilotDamage, true));
         }
         if (en.getCrew().isDoomed() || en.getCrew().isDead()) {
             vDesc.addAll(destroyEntity(en, "crew death", true));

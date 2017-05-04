@@ -146,6 +146,18 @@ public class MultiCrew extends Crew {
         return bonus;
     }
     
+    /**
+     * Since this value is used to determine crew death, we want to return the lowest value. 
+     */
+    @Override
+    public int getHits() {
+        int hits = Math.min(super.getHits(), pilotHits);
+        if (getSize() > 2) {
+            hits = Math.min(hits, techHits);
+        }
+        return hits;
+    }
+    
     public int getGunnerHits() {
         return super.getHits();
     }
@@ -158,16 +170,41 @@ public class MultiCrew extends Crew {
         return techHits;
     }
     
+    @Override
+    public void applyDamage(int damage, boolean ammoExplosion) {
+        if (!isEjected()) {
+            if (ammoExplosion) {
+                if (isPilotActive()) {
+                    pilotHits += damage;
+                    //If the pilot is out, who's driving? We'll favor the gunner, unless there
+                    //is an active tech officer with a better piloting skill (or the gunner is out).
+                } else if (isTechOfficerActive() && (!isGunnerActive() || techPiloting < gunnerPiloting)) {
+                    techHits += damage;
+                } else {
+                    super.applyDamage(damage, ammoExplosion);
+                }
+            } else {
+                super.applyDamage(damage, ammoExplosion);
+                pilotHits += damage;
+                techHits += damage;
+            }
+        }
+    }
+    
     public void setGunnerHits(int hits) {
         super.setHits(hits);
     }
     
     public void setPilotHits(int hits) {
-        pilotHits = hits;
+        if (!isEjected()) {
+            pilotHits = hits;
+        }
     }
     
     public void setTechHits(int hits) {
-        techHits = hits;
+        if (!isEjected()) {
+            techHits = hits;
+        }
     }
     
     //The crew as a whole is considered unconscious only if at least one is alive and none are active.

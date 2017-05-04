@@ -281,6 +281,12 @@ public class Crew implements Serializable {
             this.hits = hits;
         }
     }
+    
+    public void applyDamage(int damage, boolean ammoExplosion) {
+        if (!ejected) {
+            hits += damage;
+        }
+    }
 
     public void setInitBonus(int bonus) {
         initBonus = bonus;

@@ -136,6 +136,16 @@ public class MultiCrew extends Crew {
         }
     }
     
+    //TODO: this bonus should be +2 for a tripod that is designated as the force's command unit
+    @Override
+    public int getCommandBonus() {
+        int bonus = super.getCommandBonus();
+        if (isTechOfficerActive()) {
+            ++bonus;
+        }
+        return bonus;
+    }
+    
     public int getGunnerHits() {
         return super.getHits();
     }
@@ -278,14 +288,16 @@ public class MultiCrew extends Crew {
     //The crew as a whole is considered active if any crewmember is active, since any can fill in as pilot and/or gunner.
     @Override
     public boolean isActive() {
-        return isGunnerActive() || isPilotActive() || isTechActive();
+        return isGunnerActive() || isPilotActive() || isTechOfficerActive();
     }
 
+    @Override
     public boolean isPilotActive() {
         return !pilotUnconscious && !pilotDead;
     }
 
-    public boolean isTechActive() {
+    @Override
+    public boolean isTechOfficerActive() {
         return getSize() > 2 && !techUnconscious && !techDead;
     }
 

@@ -20656,7 +20656,6 @@ public class Server implements Runnable {
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
             crew.applyDamage(damage, pilotFeedback);
-            crew.setHits(crew.getHits() + damage);
             if (Crew.DEATH > crew.getHits()) {
                 r = new Report(6025);
             } else {

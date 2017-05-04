@@ -804,4 +804,31 @@ public class Crew implements Serializable {
 
         return Compute.d6(2);
     }
+    
+    /**
+     * Tripods and QuadVees get special benefits if the dedicated pilot is active.
+     * 
+     * @return Whether the pilot is alive and conscious.
+     */
+    public boolean isPilotActive() {
+        return isActive();
+    }
+    
+    /**
+     * Tripods and QuadVees get special benefits if the dedicated gunner is active.
+     * 
+     * @return Whether the gunner is alive and conscious.
+     */
+    public boolean isGunnerActive() {
+        return isActive();
+    }
+    
+    /**
+     * Superheavy tripods gain benefits from having a technical officer.
+     * 
+     * @return Whether the tech officer is alive and conscious.
+     */
+    public boolean isTechOfficerActive() {
+        return false;
+    }
 }

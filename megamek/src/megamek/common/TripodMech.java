@@ -75,6 +75,11 @@ public class TripodMech extends Mech {
                                                   ACTUATOR_LOWER_LEG));
         setCritical(LOC_CLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                                                   ACTUATOR_FOOT));
+        if (inCockpitType == COCKPIT_SUPERHEAVY_TRIPOD) {
+            setCrew(new MultiCrew(3));
+        } else {
+            setCrew(new MultiCrew(2));
+        }
     }
 
     /**

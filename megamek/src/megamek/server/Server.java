@@ -18476,6 +18476,9 @@ public class Server implements Runnable {
                                 }
                             }
                             int sdroll = Compute.d6(2);
+                            if (entity.getCrew().isTechOfficerActive()) {
+                                sdroll += 2;
+                            }
                             r = new Report(5060);
                             r.subject = entity.getId();
                             r.addDesc(entity);
@@ -18555,6 +18558,9 @@ public class Server implements Runnable {
                         // but automatic explosion.
                     }
                     int boomroll = Compute.d6(2);
+                    if (entity.getCrew().isTechOfficerActive()) {
+                        boomroll += 2;
+                    }
                     r = new Report(5065);
                     r.subject = entity.getId();
                     r.addDesc(entity);

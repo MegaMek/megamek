@@ -65,6 +65,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.TripodMech;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
@@ -1009,6 +1010,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.addModifier(Compute.getAttackerMovementModifier(game, tank.getId()).getValue(),
                         "stabiliser damage");
             }
+        }
+
+        //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
+        if (ae instanceof TripodMech && !ae.getCrew().isGunnerActive()) {
+            toHit.addModifier(2, "gunner incapacitated");
         }
 
         if (ae.hasFunctionalArmAES(weapon.getLocation()) && !weapon.isSplit()) {
@@ -2267,7 +2273,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
         }
-
+        
         // Vehicles may suffer from criticals
         if (ae instanceof Tank) {
             Tank tank = (Tank) ae;
@@ -2282,6 +2288,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (sensors > 0) {
                 toHit.addModifier(sensors, "sensor damage");
             }
+        }
+
+        //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
+        if (ae instanceof TripodMech && !ae.getCrew().isGunnerActive()) {
+            toHit.addModifier(+2, "gunner incapacitated");
         }
 
         // if we have BAP with MaxTech rules, and there are woods in the

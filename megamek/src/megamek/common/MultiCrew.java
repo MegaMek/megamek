@@ -159,11 +159,25 @@ public class MultiCrew extends Crew {
     public void setTechHits(int hits) {
         techHits = hits;
     }
+    
+    //The crew as a whole is considered unconscious only if at least one is alive and none are active.
+    @Override
+    public boolean isUnconscious() {
+        return !isActive() && !isDead();
+    }
 
     public boolean isGunnerUnconscious() {
         return super.isUnconscious();
     }
+    
+    public boolean isPilotUnconscious() {
+        return pilotUnconscious;
+    }
 
+    public boolean isTechUnconscious() {
+        return techUnconscious;
+    }
+    
     public void setGunnerUnconscious(boolean unconscious) {
         super.setUnconscious(unconscious);
     }
@@ -174,6 +188,13 @@ public class MultiCrew extends Crew {
     
     public void setTechUnconcious(boolean unconscious) {
         techUnconscious = unconscious;
+    }
+    
+    //The crew as a whole is dead only if all members are dead.
+    @Override
+    public boolean isDead() {
+        return isGunnerDead() && isPilotDead()
+                && (getSize() < 3 || isTechDead());
     }
 
     public boolean isGunnerDead() {
@@ -211,6 +232,12 @@ public class MultiCrew extends Crew {
             }
         }
     }
+    
+    @Override
+    public boolean isDoomed() {
+        return isGunnerDoomed() && isPilotDoomed()
+                && (getSize() < 3 || isTechDoomed());
+    }
 
     public boolean isGunnerDoomed() {
         return super.isDoomed();
@@ -246,6 +273,12 @@ public class MultiCrew extends Crew {
                 techHits = 6;
             }
         }
+    }
+
+    //The crew as a whole is considered active if any crewmember is active, since any can fill in as pilot and/or gunner.
+    @Override
+    public boolean isActive() {
+        return isGunnerActive() || isPilotActive() || isTechActive();
     }
 
     public boolean isPilotActive() {

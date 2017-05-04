@@ -270,6 +270,12 @@ public class TripodMech extends Mech {
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
+        if (getCrew().isPilotActive()) {
+            roll.addModifier(-1, "Dedicated pilot");
+        } else {
+            roll.addModifier(2, "Pilot incapacitated");
+        }
+        
         int[] locsToCheck = new int[3];
 
         locsToCheck[0] = Mech.LOC_RLEG;

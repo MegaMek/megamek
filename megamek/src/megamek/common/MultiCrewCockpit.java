@@ -27,23 +27,23 @@ public class MultiCrewCockpit extends Crew {
      *
      */
     public enum CockpitType {
-        TRIPOD (2, 0, 1, -1, -1, 3),
-        SUPERHEAVY_TRIPOD (3, 0, 1, 2, 2, 3),
-        QUADVEE (2, 0, 1, -1, -1, 3),
-        DUAL (2, 0, 1, -1, -1, 2),
-        COMMAND_CONSOLE (2, 0, 0, -1, -1, 1),
-        FORCE_COMMAND_CONSOLE (2, 0, 0, 1, -1, 1);
+        TRIPOD (new String[] {"Pilot", "Gunner"}, 0, 1, -1, -1, 3),
+        SUPERHEAVY_TRIPOD (new String[] {"Pilot", "Gunner", "Tech Officer"}, 0, 1, 2, 2, 3),
+        QUADVEE (new String[] {"Pilot", "Gunner"}, 0, 1, -1, -1, 3),
+        DUAL (new String[] {"Pilot", "Gunner"}, 0, 1, -1, -1, 2),
+        COMMAND_CONSOLE (new String[] {"Pilot", "Commander"}, 0, 0, -1, -1, 1),
+        FORCE_COMMAND_CONSOLE (new String[] {"Pilot", "Commander"}, 0, 0, 1, -1, 1);
         
-        private int crewSize;
+        private String[] roleNames;
         private int pilotPos;
         private int gunnerPos;
         private int commanderPos;
         private int techPos;
         private int maxPrimaryTargets;
         
-        CockpitType(int crewSize, int pilotPos, int gunnerPos, int commanderPos, int techPos,
+        CockpitType(String[] roleNames, int pilotPos, int gunnerPos, int commanderPos, int techPos,
                 int maxPrimaryTargets) {
-            this.crewSize = crewSize;
+            this.roleNames = roleNames;
             this.pilotPos = pilotPos;
             this.commanderPos = commanderPos;
             this.techPos = techPos;
@@ -51,7 +51,11 @@ public class MultiCrewCockpit extends Crew {
         }
         
         public int getCrewSize() {
-            return crewSize;
+            return roleNames.length;
+        }
+        
+        public String getRoleName(int index) {
+            return roleNames[index];
         }
         
         public int getPilotPos() {

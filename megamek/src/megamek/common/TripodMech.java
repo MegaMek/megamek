@@ -75,11 +75,6 @@ public class TripodMech extends Mech {
                                                   ACTUATOR_LOWER_LEG));
         setCritical(LOC_CLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                                                   ACTUATOR_FOOT));
-        if (inCockpitType == COCKPIT_SUPERHEAVY_TRIPOD) {
-            setCrew(new MultiCrew(3));
-        } else {
-            setCrew(new MultiCrew(2));
-        }
     }
 
     /**
@@ -270,7 +265,7 @@ public class TripodMech extends Mech {
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-        if (getCrew().isPilotActive()) {
+        if (getCrew().hasDedicatedPilot()) {
             roll.addModifier(-1, "Dedicated pilot");
         } else {
             roll.addModifier(2, "Pilot incapacitated");

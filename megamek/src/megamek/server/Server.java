@@ -18476,14 +18476,14 @@ public class Server implements Runnable {
                                 }
                             }
                             int sdroll = Compute.d6(2);
-                            if (entity.getCrew().isTechOfficerActive()) {
+                            if (entity.getCrew().hasActiveTechOfficer()) {
                                 sdroll += 2;
                             }
                             r = new Report(5060);
                             r.subject = entity.getId();
                             r.addDesc(entity);
                             r.add(shutdown);
-                            if (entity.getCrew().isTechOfficerActive()) {
+                            if (entity.getCrew().hasActiveTechOfficer()) {
                                 r.add((sdroll - 2) + "(+2)");
                             } else {
                                 r.add(sdroll);
@@ -18562,14 +18562,14 @@ public class Server implements Runnable {
                         // but automatic explosion.
                     }
                     int boomroll = Compute.d6(2);
-                    if (entity.getCrew().isTechOfficerActive()) {
+                    if (entity.getCrew().hasActiveTechOfficer()) {
                         boomroll += 2;
                     }
                     r = new Report(5065);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(boom);
-                    if (entity.getCrew().isTechOfficerActive()) {
+                    if (entity.getCrew().hasActiveTechOfficer()) {
                         r.add((boomroll - 2) + "(+2)");
                     } else {
                         r.add(boomroll);

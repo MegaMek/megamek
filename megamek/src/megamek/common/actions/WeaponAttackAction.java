@@ -1013,7 +1013,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
-        if (ae instanceof TripodMech && !ae.getCrew().isGunnerActive()) {
+        if (ae instanceof TripodMech && !ae.getCrew().hasDedicatedGunner()) {
             toHit.addModifier(2, "gunner incapacitated");
         }
 
@@ -2291,7 +2291,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
-        if (ae instanceof TripodMech && !ae.getCrew().isGunnerActive()) {
+        if (ae instanceof TripodMech && !ae.getCrew().hasDedicatedGunner()) {
             toHit.addModifier(+2, "gunner incapacitated");
         }
 

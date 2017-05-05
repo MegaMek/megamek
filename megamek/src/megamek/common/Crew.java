@@ -814,19 +814,19 @@ public class Crew implements Serializable {
     /**
      * Tripods and QuadVees get special benefits if the dedicated pilot is active.
      * 
-     * @return Whether the pilot is alive and conscious.
+     * @return Whether a Mek has a separate pilot who is active. 
      */
-    public boolean isPilotActive() {
-        return isActive();
+    public boolean hasDedicatedPilot() {
+        return false;
     }
     
     /**
      * Tripods and QuadVees get special benefits if the dedicated gunner is active.
      * 
-     * @return Whether the gunner is alive and conscious.
+     * @return Whether a Mek has a separate gunner who is active. 
      */
-    public boolean isGunnerActive() {
-        return isActive();
+    public boolean hasDedicatedGunner() {
+        return false;
     }
     
     /**
@@ -834,7 +834,7 @@ public class Crew implements Serializable {
      * 
      * @return Whether the tech officer is alive and conscious.
      */
-    public boolean isTechOfficerActive() {
+    public boolean hasActiveTechOfficer() {
         return false;
     }
 }

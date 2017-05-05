@@ -325,6 +325,25 @@ public abstract class Mech extends Entity {
         // ejection systems are disabled by default or not.
         autoEject = !PreferenceManager.getClientPreferences()
                 .defaultAutoejectDisabled();
+        
+        switch (inCockpitType) {
+        case COCKPIT_TRIPOD:
+            setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.TRIPOD));
+            break;
+        case COCKPIT_SUPERHEAVY_TRIPOD:
+            setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.SUPERHEAVY_TRIPOD));
+            break;
+        case COCKPIT_DUAL:
+            setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.DUAL));
+            break;
+        case COCKPIT_COMMAND_CONSOLE:
+            if (getWeightClass() < EntityWeightClass.WEIGHT_HEAVY) {
+                setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.COMMAND_CONSOLE));
+            } else {
+                setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.FORCE_COMMAND_CONSOLE));
+            }
+            break;
+        }
     }
 
     /**

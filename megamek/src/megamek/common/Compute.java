@@ -2044,8 +2044,8 @@ public class Compute {
         
         int maxPrimary = 1;
         //Tripods and QuadVees with dedicated gunnery can target up to three units before incurring a penalty
-        if (attacker.getCrew() instanceof MultiCrew && attacker.getCrew().isGunnerActive()) {
-            maxPrimary = 3;
+        if (attacker.getCrew() instanceof MultiCrewCockpit && attacker.getCrew().hasDedicatedGunner()) {
+            maxPrimary = ((MultiCrewCockpit)attacker.getCrew()).getCockpitType().getMaxPrimaryTargets();
         }
         if (game.getOptions().booleanOption("tacops_tank_crews")
             && (attacker instanceof Tank)) {

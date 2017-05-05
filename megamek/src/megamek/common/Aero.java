@@ -3599,6 +3599,11 @@ public class Aero extends Entity {
 
     public void setCockpitType(int type) {
         cockpitType = type;
+        if (type == COCKPIT_COMMAND_CONSOLE) {
+            setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.COMMAND_CONSOLE));
+        } else {
+            setCrew(new Crew(1));
+        }
     }
 
     public String getCockpitTypeString() {

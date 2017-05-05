@@ -33,13 +33,11 @@ public class MultiCrew extends Crew {
     //We'll use the values from the parent class for the gunner.
     private int pilotHits;
     private boolean pilotUnconscious;
-    private boolean pilotDoomed;
     private boolean pilotDead;
     private boolean pilotKoThisRound;
 
     private int techHits;
     private boolean techUnconscious;
-    private boolean techDoomed;
     private boolean techDead;
     private boolean techKoThisRound;
 
@@ -279,46 +277,13 @@ public class MultiCrew extends Crew {
             }
         }
     }
-    
+
     @Override
-    public boolean isDoomed() {
-        return isGunnerDoomed() && isPilotDoomed()
-                && (getSize() < 3 || isTechDoomed());
-    }
-
-    public boolean isGunnerDoomed() {
-        return super.isDoomed();
-    }
-
-    public boolean isPilotDoomed() {
-        return pilotDoomed;
-    }
-
-    public boolean isTechDoomed() {
-        return techDoomed;
-    }
-
-    public void setGunnerDoomed(boolean b) {
-        super.setDoomed(b);
-    }
-
-    public void setPilotDoomed(boolean b) {
-        // Ejected pilots stop taking hits.
-        if (!isEjected()) {
-            pilotDoomed = b;
-            if (b) {
-                pilotHits = 6;
-            }
-        }
-    }
-
-    public void setTechDoomed(boolean b) {
-        // Ejected pilots stop taking hits.
-        if (!isEjected()) {
-            techDoomed = b;
-            if (b) {
-                techHits = 6;
-            }
+    public void setDoomed(boolean doomed) {
+        super.setDoomed(doomed);
+        if (doomed) {
+            pilotHits = 6;
+            techHits = 6;
         }
     }
 

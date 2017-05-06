@@ -739,23 +739,25 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if (cs.useAverageSkills()) {
-            int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e,
-                    true);
-
-            int gunnery = skills[0];
-            int piloting = skills[1];
-
-            e.getCrew().setGunnery(gunnery);
-            // For infantry, piloting doubles as antimek skill, and this is
-            // set based on whether the unit has antimek training, which gets
-            // set in the BLK file, so we should ignore the defaults
-            if (!(e instanceof Infantry)) {
-                e.getCrew().setPiloting(piloting);
+        for (int i = 0; i < e.getCrew().getDistinctCrewCount(); i++) {
+            if (cs.useAverageSkills()) {
+                int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e,
+                        true);
+    
+                int gunnery = skills[0];
+                int piloting = skills[1];
+    
+                e.getCrew().setGunnery(gunnery, i);
+                // For infantry, piloting doubles as antimek skill, and this is
+                // set based on whether the unit has antimek training, which gets
+                // set in the BLK file, so we should ignore the defaults
+                if (!(e instanceof Infantry)) {
+                    e.getCrew().setPiloting(piloting, i);
+                }
             }
-        }
-        if(cs.generateNames()) {
-            e.getCrew().setName(client.getRandomNameGenerator().generate());
+            if(cs.generateNames()) {
+                e.getCrew().setName(client.getRandomNameGenerator().generate(), i);
+            }
         }
     }
 

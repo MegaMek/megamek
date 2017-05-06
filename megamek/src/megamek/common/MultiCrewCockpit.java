@@ -362,6 +362,11 @@ public class MultiCrewCockpit extends Crew {
         Arrays.fill(this.koThisRound, koThisRound);
     }
     
+    @Override
+    public int getDistinctCrewCount() {
+        return getSize();
+    }
+    
     public int getCurrentPilotIndex() {
         return pilotIndex;
     }

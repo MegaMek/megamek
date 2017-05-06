@@ -47,11 +47,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Vector;
-import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -116,6 +116,7 @@ import megamek.common.Jumpship;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
+import megamek.common.MultiCrewCockpit;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
 import megamek.common.QuirksHandler;
@@ -3538,9 +3539,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                     c = clientgui.getClient();
                 }
                 for (Entity e : entities) {
-                    int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
-                    e.getCrew().setGunnery(skills[0]);
-                    e.getCrew().setPiloting(skills[1]);
+                    for (int i = 0; i < e.getCrew().getDistinctCrewCount(); i++) {
+                        int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                        e.getCrew().setGunnery(skills[0], i);
+                        e.getCrew().setPiloting(skills[1], i);
+                    }
                     c.sendUpdateEntity(e);
                 }
             } else if (command.equalsIgnoreCase("NAME")) {
@@ -3549,7 +3552,13 @@ public class ChatLounge extends AbstractPhaseDisplay
                     c = clientgui.getClient();
                 }
                 for (Entity e : entities) {
-                    e.getCrew().setName(c.getRandomNameGenerator().generate());
+                    if (e.getCrew() instanceof MultiCrewCockpit) {
+                        for (int i = 0; i < e.getCrew().getSize(); i++) {
+                            ((MultiCrewCockpit)e.getCrew()).setName(c.getRandomNameGenerator().generate(), i);
+                        }
+                    } else {
+                        e.getCrew().setName(c.getRandomNameGenerator().generate());
+                    }
                     c.sendUpdateEntity(e);
                 }
             } else if (command.equalsIgnoreCase("LOAD")) {

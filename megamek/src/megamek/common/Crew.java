@@ -816,6 +816,17 @@ public class Crew implements Serializable {
      * values to make code more readable by avoiding typecasts.
      */
     
+    /**
+     * @return The number of crew members that are tracked separately.
+     */
+    public int getDistinctCrewCount() {
+        return 1;
+    }
+    
+    public void setName(String name, int pos) {
+        setName(name);
+    }
+    
     public String getName(int pos) {
         return name;
     }
@@ -828,8 +839,32 @@ public class Crew implements Serializable {
         applyDamage(damage);
     }
     
+    public void setPiloting(int piloting, int pos) {
+        setPiloting(piloting);
+    }
+    
     public int getPiloting(int pos) {
         return piloting;
+    }
+    
+    public void setGunnery(int gunnery, int pos) {
+        setGunnery(gunnery);
+    }
+    
+    public void setGunneryL(int gunneryL, int pos) {
+        setGunneryL(gunneryL);
+    }
+    
+    public void setGunneryB(int gunneryB, int pos) {
+        setGunneryB(gunneryB);
+    }
+    
+    public void setGunneryM(int gunneryM, int pos) {
+        setGunneryM(gunneryM);
+    }
+    
+    public int getGunnery(int pos) {
+        return getGunnery();
     }
     
     public boolean isDead(int pos) {

@@ -184,7 +184,7 @@ public class Crew implements Serializable {
     public String getName() {
         return name;
     }
-
+    
     public String getNickname() {
         return nickname;
     }
@@ -282,12 +282,12 @@ public class Crew implements Serializable {
         }
     }
     
-    public void applyDamage(int damage, boolean ammoExplosion) {
+    public void applyDamage(int damage) {
         if (!ejected) {
             hits += damage;
         }
     }
-
+    
     public void setInitBonus(int bonus) {
         initBonus = bonus;
     }
@@ -809,6 +809,39 @@ public class Crew implements Serializable {
         }
 
         return Compute.d6(2);
+    }
+    
+    /**
+     * The following methods are used for multi-crew cockpits and are implemented here with default
+     * values to make code more readable by avoiding typecasts.
+     */
+    
+    public String getName(int pos) {
+        return name;
+    }
+
+    public void applyDamage(int damage, int crewPos) {
+        applyDamage(damage);
+    }
+    
+    public int getPiloting(int pos) {
+        return piloting;
+    }
+    
+    public boolean isDead(int pos) {
+        return isDead();
+    }
+    
+    public boolean isUnconscious(int pos) {
+        return isUnconscious();
+    }
+    
+    public boolean isActive(int pos) {
+        return isActive();
+    }
+    
+    public int getCurrentPilotIndex() {
+        return -1;
     }
     
     /**

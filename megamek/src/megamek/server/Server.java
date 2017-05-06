@@ -136,6 +136,7 @@ import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
+import megamek.common.MultiCrewCockpit;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
 import megamek.common.PilotingRollData;
@@ -153,6 +154,7 @@ import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
+import megamek.common.TargetRollModifier;
 import megamek.common.Targetable;
 import megamek.common.Team;
 import megamek.common.TechConstants;
@@ -20647,23 +20649,24 @@ public class Server implements Runnable {
      * @param damage The <code>int</code> amount of damage.
      */
     public Vector<Report> damageCrew(Entity en, int damage) {
-        return damageCrew(en, damage, false);
+        return damageCrew(en, damage, -1);
     }
 
     /**
      * Inflict damage on a pilot
      *
-     * @param en            The <code>Entity</code> who's pilot gets damaged.
-     * @param damage        The <code>int</code> amount of damage.
-     * @param pilotFeedback Whether the damage is due to neurohelmet feedback and only damages the pilot
-     *                      in a multi-crewed cockpit.
+     * @param en        The <code>Entity</code> who's pilot gets damaged.
+     * @param damage    The <code>int</code> amount of damage.
+     * @param crewPos   The <code>int</code>position of the crew member in a <code>MultiCrewCockpit</crew>
+     *                  that takes the damage. A value < 0 applies the damage to all crew members.
+     *                  The basic <crew>Crew</crew> ignores this value.
      */
-    public Vector<Report> damageCrew(Entity en, int damage, boolean pilotFeedback) {
+    public Vector<Report> damageCrew(Entity en, int damage, int crewPos) {
         Vector<Report> vDesc = new Vector<Report>();
         Crew crew = en.getCrew();
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
-            crew.applyDamage(damage, pilotFeedback);
+            crew.applyDamage(damage, crewPos);
             if (Crew.DEATH > crew.getHits()) {
                 r = new Report(6025);
             } else {
@@ -26905,7 +26908,7 @@ public class Server implements Runnable {
             pilotDamage = 0;
         }
         if (!en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
-            vDesc.addAll(damageCrew(en, pilotDamage, true));
+            vDesc.addAll(damageCrew(en, pilotDamage, en.getCrew().getCurrentPilotIndex()));
         }
         if (en.getCrew().isDoomed() || en.getCrew().isDead()) {
             vDesc.addAll(destroyEntity(en, "crew death", true));
@@ -27333,32 +27336,29 @@ public class Server implements Runnable {
                 roll.addModifier(fallHeight - 1, "height of fall");
             }
 
-            if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
-                r = new Report(2320);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(entity.getCrew().getName());
-                r.indent();
-                vPhaseReport.add(r);
-                vPhaseReport.addAll(damageCrew(entity, 1));
-                Report.addNewline(vPhaseReport);
-            } else {
-                int diceRoll = entity.getCrew().rollPilotingSkill();
-                r = new Report(2325);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(entity.getCrew().getName());
-                r.add(roll.getValueAsString());
-                r.add(diceRoll);
-                if (diceRoll >= roll.getValue()) {
-                    r.choose(true);
-                    vPhaseReport.add(r);
-                } else {
-                    r.choose(false);
-                    vPhaseReport.add(r);
-                    vPhaseReport.addAll(damageCrew(entity, 1));
-                    Report.addNewline(vPhaseReport);
+            if (entity.getCrew() instanceof MultiCrewCockpit) {
+                //Extract the base from the list of modifiers so we can replace it with the piloting
+                //skill of each crew member.
+                List<TargetRollModifier> modifiers = new ArrayList<>(roll.getModifiers());
+                if (modifiers.size() > 0) {
+                    modifiers.remove(0);
                 }
+                for (int pos = 0; pos < entity.getCrew().getSize(); pos++) {
+                    PilotingRollData prd;
+                    if (entity.getCrew().isDead(pos)) {
+                        continue;
+                    } else if (entity.getCrew().isUnconscious(pos)) {
+                        prd = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
+                                "Crew member unconscious");
+                    } else {
+                        prd = new PilotingRollData(entity.getId(),
+                                entity.getCrew().getPiloting(pos), "Base piloting skill");
+                        modifiers.forEach(m -> prd.addModifier(m));
+                    }
+                    vPhaseReport.addAll(checkPilotDamageFromFall(entity, prd, pos));
+                }
+            } else {
+                vPhaseReport.addAll(checkPilotDamageFromFall(entity, roll, -1));
             }
         }
 
@@ -27422,6 +27422,39 @@ public class Server implements Runnable {
         }
 
         return vPhaseReport;
+    }
+
+    private Vector<Report> checkPilotDamageFromFall(Entity entity, PilotingRollData roll, int crewPos) {
+        Vector<Report> reports = new Vector<>();
+        Report r;
+        if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
+            r = new Report(2320);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(entity.getCrew().getName(crewPos));
+            r.indent();
+            reports.add(r);
+            reports.addAll(damageCrew(entity, 1, crewPos));
+            Report.addNewline(reports);
+        } else {
+            int diceRoll = entity.getCrew().rollPilotingSkill();
+            r = new Report(2325);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(entity.getCrew().getName(crewPos));
+            r.add(roll.getValueAsString());
+            r.add(diceRoll);
+            if (diceRoll >= roll.getValue()) {
+                r.choose(true);
+                reports.add(r);
+            } else {
+                r.choose(false);
+                reports.add(r);
+                reports.addAll(damageCrew(entity, 1, crewPos));
+                Report.addNewline(reports);
+            }
+        }
+        return reports;
     }
 
     /**

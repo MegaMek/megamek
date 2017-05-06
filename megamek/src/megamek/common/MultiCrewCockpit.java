@@ -206,6 +206,13 @@ public class MultiCrewCockpit extends Crew {
         return piloting[pilotIndex];
     }
     
+    public int getPiloting(int pos) {
+        if (pos < 0) {
+            return getPiloting();
+        }
+        return piloting[pos];
+    }
+    
     //TODO: this bonus should be +2 for a tripod that is designated as the force's command unit
     @Override
     public int getCommandBonus() {
@@ -235,17 +242,14 @@ public class MultiCrewCockpit extends Crew {
     }
     
     @Override
-    public void applyDamage(int damage, boolean ammoExplosion) {
+    public void applyDamage(int damage, int pos) {
         if (!isEjected()) {
-            if (ammoExplosion) {
-                if (!isActive(pilotIndex)) {
-                    selectPilot();
-                }
-                hits[pilotIndex] += damage;
-            } else {
+            if (pos < 0) {
                 for (int i = 0; i < hits.length; i++) {
                     hits[i] += damage;
                 }
+            } else {
+                hits[pos] += damage;
             }
         }
     }

@@ -819,6 +819,10 @@ public class Crew implements Serializable {
     public String getName(int pos) {
         return name;
     }
+    
+    public int getHits(int crewPos) {
+        return getHits();
+    }
 
     public void applyDamage(int damage, int crewPos) {
         applyDamage(damage);
@@ -836,8 +840,20 @@ public class Crew implements Serializable {
         return isUnconscious();
     }
     
+    public void setUnconscious(boolean unconscious, int pos) {
+        setUnconscious(unconscious);
+    }
+    
     public boolean isActive(int pos) {
         return isActive();
+    }
+    
+    public void setKoThisRound(boolean ko, int pos) {
+        setKoThisRound(ko);
+    }
+    
+    public boolean isKoThisRound(int pos) {
+        return isKoThisRound();
     }
     
     public int getCurrentPilotIndex() {

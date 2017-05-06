@@ -335,13 +335,31 @@ public class MultiCrewCockpit extends Crew {
     public boolean isActive(int pos) {
         return pos >= 0 && pos < getSize() && !unconscious[pos] && !dead[pos];
     }
+    
 
     public boolean isKoThisRound(int pos) {
         return pos >= 0 && pos < getSize() && koThisRound[pos];
     }
+    
+    /**
+     * Returns true only if all active crew members are ko this round.
+     */
+    public boolean isKoThisRound() {
+        for (int i = 0; i < koThisRound.length; i++) {
+            if (!koThisRound[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public void setKoThisRound(boolean koThisRound, int pos) {
         this.koThisRound[pos] = koThisRound;
+    }
+    
+    @Override
+    public void setKoThisRound(boolean koThisRound) {
+        Arrays.fill(this.koThisRound, koThisRound);
     }
     
     public int getCurrentPilotIndex() {

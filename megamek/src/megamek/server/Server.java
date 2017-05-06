@@ -20680,7 +20680,7 @@ public class Server implements Runnable {
             r.add(crew.getHits());
             vDesc.addElement(r);
             if (Crew.DEATH > crew.getHits()) {
-                vDesc.addAll(resolveCrewDamage(en, damage));
+                vDesc.addAll(resolveCrewDamage(en, damage, crewPos));
             } else if (!crew.isDoomed()) {
                 crew.setDoomed(true);
                 vDesc.addAll(destroyEntity(en, "pilot death", true));
@@ -20716,12 +20716,17 @@ public class Server implements Runnable {
 
     /**
      * resolves consciousness rolls for one entity
+     * 
+     * @param e         The <code>Entity</code> that took damage
+     * @param damage    The <code>int</code> damage taken by the pilot
+     * @param crewPos   The <code>int</code> index of the crew member for multi crew cockpits, ingnored by
+     *                  basic <code>crew</code>
      */
-    private Vector<Report> resolveCrewDamage(Entity e, int damage) {
+    private Vector<Report> resolveCrewDamage(Entity e, int damage, int crewPos) {
         Vector<Report> vDesc = new Vector<Report>();
-        final int totalHits = e.getCrew().getHits();
+        final int totalHits = e.getCrew().getHits(crewPos);
         if ((e instanceof MechWarrior) || !e.isTargetable()
-            || !e.getCrew().isActive() || (damage == 0)) {
+            || !e.getCrew().isActive(crewPos) || (damage == 0)) {
             return vDesc;
         }
 
@@ -20754,14 +20759,14 @@ public class Server implements Runnable {
                 r.indent(2);
                 r.subject = e.getId();
                 r.addDesc(e);
-                r.add(e.getCrew().getName());
+                r.add(e.getCrew().getName(crewPos));
                 r.add(rollTarget);
                 r.add(roll);
                 if (roll >= rollTarget) {
-                    e.getCrew().setKoThisRound(false);
+                    e.getCrew().setKoThisRound(false, crewPos);
                     r.choose(true);
                 } else {
-                    e.getCrew().setKoThisRound(true);
+                    e.getCrew().setKoThisRound(true, crewPos);
                     r.choose(false);
                     if (e.getCrew().hasEdgeRemaining()
                         && e.getCrew().getOptions()
@@ -20771,18 +20776,18 @@ public class Server implements Runnable {
                         r = new Report(6520);
                         r.subject = e.getId();
                         r.addDesc(e);
-                        r.add(e.getCrew().getName());
+                        r.add(e.getCrew().getName(crewPos));
                         r.add(e.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                     } // if
                     // return true;
                 } // else
                 vDesc.add(r);
             } while (e.getCrew().hasEdgeRemaining()
-                     && e.getCrew().isKoThisRound()
+                     && e.getCrew().isKoThisRound(crewPos)
                      && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO));
             // end of do-while
-            if (e.getCrew().isKoThisRound()) {
-                e.getCrew().setUnconscious(true);
+            if (e.getCrew().isKoThisRound(crewPos)) {
+                e.getCrew().setUnconscious(true, crewPos);
                 return vDesc;
             }
         }
@@ -20798,36 +20803,45 @@ public class Server implements Runnable {
 
             // only unconscious pilots of mechs and protos, ASF and smallscraft
             // and MechWarriors can roll to wake up
-            if (!e.isTargetable()
-                || !e.getCrew().isUnconscious()
-                || e.getCrew().isKoThisRound()
-                || !((e instanceof Mech) || (e instanceof Protomech)
+            if (e.isTargetable()
+                && ((e instanceof Mech) || (e instanceof Protomech)
                      || (e instanceof MechWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
-                continue;
+                if (e.getCrew() instanceof MultiCrewCockpit) {
+                    for (int pos = 0; pos < e.getCrew().getSize(); pos++) {
+                        if (e.getCrew().isUnconscious(pos) && !e.getCrew().isKoThisRound(pos)) {
+                            checkWakeup(e, pos);
+                        }
+                    }
+                } else if (e.getCrew().isUnconscious() && !e.getCrew().isKoThisRound()){
+                    checkWakeup(e, -1);
+                }
             }
-            int roll = Compute.d6(2);
-
-            if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
-)) {
-                roll = Math.min(12, roll + 1);
-            }
-
-            int rollTarget = Compute.getConsciousnessNumber(e.getCrew()
-                                                             .getHits());
-            Report r = new Report(6029);
-            r.subject = e.getId();
-            r.addDesc(e);
-            r.add(e.getCrew().getName());
-            r.add(rollTarget);
-            r.add(roll);
-            if (roll >= rollTarget) {
-                r.choose(true);
-                e.getCrew().setUnconscious(false);
-            } else {
-                r.choose(false);
-            }
-            addReport(r);
         }
+    }
+    
+    private void checkWakeup(Entity e, int crewPos) {
+        int roll = Compute.d6(2);
+
+        if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
+)) {
+            roll = Math.min(12, roll + 1);
+        }
+
+        int rollTarget = Compute.getConsciousnessNumber(e.getCrew()
+                                                         .getHits(crewPos));
+        Report r = new Report(6029);
+        r.subject = e.getId();
+        r.addDesc(e);
+        r.add(e.getCrew().getName(crewPos));
+        r.add(rollTarget);
+        r.add(roll);
+        if (roll >= rollTarget) {
+            r.choose(true);
+            e.getCrew().setUnconscious(false, crewPos);
+        } else {
+            r.choose(false);
+        }
+        addReport(r);
     }
 
     /*

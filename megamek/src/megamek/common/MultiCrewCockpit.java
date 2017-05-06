@@ -4,6 +4,7 @@
 package megamek.common;
 
 import java.util.Arrays;
+import java.util.Vector;
 
 /**
  * Crew class for use with Tripod 'Mechs and QuadVees, which track damage separately to pilot
@@ -259,7 +260,7 @@ public class MultiCrewCockpit extends Crew {
         return !isActive() && !isDead();
     }
     
-    public boolean isUnconsious(int pos) {
+    public boolean isUnconscious(int pos) {
         return pos >= 0 && pos < getSize() && unconscious[pos];
     }
     
@@ -450,20 +451,19 @@ public class MultiCrewCockpit extends Crew {
         return isActive(cockpitType.getTechPos());
     }
     
-/*
-    public String getDesc() {
-        String s = new String(name);
-        if (hits > 0) {
-            s += " (" + hits + " hit(s)";
-            if (isUnconscious()) {
+    public String getDesc(int pos) {
+        String s = new String(name[pos]);
+        if (hits[pos] > 0) {
+            s += " (" + hits[pos] + " hit(s)";
+            if (isUnconscious(pos)) {
                 s += " [ko]";
-            } else if (isDead()) {
+            } else if (isDead(pos)) {
                 s += " [dead]";
             }
             s += ")";
-        } else if (isUnconscious()) {
+        } else if (isUnconscious(pos)) {
             s += " [ko]";
-        } else if (isDead()) {
+        } else if (isDead(pos)) {
             s += " [dead]";
         }
         return s;
@@ -473,45 +473,41 @@ public class MultiCrewCockpit extends Crew {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
-        r = new Report();
-        r.type = Report.PUBLIC;
-        r.add(name);
-        if (gunneryOnly) {
-            r.messageId = 7050;
-            r.add(getGunnery());
-        } else {
+        for (int i = 0; i < name.length; i++) {
+            r = new Report();
+            r.type = Report.PUBLIC;
+            r.add(name[i]);
             r.messageId = 7045;
             r.add(getGunnery());
             r.add(getPiloting());
-        }
 
-        if ((hits > 0) || isUnconscious() || isDead()) {
-            Report r2 = new Report();
-            r2.type = Report.PUBLIC;
-            if (hits > 0) {
-                r2.messageId = 7055;
-                r2.add(hits);
-                if (isUnconscious()) {
-                    r2.messageId = 7060;
+            if ((hits[i] > 0) || isUnconscious(i) || isDead(i)) {
+                Report r2 = new Report();
+                r2.type = Report.PUBLIC;
+                if (hits[i] > 0) {
+                    r2.messageId = 7055;
+                    r2.add(hits[i]);
+                    if (isUnconscious(i)) {
+                        r2.messageId = 7060;
+                        r2.choose(true);
+                    } else if (isDead(i)) {
+                        r2.messageId = 7060;
+                        r2.choose(false);
+                    }
+                } else if (isUnconscious(i)) {
+                    r2.messageId = 7065;
                     r2.choose(true);
-                } else if (isDead()) {
-                    r2.messageId = 7060;
+                } else if (isDead(i)) {
+                    r2.messageId = 7065;
                     r2.choose(false);
                 }
-            } else if (isUnconscious()) {
-                r2.messageId = 7065;
-                r2.choose(true);
-            } else if (isDead()) {
-                r2.messageId = 7065;
-                r2.choose(false);
+                r.newlines = 0;
+                vDesc.addElement(r);
+                vDesc.addElement(r2);
+            } else {
+                vDesc.addElement(r);
             }
-            r.newlines = 0;
-            vDesc.addElement(r);
-            vDesc.addElement(r2);
-        } else {
-            vDesc.addElement(r);
         }
         return vDesc;
     }
-*/
 }

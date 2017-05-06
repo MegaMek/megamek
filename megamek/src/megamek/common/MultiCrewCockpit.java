@@ -79,20 +79,21 @@ public class MultiCrewCockpit extends Crew {
         }
     }
     
-    CockpitType cockpitType;
+    private final CockpitType cockpitType;
     
-    //Skills and health for multiple crew members. Note that these hide the fields in the parent class
-    //and we will need to override access methods to return these values instead.
-    private int[] gunnery;
-    private int[] piloting;
-    private int[] gunneryL;
-    private int[] gunneryB;
-    private int[] gunneryM;
-    private int[] artillery;
-    private int[] hits;
-    private boolean[] unconscious;
-    private boolean[] dead;
-    private boolean[] koThisRound;
+    //Skills and health for multiple crew members. Note that the equivalent fields in the parent class
+    //are not used and we will need to override access methods to return these values instead.
+    private final String[] name;
+    private final int[] gunnery;
+    private final int[] piloting;
+    private final int[] gunneryL;
+    private final int[] gunneryB;
+    private final int[] gunneryM;
+    private final int[] artillery;
+    private final int[] hits;
+    private final boolean[] unconscious;
+    private final boolean[] dead;
+    private final boolean[] koThisRound;
 
     //In the event that the pilot or gunner is incapacitated, this records who has taken over
     //the duties.
@@ -111,6 +112,9 @@ public class MultiCrewCockpit extends Crew {
         super(name, cockpitType.getCrewSize(), gunneryL, gunneryM, gunneryB, piloting);
         this.cockpitType = cockpitType;
         int size = cockpitType.getCrewSize();
+        
+        this.name = new String[size];
+        Arrays.fill(this.name, name);
         this.gunnery = new int[size];
         Arrays.fill(this.gunnery, super.getGunnery());
         this.piloting = new int[size];
@@ -134,6 +138,17 @@ public class MultiCrewCockpit extends Crew {
     
     public CockpitType getCockpitType() {
         return cockpitType;
+    }
+    
+    public void setName(String name, int pos) {
+        this.name[pos] = name;
+        if (pos == 0) {
+            super.setName(name);
+        }
+    }
+    
+    public String getName(int pos) {
+        return name[pos];
     }
         
     public void setGunnery(int gunnery, int pos) {

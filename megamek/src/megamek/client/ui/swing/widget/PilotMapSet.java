@@ -202,7 +202,7 @@ public class PilotMapSet implements DisplayMapSet {
             gunneryR.setVisible(true);
         }
         if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
-            toughBR.setString(Integer.toString(en.getCrew().getToughness()));
+            toughBR.setString(Integer.toString(en.getCrew().getToughness(0)));
         } else {
             toughBL.setVisible(false);
             toughBR.setVisible(false);

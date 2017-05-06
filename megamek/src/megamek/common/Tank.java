@@ -151,6 +151,10 @@ public class Tank extends Entity {
      */
     private boolean hasNoControlSystems = false;
 
+    public CrewType defaultCrewType() {
+        return CrewType.CREW;
+    }
+
     public int getPotCrit() {
         return potCrit;
     }

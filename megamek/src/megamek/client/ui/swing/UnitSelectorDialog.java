@@ -739,7 +739,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        for (int i = 0; i < e.getCrew().getDistinctCrewCount(); i++) {
+        for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if (cs.useAverageSkills()) {
                 int skills[] = client.getRandomSkillsGenerator().getRandomSkills(e,
                         true);

@@ -3600,9 +3600,9 @@ public class Aero extends Entity {
     public void setCockpitType(int type) {
         cockpitType = type;
         if (type == COCKPIT_COMMAND_CONSOLE) {
-            setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.COMMAND_CONSOLE));
+            setCrew(new Crew(CrewType.COMMAND_CONSOLE));
         } else {
-            setCrew(new Crew(1));
+            setCrew(new Crew(CrewType.SINGLE));
         }
     }
 

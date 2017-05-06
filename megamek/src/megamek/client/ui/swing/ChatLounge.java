@@ -116,7 +116,6 @@ import megamek.common.Jumpship;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
-import megamek.common.MultiCrewCockpit;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
 import megamek.common.QuirksHandler;
@@ -1406,7 +1405,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
         value += "" + pilot.getGunnery() + "/" + pilot.getPiloting() + "<br>";
         if (tough) {
-            value += Messages.getString("ChatLounge.Tough") + pilot.getToughness() + "<br>";
+            value += Messages.getString("ChatLounge.Tough") + pilot.getToughness(0) + "<br>";
         }
         if (command) {
             value += Messages.getString("ChatLounge.Command") + pilot.getCommandBonus() + "<br>";
@@ -3539,7 +3538,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     c = clientgui.getClient();
                 }
                 for (Entity e : entities) {
-                    for (int i = 0; i < e.getCrew().getDistinctCrewCount(); i++) {
+                    for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
                         int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
                         e.getCrew().setGunnery(skills[0], i);
                         e.getCrew().setPiloting(skills[1], i);
@@ -3552,12 +3551,8 @@ public class ChatLounge extends AbstractPhaseDisplay
                     c = clientgui.getClient();
                 }
                 for (Entity e : entities) {
-                    if (e.getCrew() instanceof MultiCrewCockpit) {
-                        for (int i = 0; i < e.getCrew().getSize(); i++) {
-                            ((MultiCrewCockpit)e.getCrew()).setName(c.getRandomNameGenerator().generate(), i);
-                        }
-                    } else {
-                        e.getCrew().setName(c.getRandomNameGenerator().generate());
+                    for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+                        e.getCrew().setName(c.getRandomNameGenerator().generate(), i);
                     }
                     c.sendUpdateEntity(e);
                 }

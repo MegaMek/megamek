@@ -826,9 +826,9 @@ public class EntityListFile {
                 output.write("\" artillery=\"");
                 output.write(String.valueOf(crew.getArtillery()));
             }
-            if (crew.getToughness() != 0) {
+            if (crew.getToughness(0) != 0) {
                 output.write("\" toughness=\"");
-                output.write(String.valueOf(crew.getToughness()));
+                output.write(String.valueOf(crew.getToughness(0)));
             }
             if (crew.getInitBonus() != 0) {
                 output.write("\" initB=\"");

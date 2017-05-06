@@ -136,7 +136,6 @@ import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
-import megamek.common.MultiCrewCockpit;
 import megamek.common.OffBoardDirection;
 import megamek.common.PhysicalResult;
 import megamek.common.PilotingRollData;
@@ -20666,7 +20665,7 @@ public class Server implements Runnable {
         Crew crew = en.getCrew();
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
-            crew.applyDamage(damage, crewPos);
+            crew.setHits(crew.getHits(crewPos) + damage, crewPos);
             if (Crew.DEATH > crew.getHits()) {
                 r = new Report(6025);
             } else {
@@ -20743,7 +20742,7 @@ public class Server implements Runnable {
         for (int hit = (totalHits - damage) + 1; hit <= totalHits; hit++) {
             int rollTarget = Compute.getConsciousnessNumber(hit);
             if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
-                rollTarget -= e.getCrew().getToughness();
+                rollTarget -= e.getCrew().getToughness(crewPos);
             }
             boolean edgeUsed = false;
             do {
@@ -20804,46 +20803,38 @@ public class Server implements Runnable {
             // only unconscious pilots of mechs and protos, ASF and smallscraft
             // and MechWarriors can roll to wake up
             if (e.isTargetable()
-                && ((e instanceof Mech) || (e instanceof Protomech)
-                     || (e instanceof MechWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
-                if (e.getCrew() instanceof MultiCrewCockpit) {
-                    for (int pos = 0; pos < e.getCrew().getSize(); pos++) {
-                        if (e.getCrew().isUnconscious(pos) && !e.getCrew().isKoThisRound(pos)) {
-                            checkWakeup(e, pos);
+                    && ((e instanceof Mech) || (e instanceof Protomech)
+                            || (e instanceof MechWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
+                for (int pos = 0; pos < e.getCrew().getSlotCount(); pos++) {
+                    if (e.getCrew().isUnconscious(pos) && !e.getCrew().isKoThisRound(pos)) {
+                        int roll = Compute.d6(2);
+
+                        if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
+                )) {
+                            roll = Math.min(12, roll + 1);
                         }
+
+                        int rollTarget = Compute.getConsciousnessNumber(e.getCrew()
+                                                                         .getHits(pos));
+                        Report r = new Report(6029);
+                        r.subject = e.getId();
+                        r.addDesc(e);
+                        r.add(e.getCrew().getName(pos));
+                        r.add(rollTarget);
+                        r.add(roll);
+                        if (roll >= rollTarget) {
+                            r.choose(true);
+                            e.getCrew().setUnconscious(false, pos);
+                        } else {
+                            r.choose(false);
+                        }
+                        addReport(r);
                     }
-                } else if (e.getCrew().isUnconscious() && !e.getCrew().isKoThisRound()){
-                    checkWakeup(e, -1);
                 }
             }
         }
     }
     
-    private void checkWakeup(Entity e, int crewPos) {
-        int roll = Compute.d6(2);
-
-        if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
-)) {
-            roll = Math.min(12, roll + 1);
-        }
-
-        int rollTarget = Compute.getConsciousnessNumber(e.getCrew()
-                                                         .getHits(crewPos));
-        Report r = new Report(6029);
-        r.subject = e.getId();
-        r.addDesc(e);
-        r.add(e.getCrew().getName(crewPos));
-        r.add(rollTarget);
-        r.add(roll);
-        if (roll >= rollTarget) {
-            r.choose(true);
-            e.getCrew().setUnconscious(false, crewPos);
-        } else {
-            r.choose(false);
-        }
-        addReport(r);
-    }
-
     /*
      * Resolve any outstanding self destructions...
      */
@@ -27350,14 +27341,14 @@ public class Server implements Runnable {
                 roll.addModifier(fallHeight - 1, "height of fall");
             }
 
-            if (entity.getCrew() instanceof MultiCrewCockpit) {
+            if (entity.getCrew().getSlotCount() > 1) {
                 //Extract the base from the list of modifiers so we can replace it with the piloting
                 //skill of each crew member.
                 List<TargetRollModifier> modifiers = new ArrayList<>(roll.getModifiers());
                 if (modifiers.size() > 0) {
                     modifiers.remove(0);
                 }
-                for (int pos = 0; pos < entity.getCrew().getSize(); pos++) {
+                for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
                     PilotingRollData prd;
                     if (entity.getCrew().isDead(pos)) {
                         continue;
@@ -32599,7 +32590,7 @@ public class Server implements Runnable {
                 guerrilla.setSquadN(4);
                 guerrilla.setSquadSize(7);
                 guerrilla.autoSetInternal();
-                guerrilla.getCrew().setGunnery(5);
+                guerrilla.getCrew().setGunnery(5, 0);
                 try {
                     guerrilla.addEquipment(EquipmentType.get("InfantryAssaultRifle"),
                             Infantry.LOC_INFANTRY);
@@ -32676,7 +32667,7 @@ public class Server implements Runnable {
 
             // create the MechWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
-            pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
+            pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious(), 0);
             pilot.setDeployed(true);
             pilot.setId(getFreeEntityId());
             game.addEntity(pilot);

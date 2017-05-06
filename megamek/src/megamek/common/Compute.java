@@ -1981,7 +1981,7 @@ public class Compute {
 
         // large craft do not get secondary target mod
         // http://www.classicbattletech.com/forums/index.php/topic,37661.0.html
-        if ((attacker instanceof Dropship) || (attacker instanceof Jumpship)) {
+        if (attacker.getCrew().getCrewType().getMaxPrimaryTargets() < 0) {
             return null;
         }
 
@@ -2044,8 +2044,8 @@ public class Compute {
         
         int maxPrimary = 1;
         //Tripods and QuadVees with dedicated gunnery can target up to three units before incurring a penalty
-        if (attacker.getCrew() instanceof MultiCrewCockpit && attacker.getCrew().hasDedicatedGunner()) {
-            maxPrimary = ((MultiCrewCockpit)attacker.getCrew()).getCockpitType().getMaxPrimaryTargets();
+        if (attacker.getCrew().hasDedicatedGunner()) {
+            maxPrimary = attacker.getCrew().getCrewType().getMaxPrimaryTargets();
         }
         if (game.getOptions().booleanOption("tacops_tank_crews")
             && (attacker instanceof Tank)) {

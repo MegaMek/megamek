@@ -912,7 +912,7 @@ WindowListener, TreeSelectionListener {
 
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        for (int i = 0; i < e.getCrew().getDistinctCrewCount(); i++) {
+        for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
             if(cs.useAverageSkills()) {
                 int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
     

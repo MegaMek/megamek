@@ -60,7 +60,7 @@ public class EjectedCrew extends Infantry {
      */
     public EjectedCrew() {
         super();
-        setCrew(new Crew(1));
+        setCrew(new Crew(CrewType.CREW));
         setChassis(VEE_EJECT_NAME);
         //this constructor is just so that the MUL parser can read these units in so
         //assign some arbitrarily large number here for the internal so that locations will get 

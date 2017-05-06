@@ -209,6 +209,10 @@ public class Infantry extends Entity {
         // Determine the number of MPs.
         setOriginalWalkMP(1);
     }
+    
+    public CrewType defaultCrewType() {
+        return CrewType.CREW;
+    }
 
     /**
      * Infantry can face freely (except when dug in)
@@ -1644,12 +1648,12 @@ public class Infantry extends Entity {
         if (amTraining) {
             if ((getMovementMode() == EntityMovementMode.INF_MOTORIZED)
                     || getMovementMode() == EntityMovementMode.INF_JUMP) {
-                getCrew().setPiloting(ANTI_MECH_SKILL_JUMP);
+                getCrew().setPiloting(ANTI_MECH_SKILL_JUMP, 0);
             } else {
-                getCrew().setPiloting(ANTI_MECH_SKILL_FOOT);
+                getCrew().setPiloting(ANTI_MECH_SKILL_FOOT, 0);
             }
         } else {
-            getCrew().setPiloting(ANTI_MECH_SKILL_UNTRAINED);            
+            getCrew().setPiloting(ANTI_MECH_SKILL_UNTRAINED, 0);            
         }
     }
     
@@ -1663,7 +1667,7 @@ public class Infantry extends Entity {
         if (getCrew() == null) {
             return;
         }
-        getCrew().setPiloting(amSkill);
+        getCrew().setPiloting(amSkill, 0);
     }
     
     /**

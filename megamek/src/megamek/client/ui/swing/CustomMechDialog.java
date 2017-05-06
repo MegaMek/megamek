@@ -666,7 +666,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         fldFatigue.setToolTipText(Messages
                 .getString("CustomMechDialog.labFatigueToolTip"));
         fldFatigue.addActionListener(this);
-        fldTough.setText(Integer.toString(entity.getCrew().getToughness()));
+        fldTough.setText(Integer.toString(entity.getCrew().getToughness(0)));
         fldTough.addActionListener(this);
         fldInit.setText(Integer.toString(entity.getCrew().getInitBonus()));
         fldInit.addActionListener(this);
@@ -1221,18 +1221,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             Entity entity = entities.get(0);
 
             if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-                entity.setCrew(new Crew(name, Compute.getFullCrewSize(entity),
+                entity.setCrew(new Crew(entity.defaultCrewType(), name, Compute.getFullCrewSize(entity),
                         gunneryL, gunneryM, gunneryB, piloting));
             } else {
-                entity.setCrew(new Crew(name, Compute.getFullCrewSize(entity),
+                entity.setCrew(new Crew(entity.getCrew().getCrewType(), name, Compute.getFullCrewSize(entity),
                         gunnery, piloting));
             }
-            entity.getCrew().setArtillery(artillery);
+            entity.getCrew().setArtillery(artillery, 0);
             entity.getCrew().setFatigue(fatigue);
-            entity.getCrew().setToughness(tough);
+            entity.getCrew().setToughness(tough, 0);
             entity.getCrew().setInitBonus(init);
             entity.getCrew().setCommandBonus(command);
-            entity.getCrew().setNickname(nick);
+            entity.getCrew().setNickname(nick, 0);
             entity.getCrew().setPortraitCategory(portraitDialog.getCategory());
             entity.getCrew().setPortraitFileName(portraitDialog.getFileName());
             entity.getCrew().setExternalIdAsString(externalId);

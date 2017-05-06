@@ -880,7 +880,7 @@ public class MULParser {
                 pilotName = "Unnamed";
             }
 
-            Crew crew = new Crew(pilotName, 1, gunneryLVal, gunneryMVal,
+            Crew crew = new Crew(entity.defaultCrewType(), pilotName, 1, gunneryLVal, gunneryMVal,
                     gunneryBVal, pilotVal);
             
             if (pilotSize != null && pilotSize.length() > 0) {
@@ -896,7 +896,7 @@ public class MULParser {
             }
 
             if ((null != pilotNickname) && (pilotNickname.length() > 0)) {
-                crew.setNickname(pilotNickname);
+                crew.setNickname(pilotNickname, 0);
             }
             if ((null != portraitCategory)
                     && (portraitCategory.length() > 0)) {
@@ -905,8 +905,8 @@ public class MULParser {
             if ((null != portraitFile) && (portraitFile.length() > 0)) {
                 crew.setPortraitFileName(portraitFile);
             }
-            crew.setArtillery(artVal);
-            crew.setToughness(toughVal);
+            crew.setArtillery(artVal, 0);
+            crew.setToughness(toughVal, 0);
             crew.setInitBonus(initBVal);
             crew.setCommandBonus(commandBVal);
             if ((null != advantages)
@@ -980,7 +980,7 @@ public class MULParser {
                     warning.append("Found invalid hits value: ")
                             .append(hits).append(".\n");
                 } else {
-                    crew.setHits(hitVal);
+                    crew.setHits(hitVal, 0);
                 }
 
             } // End have-hits

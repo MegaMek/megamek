@@ -159,7 +159,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             // go through all of the units provided for this player and assign random names
             for (Entity ent : units) {
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
-                    for (int i = 0; i < ent.getCrew().getDistinctCrewCount(); i++) {
+                    for (int i = 0; i < ent.getCrew().getSlotCount(); i++) {
                         ent.getCrew().setName(rng.generate(), i);
                     }
                     c.sendUpdateEntity(ent);

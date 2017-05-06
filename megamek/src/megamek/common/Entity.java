@@ -231,7 +231,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
-    private Crew crew = new Crew(1);
+    private Crew crew;
 
     private Quirks quirks = new Quirks();
     private PartialRepairs partReps = new PartialRepairs();
@@ -788,6 +788,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Generates a new, blank, entity.
      */
     public Entity() {
+        crew = new Crew(defaultCrewType());
         armor = new int[locations()];
         internal = new int[locations()];
         orig_armor = new int[locations()];
@@ -817,6 +818,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
         externalId = UUID.randomUUID().toString();
+    }
+    
+    public CrewType defaultCrewType() {
+        return CrewType.SINGLE;
     }
 
     protected void initMilitary() {

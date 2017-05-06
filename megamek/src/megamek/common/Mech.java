@@ -328,19 +328,19 @@ public abstract class Mech extends Entity {
         
         switch (inCockpitType) {
         case COCKPIT_TRIPOD:
-            setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.TRIPOD));
+            setCrew(new Crew(CrewType.TRIPOD));
             break;
         case COCKPIT_SUPERHEAVY_TRIPOD:
-            setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.SUPERHEAVY_TRIPOD));
+            setCrew(new Crew(CrewType.SUPERHEAVY_TRIPOD));
             break;
         case COCKPIT_DUAL:
-            setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.DUAL));
+            setCrew(new Crew(CrewType.DUAL));
             break;
         case COCKPIT_COMMAND_CONSOLE:
             if (getWeightClass() < EntityWeightClass.WEIGHT_HEAVY) {
-                setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.COMMAND_CONSOLE));
+                setCrew(new Crew(CrewType.COMMAND_CONSOLE));
             } else {
-                setCrew(new MultiCrewCockpit(MultiCrewCockpit.CockpitType.FORCE_COMMAND_CONSOLE));
+                setCrew(new Crew(CrewType.FORCE_COMMAND_CONSOLE));
             }
             break;
         }

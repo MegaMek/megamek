@@ -1298,6 +1298,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryRifleNeedlerWeapon());
         EquipmentType.addType(new InfantryRiflePulseLaserWeapon());
         EquipmentType.addType(new InfantryRifleRadiumLaserSniperWeapon());
+        EquipmentType.addType(new InfantryRifleStalkerSniperRifleWeapon());
+        EquipmentType.addType(new InfantryRifleStrikerCarbineRifleWeapon());
         EquipmentType.addType(new InfantryRifleShredderHeavyNeedlerWeapon());
         EquipmentType.addType(new InfantryRifleStarKingGyroslugCarbineWeapon());
         EquipmentType.addType(new InfantryRifleSunbeamStarfireERLaserWeapon());

@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryPistolSpitballGasPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolSpitballGasPistolWeapon() {
-        super();
+	public InfantryPistolSpitballGasPistolWeapon() {
+		super();
 
-        name = "Pistol (Spitball Gas Weapon)";
-        setInternalName(name);
-        addLookupName("InfantrySpitballGaspistol");
-        addLookupName("Spitball Gas Weapon");
-        ammoType = AmmoType.T_NA;
-        cost = 6;
-        bv = 0;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.0;
-        infantryRange = 0;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3051, 3059, 3100);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_C });
-    }
+		name = "Pistol (Spitball Gas Weapon)";
+		setInternalName(name);
+		addLookupName("InfantrySpitballGaspistol");
+		addLookupName("Spitball Gas Weapon");
+		ammoType = AmmoType.T_NA;
+		cost = 6;
+		bv = 0;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.0;
+		infantryRange = 0;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3056, 3059, 3100, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setPrototypeFactions(F_LC)
+				.setProductionFactions(F_LC).setTechRating(RATING_C)
+				.setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+
+	}
 }

@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryArchaicSingleStunStaffWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicSingleStunStaffWeapon() {
-        super();
+	public InfantryArchaicSingleStunStaffWeapon() {
+		super();
 
-        name = "Staff (Stun Staff, Single-End)";
-        setInternalName(name);
-        addLookupName("InfantrySingleStunStaff");
-        addLookupName("Single Ended Stun Staff");
-        ammoType = AmmoType.T_NA;
-        cost = 300;
-        bv = 0.06;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.07;
-        infantryRange = 0;
-        rulesRefs =" 272, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_A, RATING_C, RATING_A, RATING_B });
-    }
+		name = "Staff (Stun Staff, Single-End)";
+		setInternalName(name);
+		addLookupName("InfantrySingleStunStaff");
+		addLookupName("Single Ended Stun Staff");
+		ammoType = AmmoType.T_NA;
+		cost = 300;
+		bv = 0.06;
+		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+		infantryDamage = 0.07;
+		infantryRange = 0;
+		rulesRefs = " 272, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+				.setAvailability(RATING_A, RATING_C, RATING_A, RATING_B);
+
+	}
 }

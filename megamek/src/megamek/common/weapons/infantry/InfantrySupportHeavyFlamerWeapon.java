@@ -24,31 +24,32 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -5741978934100309295L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -5741978934100309295L;
 
-    public InfantrySupportHeavyFlamerWeapon() {
-        super();
+	public InfantrySupportHeavyFlamerWeapon() {
+		super();
 
-        name = "Flamer (Heavy)";
-        setInternalName(name);
-        addLookupName("InfantryHeavyFlamer");
-        // Flamer (Heavy), TM p. 300
-        cost = 200;
-        bv = 0.72;
-        flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT);
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
-        infantryDamage = 0.79;
-        infantryRange = 0;
-        crew = 2;
-        rulesRefs =" 273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(TechAdvancement.DATE_ES, TechAdvancement.DATE_ES, TechAdvancement.DATE_ES);
-        techAdvancement.setIntroLevel(true);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
-    }
+		name = "Flamer (Heavy)";
+		setInternalName(name);
+		addLookupName("InfantryHeavyFlamer");
+		// Flamer (Heavy), TM p. 300
+		cost = 200;
+		bv = 0.72;
+		flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT);
+		String[] modeStrings = { "Damage", "Heat" };
+		setModes(modeStrings);
+		infantryDamage = 0.79;
+		infantryRange = 0;
+		crew = 2;
+		rulesRefs = " 273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+				.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+
+	}
 }

@@ -25,28 +25,31 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolHoldoutNeedlerPistolWeapon() {
-        super();
+	public InfantryPistolHoldoutNeedlerPistolWeapon() {
+		super();
 
-        name = "Needler Pistol (Hold-Out)";
-        setInternalName(name);
-        addLookupName("InfantryHoldoutNeedlerpistol");
-        addLookupName("Holdout Needler Pistol");
-        ammoType = AmmoType.T_NA;
-        cost = 20;
-        bv = 0.10;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
-        infantryDamage = 0.11;
-        infantryRange = 0;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2505, 2515, 2570);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_B, RATING_B, RATING_A });
-    }
+		name = "Needler Pistol (Hold-Out)";
+		setInternalName(name);
+		addLookupName("InfantryHoldoutNeedlerpistol");
+		addLookupName("Holdout Needler Pistol");
+		ammoType = AmmoType.T_NA;
+		cost = 20;
+		bv = 0.10;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);
+		infantryDamage = 0.11;
+		infantryRange = 0;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2510, 2515, 2570, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setClanAdvancement(2510, 2515, 2570, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+				.setProductionFactions(F_TH).setTechRating(RATING_D)
+				.setAvailability(RATING_C, RATING_B, RATING_B, RATING_A);
+
+	}
 }

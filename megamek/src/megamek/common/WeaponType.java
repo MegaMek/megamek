@@ -1166,7 +1166,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicMedusaWhipWeapon());
         EquipmentType.addType(new InfantryArchaicMiniStunstickWeapon());
         EquipmentType.addType(new InfantryArchaicMonowireWeapon());
-        EquipmentType.addType(new InfantryArchaicISNeuralLashWeapon());
+        EquipmentType.addType(new InfantryArchaicNeuralLashWeapon());
         EquipmentType.addType(new InfantryArchaicNeuralWhipWeapon());
         EquipmentType.addType(new InfantryArchaicNoDachiWeapon());
         EquipmentType.addType(new InfantryArchaicNunchakuWeapon());
@@ -1177,10 +1177,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicStaffWeapon());
         EquipmentType.addType(new InfantryArchaicStunstickWeapon());
         EquipmentType.addType(new InfantryArchaicSwordWeapon());
-        EquipmentType.addType(new InfantryArchaicISVibroAxeWeapon());
-        EquipmentType.addType(new InfantryArchaicISVibroBladeWeapon());
+        EquipmentType.addType(new InfantryArchaicVibroAxeWeapon());
+        EquipmentType.addType(new InfantryArchaicVibroBladeWeapon());
         EquipmentType.addType(new InfantryArchaicVibroKatanaWeapon());
-        EquipmentType.addType(new InfantryArchaicVibroSwordWeapon());
+        EquipmentType.addType(new InfantryArchaicISVibroSwordWeapon());
         EquipmentType.addType(new InfantryArchaicVibroMaceWeapon());
         EquipmentType.addType(new InfantryArchaicWakizashiWeapon());
         EquipmentType.addType(new InfantryArchaicWhipWeapon());
@@ -1194,42 +1194,40 @@ public class WeaponType extends EquipmentType {
         
         //Clan Archaic - Commented out can be considered Obsolete
         EquipmentType.addType(new InfantryArchaicClanVibroSwordWeapon());
-        EquipmentType.addType(new InfantryArchaicClanNeuralLashWeapon());        
-        EquipmentType.addType(new InfantryArchaicClanVibroAxeWeapon());        
-        EquipmentType.addType(new InfantryArchaicClanVibroBladeWeapon());
+  
             
         // Infantry Pistols
         EquipmentType.addType(new InfantryPistolAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolAutoPistolNissanWeapon());
-        EquipmentType.addType(new InfantryPistolISBlazerPistolWeapon());
+        EquipmentType.addType(new InfantryPistolBlazerPistolWeapon());
         EquipmentType.addType(new InfantryPistolCoventryHandrocketGyrojetPistolWeapon());
         EquipmentType.addType(new InfantryPistolDartGunWeapon());
         EquipmentType.addType(new InfantryPistolFlamerPistolWeapon());
         EquipmentType.addType(new InfantryPistolFlarePistolWeapon());
-        EquipmentType.addType(new InfantryPistolISGyrojetPistolWeapon());
+        EquipmentType.addType(new InfantryPistolGyrojetPistolWeapon());
         EquipmentType.addType(new InfantryPistolHawkEagleAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolHoldoutGyrojetPistolWeapon());
-        EquipmentType.addType(new InfantryPistolISHoldOutLaserPistolWeapon());
+        EquipmentType.addType(new InfantryPistolHoldOutLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolHoldoutNeedlerPistolWeapon());
-        EquipmentType.addType(new InfantryPistolISHoldoutPistolWeapon());
+        EquipmentType.addType(new InfantryPistolHoldoutPistolWeapon());
         EquipmentType.addType(new InfantryPistolLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolMagnumRevolverWeapon());
         EquipmentType.addType(new InfantryPistolMakeshiftPistolWeapon());
         EquipmentType.addType(new InfantryPistolMandrakeGaussPistolWeapon());
         EquipmentType.addType(new InfantryPistolMartialEagleMachinePistolWeapon());
-        EquipmentType.addType(new InfantryPistolISMauserAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolISMauserNeedlerPistolWeapon());
+        EquipmentType.addType(new InfantryPistolMauserAutoPistolWeapon());
+        EquipmentType.addType(new InfantryPistolMauserNeedlerPistolWeapon());
         EquipmentType.addType(new InfantryPistolMagnumAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolISMydronAutoPistolWeapon());
+        EquipmentType.addType(new InfantryPistolMydronAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolNakjimaLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolISNambuAutoPistolWeapon());
+        EquipmentType.addType(new InfantryPistolNambuAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolNeedlerPistolWeapon());
         EquipmentType.addType(new InfantryPistolPaintGunPistolWeapon());
-        EquipmentType.addType(new InfantryPistolPulseLaserPistolWeapon());
+        EquipmentType.addType(new InfantryPistolISPulseLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolRevolverWeapon());
         EquipmentType.addType(new InfantryPistolSeaEagleNeedlerPistolWeapon());
         EquipmentType.addType(new InfantryPistolSerrekAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolISSonicStunnerWeapon());
+        EquipmentType.addType(new InfantryPistolSonicStunnerWeapon());
         EquipmentType.addType(new InfantryPistolSpitballGasPistolWeapon());
         EquipmentType.addType(new InfantryPistolSternsnachtPistolWeapon());
         EquipmentType.addType(new InfantryPistolSternsnachtPythonAutoPistolWeapon());
@@ -1243,17 +1241,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolVintageWeapon());
 
         //Clan Pistols - Commented out can be considered Obsolete
-        EquipmentType.addType(new InfantryPistolClanBlazerPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanERLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanGaussPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanPulseLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolClanSonicStunnerWeapon());        
-//        EquipmentType.addType(new InfantryPistolClanNambuAutoPistolWeapon());
-//        EquipmentType.addType(new InfantryPistolClanMydronAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolClanMauserNeedlerPistolWeapon());
-        EquipmentType.addType(new InfantryPistolClanMauserAutoPistolWeapon());
-        EquipmentType.addType(new InfantryPistolClanHoldOutLaserPistolWeapon());
-        EquipmentType.addType(new InfantryPistolClanGyrojetPistolWeapon());
+
         
         // Infantry Rifles
         EquipmentType.addType(new InfantryRifleAutoRifleWeapon());

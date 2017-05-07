@@ -25,28 +25,29 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicClanVibroSwordWeapon() {
-        super();
+	public InfantryArchaicClanVibroSwordWeapon() {
+		super();
 
-        name = "Blade (Vibro-sword) [Clan]";
-        setInternalName(name);
-        addLookupName("InfantryClanVibroSword");
-        addLookupName("Clan Vibro Sword");
-        ammoType = AmmoType.T_NA;
-        cost = 500;
-        bv = 0.34;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.37;
-        infantryRange = 0;
-        rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2810, 2820, DATE_NONE);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
-    }
+		name = "Blade (Vibro-sword) [Clan]";
+		setInternalName(name);
+		addLookupName("InfantryClanVibroSword");
+		addLookupName("Clan Vibro Sword");
+		ammoType = AmmoType.T_NA;
+		cost = 500;
+		bv = 0.34;
+		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+		infantryDamage = 0.37;
+		infantryRange = 0;
+		rulesRefs = "272, TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2815, 2820, DATE_NONE, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CJF)
+				.setProductionFactions(F_CJF).setTechRating(RATING_F)
+				.setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+
+	}
 }

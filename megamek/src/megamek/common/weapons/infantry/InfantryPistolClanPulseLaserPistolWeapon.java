@@ -25,28 +25,28 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolClanPulseLaserPistolWeapon() {
-        super();
+	public InfantryPistolClanPulseLaserPistolWeapon() {
+		super();
 
-        name = "Pulse Laser Pistol [Clan]";
-        setInternalName(name);
-        addLookupName("InfantryClanPulseLaserPistol");
-        addLookupName("Clan Pulse Laser Pistol");
-        ammoType = AmmoType.T_NA;
-        cost = 1500;
-        bv = 0.61;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.20;
-        infantryRange = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2830, 2840, DATE_NONE);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
-    }
+		name = "Pulse Laser Pistol [Clan]";
+		setInternalName(name);
+		addLookupName("InfantryClanPulseLaserPistol");
+		addLookupName("Clan Pulse Laser Pistol");
+		ammoType = AmmoType.T_NA;
+		cost = 1500;
+		bv = 0.61;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+		infantryDamage = 0.20;
+		infantryRange = 1;
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CFM)
+				.setProductionFactions(F_CFM).setTechRating(RATING_F)
+				.setAvailability(RATING_X, RATING_C, RATING_C, RATING_C);
+
+	}
 }

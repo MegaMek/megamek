@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryPistolMandrakeGaussPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolMandrakeGaussPistolWeapon() {
-        super();
+	public InfantryPistolMandrakeGaussPistolWeapon() {
+		super();
 
-        name = "Gauss Pistol (Mandrake Hold-Out)";
-        setInternalName(name);
-        addLookupName("InfantryMandrakeGaussPistol");
-        addLookupName("IMandrake Holdout Gauss Pistol");
-        ammoType = AmmoType.T_NA;
-        cost = 750;
-        bv = 0.02;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.02;
-        infantryRange = 0;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3045, 3052, 3085);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
-    }
+		name = "Gauss Pistol (Mandrake Hold-Out)";
+		setInternalName(name);
+		addLookupName("InfantryMandrakeGaussPistol");
+		addLookupName("IMandrake Holdout Gauss Pistol");
+		ammoType = AmmoType.T_NA;
+		cost = 750;
+		bv = 0.02;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.02;
+		infantryRange = 0;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3052, 3085, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setPrototypeFactions(F_CC)
+				.setProductionFactions(F_CC).setTechRating(RATING_E)
+				.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+
+	}
 }

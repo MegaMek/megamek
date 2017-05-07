@@ -25,29 +25,31 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySupportAutoGrenadeLauncherInfernoWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportAutoGrenadeLauncherInfernoWeapon() {
-        super();
+	public InfantrySupportAutoGrenadeLauncherInfernoWeapon() {
+		super();
 
-        name = "Grenade Launcher (Auto) - Inferno";
-        setInternalName(name);
-        addLookupName("InfantryAutoGLInferno");
-        addLookupName("Infantry Inferno Auto Grenade Launcher");
-        ammoType = AmmoType.T_NA;
-        cost = 975;
-        bv = 1.25;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.41;
-        infantryRange = 1;
-        crew = 1;
-        rulesRefs =" 273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
-    }
+		name = "Grenade Launcher (Auto) - Inferno";
+		setInternalName(name);
+		addLookupName("InfantryAutoGLInferno");
+		addLookupName("Infantry Inferno Auto Grenade Launcher");
+		ammoType = AmmoType.T_NA;
+		cost = 975;
+		bv = 1.25;
+		flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		infantryDamage = 0.41;
+		infantryRange = 1;
+		crew = 1;
+		rulesRefs = " 273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+				.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+
+	}
 }

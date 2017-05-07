@@ -25,27 +25,29 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryShotgunCeresCrowdbusterWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryShotgunCeresCrowdbusterWeapon() {
-        super();
+	public InfantryShotgunCeresCrowdbusterWeapon() {
+		super();
 
-        name = "Ceres Arms Crowdbuster";
-        setInternalName(name);
-        addLookupName("InfantryCeresCrowdbuster");
-        ammoType = AmmoType.T_NA;
-        cost = 150;
-        bv = 0.10;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.11;
-        infantryRange = 0;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3023, 3030, 3058);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_C });
-    }
+		name = "Ceres Arms Crowdbuster";
+		setInternalName(name);
+		addLookupName("InfantryCeresCrowdbuster");
+		ammoType = AmmoType.T_NA;
+		cost = 150;
+		bv = 0.10;
+		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.11;
+		infantryRange = 0;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3028, 3030, 3058, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setPrototypeFactions(F_CC)
+				.setProductionFactions(F_CC).setTechRating(RATING_D)
+				.setAvailability(RATING_X, RATING_F, RATING_D, RATING_C);
+
+	}
 }

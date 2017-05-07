@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryPistolNakjimaLaserPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolNakjimaLaserPistolWeapon() {
-        super();
+	public InfantryPistolNakjimaLaserPistolWeapon() {
+		super();
 
-        name = "Laser Pistol (Nakjima)";
-        setInternalName(name);
-        addLookupName("InfantryNakjimalaserpistol");
-        addLookupName("Nakjima Laser Pistol");
-        ammoType = AmmoType.T_NA;
-        cost = 750;
-        bv = 0.55;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.18;
-        infantryRange = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2870, 2880, 3000);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_C });
-    }
+		name = "Laser Pistol (Nakjima)";
+		setInternalName(name);
+		addLookupName("InfantryNakjimalaserpistol");
+		addLookupName("Nakjima Laser Pistol");
+		ammoType = AmmoType.T_NA;
+		cost = 750;
+		bv = 0.55;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+		infantryDamage = 0.18;
+		infantryRange = 1;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2875, 2880, 3000, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setPrototypeFactions(F_DC)
+				.setProductionFactions(F_DC).setTechRating(RATING_D)
+				.setAvailability(RATING_X, RATING_D, RATING_C, RATING_C);
+
+	}
 }

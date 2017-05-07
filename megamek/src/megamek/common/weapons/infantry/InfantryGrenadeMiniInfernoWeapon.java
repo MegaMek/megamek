@@ -25,31 +25,33 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryGrenadeMiniInfernoWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryGrenadeMiniInfernoWeapon() {
-        super();
+	public InfantryGrenadeMiniInfernoWeapon() {
+		super();
 
-        name = "Grenade (Mini) (Inferno)";
-        setInternalName(name);
-        addLookupName("InfantryMiniInfernoGrenade");
-        addLookupName("Mini Inferno Grenades");
-        ammoType = AmmoType.T_NA;
-        cost = 8;
-        bv = 0.10;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
-        infantryDamage = 0.11;
-        infantryRange = 0;
-        //very hackish - using some data from Inferno Fuel.
-        rulesRefs =" 272, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2385);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_D, RATING_E, RATING_D, RATING_C });
-    }
+		name = "Grenade (Mini) (Inferno)";
+		setInternalName(name);
+		addLookupName("InfantryMiniInfernoGrenade");
+		addLookupName("Mini Inferno Grenades");
+		ammoType = AmmoType.T_NA;
+		cost = 8;
+		bv = 0.10;
+		flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		String[] modeStrings = { "Damage", "Heat" };
+		setModes(modeStrings);
+		infantryDamage = 0.11;
+		infantryRange = 0;
+		// very hackish - using some data from Inferno Fuel.
+		rulesRefs = " 272, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+				.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+
+	}
 }

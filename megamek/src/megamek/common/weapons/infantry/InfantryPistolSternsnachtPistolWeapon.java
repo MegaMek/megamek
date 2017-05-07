@@ -25,29 +25,31 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolSternsnachtPistolWeapon() {
-        super();
+	public InfantryPistolSternsnachtPistolWeapon() {
+		super();
 
-        name = "Pistol (Sternsnacht Heavy [Claymore])";
-        setInternalName(name);
-        addLookupName("InfantrySternsnachtpistol");
-        addLookupName("InfantryClaymorePistol");
-        addLookupName("Sternsnacht Heavy Pistol");
-        ammoType = AmmoType.T_NA;
-        cost = 200;
-        bv = 0.08;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.09;
-        infantryRange = 0;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2877, 2885, 2950);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_C });
-    }
+		name = "Pistol (Sternsnacht Heavy [Claymore])";
+		setInternalName(name);
+		addLookupName("InfantrySternsnachtpistol");
+		addLookupName("InfantryClaymorePistol");
+		addLookupName("Sternsnacht Heavy Pistol");
+		ammoType = AmmoType.T_NA;
+		cost = 200;
+		bv = 0.08;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.09;
+		infantryRange = 0;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2882, 2885, 2950, DATE_NONE, DATE_NONE)
+				.setISApproximate(true, false, false, false, false)
+				.setPrototypeFactions(F_LC)
+				.setProductionFactions(F_LC).setTechRating(RATING_C)
+				.setAvailability(RATING_X, RATING_E, RATING_D, RATING_C);
+
+	}
 }

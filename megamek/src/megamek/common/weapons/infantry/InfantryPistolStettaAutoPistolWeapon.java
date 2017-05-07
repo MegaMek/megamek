@@ -51,3 +51,5 @@ public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
 
     }
 }
+//
+

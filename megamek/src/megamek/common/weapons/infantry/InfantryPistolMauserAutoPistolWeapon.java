@@ -23,30 +23,31 @@ import megamek.common.TechAdvancement;
 /**
  * @author Ben Grills
  */
-public class InfantryArchaicClanVibroAxeWeapon extends InfantryWeapon {
+public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicClanVibroAxeWeapon() {
+    public InfantryPistolMauserAutoPistolWeapon() {
         super();
 
-        name = "Blade (Vibro-axe) [Clan]";
+        name = "Auto-Pistol (M&G)";
         setInternalName(name);
-        addLookupName("CLInfantryVibroAxe");
-        addLookupName("Clan Vibro Axe");
+        addLookupName("InfantryMauserAutopistol");
+        addLookupName("M&G Auto Pistol");
         ammoType = AmmoType.T_NA;
-        cost = 150;
-        bv = 0.39;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.42;
+        cost = 60;
+        bv = 0.16;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.17;
         infantryRange = 0;
-        rulesRefs = "272, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
+        rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2490, 2495, 2550, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_C)
+		        .setAvailability(RATING_C, RATING_B, RATING_C, RATING_B);
+
     }
 }

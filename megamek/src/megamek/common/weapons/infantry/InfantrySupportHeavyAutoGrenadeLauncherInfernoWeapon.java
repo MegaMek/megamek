@@ -25,31 +25,31 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySupportHeavyAutoGrenadeLauncherInfernoWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportHeavyAutoGrenadeLauncherInfernoWeapon() {
-        super();
+	public InfantrySupportHeavyAutoGrenadeLauncherInfernoWeapon() {
+		super();
 
-        name = "Grenade Launcher (Heavy Auto) w/Inferno";
-        setInternalName(name);
-        addLookupName("InfantryHeavyAutoGrenadeLauncherInferno");
-        addLookupName("nfantry Inferno Heavy Auto Grenade Launcher");
-        ammoType = AmmoType.T_NA;
-        cost = 4500;
-        bv = 2.93;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 0.96;
-        infantryRange = 1;
-        crew = 1;
-        tonnage = .020;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2896, 2900, DATE_NONE);
-        techAdvancement.setApproximate(true, false);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
-    }
+		name = "Grenade Launcher (Heavy Auto) w/Inferno";
+		setInternalName(name);
+		addLookupName("InfantryHeavyAutoGrenadeLauncherInferno");
+		addLookupName("nfantry Inferno Heavy Auto Grenade Launcher");
+		ammoType = AmmoType.T_NA;
+		cost = 4500;
+		bv = 2.93;
+		flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+		infantryDamage = 0.96;
+		infantryRange = 1;
+		crew = 1;
+		tonnage = .020;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2896, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
+				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSF, F_CHH)
+				.setProductionFactions(F_CSF).setTechRating(RATING_D)
+				.setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+
+	}
 }

@@ -25,28 +25,29 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolSternsnachtPythonAutoPistolWeapon() {
-        super();
-        name = "Auto-Pistol (Sternsnacht Python)";
-        setInternalName(name);
-        addLookupName("InfantrySternsnachtPython");
-        addLookupName("Sternsnacht Python AutoPistol");
-        ammoType = AmmoType.T_NA;
-        cost = 125;
-        bv = 0.26;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.28;
-        infantryRange = 0;
-        rulesRefs = "273, TM";
+	public InfantryPistolSternsnachtPythonAutoPistolWeapon() {
+		super();
+		name = "Auto-Pistol (Sternsnacht Python)";
+		setInternalName(name);
+		addLookupName("InfantrySternsnachtPython");
+		addLookupName("Sternsnacht Python AutoPistol");
+		ammoType = AmmoType.T_NA;
+		cost = 125;
+		bv = 0.26;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.28;
+		infantryRange = 0;
+		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3048, 3051, 3068, DATE_NONE, DATE_NONE)
-		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_FS, F_LC).setTechRating(RATING_C)
-		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B);
+				.setISApproximate(true, false, false, false, false)
+				.setPrototypeFactions(F_LC)
+				.setProductionFactions(F_FS, F_LC).setTechRating(RATING_C)
+				.setAvailability(RATING_X, RATING_X, RATING_C, RATING_B);
 
-    }
+	}
 }

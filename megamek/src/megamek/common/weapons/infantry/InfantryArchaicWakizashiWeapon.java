@@ -25,29 +25,31 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryArchaicWakizashiWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryArchaicWakizashiWeapon() {
-        super();
+	public InfantryArchaicWakizashiWeapon() {
+		super();
 
-        name = "Blade (Wakizashi)";
-      //IO Combines this weapon into the Dao Weapon
-        setInternalName(name);
-        addLookupName("InfantryWakizashi");
-        addLookupName("Wakizashi");
-        ammoType = AmmoType.T_NA;
-        cost = 150;
-        bv = 0.02;
-        flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.02;
-        infantryRange = 0;
-        rulesRefs =" 272, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
-        techAdvancement.setTechRating(RATING_A);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
-    }
+		name = "Blade (Wakizashi)";
+		// IO Combines this weapon into the Dao Weapon
+		setInternalName(name);
+		addLookupName("InfantryWakizashi");
+		addLookupName("Wakizashi");
+		ammoType = AmmoType.T_NA;
+		cost = 150;
+		bv = 0.02;
+		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
+		infantryDamage = 0.02;
+		infantryRange = 0;
+		rulesRefs = " 272, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setISApproximate(false, false, false, false, false)
+				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+				.setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+
+	}
 }

@@ -23,31 +23,30 @@ import megamek.common.TechAdvancement;
 /**
  * @author Ben Grills
  */
-public class InfantryPistolISNambuAutoPistolWeapon extends InfantryWeapon {
+public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolISNambuAutoPistolWeapon() {
+    public InfantryPistolBlazerPistolWeapon() {
         super();
 
-        name = "Auto-Pistol (Nambu)";
+        name = "Laser Pistol (Blazer)";
         setInternalName(name);
-        addLookupName("InfantryNambuAutopistol");
-        addLookupName("Nambu Auto Pistol");
+        addLookupName("InfantryBlazerPistol");
+        addLookupName("Blazer Pistol");
         ammoType = AmmoType.T_NA;
-        cost = 75;
-        bv = 0.19;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.21;
-        infantryRange = 0;
+        cost = 3000;
+        bv = 0.79;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+        infantryDamage = 0.26;
+        infantryRange = 1;
         rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2535, 2540, 2600, DATE_NONE, DATE_NONE)
-		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_DC)
-		        .setProductionFactions(F_DC).setTechRating(RATING_C)
-		        .setAvailability(RATING_B, RATING_C, RATING_C, RATING_C);
-
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+        techAdvancement.setISAdvancement(2100, 2290, 2350);
+        techAdvancement.setTechRating(RATING_D);
+        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_D, RATING_C });
     }
 }

@@ -25,29 +25,31 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleVSPLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleVSPLaserWeapon() {
-        super();
+	public InfantryRifleVSPLaserWeapon() {
+		super();
 
-        name = "Variable-Pulse Laser Rifle";
-        setInternalName(name);
-        addLookupName("InfantryVSPRifle");
-        addLookupName("VariablePulseLaserRifle");
-        ammoType = AmmoType.T_NA;
-        cost = 4500;
-        tonnage = 0.006;
-        bv = 0.0;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.33;
-        infantryRange = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3075, 3077, 3085);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
-    }
+		name = "Variable-Pulse Laser Rifle";
+		setInternalName(name);
+		addLookupName("InfantryVSPRifle");
+		addLookupName("VariablePulseLaserRifle");
+		ammoType = AmmoType.T_NA;
+		cost = 4500;
+		tonnage = 0.006;
+		bv = 0.0;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.33;
+		infantryRange = 1;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3075, 3077, 3085, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setPrototypeFactions(F_FS)
+		        .setProductionFactions(F_FS).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+
+	}
 }

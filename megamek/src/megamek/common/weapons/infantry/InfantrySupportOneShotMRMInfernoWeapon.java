@@ -25,34 +25,35 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySupportOneShotMRMInfernoWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportOneShotMRMInfernoWeapon() {
-        super();
+	public InfantrySupportOneShotMRMInfernoWeapon() {
+		super();
 
-        name = "MRM Launcher w/Inferno";
-        setInternalName(name);
-        addLookupName("InfantryInfernoMRM");
-        addLookupName("InfantryOneShotInfernoMRM");
-        addLookupName("Infantry One-Shot MRM Inferno Launcher");
-        ammoType = AmmoType.T_NA;
-        cost = 2500;
-        bv = 1.33;
-        tonnage = .03;
-        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
-        infantryDamage = 0.26;
-        infantryRange = 2;
-        crew = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3063, 3065, 3075);
-        techAdvancement.setApproximate(true,false,false);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
-    }
+		name = "MRM Launcher w/Inferno";
+		setInternalName(name);
+		addLookupName("InfantryInfernoMRM");
+		addLookupName("InfantryOneShotInfernoMRM");
+		addLookupName("Infantry One-Shot MRM Inferno Launcher");
+		ammoType = AmmoType.T_NA;
+		cost = 2500;
+		bv = 1.33;
+		tonnage = .03;
+		flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
+		String[] modeStrings = { "Damage", "Heat" };
+		setModes(modeStrings);
+		infantryDamage = 0.26;
+		infantryRange = 2;
+		crew = 1;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_DC)
+		        .setProductionFactions(F_DC).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+
+	}
 }

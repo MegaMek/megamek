@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleFederatedLongWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleFederatedLongWeapon() {
-        super();
+	public InfantryRifleFederatedLongWeapon() {
+		super();
 
-        name = "Rifle (Federated Long)";
-        setInternalName(name);
-        addLookupName("InfantryFederatedLongRifle");
-        addLookupName("Federated Long Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 120;
-        bv = 1.07;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.35;
-        infantryRange = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2855, 2870, 3000);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_A, RATING_B });
-    }
+		name = "Rifle (Federated Long)";
+		setInternalName(name);
+		addLookupName("InfantryFederatedLongRifle");
+		addLookupName("Federated Long Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 120;
+		bv = 1.07;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.35;
+		infantryRange = 1;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2860, 2870, 3000, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FS)
+		        .setProductionFactions(F_FS).setTechRating(RATING_C)
+		        .setAvailability(RATING_X, RATING_C, RATING_A, RATING_B);
+
+	}
 }

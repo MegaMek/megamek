@@ -45,9 +45,11 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
         infantryDamage = 0.55;
         infantryRange = 2;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3053, 3062, 3085);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3062, 3085, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS).setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+
     }
 }

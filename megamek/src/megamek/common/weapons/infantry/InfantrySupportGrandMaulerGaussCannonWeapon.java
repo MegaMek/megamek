@@ -25,32 +25,33 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportGrandMaulerGaussCannonWeapon() {
-        super();
+	public InfantrySupportGrandMaulerGaussCannonWeapon() {
+		super();
 
-        name = "Gauss Cannon (Grand Mauler)";
-        setInternalName(name);
-        addLookupName("InfantryGrandMaulerGaussCannon");
-        addLookupName("InfantryGrandMauler");
-        addLookupName("Infantry Grand Mauler Gauss Cannon");
-        ammoType = AmmoType.T_NA;
-        cost = 5000;
-        bv = 3.22;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        infantryDamage = 0.63;
-        infantryRange = 2;
-        crew = 1;
-        tonnage = .014;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3055, 3059, 3065);
-        techAdvancement.setApproximate(true, false, false);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_E });
-    }
+		name = "Gauss Cannon (Grand Mauler)";
+		setInternalName(name);
+		addLookupName("InfantryGrandMaulerGaussCannon");
+		addLookupName("InfantryGrandMauler");
+		addLookupName("Infantry Grand Mauler Gauss Cannon");
+		ammoType = AmmoType.T_NA;
+		cost = 5000;
+		bv = 3.22;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+		infantryDamage = 0.63;
+		infantryRange = 2;
+		crew = 1;
+		tonnage = .014;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3055, 3059, 3065, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FS)
+		        .setProductionFactions(F_FS).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_E);
+
+	}
 }

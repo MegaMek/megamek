@@ -46,10 +46,10 @@ public class InfantrySupportHeavyFlamerWeapon extends InfantryWeapon {
 		crew = 2;
 		rulesRefs = " 273, TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
-				.setISApproximate(false, false, false, false, false)
-				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
-				.setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-				.setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+		        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
 
 	}
 }

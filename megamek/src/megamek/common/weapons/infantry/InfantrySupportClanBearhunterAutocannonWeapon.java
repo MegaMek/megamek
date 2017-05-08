@@ -47,8 +47,7 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
         infantryRange = 0;
         crew = 2;
         rulesRefs = "273, TM";
-		techAdvancement.setTechBase(TECH_BASE_CLAN).setISAdvancement(3059, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setISApproximate(true, false, false, false, false)
+		techAdvancement.setTechBase(TECH_BASE_CLAN)
 		        .setClanAdvancement(3059, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
 		        .setProductionFactions(F_CHH).setTechRating(RATING_D)

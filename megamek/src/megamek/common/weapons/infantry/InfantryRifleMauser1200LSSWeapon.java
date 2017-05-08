@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleMauser1200LSSWeapon() {
-        super();
+	public InfantryRifleMauser1200LSSWeapon() {
+		super();
 
-        name = "Laser Rifle (Mauser 1200 LSS)";
-        setInternalName(name);
-        addLookupName("InfantryMauser1200");
-        addLookupName("Mauser 1200 LSS");
-        ammoType = AmmoType.T_NA;
-        cost = 10000;
-        bv = 5.32;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 1.04;
-        infantryRange = 2;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3047, 3055, 3075);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
-    }
+		name = "Laser Rifle (Mauser 1200 LSS)";
+		setInternalName(name);
+		addLookupName("InfantryMauser1200");
+		addLookupName("Mauser 1200 LSS");
+		ammoType = AmmoType.T_NA;
+		cost = 10000;
+		bv = 5.32;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 1.04;
+		infantryRange = 2;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3052, 3055, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_WB)
+		        .setProductionFactions(F_WB).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+
+	}
 }

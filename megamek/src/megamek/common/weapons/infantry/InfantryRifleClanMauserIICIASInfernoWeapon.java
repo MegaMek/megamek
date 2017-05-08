@@ -25,29 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleClanMauserIICIASInfernoWeapon() {
-        super();
+	public InfantryRifleClanMauserIICIASInfernoWeapon() {
+		super();
 
-        name = "Laser Rifle (Mauser IIC IAS) (Inferno Grenades)";
-        setInternalName(name);
-        addLookupName("InfantryClanMauserIICIASInferno");
-        addLookupName("Infantry Clan Mauser IIC Inferno");
-        ammoType = AmmoType.T_NA;
-        tonnage = 0.0012;
-        cost = 18000;
-        bv = 6.45;
-        flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
-        infantryDamage = 0.90;
-        infantryRange = 3;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(3008, 3015, DATE_NONE);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
-    }
+		name = "Laser Rifle (Mauser IIC IAS) (Inferno Grenades)";
+		setInternalName(name);
+		addLookupName("InfantryClanMauserIICIASInferno");
+		addLookupName("Infantry Clan Mauser IIC Inferno");
+		ammoType = AmmoType.T_NA;
+		tonnage = 0.0012;
+		cost = 18000;
+		bv = 6.45;
+		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_INF_ENCUMBER);
+		infantryDamage = 0.90;
+		infantryRange = 3;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
+		        .setProductionFactions(F_CHH).setTechRating(RATING_F)
+		        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D);
+
+	}
 }

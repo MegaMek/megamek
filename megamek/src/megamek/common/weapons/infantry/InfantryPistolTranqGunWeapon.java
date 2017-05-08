@@ -25,27 +25,29 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryPistolTranqGunWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolTranqGunWeapon() {
-        super();
+	public InfantryPistolTranqGunWeapon() {
+		super();
 
-        name = "Tranq Gun";
-        setInternalName(name);
-        addLookupName("InfantryTranquilizerGun");
-        ammoType = AmmoType.T_NA;
-        cost = 30;
-        bv = 0.13;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.14;
-        infantryRange = 0;
-        rulesRefs =" 273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        techAdvancement.setTechRating(RATING_A);
-        techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-    }
+		name = "Tranq Gun";
+		setInternalName(name);
+		addLookupName("InfantryTranquilizerGun");
+		ammoType = AmmoType.T_NA;
+		cost = 30;
+		bv = 0.13;
+		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.14;
+		infantryRange = 0;
+		rulesRefs = " 273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_A)
+		        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+
+	}
 }

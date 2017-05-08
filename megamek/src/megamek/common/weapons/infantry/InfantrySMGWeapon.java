@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySMGWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySMGWeapon() {
-        super();
+	public InfantrySMGWeapon() {
+		super();
 
-        name = "Submachine Gun";
-        setInternalName(name);
-        addLookupName("InfantrySMG");
-        addLookupName("Submachinegun");
-        ammoType = AmmoType.T_NA;
-        cost = 80;
-        bv = 0.23;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.25;
-        infantryRange = 0;
-        rulesRefs =" 273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
-    }
+		name = "Submachine Gun";
+		setInternalName(name);
+		addLookupName("InfantrySMG");
+		addLookupName("Submachinegun");
+		ammoType = AmmoType.T_NA;
+		cost = 80;
+		bv = 0.23;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.25;
+		infantryRange = 0;
+		rulesRefs = " 273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+		        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+
+	}
 }

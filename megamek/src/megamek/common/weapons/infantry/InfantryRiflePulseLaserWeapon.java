@@ -25,28 +25,31 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRiflePulseLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRiflePulseLaserWeapon() {
-        super();
+	public InfantryRiflePulseLaserWeapon() {
+		super();
 
-        name = "Pulse Laser Rifle (IS)";
-        setInternalName(name);
-        addLookupName("InfantryISPulseLaser");
-        addLookupName("IS Pulse Laser Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 1000;
-        bv = 0.76;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.25;
-        infantryRange = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2673, 2680, 2700);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_D, RATING_E, RATING_C, RATING_C });
-    }
+		name = "Pulse Laser Rifle (Inner Sphere)";
+		setInternalName(name);
+		addLookupName("InfantryISPulseLaser");
+		addLookupName("IS Pulse Laser Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 1000;
+		bv = 0.76;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.25;
+		infantryRange = 1;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2678, 2680, 2700, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2678, 2680, 2700, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH).setTechRating(RATING_D)
+		        .setAvailability(RATING_D, RATING_E, RATING_C, RATING_C);
+
+	}
 }

@@ -44,9 +44,10 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
         infantryDamage = 1.02;
         infantryRange = 1;
         rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3055, 3064, 3095);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS).setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
     }
 }

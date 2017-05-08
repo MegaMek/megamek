@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleBoltActionWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleBoltActionWeapon() {
-        super();
+	public InfantryRifleBoltActionWeapon() {
+		super();
 
-        name = "Rifle (Bolt-Action)";
-        setInternalName(name);
-        addLookupName("InfantryBoltActionRifle");
-        addLookupName("Infantry Bolt Action Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 60;
-        bv = 0.43;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.14;
-        infantryRange = 1;
-        rulesRefs =" 273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_B });
-    }
+		name = "Rifle (Bolt-Action)";
+		setInternalName(name);
+		addLookupName("InfantryBoltActionRifle");
+		addLookupName("Infantry Bolt Action Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 60;
+		bv = 0.43;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.14;
+		infantryRange = 1;
+		rulesRefs = " 273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_B)
+		        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_B);
+
+	}
 }

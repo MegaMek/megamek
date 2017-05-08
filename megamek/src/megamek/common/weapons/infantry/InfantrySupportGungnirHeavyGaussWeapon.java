@@ -25,32 +25,33 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySupportGungnirHeavyGaussWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportGungnirHeavyGaussWeapon() {
-        super();
+	public InfantrySupportGungnirHeavyGaussWeapon() {
+		super();
 
-        name = "Gauss Rifle (Gungnir Heavy)";
-        setInternalName(name);
-        addLookupName("InfantryGungnirHeavySupportGaussRifle");
-        addLookupName("GungnirHeavySupportGaussRifle");
-        ammoType = AmmoType.T_NA;
-        cost = 15000;
-        tonnage = 0.006f;
-        bv = 0.0;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 1.23;
-        infantryRange = 3;
-        crew = 3;
-        tonnage = .060;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3074, 3080, DATE_NONE);
-        techAdvancement.setApproximate(true, false, false);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
-    }
+		name = "Gauss Rifle (Gungnir Heavy)";
+		setInternalName(name);
+		addLookupName("InfantryGungnirHeavySupportGaussRifle");
+		addLookupName("GungnirHeavySupportGaussRifle");
+		ammoType = AmmoType.T_NA;
+		cost = 15000;
+		tonnage = 0.006f;
+		bv = 0.0;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		infantryDamage = 1.23;
+		infantryRange = 3;
+		crew = 3;
+		tonnage = .060;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3074, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
+
+	}
 }

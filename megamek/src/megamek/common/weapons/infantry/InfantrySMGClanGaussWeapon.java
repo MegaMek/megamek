@@ -25,28 +25,29 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySMGClanGaussWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySMGClanGaussWeapon() {
-        super();
+	public InfantrySMGClanGaussWeapon() {
+		super();
 
-        name = "Gauss Submachinegun";
-        setInternalName(name);
-        addLookupName("InfantryGaussSMG");
-        addLookupName("InfantryClanGaussSMG");
-        ammoType = AmmoType.T_NA;
-        cost = 2000;
-        bv = 1.38;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.45;
-        infantryRange = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(3046, 3055, 3060);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
-    }
+		name = "Gauss Submachinegun";
+		setInternalName(name);
+		addLookupName("InfantryGaussSMG");
+		addLookupName("InfantryClanGaussSMG");
+		ammoType = AmmoType.T_NA;
+		cost = 2000;
+		bv = 1.38;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.45;
+		infantryRange = 1;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3051, 3055, 3060, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSF)
+		        .setProductionFactions(F_CSF).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+
+	}
 }

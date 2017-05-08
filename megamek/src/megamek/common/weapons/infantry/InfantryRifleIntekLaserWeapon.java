@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleIntekLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleIntekLaserWeapon() {
-        super();
+	public InfantryRifleIntekLaserWeapon() {
+		super();
 
-        name = "Laser Rifle (Intek)";
-        setInternalName(name);
-        addLookupName("InfantryIntekLaser");
-        addLookupName("Intek Laser Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 1250;
-        bv = 1.51;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.21;
-        infantryRange = 3;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2870, 2880, 2950);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
-    }
+		name = "Laser Rifle (Intek)";
+		setInternalName(name);
+		addLookupName("InfantryIntekLaser");
+		addLookupName("Intek Laser Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 1250;
+		bv = 1.51;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+		infantryDamage = 0.21;
+		infantryRange = 3;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2875, 2880, 2950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FW)
+		        .setProductionFactions(F_FW).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_D, RATING_D, RATING_C);
+
+	}
 }

@@ -25,30 +25,32 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleThunderstrokeIIWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleThunderstrokeIIWeapon() {
-        super();
+	public InfantryRifleThunderstrokeIIWeapon() {
+		super();
 
-        name = "Gauss Rifle (Thunderstroke II)";
-        setInternalName(name);
-        addLookupName("InfantryTStroke2");
-        addLookupName("InfantryThunderstroke2");
-        addLookupName("InfantryThunderStrokeII");
-        addLookupName("Thunderstroke II");
-        ammoType = AmmoType.T_NA;
-        cost = 3500;
-        bv = 2.71;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.53;
-        infantryRange = 2;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3053, 3062, 3090);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_D });
-    }
+		name = "Gauss Rifle (Thunderstroke II)";
+		setInternalName(name);
+		addLookupName("InfantryTStroke2");
+		addLookupName("InfantryThunderstroke2");
+		addLookupName("InfantryThunderStrokeII");
+		addLookupName("Thunderstroke II");
+		ammoType = AmmoType.T_NA;
+		cost = 3500;
+		bv = 2.71;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.53;
+		infantryRange = 2;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3062, 3090, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FS)
+		        .setProductionFactions(F_FS).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
+
+	}
 }

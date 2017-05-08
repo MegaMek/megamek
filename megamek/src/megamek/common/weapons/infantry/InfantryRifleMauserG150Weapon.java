@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleMauserG150Weapon() {
-        super();
+	public InfantryRifleMauserG150Weapon() {
+		super();
 
-        name = "Rifle (M&G G-150)";
-        setInternalName(name);
-        addLookupName("InfantryM&GG150");
-        addLookupName("Mauser and Grey G-150");
-        ammoType = AmmoType.T_NA;
-        cost = 270;
-        bv = 1.64;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.32;
-        infantryRange = 2;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3053, 3060, 3075);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
-    }
+		name = "Rifle (M&G G-150)";
+		setInternalName(name);
+		addLookupName("InfantryM&GG150");
+		addLookupName("Mauser and Grey G-150");
+		ammoType = AmmoType.T_NA;
+		cost = 270;
+		bv = 1.64;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.32;
+		infantryRange = 2;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3060, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_C)
+		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B);
+
+	}
 }

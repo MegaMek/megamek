@@ -25,32 +25,32 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportClanERLaserWeapon() {
-        super();
+	public InfantrySupportClanERLaserWeapon() {
+		super();
 
-        name = "Support Laser (ER, Clan)";
-        setInternalName(name);
-        addLookupName("InfantryClanERLaser");
-        addLookupName("InfantryClanERSmallLaser");
-        addLookupName("Infantry Clan ER Laser");
-        ammoType = AmmoType.T_NA;
-        cost = 11250;
-        bv = 10.27;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
-        infantryDamage = 1.05;
-        infantryRange = 4;
-        crew = 2;
-        tonnage = .100;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2824, 2825, DATE_NONE);
-        techAdvancement.setApproximate(true, false, false);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_C });
-    }
+		name = "Support Laser (ER, Clan)";
+		setInternalName(name);
+		addLookupName("InfantryClanERLaser");
+		addLookupName("InfantryClanERSmallLaser");
+		addLookupName("Infantry Clan ER Laser");
+		ammoType = AmmoType.T_NA;
+		cost = 11250;
+		bv = 10.27;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY).or(F_LASER).or(F_INF_SUPPORT);
+		infantryDamage = 1.05;
+		infantryRange = 4;
+		crew = 2;
+		tonnage = .100;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2824, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
+		        .setProductionFactions(F_CHH).setTechRating(RATING_F)
+		        .setAvailability(RATING_X, RATING_E, RATING_D, RATING_C);
+
+	}
 }

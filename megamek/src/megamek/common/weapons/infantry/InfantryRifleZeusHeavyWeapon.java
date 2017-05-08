@@ -25,28 +25,31 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleZeusHeavyWeapon() {
-        super();
+	public InfantryRifleZeusHeavyWeapon() {
+		super();
 
-        name = "Rifle (Zeus Heavy)";
-        setInternalName(name);
-        addLookupName("InfantryZeusHeavyRifle");
-        addLookupName("Zeus Heavy Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 200;
-        bv = 0.67;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.22;
-        infantryRange = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2740, 2745, 2750);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_B, RATING_B, RATING_B });
-    }
+		name = "Rifle (Zeus Heavy)";
+		setInternalName(name);
+		addLookupName("InfantryZeusHeavyRifle");
+		addLookupName("Zeus Heavy Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 200;
+		bv = 0.67;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.22;
+		infantryRange = 1;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2740, 2745, 2750, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2740, 2745, 2750, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_FS)
+		        .setProductionFactions(F_FS).setTechRating(RATING_C)
+		        .setAvailability(RATING_C, RATING_B, RATING_B, RATING_B);
+
+	}
 }

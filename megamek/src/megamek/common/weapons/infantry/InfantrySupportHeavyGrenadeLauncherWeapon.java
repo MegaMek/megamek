@@ -48,8 +48,7 @@ public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
 		rulesRefs = "273, TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3049, 3050, 3057, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
-				.setClanAdvancement(3049, 3050, 3057, DATE_NONE, DATE_NONE)
-				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_FS, F_LC)
+				.setPrototypeFactions(F_FS, F_LC)
 				.setProductionFactions(F_FS, F_LC).setTechRating(RATING_C)
 				.setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
 

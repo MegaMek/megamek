@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleStarKingGyroslugCarbineWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleStarKingGyroslugCarbineWeapon() {
-        super();
+	public InfantryRifleStarKingGyroslugCarbineWeapon() {
+		super();
 
-        name = "Gyroslug Carbine (Star King)";
-        setInternalName(name);
-        addLookupName("InfantryStarKing");
-        addLookupName("Star King Gyroslug Carbine");
-        ammoType = AmmoType.T_NA;
-        cost = 950;
-        bv = 1.07;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.35;
-        infantryRange = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2770, 2789, 2825);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_D, RATING_C });
-    }
+		name = "Gyroslug Carbine (Star King)";
+		setInternalName(name);
+		addLookupName("InfantryStarKing");
+		addLookupName("Star King Gyroslug Carbine");
+		ammoType = AmmoType.T_NA;
+		cost = 950;
+		bv = 1.07;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.35;
+		infantryRange = 1;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2775, 2789, 2825, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_C, RATING_D, RATING_C);
+
+	}
 }

@@ -25,34 +25,35 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySupportFiredrakeNeedlerWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportFiredrakeNeedlerWeapon() {
-        super();
+	public InfantrySupportFiredrakeNeedlerWeapon() {
+		super();
 
-        name = "Needler, Support (Firedrake)";
-        setInternalName(name);
-        addLookupName("InfantryFiredrake");
-        addLookupName("InfantrySupportNeedler");
-        addLookupName("Infantry Firedrake Needler");
-        ammoType = AmmoType.T_NA;
-        cost = 500;
-        bv = 6.13;
-        flags = flags.or(F_INCENDIARY_NEEDLES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        String[] modeStrings = { "Damage", "Heat" };
-        setModes(modeStrings);
-        infantryDamage = 1.2;
-        infantryRange = 1;
-        crew = 2;
-        tonnage = .025;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3058, 3061, 3075);
-        techAdvancement.setApproximate(true, false, false);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_C });
-    }
+		name = "Needler, Support (Firedrake)";
+		setInternalName(name);
+		addLookupName("InfantryFiredrake");
+		addLookupName("InfantrySupportNeedler");
+		addLookupName("Infantry Firedrake Needler");
+		ammoType = AmmoType.T_NA;
+		cost = 500;
+		bv = 6.13;
+		flags = flags.or(F_INCENDIARY_NEEDLES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		String[] modeStrings = { "Damage", "Heat" };
+		setModes(modeStrings);
+		infantryDamage = 1.2;
+		infantryRange = 1;
+		crew = 2;
+		tonnage = .025;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3061, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+
+	}
 }

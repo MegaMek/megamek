@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleMaxellPL10LaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleMaxellPL10LaserWeapon() {
-        super();
+	public InfantryRifleMaxellPL10LaserWeapon() {
+		super();
 
-        name = "Laser Rifle (Maxell PL-10)";
-        setInternalName(name);
-        addLookupName("InfantryMaxellPL10Laser");
-        addLookupName("Maxell PL10 Laser Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 2000;
-        bv = 1.33;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.26;
-        infantryRange = 2;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3052, 3059, 3075);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_C });
-    }
+		name = "Laser Rifle (Maxell PL-10)";
+		setInternalName(name);
+		addLookupName("InfantryMaxellPL10Laser");
+		addLookupName("Maxell PL10 Laser Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 2000;
+		bv = 1.33;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.26;
+		infantryRange = 2;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3057, 3059, 3075, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C);
+
+	}
 }

@@ -25,30 +25,32 @@ import megamek.common.TechAdvancement;
  */
 public class InfantrySupportVintageMiniGunWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantrySupportVintageMiniGunWeapon() {
-        super();
+	public InfantrySupportVintageMiniGunWeapon() {
+		super();
 
-        name = "Vintage MiniGun";
-        setInternalName(name);
-        addLookupName("InfantryVintageMiniGun");
-        addLookupName("VintageMinGun");
-        ammoType = AmmoType.T_NA;
-        cost = 50000;
-        tonnage = .021;
-        bv = 0.0;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
-        infantryDamage = 0.81;
-        infantryRange = 2;
-        crew = 2;
-        rulesRefs =" 273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_F });
-    }
+		name = "Vintage MiniGun";
+		setInternalName(name);
+		addLookupName("InfantryVintageMiniGun");
+		addLookupName("VintageMinGun");
+		ammoType = AmmoType.T_NA;
+		cost = 50000;
+		tonnage = .021;
+		bv = 0.0;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_SUPPORT);
+		infantryDamage = 0.81;
+		infantryRange = 2;
+		crew = 2;
+		rulesRefs = " 273, TM";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
+		        .setAvailability(RATING_E, RATING_E, RATING_E, RATING_F);
+
+	}
 }

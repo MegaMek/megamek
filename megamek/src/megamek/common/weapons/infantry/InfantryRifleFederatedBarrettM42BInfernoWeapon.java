@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleFederatedBarrettM42BInfernoWeapon() {
-        super();
+	public InfantryRifleFederatedBarrettM42BInfernoWeapon() {
+		super();
 
-        name = "Rifle (Federated-Barrett M42B) (Inferno Grenades)";
-        setInternalName(name);
-        addLookupName("InfantryFederatedBarrettM42BInferno");
-        addLookupName("Federated Barrett M42B Inferno");
-        ammoType = AmmoType.T_NA;
-        cost = 1385;
-        bv = 2.3;
-        flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.82;
-        infantryRange = 1;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3055, 3064, 3095);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
-    }
+		name = "Rifle (Federated-Barrett M42B) (Inferno Grenades)";
+		setInternalName(name);
+		addLookupName("InfantryFederatedBarrettM42BInferno");
+		addLookupName("Federated Barrett M42B Inferno");
+		ammoType = AmmoType.T_NA;
+		cost = 1385;
+		bv = 2.3;
+		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.82;
+		infantryRange = 1;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FS)
+		        .setProductionFactions(F_FS).setTechRating(RATING_C)
+		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+
+	}
 }

@@ -25,28 +25,29 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryShotgunBuccaneerGelGunWeapon() {
-        super();
+	public InfantryShotgunBuccaneerGelGunWeapon() {
+		super();
 
-        name = "Gel Gun (Buccaneer)";
-        setInternalName(name);
-        addLookupName("InfantryBuccaneerGelGun");
-        addLookupName("Buccaneer Gel Gun");
-        ammoType = AmmoType.T_NA;
-        cost = 200;
-        bv = 0.06;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.07;
-        infantryRange = 0;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3025, 3035, 3057);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
-    }
+		name = "Gel Gun (Buccaneer)";
+		setInternalName(name);
+		addLookupName("InfantryBuccaneerGelGun");
+		addLookupName("Buccaneer Gel Gun");
+		ammoType = AmmoType.T_NA;
+		cost = 200;
+		bv = 0.06;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+		infantryDamage = 0.07;
+		infantryRange = 0;
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3030, 3035, 3057, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FW)
+		        .setProductionFactions(F_FW).setTechRating(RATING_C)
+		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+
+	}
 }

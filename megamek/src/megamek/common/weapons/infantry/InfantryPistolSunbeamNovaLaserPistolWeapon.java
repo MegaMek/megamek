@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryPistolSunbeamNovaLaserPistolWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryPistolSunbeamNovaLaserPistolWeapon() {
-        super();
+	public InfantryPistolSunbeamNovaLaserPistolWeapon() {
+		super();
 
-        name = "Laser Pistol (Sunbeam Nova)";
-        setInternalName(name);
-        addLookupName("InfantrySunbeamNovapistol");
-        addLookupName("InfantrySunbeamNovapistol");
-        ammoType = AmmoType.T_NA;
-        cost = 1250;
-        bv = 0.24;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.26;
-        infantryRange = 0;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3045, 3053, 3057);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
-    }
+		name = "Laser Pistol (Sunbeam Nova)";
+		setInternalName(name);
+		addLookupName("InfantrySunbeamNovapistol");
+		addLookupName("InfantrySunbeamNovapistol");
+		ammoType = AmmoType.T_NA;
+		cost = 1250;
+		bv = 0.24;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+		infantryDamage = 0.26;
+		infantryRange = 0;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3050, 3053, 3057, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FW)
+		        .setProductionFactions(F_FW).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+
+	}
 }

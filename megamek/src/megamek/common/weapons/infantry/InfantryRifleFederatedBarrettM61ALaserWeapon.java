@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleFederatedBarrettM61ALaserWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleFederatedBarrettM61ALaserWeapon() {
-        super();
+	public InfantryRifleFederatedBarrettM61ALaserWeapon() {
+		super();
 
-        name = "Laser Rifle (Federated-Barrett M61A)";
-        setInternalName(name);
-        addLookupName("InfantryFederatedBarrettM61A");
-        addLookupName("Federated Barrett M61A");
-        ammoType = AmmoType.T_NA;
-        cost = 2150;
-        bv = 3.83;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
-        infantryDamage = 0.75;
-        infantryRange = 2;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3053, 3062, 3085);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
-    }
+		name = "Laser Rifle (Federated-Barrett M61A)";
+		setInternalName(name);
+		addLookupName("InfantryFederatedBarrettM61A");
+		addLookupName("Federated Barrett M61A");
+		ammoType = AmmoType.T_NA;
+		cost = 2150;
+		bv = 3.83;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
+		infantryDamage = 0.75;
+		infantryRange = 2;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3058, 3062, 3085, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_FS)
+		        .setProductionFactions(F_FS).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C);
+
+	}
 }

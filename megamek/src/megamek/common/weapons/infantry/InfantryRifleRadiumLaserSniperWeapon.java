@@ -25,28 +25,30 @@ import megamek.common.TechAdvancement;
  */
 public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = -3164871600230559641L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryRifleRadiumLaserSniperWeapon() {
-        super();
+	public InfantryRifleRadiumLaserSniperWeapon() {
+		super();
 
-        name = "Rifle (Radium Sniper)";
-        setInternalName(name);
-        addLookupName("InfantryRadiumSniper");
-        addLookupName("Radium Sniper Rifle");
-        ammoType = AmmoType.T_NA;
-        cost = 9500;
-        bv = 2.58;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.36;
-        infantryRange = 3;
-        rulesRefs = "273, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2577, 2583, DATE_NONE, 2607, 3062);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_F, RATING_F });
-    }
+		name = "Rifle (Radium Sniper)";
+		setInternalName(name);
+		addLookupName("InfantryRadiumSniper");
+		addLookupName("Radium Sniper Rifle");
+		ammoType = AmmoType.T_NA;
+		cost = 9500;
+		bv = 2.58;
+		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
+		infantryDamage = 0.36;
+		infantryRange = 3;
+		rulesRefs = "273, TM";
+		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2582, 2583, DATE_NONE, 2607, 3062)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_TC)
+		        .setProductionFactions(F_TC).setReintroductionFactions(F_TC).setTechRating(RATING_E)
+		        .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F);
+
+	}
 }

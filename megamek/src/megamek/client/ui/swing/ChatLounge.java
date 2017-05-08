@@ -3543,6 +3543,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                         e.getCrew().setGunnery(skills[0], i);
                         e.getCrew().setPiloting(skills[1], i);
                     }
+                    e.getCrew().sortRandomSkills();
                     c.sendUpdateEntity(e);
                 }
             } else if (command.equalsIgnoreCase("NAME")) {

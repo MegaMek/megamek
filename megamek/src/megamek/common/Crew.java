@@ -1123,6 +1123,45 @@ public class Crew implements Serializable {
     }
     
     /**
+     * When assigning skills randomly, we want to make sure the skills are assigned to the most
+     * appropriate position. We're going to do it the simpler way and reassign the piloting and gunnery
+     * skills individually, resulting in a more specialized crew.
+     */
+    public void sortRandomSkills() {
+        if (crewType.getCrewSlots() < 2) {
+            return;
+        }
+        int lowest = MAX_SKILL;
+        int pos = -1;
+        if (!missing[crewType.getPilotPos()]) {
+            for (int i = 0; i < getSlotCount(); i++) {
+                if (piloting[i] < lowest) {
+                    lowest = piloting[i];
+                    pos = i;
+                }
+            }
+            if (pos >= 0) {
+                piloting[pos] = piloting[crewType.getPilotPos()];
+                piloting[crewType.getPilotPos()] = lowest;
+            }
+        }
+        lowest = MAX_SKILL;
+        pos = -1;
+        if (!missing[crewType.getGunnerPos()]) {
+            for (int i = 0; i < getSlotCount(); i++) {
+                if (gunnery[i] < lowest) {
+                    lowest = gunnery[i];
+                    pos = i;
+                }
+            }
+            if (pos >= 0) {
+                gunnery[pos] = gunnery[crewType.getGunnerPos()];
+                gunnery[crewType.getGunnerPos()] = lowest;
+            }
+        }
+    }
+    
+    /**
      * Tripods and QuadVees get special benefits if the dedicated pilot is active.
      * 
      * @return Whether a Mek has a separate pilot who is active. 

@@ -759,6 +759,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 e.getCrew().setName(client.getRandomNameGenerator().generate(), i);
             }
         }
+        e.getCrew().sortRandomSkills();
     }
 
      public void run() {

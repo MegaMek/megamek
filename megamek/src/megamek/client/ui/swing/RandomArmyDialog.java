@@ -922,6 +922,7 @@ WindowListener, TreeSelectionListener {
                 e.getCrew().setGunnery(gunnery, i);
                 e.getCrew().setPiloting(piloting, i);
             }
+            e.getCrew().sortRandomSkills();
             if(cs.generateNames()) {
                 e.getCrew().setName(m_client.getRandomNameGenerator().generate(), i);
             }

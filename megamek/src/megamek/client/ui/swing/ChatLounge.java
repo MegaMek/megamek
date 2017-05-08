@@ -1374,12 +1374,20 @@ public class ChatLounge extends AbstractPhaseDisplay
         int implants = pilot.countOptions(PilotOptions.MD_ADVANTAGES);
 
         String value = "";
-        if (blindDrop) {
-            value += "<b>" + Messages.getString("ChatLounge.Unknown") + "</b><br>";
+        if (!blindDrop && pilot.getSlotCount() > 1) {
+            for (int i = 0; i < pilot.getSlotCount(); i++) {
+                value += "<b>" + pilot.getDesc(i) + "</b> (" + pilot.getCrewType().getRoleName(i) + "): ";
+                value += pilot.getGunnery(i) + "/" + pilot.getPiloting(i);
+                value += "<br/>";
+            }
         } else {
-            value += "<b>" + pilot.getDesc() + "</b><br>";
+            if (blindDrop) {
+                value += "<b>" + Messages.getString("ChatLounge.Unknown") + "</b><br/>";
+            } else {
+                value += "<b>" + pilot.getDesc() + "</b><br/>";
+            }
+            value += "" + pilot.getGunnery() + "/" + pilot.getPiloting();
         }
-        value += "" + pilot.getGunnery() + "/" + pilot.getPiloting();
         if (crewAdvCount > 0) {
             value += ", " + crewAdvCount + Messages.getString("ChatLounge.advs");
         }

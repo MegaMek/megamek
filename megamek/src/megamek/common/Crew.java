@@ -709,18 +709,22 @@ public class Crew implements Serializable {
      * Overall crew description, using the name of the first crew member in the case of multi-crew cockpits.
      */
     public String getDesc() {
-        String s = new String(name[0]);
-        if (getHits() > 0) {
-            s += " (" + getHits() + " hit(s)";
-            if (isUnconscious()) {
+        return getDesc(0);
+    }
+    
+    public String getDesc(int pos) {
+        String s = new String(name[pos]);
+        if (hits[pos] > 0) {
+            s += " (" + hits[pos] + " hit(s)";
+            if (isUnconscious(pos)) {
                 s += " [ko]";
-            } else if (isDead()) {
+            } else if (isDead(pos)) {
                 s += " [dead]";
             }
             s += ")";
-        } else if (isUnconscious()) {
+        } else if (isUnconscious(pos)) {
             s += " [ko]";
-        } else if (isDead()) {
+        } else if (isDead(pos)) {
             s += " [dead]";
         }
         return s;

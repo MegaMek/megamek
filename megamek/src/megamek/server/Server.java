@@ -20758,7 +20758,7 @@ public class Server implements Runnable {
                 r.indent(2);
                 r.subject = e.getId();
                 r.addDesc(e);
-                r.add(e.getCrew().getName(crewPos));
+                r.add(e.getCrew().getNameAndRole(crewPos));
                 r.add(rollTarget);
                 r.add(roll);
                 if (roll >= rollTarget) {
@@ -20819,7 +20819,7 @@ public class Server implements Runnable {
                         Report r = new Report(6029);
                         r.subject = e.getId();
                         r.addDesc(e);
-                        r.add(e.getCrew().getName(pos));
+                        r.add(e.getCrew().getNameAndRole(pos));
                         r.add(rollTarget);
                         r.add(roll);
                         if (roll >= rollTarget) {
@@ -27436,7 +27436,7 @@ public class Server implements Runnable {
             r = new Report(2320);
             r.subject = entity.getId();
             r.addDesc(entity);
-            r.add(entity.getCrew().getName(crewPos));
+            r.add(entity.getCrew().getNameAndRole(crewPos));
             r.indent();
             reports.add(r);
             reports.addAll(damageCrew(entity, 1, crewPos));

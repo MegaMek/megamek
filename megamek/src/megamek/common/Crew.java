@@ -241,6 +241,18 @@ public class Crew implements Serializable {
     public String getNickname(int pos) {
         return nickname[pos];
     }
+    
+    /**
+     * @param pos The slot index for multi-crewed cockpits
+     * @return    For multi-slot crews, the crew member's name followed by the role. For-slot crews, the
+     *            crew name only.
+     */
+    public String getNameAndRole(int pos) {
+        if (getSlotCount() < 2) {
+            return getName(pos);
+        }
+        return getName(pos) + " (" + crewType.getRoleName(pos) + ")";
+    }
 
     /**
      * The size of this crew.

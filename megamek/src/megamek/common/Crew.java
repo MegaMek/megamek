@@ -89,6 +89,11 @@ public class Crew implements Serializable {
     
     private int pilotPos;
     private int gunnerPos;
+    
+    //Designate the slot index of the crew member that will fill in if the pilot or gunner is incapacitated.
+    //This is only relevant for superheavy tripods, as other types have at most a single other option.
+    private int backupPilot;
+    private int backupGunner;
 
     /**
      * End RPG Skills **
@@ -220,6 +225,13 @@ public class Crew implements Serializable {
 
         pilotPos = crewType.getPilotPos();
         gunnerPos = crewType.getGunnerPos();
+        
+        //For 2-slot crews, this will designate the other crew member as backup. For superheavy tripods,
+        //this will designate the pilot and gunner as backups for each other.
+        if (getSlotCount() > 1) {
+            backupPilot = 1 - pilotPos;
+            backupGunner = 1 - gunnerPos;
+        }
         
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
@@ -1045,6 +1057,14 @@ public class Crew implements Serializable {
         return gunnerPos;
     }
     
+    public void setBackupPilotPos(int pos) {
+        backupPilot = pos;
+    }
+    
+    public void setBackupGunner(int pos) {
+        backupGunner = pos;
+    }
+    
     /**
      * Set the pilot slot. If a multicrew cockpit uses the same crew member as both pilot and gunner
      * (i.e. cockpit command console), sets the gunner as well.
@@ -1077,63 +1097,31 @@ public class Crew implements Serializable {
      * A pilot or gunner that wakes up will resume normal duties.
      */
     private void activeStatusChanged() {
-        //Start by checking whether the default pilot is available. If not, leave things as they are
-        //unless the current pilot is now inactive.
+        //Start by checking whether the default pilot is available. If not, check the designated backup.
+        //If still not available, select the first active slot. If none are active, it does not matter
+        //which slot is designated and the value is not changed.
         if (isActive(crewType.getPilotPos())) {
             pilotPos = crewType.getPilotPos();
-        } else if (!isActive(pilotPos)) {
-            //If not, look for the crew member with the best piloting skill. If equal, we use the lowest index.
-            int skill = MAX_SKILL;
-            for (int i = 0; i < piloting.length; i++) {
-                if (piloting[i] < skill && isActive(i)) {
+        } else if (isActive(backupPilot)) {
+            pilotPos = backupPilot;
+        } else {
+            for (int i = 0; i < getSlotCount(); i++) {
+                if (isActive(i)) {
                     pilotPos = i;
-                    skill = piloting[i];
+                    break;
                 }
             }
-            //If none is found with less than the max skill, just take the first active.
-            if (pilotPos < 0) {
-                for (int i = 0; i < piloting.length; i++) {
-                    if (isActive(i)) {
-                        pilotPos = i;
-                        break;
-                    }
-                }
-            }
-            //If we still haven't found any, the entire crew is inactive and it doesn't matter who the pilot is.
-            if (pilotPos < 0) {
-                pilotPos = crewType.getPilotPos();
-            }
         }
-        //Make sure that cockpit command consoles use the same crew member for pilot and gunner.
-        if (crewType.getPilotPos() == crewType.getGunnerPos()) {
-            gunnerPos = pilotPos;
-            return;
-        }
-
-        //If the unit has a dedicated gunner, perform the same steps.
         if (isActive(crewType.getGunnerPos())) {
             gunnerPos = crewType.getGunnerPos();
-        } else if (!isActive(gunnerPos)) {
-            //If not, look for the crew member with the best gunnery skill. If equal, we use the lowest index.
-            int skill = MAX_SKILL;
-            for (int i = 0; i < gunnery.length; i++) {
-                if (gunnery[i] < skill && isActive(i)) {
+        } else if (isActive(backupGunner)) {
+            gunnerPos = backupGunner;
+        } else {
+            for (int i = 0; i < getSlotCount(); i++) {
+                if (isActive(i)) {
                     gunnerPos = i;
-                    skill = gunnery[i];
+                    break;
                 }
-            }
-            //If none is found with less than the max skill, just take the first active.
-            if (gunnerPos < 0) {
-                for (int i = 0; i < gunnery.length; i++) {
-                    if (isActive(i)) {
-                        gunnerPos = i;
-                        break;
-                    }
-                }
-            }
-            //If we still haven't found any, the entire crew is inactive and it doesn't matter who the gunner is.
-            if (gunnerPos < 0) {
-                gunnerPos = crewType.getGunnerPos();
             }
         }
     }

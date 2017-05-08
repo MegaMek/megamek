@@ -48,6 +48,7 @@ public enum CrewType {
             int maxPrimaryTargets) {
         this.roleNames = roleNames;
         this.pilotPos = pilotPos;
+        this.gunnerPos = gunnerPos;
         this.commanderPos = commanderPos;
         this.techPos = techPos;
         this.maxPrimaryTargets = maxPrimaryTargets;

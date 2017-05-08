@@ -55,6 +55,8 @@ public class Crew implements Serializable {
 
     private final boolean[] unconscious;
     private final boolean[] dead;
+    //Allow for the possibility that the unit is fielded with less than full crew.
+    private final boolean[] missing;
     
     //The following only apply to the entire crew.
     private boolean doomed; // scheduled to die at end of phase
@@ -209,6 +211,7 @@ public class Crew implements Serializable {
         hits = new int[slots];
         unconscious = new boolean[slots];
         dead = new boolean[slots];
+        missing = new boolean[slots];
         koThisRound = new boolean[slots];
         fatigue = 0;
         toughness = new int[slots];
@@ -377,7 +380,7 @@ public class Crew implements Serializable {
 
     public void setHits(int hits, int pos) {
         // Ejected pilots stop taking hits.
-        if (!ejected) {
+        if (!ejected && !missing[pos]) {
             this.hits[pos] = hits;
         }
     }
@@ -436,7 +439,7 @@ public class Crew implements Serializable {
 
     public void setDead(boolean dead, int pos) {
         // Ejected pilots stop taking hits.
-        if (!ejected) {
+        if (!ejected && !missing[pos]) {
             this.dead[pos] = dead;
             if (dead) {
                 hits[pos] = 6;
@@ -445,6 +448,21 @@ public class Crew implements Serializable {
                 activeStatusChanged();
             }
         }
+    }
+    
+    /**
+     * @return Whether the unit was fielded without a crew member in the slot.
+     */
+    public boolean isMissing(int pos) {
+        return missing[pos];
+    }
+    
+    /**
+     * Allows a unit with a multi-crew cockpit to fielded with less than a full crew. Does not apply
+     * to collective crew (vehicles, infantry, large craft). 
+     */
+    public void setMissing(boolean missing, int pos) {
+        this.missing[pos] = missing;
     }
 
     /**
@@ -485,7 +503,7 @@ public class Crew implements Serializable {
     }
     
     public boolean isActive(int pos) {
-        return !unconscious[pos] && !dead[pos];
+        return !unconscious[pos] && !dead[pos] && !missing[pos];
     }
     
     /**
@@ -706,9 +724,15 @@ public class Crew implements Serializable {
         Report r;
 
         for (int i = 0; i < getSlotCount(); i++) {
+            if (missing[i]) {
+                continue;
+            }
             r = new Report();
             r.type = Report.PUBLIC;
             r.add(name[i]);
+            if (getSlotCount() > 1) {
+                r.add(" (" + crewType.getRoleName(i) + ")");
+            }
             if (gunneryOnly) {
                 r.messageId = 7050;
                 r.add(getGunnery(i));
@@ -718,7 +742,7 @@ public class Crew implements Serializable {
                 r.add(getPiloting(i));
             }
     
-            if ((hits[i] > 0) || isUnconscious() || isDead()) {
+            if ((hits[i] > 0) || isUnconscious(i) || isDead(i)) {
                 Report r2 = new Report();
                 r2.type = Report.PUBLIC;
                 if (hits[i] > 0) {

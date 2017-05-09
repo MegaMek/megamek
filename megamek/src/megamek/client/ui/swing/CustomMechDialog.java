@@ -973,8 +973,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.getCrew().setToughness(tough, i);
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
-                entity.getCrew().setPortraitCategory(panCrewMember[i].getPortraitCategory());
-                entity.getCrew().setPortraitFileName(panCrewMember[i].getPortraitFilename());
+                entity.getCrew().setPortraitCategory(panCrewMember[i].getPortraitCategory(), i);
+                entity.getCrew().setPortraitFileName(panCrewMember[i].getPortraitFilename(), i);
 
                 // If the player wants to swap unit numbers, update both
                 // entities and send an update packet for the other entity.

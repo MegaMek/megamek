@@ -323,8 +323,8 @@ public class PilotMapSet implements DisplayMapSet {
      */
     public Image getPortrait(Crew pilot) {
 
-        String category = pilot.getPortraitCategory();
-        String file = pilot.getPortraitFileName();
+        String category = pilot.getPortraitCategory(0);
+        String file = pilot.getPortraitFileName(0);
 
         // Return a null if the player has selected no portrait file.
         if ((null == category) || (null == file) || (null == portraits)) {

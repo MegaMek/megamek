@@ -109,8 +109,8 @@ public class Crew implements Serializable {
     // pathway to pilot portrait
     public static final String ROOT_PORTRAIT = "-- General --";
     public static final String PORTRAIT_NONE = "None";
-    private String portraitCategory = ROOT_PORTRAIT;
-    private String portraitFileName = PORTRAIT_NONE;
+    private final String[] portraitCategory;
+    private final String[] portraitFileName;
 
     //SPA RangeMaster range bands
     public static final String RANGEMASTER_NONE = "None";
@@ -220,6 +220,10 @@ public class Crew implements Serializable {
         koThisRound = new boolean[slots];
         fatigue = 0;
         toughness = new int[slots];
+        portraitCategory = new String[slots];
+        Arrays.fill(portraitCategory, ROOT_PORTRAIT);
+        portraitFileName = new String[slots];
+        Arrays.fill(portraitFileName, PORTRAIT_NONE);
 
         options.initialize();
 
@@ -997,20 +1001,20 @@ public class Crew implements Serializable {
         return Integer.parseInt(externalId);
     }
 
-    public void setPortraitCategory(String name) {
-        portraitCategory = name;
+    public void setPortraitCategory(String name, int pos) {
+        portraitCategory[pos] = name;
     }
 
-    public String getPortraitCategory() {
-        return portraitCategory;
+    public String getPortraitCategory(int pos) {
+        return portraitCategory[pos];
     }
 
-    public void setPortraitFileName(String name) {
-        portraitFileName = name;
+    public void setPortraitFileName(String name, int pos) {
+        portraitFileName[pos] = name;
     }
 
-    public String getPortraitFileName() {
-        return portraitFileName;
+    public String getPortraitFileName(int pos) {
+        return portraitFileName[pos];
     }
 
     public int getToughness(int pos) {

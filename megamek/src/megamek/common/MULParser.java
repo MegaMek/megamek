@@ -900,10 +900,10 @@ public class MULParser {
             }
             if ((null != portraitCategory)
                     && (portraitCategory.length() > 0)) {
-                crew.setPortraitCategory(portraitCategory);
+                crew.setPortraitCategory(portraitCategory, 0);
             }
             if ((null != portraitFile) && (portraitFile.length() > 0)) {
-                crew.setPortraitFileName(portraitFile);
+                crew.setPortraitFileName(portraitFile, 0);
             }
             crew.setArtillery(artVal, 0);
             crew.setToughness(toughVal, 0);

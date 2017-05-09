@@ -88,7 +88,7 @@ public class CustomPilotView extends JPanel {
         
         portraitDialog = new PortraitChoiceDialog(clientgui.getFrame(),
                 button);
-        portraitDialog.setPilot(entity.getCrew());
+        portraitDialog.setPilot(entity.getCrew(), slot);
         add(button, GBC.std().gridheight(2));
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$

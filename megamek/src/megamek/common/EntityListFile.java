@@ -891,13 +891,13 @@ public class EntityListFile {
                     }
                 }
             }
-            if (!Crew.ROOT_PORTRAIT.equals(crew.getPortraitCategory())) {
+            if (!Crew.ROOT_PORTRAIT.equals(crew.getPortraitCategory(0))) {
                 output.write("\" portraitCat=\"");
-                output.write(crew.getPortraitCategory());
+                output.write(crew.getPortraitCategory(0));
             }
-            if (!Crew.PORTRAIT_NONE.equals(crew.getPortraitFileName())) {
+            if (!Crew.PORTRAIT_NONE.equals(crew.getPortraitFileName(0))) {
                 output.write("\" portraitFile=\"");
-                output.write(crew.getPortraitFileName());
+                output.write(crew.getPortraitFileName(0));
             }
             if (!crew.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");

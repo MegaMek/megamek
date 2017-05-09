@@ -3414,8 +3414,8 @@ public class ChatLounge extends AbstractPhaseDisplay
 
             public void setPortrait(Crew pilot) {
 
-                String category = pilot.getPortraitCategory();
-                String file = pilot.getPortraitFileName();
+                String category = pilot.getPortraitCategory(0);
+                String file = pilot.getPortraitFileName(0);
 
                 // Return a null if the player has selected no portrait file.
                 if ((null == category) || (null == file) || (null == portraits)) {
@@ -3436,9 +3436,9 @@ public class ChatLounge extends AbstractPhaseDisplay
                     portrait = (Image) portraits.getItem(category, file);
                     if (null == portrait) {
                         // the image could not be found so switch to default one
-                        pilot.setPortraitCategory(Crew.ROOT_PORTRAIT);
+                        pilot.setPortraitCategory(Crew.ROOT_PORTRAIT, 0);
                         category = "";
-                        pilot.setPortraitFileName(Crew.PORTRAIT_NONE);
+                        pilot.setPortraitFileName(Crew.PORTRAIT_NONE, 0);
                         file = "default.gif";
                         portrait = (Image) portraits.getItem(category, file);
                     }

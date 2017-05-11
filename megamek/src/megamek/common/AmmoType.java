@@ -621,7 +621,7 @@ public class AmmoType extends EquipmentType {
         clanHeavyFlamerAmmos.add(base);
         EquipmentType.addType(base);
         EquipmentType.addType(AmmoType.createISCoolantPod());
-        EquipmentType.addType(AmmoType.createCLCoolantPod());
+//        EquipmentType.addType(AmmoType.createCLCoolantPod());
         EquipmentType.addType(AmmoType.createISRailGunAmmo());
         EquipmentType.addType(AmmoType.createISMPodAmmo());
         EquipmentType.addType(AmmoType.createISBPodAmmo());
@@ -9246,14 +9246,19 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(theModes);
         ammo.setInstantModeSwitch(true);
 
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(3049, DATE_NONE, 3079);
-        ammo.techAdvancement.setTechRating(RATING_D);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setISAdvancement(3049, 3079, 3098, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, true, false, false, false)
+        .setClanAdvancement(DATE_NONE, 3079, 3098, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, true, false, false, false)
+        .setPrototypeFactions(F_FS,F_LC)
+        .setProductionFactions(F_FS,F_LC,F_CJF)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
         return ammo;
     }
 
-    private static AmmoType createCLCoolantPod() {
+/*    private static AmmoType createCLCoolantPod() {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Coolant Pod";
@@ -9276,7 +9281,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechRating(RATING_D);
         ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
-    }
+    }*/
 
     private static AmmoType createISExtendedLRM5Ammo() {
         AmmoType ammo = new AmmoType();

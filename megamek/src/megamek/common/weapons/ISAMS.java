@@ -34,7 +34,7 @@ public class ISAMS extends AmmoWeapon {
      */
     public ISAMS() {
         super();
-        name = "AMS";
+        name = "Anti-Missile System";
         setInternalName("ISAntiMissileSystem");
         addLookupName("IS Anti-Missile System");
         addLookupName("IS AMS");
@@ -52,9 +52,14 @@ public class ISAMS extends AmmoWeapon {
         setInstantModeSwitch(false);
         cost = 100000;
         atClass = CLASS_POINT_DEFENSE;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2617, 2796, 3040);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
+        rulesRefs = "204,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+            .setISAdvancement(2613, 2617, 3048, 2835, 3045)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_CC);
     }
 }

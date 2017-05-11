@@ -53,9 +53,13 @@ public class CLLaserAMS extends LaserWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 3048, 3079);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "322,TO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setClanAdvancement(3048, 3079, 3145, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, true, false,false, false)
+            .setPrototypeFactions(F_CWF)
+            .setProductionFactions(F_CWF);
     }
 }

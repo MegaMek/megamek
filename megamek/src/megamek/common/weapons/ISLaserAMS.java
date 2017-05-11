@@ -49,9 +49,13 @@ public class ISLaserAMS extends LaserWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 225000;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 3059, 3079);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "322,TO";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3059, 3079, 3145, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, true, false,false, false)
+            .setPrototypeFactions(F_FS)
+            .setProductionFactions(F_FS);
     }
 }

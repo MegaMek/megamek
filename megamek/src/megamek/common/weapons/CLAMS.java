@@ -34,7 +34,7 @@ public class CLAMS extends AmmoWeapon {
      */
     public CLAMS() {
         super();
-        name = "AMS";
+        name = "Anti-Missile System";
         setInternalName("CLAntiMissileSystem");
         addLookupName("Clan Anti-Missile Sys");
         addLookupName("Clan AMS");
@@ -54,9 +54,15 @@ public class CLAMS extends AmmoWeapon {
         setInstantModeSwitch(false);
         cost = 100000;
         atClass = CLASS_POINT_DEFENSE;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2831);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
+        rulesRefs = "204,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+            .setISAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CSA)
+            .setProductionFactions(F_CSA);
     }
 }

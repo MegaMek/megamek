@@ -1061,11 +1061,19 @@ public class Crew implements Serializable {
         return gunnerPos;
     }
     
+    public int getBackupPilotPos() {
+        return backupPilot;
+    }
+    
     public void setBackupPilotPos(int pos) {
         backupPilot = pos;
     }
     
-    public void setBackupGunner(int pos) {
+    public int getBackupGunnerPos() {
+        return backupGunner;
+    }
+    
+    public void setBackupGunnerPos(int pos) {
         backupGunner = pos;
     }
     

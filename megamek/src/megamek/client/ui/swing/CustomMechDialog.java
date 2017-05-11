@@ -925,6 +925,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 int artillery;
                 int piloting;
                 int tough = 0;
+                int backup = panCrewMember[i].getBackup();
                 try {
                     gunnery = panCrewMember[i].getGunnery();
                     gunneryL = panCrewMember[i].getGunneryL();
@@ -975,6 +976,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 entity.getCrew().setNickname(nick, i);
                 entity.getCrew().setPortraitCategory(panCrewMember[i].getPortraitCategory(), i);
                 entity.getCrew().setPortraitFileName(panCrewMember[i].getPortraitFilename(), i);
+                if (backup >= 0) {
+                    if (i == entity.getCrew().getCrewType().getPilotPos()) {
+                        entity.getCrew().setBackupPilotPos(backup);
+                    } else if (i == entity.getCrew().getCrewType().getGunnerPos()) {
+                        entity.getCrew().setBackupGunnerPos(backup);
+                    }
+                }
 
                 // If the player wants to swap unit numbers, update both
                 // entities and send an update packet for the other entity.

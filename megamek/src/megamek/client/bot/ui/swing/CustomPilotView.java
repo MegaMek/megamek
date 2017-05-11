@@ -42,7 +42,9 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 
 /**
- * 
+ * Controls for customizing crew in the chat lounge. For most crew types this is part of the pilot tab.
+ * For multi-crew cockpits there is a separate tab for each crew member and another that shows common options
+ * for the entire crew.
  * 
  * @author Neoancient
  *
@@ -66,6 +68,8 @@ public class CustomPilotView extends JPanel {
     private final JTextField fldPiloting = new JTextField(3);
     private final JTextField fldArtillery = new JTextField(3);
     private JTextField fldTough = new JTextField(3);
+    
+    private JComboBox<String> cbBackup = new JComboBox<String>();
     
     private ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
     private JComboBox<String> choUnitNum = new JComboBox<String>();
@@ -162,6 +166,27 @@ public class CustomPilotView extends JPanel {
             add(fldTough, GBC.eop());
         }
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
+        
+        if (entity.getCrew().getSlotCount() > 2) {
+            for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
+                if (i != slot) {
+                    cbBackup.addItem(entity.getCrew().getCrewType().getRoleName(i));
+                }
+            }
+            if (slot == entity.getCrew().getCrewType().getPilotPos()) {
+                label = new JLabel(Messages.getString("CustomMechDialog.labBackupPilot"), SwingConstants.RIGHT); //$NON-NLS-1$
+                add(label, GBC.std());
+                add(cbBackup, GBC.eop());
+                cbBackup.setToolTipText(Messages.getString("CustomMechDialog.tooltipBackupPilot"));
+                cbBackup.setSelectedItem(entity.getCrew().getCrewType().getRoleName(entity.getCrew().getBackupPilotPos()));
+            } else if (slot == entity.getCrew().getCrewType().getGunnerPos()) {
+                label = new JLabel(Messages.getString("CustomMechDialog.labBackupGunner"), SwingConstants.RIGHT); //$NON-NLS-1$
+                add(label, GBC.std());
+                add(cbBackup, GBC.eop());
+                cbBackup.setToolTipText(Messages.getString("CustomMechDialog.tooltipBackupGunner"));
+                cbBackup.setSelectedItem(entity.getCrew().getCrewType().getRoleName(entity.getCrew().getBackupGunnerPos()));
+            }
+        }
 
         if (entity instanceof Protomech) {
             // All Protomechs have a callsign.
@@ -306,5 +331,16 @@ public class CustomPilotView extends JPanel {
             return null;
         }
         return entityUnitNum.get(choUnitNum.getSelectedIndex());
+    }
+    
+    public int getBackup() {
+        if (null != cbBackup.getSelectedItem()) {
+            for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
+                if (cbBackup.getSelectedItem().equals(entity.getCrew().getCrewType().getRoleName(i))) {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 }

@@ -39,7 +39,7 @@ import megamek.common.util.DirectoryItems;
 import megamek.common.util.MegaMekFile;
 
 /**
- * Set of elements to reperesent pilot information in MechDisplay
+ * Set of elements to represent pilot information in MechDisplay
  */
 
 public class PilotMapSet implements DisplayMapSet {
@@ -63,7 +63,7 @@ public class PilotMapSet implements DisplayMapSet {
     private DirectoryItems portraits;
 
     /**
-     * This constructor have to be called anly from addNotify() method
+     * This constructor have to be called only from addNotify() method
      */
     public PilotMapSet(JComponent c) {
         comp = c;
@@ -163,26 +163,31 @@ public class PilotMapSet implements DisplayMapSet {
     /**
      * updates fields for the unit
      */
+    @Override
     public void setEntity(Entity en) {
+        setEntity(en, 0);
+    }
+    
+    public void setEntity(Entity en, int slot) {
 
         if (en instanceof Infantry) {
             pilotL.setString(Messages.getString("PilotMapSet.pilotLAntiMech"));
         } else {
             pilotL.setString(Messages.getString("PilotMapSet.pilotL"));
         }
-        nameL.setString(en.getCrew().getName());
-        nickL.setString(en.getCrew().getNickname());
-        pilotR.setString(Integer.toString(en.getCrew().getPiloting()));
-        gunneryR.setString(Integer.toString(en.getCrew().getGunnery()));
+        nameL.setString(en.getCrew().getName(slot));
+        nickL.setString(en.getCrew().getNickname(slot));
+        pilotR.setString(Integer.toString(en.getCrew().getPiloting(slot)));
+        gunneryR.setString(Integer.toString(en.getCrew().getGunnery(slot)));
 
-        if (null != getPortrait(en.getCrew())) {
-            portraitArea.setIdleImage(getPortrait(en.getCrew()));
+        if (null != getPortrait(en.getCrew(), slot)) {
+            portraitArea.setIdleImage(getPortrait(en.getCrew(), slot));
         }
 
         if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-            gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL()));
-            gunneryMR.setString(Integer.toString(en.getCrew().getGunneryM()));
-            gunneryBR.setString(Integer.toString(en.getCrew().getGunneryB()));
+            gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL(slot)));
+            gunneryMR.setString(Integer.toString(en.getCrew().getGunneryM(slot)));
+            gunneryBR.setString(Integer.toString(en.getCrew().getGunneryB(slot)));
             gunneryL.setVisible(false);
             gunneryR.setVisible(false);
             gunneryLL.setVisible(true);
@@ -202,7 +207,7 @@ public class PilotMapSet implements DisplayMapSet {
             gunneryR.setVisible(true);
         }
         if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
-            toughBR.setString(Integer.toString(en.getCrew().getToughness(0)));
+            toughBR.setString(Integer.toString(en.getCrew().getToughness(slot)));
         } else {
             toughBL.setVisible(false);
             toughBR.setVisible(false);
@@ -321,10 +326,10 @@ public class PilotMapSet implements DisplayMapSet {
      *         be <code>null</code> if no portrait was selected or if there was
      *         an error loading it.
      */
-    public Image getPortrait(Crew pilot) {
+    public Image getPortrait(Crew pilot, int slot) {
 
-        String category = pilot.getPortraitCategory(0);
-        String file = pilot.getPortraitFileName(0);
+        String category = pilot.getPortraitCategory(slot);
+        String file = pilot.getPortraitFileName(slot);
 
         // Return a null if the player has selected no portrait file.
         if ((null == category) || (null == file) || (null == portraits)) {

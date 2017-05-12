@@ -972,13 +972,32 @@ public class Crew implements Serializable {
         return fatigueCount >= getGunneryFatigueTurn();
     }
 
+    /**
+     * @return A description of the status of crew as a whole
+     */
     public String getStatusDesc() {
         String s = new String("");
         if (getHits() > 0) {
-            s += hits + " hits";
+            s += getHits() + " hits";
             if (isUnconscious()) {
                 s += " (KO)";
             } else if (isDead()) {
+                s += " (dead)";
+            }
+        }
+        return s;
+    }
+
+    /**
+     * @return A description of the status of a single crew member
+     */
+    public String getStatusDesc(int pos) {
+        String s = new String("");
+        if (getHits(pos) > 0) {
+            s += hits + " hits";
+            if (isUnconscious(pos)) {
+                s += " (KO)";
+            } else if (isDead(pos)) {
                 s += " (dead)";
             }
         }

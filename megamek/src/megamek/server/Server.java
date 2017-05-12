@@ -1991,11 +1991,13 @@ public class Server implements Runnable {
                 while (devastated.hasMoreElements()) {
                     Entity e = devastated.nextElement();
                     if (e.getOwner() == p) {
-                        sb.append(e.getShortName()).append(", Pilot: ")
-                          .append(e.getCrew().getName()).append(" (")
-                          .append(e.getCrew().getGunnery()).append('/')
-                          .append(e.getCrew().getPiloting()).append(')');
-                        sb.append(CommonConstants.NL);
+                        sb.append(e.getShortName());
+                        for (int pos = 0; pos < e.getCrew().getSlotCount(); pos++) {
+                            sb.append(", ").append(e.getCrew().getNameAndRole(pos)).append(" (")
+                                .append(e.getCrew().getGunnery()).append('/')
+                                .append(e.getCrew().getPiloting()).append(')');
+                            sb.append(CommonConstants.NL);
+                        }
                     }
                 } // Handle the next unsalvageable unit for the player
                 sb.append("=============================================================");
@@ -20665,24 +20667,29 @@ public class Server implements Runnable {
         Crew crew = en.getCrew();
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
-            crew.setHits(crew.getHits(crewPos) + damage, crewPos);
-            if (Crew.DEATH > crew.getHits()) {
-                r = new Report(6025);
-            } else {
-                r = new Report(6026);
-            }
-            r.subject = en.getId();
-            r.indent(2);
-            r.addDesc(en);
-            r.add(crew.getName());
-            r.add(damage);
-            r.add(crew.getHits());
-            vDesc.addElement(r);
-            if (Crew.DEATH > crew.getHits()) {
-                vDesc.addAll(resolveCrewDamage(en, damage, crewPos));
-            } else if (!crew.isDoomed()) {
-                crew.setDoomed(true);
-                vDesc.addAll(destroyEntity(en, "pilot death", true));
+            for (int pos = 0; pos < en.getCrew().getSlotCount(); pos++) {
+                if (crewPos >= 0 && crewPos != pos) {
+                    continue;
+                }
+                crew.setHits(crew.getHits(pos) + damage, pos);
+                if (Crew.DEATH > crew.getHits(pos)) {
+                    r = new Report(6025);
+                } else {
+                    r = new Report(6026);
+                }
+                r.subject = en.getId();
+                r.indent(2);
+                r.addDesc(en);
+                r.add(crew.getName(pos));
+                r.add(damage);
+                r.add(crew.getHits(pos));
+                vDesc.addElement(r);
+                if (Crew.DEATH > crew.getHits(pos)) {
+                    vDesc.addAll(resolveCrewDamage(en, damage, pos));
+                } else if (!crew.isDoomed()) {
+                    crew.setDoomed(true);
+                    vDesc.addAll(destroyEntity(en, "pilot death", true));
+                }
             }
         } else {
             boolean isPilot = (en instanceof Mech)

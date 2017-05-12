@@ -1530,6 +1530,16 @@ public class Infantry extends Entity {
 
     @Override
     public boolean doomedInExtremeTemp() {
+        Optional<Mounted> armor = getEquipment().stream()
+                .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+                .findFirst();
+        if (armor.isPresent()) {
+            if (isXCT() || isMechanized()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
         if (hasSpaceSuit() || isMechanized()) {
             return false;
         }
@@ -1701,6 +1711,37 @@ public class Infantry extends Entity {
                 (getMovementMode() == EntityMovementMode.TRACKED) ||
                 (getMovementMode() == EntityMovementMode.SUBMARINE) ||
                 (getMovementMode() == EntityMovementMode.VTOL);
+    }
+
+    public boolean isXCT() {
+        Optional<Mounted> armor = getEquipment().stream()
+                .filter(m -> m.getType().hasFlag(MiscType.F_ARMOR_KIT))
+                .findFirst();
+        if (armor.isPresent()) {
+            if (armor.get().getType().getName() == "Environment Suit, Hostile"
+                || armor.get().getType().getName() == "Environment Suit, Hostile(Clan)"
+                || armor.get().getType().getName() == "Environment Suit, Marine"
+                || armor.get().getType().getName() == "Environment Suit, Marine(Clan)"
+                || armor.get().getType().getName() == "Spacesuit"
+                || armor.get().getType().getName() == "Spacesuit, Combat") {
+                return true;
+            } else if ((game.getPlanetaryConditions().getTemperature() < -29)
+                    && (armor.get().getType().getName() == "Heat Suit"
+                        || armor.get().getType().getName() == "Heat Suit (Clan)"
+                        || armor.get().getType().getName() == "Snow suit")) {
+                return true;
+            } else if ((game.getPlanetaryConditions().getTemperature() > 49)
+                    && (armor.get().getType().getName() == "MechWarrior Cooling Suit"
+                        || armor.get().getType().getName() == "MechWarrior Cooling Suit (Clan)")) {
+                return true;
+            // TODO Add section here to check for Tainted/Toxic atmosphere equipment once
+            // the conditions are added to PlanetaryConditions.java
+            } else {
+                return false;
+            }
+        } else {
+            return spaceSuit;
+        }
     }
 
     /*

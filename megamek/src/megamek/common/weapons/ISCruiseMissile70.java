@@ -48,10 +48,14 @@ public class ISCruiseMissile70 extends ArtilleryWeapon {
         this.criticals = 80;
         this.bv = 1031;
         this.cost = 1250000;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3065, 3095, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        rulesRefs = "284,TO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3065, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_FS)
+            .setProductionFactions(F_FS);
     }
 
 }

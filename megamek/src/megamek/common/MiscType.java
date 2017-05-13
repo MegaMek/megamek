@@ -3908,8 +3908,1630 @@ Lamellor Ferro-Carbide - IO pg 36
     
     
 // Armor (Conventional Infantry) 
+
+    public static MiscType createISAblativeStandardInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ablative, Standard";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISAblativeStandard");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING;
+    	misc.cost = 1000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
+        .setISAdvancement(DATE_ES, 2300, 2305, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_ES, 2300, 2305, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false)
+        .setProductionFactions(F_TA);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLAblativeStandardInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ablative, Standard (Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLAblativeStandard");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING;
+    	misc.cost = 1000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(2100, 2828, 2830);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_A, RATING_A });
+    	return misc;
+    }*/
+    
+    public static MiscType createISAblativeConcealedInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ablative, Concealed";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISAblativeConcealed");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 1500;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_E, RATING_D, RATING_B, RATING_B)
+        .setISAdvancement(2390, 2400, 2410, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2390, 2400, 2410, 2820, DATE_NONE)
+        .setClanApproximate(true, false, false,true, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+
+    	return misc;
+    }
+    
+/*    public static MiscType createCLAblativeConcealedInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ablative, Concealed (Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLAblativeConcealed");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 1500;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807, 2825);
+        misc.techAdvancement.setTechRating(RATING_E);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_B, RATING_B });
+    	return misc;
+    } */
+
+    public static MiscType createISAblativeFlakStandardArmorInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ablative/Flak, Standard";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISAblativeFlakStandard");
+    	misc.addLookupName("CLAblativeFlakStandard");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 800;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_B, RATING_C, RATING_B, RATING_A)
+        .setISAdvancement(2300, 2305, 2310, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2300, 2305, 2310, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TA)
+        .setProductionFactions(F_TA);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLAblativeFlakStandardArmorInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ablative/Flak, Standard(Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLAblativeFlakStandard");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 800;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_A });
+    	return misc;
+    }*/
+
+    public static MiscType createISAblativeFlakConcealedArmorInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ablative/Flak, Concealed";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISAblativeFlakConcealed");
+    	misc.addLookupName("CLAblativeFlakConcealed");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 1400;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_F, RATING_D, RATING_C, RATING_B)
+        .setISAdvancement(2390, 2300, 2305, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2390, 2300, 2305, 2825, DATE_NONE)
+        .setClanApproximate(true, false, false,true, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLAblativeFlakConcealedArmorInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ablative/Flak, Concealed(Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLAblativeFlakConcealed");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 1400;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807, 2830);
+        misc.techAdvancement.setTechRating(RATING_E);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
+    	return misc;
+    }*/
+
+    public static MiscType createISBallisicPlateStandardInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ballistic Plate, Standard";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISBallisticPlateStandard");
+    	misc.addLookupName("CLBallisticPlateStandard");
+    	misc.damageDivisor = 2.0;
+    	misc.subType = S_ENCUMBERING;
+    	misc.cost = 1600;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        .setISAdvancement(2305, 2310, 2315, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2305, 2310, 2315, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TA)
+        .setProductionFactions(F_TA);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLBallisicPlateStandardInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ballistic Plate, Standard(Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLBallisticPlateStandard");
+    	misc.damageDivisor = 2.0;
+    	misc.subType = S_ENCUMBERING;
+    	misc.cost = 1600;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
+    	return misc;
+    }*/
+
+    public static MiscType createBallisicPlateConcealedInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Ballistic Plate, Concealed";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("BallisticPlateConcealed");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 2880;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+        .setISAdvancement(2810, 2820, 2822, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+    	return misc;
+    }
+
+    public static MiscType createClothingFatiguesInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Clothing, Fatigues/Civilian/Non-Armored";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("Fatigues");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 25;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_A)
+        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+    
+    public static MiscType createClothingLeatherHideInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Clothing, Leather/Synthetic Hide";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ClothingLeather");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 100;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_A)
+        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+
+    public static MiscType createClothingLightInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Clothing, Light/Naked ;)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ClothingLightNone");
+    	misc.damageDivisor = 0.5;
+    	misc.cost = 15;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_A)
+        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+
+    public static MiscType createISEngineeringSuitInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Engineering Suit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISEngineeringSuit");
+    	misc.addLookupName("CLEngineeringSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+    	misc.cost = 7500;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+        .setISAdvancement(2340, 2350, 2351, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2340, 2350, 2351, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+
+    	return misc;
+    }
+    
+/*    public static MiscType createCLEngineeringSuitInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Engineering Suit (Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLEngineeringSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+    	misc.cost = 7500;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_E);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
+    	return misc;
+    }*/
+
+    public static MiscType createISEnvironmentSuitLightInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Environment Suit, Light";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISEnvironmentSuitLight");
+    	misc.addLookupName("CLEnvironmentSuitLight");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+    	misc.cost = 200;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        .setISAdvancement(DATE_ES, DATE_ES, 2100, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_ES, DATE_ES, 2100, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLEnvironmentSuitLightInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Environment Suit, Light(Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLEnvironmentSuitLight");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+    	misc.cost = 200;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_C);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_B });
+    	return misc;
+    }*/
+
+    public static MiscType createISEnvironmentSuitHostileInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Environment Suit, Hostile";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISEnvironmentSuitHostile");
+    	misc.addLookupName("CLEnvironmentSuitHostile");
+    	misc.damageDivisor = 2.0;
+    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+    	misc.cost = 10000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        .setISAdvancement(DATE_ES, 2300, 2302, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_ES, 2300, 2302, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLEnvironmentSuitHostileInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Environment Suit, Hostile(Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLEnvironmentSuitHostile");
+    	misc.damageDivisor = 2.0;
+    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+    	misc.cost = 10000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
+    	return misc;
+    }*/
+
+    public static MiscType createISEnvironmentSuitMarineInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Environment Suit, Marine";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISEnvironmentSuitMarine");
+    	misc.addLookupName("CLEnvironmentSuitMarine");
+    	misc.damageDivisor = 2.0;
+    	misc.subType = S_SPACE_SUIT;
+    	misc.cost = 15000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
+        .setISAdvancement(2315, 2325, 2330, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2315, 2325, 2330, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TC)
+        .setProductionFactions(F_TC);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLEnvironmentSuitMarineInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Environment Suit, Marine(Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLEnvironmentSuitMarine");
+    	misc.damageDivisor = 2.0;
+    	misc.subType = S_SPACE_SUIT;
+    	misc.cost = 15000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
+    	return misc;
+    }*/
+
+    public static MiscType createISFlakStandardInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Flak, Standard";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISFlakStandard");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 150;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        .setISAdvancement(DATE_ES, DATE_ES, 2200, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_ES, DATE_ES, 2200, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLFlakStandardInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Flak, Standard(Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLFlakStandard");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 150;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_C);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_A, RATING_A, RATING_A });
+    	return misc;
+    }*/
+
+    public static MiscType createISFlakConcealedInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Flak, Concealed";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISFlakConcealed");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 225;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_D, RATING_C, RATING_B, RATING_B)
+        .setISAdvancement(DATE_ES, DATE_ES, 2230, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_ES, DATE_ES, 2230, 2825, DATE_NONE)
+        .setClanApproximate(false, false, false,true, false);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLFlakConcealedInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Flak, Concealed(Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLFlakConcealed");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 225;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807, 2830);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_B });
+    	return misc;
+    }*/
+
+    public static MiscType createISHeatSuitInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Heat Suit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("HeatSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 100;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+        .setISAdvancement(2350, 2355, 2358, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2350, 2355, 2358, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+
+    	return misc;
+    }
+    
+/*    public static MiscType createCLHeatSuitInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Heat Suit (Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLHeatSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 100;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807, 2830);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_B });
+    	return misc;
+    }*/
+
+    public static MiscType createISMechWarriorCombatSuitInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "MechWarrior Combat Suit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISMechWarriorCombatSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 20000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+        .setISAdvancement(2690, 2790, 2820, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2690, 2790, 2820, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_DC);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLMechWarriorCombatSuitInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "MechWarrior Combat Suit (Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLMechWarriorCombatSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 20000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	//Information below going into IO Errata, not listed as of Jan 2017
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_E);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
+    	return misc;
+    }*/
+
+    public static MiscType createISMechWarriorCoolingSuitInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "MechWarrior Cooling Suit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISMechWarriorCoolingSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 500;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+        .setISAdvancement(2680, 2800, 3065, 2850, 3050)
+        .setISApproximate(true, false, false,true, false)
+        .setClanAdvancement(2680, 2800, 3065, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_CS);
+    	return misc;  
+    }
+    
+/*    public static MiscType createCLMechWarriorCoolingSuitInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "MechWarrior Cooling Suit (Clan)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLMechWarriorCoolingSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 500;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";;
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2807, 2820);
+        misc.techAdvancement.setTechRating(RATING_E);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
+    	return misc;
+    }*/
+
+    public static MiscType createMechWarriorCoolingVestInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "MechWarrior Cooling Vest (Only)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("MechWarriorCoolingVest");
+    	misc.damageDivisor = 0.5;
+    	misc.cost = 200;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        .setISAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,true, false)
+        .setClanAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+
+    public static MiscType createMyomerSuitInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Myomer, Suit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("MyomerSuit");
+    	misc.damageDivisor = 2.0;
+    	misc.subType = S_ENCUMBERING;
+    	misc.cost = 5800;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "317, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3045, 3047, 3052, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,true, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+    	return misc;
+    }
+
+    public static MiscType createMyomerVestInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Myomer, Vest";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("MyomerVest");
+    	misc.damageDivisor = 2.0;
+    	misc.cost = 1800;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3044, 3045, 3051, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,true, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+    	return misc;
+    }
+    
+    public static MiscType createNeoChainMailInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Neo-Chainmail";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("NeoChainmail");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 920;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C)
+        .setISAdvancement(3062, 3065, 3066, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,true, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS);
+    	return misc;
+    }
+
+    public static MiscType createParkaInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Parka";
+    	misc.setInternalName(misc.name);
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 50;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setTechRating(RATING_C)
+        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+
+    public static MiscType createSnowSuitInfArmor() {
+    	MiscType misc = new MiscType();
+    	misc.name = "Snow suit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("SnowSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING;
+    	misc.cost = 70;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setTechRating(RATING_C)
+        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+
+    public static MiscType createSpaceSuitInfArmor() {
+    	MiscType misc = new MiscType();
+    	
+    	misc.name = "Spacesuit";
+    	misc.setInternalName(misc.name);
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+    	misc.cost = 5000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_ES, DATE_ES)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_ES, DATE_ES)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+
+    public static MiscType createSpacesuitCombatInfArmor() {
+    	MiscType misc = new MiscType();
+    	
+    	misc.name = "Spacesuit, Combat";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("SpacesuitCombat");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
+    	misc.cost = 7000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setTechRating(RATING_C)
+        .setAvailability(RATING_C, RATING_D, RATING_E, RATING_D)
+        .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, 2200, DATE_ES)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, 2200, DATE_ES)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+
+    public static MiscType createCapellanConfederationInfArmor() {
+    	MiscType misc = new MiscType();
+    	
+    	misc.name = "Capellan Confederation Armor Kit (3050)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("LiaoKit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 450;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+        .setISAdvancement(3045, 3050, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CC)
+        .setProductionFactions(F_CC);
+    	return misc;
+    }
+
+    public static MiscType createClanInfArmor() {
+    	MiscType misc = new MiscType();
+    	
+    	misc.name = "Clan Armor Kit (All)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ClanKit");
+    	misc.damageDivisor = 2.0;
+    	misc.cost = 5560;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_E, RATING_E, RATING_C)
+        .setClanAdvancement(2850, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CHH)
+        .setProductionFactions(F_CLAN);
+    	return misc;
+    }
+
+
+    public static MiscType createComstarInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Comstar Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CSInfKit");
+    	misc.addLookupName("ComstarKit");
+    	misc.damageDivisor = 2.0;
+    	misc.cost = 4280;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_E)
+        .setISAdvancement(2825, 2830, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CS)
+        .setProductionFactions(F_CS);
+    	return misc;
+    }
+
+    public static MiscType createDraconisCombineInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Draconis Combine Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("KuritaKit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 360;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        .setISAdvancement(2620, 2625, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_DC)
+        .setProductionFactions(F_DC);
+    	return misc;
+    }
+
+    public static MiscType createFedSunsInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Federated Suns Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("DavionKit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 750;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_F)
+        .setISAdvancement(2325, 2330, DATE_NONE, 3035, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS);
+    	return misc;
+    }
+
+    public static MiscType createFedComInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Fed Suns/Fed Commonweath Infantry Kit (3030-3066)";
+    	misc.damageDivisor = 1.0;
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("DavionKit3030");
+    	misc.addLookupName("EarlyFedComKit");
+    	misc.damageDivisor = 1;
+    	misc.cost = 1040;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_D, RATING_B, RATING_E)
+        .setISAdvancement(3025, 3030, DATE_NONE, 3070, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FS,F_LC)
+        .setProductionFactions(F_FS,F_LC);
+    	return misc;
+    }
+
+    public static MiscType createFedSunsLateInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Fed Suns Infantry Kit (3067+)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("DavionKit3067");
+    	misc.addLookupName("LateDavionKit");
+    	misc.subType = S_ENCUMBERING;
+    	misc.damageDivisor = 2.0;
+    	misc.cost = 2080;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+        .setISAdvancement(3065, 3067, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS);
+    	return misc;
+    }
+
+    public static MiscType createFRRInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Free Rasalhague Republic Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("FRRKit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 360;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";;
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
+        .setISAdvancement(3035, 3040, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FR)
+        .setProductionFactions(F_FR);
+    	return misc;
+    }
+
+    public static MiscType createFWLEarlyInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Free Worlds League Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("MarikKit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 950;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_D)
+        .setISAdvancement(2280, 2290, DATE_NONE, 3050, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FW)
+        .setProductionFactions(F_FW);
+    	return misc;
+    }
+
+    public static MiscType createFWLLateInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Free Worlds League Infantry Kit (3035+)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("MarikKit3035");
+    	misc.addLookupName("LateMarikKit");
+    	misc.damageDivisor = 2.0;
+    	misc.subType = S_ENCUMBERING;
+    	misc.cost = 360;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_E, RATING_B, RATING_B)
+        .setISAdvancement(3030, 3035, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FW)
+        .setProductionFactions(F_FW);
+    	return misc;
+    }
+
+    public static MiscType createLyranInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Lyran Commonwealth Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("SteinerKit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 650;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_E)
+        .setISAdvancement(2420, 2425, DATE_NONE, 3067, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+    	return misc;
+    }
+
+    public static MiscType createLyranLateInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("SteinerKit3060");
+    	misc.damageDivisor = 2.0;
+    	misc.cost = 730;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_D, RATING_B, RATING_E)
+        .setISAdvancement(3058, 3060, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+    	return misc;
+    }
+
+    public static MiscType createCanopusInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Magistracy of Canopus Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CanopianKit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 400;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        .setISAdvancement(2600, 2610, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_MC)
+        .setProductionFactions(F_MC);
+    	return misc;
+    }
+
+    public static MiscType createMarianInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Marian Hegemony Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("MarianKit");
+    	misc.damageDivisor = 2.0;
+    	misc.cost = 1580;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_F, RATING_B, RATING_B)
+        .setISAdvancement(3045, 3049, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CC)
+        .setProductionFactions(F_MH);
+    	return misc;
+    }
+
+    public static MiscType createISSLDFInfArmor() {
+    	MiscType misc = new MiscType();
+    	
+//    	Stats converted from ATOW
+    	misc.name = "SLDF Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("SLDFKit");
+    	misc.damageDivisor = 2.0;
+    	misc.cost = 5000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_C, RATING_E, RATING_F, RATING_X)
+        .setISAdvancement(2570, 2575, 2580, 2800, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2570, 2575, 2580, 2950, DATE_NONE)
+        .setClanApproximate(true, false, false,true, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLSLDFInfArmor() {
+    	MiscType misc = new MiscType();
+//    	Stats converted from ATOW
+
+    	misc.name = "SLDF Infantry Kit (Clan Surplus)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("SLDFKit");
+    	misc.damageDivisor = 2.0;
+    	misc.cost = 5000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2807, DATE_NONE, 2955);
+        misc.techAdvancement.setTechRating(RATING_E);
+        misc.techAdvancement.setAvailability( new int[] { RATING_C, RATING_E, RATING_F, RATING_X });
+    	return misc;
+    }*/
     
     
+    public static MiscType createTaurianInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Taurian Concordat/Calderon Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("TaurianKit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 370;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
+        .setISAdvancement(3045, 3047, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TC)
+        .setProductionFactions(F_TC,F_CP);
+    	return misc;
+    }
+
+    public static MiscType createWoBInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Word of Blake Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("WoBKit");
+    	misc.damageDivisor = 2.0;
+    	misc.cost = 4300;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_F)
+        .setISAdvancement(3053, 3055, DATE_NONE, 3081, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_WB)
+        .setProductionFactions(F_WB);
+    	return misc;
+    }
+
+    public static MiscType createGenericInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Generic Infantry Kit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("GenericKit");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 4300;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+    
+    public static MiscType createVintageBulletProofVest() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Vintage Bulletproof Vest";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("BulletproofVest");
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 500;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "195, ATOWC";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_C, RATING_D, RATING_E)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+    
+    public static MiscType createVintageBombSuit() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Vintage Bomb Suit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("BombSuit");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_ENCUMBERING;
+    	misc.cost = 750;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "195, ATOWC";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_B, RATING_C, RATING_E, RATING_E)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false);
+    	return misc;
+    }
+    
+    
+
+    // Sneak Suits
+    public static MiscType createDESTInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "DEST Infiltration Suit";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("DESTSuit");
+    	misc.subType = S_DEST;
+    	misc.damageDivisor = 1.0;
+    	misc.cost = 50000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
+        .setISAdvancement(2785, 2800, DATE_NONE, 2845, 3045)
+        .setISApproximate(true, true, false,true, false)
+        .setPrototypeFactions(F_DC)
+        .setProductionFactions(F_DC);
+
+    	return misc;
+    }
+
+    public static MiscType createISSneakCamoSystemInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (Camo)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISSneakSuitCamo");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_CAMO;
+    	misc.cost = 7000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        .setISAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLSneakCamoSystemInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (Camo)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLSneakSuitCamo");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_CAMO;
+    	misc.cost = 7000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
+    	return misc;
+    }*/
+
+    public static MiscType createISSneakIRSystemInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (IR)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISSneakSuitIR");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_IR;
+    	misc.cost = 7000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        .setISAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLSneakIRSystemInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (IR)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLSneakSuitIR");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_IR;
+    	misc.cost = 7000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
+    	return misc;
+    }
+*/
+    public static MiscType createISSneakECMSystemInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (ECM)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISSneakSuitECM");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_ECM;
+    	misc.cost = 7000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        .setISAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+
+/*    public static MiscType createCLSneakECMSystemInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (ECM)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLSneakSuitECM");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_ECM;
+    	misc.cost = 7000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
+    	return misc;
+    }*/
+    
+    //Two System Sneak Suits
+    
+    public static MiscType createISSneakCamoIRInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (Camo/IR)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISSneakSuitCamoIR");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_CAMO | S_SNEAK_IR;
+    	misc.cost = 21000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+        .setISAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLSneakCamoIRInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (Camo/IR)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLSneakSuitCamoIR");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_CAMO | S_SNEAK_IR;
+    	misc.cost = 21000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_D });
+    	return misc;
+    }*/
+
+    public static MiscType createISSneakCamoECMInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (Camo/ECM)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISSneakSuitCamoECM");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_CAMO | S_SNEAK_ECM;
+    	misc.cost = 21000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+        .setISAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLSneakCamoECMInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (Camo/ECM)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLSneakSuitCamoECM");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_CAMO | S_SNEAK_ECM;
+    	misc.cost = 21000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_D });
+    	return misc;
+    }*/
+
+    public static MiscType createISSneakIRECMInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (IR/ECM)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISSneakSuitIRECM");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_IR | S_SNEAK_ECM;
+    	misc.cost = 21000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+        .setISAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLSneakIRECMInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (IR/ECM)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLSneakSuitIRECM");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_IR | S_SNEAK_ECM;
+    	misc.cost = 21000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_D });
+    	return misc;
+    }*/
+
+    
+    //Three System Sneak Suits
+    
+    public static MiscType createISSneakThreeSystemInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (Camo/IR/ECM)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("ISSneakSuitCamoIRECM");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_CAMO | S_SNEAK_IR | S_SNEAK_ECM;
+    	misc.cost = 28000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+        .setISAdvancement(2465, 2475, 2510, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2465, 2475, 2510, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+    	return misc;
+    }
+    
+/*    public static MiscType createCLSneakThreeSystemInfArmor() {
+    	MiscType misc = new MiscType();
+
+    	misc.name = "Sneak Suit (Camo/IR/ECM)";
+    	misc.setInternalName(misc.name);
+    	misc.addLookupName("CLSneakSuitCamoIRECM");
+    	misc.damageDivisor = 1.0;
+    	misc.subType = S_SNEAK_CAMO | S_SNEAK_IR | S_SNEAK_ECM;
+    	misc.cost = 28000;
+    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
+    	misc.rulesRefs = "318, TO";
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_E, RATING_E });
+    	return misc;
+    }*/
+    
+//Armored Component Systems
+
+//TODO Armored Components - TO 283 - Coded to work but with no tech progression.
+    
+        public static MiscType createISArmoredMotiveSystem() {
+        MiscType misc = new MiscType();
+        misc.name = "Armored Motive System";
+        misc.setInternalName("ISArmoredMotiveSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_ARMORED_MOTIVE_SYSTEM)
+                .or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "283,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3071, 3084, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_FW)
+            .setProductionFactions(F_LC);
+        return misc;
+    }
+
+    public static MiscType createCLArmoredMotiveSystem() {
+        MiscType misc = new MiscType();
+        misc.name = "Armored Motive System";
+        misc.setInternalName("CLArmoredMotiveSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_ARMORED_MOTIVE_SYSTEM)
+                .or(F_TANK_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "283,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setClanAdvancement(3057, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CHH);
+        return misc;
+    }
     
 //Heat Sinks
     public static MiscType createHeatSink() {
@@ -9490,42 +11112,6 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createISArmoredMotiveSystem() {
-        MiscType misc = new MiscType();
-        misc.name = "Armored Motive System";
-        misc.setInternalName("ISArmoredMotiveSystem");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 0;
-        misc.tankslots = 0;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_ARMORED_MOTIVE_SYSTEM)
-                .or(F_TANK_EQUIPMENT);
-        misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3071, 3083, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createCLArmoredMotiveSystem() {
-        MiscType misc = new MiscType();
-        misc.name = "Armored Motive System";
-        misc.setInternalName("CLArmoredMotiveSystem");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 0;
-        misc.tankslots = 0;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_ARMORED_MOTIVE_SYSTEM)
-                .or(F_TANK_EQUIPMENT);
-        misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(3054, 3083, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_F);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
-
     public static MiscType createISChaffPod() {
         // TODO: add game rules for this
         MiscType misc = new MiscType();
@@ -10836,1577 +12422,7 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    //====================  Infantry Armor Kits ==========================
 
-    public static MiscType createISAblativeStandardInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ablative, Standard";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISAblativeStandard");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING;
-    	misc.cost = 1000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_A, RATING_B, RATING_A, RATING_A)
-        .setISAdvancement(DATE_ES, 2300, 2305, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_ES, 2300, 2305, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false)
-        .setProductionFactions(F_TA);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLAblativeStandardInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ablative, Standard (Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLAblativeStandard");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING;
-    	misc.cost = 1000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(2100, 2828, 2830);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_A, RATING_A });
-    	return misc;
-    }*/
-    
-    public static MiscType createISAblativeConcealedInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ablative, Concealed";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISAblativeConcealed");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 1500;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_E, RATING_D, RATING_B, RATING_B)
-        .setISAdvancement(2390, 2400, 2410, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2390, 2400, 2410, 2820, DATE_NONE)
-        .setClanApproximate(true, false, false,true, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-
-    	return misc;
-    }
-    
-/*    public static MiscType createCLAblativeConcealedInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ablative, Concealed (Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLAblativeConcealed");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 1500;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807, 2825);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_B, RATING_B });
-    	return misc;
-    } */
-
-    public static MiscType createISAblativeFlakStandardArmorInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ablative/Flak, Standard";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISAblativeFlakStandard");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 800;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_B, RATING_C, RATING_B, RATING_A)
-        .setISAdvancement(2300, 2305, 2310, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2300, 2305, 2310, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TA)
-        .setProductionFactions(F_TA);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLAblativeFlakStandardArmorInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ablative/Flak, Standard(Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLAblativeFlakStandard");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 800;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_A });
-    	return misc;
-    }*/
-
-    public static MiscType createISAblativeFlakConcealedArmorInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ablative/Flak, Concealed";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISAblativeFlakConcealed");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 1400;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_F, RATING_D, RATING_C, RATING_B)
-        .setISAdvancement(2390, 2300, 2305, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2390, 2300, 2305, 2825, DATE_NONE)
-        .setClanApproximate(true, false, false,true, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLAblativeFlakConcealedArmorInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ablative/Flak, Concealed(Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLAblativeFlakConcealed");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 1400;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807, 2830);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
-    	return misc;
-    }*/
-
-    public static MiscType createISBallisicPlateStandardInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ballistic Plate, Standard";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISBallisticPlateStandard");
-    	misc.damageDivisor = 2.0;
-    	misc.subType = S_ENCUMBERING;
-    	misc.cost = 1600;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-        .setISAdvancement(2305, 2310, 2315, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2305, 2310, 2315, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TA)
-        .setProductionFactions(F_TA);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLBallisicPlateStandardInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ballistic Plate, Standard(Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLBallisticPlateStandard");
-    	misc.damageDivisor = 2.0;
-    	misc.subType = S_ENCUMBERING;
-    	misc.cost = 1600;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
-    	return misc;
-    }*/
-
-    public static MiscType createBallisicPlateConcealedInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Ballistic Plate, Concealed";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("BallisticPlateConcealed");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 2880;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
-        .setISAdvancement(2810, 2820, 2822, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-    	return misc;
-    }
-
-    public static MiscType createClothingFatiguesInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Clothing, Fatigues/Civilian/Non-Armored";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("Fatigues");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 25;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_A)
-        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-    
-    public static MiscType createClothingLeatherHideInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Clothing, Leather/Synthetic Hide";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ClothingLeather");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 100;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_A)
-        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-
-    public static MiscType createClothingLightInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Clothing, Light/Naked ;)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ClothingLightNone");
-    	misc.damageDivisor = 0.5;
-    	misc.cost = 15;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_A)
-        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-
-    public static MiscType createISEngineeringSuitInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Engineering Suit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISEngineeringSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
-    	misc.cost = 7500;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
-        .setISAdvancement(2340, 2350, 2351, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2340, 2350, 2351, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-
-    	return misc;
-    }
-    
-/*    public static MiscType createCLEngineeringSuitInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Engineering Suit (Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLEngineeringSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
-    	misc.cost = 7500;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_D });
-    	return misc;
-    }*/
-
-    public static MiscType createISEnvironmentSuitLightInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Environment Suit, Light";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISEnvironmentSuitLight");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
-    	misc.cost = 200;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-        .setISAdvancement(DATE_ES, DATE_ES, 2100, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_ES, DATE_ES, 2100, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLEnvironmentSuitLightInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Environment Suit, Light(Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLEnvironmentSuitLight");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
-    	misc.cost = 200;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_B });
-    	return misc;
-    }*/
-
-    public static MiscType createISEnvironmentSuitHostileInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Environment Suit, Hostile";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISEnvironmentSuitHostile");
-    	misc.damageDivisor = 2.0;
-    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
-    	misc.cost = 10000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-        .setISAdvancement(DATE_ES, 2300, 2302, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_ES, 2300, 2302, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLEnvironmentSuitHostileInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Environment Suit, Hostile(Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLEnvironmentSuitHostile");
-    	misc.damageDivisor = 2.0;
-    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
-    	misc.cost = 10000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
-    	return misc;
-    }*/
-
-    public static MiscType createISEnvironmentSuitMarineInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Environment Suit, Marine";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISEnvironmentSuitMarine");
-    	misc.damageDivisor = 2.0;
-    	misc.subType = S_SPACE_SUIT;
-    	misc.cost = 15000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_C, RATING_D, RATING_D, RATING_C)
-        .setISAdvancement(2315, 2325, 2330, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2315, 2325, 2330, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TC)
-        .setProductionFactions(F_TC);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLEnvironmentSuitMarineInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Environment Suit, Marine(Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLEnvironmentSuitMarine");
-    	misc.damageDivisor = 2.0;
-    	misc.subType = S_SPACE_SUIT;
-    	misc.cost = 15000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_C });
-    	return misc;
-    }*/
-
-    public static MiscType createISFlakStandardInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Flak, Standard";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISFlakStandard");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 150;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-        .setISAdvancement(DATE_ES, DATE_ES, 2200, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_ES, DATE_ES, 2200, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLFlakStandardInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Flak, Standard(Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLFlakStandard");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 150;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_A, RATING_A, RATING_A });
-    	return misc;
-    }*/
-
-    public static MiscType createISFlakConcealedInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Flak, Concealed";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISFlakConcealed");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 225;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_D, RATING_C, RATING_B, RATING_B)
-        .setISAdvancement(DATE_ES, DATE_ES, 2230, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_ES, DATE_ES, 2230, 2825, DATE_NONE)
-        .setClanApproximate(false, false, false,true, false);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLFlakConcealedInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Flak, Concealed(Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLFlakConcealed");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 225;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807, 2830);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_B, RATING_B });
-    	return misc;
-    }*/
-
-    public static MiscType createISHeatSuitInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Heat Suit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("HeatSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 100;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-        .setISAdvancement(2350, 2355, 2358, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2350, 2355, 2358, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-
-    	return misc;
-    }
-    
-/*    public static MiscType createCLHeatSuitInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Heat Suit (Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLHeatSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 100;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807, 2830);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_B });
-    	return misc;
-    }*/
-
-    public static MiscType createISMechWarriorCombatSuitInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "MechWarrior Combat Suit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISMechWarriorCombatSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 20000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
-        .setISAdvancement(2690, 2790, 2820, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2690, 2790, 2820, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_DC);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLMechWarriorCombatSuitInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "MechWarrior Combat Suit (Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLMechWarriorCombatSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 20000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	//Information below going into IO Errata, not listed as of Jan 2017
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
-    	return misc;
-    }*/
-
-    public static MiscType createISMechWarriorCoolingSuitInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "MechWarrior Cooling Suit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISMechWarriorCoolingSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 500;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
-        .setISAdvancement(2680, 2800, 3065, 2850, 3050)
-        .setISApproximate(true, false, false,true, false)
-        .setClanAdvancement(2680, 2800, 3065, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_CS);
-    	return misc;  
-    }
-    
-/*    public static MiscType createCLMechWarriorCoolingSuitInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "MechWarrior Cooling Suit (Clan)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLMechWarriorCoolingSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 500;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2807, 2820);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
-    	return misc;
-    }*/
-
-    public static MiscType createMechWarriorCoolingVestInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "MechWarrior Cooling Vest (Only)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("MechWarriorCoolingVest");
-    	misc.damageDivisor = 0.5;
-    	misc.cost = 200;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-        .setISAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,true, false)
-        .setClanAdvancement(2440, 2460, 2461, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-
-    public static MiscType createMyomerSuitInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Myomer, Suit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("MyomerSuit");
-    	misc.damageDivisor = 2.0;
-    	misc.subType = S_ENCUMBERING;
-    	misc.cost = 5800;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "317, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setISAdvancement(3045, 3047, 3052, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,true, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-    	return misc;
-    }
-
-    public static MiscType createMyomerVestInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Myomer, Vest";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("MyomerVest");
-    	misc.damageDivisor = 2.0;
-    	misc.cost = 1800;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setISAdvancement(3044, 3045, 3051, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,true, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-    	return misc;
-    }
-    
-    public static MiscType createNeoChainMailInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Neo-Chainmail";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("NeoChainmail");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 920;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C)
-        .setISAdvancement(3062, 3065, 3066, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,true, false)
-        .setPrototypeFactions(F_FS)
-        .setProductionFactions(F_FS);
-    	return misc;
-    }
-
-    public static MiscType createParkaInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Parka";
-    	misc.setInternalName(misc.name);
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 50;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setTechRating(RATING_C)
-        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-
-    public static MiscType createSnowSuitInfArmor() {
-    	MiscType misc = new MiscType();
-    	misc.name = "Snow suit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("SnowSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING;
-    	misc.cost = 70;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setTechRating(RATING_C)
-        .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
-        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_PS, DATE_PS)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-
-    public static MiscType createSpaceSuitInfArmor() {
-    	MiscType misc = new MiscType();
-    	
-    	misc.name = "Spacesuit";
-    	misc.setInternalName(misc.name);
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
-    	misc.cost = 5000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-        .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_ES, DATE_ES)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_ES, DATE_ES)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-
-    public static MiscType createSpacesuitCombatInfArmor() {
-    	MiscType misc = new MiscType();
-    	
-    	misc.name = "Spacesuit, Combat";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("SpacesuitCombat");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING | S_SPACE_SUIT;
-    	misc.cost = 7000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setTechRating(RATING_C)
-        .setAvailability(RATING_C, RATING_D, RATING_E, RATING_D)
-        .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, 2200, DATE_ES)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, 2200, DATE_ES)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-
-//    Faction Armor Kits
-
-    public static MiscType createCapellanConfederationInfArmor() {
-    	MiscType misc = new MiscType();
-    	
-    	misc.name = "Capellan Confederation Armor Kit (3050)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("LiaoKit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 450;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
-        .setISAdvancement(3045, 3050, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CC)
-        .setProductionFactions(F_CC);
-    	return misc;
-    }
-
-    public static MiscType createClanInfArmor() {
-    	MiscType misc = new MiscType();
-    	
-    	misc.name = "Clan Armor Kit (All)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ClanKit");
-    	misc.damageDivisor = 2.0;
-    	misc.cost = 5560;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_E, RATING_E, RATING_C)
-        .setClanAdvancement(2850, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CHH)
-        .setProductionFactions(F_CLAN);
-    	return misc;
-    }
-
-
-    public static MiscType createComstarInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Comstar Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CSInfKit");
-    	misc.addLookupName("ComstarKit");
-    	misc.damageDivisor = 2.0;
-    	misc.cost = 4280;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_E)
-        .setISAdvancement(2825, 2830, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CS)
-        .setProductionFactions(F_CS);
-    	return misc;
-    }
-
-    public static MiscType createDraconisCombineInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Draconis Combine Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("KuritaKit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 360;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-        .setISAdvancement(2620, 2625, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_DC)
-        .setProductionFactions(F_DC);
-    	return misc;
-    }
-
-    public static MiscType createFedSunsInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Federated Suns Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("DavionKit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 750;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_F)
-        .setISAdvancement(2325, 2330, DATE_NONE, 3035, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_FS)
-        .setProductionFactions(F_FS);
-    	return misc;
-    }
-
-    public static MiscType createFedComInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Fed Suns/Fed Commonweath Infantry Kit (3030-3066)";
-    	misc.damageDivisor = 1.0;
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("DavionKit3030");
-    	misc.addLookupName("EarlyFedComKit");
-    	misc.damageDivisor = 1;
-    	misc.cost = 1040;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_D, RATING_B, RATING_E)
-        .setISAdvancement(3025, 3030, DATE_NONE, 3070, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_FS,F_LC)
-        .setProductionFactions(F_FS,F_LC);
-    	return misc;
-    }
-
-    public static MiscType createFedSunsLateInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Fed Suns Infantry Kit (3067+)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("DavionKit3067");
-    	misc.addLookupName("LateDavionKit");
-    	misc.subType = S_ENCUMBERING;
-    	misc.damageDivisor = 2.0;
-    	misc.cost = 2080;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
-        .setISAdvancement(3065, 3067, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_FS)
-        .setProductionFactions(F_FS);
-    	return misc;
-    }
-
-    public static MiscType createFRRInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Free Rasalhague Republic Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("FRRKit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 360;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";;
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
-        .setISAdvancement(3035, 3040, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_FR)
-        .setProductionFactions(F_FR);
-    	return misc;
-    }
-
-    public static MiscType createFWLEarlyInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Free Worlds League Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("MarikKit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 950;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_D)
-        .setISAdvancement(2280, 2290, DATE_NONE, 3050, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_FW)
-        .setProductionFactions(F_FW);
-    	return misc;
-    }
-
-    public static MiscType createFWLLateInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Free Worlds League Infantry Kit (3035+)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("MarikKit3035");
-    	misc.addLookupName("LateMarikKit");
-    	misc.damageDivisor = 2.0;
-    	misc.subType = S_ENCUMBERING;
-    	misc.cost = 360;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_E, RATING_B, RATING_B)
-        .setISAdvancement(3030, 3035, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_FW)
-        .setProductionFactions(F_FW);
-    	return misc;
-    }
-
-    public static MiscType createLyranInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Lyran Commonwealth Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("SteinerKit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 650;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_E)
-        .setISAdvancement(2420, 2425, DATE_NONE, 3067, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-    	return misc;
-    }
-
-    public static MiscType createLyranLateInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Lyran Alliance/Lyran Commonwealth (3060+) Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("SteinerKit3060");
-    	misc.damageDivisor = 2.0;
-    	misc.cost = 730;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_D, RATING_B, RATING_E)
-        .setISAdvancement(3058, 3060, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-    	return misc;
-    }
-
-    public static MiscType createCanopusInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Magistracy of Canopus Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CanopianKit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 400;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-        .setISAdvancement(2600, 2610, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_MC)
-        .setProductionFactions(F_MC);
-    	return misc;
-    }
-
-    public static MiscType createMarianInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Marian Hegemony Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("MarianKit");
-    	misc.damageDivisor = 2.0;
-    	misc.cost = 1580;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_F, RATING_B, RATING_B)
-        .setISAdvancement(3045, 3049, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CC)
-        .setProductionFactions(F_MH);
-    	return misc;
-    }
-
-    public static MiscType createISSLDFInfArmor() {
-    	MiscType misc = new MiscType();
-    	
-//    	Stats converted from ATOW
-    	misc.name = "SLDF Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("SLDFKit");
-    	misc.damageDivisor = 2.0;
-    	misc.cost = 5000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_C, RATING_E, RATING_F, RATING_X)
-        .setISAdvancement(2570, 2575, 2580, 2800, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2570, 2575, 2580, 2950, DATE_NONE)
-        .setClanApproximate(true, false, false,true, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLSLDFInfArmor() {
-    	MiscType misc = new MiscType();
-//    	Stats converted from ATOW
-
-    	misc.name = "SLDF Infantry Kit (Clan Surplus)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("SLDFKit");
-    	misc.damageDivisor = 2.0;
-    	misc.cost = 5000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2807, DATE_NONE, 2955);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_C, RATING_E, RATING_F, RATING_X });
-    	return misc;
-    }*/
-    
-    
-    public static MiscType createTaurianInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Taurian Concordat/Calderon Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("TaurianKit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 370;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_X, RATING_B, RATING_B)
-        .setISAdvancement(3045, 3047, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TC)
-        .setProductionFactions(F_TC,F_CP);
-    	return misc;
-    }
-
-    public static MiscType createWoBInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Word of Blake Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("WoBKit");
-    	misc.damageDivisor = 2.0;
-    	misc.cost = 4300;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_F)
-        .setISAdvancement(3053, 3055, DATE_NONE, 3081, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_WB)
-        .setProductionFactions(F_WB);
-    	return misc;
-    }
-
-    public static MiscType createGenericInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Generic Infantry Kit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("GenericKit");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 4300;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
-        .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-    
-    public static MiscType createVintageBulletProofVest() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Vintage Bulletproof Vest";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("BulletproofVest");
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 500;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "195, ATOWC";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_C, RATING_D, RATING_E)
-        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-    
-    public static MiscType createVintageBombSuit() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Vintage Bomb Suit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("BombSuit");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_ENCUMBERING;
-    	misc.cost = 750;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "195, ATOWC";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_B, RATING_C, RATING_E, RATING_E)
-        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false);
-    	return misc;
-    }
-    
-    
-
-    // Sneak Suits
-    public static MiscType createDESTInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "DEST Infiltration Suit";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("DESTSuit");
-    	misc.subType = S_DEST;
-    	misc.damageDivisor = 1.0;
-    	misc.cost = 50000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
-        .setISAdvancement(2785, 2800, DATE_NONE, 2845, 3045)
-        .setISApproximate(true, true, false,true, false)
-        .setPrototypeFactions(F_DC)
-        .setProductionFactions(F_DC);
-
-    	return misc;
-    }
-
-    public static MiscType createISSneakCamoSystemInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (Camo)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISSneakSuitCamo");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_CAMO;
-    	misc.cost = 7000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-        .setISAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLSneakCamoSystemInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (Camo)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLSneakSuitCamo");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_CAMO;
-    	misc.cost = 7000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
-    	return misc;
-    }*/
-
-    public static MiscType createISSneakIRSystemInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (IR)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISSneakSuitIR");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_IR;
-    	misc.cost = 7000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-        .setISAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLSneakIRSystemInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (IR)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLSneakSuitIR");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_IR;
-    	misc.cost = 7000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
-    	return misc;
-    }
-*/
-    public static MiscType createISSneakECMSystemInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (ECM)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISSneakSuitECM");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_ECM;
-    	misc.cost = 7000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-        .setISAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2430, 2450, 2500, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-
-/*    public static MiscType createCLSneakECMSystemInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (ECM)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLSneakSuitECM");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_ECM;
-    	misc.cost = 7000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_C });
-    	return misc;
-    }*/
-    
-    //Two System Sneak Suits
-    
-    public static MiscType createISSneakCamoIRInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (Camo/IR)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISSneakSuitCamoIR");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_CAMO | S_SNEAK_IR;
-    	misc.cost = 21000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
-        .setISAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLSneakCamoIRInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (Camo/IR)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLSneakSuitCamoIR");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_CAMO | S_SNEAK_IR;
-    	misc.cost = 21000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_D });
-    	return misc;
-    }*/
-
-    public static MiscType createISSneakCamoECMInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (Camo/ECM)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISSneakSuitCamoECM");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_CAMO | S_SNEAK_ECM;
-    	misc.cost = 21000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
-        .setISAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLSneakCamoECMInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (Camo/ECM)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLSneakSuitCamoECM");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_CAMO | S_SNEAK_ECM;
-    	misc.cost = 21000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_D });
-    	return misc;
-    }*/
-
-    public static MiscType createISSneakIRECMInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (IR/ECM)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISSneakSuitIRECM");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_IR | S_SNEAK_ECM;
-    	misc.cost = 21000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
-        .setISAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2445, 2460, 2505, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLSneakIRECMInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (IR/ECM)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLSneakSuitIRECM");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_IR | S_SNEAK_ECM;
-    	misc.cost = 21000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_D });
-    	return misc;
-    }*/
-
-    
-    //Three System Sneak Suits
-    
-    public static MiscType createISSneakThreeSystemInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (Camo/IR/ECM)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("ISSneakSuitCamoIRECM");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_CAMO | S_SNEAK_IR | S_SNEAK_ECM;
-    	misc.cost = 28000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-    	misc.techAdvancement.setTechBase(TECH_BASE_ALL)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
-        .setISAdvancement(2465, 2475, 2510, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setClanAdvancement(2465, 2475, 2510, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
-    	return misc;
-    }
-    
-/*    public static MiscType createCLSneakThreeSystemInfArmor() {
-    	MiscType misc = new MiscType();
-
-    	misc.name = "Sneak Suit (Camo/IR/ECM)";
-    	misc.setInternalName(misc.name);
-    	misc.addLookupName("CLSneakSuitCamoIRECM");
-    	misc.damageDivisor = 1.0;
-    	misc.subType = S_SNEAK_CAMO | S_SNEAK_IR | S_SNEAK_ECM;
-    	misc.cost = 28000;
-    	misc.flags = misc.flags.or(F_INF_EQUIPMENT).or(F_ARMOR_KIT);
-    	misc.rulesRefs = "318, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_E, RATING_E });
-    	return misc;
-    }*/
 
     @Override
     public String toString() {

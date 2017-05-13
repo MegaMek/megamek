@@ -52,12 +52,13 @@ public class CLArrowIV extends ArtilleryWeapon {
         criticals = 12;
         bv = 240;
         cost = 450000;
-        rulesRefs = "359, TO";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 2807, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_E });
+        rulesRefs = "284, TO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+            .setClanAdvancement(DATE_NONE, 2844, 2850, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_CHH);
     }
 
 }

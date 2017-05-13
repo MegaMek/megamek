@@ -39,6 +39,9 @@ public class ISLongTom extends ArtilleryWeapon {
         setInternalName("ISLongTom");
         addLookupName("ISLongTomArtillery");
         addLookupName("IS Long Tom");
+        addLookupName("CLLongTom");
+        addLookupName("CLLongTomArtillery");
+        addLookupName("Clan Long Tom");
         heat = 20;
         rackSize = 25;
         ammoType = AmmoType.T_LONG_TOM;
@@ -51,11 +54,15 @@ public class ISLongTom extends ArtilleryWeapon {
         bv = 368;
         cost = 450000;
         rulesRefs = "284, TO";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2445, 2500, DATE_NONE);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        .setISAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(2445, 2500, 2520, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
     }
 
 }

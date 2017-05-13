@@ -57,3 +57,6 @@ public class CLLongTom extends ArtilleryWeapon {
     }
 
 }
+
+
+//Commented out in Weapon Type. Stats identical to IS version and Tech Progression captured in the IS version of the weapon for both Clan and IS.

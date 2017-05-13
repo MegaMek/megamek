@@ -1064,9 +1064,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISThumper());
         EquipmentType.addType(new ISSniper());
         EquipmentType.addType(new ISArrowIV());
-        EquipmentType.addType(new CLLongTom());
-        EquipmentType.addType(new CLSniper());
-        EquipmentType.addType(new CLThumper());
+//        EquipmentType.addType(new CLLongTom());
+//        EquipmentType.addType(new CLSniper());
+//        EquipmentType.addType(new CLThumper());
         EquipmentType.addType(new CLArrowIV());
         EquipmentType.addType(new ISBATubeArtillery());
         // Arty Cannons

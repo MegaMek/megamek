@@ -40,6 +40,9 @@ public class ISSniper extends ArtilleryWeapon {
         setInternalName("ISSniper");
         addLookupName("ISSniperArtillery");
         addLookupName("IS Sniper");
+        addLookupName("CLSniper");
+        addLookupName("CLSniperArtillery");
+        addLookupName("Clan Sniper");
         flags = flags.or(F_AERO_WEAPON);
         heat = 10;
         rackSize = 20;
@@ -53,11 +56,15 @@ public class ISSniper extends ArtilleryWeapon {
         bv = 85;
         cost = 300000;
         rulesRefs = "284, TO";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 1950, DATE_NONE);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
     }
 
 }

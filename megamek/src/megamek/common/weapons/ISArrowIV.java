@@ -51,11 +51,15 @@ public class ISArrowIV extends ArtilleryWeapon {
         criticals = 15;
         bv = 240;
         cost = 450000;
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 2600, DATE_NONE, 2830, 3045);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
+        rulesRefs = "284,TO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+            .setISAdvancement(2593, 2600, 3048, 2830, 3044)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_CC);	
     }
 
 }

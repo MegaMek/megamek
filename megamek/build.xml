@@ -26,7 +26,7 @@
     <property name="TinyXMLsrc" value="TinyXML07-src.zip"/>
 
     <!-- Name of the target jarfile and the class containing the main-Method -->
-    <property name="jarfile" value="MegaMek.jar"/>
+    <property name="jarfile" value="MegaMek (IO).jar"/>
     <property name="jarmainclass" value="megamek.MegaMek"/>
 
     <!-- This is the relative path to the 'data' directory -->

@@ -14,48 +14,48 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.capitalweapons.SubCapitalMissileWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MantaRayHandler;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class CLStingrayWeapon extends SubCapitalMissileWeapon {
+public class ISMantaRayWeapon extends SubCapitalMissileWeapon {
     /**
      * 
      */
-    private static final long serialVersionUID = 3827228773281489872L;
+    private static final long serialVersionUID = 2277255235440703333L;
 
     /**
      * 
      */
-    public CLStingrayWeapon() {
+    public ISMantaRayWeapon() {
         super();
-        this.name = "Stingray (Clan)";
+        this.name = "Manta Ray";
         this.setInternalName(this.name);
-        this.addLookupName("CLStingray");
-        this.heat = 9;
-        this.damage = 3;
-        this.ammoType = AmmoType.T_STINGRAY;
+        this.addLookupName("MantaRay");
+        this.heat = 21;
+        this.damage = 5;
+        this.ammoType = AmmoType.T_MANTA_RAY;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;
         this.extremeRange = 28;
-        this.tonnage = 120.0f;
-        this.bv = 496;
-        this.cost = 85000;
-        this.shortAV = 3.5;
-        this.medAV = 3.5;
-        this.maxRange = RANGE_MED;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 3070, 3072);
+        this.tonnage = 160.0f;
+        this.bv = 396;
+        this.cost = 150000;
+        this.shortAV = 5;
+        this.maxRange = RANGE_SHORT;
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, 3060, 3072);
         techAdvancement.setTechRating(RATING_F);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
     }
@@ -70,6 +70,6 @@ public class CLStingrayWeapon extends SubCapitalMissileWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new StingrayHandler(toHit, waa, game, server);
+        return new MantaRayHandler(toHit, waa, game, server);
     }
 }

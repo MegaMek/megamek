@@ -14,20 +14,21 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.capitalweapons.SubCapitalMissileWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.StingrayHandler;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class CLStingrayWeapon extends SubCapitalMissileWeapon {
+public class ISStingrayWeapon extends SubCapitalMissileWeapon {
     /**
      * 
      */
@@ -36,11 +37,11 @@ public class CLStingrayWeapon extends SubCapitalMissileWeapon {
     /**
      * 
      */
-    public CLStingrayWeapon() {
+    public ISStingrayWeapon() {
         super();
-        this.name = "Stingray (Clan)";
+        this.name = "Sub-Capital Missile Launcher (Stingray)";
         this.setInternalName(this.name);
-        this.addLookupName("CLStingray");
+        this.addLookupName("Stingray");
         this.heat = 9;
         this.damage = 3;
         this.ammoType = AmmoType.T_STINGRAY;
@@ -54,10 +55,14 @@ public class CLStingrayWeapon extends SubCapitalMissileWeapon {
         this.shortAV = 3.5;
         this.medAV = 3.5;
         this.maxRange = RANGE_MED;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 3070, 3072);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+		rulesRefs = "345,TO";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+		        .setISAdvancement(3066, 3072, 3145, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(DATE_NONE, DATE_NONE, 3073, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_WB, F_CGB, F_CNC)
+		        .setProductionFactions(F_WB);
     }
 
     /*

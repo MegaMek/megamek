@@ -1522,7 +1522,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISTHBAngelECM());
         EquipmentType.addType(MiscType.createCLAngelECM());
         EquipmentType.addType(MiscType.createWatchdogECM());
-        EquipmentType.addType(MiscType.createTHBMace());
+//        EquipmentType.addType(MiscType.createTHBMace());
         EquipmentType.addType(MiscType.createMace());
         EquipmentType.addType(MiscType.createDualSaw());
         EquipmentType.addType(MiscType.createChainsaw());
@@ -1545,7 +1545,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISSmallShield());
         EquipmentType.addType(MiscType.createISLargeShield());
         EquipmentType.addType(MiscType.createISClaw());
-        EquipmentType.addType(MiscType.createClClaw());
+//        EquipmentType.addType(MiscType.createClClaw());
         EquipmentType.addType(MiscType.createCLHarJel());
         EquipmentType.addType(MiscType.createISHarJel());
         EquipmentType.addType(MiscType.createISUMU());
@@ -5532,6 +5532,698 @@ Lamellor Ferro-Carbide - IO pg 36
             .setProductionFactions(F_CHH);
         return misc;
     }
+ 
+//BattleMech Melee Weapons    
+    public static MiscType createChainWhip() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Chain Whip";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 3;
+        misc.criticals = 2;
+        misc.cost = 120000;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.subType |= S_CHAIN_WHIP;
+        misc.bv = 5.175;
+        misc.rulesRefs = "289,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3071, 3084, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_WB)
+            .setProductionFactions(F_LC);
+        return misc;
+    }
+    
+    public static MiscType createISClaw() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Claw";
+        misc.setInternalName("ISClaw");
+        misc.addLookupName("ClClaw");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_HAND_WEAPON).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_CLAW;
+        misc.bv = BV_VARIABLE;
+        misc.rulesRefs = "289,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+            .setISAdvancement(3050, 3060, 3145, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setClanAdvancement(3090, DATE_NONE, 3145, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_LC,F_CJF)
+            .setProductionFactions(F_LC);
+        return misc;
+    }
+
+/*    public static MiscType createClClaw() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Claw (Clan)";
+        misc.setInternalName("ClClaw");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_HAND_WEAPON).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_CLAW;
+        misc.bv = BV_VARIABLE;
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, 3090, 3110);
+        misc.techAdvancement.setTechRating(RATING_B);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_X });
+        return misc;
+    }*/
+    
+    public static MiscType createISFlail() {
+        MiscType misc = new MiscType();
+        misc.name = "Flail";
+        misc.setInternalName("IS Flail");
+        misc.addLookupName("Flail");
+        misc.tonnage = 5;
+        misc.criticals = 4;
+        misc.cost = 110000;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_FLAIL;
+        misc.bv = 11;
+        misc.rulesRefs = "289,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+            .setISAdvancement(3057, 3079, 3085, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_FS)
+            .setProductionFactions(F_FS);
+        return misc;
+    }
+    
+    public static MiscType createHatchet() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Hatchet";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_HATCHET;
+        misc.bv = BV_VARIABLE;
+        misc.rulesRefs = "220,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+            .setISAdvancement(3015, 3022, 3025, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_LC,F_FS)
+            .setProductionFactions(F_LC);
+        return misc;
+    }  
+
+    public static MiscType createISLance() {
+        MiscType misc = new MiscType();
+        misc.name = "Lance";
+        misc.setInternalName("IS Lance");
+        misc.addLookupName("ISLance");
+        misc.addLookupName("Lance");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_LANCE;
+        misc.bv = BV_VARIABLE;
+        misc.rulesRefs = "290,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3064, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC);
+        return misc;
+    }
+    
+    public static MiscType createMace() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Mace";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("THB Mace");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = 130000;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.subType |= S_MACE;
+        misc.bv = BV_VARIABLE;
+        misc.rulesRefs = "290,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+            .setISAdvancement(3061, 3079, 3085, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC);
+        return misc;
+    }
+    
+/*    public static MiscType createTHBMace() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Mace (THB)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("THB Mace");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.subType |= S_MACE_THB;
+        misc.bv = BV_VARIABLE;
+        //Copying Mace Stats
+
+        misc.techAdvancement.setTechBase(TECH_BASE_IS);
+        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3061);
+        misc.techAdvancement.setTechRating(RATING_B);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_X });
+        return misc;
+    }*/
+
+
+    public static MiscType createRetractableBlade() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Retractable Blade";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.subType |= S_RETRACTABLE_BLADE;
+        misc.bv = BV_VARIABLE;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "retracted", "extended" };
+        misc.setModes(modes);
+        misc.rulesRefs = "236,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_F, RATING_D, RATING_D, RATING_D)
+            .setISAdvancement(2400, 2420, 3075, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH);
+        return misc;
+    }
+    
+    public static MiscType createISSmallShield() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Shield (Small)";
+        misc.setInternalName("ISSmallShield");
+        misc.addLookupName("Small Shield");
+        misc.tonnage = 2;
+        misc.criticals = 3;
+        misc.cost = 50000;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_SHIELD_SMALL;
+        misc.bv = 50;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
+        misc.setModes(modes);
+        misc.damageTaken = 0;
+        misc.baseDamageAbsorptionRate = 3;
+        misc.baseDamageCapacity = 11;
+        misc.rulesRefs = "290,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3067, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC);
+        return misc;
+    }
+
+    public static MiscType createISMediumShield() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Shield (Medium)";
+        misc.setInternalName("ISMediumShield");
+        misc.addLookupName("Medium Shield");
+        misc.tonnage = 4;
+        misc.criticals = 5;
+        misc.cost = 100000;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_SHIELD_MEDIUM;
+        misc.bv = 135;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
+        misc.setModes(modes);
+        misc.damageTaken = 0;
+        misc.baseDamageAbsorptionRate = 5;
+        misc.baseDamageCapacity = 18;
+        misc.rulesRefs = "290,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3067, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC);
+        return misc;
+    }
+
+    public static MiscType createISLargeShield() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Shield (Large)";
+        misc.setInternalName("ISLargeShield");
+        misc.addLookupName("Large Shield");
+        misc.tonnage = 6;
+        misc.criticals = 7;
+        misc.cost = 300000;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_SHIELD_LARGE;
+        misc.bv = 263;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
+        misc.setModes(modes);
+        misc.damageTaken = 0;
+        misc.baseDamageAbsorptionRate = 7;
+        misc.baseDamageCapacity = 25;
+        misc.rulesRefs = "290,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3067, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC);
+        return misc;
+    }
+    
+
+    public static MiscType createSpikes() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Spikes";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.5;
+        misc.criticals = 1;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_SPIKES).or(F_MECH_EQUIPMENT);
+        misc.bv = 4;
+        misc.rulesRefs = "290,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_E, RATING_E, RATING_D)
+        .setISAdvancement(3051, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+        return misc;
+    }
+    
+    public static MiscType createSword() {
+        MiscType misc = new MiscType();
+        misc.name = "Sword";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);;
+        misc.subType |= S_SWORD;
+        misc.bv = BV_VARIABLE;
+        misc.rulesRefs = "290,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+        .setISAdvancement(3050, 3058, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_DC)
+        .setProductionFactions(F_DC);
+        return misc;
+    }
+
+    public static MiscType createTalons() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Talons";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.spreadable = true;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_TALON).or(F_MECH_EQUIPMENT);
+        misc.bv = BV_VARIABLE;
+        misc.rulesRefs = "290,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(3072, 3087, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_CJF)
+        .setProductionFactions(F_CJF);
+        return misc;
+    }
+    
+    public static MiscType createISSmallVibroblade() {
+        MiscType misc = new MiscType();
+        misc.name = "Vibroblade (Small)";
+        misc.setInternalName("ISSmallVibroblade");
+        misc.addLookupName("Small Vibroblade");
+        misc.tonnage = 3;
+        misc.criticals = 1;
+        misc.cost = 150000;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_VIBRO_SMALL;
+        misc.bv = 12;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "Inactive", "Active" };
+        misc.setModes(modes);
+        misc.rulesRefs = "292,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3065, 3091, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_DC)
+        .setProductionFactions(F_DC);
+        return misc;
+    }
+
+    public static MiscType createISMediumVibroblade() {
+        MiscType misc = new MiscType();
+        misc.name = "Vibroblade (Medium)";
+        misc.setInternalName("ISMediumVibroblade");
+        misc.addLookupName("Medium Vibroblade");
+        misc.tonnage = 5;
+        misc.criticals = 2;
+        misc.cost = 400000;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_VIBRO_MEDIUM;
+        misc.bv = 17;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "Inactive", "Active" };
+        misc.setModes(modes);
+        misc.rulesRefs = "292,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3065, 3091, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_DC)
+        .setProductionFactions(F_DC);
+        return misc;
+    }
+
+    public static MiscType createISLargeVibroblade() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Vibroblade (Large)";
+        misc.setInternalName("ISLargeVibroblade");
+        misc.addLookupName("Large Vibroblade");
+        misc.tonnage = 7;
+        misc.criticals = 4;
+        misc.cost = 750000;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_VIBRO_LARGE;
+        misc.bv = 24;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { "Inactive", "Active" };
+        misc.setModes(modes);
+        misc.rulesRefs = "292,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3066, 3091, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_DC)
+        .setProductionFactions(F_DC);
+        return misc;
+    }
+
+    //ADDING THE CLUBS FOUND LAYING AROUND TO THIS SECTION.
+    public static MiscType createTreeClub() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Tree Club";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_TREE_CLUB | S_CLUB;
+        misc.bv = 0;
+
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        misc.techAdvancement.setTechRating(RATING_A);
+        misc.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        return misc;
+    }
+
+    public static MiscType createGirderClub() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Girder Club";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
+        misc.subType |= S_CLUB;
+        misc.bv = 0;
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        misc.techAdvancement.setTechRating(RATING_A);
+        misc.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        return misc;
+    }
+
+    public static MiscType createLimbClub() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Limb Club";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.flags = misc.flags.or(F_CLUB);
+        misc.subType |= S_CLUB;
+        misc.bv = 0;
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+        misc.techAdvancement.setTechRating(RATING_A);
+        misc.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        return misc;
+    }
+
+
+//C3 Systems. -  Master Units under Weapons.
+    
+
+    public static MiscType createC3S() {
+        MiscType misc = new MiscType();
+
+        misc.name = "C3 Computer [Slave]";
+        misc.setInternalName("ISC3SlaveUnit");
+        misc.addLookupName("IS C3 Slave");
+        misc.tonnage = 1;
+        misc.criticals = 1;
+        misc.cost = 250000;
+        misc.flags = misc.flags.or(F_C3S).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "209,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3039, 3050, 3065, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_DC)
+            .setProductionFactions(F_DC);
+        return misc;
+    }
+    
+    public static MiscType createC3I() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Improved C3 Computer (C3I)";
+        misc.setInternalName("ISC3iUnit");
+        misc.addLookupName("ISImprovedC3CPU");
+        misc.addLookupName("IS C3i Computer");
+        misc.tonnage = 2.5f;
+        misc.criticals = 2;
+        misc.cost = 750000;
+        misc.flags = misc.flags.or(F_C3I).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
+        .setISAdvancement(3052, 3062, DATE_NONE, 3085, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CS)
+        .setProductionFactions(F_CS);
+        return misc;
+    }
+    
+    public static MiscType createC3SBS() {
+        MiscType misc = new MiscType();
+        misc.name = "C3 Boosted System (C3BS) [Slave]";
+        misc.setInternalName("ISC3BoostedSystemSlaveUnit");
+        misc.addLookupName("IS C3 Boosted System Slave");
+        misc.tonnage = 3;
+        misc.criticals = 2;
+        misc.cost = 500000;
+        misc.flags = misc.flags.or(F_C3SBS).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "298,TO";        
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(3071, 3100, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS);
+        return misc;
+    }
+
+
+    public static MiscType createEmergencyC3M() {
+        MiscType misc = new MiscType();
+
+        misc.name = "C3 Emergency Master (C3EM)";
+        misc.setInternalName("ISC3EmergencyMaster");
+        misc.setInternalName("Emergency C3 Master");
+        misc.tonnage = 2;
+        misc.criticals = 2;
+        misc.cost = 2800000;
+        // TODO: implement game rules
+        misc.flags = misc.flags.or(F_C3EM).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_C3S).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "298,TO";        
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(3071, 3099, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_DC)
+        .setProductionFactions(F_DC);
+        return misc;
+    }
+    
+    //TODO C3 Remote Sensor Launcher - See IO pg 38 (will likely need to be added as weapon)
+    
+    public static MiscType createBC3() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Battle Armor C3 (BC3)";
+        misc.setInternalName("BattleArmorC3");
+        misc.addLookupName("IS BattleArmor C3");
+        misc.tonnage = .250;
+        misc.criticals = 1;
+        misc.cost = 62500;
+        misc.flags = misc.flags.or(F_C3S).or(F_BA_EQUIPMENT)
+                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+                .andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "297, TO";     
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        .setISAdvancement(3073, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_DC)
+        .setProductionFactions(F_DC);
+        return misc;
+    }
+
+    public static MiscType createBC3i() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Battle Armor Improved C3 (BC3I)";
+        misc.setInternalName("ISBC3i");
+        misc.addLookupName("IS BC3i");
+        misc.addLookupName("IS BattleArmor C3i");
+        misc.tonnage = .350;
+        misc.criticals = 1;
+        misc.cost = 125000;
+        misc.flags = misc.flags.or(F_C3I).or(F_BA_EQUIPMENT)
+                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+                .andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "297, TO";     
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        .setISAdvancement(3063, 3095, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_WB)
+        .setProductionFactions(F_RS);
+        return misc;
+    }
+      
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 //Heat Sinks
     public static MiscType createHeatSink() {
@@ -5883,77 +6575,8 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createTreeClub() {
-        MiscType misc = new MiscType();
 
-        misc.name = "Tree Club";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 0;
-        misc.criticals = 0;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_TREE_CLUB | S_CLUB;
-        misc.bv = 0;
 
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createGirderClub() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Girder Club";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 0;
-        misc.criticals = 0;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_CLUB;
-        misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createLimbClub() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Limb Club";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 0;
-        misc.criticals = 0;
-        misc.flags = misc.flags.or(F_CLUB);
-        misc.subType |= S_CLUB;
-        misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        misc.techAdvancement.setTechRating(RATING_A);
-        misc.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createHatchet() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Hatchet";
-        misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_HATCHET;
-        misc.bv = BV_VARIABLE;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3022);
-        misc.techAdvancement.setIntroLevel(true);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_X });
-        return misc;
-    }
 
     // Start of Level2 stuff
 
@@ -6116,86 +6739,6 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createC3S() {
-        MiscType misc = new MiscType();
-
-        misc.name = "C3 Slave";
-        misc.setInternalName("ISC3SlaveUnit");
-        misc.addLookupName("IS C3 Slave");
-        misc.tonnage = 1;
-        misc.criticals = 1;
-        misc.cost = 250000;
-        misc.flags = misc.flags.or(F_C3S).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.bv = 0;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createEmergencyC3M() {
-        MiscType misc = new MiscType();
-
-        misc.name = "C3 Emergency Master";
-        misc.setInternalName("ISC3EmergencyMaster");
-        misc.setInternalName("Emergency C3 Master");
-        misc.tonnage = 2;
-        misc.criticals = 2;
-        misc.cost = 2800000;
-        // TODO: implement game rules
-        misc.flags = misc.flags.or(F_C3EM).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_C3S).andNot(F_AERO_EQUIPMENT);
-        misc.bv = 0;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3071, 3099, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createC3SBS() {
-        MiscType misc = new MiscType();
-        misc.name = "C3 Slave Boosted";
-        misc.setInternalName("ISC3BoostedSystemSlaveUnit");
-        misc.addLookupName("IS C3 Boosted System Slave");
-        misc.tonnage = 3;
-        misc.criticals = 2;
-        misc.cost = 500000;
-        misc.flags = misc.flags.or(F_C3SBS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.bv = 0;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3073, 3100, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createC3I() {
-        MiscType misc = new MiscType();
-
-        misc.name = "C3i Computer";
-        misc.setInternalName("ISC3iUnit");
-        misc.addLookupName("ISImprovedC3CPU");
-        misc.addLookupName("IS C3i Computer");
-        misc.tonnage = 2.5f;
-        misc.criticals = 2;
-        misc.cost = 750000;
-        misc.flags = misc.flags.or(F_C3I).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.bv = 0;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3060);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
 
     public static MiscType createNC3() {
         MiscType misc = new MiscType();
@@ -6219,50 +6762,7 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createBC3() {
-        MiscType misc = new MiscType();
 
-        misc.name = "Battle Armor C3 (BC3)";
-        misc.setInternalName("BattleArmorC3");
-        misc.addLookupName("IS BattleArmor C3");
-        misc.tonnage = .250;
-        misc.criticals = 1;
-        misc.cost = 62500;
-        misc.flags = misc.flags.or(F_C3S).or(F_BA_EQUIPMENT)
-                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
-                .andNot(F_AERO_EQUIPMENT);
-        misc.bv = 0;
-        misc.rulesRefs = "297, TO";
-        
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3073, 3095, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
-        return misc;
-    }
-
-    public static MiscType createBC3i() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Battle Armor Improved C3 (BC3I)";
-        misc.setInternalName("ISBC3i");
-        misc.addLookupName("IS BC3i");
-        misc.addLookupName("IS BattleArmor C3i");
-        misc.tonnage = .350;
-        misc.criticals = 1;
-        misc.cost = 125000;
-        misc.flags = misc.flags.or(F_C3I).or(F_BA_EQUIPMENT)
-                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
-                .andNot(F_AERO_EQUIPMENT);
-        misc.bv = 0;
-        misc.rulesRefs = "297, TO";
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3063, 3095, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
-        return misc;
-    }
 
     public static MiscType createISArtemis() {
         MiscType misc = new MiscType();
@@ -6528,63 +7028,6 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createSword() {
-        MiscType misc = new MiscType();
-        misc.name = "Sword";
-        misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);;
-        misc.subType |= S_SWORD;
-        misc.bv = BV_VARIABLE;
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3058);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createChainWhip() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Chain Whip";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 3;
-        misc.criticals = 2;
-        misc.cost = 120000;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.subType |= S_CHAIN_WHIP;
-        misc.bv = 5.175;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3071, 3084, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createRetractableBlade() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Retractable Blade";
-        misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.subType |= S_RETRACTABLE_BLADE;
-        misc.bv = BV_VARIABLE;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { "retracted", "extended" };
-        misc.setModes(modes);
-
-        misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-        misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2420);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_F, RATING_D, RATING_D, RATING_X });
-        return misc;
-    }
 
     public static MiscType createSpotWelder() {
         MiscType misc = new MiscType();
@@ -6606,45 +7049,6 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createTHBMace() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Mace (THB)";
-        misc.setInternalName(misc.name);
-        misc.addLookupName("THB Mace");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.subType |= S_MACE_THB;
-        misc.bv = BV_VARIABLE;
-        //Copying Mace Stats
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3061);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createMace() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Mace";
-        misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = 130000;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.subType |= S_MACE;
-        misc.bv = BV_VARIABLE;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 3061, 3079);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_X });
-        return misc;
-    }
 
     public static MiscType createBackhoe() {
         MiscType misc = new MiscType();
@@ -8735,126 +9139,6 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createISSmallShield() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Small Shield";
-        misc.setInternalName("ISSmallShield");
-        misc.addLookupName("Small Shield");
-        misc.tonnage = 2;
-        misc.criticals = 3;
-        misc.cost = 50000;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_SHIELD_SMALL;
-        misc.bv = 50;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
-        misc.setModes(modes);
-        misc.damageTaken = 0;
-        misc.baseDamageAbsorptionRate = 3;
-        misc.baseDamageCapacity = 11;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3071, 3079, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
-
-    /**
-     * Creates a claw MiscType Object
-     *
-     * @return MiscType
-     */
-    public static MiscType createISClaw() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Claw";
-        misc.setInternalName("ISClaw");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_HAND_WEAPON).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_CLAW;
-        misc.bv = BV_VARIABLE;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 3050, 3110);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createClClaw() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Claw (Clan)";
-        misc.setInternalName("ClClaw");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_HAND_WEAPON).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_CLAW;
-        misc.bv = BV_VARIABLE;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, 3090, 3110);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createISMediumShield() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Medium Shield";
-        misc.setInternalName("ISMediumShield");
-        misc.addLookupName("Medium Shield");
-        misc.tonnage = 4;
-        misc.criticals = 5;
-        misc.cost = 100000;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_SHIELD_MEDIUM;
-        misc.bv = 135;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
-        misc.setModes(modes);
-        misc.damageTaken = 0;
-        misc.baseDamageAbsorptionRate = 5;
-        misc.baseDamageCapacity = 18;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3067, 3079, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createISLargeShield() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Large Shield";
-        misc.setInternalName("ISLargeShield");
-        misc.addLookupName("Large Shield");
-        misc.tonnage = 6;
-        misc.criticals = 7;
-        misc.cost = 300000;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_SHIELD_LARGE;
-        misc.bv = 263;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { S_NO_SHIELD, S_ACTIVE_SHIELD, S_PASSIVE_SHIELD };
-        misc.setModes(modes);
-        misc.damageTaken = 0;
-        misc.baseDamageAbsorptionRate = 7;
-        misc.baseDamageCapacity = 25;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3067, 3079, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
 
     public static MiscType createCLHarJel() {
         MiscType misc = new MiscType();
@@ -8939,44 +9223,6 @@ Lamellor Ferro-Carbide - IO pg 36
 
 
 
-    public static MiscType createISLance() {
-        MiscType misc = new MiscType();
-        misc.name = "Lance";
-        misc.setInternalName("IS Lance");
-        misc.addLookupName("ISLance");
-        misc.addLookupName("Lance");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_LANCE;
-        misc.bv = BV_VARIABLE;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3064, 3083, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createISFlail() {
-        MiscType misc = new MiscType();
-        misc.name = "Flail";
-        misc.setInternalName("IS Flail");
-        misc.addLookupName("Flail");
-        misc.tonnage = 5;
-        misc.criticals = 4;
-        misc.cost = 110000;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_FLAIL;
-        misc.bv = 11;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3057, DATE_NONE, 3079);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-        return misc;
-    }
 
     public static MiscType createISWreckingBall() {
         MiscType misc = new MiscType();
@@ -9018,73 +9264,6 @@ Lamellor Ferro-Carbide - IO pg 36
         misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
         misc.techAdvancement.setTechRating(RATING_A);
         misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createISSmallVibroblade() {
-        MiscType misc = new MiscType();
-        misc.name = "Small Vibroblade";
-        misc.setInternalName("ISSmallVibroblade");
-        misc.addLookupName("Small Vibroblade");
-        misc.tonnage = 3;
-        misc.criticals = 1;
-        misc.cost = 150000;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_VIBRO_SMALL;
-        misc.bv = 12;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { "Inactive", "Active" };
-        misc.setModes(modes);
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3065, 3091, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createISMediumVibroblade() {
-        MiscType misc = new MiscType();
-        misc.name = "Medium Vibroblade";
-        misc.setInternalName("ISMediumVibroblade");
-        misc.addLookupName("Medium Vibroblade");
-        misc.tonnage = 5;
-        misc.criticals = 2;
-        misc.cost = 400000;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_VIBRO_MEDIUM;
-        misc.bv = 17;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { "Inactive", "Active" };
-        misc.setModes(modes);
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3065, 3091, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createISLargeVibroblade() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Large Vibroblade";
-        misc.setInternalName("ISLargeVibroblade");
-        misc.addLookupName("Large Vibroblade");
-        misc.tonnage = 7;
-        misc.criticals = 4;
-        misc.cost = 750000;
-        misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT);
-        misc.subType |= S_VIBRO_LARGE;
-        misc.bv = 24;
-        misc.setInstantModeSwitch(true);
-        String[] modes = { "Inactive", "Active" };
-        misc.setModes(modes);
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3065, 3091, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return misc;
     }
 
@@ -9144,43 +9323,6 @@ Lamellor Ferro-Carbide - IO pg 36
         misc.techAdvancement.setISAdvancement(DATE_NONE, 3049, DATE_NONE);
         misc.techAdvancement.setTechRating(RATING_C);
         misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createSpikes() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Spikes";
-        misc.setInternalName(misc.name);
-        misc.tonnage = 0.5;
-        misc.criticals = 1;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_SPIKES).or(F_MECH_EQUIPMENT);
-        misc.bv = 4;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3051, DATE_NONE, 3082);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_E, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createTalons() {
-        MiscType misc = new MiscType();
-
-        misc.name = "Talons";
-        misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = CRITICALS_VARIABLE;
-        misc.spreadable = true;
-        misc.cost = COST_VARIABLE;
-        misc.flags = misc.flags.or(F_TALON).or(F_MECH_EQUIPMENT);
-        misc.bv = BV_VARIABLE;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(3072, 3087, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
         return misc;
     }
 

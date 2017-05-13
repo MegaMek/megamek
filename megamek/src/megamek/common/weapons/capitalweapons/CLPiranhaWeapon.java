@@ -14,46 +14,49 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.capitalweapons.SubCapitalMissileWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.PiranhaHandler;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class CLStingrayWeapon extends SubCapitalMissileWeapon {
+public class CLPiranhaWeapon extends SubCapitalMissileWeapon {
     /**
      * 
      */
-    private static final long serialVersionUID = 3827228773281489872L;
+    private static final long serialVersionUID = 3827228773282489872L;
 
     /**
      * 
      */
-    public CLStingrayWeapon() {
+    public CLPiranhaWeapon() {
         super();
-        this.name = "Stingray (Clan)";
-        this.setInternalName(this.name);
-        this.addLookupName("CLStingray");
-        this.heat = 9;
-        this.damage = 3;
-        this.ammoType = AmmoType.T_STINGRAY;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
-        this.tonnage = 120.0f;
-        this.bv = 496;
-        this.cost = 85000;
-        this.shortAV = 3.5;
-        this.medAV = 3.5;
-        this.maxRange = RANGE_MED;
+        name = "Piranha (Clan)";
+        setInternalName(name);
+        addLookupName("CLPiranha");
+        heat = 9;
+        damage = 3;
+        ammoType = AmmoType.T_PIRANHA;
+        shortRange = 7;
+        mediumRange = 14;
+        longRange = 21;
+        extremeRange = 28;
+        tonnage = 100.0f;
+        bv = 670;
+        cost = 75000;
+        shortAV = 3;
+        medAV = 3;
+        longAV = 3;
+        maxRange = RANGE_LONG;
+        flags = flags.or(F_AERO_WEAPON).or(F_MISSILE);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 3070, 3072);
         techAdvancement.setTechRating(RATING_F);
@@ -70,6 +73,6 @@ public class CLStingrayWeapon extends SubCapitalMissileWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new StingrayHandler(toHit, waa, game, server);
+        return new PiranhaHandler(toHit, waa, game, server);
     }
 }

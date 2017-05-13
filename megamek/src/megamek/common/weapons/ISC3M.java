@@ -31,7 +31,7 @@ public class ISC3M extends TAGWeapon {
 
     public ISC3M() {
         super();
-        name = "C3 Master with TAG";
+        name = "C3 Computer [Master]";
         setInternalName("ISC3MasterUnit");
         addLookupName("IS C3 Computer");
         addLookupName("ISC3MasterComputer");
@@ -48,9 +48,15 @@ public class ISC3M extends TAGWeapon {
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "209,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3039, 3050, 3065, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_DC)
+            .setProductionFactions(F_DC);
     }
 }

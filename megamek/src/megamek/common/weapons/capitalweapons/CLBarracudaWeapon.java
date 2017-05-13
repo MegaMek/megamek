@@ -14,50 +14,57 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.capitalweapons.SubCapitalMissileWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.BarracudaHandler;
+import megamek.common.weapons.CapitalMissileWeapon;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class CLStingrayWeapon extends SubCapitalMissileWeapon {
+public class CLBarracudaWeapon extends CapitalMissileWeapon {
     /**
      * 
      */
-    private static final long serialVersionUID = 3827228773281489872L;
+    private static final long serialVersionUID = 8756042527483383101L;
 
     /**
      * 
      */
-    public CLStingrayWeapon() {
+    public CLBarracudaWeapon() {
         super();
-        this.name = "Stingray (Clan)";
+        this.name = "Barracuda (Clan)";
         this.setInternalName(this.name);
-        this.addLookupName("CLStingray");
-        this.heat = 9;
-        this.damage = 3;
-        this.ammoType = AmmoType.T_STINGRAY;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
-        this.tonnage = 120.0f;
-        this.bv = 496;
-        this.cost = 85000;
-        this.shortAV = 3.5;
-        this.medAV = 3.5;
-        this.maxRange = RANGE_MED;
+        this.addLookupName("CLBarracuda");
+        this.heat = 10;
+        this.damage = 2;
+        this.ammoType = AmmoType.T_BARRACUDA;
+        this.shortRange = 20;
+        this.mediumRange = 30;
+        this.longRange = 40;
+        this.extremeRange = 50;
+        this.tonnage = 90.0f;
+        this.bv = 522;
+        this.cost = 90000;
+        this.atClass = CLASS_CAPITAL_MISSILE;
+        this.shortAV = 2;
+        this.medAV = 2;
+        this.longAV = 2;
+        this.extAV = 2;
+        this.maxRange = RANGE_EXT;
+        this.toHitModifier = -2;
+
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 3070, 3072);
+        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2855);
         techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_D, RATING_X });
     }
 
     /*
@@ -70,6 +77,6 @@ public class CLStingrayWeapon extends SubCapitalMissileWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new StingrayHandler(toHit, waa, game, server);
+        return new BarracudaHandler(toHit, waa, game, server);
     }
 }

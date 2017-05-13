@@ -14,20 +14,21 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.capitalweapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.capitalweapons.SubCapitalMissileWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.SwordfishHandler;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class CLStingrayWeapon extends SubCapitalMissileWeapon {
+public class CLSwordfishWeapon extends SubCapitalMissileWeapon {
     /**
      * 
      */
@@ -36,24 +37,23 @@ public class CLStingrayWeapon extends SubCapitalMissileWeapon {
     /**
      * 
      */
-    public CLStingrayWeapon() {
+    public CLSwordfishWeapon() {
         super();
-        this.name = "Stingray (Clan)";
+        this.name = "Swordfish (Clan)";
         this.setInternalName(this.name);
-        this.addLookupName("CLStingray");
-        this.heat = 9;
-        this.damage = 3;
-        this.ammoType = AmmoType.T_STINGRAY;
+        this.addLookupName("CLSwordfish");
+        this.heat = 15;
+        this.damage = 4;
+        this.ammoType = AmmoType.T_SWORDFISH;
         this.shortRange = 7;
         this.mediumRange = 14;
         this.longRange = 21;
         this.extremeRange = 28;
-        this.tonnage = 120.0f;
-        this.bv = 496;
-        this.cost = 85000;
-        this.shortAV = 3.5;
-        this.medAV = 3.5;
-        this.maxRange = RANGE_MED;
+        this.tonnage = 140.0f;
+        this.bv = 317;
+        this.cost = 110000;
+        this.shortAV = 4;
+        this.maxRange = RANGE_SHORT;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(DATE_NONE, 3070, 3072);
         techAdvancement.setTechRating(RATING_F);
@@ -70,6 +70,6 @@ public class CLStingrayWeapon extends SubCapitalMissileWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new StingrayHandler(toHit, waa, game, server);
+        return new SwordfishHandler(toHit, waa, game, server);
     }
 }

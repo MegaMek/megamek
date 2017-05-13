@@ -37,6 +37,9 @@ public class ISThumperCannon extends ArtilleryCannonWeapon {
         setInternalName("ISThumperCannon");
         addLookupName("ISThumperArtilleryCannon");
         addLookupName("IS Thumper Cannon");
+        addLookupName("CLThumper Cannon");
+        addLookupName("CLThumperArtilleryCannon");
+        addLookupName("CL Thumper Cannon");
         heat = 5;
         rackSize = 5;
         ammoType = AmmoType.T_THUMPER_CANNON;
@@ -54,10 +57,16 @@ public class ISThumperCannon extends ArtilleryCannonWeapon {
         longAV = 5;
         maxRange = RANGE_MED;
         rulesRefs = "285, TO";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3012, 3079, DATE_NONE);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+        .setISAdvancement(3012, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(3032, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_LC,F_CWF)
+        .setProductionFactions(F_LC);
     }
 
 }
+

@@ -1073,9 +1073,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLongTomCannon());
         EquipmentType.addType(new ISThumperCannon());
         EquipmentType.addType(new ISSniperCannon());
-        EquipmentType.addType(new CLLongTomCannon());
-        EquipmentType.addType(new CLSniperCannon());
-        EquipmentType.addType(new CLThumperCannon());
+//        EquipmentType.addType(new CLLongTomCannon());
+//        EquipmentType.addType(new CLSniperCannon());
+//        EquipmentType.addType(new CLThumperCannon());
         // MFUK weapons
         EquipmentType.addType(new CLPlasmaRifle());
         EquipmentType.addType(new CLRAC2());

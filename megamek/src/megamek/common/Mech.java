@@ -31,7 +31,6 @@ import java.util.Vector;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.CLImprovedHeavyLargeLaser;
 import megamek.common.weapons.CLImprovedHeavyMediumLaser;
 import megamek.common.weapons.CLImprovedHeavySmallLaser;
@@ -44,6 +43,7 @@ import megamek.common.weapons.LBXACWeapon;
 import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.UACWeapon;
+import megamek.common.weapons.autocannons.ACWeapon;
 
 /**
  * You know what mechs are, silly.

@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.weapons.autocannons.ACWeapon;
 
 public abstract class LACWeapon extends ACWeapon {
 

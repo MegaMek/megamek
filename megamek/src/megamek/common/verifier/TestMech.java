@@ -36,12 +36,12 @@ import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.LBXACWeapon;
 import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.UACWeapon;
+import megamek.common.weapons.autocannons.ACWeapon;
 
 public class TestMech extends TestEntity {
     private Mech mech = null;

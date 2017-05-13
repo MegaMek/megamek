@@ -57,7 +57,6 @@ import megamek.common.options.PartialRepairs;
 import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.ISASEWMissileWeapon;
 import megamek.common.weapons.ISASMissileWeapon;
 import megamek.common.weapons.CLASEWMissileWeapon;
@@ -81,6 +80,7 @@ import megamek.common.weapons.SCLBayWeapon;
 import megamek.common.weapons.SpaceBombAttack;
 import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
 
 /**

@@ -32,13 +32,13 @@ import megamek.common.MiscType;
 import megamek.common.UnitRole;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
-import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.ArtilleryWeapon;
 import megamek.common.weapons.LBXACWeapon;
 import megamek.common.weapons.LRMWeapon;
 import megamek.common.weapons.SRMWeapon;
 import megamek.common.weapons.TAGWeapon;
 import megamek.common.weapons.UACWeapon;
+import megamek.common.weapons.autocannons.ACWeapon;
 
 /**
  * Campaign Operations rules for force generation.

@@ -15,7 +15,7 @@
  * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.tag;
 
 import megamek.common.TechAdvancement;
 
@@ -46,10 +46,16 @@ public class ISTAG extends TAGWeapon {
         extremeRange = 18;
         bv = 0;
         cost = 50000;
-        flags = flags.andNot(F_BA_WEAPON).or(F_AERO_WEAPON);
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2600, 2835, 3044);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
+        rulesRefs = "238,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+            .setISAdvancement(2593, 2600, 3045, 2835, 3044)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_FS,F_LC);	
     }
 }

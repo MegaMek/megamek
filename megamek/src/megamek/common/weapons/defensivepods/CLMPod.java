@@ -18,7 +18,6 @@
 package megamek.common.weapons.defensivepods;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.MPodWeapon;
 
 /**
  * @author Sebastian Brocks

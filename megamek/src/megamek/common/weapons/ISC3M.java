@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.tag.TAGWeapon;
 
 /**
  * @author Sebastian Brocks

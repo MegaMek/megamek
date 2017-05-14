@@ -12,43 +12,61 @@
  *  for more details.
  */
 /*
- * Created on Sep 7, 2005
+ * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.defensivepods;
 
+import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MPodHandler;
 import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
  */
-public abstract class TAGWeapon extends Weapon {
+public abstract class MPodWeapon extends AmmoWeapon {
+
+    private static final long serialVersionUID = 3343394645568467135L;
+
     /**
      *
      */
-    private static final long serialVersionUID = 6794299593713032006L;
-
-    public TAGWeapon() {
+    public MPodWeapon() {
         super();
-        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).andNot(F_AERO_WEAPON)
-                .or(F_TAG).or(F_NO_FIRES);
-        setModes(new String[] { "1-shot", "2-shot", "3-shot", "4-shot" });
+        heat = 0;
+        damage = 15;
+        ammoType = AmmoType.T_MPOD;
+        rackSize = 15;
+        minimumRange = 0;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
+        tonnage = 1.0f;
+        criticals = 1;
+        flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_BALLISTIC)
+                .or(F_ONESHOT).or(F_M_POD);
+        explosive = true;
+        bv = 5;
+        cost = 6000;
+        explosionDamage = 5;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
-     * megamek.server.Server)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new TAGHandler(toHit, waa, game, server);
+        return new MPodHandler(toHit, waa, game, server);
     }
 }

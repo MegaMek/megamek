@@ -15,7 +15,7 @@
  * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.tag;
 
 import megamek.common.TechAdvancement;
 
@@ -47,9 +47,15 @@ public class CLLightTAG extends TAGWeapon {
         bv = 0;
         cost = 40000;
         flags = flags.andNot(F_BA_WEAPON).or(F_AERO_WEAPON);
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3054);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "CHECK";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+            .setClanAdvancement(3051, 3054, 3059, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CWF)
+            .setProductionFactions(F_CWF);
     }
 }

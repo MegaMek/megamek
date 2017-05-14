@@ -36,9 +36,9 @@ import megamek.common.weapons.ArtilleryWeapon;
 import megamek.common.weapons.LBXACWeapon;
 import megamek.common.weapons.LRMWeapon;
 import megamek.common.weapons.SRMWeapon;
-import megamek.common.weapons.TAGWeapon;
 import megamek.common.weapons.UACWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
+import megamek.common.weapons.tag.TAGWeapon;
 
 /**
  * Campaign Operations rules for force generation.

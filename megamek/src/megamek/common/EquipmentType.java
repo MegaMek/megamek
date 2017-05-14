@@ -30,9 +30,9 @@ import java.util.Vector;
 
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.HVACWeapon;
-import megamek.common.weapons.MPodWeapon;
 import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.defensivepods.BPodWeapon;
+import megamek.common.weapons.defensivepods.MPodWeapon;
 import megamek.server.Server;
 
 /**

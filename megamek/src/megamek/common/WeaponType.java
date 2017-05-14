@@ -149,6 +149,10 @@ import megamek.common.weapons.defensivepods.ISBPod;
 import megamek.common.weapons.defensivepods.ISMPod;
 import megamek.common.weapons.capitalweapons.CapMissTeleWhiteSharkWeapon;
 import megamek.common.weapons.infantry.*;
+import megamek.common.weapons.tag.CLLightTAG;
+import megamek.common.weapons.tag.CLTAG;
+import megamek.common.weapons.tag.ISLightTAG;
+import megamek.common.weapons.tag.ISTAG;
 
 
 

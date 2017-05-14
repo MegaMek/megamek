@@ -159,15 +159,15 @@ public interface ITechnology {
     default int getTechLevel(int year, boolean clan) {
         if (isUnofficial()) {
             return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
-        } else if (year >= getCommonDate(clan)) {
+        } else if (year >= getCommonDate(clan) && getCommonDate(clan) != DATE_NONE) {
             if (clan) {
                 return TechConstants.T_CLAN_TW;
             } else {
                 return isIntroLevel()? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX;
             }
-        } else if (year >= getProductionDate(clan)) {
+        } else if (year >= getProductionDate(clan) && getProductionDate(clan) != DATE_NONE) {
             return clan? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
-        } else if (year >= getPrototypeDate(clan)) {
+        } else if (year >= getPrototypeDate(clan) && getPrototypeDate(clan) != DATE_NONE) {
             return clan? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
         } else {
             return TechConstants.T_TECH_UNKNOWN;
@@ -231,10 +231,11 @@ public interface ITechnology {
     }
     
     default boolean isAvailableIn(int year, boolean clan) {
-        return year >= getIntroductionDate(clan) && !isExtinct(year, clan);
+        return year >= getIntroductionDate(clan) && getIntroductionDate(clan) != DATE_NONE  && !isExtinct(year, clan);
     }
+    
     default boolean isAvailableIn(int year) {
-        return year >= getIntroductionDate() && !isExtinct(year);
+        return year >= getIntroductionDate() && getIntroductionDate() != DATE_NONE && !isExtinct(year);
     }
     
     /**

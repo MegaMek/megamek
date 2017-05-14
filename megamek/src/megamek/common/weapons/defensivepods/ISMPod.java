@@ -15,9 +15,10 @@
  * Created on Oct 20, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.defensivepods;
 
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.MPodWeapon;
 
 /**
  * @author Sebastian Brocks
@@ -38,9 +39,15 @@ public class ISMPod extends MPodWeapon {
         setInternalName("ISMPod");
         addLookupName("ISM-Pod");
 
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 3060, 3064);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "330,TO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3060, 3064, 3099, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC);
     }
 }

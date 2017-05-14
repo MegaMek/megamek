@@ -119,7 +119,9 @@ NAC20
 NAC20 Ammo:300
 </Aft Right Side Equipment>
 
-<Aft Equipment> 
+<Aft Equipment>
+SDSSelfDestructSystem
+CasparDroneControlSystem
 NL45
 NL45
 NL45

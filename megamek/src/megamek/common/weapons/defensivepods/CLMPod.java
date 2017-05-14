@@ -15,9 +15,10 @@
  * Created on Oct 20, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.defensivepods;
 
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.MPodWeapon;
 
 /**
  * @author Sebastian Brocks
@@ -37,9 +38,16 @@ public class CLMPod extends MPodWeapon {
         this.name = "M-Pod";
         this.setInternalName("CLMPod");
         this.addLookupName("CLM-Pod");
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 3064, DATE_NONE);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
+        rulesRefs = "Unofficial";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(true)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3060, 3064, 3099, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC);
     }
 }
+

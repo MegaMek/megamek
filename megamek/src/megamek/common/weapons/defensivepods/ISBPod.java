@@ -15,31 +15,27 @@
  * Created on Oct 20, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.defensivepods;
 
 import megamek.common.TechAdvancement;
 
 /**
  * @author Jason Tighe
  */
-public class CLBPod extends BPodWeapon {
+public class ISBPod extends BPodWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -950371259420885833L;
+    private static final long serialVersionUID = -7533678162058325256L;
 
     /**
      * 
      */
-    public CLBPod() {
+    public ISBPod() {
         super();
-        this.name = "B-Pod";
-        this.setInternalName("CLBPod");
-        this.addLookupName("CLB-Pod");
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3068);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
+        this.name = "Anti-BattleArmor Pods (B-Pods)";
+        this.setInternalName("ISBPod");
+        this.addLookupName("ISB-Pod");
     }
 }

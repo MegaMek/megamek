@@ -15,12 +15,15 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.defensivepods;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.BPodHandler;
 import megamek.server.Server;
 
 /**
@@ -55,6 +58,18 @@ public abstract class BPodWeapon extends AmmoWeapon {
         bv = 2;
         cost = 2500;
         explosionDamage = 2;
+        rulesRefs = "204,TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3068, 3068, 3070, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setClanAdvancement(3065, 3068, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CWX,F_LC,F_WB,F_FW)
+            .setProductionFactions(F_CWX);
     }
 
     /*

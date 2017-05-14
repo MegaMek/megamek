@@ -118,6 +118,8 @@ NAC20 Ammo:300
 </Aft Right Side Equipment>
 
 <Aft Equipment> 
+SDSSelfDestructSystem
+CasparDroneControlSystem
 NL45
 NL45
 NL45
@@ -125,6 +127,8 @@ Barracuda
 Barracuda
 Barracuda Ammo:40
 </Aft Equipment>
+
+
 
 <structural_integrity>
 50

@@ -143,6 +143,10 @@ import megamek.common.weapons.capitalweapons.NAC30Weapon;
 import megamek.common.weapons.capitalweapons.NAC35Weapon;
 import megamek.common.weapons.capitalweapons.NAC40Weapon;
 import megamek.common.weapons.capitalweapons.ScreenLauncherWeapon;
+import megamek.common.weapons.defensivepods.CLBPod;
+import megamek.common.weapons.defensivepods.CLMPod;
+import megamek.common.weapons.defensivepods.ISBPod;
+import megamek.common.weapons.defensivepods.ISMPod;
 import megamek.common.weapons.capitalweapons.CapMissTeleWhiteSharkWeapon;
 import megamek.common.weapons.infantry.*;
 
@@ -1216,9 +1220,9 @@ public class WeaponType extends EquipmentType {
         // MapPack Solaris VII
         EquipmentType.addType(new ISMagshotGaussRifle());
         EquipmentType.addType(new ISMPod());
-        EquipmentType.addType(new CLMPod());
+//        EquipmentType.addType(new CLMPod());
         EquipmentType.addType(new ISBPod());
-        EquipmentType.addType(new CLBPod());
+//        EquipmentType.addType(new CLBPod());
         // Thunderbolts
         EquipmentType.addType(new ISThunderBolt5());
         EquipmentType.addType(new ISThunderBolt10());

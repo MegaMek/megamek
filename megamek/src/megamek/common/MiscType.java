@@ -1463,7 +1463,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLActiveProbe());
         EquipmentType.addType(MiscType.createCLLightActiveProbe());
         EquipmentType.addType(MiscType.createISAPPod());
-        EquipmentType.addType(MiscType.createCLAPPod());
+//        EquipmentType.addType(MiscType.createCLAPPod());
         EquipmentType.addType(MiscType.createSword());
         EquipmentType.addType(MiscType.createISPPCCapacitor());
         EquipmentType.addType(MiscType.createCLPPCCapacitor());
@@ -1477,7 +1477,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLiftHoist());
         EquipmentType.addType(MiscType.createTracks());
         EquipmentType.addType(MiscType.createISMASS());
-        EquipmentType.addType(MiscType.createCLMASS());
+//        EquipmentType.addType(MiscType.createCLMASS());
         EquipmentType.addType(MiscType.createLightBridgeLayer());
         EquipmentType.addType(MiscType.createMediumBridgeLayer());
         EquipmentType.addType(MiscType.createHeavyBridgeLayer());
@@ -1659,7 +1659,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLHeadTurret());
         EquipmentType.addType(MiscType.createISQuadTurret());
         EquipmentType.addType(MiscType.createCLQuadTurret());
-        EquipmentType.addType(MiscType.createCLTankCommandConsole());
+//        EquipmentType.addType(MiscType.createCLTankCommandConsole());
         EquipmentType.addType(MiscType.createISTankCommandConsole());
         EquipmentType.addType(MiscType.createISSponsonTurret());
         EquipmentType.addType(MiscType.createCLSponsonTurret());
@@ -1667,10 +1667,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISArmoredMotiveSystem());
         EquipmentType.addType(MiscType.createCLArmoredMotiveSystem());
         EquipmentType.addType(MiscType.createISChaffPod());
-        EquipmentType.addType(MiscType.createISDroneCarrierControlSystem());
-        EquipmentType.addType(MiscType.createCLDroneCarrierControlSystem());
-        EquipmentType.addType(MiscType.createISDroneExtra());
-        EquipmentType.addType(MiscType.createCLDroneExtra());
         EquipmentType.addType(MiscType.createBC3());
         EquipmentType.addType(MiscType.createBC3i());
         EquipmentType.addType(MiscType.createISHIResImager());
@@ -1683,8 +1679,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISVTOLJetBooster());
 //        EquipmentType.addType(MiscType.createCLVTOLJetBooster());
         EquipmentType.addType(MiscType.createRemoteSensorDispenser());
-        EquipmentType.addType(MiscType.createCLDroneOperatingSystem());
-        EquipmentType.addType(MiscType.createISDroneOperatingSystem());
         EquipmentType.addType(MiscType.createISVehicularMineDispenser());
         EquipmentType.addType(MiscType.createCLVehicularMineDispenser());
         EquipmentType.addType(MiscType.createMiningDrill());
@@ -1860,8 +1854,26 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createRISCViralJammerHoming());
         EquipmentType.addType(MiscType.createDroneControlConsole());
         EquipmentType.addType(MiscType.createRISCLaserPulseModule());
-        EquipmentType.addType(MiscType.createISRemoteDroneCommandConsole());
+
         EquipmentType.addType(MiscType.createRISCEmergencyCoolantSystem());
+        
+        //Drone and Robotic Systems
+        EquipmentType.addType(MiscType.createISRemoteDroneCommandConsole());
+        EquipmentType.addType(MiscType.createSmartRoboticControlSystem());
+        EquipmentType.addType(MiscType.createISDroneCarrierControlSystem());
+//      EquipmentType.addType(MiscType.createCLDroneCarrierControlSystem());
+	    EquipmentType.addType(MiscType.createISDroneExtra());
+	    EquipmentType.addType(MiscType.createCLDroneExtra());
+//      EquipmentType.addType(MiscType.createCLDroneOperatingSystem());
+        EquipmentType.addType(MiscType.createISDroneOperatingSystem());
+        EquipmentType.addType(MiscType.createShieldedAeroSRCS());
+        EquipmentType.addType(MiscType.createCasparDroneControlSystem());
+        EquipmentType.addType(MiscType.createCasparIIDroneControlSystem());
+        EquipmentType.addType(MiscType.createAutoTacticalAnalysisComputer());
+        EquipmentType.addType(MiscType.createAdvRoboticTransportSystem());
+        EquipmentType.addType(MiscType.createDirectTacticalAnalysisSystem());
+        EquipmentType.addType(MiscType.createSDSSelfDestructSystem());
+        EquipmentType.addType(MiscType.createSDSJammerSystem());
 
         //Infantry Equipment Packs
         EquipmentType.addType(MiscType.createISAblativeStandardInfArmor());
@@ -6053,7 +6065,6 @@ Lamellor Ferro-Carbide - IO pg 36
 
 //C3 Systems. -  Master Units under Weapons.
     
-
     public static MiscType createC3S() {
         MiscType misc = new MiscType();
 
@@ -6127,7 +6138,6 @@ Lamellor Ferro-Carbide - IO pg 36
         .setProductionFactions(F_FS);
         return misc;
     }
-
 
     public static MiscType createEmergencyC3M() {
         MiscType misc = new MiscType();
@@ -6210,10 +6220,596 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
       
+ //CELLULAR AMMUNITION STORAGE EQUIPMENT (CASE)
+    
+    public static MiscType createISCASE() {
+        MiscType misc = new MiscType();
+
+        misc.name = "CASE";
+        misc.setInternalName("ISCASE");
+        misc.addLookupName("IS CASE");
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_CASE).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.cost = 50000;
+        misc.bv = 0;
+        misc.rulesRefs = "210,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_C, RATING_F, RATING_D, RATING_C)
+            .setISAdvancement(2452, 2476, 3045, 2840, 3036)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_DC);	
+        return misc;
+    }
+
+    public static MiscType createCLCASE() {
+        MiscType misc = new MiscType();
+
+        misc.name = "CASE";
+        misc.setInternalName("CLCASE");
+        misc.addLookupName("Clan CASE");
+        misc.tonnage = 0.0f;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_CASE).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+        misc.cost = 50000;
+        misc.bv = 0;
+        misc.rulesRefs = "210,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+            .setClanAdvancement(2824, 2825, 2828, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CCY)
+            .setProductionFactions(F_CCY);
+        return misc;
+    }
+
+    public static MiscType createISCASEII() {
+        MiscType misc = new MiscType();
+
+        misc.name = "CASE II";
+        misc.setInternalName("ISCASEII");
+        misc.addLookupName("IS CASE II");
+        misc.tonnage = 1.0f;
+        misc.criticals = 1;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_CASEII).or(F_MECH_EQUIPMENT)
+                .or(F_AERO_EQUIPMENT);
+        misc.cost = 175000;
+        misc.bv = 0;
+        misc.rulesRefs = "299,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+            .setISAdvancement(3064, 3082, 3105, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, true, true,false, false)
+            .setPrototypeFactions(F_FW)
+            .setProductionFactions(F_RS);
+        return misc;
+    }
+
+    public static MiscType createCLCASEII() {
+        MiscType misc = new MiscType();
+
+        misc.name = "CASE II";
+        misc.setInternalName("CLCASEII");
+        misc.addLookupName("Clan CASE II");
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.hittable = false;
+        misc.flags = misc.flags.or(F_CASEII).or(F_MECH_EQUIPMENT)
+                .or(F_AERO_EQUIPMENT);
+        misc.cost = 175000;
+        misc.bv = 0;
+        misc.rulesRefs = "299,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+            .setClanAdvancement(3062, 3082, 3105, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, true, true,false, false)
+            .setPrototypeFactions(F_CCY)
+            .setProductionFactions(F_CWF);
+        return misc;
+    }
+    
+    
+//Defensive Pods (B-pods and M-Pods are in common.weapons.defensivepods)    
+    
+    public static MiscType createISAPPod() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Anti-Personnel Pods (A-Pods)";
+        misc.setInternalName("ISAntiPersonnelPod");
+        misc.addLookupName("ISAPod");
+        misc.addLookupName("IS A-Pod");
+        misc.addLookupName("IS AP Pod");
+        misc.addLookupName("CLAntiPersonnelPod");
+        misc.addLookupName("Clan A-Pod");
+        misc.addLookupName("CL AP Pod");
+        misc.tonnage = 0.5;
+        misc.criticals = 1;
+        misc.cost = 1500;
+        misc.flags = misc.flags.or(F_AP_POD).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 1;
+        misc.rulesRefs = "204,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+            .setISAdvancement(DATE_NONE, DATE_NONE, 3055, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setClanAdvancement(2845, 2850, 3055, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, true, false,false, false)
+            .setPrototypeFactions(F_CGB)
+            .setProductionFactions(F_CGB);
+        return misc;
+    }
+
+/*    public static MiscType createCLAPPod() {
+        MiscType misc = new MiscType();
+
+        misc.name = "A-Pod";
+        misc.setInternalName("CLAntiPersonnelPod");
+        misc.addLookupName("Clan A-Pod");
+        misc.addLookupName("CL AP Pod");
+        misc.tonnage = 0.5;
+        misc.criticals = 1;
+        misc.cost = 1500;
+        misc.flags = misc.flags.or(F_AP_POD).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 1;
+
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2850);
+        misc.techAdvancement.setTechRating(RATING_B);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
+        return misc;
+    }*/
+
+//Cockpit Systems - Most Cockpit Systems are in the Techconstants.java.
+    
+    public static MiscType createISTankCommandConsole() {
+        MiscType misc = new MiscType();
+        misc.name = "Cockpit Command Console";
+        misc.setInternalName("ISTankCockpitCommandConsole");
+        misc.setInternalName("CLTankCockpitCommandConsole");
+        misc.tonnage = 3;
+        misc.cost = 500000;
+        misc.flags = misc.flags.or(F_COMMAND_CONSOLE).or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.bv = 0;
+        misc.rulesRefs = "300,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_F, RATING_E, RATING_D)
+            .setISAdvancement(2625, 2631, DATE_NONE, 2850, 3030)
+            .setISApproximate(true, false, false,true, true)
+            .setClanAdvancement(2625, 2631, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_FS);
+        return misc;
+    }
+    
+/*    public static MiscType createCLTankCommandConsole() {
+        MiscType misc = new MiscType();
+        misc.name = "Cockpit Command Console";
+        misc.setInternalName("CLTankCockpitCommandConsole");
+        misc.tonnage = 3;
+        misc.cost = 500000;
+        misc.flags = misc.flags.or(F_COMMAND_CONSOLE).or(F_TANK_EQUIPMENT)
+                .or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.bv = 0;
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_X });
+        return misc;
+    }*/
+
+    public static MiscType createISMASS() {
+        MiscType misc = new MiscType();
+
+        misc.name = "MechWarrior Aquatic Survival System (MASS)";
+        misc.setInternalName("ISMASS");
+        misc.addLookupName("IS Mass");
+        misc.addLookupName("Clan Mass");
+        misc.tonnage = 1.5;
+        misc.criticals = 1;
+        misc.bv = 9;
+        misc.cost = 4000;
+        misc.flags = misc.flags.or(F_MASS).or(F_MECH_EQUIPMENT);
+        misc.rulesRefs = "325,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+            .setISAdvancement(3048, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setClanAdvancement(3062, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_FS,F_CGS)
+            .setProductionFactions(F_FS);
+        return misc;
+    }
+
+/*    public static MiscType createCLMASS() {
+        MiscType misc = new MiscType();
+
+        misc.name = "MASS";
+        misc.setInternalName("CLMASS");
+        misc.addLookupName("Clan Mass");
+        misc.tonnage = 1.5;
+        misc.criticals = 1;
+        misc.bv = 9;
+        misc.cost = 4000;
+        misc.flags = misc.flags.or(F_MASS).or(F_MECH_EQUIPMENT);
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(3062, 3083, DATE_NONE);
+        misc.techAdvancement.setTechRating(RATING_D);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
+        return misc;
+    }
+*/
+    
+    //TODO - Damage Interupt Circuit - IO pg 39
+    //Maybe the helmets should be quirks?
+    //TODO - SLDF Advanced Neurohelmet (MechWarrior) - IO pg 40
+    //TODO - SLDF Advanced Neurohelmet (Fighter Pilot) - IO pg 40 
     
     
     
+//Drone and Robotic Systems
+
+    public static MiscType createISDroneCarrierControlSystem() {
+        // TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.name = "Drone (Remote) Carrier Control System";
+        misc.setInternalName("ISDroneCarrierControlSystem");
+        misc.addLookupName("CLDroneCarrierControlSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 1;
+        misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL)
+                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.rulesRefs = "305,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+            .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false);
+        return misc;
+    }
     
+/*    public static MiscType createCLDroneCarrierControlSystem() {
+        // TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.name = "Drone Carrier Control System";
+        misc.setInternalName("CLDroneCarrierControlSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 1;
+        misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL)
+                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+        misc.techAdvancement.setTechRating(RATING_C);
+        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_X });
+        return misc;
+    }
+*/
+    public static MiscType createISDroneOperatingSystem() {
+        // TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.name = "Drone (Remote) Operating System";
+        misc.setInternalName("ISDroneOperatingSystem");
+        misc.addLookupName("CLDroneOperatingSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 1;
+        misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
+        misc.rulesRefs = "306,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+            .setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false);
+        return misc;
+    }
+    
+/*    public static MiscType createCLDroneOperatingSystem() {
+        // TODO: add game rules for this
+        MiscType misc = new MiscType();
+        misc.name = "Drone (Remote) Operating System";
+        misc.setInternalName("CLDroneOperatingSystem");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 1;
+        misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2801, DATE_NONE);
+        misc.techAdvancement.setTechRating(RATING_C);
+        misc.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_F, RATING_X });
+        return misc;
+    }*/
+
+    public static MiscType createISRemoteDroneCommandConsole() {
+        MiscType misc = new MiscType();
+        misc.name = "Remote Drone Command Console";
+        misc.setInternalName("ISRemoteDroneCommandConsole");
+        misc.tonnage = 2;
+        misc.criticals = 1;
+        misc.cost = 50000;
+        misc.rulesRefs = "90,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+            .setISAdvancement(3125, 3140, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_RS);
+
+        return misc;
+    }
+    
+    public static MiscType createSmartRoboticControlSystem() {
+    	//TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Smart Robotic Control System (SRCS)";
+        misc.setInternalName("SmartRoboticControlSystem");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.rulesRefs = "140,IO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+			.setTechRating(RATING_C)
+			.setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+			.setISAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
+			.setISApproximate(false, false, false,false, false)
+			.setClanAdvancement(DATE_ES, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
+			.setClanApproximate(false, false, false,false, false);
+
+        return misc;
+    }
+    
+    public static MiscType createShieldedAeroSRCS() {
+    	//TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Shielded Aerospace Smart Robotic Control System";
+        misc.setInternalName("ShieldedAeroSRCS");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.andNot(F_MECH_EQUIPMENT).andNot(
+                F_AERO_EQUIPMENT).andNot(F_BA_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
+        misc.rulesRefs = "141,IO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+			.setTechRating(RATING_C)
+			.setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
+			.setISAdvancement(2755, DATE_ES, DATE_NONE, 2780, 3077)
+			.setISApproximate(false, false, false,false, false)
+			.setClanAdvancement(2755, DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE)
+			.setClanApproximate(false, false, false,false, false)
+			.setReintroductionFactions(F_WB);
+
+        return misc;
+    }
+    
+    public static MiscType createCasparDroneControlSystem() {
+    	//TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "SDS (Caspar) Drone Control System";
+        misc.setInternalName("CasparDroneControlSystem");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.andNot(F_MECH_EQUIPMENT).andNot(
+                F_AERO_EQUIPMENT).andNot(F_BA_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
+        misc.rulesRefs = "142,IO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+			.setTechRating(RATING_F)
+			.setAvailability(RATING_E, RATING_X, RATING_X, RATING_X)
+			.setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
+			.setISApproximate(false, false, false,false, false)
+			.setClanAdvancement(2695, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+			.setClanApproximate(false, false, false,false, false)
+        	.setPrototypeFactions(F_TH);
+
+        return misc;
+    }
+    
+    public static MiscType createCasparIIDroneControlSystem() {
+    	//TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Capsar II Advanced Smart Robotic Control System";
+        misc.setInternalName("CasparIIDroneControlSystem");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.andNot(F_MECH_EQUIPMENT).andNot(
+                F_AERO_EQUIPMENT).andNot(F_BA_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
+        misc.rulesRefs = "143,IO";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+			.setTechRating(RATING_E)
+			.setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+			.setISAdvancement(3064, DATE_NONE, DATE_NONE, 3078, 3082)
+			.setISApproximate(false, false, false,false, false)
+        	.setPrototypeFactions(F_WB)
+        	.setReintroductionFactions(F_RS);
+
+        return misc;
+    }
+    
+    public static MiscType createAutoTacticalAnalysisComputer() {
+    	//TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Autonomous Tactical Analysis Computer (ATAC)";
+        misc.setInternalName("AutoTacticalAnalysisComputer");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.andNot(F_MECH_EQUIPMENT).andNot(
+                F_AERO_EQUIPMENT).andNot(F_BA_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
+        misc.rulesRefs = "145,IO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+			.setTechRating(RATING_E)
+			.setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
+			.setISAdvancement(2705, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
+			.setISApproximate(false, false, false,false, false)
+			.setClanAdvancement(2705, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+			.setClanApproximate(false, false, false,false, false)
+        	.setPrototypeFactions(F_TH);
+
+        return misc;
+    }
+    
+    public static MiscType createAdvRoboticTransportSystem() {
+    	//TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Advanced Robotic Transport System (ARTS)";
+        misc.setInternalName("AdvRoboticTransportSystem");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.andNot(F_MECH_EQUIPMENT).andNot(
+                F_AERO_EQUIPMENT).andNot(F_BA_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
+        misc.rulesRefs = "147,IO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+			.setTechRating(RATING_E)
+			.setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+			.setISAdvancement(2600, 2609, DATE_NONE, 2804, 3068)
+			.setISApproximate(true, false, false,false, false)
+			.setClanAdvancement(2600, 2609, DATE_NONE, DATE_NONE, DATE_NONE)
+			.setClanApproximate(true, false, false,false, false)
+        	.setPrototypeFactions(F_TH)
+        	.setProductionFactions(F_TH);
+
+        return misc;
+    }
+    
+    public static MiscType createDirectTacticalAnalysisSystem() {
+    	//TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "Direct Tactical Analysis Control (DTAC) System";
+        misc.setInternalName("DirectTacticalAnalysisSystem");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.andNot(F_MECH_EQUIPMENT).andNot(
+                F_AERO_EQUIPMENT).andNot(F_BA_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
+        misc.rulesRefs = "146,IO";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+			.setTechRating(RATING_F)
+			.setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+			.setISAdvancement(3072, DATE_NONE, DATE_NONE, 3078, 3082)
+			.setISApproximate(true, false, false,false, false)
+        	.setPrototypeFactions(F_WB)
+        	.setReintroductionFactions(F_RS);
+
+        return misc;
+    }
+    
+    public static MiscType createSDSSelfDestructSystem() {
+    	//TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "SDS Self-Destruct System";
+        misc.setInternalName("SDSSelfDestructSystem");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.andNot(F_MECH_EQUIPMENT).andNot(
+                F_AERO_EQUIPMENT).andNot(F_BA_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
+        misc.rulesRefs = "147,IO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+			.setTechRating(RATING_C)
+			.setAvailability(RATING_D, RATING_F, RATING_X, RATING_X)
+			.setISAdvancement(2695, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
+			.setISApproximate(false, false, false,false, false)
+			.setClanAdvancement(2695, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+			.setClanApproximate(false, false, false,false, false)
+        	.setPrototypeFactions(F_TH);
+
+		return misc;
+    }
+    
+    public static MiscType createSDSJammerSystem() {
+    	//TODO Game Rules.
+        MiscType misc = new MiscType();
+        misc.name = "SLDF SDS Jammer System";
+        misc.setInternalName("SDSJammerSystem");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.andNot(F_MECH_EQUIPMENT).andNot(
+                F_AERO_EQUIPMENT).andNot(F_BA_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
+        misc.rulesRefs = "148,IO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+			.setTechRating(RATING_E)
+			.setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+			.setISAdvancement(2776, DATE_NONE, DATE_NONE, 2780, DATE_NONE)
+			.setISApproximate(false, false, false,false, false)
+			.setClanAdvancement(2776, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+			.setClanApproximate(false, false, false,false, false)
+        	.setPrototypeFactions(F_TH);
+
+		return misc;
+    }
     
     
     
@@ -6580,90 +7176,7 @@ Lamellor Ferro-Carbide - IO pg 36
 
     // Start of Level2 stuff
 
-    public static MiscType createISCASE() {
-        MiscType misc = new MiscType();
 
-        misc.name = "CASE";
-        misc.setInternalName("ISCASE");
-        misc.addLookupName("IS CASE");
-        misc.tonnage = 0.5f;
-        misc.criticals = 1;
-        misc.hittable = false;
-        misc.flags = misc.flags.or(F_CASE).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
-        misc.cost = 50000;
-        misc.bv = 0;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2476, 2840, 3036);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_C, RATING_F, RATING_D, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createCLCASE() {
-        MiscType misc = new MiscType();
-
-        misc.name = "CASE";
-        misc.setInternalName("CLCASE");
-        misc.addLookupName("Clan CASE");
-        misc.tonnage = 0.0f;
-        misc.criticals = 0;
-        misc.tankslots = 0;
-        misc.hittable = false;
-        misc.flags = misc.flags.or(F_CASE).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
-        misc.cost = 50000;
-        misc.bv = 0;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2825);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createISCASEII() {
-        MiscType misc = new MiscType();
-
-        misc.name = "CASE II";
-        misc.setInternalName("ISCASEII");
-        misc.addLookupName("IS CASE II");
-        misc.tonnage = 1.0f;
-        misc.criticals = 1;
-        misc.hittable = false;
-        misc.flags = misc.flags.or(F_CASEII).or(F_MECH_EQUIPMENT)
-                .or(F_AERO_EQUIPMENT);
-        misc.cost = 175000;
-        misc.bv = 0;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3064, DATE_NONE, 3082);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createCLCASEII() {
-        MiscType misc = new MiscType();
-
-        misc.name = "CASE II";
-        misc.setInternalName("CLCASEII");
-        misc.addLookupName("Clan CASE II");
-        misc.tonnage = 0.5f;
-        misc.criticals = 1;
-        misc.hittable = false;
-        misc.flags = misc.flags.or(F_CASEII).or(F_MECH_EQUIPMENT)
-                .or(F_AERO_EQUIPMENT);
-        misc.cost = 175000;
-        misc.bv = 0;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(3062, 3080, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_F);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-        return misc;
-    }
 
 
 
@@ -8503,48 +9016,7 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createISAPPod() {
-        MiscType misc = new MiscType();
 
-        misc.name = "A-Pod";
-        misc.setInternalName("ISAntiPersonnelPod");
-        misc.addLookupName("ISAPod");
-        misc.addLookupName("IS A-Pod");
-        misc.addLookupName("IS AP Pod");
-        misc.tonnage = 0.5;
-        misc.criticals = 1;
-        misc.cost = 1500;
-        misc.flags = misc.flags.or(F_AP_POD).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.bv = 1;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3055);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createCLAPPod() {
-        MiscType misc = new MiscType();
-
-        misc.name = "A-Pod";
-        misc.setInternalName("CLAntiPersonnelPod");
-        misc.addLookupName("Clan A-Pod");
-        misc.addLookupName("CL AP Pod");
-        misc.tonnage = 0.5;
-        misc.criticals = 1;
-        misc.cost = 1500;
-        misc.flags = misc.flags.or(F_AP_POD).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.bv = 1;
-
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2850);
-        misc.techAdvancement.setTechRating(RATING_B);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
-        return misc;
-    }
 
     public static MiscType createSearchlight() {
         MiscType misc = new MiscType();
@@ -9425,42 +9897,7 @@ Lamellor Ferro-Carbide - IO pg 36
 
 
 
-    public static MiscType createISMASS() {
-        MiscType misc = new MiscType();
 
-        misc.name = "MASS";
-        misc.setInternalName("ISMASS");
-        misc.addLookupName("IS Mass");
-        misc.tonnage = 1.5;
-        misc.criticals = 1;
-        misc.bv = 9;
-        misc.cost = 4000;
-        misc.flags = misc.flags.or(F_MASS).or(F_MECH_EQUIPMENT);
-
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(3048, 3083, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createCLMASS() {
-        MiscType misc = new MiscType();
-
-        misc.name = "MASS";
-        misc.setInternalName("CLMASS");
-        misc.addLookupName("Clan Mass");
-        misc.tonnage = 1.5;
-        misc.criticals = 1;
-        misc.bv = 9;
-        misc.cost = 4000;
-        misc.flags = misc.flags.or(F_MASS).or(F_MECH_EQUIPMENT);
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(3062, 3083, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_X });
-        return misc;
-    }
 
 
 
@@ -11164,37 +11601,6 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createCLTankCommandConsole() {
-        MiscType misc = new MiscType();
-        misc.name = "Cockpit Command Console";
-        misc.setInternalName("CLTankCockpitCommandConsole");
-        misc.tonnage = 3;
-        misc.cost = 500000;
-        misc.flags = misc.flags.or(F_COMMAND_CONSOLE).or(F_TANK_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
-        misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_C, RATING_C, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createISTankCommandConsole() {
-        MiscType misc = new MiscType();
-        misc.name = "Cockpit Command Console";
-        misc.setInternalName("ISTankCockpitCommandConsole");
-        misc.tonnage = 3;
-        misc.cost = 500000;
-        misc.flags = misc.flags.or(F_COMMAND_CONSOLE).or(F_TANK_EQUIPMENT)
-                .or(F_SUPPORT_TANK_EQUIPMENT);
-        misc.bv = 0;
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 2631, DATE_NONE, 2850, 3030);
-        misc.techAdvancement.setTechRating(RATING_D);
-        misc.techAdvancement.setAvailability( new int[] { RATING_C, RATING_F, RATING_E, RATING_X });
-        return misc;
-    }
 
     public static MiscType createISSponsonTurret() {
         MiscType misc = new MiscType();
@@ -11272,41 +11678,7 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createCLDroneCarrierControlSystem() {
-        // TODO: add game rules for this
-        MiscType misc = new MiscType();
-        misc.name = "Drone Carrier Control System";
-        misc.setInternalName("CLDroneCarrierControlSystem");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.criticals = 1;
-        misc.tankslots = 1;
-        misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL)
-                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_D, RATING_X });
-        return misc;
-    }
 
-    public static MiscType createISDroneCarrierControlSystem() {
-        // TODO: add game rules for this
-        MiscType misc = new MiscType();
-        misc.name = "Drone Carrier Control System";
-        misc.setInternalName("ISDroneCarrierControlSystem");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.criticals = 1;
-        misc.tankslots = 1;
-        misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL)
-                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 2000, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_F, RATING_X });
-        return misc;
-    }
 
     public static MiscType createISDroneExtra() {
         // TODO: add game rules for this
@@ -11342,56 +11714,7 @@ Lamellor Ferro-Carbide - IO pg 36
         return misc;
     }
 
-    public static MiscType createCLDroneOperatingSystem() {
-        // TODO: add game rules for this
-        MiscType misc = new MiscType();
-        misc.name = "Drone (Remote) Operating System";
-        misc.setInternalName("CLDroneOperatingSystem");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.criticals = 1;
-        misc.tankslots = 1;
-        misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        misc.techAdvancement.setClanAdvancement(DATE_NONE, 2801, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_F, RATING_X });
-        return misc;
-    }
 
-    public static MiscType createISDroneOperatingSystem() {
-        // TODO: add game rules for this
-        MiscType misc = new MiscType();
-        misc.name = "Drone (Remote) Operating System";
-        misc.setInternalName("ISDroneOperatingSystem");
-        misc.tonnage = TONNAGE_VARIABLE;
-        misc.cost = COST_VARIABLE;
-        misc.criticals = 1;
-        misc.tankslots = 1;
-        misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 2000, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_C);
-        misc.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_F, RATING_X });
-        return misc;
-    }
-
-    public static MiscType createISRemoteDroneCommandConsole() {
-        MiscType misc = new MiscType();
-        misc.name = "Remote Drone Command Console";
-        misc.setInternalName("ISRemoteDroneCommandConsole");
-        misc.tonnage = 2;
-        misc.criticals = 1;
-        misc.cost = 50000;
-        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_REMOTE_DRONE_COMMAND_CONSOLE);
-        misc.techAdvancement.setTechBase(TECH_BASE_IS);
-        misc.techAdvancement.setISAdvancement(DATE_NONE, 3140, DATE_NONE);
-        misc.techAdvancement.setTechRating(RATING_E);
-        misc.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_F });
-        return misc;
-    }
 
 
 

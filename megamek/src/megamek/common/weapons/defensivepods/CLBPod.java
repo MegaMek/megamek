@@ -15,31 +15,30 @@
  * Created on Oct 20, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.defensivepods;
 
 import megamek.common.TechAdvancement;
 
 /**
  * @author Jason Tighe
  */
-public class ISBPod extends BPodWeapon {
+public class CLBPod extends BPodWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -7533678162058325256L;
+    private static final long serialVersionUID = -950371259420885833L;
 
     /**
      * 
      */
-    public ISBPod() {
+    public CLBPod() {
         super();
         this.name = "B-Pod";
-        this.setInternalName("ISBPod");
-        this.addLookupName("ISB-Pod");
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3069);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        this.setInternalName("CLBPod");
+        this.addLookupName("CLB-Pod");
+
     }
 }
+
+//commented out in Weapontype. Clan version is same stats as IS one. And IS versions captures Tech progression for both.

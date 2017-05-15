@@ -181,8 +181,17 @@ public class TechAdvancement implements ITechnology {
     public int getCommonDate() {
         return earliestDate(isAdvancement[COMMON], clanAdvancement[COMMON]);
     }
-    
+
+    /**
+     * If the tech base is IS or Clan, returns the extinction date that matches the tech base. Otherwise
+     * returns the later of the IS and Clan dates, or DATE_NONE if the tech has not gone extinct for both.
+     * 
+     * @return Universe-wide extinction date.
+     */
     public int getExtinctionDate() {
+        if (getTechBase() != TECH_BASE_ALL) {
+            return getExtinctionDate(getTechBase() == TECH_BASE_CLAN);
+        }
         if (isAdvancement[EXTINCT] == DATE_NONE
                 || clanAdvancement[EXTINCT] == DATE_NONE) {
             return DATE_NONE;

@@ -15,7 +15,7 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.flamers;
 
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
@@ -50,9 +50,15 @@ public class CLERFlamer extends FlamerWeapon {
         cost = 15000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 3067, 3081);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "312,TO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setClanAdvancement(3065, 3067, 3081, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CJF)
+        .setProductionFactions(F_CJF);
     }
 }

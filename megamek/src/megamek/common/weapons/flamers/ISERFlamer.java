@@ -15,7 +15,7 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.flamers;
 
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
@@ -51,9 +51,14 @@ public class ISERFlamer extends FlamerWeapon {
         cost = 15000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 3070, 3081);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "312,TO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(DATE_NONE, 3070, 3081, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setProductionFactions(F_FS);
     }
 }

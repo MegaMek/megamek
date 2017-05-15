@@ -12,18 +12,19 @@
  * details.
  */
 /*
- * Created on Sep 23, 2011
+ * Created on Sep 24, 2004
  */
-package megamek.common.weapons;
+package megamek.common.weapons.flamers;
 
 import megamek.common.AmmoType;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
+import megamek.common.weapons.VehicleFlamerWeapon;
 
 /**
- * @author Klaus Mittag (based on ISHeavyFlamer by Andrew Hunter)
+ * @author Andrew Hunter
  */
-public class CLHeavyFlamer extends VehicleFlamerWeapon {
+public class ISHeavyFlamer extends VehicleFlamerWeapon {
     /**
      *
      */
@@ -32,14 +33,13 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
     /**
      *
      */
-    public CLHeavyFlamer() {
+    public ISHeavyFlamer() {
         super();
 
         name = "Heavy Flamer";
-        setInternalName("CLHeavyFlamer");
-        addLookupName("Clan Heavy Flamer");
-        addLookupName("CL Heavy Flamer");
-        addLookupName("CLHeavyFlamer");
+        setInternalName(name);
+        addLookupName("IS Heavy Flamer");
+        addLookupName("ISHeavyFlamer");
         heat = 5;
         damage = 4;
         infDamageClass = WeaponType.WEAPON_BURST_6D6;
@@ -55,10 +55,15 @@ public class CLHeavyFlamer extends VehicleFlamerWeapon {
         cost = 11250;
         flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MECH_WEAPON)
                 .or(WeaponType.F_TANK_WEAPON);
-        rulesRefs = "285, TO";;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 3067, 3060);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
+        rulesRefs = "312, TO";;
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
     }
 }

@@ -15,7 +15,7 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.flamers;
 
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
@@ -51,11 +51,15 @@ public class ISFlamer extends FlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setISAdvancement(TechAdvancement.DATE_ES, TechAdvancement.DATE_ES, TechAdvancement.DATE_ES);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, TechAdvancement.DATE_ES, 2830);
-        techAdvancement.setIntroLevel(true);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_A });
+        rulesRefs = "218,TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(true)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_A)
+            .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, 2830, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false);
     }
 }

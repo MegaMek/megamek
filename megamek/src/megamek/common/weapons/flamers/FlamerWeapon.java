@@ -15,12 +15,16 @@
  * Created on Sep 23, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.flamers;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.EnergyWeapon;
+import megamek.common.weapons.FlamerHandler;
+import megamek.common.weapons.FlamerHeatHandler;
 import megamek.server.Server;
 
 /**

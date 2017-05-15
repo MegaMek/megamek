@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -15,51 +15,51 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.flamers;
 
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
- * @author Sebastian Brocks
+ * @author Andrew Hunter
  */
-public class ISVehicleFlamer extends VehicleFlamerWeapon {
+public class CLFlamer extends FlamerWeapon {
     /**
      * 
      */
-    private static final long serialVersionUID = -5209851790302913451L;
+    private static final long serialVersionUID = 8782512971175525221L;
 
     /**
      * 
      */
-    public ISVehicleFlamer() {
+    public CLFlamer() {
         super();
-
-        this.name = "Vehicle Flamer";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Vehicle Flamer");
-        this.addLookupName("ISVehicleFlamer");
-        this.addLookupName("CLVehicleFlamer");
-        this.addLookupName("Clan Vehicle Flamer");
+        this.name = "Flamer";
+        this.setInternalName("CLFlamer");
+        this.addLookupName("Clan Flamer");
         this.heat = 3;
         this.damage = 2;
         this.infDamageClass = WeaponType.WEAPON_BURST_4D6;
-        this.rackSize = 2;
         this.shortRange = 1;
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        this.tonnage = 0.5f;
+        this.tonnage = 0.5;
         this.criticals = 1;
-        this.bv = 5;
+        this.bv = 6;
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        rulesRefs = "218, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
-        techAdvancement.setIntroLevel(true);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
+        rulesRefs = "218,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_C, RATING_A, RATING_A)
+            .setClanAdvancement(2820, 2827, 2828, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_CFM)
+            .setProductionFactions(F_CFM);
     }
+
 }

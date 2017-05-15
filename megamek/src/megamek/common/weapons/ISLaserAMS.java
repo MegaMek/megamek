@@ -50,7 +50,7 @@ public class ISLaserAMS extends LaserWeapon {
         setInstantModeSwitch(false);
         cost = 225000;
         rulesRefs = "322,TO";
-        techAdvancement.setTechBase(TECH_BASE_ALL)
+        techAdvancement.setTechBase(TECH_BASE_IS)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setISAdvancement(3059, 3079, 3145, DATE_NONE, DATE_NONE)

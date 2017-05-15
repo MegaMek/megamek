@@ -896,7 +896,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLLRT19Ammo());
         EquipmentType.addType(AmmoType.createCLLRT20Ammo());
         EquipmentType.addType(AmmoType.createCLMPodAmmo());
-        EquipmentType.addType(AmmoType.createCLBPodAmmo());
+//        EquipmentType.addType(AmmoType.createCLBPodAmmo());
         EquipmentType.addType(AmmoType.createCLHAG20Ammo());
         EquipmentType.addType(AmmoType.createCLHAG30Ammo());
         EquipmentType.addType(AmmoType.createCLHAG40Ammo());
@@ -9552,14 +9552,20 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_NONE, 3064, DATE_NONE);
-        ammo.techAdvancement.setTechRating(RATING_E);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+        ammo.rulesRefs = "330,TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3060, 3064, 3099, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC);
         return ammo;
     }
 
+    //Per IO pg 40 - There is no Clan MPod.
     private static AmmoType createCLMPodAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -9575,10 +9581,16 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(DATE_NONE, 3064, DATE_NONE);
-        ammo.techAdvancement.setTechRating(RATING_E);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        ammo.rulesRefs = "Unofficial";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(true)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3060, 3064, 3099, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_LC)
+            .setProductionFactions(F_LC);
         return ammo;
     }
 
@@ -11382,7 +11394,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISBPodAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "B Pod Ammo";
+        ammo.name = "Anti-BattleArmor Pods (B-Pods) Ammo";
         ammo.setInternalName("ISBPodAmmo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
@@ -11391,15 +11403,22 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.tonnage = 0;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3069);
-        ammo.techAdvancement.setTechRating(RATING_E);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        ammo.rulesRefs = "204,TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3068, 3068, 3070, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setClanAdvancement(3065, 3068, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CWX,F_LC,F_WB,F_FW)
+            .setProductionFactions(F_CWX);
         return ammo;
     }
 
-    private static AmmoType createCLBPodAmmo() {
+/*    private static AmmoType createCLBPodAmmo() {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "B Pod Ammo";
@@ -11417,7 +11436,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechRating(RATING_E);
         ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
         return ammo;
-    }
+    }*/
 
     private static AmmoType createISNailRivetGunAmmo() {
         AmmoType ammo = new AmmoType();

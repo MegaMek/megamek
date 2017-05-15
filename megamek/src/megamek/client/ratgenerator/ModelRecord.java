@@ -127,7 +127,7 @@ public class ModelRecord extends AbstractUnitRecord {
         				|| ((WeaponType)eq).getAmmoType() == AmmoType.T_MRM;
         		
         		if (eq instanceof megamek.common.weapons.MGWeapon ||
-        				eq instanceof megamek.common.weapons.BPodWeapon) {
+        				eq instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
         			apWeapons = true;
         		}
         		if (((WeaponType) eq).getAmmoType() > megamek.common.AmmoType.T_NA) {

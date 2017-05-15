@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.tag.TAGWeapon;
 
 /**
  * @author Jason Tighe
@@ -31,7 +32,7 @@ public class ISC3MBS extends TAGWeapon {
 
     public ISC3MBS() {
         super();
-        name = "C3 Master Boosted with TAG";
+        name = "C3 Boosted System (C3BS) [Master]";
         setInternalName("ISC3MasterBoostedSystemUnit");
         addLookupName("IS C3 Computer Boosted");
         addLookupName("ISC3MasterComputerBoosted");
@@ -49,9 +50,15 @@ public class ISC3MBS extends TAGWeapon {
         mediumRange = 9;
         longRange = 15;
         extremeRange = 18;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3073, 3100, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        rulesRefs = "298,TO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3071, 3100, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_FS)
+            .setProductionFactions(F_FS);
     }
 }

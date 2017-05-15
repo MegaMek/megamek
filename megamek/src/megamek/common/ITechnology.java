@@ -90,13 +90,14 @@ public interface ITechnology {
     public static final int F_CWF = 42;
     public static final int F_CWX = 43;
     public static final int F_CWV = 44;
+    public static final int F_PER = 45;
     
     //display codes using values from IOps
     public static final String[] IO_FACTION_CODES = {
             "IS", "CC", "CF", "CP", "CS", "DC", "EI", "FR", "FS", "FW", "LC", "MC",
             "MH", "OA", "TA", "TC", "TH", "RD", "RS", "RA", "RW", "WB", "Merc", 
             "Clan", "CBR", "CBS", "CCY", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMN",
-            "CNC", "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV" 
+            "CNC", "CSF", "CSJ", "CSR", "CSV", "CSA", "CWM", "CWF", "CWX", "CWV", "PER" 
     };
     
     //faction lookup names for MHQ
@@ -104,7 +105,7 @@ public interface ITechnology {
             "IS", "CC", "CIR", "CDP", "CS", "DC", "CEI", "FRR", "FS", "FWL", "LA", "MOC",
             "MH", "OA", "TA", "TC", "TH", "RD", "ROS", "RA", "RWR", "WOB", "MERC",
             "CLAN", "CB", "CBS", "CCO", "CCC", "CFM", "CGB", "CGS", "CHH", "CIH", "CJF", "CMG",
-            "CNC", "CDS", "CSJ", "CSR", "CSV", "CSA", "CWI", "CW", "CWIE", "CWOV" 
+            "CNC", "CDS", "CSJ", "CSR", "CSV", "CSA", "CWI", "CW", "CWIE", "CWOV", "PER" 
     };
     
     boolean isClan();

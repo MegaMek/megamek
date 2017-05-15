@@ -6608,6 +6608,21 @@ public abstract class Mech extends Entity {
         }
         return success;
     }
+    
+    /**
+     * Determines which crew slot is associated with a particular cockpit critical.
+     * @param cs    A cockpit critical slot
+     * @return      The crew slot index associated with this critical slot, or -1 to indicate the entire crew.
+     */
+    public int getCrewForCockpitSlot(CriticalSlot cs) {
+        if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
+                || getCockpitType() == COCKPIT_DUAL
+                || getCockpitType() == COCKPIT_QUADVEE) {
+            return cs.getIndex() / 3;
+        } else {
+            return -1;
+        }
+    }
 
     /**
      * Add the critical slots necessary for a standard gyro. Also set the gyro

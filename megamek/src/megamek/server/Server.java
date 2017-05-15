@@ -20684,7 +20684,7 @@ public class Server implements Runnable {
                 r.add(damage);
                 r.add(crew.getHits(pos));
                 vDesc.addElement(r);
-                if (Crew.DEATH > crew.getHits(pos)) {
+                if (Crew.DEATH > crew.getHits()) {
                     vDesc.addAll(resolveCrewDamage(en, damage, pos));
                 } else if (!crew.isDoomed()) {
                     crew.setDoomed(true);
@@ -24974,14 +24974,37 @@ public class Server implements Runnable {
                                 }
                             }
                         }
-
-                        // Don't kill a pilot multiple times.
-                        if (Crew.DEATH > en.getCrew().getHits()) {
-                            // boink!
-                            en.getCrew().setDoomed(true);
-                            Report.addNewline(vDesc);
-                            vDesc.addAll(destroyEntity(en, "pilot death", true));
+                        
+                        //First check whether this hit takes out the whole crew; for multi-crew cockpits
+                        //we need to check the other critical positions (if any).
+                        boolean allDead = true;
+                        int crewSlot = ((Mech)en).getCrewForCockpitSlot(cs);
+                        if (crewSlot >= 0) {
+                            for (int i = 0; i < en.getCrew().getSlotCount(); i++) {
+                                if (i != crewSlot && !en.getCrew().isDead(i)) {
+                                    allDead = false;
+                                }
+                            }
                         }
+                        if (allDead) {
+                            // Don't kill a pilot multiple times.
+                            if (Crew.DEATH > en.getCrew().getHits()) {
+                                // Single pilot or tripod cockpit; all crew are killed.
+                                en.getCrew().setDoomed(true);
+                                Report.addNewline(vDesc);
+                                vDesc.addAll(destroyEntity(en, "pilot death", true));
+                            }                            
+                        } else {
+                            en.getCrew().setDead(true, crewSlot);
+                            r = new Report(6027);
+                            r.subject = en.getId();
+                            r.indent(2);
+                            r.add(en.getCrew().getCrewType().getRoleName(crewSlot));
+                            r.addDesc(en);
+                            r.add(en.getCrew().getName(crewSlot));
+                            vDesc.addElement(r);
+                        }
+
                         break;
                     case Mech.SYSTEM_ENGINE:
                         // if the slot is missing, the location was previously

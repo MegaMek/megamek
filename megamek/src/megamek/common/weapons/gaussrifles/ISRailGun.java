@@ -15,7 +15,7 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.TechAdvancement;
@@ -51,9 +51,15 @@ public class ISRailGun extends GaussWeapon {
         this.cost = 300000;
         this.explosionDamage = 20;
         //This appears to be like the Heavy Gauss using those stats.
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3061);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "Unofficial";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(true)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3051, 3061, 3067, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FW)
+        .setProductionFactions(F_FC);
     }
 }

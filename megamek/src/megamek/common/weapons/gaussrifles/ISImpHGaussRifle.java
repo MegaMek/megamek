@@ -15,19 +15,21 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.HGRHandler;
 import megamek.server.Server;
 
 /**
  * @author Jason Tighe
  */
-public class ISIHGaussRifle extends GaussWeapon {
+public class ISImpHGaussRifle extends GaussWeapon {
     /**
      *
      */
@@ -36,7 +38,7 @@ public class ISIHGaussRifle extends GaussWeapon {
     /**
      *
      */
-    public ISIHGaussRifle() {
+    public ISImpHGaussRifle() {
         super();
 
         name = "Improved Heavy Gauss Rifle";
@@ -61,11 +63,15 @@ public class ISIHGaussRifle extends GaussWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = 30;
         rulesRefs = "313, TO";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3065, 3081, 3090);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(3065, 3081, 3090, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
     }
 
     /*

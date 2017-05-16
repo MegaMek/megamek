@@ -15,48 +15,52 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
 
 import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks
  */
-public class CLHAG30 extends HAGWeapon {
+public class CLHAG20 extends HAGWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 7189182993830405980L;
+    private static final long serialVersionUID = -1150472287591805766L;
 
-    public CLHAG30() {
+    public CLHAG20() {
         super();
 
-        name = "HAG/30";
-        setInternalName("CLHAG30");
-        addLookupName("Clan HAG/30");
-        heat = 6;
-        rackSize = 30;
+        name = "HAG/20";
+        setInternalName("CLHAG20");
+        addLookupName("Clan HAG/20");
+        heat = 4;
+        rackSize = 20;
         minimumRange = 2;
         shortRange = 8;
         mediumRange = 16;
         longRange = 24;
         extremeRange = 32;
-        tonnage = 13.0f;
-        criticals = 8;
-        bv = 401;
-        cost = 500000;
-        shortAV = 24;
-        medAV = 18;
-        longAV = 18;
+        tonnage = 10.0f;
+        criticals = 6;
+        bv = 267;
+        cost = 400000;
+        shortAV = 16;
+        medAV = 12;
+        longAV = 12;
         maxRange = RANGE_LONG;
         explosionDamage = rackSize / 2;
         rulesRefs = "219, TM";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(3057, 3068, 3072);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+        .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CHH)
+        .setProductionFactions(F_CHH);
     }
 
 }

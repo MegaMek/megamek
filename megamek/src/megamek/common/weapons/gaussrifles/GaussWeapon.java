@@ -15,7 +15,9 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
+
+import megamek.common.weapons.AmmoWeapon;
 
 /**
  * @author Andrew Hunter

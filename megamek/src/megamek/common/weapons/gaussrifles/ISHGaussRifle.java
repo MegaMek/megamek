@@ -15,13 +15,15 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.HGRHandler;
 import megamek.server.Server;
 
 /**
@@ -63,11 +65,15 @@ public class ISHGaussRifle extends GaussWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = 25;
         rulesRefs = "218, TM";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3046, 3061, 3067);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3051, 3061, 3067, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FW)
+        .setProductionFactions(F_FC);
     }
 
     @Override

@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.weapons.gaussrifles.GaussWeapon;
+
 /**
  * @author Jay Lawson
  */

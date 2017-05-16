@@ -15,7 +15,7 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
@@ -23,6 +23,8 @@ import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.HAGWeaponHandler;
 import megamek.server.Server;
 
 /**

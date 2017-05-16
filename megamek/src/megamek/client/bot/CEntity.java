@@ -40,9 +40,9 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.ISIHGaussRifle;
 import megamek.common.weapons.ISSnubNosePPC;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
+import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 public class CEntity {
@@ -1539,7 +1539,7 @@ public class CEntity {
 
             // Heavy Gauss, Snubnose PPC, variable speed lasers change
             // damage with range
-            if ((wt instanceof ISIHGaussRifle) || (wt instanceof ISSnubNosePPC)
+            if ((wt instanceof ISImpHGaussRifle) || (wt instanceof ISSnubNosePPC)
                     || (wt instanceof VariableSpeedPulseLaserWeapon)) {
                 raw_damage_array[0] = wt.getDamage(wt.getShortRange());
                 raw_damage_array[1] = wt.getDamage(wt.getShortRange());

@@ -15,19 +15,21 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.GRHandler;
 import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
  */
-public class ISGaussRifle extends GaussWeapon {
+public class CLImprovedGaussRifle extends GaussWeapon {
     /**
      * 
      */
@@ -36,22 +38,22 @@ public class ISGaussRifle extends GaussWeapon {
     /**
      * 
      */
-    public ISGaussRifle() {
+    public CLImprovedGaussRifle() {
         super();
 
-        this.name = "Gauss Rifle";
-        this.setInternalName("ISGaussRifle");
-        this.addLookupName("IS Gauss Rifle");
+        this.name = "Improved Gauss Rifle";
+        this.setInternalName("Improved Gauss Rifle");
+        this.addLookupName("CLIMPGaussRifle");
         this.heat = 1;
         this.damage = 15;
-        this.ammoType = AmmoType.T_GAUSS;
+        this.ammoType = AmmoType.T_GAUSS_IMP;
         this.minimumRange = 2;
         this.shortRange = 7;
         this.mediumRange = 15;
         this.longRange = 22;
         this.extremeRange = 30;
-        this.tonnage = 15.0f;
-        this.criticals = 7;
+        this.tonnage = 13.0f;
+        this.criticals = 6;
         this.bv = 320;
         this.cost = 300000;
         this.shortAV = 15;
@@ -59,12 +61,17 @@ public class ISGaussRifle extends GaussWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
-        rulesRefs = "218, TM";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2587, 2590, 3045, 2865, 3040);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_D, RATING_F, RATING_D, RATING_C });
+        rulesRefs = "96, IO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
+        .setClanAdvancement(2818, 2821, 2822, 2827, 3080)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CGS)
+        .setProductionFactions(F_CGS)
+        .setReintroductionFactions(F_EI);
     }
 
     /*

@@ -15,55 +15,64 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.GRHandler;
 import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
  */
-public class CLImprovedGaussRifle extends GaussWeapon {
+public class ISLGaussRifle extends GaussWeapon {
     /**
      * 
      */
-    private static final long serialVersionUID = -8454131645293473685L;
+    private static final long serialVersionUID = 8971550996626387100L;
 
     /**
      * 
      */
-    public CLImprovedGaussRifle() {
+    public ISLGaussRifle() {
         super();
 
-        this.name = "Improved Gauss Rifle";
-        this.setInternalName("Improved Gauss Rifle");
-        this.addLookupName("CLIMPGaussRifle");
+        this.name = "Light Gauss Rifle";
+        this.setInternalName("ISLightGaussRifle");
+        this.addLookupName("IS Light Gauss Rifle");
         this.heat = 1;
-        this.damage = 15;
-        this.ammoType = AmmoType.T_GAUSS_IMP;
-        this.minimumRange = 2;
-        this.shortRange = 7;
-        this.mediumRange = 15;
-        this.longRange = 22;
-        this.extremeRange = 30;
-        this.tonnage = 13.0f;
-        this.criticals = 6;
-        this.bv = 320;
-        this.cost = 300000;
-        this.shortAV = 15;
-        this.medAV = 15;
-        this.longAV = 15;
-        this.maxRange = RANGE_LONG;
-        this.explosionDamage = 20;
-        rulesRefs = "96, IO";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2813, 2821, 2822, 2837, 3080);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_X, RATING_X });
+        this.damage = 8;
+        this.ammoType = AmmoType.T_GAUSS_LIGHT;
+        this.minimumRange = 3;
+        this.shortRange = 8;
+        this.mediumRange = 17;
+        this.longRange = 25;
+        this.extremeRange = 34;
+        this.tonnage = 12.0f;
+        this.criticals = 5;
+        this.bv = 159;
+        this.cost = 275000;
+        this.shortAV = 8;
+        this.medAV = 8;
+        this.longAV = 8;
+        this.extAV = 8;
+        this.maxRange = RANGE_EXT;
+        this.explosionDamage = 16;
+        rulesRefs = "219, TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_C, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3049, 3056, 3065, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FW)
+        .setProductionFactions(F_FW);
+
     }
 
     /*

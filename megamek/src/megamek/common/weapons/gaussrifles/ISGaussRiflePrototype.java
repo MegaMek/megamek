@@ -15,13 +15,15 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.PrototypeGaussHandler;
 import megamek.server.Server;
 
 /**
@@ -55,10 +57,17 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         criticals = 8;
         flags = flags.or(F_PROTOTYPE);
         explosionDamage = 20;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2587, DATE_NONE, DATE_NONE, 2590, 3040);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
+        rulesRefs = "219, TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
+        .setISAdvancement(2587, DATE_NONE, DATE_NONE, 2587, DATE_NONE)
+        .setISApproximate(true, false, false,true, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
+
     }
 
     /*

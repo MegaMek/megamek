@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.capitalweapons;
 
-import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 /**
  * @author Dave Nawton

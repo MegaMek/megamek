@@ -15,57 +15,62 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.GRHandler;
 import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
  */
-public class ISLGaussRifle extends GaussWeapon {
+public class CLGaussRifle extends GaussWeapon {
     /**
      * 
      */
-    private static final long serialVersionUID = 8971550996626387100L;
+    private static final long serialVersionUID = -4436936560457546313L;
 
     /**
      * 
      */
-    public ISLGaussRifle() {
+    public CLGaussRifle() {
         super();
 
-        this.name = "Light Gauss Rifle";
-        this.setInternalName("ISLightGaussRifle");
-        this.addLookupName("IS Light Gauss Rifle");
+        this.name = "Gauss Rifle";
+        this.setInternalName("CLGaussRifle");
+        this.addLookupName("Clan Gauss Rifle");
         this.heat = 1;
-        this.damage = 8;
-        this.ammoType = AmmoType.T_GAUSS_LIGHT;
-        this.minimumRange = 3;
-        this.shortRange = 8;
-        this.mediumRange = 17;
-        this.longRange = 25;
-        this.extremeRange = 34;
+        this.damage = 15;
+        this.ammoType = AmmoType.T_GAUSS;
+        this.minimumRange = 2;
+        this.shortRange = 7;
+        this.mediumRange = 15;
+        this.longRange = 22;
+        this.extremeRange = 30;
         this.tonnage = 12.0f;
-        this.criticals = 5;
-        this.bv = 159;
-        this.cost = 275000;
-        this.shortAV = 8;
-        this.medAV = 8;
-        this.longAV = 8;
-        this.extAV = 8;
-        this.maxRange = RANGE_EXT;
-        this.explosionDamage = 16;
+        this.criticals = 6;
+        this.bv = 320;
+        this.cost = 300000;
+        this.shortAV = 15;
+        this.medAV = 15;
+        this.longAV = 15;
+        this.maxRange = RANGE_LONG;
+        this.explosionDamage = 20;
         rulesRefs = "219, TM";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3044, 3056, 3065);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+        .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CBR)
+        .setProductionFactions(F_CBR);
     }
 
     /*

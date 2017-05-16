@@ -72,7 +72,6 @@ import megamek.common.weapons.CLAAAMissileWeapon;
 import megamek.common.weapons.CLLAAMissileWeapon;
 import megamek.common.weapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.DiveBombAttack;
-import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISAAAMissileWeapon;
 import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.ISLAAMissileWeapon;
@@ -82,6 +81,7 @@ import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.

@@ -35,7 +35,6 @@ import megamek.common.weapons.CLImprovedHeavyLargeLaser;
 import megamek.common.weapons.CLImprovedHeavyMediumLaser;
 import megamek.common.weapons.CLImprovedHeavySmallLaser;
 import megamek.common.weapons.EnergyWeapon;
-import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.ISMekTaser;
 import megamek.common.weapons.ISRISCHyperLaser;
@@ -44,6 +43,7 @@ import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.UACWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
+import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 /**
  * You know what mechs are, silly.

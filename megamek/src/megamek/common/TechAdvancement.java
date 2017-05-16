@@ -200,10 +200,8 @@ public class TechAdvancement implements ITechnology {
     }
     
     public int getReintroductionDate() {
-        /* check for universal extinction first */
-        if (isAdvancement[EXTINCT] == DATE_NONE
-                || clanAdvancement[EXTINCT] == DATE_NONE) {
-            return DATE_NONE;
+        if (getTechBase() != TECH_BASE_ALL) {
+            return getReintroductionDate(getTechBase() == TECH_BASE_CLAN);
         }
         return earliestDate(isAdvancement[REINTRODUCED], clanAdvancement[REINTRODUCED]);
     }

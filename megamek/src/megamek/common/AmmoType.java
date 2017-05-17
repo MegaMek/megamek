@@ -908,8 +908,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLLargeChemicalLaserAmmo());
         EquipmentType.addType(AmmoType.createISNailRivetGunAmmo());
         EquipmentType.addType(AmmoType.createISNailRivetGunAmmoHalf());
-        EquipmentType.addType(AmmoType.createCLNailRivetGunAmmo());
-        EquipmentType.addType(AmmoType.createCLNailRivetGunAmmoHalf());
+//        EquipmentType.addType(AmmoType.createCLNailRivetGunAmmo());
+//        EquipmentType.addType(AmmoType.createCLNailRivetGunAmmoHalf());
         EquipmentType.addType(AmmoType.createCLRL10PrototypeAmmo());
         EquipmentType.addType(AmmoType.createCLRL15PrototypeAmmo());
         EquipmentType.addType(AmmoType.createCLRL20PrototypeAmmo());
@@ -11496,8 +11496,10 @@ public class AmmoType extends EquipmentType {
 
         ammo.name = "Nail/Rivet Gun Ammo";
         ammo.shortName = "Nail/Rivet Gun";
-        ammo.setInternalName("IS Ammo Nail/Rivet - Full");
+        ammo.addLookupName("IS Ammo Nail/Rivet - Full");
         ammo.addLookupName("ISNailRivetGun Ammo (300)");
+        ammo.addLookupName("CL Ammo Nail/Rivet - Full");
+        ammo.addLookupName("CLNailRivetGun Ammo (300)");
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NAIL_RIVET_GUN;
@@ -11506,20 +11508,28 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 300;
         ammo.tonnage = 1f;
         ammo.explosive = false;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
-        ammo.techAdvancement.setTechRating(RATING_A);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        ammo.rulesRefs = "246,TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, true, false,false, false)
+            .setClanAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, true, false,false, false)
+            .setPrototypeFactions(F_FW)
+            .setProductionFactions(F_FW);
         return ammo;
     }
 
     private static AmmoType createISNailRivetGunAmmoHalf() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Half Nail/Rivet Gun Ammo";
+        ammo.name = "Nail/Rivet Gun Ammo (Half-ton)";
         ammo.shortName = "Nail/Rivet Gun";
-        ammo.setInternalName("IS Ammo Nail/Rivet - Half");
+        ammo.addLookupName("IS Ammo Nail/Rivet - Half");
+        ammo.addLookupName("CL Ammo Nail/Rivet - Half");
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_NAIL_RIVET_GUN;
@@ -11528,15 +11538,22 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.cost = 150;
         ammo.explosive = false;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 1950);
-        ammo.techAdvancement.setTechRating(RATING_A);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+        ammo.rulesRefs = "246,TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, true, false,false, false)
+            .setClanAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, true, false,false, false)
+            .setPrototypeFactions(F_FW)
+            .setProductionFactions(F_FW);
         return ammo;
     }
 
-    private static AmmoType createCLNailRivetGunAmmo() {
+/*    private static AmmoType createCLNailRivetGunAmmo() {
         AmmoType ammo = new AmmoType();
 
         ammo.name = "Nail/Rivet Gun Ammo";
@@ -11579,7 +11596,7 @@ public class AmmoType extends EquipmentType {
         ammo.techAdvancement.setTechRating(RATING_A);
         ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_A, RATING_A, RATING_X });
         return ammo;
-    }
+    }*/
 
     //UNOFFICIAL AMMOs
     private static AmmoType createISAC15Ammo() {

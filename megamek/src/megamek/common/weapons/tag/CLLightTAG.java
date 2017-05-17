@@ -31,7 +31,7 @@ public class CLLightTAG extends TAGWeapon {
 
     public CLLightTAG() {
         super();
-        name = "Light TAG";
+        name = "Light TAG [Clan]";
         setInternalName("CLLightTAG");
         addLookupName("Clan Light TAG");
         tonnage = 0.5f;

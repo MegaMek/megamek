@@ -27,14 +27,29 @@ public class ISNailGun extends NailRivetGunWeapon {
 
     public ISNailGun() {
         super();
-        name = "Nail Gun";
+        name = "Nail/Rivet Gun";
         setInternalName(name);
         addLookupName("ISNailRivet Gun");
         addLookupName("ISNail Gun");
         addLookupName("Nail/Rivet Gun");
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2310);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
+        addLookupName("CLNailRivet Gun");
+        addLookupName("CLNail/Rivet Gun");
+        addLookupName("CLNail Gun");
+        addLookupName("ISRivet Gun");
+        addLookupName("CLRivet Gun");
+        addLookupName("CLNailRivetGun");
+        rulesRefs = "246,TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, true, false,false, false)
+            .setClanAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, true, false,false, false)
+            .setPrototypeFactions(F_FW)
+            .setProductionFactions(F_FW);
     }
 }
+

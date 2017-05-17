@@ -1257,9 +1257,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMekTaser());
 
         EquipmentType.addType(new ISNailGun());
-        EquipmentType.addType(new ISRivetGun());
-        EquipmentType.addType(new CLNailGun());
-        EquipmentType.addType(new CLRivetGun());
+//        EquipmentType.addType(new ISRivetGun());
+//        EquipmentType.addType(new CLNailGun());
+//        EquipmentType.addType(new CLRivetGun());
 
         // rifles
         EquipmentType.addType(new ISRifleLight());

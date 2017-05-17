@@ -31,7 +31,7 @@ public class CLTAG extends TAGWeapon {
 
     public CLTAG() {
         super();
-        name = "Clan TAG";
+        name = "TAG (Clan)";
         setInternalName("CLTAG");
         addLookupName("Clan TAG");
         tonnage = 1;

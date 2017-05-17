@@ -34,8 +34,7 @@ public enum CrewType {
     SUPERHEAVY_TRIPOD (new String[] {"Pilot", "Gunner", "Tech Officer"}, 0, 1, 2, 2, 3),
     QUADVEE (new String[] {"Pilot", "Gunner"}, 0, 1, -1, -1, 3),
     DUAL (new String[] {"Pilot", "Gunner"}, 0, 1, -1, -1, 2),
-    COMMAND_CONSOLE (new String[] {"Pilot", "Commander"}, 0, 0, -1, -1, 1),
-    FORCE_COMMAND_CONSOLE (new String[] {"Pilot", "Commander"}, 0, 0, 1, -1, 1);
+    COMMAND_CONSOLE (new String[] {"Pilot", "Commander"}, 0, 0, 1, -1, 1);
 
     private String[] roleNames;
     private int pilotPos;

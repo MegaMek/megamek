@@ -337,11 +337,7 @@ public abstract class Mech extends Entity {
             setCrew(new Crew(CrewType.DUAL));
             break;
         case COCKPIT_COMMAND_CONSOLE:
-            if (getWeightClass() < EntityWeightClass.WEIGHT_HEAVY) {
-                setCrew(new Crew(CrewType.COMMAND_CONSOLE));
-            } else {
-                setCrew(new Crew(CrewType.FORCE_COMMAND_CONSOLE));
-            }
+            setCrew(new Crew(CrewType.COMMAND_CONSOLE));
             break;
         }
     }
@@ -6622,6 +6618,14 @@ public abstract class Mech extends Entity {
         } else {
             return -1;
         }
+    }
+    
+    @Override
+    public boolean hasCommandConsoleBonus() {
+        return getCockpitType() == COCKPIT_COMMAND_CONSOLE
+                && getCrew().hasActiveCommander()
+                && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
+                && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
     }
 
     /**

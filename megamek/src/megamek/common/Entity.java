@@ -1180,6 +1180,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setCrew(Crew crew) {
         this.crew = crew;
     }
+    
+    /**
+     * Units with a cockpit command console provide an initiative bonus to their side, provided
+     * that the commander is not currently functioning as pilot, the unit has advanced fire control,
+     * and the unit is heavy or assault weight class.
+     * 
+     * @return Whether the Entity qualifies for initiative bonus from cockpit command console.
+     */
+    public boolean hasCommandConsoleBonus() {
+        return false;
+    }
 
     public boolean isShutDown() {
         return shutDown;

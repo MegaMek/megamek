@@ -3618,6 +3618,13 @@ public class Aero extends Entity {
     }
 
     @Override
+    public boolean hasCommandConsoleBonus() {
+        return getCockpitType() == COCKPIT_COMMAND_CONSOLE
+                && getCrew().hasActiveCommander()
+                && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY;
+    }
+
+    @Override
     public double getArmorRemainingPercent() {
         int armor0 = getTotalOArmor();
         int armor = getTotalArmor();

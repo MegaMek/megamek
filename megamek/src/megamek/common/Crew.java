@@ -358,11 +358,7 @@ public class Crew implements Serializable {
     }
 
     public int getCommandBonus() {
-        int bonus = commandBonus;
-        if (crewType.getCommanderPos() > 0 && isActive(crewType.getCommanderPos())) {
-            ++bonus;
-        }
-        return bonus;
+        return commandBonus;
     }
 
     public void setName(String name, int pos) {
@@ -1223,5 +1219,17 @@ public class Crew implements Serializable {
      */
     public boolean hasActiveTechOfficer() {
         return crewType.getTechPos() > 0 && isActive(crewType.getTechPos());
+    }
+    
+    /**
+     * Cockpit command console provides commander init bonus if both crew members are active
+     * (also requires advanced fire control and heavy/assault unit, which is not checked here).
+     * 
+     * @return Whether the unit has a commander that is not also acting as pilot.
+     */
+    public boolean hasActiveCommander() {
+        return crewType.getCommanderPos() >= 0
+                && isActive(crewType.getCommanderPos())
+                && crewType.getCommanderPos() != getCurrentPilotIndex(); 
     }
 }

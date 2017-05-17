@@ -520,13 +520,13 @@ public final class Player extends TurnOrdered implements IPlayer {
         if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
             for (Entity entity : game.getEntitiesVector()) {
                 if ((null != entity.getOwner())
-                    && entity.getOwner().equals(this)
-                    && !entity.isDestroyed()
-                    && entity.isDeployed()
-                    && !entity.isOffBoard()
-                    && entity.getCrew().isActive()
-                    && !entity.isCaptured()
-                    && !(entity instanceof MechWarrior)) {
+                        && entity.getOwner().equals(this)
+                        && !entity.isDestroyed()
+                        && entity.isDeployed()
+                        && !entity.isOffBoard()
+                        && entity.getCrew().isActive()
+                        && !entity.isCaptured()
+                        && !(entity instanceof MechWarrior)) {
                     if (entity.getCrew().getCommandBonus() > commandb) {
                         commandb = entity.getCrew().getCommandBonus();
                     }
@@ -534,6 +534,55 @@ public final class Player extends TurnOrdered implements IPlayer {
             }
         }
         return commandb;
+    }
+
+    /**
+     * @return the bonus to this player's initiative rolls for
+     *         the highest value initiative (i.e. the 'commander')
+     */
+    @Override
+    public int[] getCommandAndTripodBonus() {
+        int commandb = 0;
+        boolean hasTripod = false;
+        boolean commanderIsTripod = false;
+        
+        for (Entity entity : game.getEntitiesVector()) {
+            if ((null != entity.getOwner())
+                    && entity.getOwner().equals(this)
+                    && !entity.isDestroyed()
+                    && entity.isDeployed()
+                    && !entity.isOffBoard()
+                    && entity.getCrew().isActive()
+                    && !entity.isCaptured()
+                    && !(entity instanceof MechWarrior)) {
+                int bonus = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)?
+                        entity.getCrew().getCommandBonus() : 0;
+                if (entity.getCrew().hasActiveTechOfficer()) {
+                    bonus += 2;
+                    hasTripod = true;
+                    if (bonus > commandb) {
+                        commanderIsTripod = true;
+                    }
+                } else if (entity.hasCommandConsoleBonus()) {
+                    bonus += 2;
+                }
+                //If the previous maximum came from a superheavy tripod but we've equalled it with a different unit,
+                //use the other unit as the force commander so we can still get the tripod's +1 bonus.
+                if (bonus == commandb && commanderIsTripod && !entity.getCrew().hasActiveTechOfficer()) {
+                    commanderIsTripod = false;
+                }
+                if (bonus > commandb) {
+                    commandb = bonus;
+                }
+            }
+        }
+        if (commanderIsTripod) {
+            return new int[] {commandb, 2};
+        } else if (hasTripod) {
+            return new int[] {commandb, 1};
+        } else {
+            return new int[] {commandb, 0};
+        }
     }
 
     /**

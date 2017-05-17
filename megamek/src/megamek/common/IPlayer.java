@@ -181,11 +181,21 @@ public interface IPlayer extends ITurnOrdered {
     int getTurnInitBonus();
 
     /**
-     * @return the bonus to this player's initiative rolls for
-     *         the highest value initiative (i.e. the 'commander')
+     * @return the bonus to this player's initiative rolls for the highest value initiative
+     *         (i.e. the 'commander')
      */
     int getCommandBonus();
 
+    /**
+     * Finds the highest commander initiative bonus if the commander initiative bonus option is active,
+     * and adds any additional bonuses from a qualifying cockpit command console or superheavy tripod with
+     * an active tech officer. The tripod bonus is returned separately, since only one applies per side
+     * and the value varies according to whether the tripod is the force commander.
+     * 
+     * @return the bonus to this player's initiative rolls for the highest value initiative
+     *         and any bonus for having a superheavy tripod with an active tech officer
+     */
+    int[] getCommandAndTripodBonus();
     /**
      * cycle through entities on team and collect all the airborne VTOL/WIGE
      *

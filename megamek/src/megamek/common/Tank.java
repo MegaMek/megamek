@@ -446,6 +446,21 @@ public class Tank extends Entity {
         }
         return super.isImmobile() || m_bImmobile;
     }
+    
+    @Override
+    public boolean hasCommandConsoleBonus() {
+        //TODO: give a free commander hit when there is a command console, after which the unit uses the console bonus
+        if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE)) {
+            return false;
+        }
+        if (isSupportVehicle()) {
+            return getWeightClass() >= EntityWeightClass.WEIGHT_LARGE_SUPPORT
+                    && hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL);
+        } else {
+            return getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY;
+        }
+    }
+
 
     /**
      * Tanks have all sorts of prohibited terrain.

@@ -11,32 +11,35 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-package megamek.common.weapons;
+/*
+ * Created on Oct 20, 2004
+ *
+ */
+package megamek.common.weapons.mgs;
 
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
+import megamek.common.weapons.MGWeapon;
 
 /**
- * @author Sebastian Brocks
+ * @author Andrew Hunter
  */
-public class ISMG extends MGWeapon {
+public class CLMG extends MGWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -4431163118750064849L;
+    private static final long serialVersionUID = 2557643305248678454L;
 
     /**
      * 
      */
-    public ISMG() {
+    public CLMG() {
         super();
 
         this.name = "Machine Gun";
-        this.setInternalName(this.name);
-        this.addLookupName("IS Machine Gun");
-        this.addLookupName("ISMachine Gun");
-        this.addLookupName("ISMG");
+        this.setInternalName("CLMG");
+        this.addLookupName("Clan Machine Gun");
         this.heat = 0;
         this.damage = 2;
         this.infDamageClass = WeaponType.WEAPON_BURST_2D6;
@@ -45,18 +48,22 @@ public class ISMG extends MGWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        this.tonnage = 0.5f;
+        this.tonnage = 0.25f;
         this.criticals = 1;
         this.bv = 5;
         this.cost = 5000;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
         rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(TechAdvancement.DATE_PS, TechAdvancement.DATE_PS, TechAdvancement.DATE_PS);
-        techAdvancement.setIntroLevel(true);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_B, RATING_B, RATING_A )
+        .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CSF)
+        .setProductionFactions(F_CSF);
     }
 
 }

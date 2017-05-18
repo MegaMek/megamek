@@ -5669,6 +5669,7 @@ public class MiscType extends EquipmentType {
 		misc.setInternalName("ISMASS");
 		misc.addLookupName("IS Mass");
 		misc.addLookupName("Clan Mass");
+		misc.addLookupName("CLMass");
 		misc.tonnage = 1.5;
 		misc.criticals = 1;
 		misc.bv = 9;
@@ -7765,6 +7766,7 @@ public class MiscType extends EquipmentType {
 
 		misc.name = "Lift Hoist/Arresting Hoist";
 		misc.setInternalName(misc.name);
+		misc.addLookupName("Lift Hoist");
 		misc.tonnage = 3;
 		misc.criticals = 3;
 		misc.cost = 50000;
@@ -7786,14 +7788,16 @@ public class MiscType extends EquipmentType {
 	
 	public static MiscType createManipulator() {
 		MiscType misc = new MiscType();
-		misc.tonnage = 0.01;
-		misc.cost = 7500;
-		misc.criticals = 1;
+
 		misc.name = "Manipulator [Non-Mech/Non-Battle Armor]";
+		misc.addLookupName("Manipulator");
 		misc.setInternalName(misc.name);
 		misc.flags = misc.flags.or(F_MANIPULATOR).or(F_SUPPORT_TANK_EQUIPMENT).or(F_TANK_EQUIPMENT)
 		        .or(F_VTOL_EQUIPMENT);
 		misc.industrial = true;
+		misc.tonnage = 0.01;
+		misc.cost = 7500;
+		misc.criticals = 1;
 		misc.rulesRefs = "245,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
 			.setIntroLevel(false)

@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.mgs;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
@@ -19,6 +19,9 @@ import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MGAWeaponHandler;
 import megamek.server.Server;
 
 /**
@@ -58,11 +61,16 @@ public class ISLightMGA extends AmmoWeapon {
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;
-        rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3061, 3068, 3070);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
+        rulesRefs = "228,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+            .setISAdvancement(3066, 3068, 3070, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, true, false,false, false)
+            .setPrototypeFactions(F_FS)
+            .setProductionFactions(F_TC);
     }
 
     /*

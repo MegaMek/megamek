@@ -370,7 +370,7 @@ W,3062-Inner Sphere3049-Inner Sphere3070-Inner Sphere,3062-IS_Advanced3049-IS_Ex
 W,3062-Inner Sphere3049-Inner Sphere3070-Inner Sphere,3062-IS_Advanced3049-IS_Experimental3070-IS_TW_Non_Box,ISImprovedNarc (OS),IS OS iNarc Beacon,IS iNarc Missile Beacon (OS),
 W,2613-Inner Sphere3048-Inner Sphere2617-Inner Sphere,2613-IS_Experimental3048-IS_TW_Non_Box2617-IS_Advanced,ISAntiMissileSystem,IS Anti-Missile System,IS AMS,ISAMS,
 W,3059-Inner Sphere3079-Inner Sphere3145-Inner Sphere,3059-IS_Experimental3079-IS_Advanced3145-IS_TW_Non_Box,ISLaserAntiMissileSystem,IS Laser Anti-Missile System,IS Laser AMS,ISLaserAMS,
-W,3059-Inner Sphere,3059-IS_TW_Non_Box,ISLaserAntiMissileSystemTHB,IS Laser Anti-Missile System (THB),IS Laser AMS (THB),
+W,-1-Inner Sphere,-1-IS_Unofficial,ISLaserAntiMissileSystemTHB,IS Laser Anti-Missile System (THB),IS Laser AMS (THB),
 W,2835-Clan2824-Clan2831-Clan,2835-Clan_TW2824-Clan_Experimental2831-Clan_Advanced,CLAntiMissileSystem,Clan Anti-Missile Sys,Clan AMS,ClanAMS,ClAMS,
 W,3079-Clan3048-Clan3145-Clan,3079-Clan_Advanced3048-Clan_Experimental3145-Clan_TW,CLLaserAntiMissileSystem,Clan Laser Anti-Missile Sys,Clan Laser AMS,
 W,3062-Inner Sphere3050-Inner Sphere3053-Inner Sphere,3062-IS_TW_Non_Box3050-IS_Experimental3053-IS_Advanced,ISLightTAG,

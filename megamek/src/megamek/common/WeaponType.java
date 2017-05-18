@@ -188,6 +188,18 @@ import megamek.common.weapons.lasers.ISPulseLaserSmall;
 import megamek.common.weapons.lasers.ISReengineeredLaserSmall;
 import megamek.common.weapons.lasers.ISVariableSpeedPulseLaserSmall;
 import megamek.common.weapons.lasers.ISXPulseLaserSmall;
+import megamek.common.weapons.mgs.CLHeavyMG;
+import megamek.common.weapons.mgs.CLHeavyMGA;
+import megamek.common.weapons.mgs.CLLightMG;
+import megamek.common.weapons.mgs.CLLightMGA;
+import megamek.common.weapons.mgs.CLMG;
+import megamek.common.weapons.mgs.CLMGA;
+import megamek.common.weapons.mgs.ISHeavyMG;
+import megamek.common.weapons.mgs.ISHeavyMGA;
+import megamek.common.weapons.mgs.ISLightMG;
+import megamek.common.weapons.mgs.ISLightMGA;
+import megamek.common.weapons.mgs.ISMG;
+import megamek.common.weapons.mgs.ISMGA;
 import megamek.common.weapons.primitive.ISAC10Primitive;
 import megamek.common.weapons.primitive.ISAC20Primitive;
 import megamek.common.weapons.primitive.ISAC2Primitive;
@@ -1319,7 +1331,7 @@ public class WeaponType extends EquipmentType {
         // Taser
         EquipmentType.addType(new ISMekTaser());
 
-        EquipmentType.addType(new ISNailGun());
+        EquipmentType.addType(new ISNailandRivetGun());
 //        EquipmentType.addType(new ISRivetGun());
 //        EquipmentType.addType(new CLNailGun());
 //        EquipmentType.addType(new CLRivetGun());

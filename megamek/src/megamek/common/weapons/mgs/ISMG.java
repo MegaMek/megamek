@@ -11,34 +11,33 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-/*
- * Created on Oct 20, 2004
- *
- */
-package megamek.common.weapons;
+package megamek.common.weapons.mgs;
 
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
+import megamek.common.weapons.MGWeapon;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  */
-public class CLMG extends MGWeapon {
+public class ISMG extends MGWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = 2557643305248678454L;
+    private static final long serialVersionUID = -4431163118750064849L;
 
     /**
      * 
      */
-    public CLMG() {
+    public ISMG() {
         super();
 
         this.name = "Machine Gun";
-        this.setInternalName("CLMG");
-        this.addLookupName("Clan Machine Gun");
+        this.setInternalName(this.name);
+        this.addLookupName("IS Machine Gun");
+        this.addLookupName("ISMachine Gun");
+        this.addLookupName("ISMG");
         this.heat = 0;
         this.damage = 2;
         this.infDamageClass = WeaponType.WEAPON_BURST_2D6;
@@ -47,18 +46,22 @@ public class CLMG extends MGWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        this.tonnage = 0.25f;
+        this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 5;
         this.cost = 5000;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        rulesRefs = "228, TM";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2817, 2825, 2830);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_A });
+        rulesRefs = "228,TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
+            .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+        	.setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, 2826, DATE_NONE)
+        	.setClanApproximate(false, false, false,false, false);
     }
 
 }

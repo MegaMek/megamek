@@ -2456,11 +2456,15 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 1000;
         ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        ammo.techAdvancement.setIntroLevel(true);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+    	.setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, 2826, DATE_NONE)
+    	.setClanApproximate(false, false, false,false, false);
         return ammo;
     }
 
@@ -2483,11 +2487,15 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.cost = 500;
         ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        ammo.techAdvancement.setIntroLevel(true);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_A, RATING_A, RATING_B, RATING_A });
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+    	.setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, 2826, DATE_NONE)
+    	.setClanApproximate(false, false, false,false, false);
         return ammo;
     }
 
@@ -2507,11 +2515,15 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 1000;
         ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(3058, 3068, 3070);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+        .setClanAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TC)
+        .setProductionFactions(F_TC);
         return ammo;
     }
 
@@ -2532,11 +2544,15 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.5f;
         ammo.cost = 500;
         ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(3058, 3068, 3070);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+        .setClanAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TC)
+        .setProductionFactions(F_TC);
         return ammo;
     }
 
@@ -2556,11 +2572,15 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 500;
         ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(3059, 3068, 3070);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+        .setClanAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CC)
+        .setProductionFactions(F_CC);
         return ammo;
     }
 
@@ -2581,11 +2601,15 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.5f;
         ammo.cost = 250;
         ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(3059, 3068, 3070);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+        .setClanAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CC)
+        .setProductionFactions(F_CC);
         return ammo;
     }
 
@@ -4456,12 +4480,16 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 1000;
         ammo.kgPerShot = 10;
-        ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(3049, 3059, 3070);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        ammo.rulesRefs = "228,TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+            .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CSJ);
         return ammo;
     }
 
@@ -4482,12 +4510,16 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.5f;
         ammo.cost = 500;
         ammo.kgPerShot = 10;
-        ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(3049, 3059, 3070);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        ammo.rulesRefs = "228,TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+            .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CSJ);
         return ammo;
     }
 
@@ -4509,11 +4541,15 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.kgPerShot = 5;
         ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(2817, 2825, 2830);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_A });
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_B, RATING_B, RATING_A )
+        .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CSF)
+        .setProductionFactions(F_CSF);
         return ammo;
     }
 
@@ -4536,11 +4572,15 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 500;
         ammo.kgPerShot = 5;
         ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(2817, 2825, 2830);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_A });
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_B, RATING_B, RATING_A )
+        .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CSF)
+        .setProductionFactions(F_CSF);
         return ammo;
     }
 
@@ -4561,11 +4601,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 500;
         ammo.kgPerShot = 5;
         ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(3050, 3060, 3070);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+        .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false);
         return ammo;
     }
 
@@ -4587,11 +4629,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 250;
         ammo.kgPerShot = 5;
         ammo.rulesRefs = "228, TM";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(3050, 3060, 3070);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+        .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false);
         return ammo;
     }
 

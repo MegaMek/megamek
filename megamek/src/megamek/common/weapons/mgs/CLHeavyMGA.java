@@ -11,39 +11,44 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.mgs;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MGAWeaponHandler;
 import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
  */
-public class CLMGA extends AmmoWeapon {
+public class CLHeavyMGA extends AmmoWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 3727925307251828896L;
+    private static final long serialVersionUID = 7515050923963957889L;
 
-    public CLMGA() {
+    public CLHeavyMGA() {
         super();
 
-        name = "Machine Gun Array";
-        addLookupName("Clan Machine Gun Array");
-        setInternalName("CLMGA");
+        name = "Heavy Machine Gun Array";
+        setInternalName("CLHMGA");
+        setInternalName("Clan Heavy Machine Gun Array");
         heat = 0;
-        damage = 2;
-        rackSize = 2;
-        ammoType = AmmoType.T_MG;
+        damage = 3;
+        infDamageClass = WeaponType.WEAPON_BURST_3D6;
+        rackSize = 3;
+        ammoType = AmmoType.T_MG_HEAVY;
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;
-        longRange = 3;
+        longRange = 2;
         extremeRange = 4;
         tonnage = 0.25f;
         criticals = 1;
@@ -51,16 +56,19 @@ public class CLMGA extends AmmoWeapon {
         // because it depends on the number of MGs linked to
         // the MGA
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
-                .or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
+                .or(F_PROTO_WEAPON).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_MGA);
         cost = 1250;
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;
-        rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 3069, 3070);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
+        rulesRefs = "228,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+            .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false);
     }
 
     /*

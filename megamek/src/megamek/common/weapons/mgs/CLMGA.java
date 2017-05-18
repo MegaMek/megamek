@@ -11,43 +11,44 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.mgs;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.MGAWeaponHandler;
 import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
  */
-public class ISHeavyMGA extends AmmoWeapon {
+public class CLMGA extends AmmoWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -2647621717483237437L;
+    private static final long serialVersionUID = 3727925307251828896L;
 
-    public ISHeavyMGA() {
+    public CLMGA() {
         super();
 
-        name = "Heavy Machine Gun Array";
-        setInternalName("ISHMGA");
-        addLookupName("IS Heavy Machine Gun Array");
+        name = "Machine Gun Array";
+        addLookupName("Clan Machine Gun Array");
+        setInternalName("CLMGA");
         heat = 0;
-        damage = 3;
-        infDamageClass = WeaponType.WEAPON_BURST_3D6;
-        rackSize = 3;
-        ammoType = AmmoType.T_MG_HEAVY;
+        damage = 2;
+        rackSize = 2;
+        ammoType = AmmoType.T_MG;
         minimumRange = WEAPON_NA;
         shortRange = 1;
         mediumRange = 2;
-        longRange = 2;
+        longRange = 3;
         extremeRange = 4;
-        tonnage = 0.5f;
+        tonnage = 0.25f;
         criticals = 1;
         bv = 0; // we'll have to calculate this in calculateBV(),
         // because it depends on the number of MGs linked to
@@ -58,11 +59,15 @@ public class ISHeavyMGA extends AmmoWeapon {
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;
-        rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3061, 3068, 3070);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
+        rulesRefs = "228,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+            .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false);
+
     }
 
     /*

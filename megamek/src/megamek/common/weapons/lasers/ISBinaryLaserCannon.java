@@ -38,6 +38,7 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         addLookupName("ISBlazer");
         addLookupName("ISBinaryLaserCannon");
         addLookupName("ISBinaryLaser");
+        addLookupName("Blazer Cannon");
         heat = 16;
         damage = 12;
         shortRange = 5;

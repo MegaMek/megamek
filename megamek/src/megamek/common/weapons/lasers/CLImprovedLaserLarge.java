@@ -58,7 +58,7 @@ public class CLImprovedLaserLarge extends LaserWeapon {
         	.setUnofficial(false)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
-            .setClanAdvancement(2812, 2815, 2818, DATE_NONE, DATE_NONE)
+            .setClanAdvancement(2812, 2815, 2818, 2830, 3080)
             .setClanApproximate(true, true, false, false, false)
             .setPrototypeFactions(F_CNC)
             .setProductionFactions(F_CNC);

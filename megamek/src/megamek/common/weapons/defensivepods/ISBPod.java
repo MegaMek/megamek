@@ -37,5 +37,7 @@ public class ISBPod extends BPodWeapon {
         this.name = "Anti-BattleArmor Pods (B-Pods)";
         this.setInternalName("ISBPod");
         this.addLookupName("ISB-Pod");
+        this.addLookupName("CLBPod");
+        this.addLookupName("CLB-Pod");
     }
 }

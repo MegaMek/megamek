@@ -18,14 +18,14 @@ import megamek.common.TechAdvancement;
 /**
  * @author Sebastian Brocks
  */
-public class ISNailGun extends NailRivetGunWeapon {
+public class ISNailandRivetGun extends NailRivetGunWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = -5198228513368748633L;
 
-    public ISNailGun() {
+    public ISNailandRivetGun() {
         super();
         name = "Nail/Rivet Gun";
         setInternalName(name);

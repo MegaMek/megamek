@@ -15,11 +15,12 @@
  * Created on Oct 20, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.mgs;
 
 import megamek.common.AmmoType;
 import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
+import megamek.common.weapons.MGWeapon;
 
 /**
  * @author Andrew Hunter
@@ -55,11 +56,16 @@ public class CLHeavyMG extends MGWeapon {
         this.cost = 7500;
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
-        rulesRefs = "228, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(3049, 3059, 3070);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        rulesRefs = "228,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+            .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CSJ);
     }
 
 }

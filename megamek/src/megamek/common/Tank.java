@@ -128,6 +128,9 @@ public class Tank extends Entity {
     private int stabiliserHits = 0;
     private boolean driverHit = false;
     private boolean commanderHit = false;
+    //If there is a cockpit command console, the tank does not suffer the effects of the first commander critical,
+    //but the command console benefits are lost as the backup has to take command.
+    private boolean usingConsoleCommander = false;
 
     // set up some vars for what the critical effects would be
     private int potCrit = CRIT_NONE;
@@ -392,6 +395,14 @@ public class Tank extends Entity {
     public void setCommanderHit(boolean hit) {
         commanderHit = hit;
     }
+    
+    public boolean isUsingConsoleCommander() {
+        return usingConsoleCommander;
+    }
+    
+    public void setUsingConsoleCommander(boolean b) {
+        usingConsoleCommander = b;
+    }
 
     public boolean isDriverHitPS() {
         return driverHitPS;
@@ -449,8 +460,7 @@ public class Tank extends Entity {
     
     @Override
     public boolean hasCommandConsoleBonus() {
-        //TODO: give a free commander hit when there is a command console, after which the unit uses the console bonus
-        if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE)) {
+        if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE) || isUsingConsoleCommander()) {
             return false;
         }
         if (isSupportVehicle()) {

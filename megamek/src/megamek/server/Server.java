@@ -23950,6 +23950,12 @@ public class Server implements Runnable {
                             r.subject = t.getId();
                             vDesc.add(r);
                             t.setCommanderHitPS(true);
+                        } else if (en.hasWorkingMisc(MiscType.F_COMMAND_CONSOLE)
+                                && !((Tank)en).isUsingConsoleCommander()) {
+                            r = new Report(6607);
+                            r.subject = t.getId();
+                            vDesc.add(r);
+                            t.setUsingConsoleCommander(true);
                         } else {
                             r = new Report(6605);
                             r.subject = t.getId();

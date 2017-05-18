@@ -817,7 +817,7 @@ public class Compute {
                 los.setTargetCover(LosEffects.COVER_NONE);
                 mods.append(Compute.getAttackerMovementModifier(game,
                                                                 other.getId()));
-                if (other.isAttackingThisTurn()) {
+                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole()) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
                 // is this guy a better spotter?

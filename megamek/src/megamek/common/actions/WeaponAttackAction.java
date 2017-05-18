@@ -680,8 +680,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return toHit;
         }
 
-        // if we're spotting for indirect fire, add +1
-        if (ae.isSpotting()) {
+        // if we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
 
@@ -1519,7 +1519,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             } else if (!narcSpotter && (spotter != null)) {
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
-                if (spotter.isAttackingThisTurn()) {
+                if (spotter.isAttackingThisTurn() && !spotter.getCrew().hasActiveCommandConsole()) {
                     toHit.addModifier(1, "spotter is making an attack this turn");
                 }
             }
@@ -2114,7 +2114,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(ae.getTaserInterference(), "Taser interference");
         }
         // if we're spotting for indirect fire, add +1
-        if (ae.isSpotting()) {
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
         // super heavy modifier

@@ -1227,7 +1227,7 @@ public class Crew implements Serializable {
      * 
      * @return Whether the unit has a commander that is not also acting as pilot.
      */
-    public boolean hasActiveCommander() {
+    public boolean hasActiveCommandConsole() {
         return crewType.getCommanderPos() >= 0
                 && isActive(crewType.getCommanderPos())
                 && crewType.getCommanderPos() != getCurrentPilotIndex(); 

@@ -533,7 +533,7 @@ public final class Player extends TurnOrdered implements IPlayer {
                 //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
                 //Since we are not designating a single force commander at this point, we assume a superheavy tripod
                 //is the force commander if that gives the highest bonus.
-                if ((entity.hasCommandConsoleBonus() && entity.getCrew().hasActiveCommander())
+                if ((entity.hasCommandConsoleBonus() && entity.getCrew().hasActiveCommandConsole())
                         || entity.getCrew().hasActiveTechOfficer()) {
                     bonus += 2;
                 }

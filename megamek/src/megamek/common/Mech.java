@@ -6623,7 +6623,7 @@ public abstract class Mech extends Entity {
     @Override
     public boolean hasCommandConsoleBonus() {
         return getCockpitType() == COCKPIT_COMMAND_CONSOLE
-                && getCrew().hasActiveCommander()
+                && getCrew().hasActiveCommandConsole()
                 && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
                 && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
     }

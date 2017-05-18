@@ -169,7 +169,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
         toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
         // attacker is spotting
-        if (ae.isSpotting()) {
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
             toHit.addModifier(+1, "attacker is spotting");
         }
 

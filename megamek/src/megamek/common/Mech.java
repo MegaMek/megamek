@@ -5225,6 +5225,13 @@ public abstract class Mech extends Entity {
                 roll.addModifier(4,
                         "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
+        } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
+            //Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner acting as pilot.
+            if (getCrew().getCurrentPilotIndex() != getCrew().getCrewType().getPilotPos()) {
+                roll.addModifier(1, "Dual cockpit without active pilot");
+            } else if (getCrew().hasDedicatedGunner() || !isAttackingThisTurn()) {
+                roll.addModifier(-1, "Dedicated pilot");
+            }
         }
 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {

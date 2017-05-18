@@ -2043,7 +2043,7 @@ public class Compute {
         int countTargets = 1 + targIds.size();
         
         int maxPrimary = 1;
-        //Tripods and QuadVees with dedicated gunnery can target up to three units before incurring a penalty
+        //Tripods and QuadVees with dedicated gunnery can target up to three units before incurring a penalty, and two for dual cockpit
         if (attacker.getCrew().hasDedicatedGunner()) {
             maxPrimary = attacker.getCrew().getCrewType().getMaxPrimaryTargets();
         }

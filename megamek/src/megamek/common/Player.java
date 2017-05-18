@@ -517,35 +517,6 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getCommandBonus() {
         int commandb = 0;
-        if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
-            for (Entity entity : game.getEntitiesVector()) {
-                if ((null != entity.getOwner())
-                        && entity.getOwner().equals(this)
-                        && !entity.isDestroyed()
-                        && entity.isDeployed()
-                        && !entity.isOffBoard()
-                        && entity.getCrew().isActive()
-                        && !entity.isCaptured()
-                        && !(entity instanceof MechWarrior)) {
-                    if (entity.getCrew().getCommandBonus() > commandb) {
-                        commandb = entity.getCrew().getCommandBonus();
-                    }
-                }
-            }
-        }
-        return commandb;
-    }
-
-    /**
-     * @return the bonus to this player's initiative rolls for
-     *         the highest value initiative (i.e. the 'commander')
-     */
-    @Override
-    public int[] getCommandAndTripodBonus() {
-        int commandb = 0;
-        boolean hasTripod = false;
-        boolean commanderIsTripod = false;
-        
         for (Entity entity : game.getEntitiesVector()) {
             if ((null != entity.getOwner())
                     && entity.getOwner().equals(this)
@@ -555,34 +526,23 @@ public final class Player extends TurnOrdered implements IPlayer {
                     && entity.getCrew().isActive()
                     && !entity.isCaptured()
                     && !(entity instanceof MechWarrior)) {
-                int bonus = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)?
-                        entity.getCrew().getCommandBonus() : 0;
-                if (entity.getCrew().hasActiveTechOfficer()) {
-                    bonus += 2;
-                    hasTripod = true;
-                    if (bonus > commandb) {
-                        commanderIsTripod = true;
-                    }
-                } else if (entity.hasCommandConsoleBonus()) {
-                    bonus += 2;
+                int bonus = 0;
+                if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+                    bonus = entity.getCrew().getCommandBonus();
                 }
-                //If the previous maximum came from a superheavy tripod but we've equalled it with a different unit,
-                //use the other unit as the force commander so we can still get the tripod's +1 bonus.
-                if (bonus == commandb && commanderIsTripod && !entity.getCrew().hasActiveTechOfficer()) {
-                    commanderIsTripod = false;
+                //Even if the RPG option is not enabled, we still get the command bonus provided by special equipment.
+                //Since we are not designating a single force commander at this point, we assume a superheavy tripod
+                //is the force commander if that gives the highest bonus.
+                if ((entity.hasCommandConsoleBonus() && entity.getCrew().hasActiveCommander())
+                        || entity.getCrew().hasActiveTechOfficer()) {
+                    bonus += 2;
                 }
                 if (bonus > commandb) {
                     commandb = bonus;
                 }
             }
         }
-        if (commanderIsTripod) {
-            return new int[] {commandb, 2};
-        } else if (hasTripod) {
-            return new int[] {commandb, 1};
-        } else {
-            return new int[] {commandb, 0};
-        }
+        return commandb;
     }
 
     /**

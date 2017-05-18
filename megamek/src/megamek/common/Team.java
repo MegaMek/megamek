@@ -266,31 +266,14 @@ public final class Team extends TurnOrdered {
         int constantb = Integer.MIN_VALUE;
         int commandb = Integer.MIN_VALUE;
         constantb = Integer.MIN_VALUE;
-        //A superheavy tripod with an active tech officer gives a +1 to the side (non-cumulative). 
-        boolean hasTripod = false;
-        //A superheavy tripod that is force commander gives a +2 instead of the +1, but is already accounted for in the calculated command bonus
-        boolean commanderIsTripod = false;
         for (IPlayer player : getPlayersVector()) {
             turnb += player.getTurnInitBonus();
-            int[] cmdB = player.getCommandAndTripodBonus();
-            if (cmdB[1] > 0) {
-                hasTripod = true;
-            }
-            //If the previous maximum came from a superheavy tripod but we've equalled it with a different unit,
-            //use the other unit as the force commander so we can still get the tripod's +1 bonus.
-            if (cmdB[0] == commandb && commanderIsTripod && cmdB[1] < 2) {
-                commanderIsTripod = false;
-            }
-            if (cmdB[0] > commandb) {
-                commandb = cmdB[0];
-                commanderIsTripod = cmdB[1] == 2;
+            if (player.getCommandBonus() > commandb) {
+                commandb = player.getCommandBonus();
             }
             if (player.getConstantInitBonus() > constantb) {
                 constantb = player.getConstantInitBonus();
             }
-        }
-        if (hasTripod && !commanderIsTripod) {
-            commandb++;
         }
         return constantb + turnb + commandb
                 + getInitCompensationBonus(bInitiativeCompensationBonus);

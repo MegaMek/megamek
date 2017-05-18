@@ -39,6 +39,15 @@ public class EjectedCrew extends Infantry {
         // Finish initializing this unit.
         setOwner(originalRide.getOwner());
         initializeInternal(originalRide.getCrew().getSize(), Infantry.LOC_INFANTRY);
+        if (originalRide.getCrew().getSlotCount() > 1) {
+            int dead = 0;
+            for (int i = 0; i < originalRide.getCrew().getSlotCount(); i++) {
+                if (originalRide.getCrew().isDead(i)) {
+                    dead++;
+                }
+            }
+            setInternal(originalRide.getCrew().getSize() - dead, Infantry.LOC_INFANTRY);
+        }
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalIdAsString());
         IGame tmpGame = originalRide.getGame();
@@ -82,6 +91,15 @@ public class EjectedCrew extends Infantry {
         // Finish initializing this unit.
         setOwner(owner);
         initializeInternal(crew.getSize(), Infantry.LOC_INFANTRY);
+        if (crew.getSlotCount() > 1) {
+            int dead = 0;
+            for (int i = 0; i < crew.getSlotCount(); i++) {
+                if (crew.isDead(i)) {
+                    dead++;
+                }
+            }
+            setInternal(crew.getSize() - dead, Infantry.LOC_INFANTRY);
+        }
         IGame tmpGame = game;
         if (tmpGame != null
             && (!(this instanceof MechWarrior) 

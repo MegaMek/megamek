@@ -189,7 +189,7 @@ public class Crew implements Serializable {
     public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
             int piloting) {
         this.crewType = crewType;
-        this.size = size;
+        this.size = Math.max(size, crewType.getCrewSlots());
 
         int slots = crewType.getCrewSlots();
         this.name = new String[slots];

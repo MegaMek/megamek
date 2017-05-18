@@ -1445,7 +1445,7 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createBlueShield());
 		EquipmentType.addType(MiscType.createISEndoComposite());
 		EquipmentType.addType(MiscType.createCLEndoComposite());
-		EquipmentType.addType(MiscType.createCLLaserInsulator());
+//		EquipmentType.addType(MiscType.createCLLaserInsulator());
 		EquipmentType.addType(MiscType.createISLaserInsulator());
 		EquipmentType.addType(MiscType.createISEWEquipment());
 		EquipmentType.addType(MiscType.createISCollapsibleCommandModule());
@@ -8218,6 +8218,47 @@ public class MiscType extends EquipmentType {
 		return misc;
 	}
 	
+// Lasers - Almost all under the weapons.
+	public static MiscType createISLaserInsulator() {
+		MiscType misc = new MiscType();
+		misc.name = "Laser Insulator";
+		misc.setInternalName("ISLaserInsulator");
+		misc.setInternalName("CLLaserInsulator");
+		misc.tonnage = 0.5;
+		misc.criticals = 1;
+		misc.cost = 3500;
+		misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
+		        .or(MiscType.F_MECH_EQUIPMENT).or(MiscType.F_AERO_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
+		misc.rulesRefs = "322,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_E, RATING_F, RATING_F)
+		    .setISAdvancement(2575, DATE_NONE, DATE_NONE, 2820, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(2575, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_TH);
+		return misc;
+	}
+
+/*	public static MiscType createCLLaserInsulator() {
+		MiscType misc = new MiscType();
+		misc.name = "Laser Insulator";
+		misc.setInternalName("CLLaserInsulator");
+		misc.tonnage = 0.5;
+		misc.criticals = 1;
+		misc.cost = 3500;
+		misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
+		        .or(MiscType.F_MECH_EQUIPMENT).or(MiscType.F_AERO_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(2820, DATE_NONE, DATE_NONE);
+		misc.techAdvancement.setTechRating(RATING_E);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_E, RATING_F, RATING_X });
+		return misc;
+	}*/
+	
 	
 	
 	
@@ -10798,37 +10839,7 @@ public class MiscType extends EquipmentType {
 		return misc;
 	}
 
-	public static MiscType createISLaserInsulator() {
-		MiscType misc = new MiscType();
-		misc.name = "Laser Insulator";
-		misc.setInternalName("ISLaserInsulator");
-		misc.tonnage = 0.5;
-		misc.criticals = 1;
-		misc.cost = 3500;
-		misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
-		        .or(MiscType.F_MECH_EQUIPMENT).or(MiscType.F_AERO_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(2575, DATE_NONE, DATE_NONE, 2820);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_F, RATING_F, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createCLLaserInsulator() {
-		MiscType misc = new MiscType();
-		misc.name = "Laser Insulator";
-		misc.setInternalName("CLLaserInsulator");
-		misc.tonnage = 0.5;
-		misc.criticals = 1;
-		misc.cost = 3500;
-		misc.flags = misc.flags.or(MiscType.F_LASER_INSULATOR).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
-		        .or(MiscType.F_MECH_EQUIPMENT).or(MiscType.F_AERO_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(2820, DATE_NONE, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_E, RATING_F, RATING_X });
-		return misc;
-	}
 
 	public static MiscType createISCollapsibleCommandModule() {
 		MiscType misc = new MiscType();

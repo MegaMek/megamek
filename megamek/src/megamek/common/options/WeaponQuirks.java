@@ -27,7 +27,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.WeaponType;
 import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.EnergyWeapon;
+import megamek.common.weapons.lasers.EnergyWeapon;
 
 /**
  * Contains the options determining quirks of the unit

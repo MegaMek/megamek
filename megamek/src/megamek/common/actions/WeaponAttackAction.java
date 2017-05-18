@@ -70,7 +70,6 @@ import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.ArtilleryWeapon;
-import megamek.common.weapons.ISBombastLaser;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.LRTWeapon;
 import megamek.common.weapons.LaserBayWeapon;
@@ -83,6 +82,7 @@ import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.gaussrifles.ISHGaussRifle;
+import megamek.common.weapons.lasers.ISBombastLaser;
 
 /**
  * Represents intention to fire a weapon at the target.

@@ -25,8 +25,8 @@ import java.util.Vector;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.SupportVeeStructure;
-import megamek.common.weapons.CLChemicalLaserWeapon;
 import megamek.common.weapons.VehicleFlamerWeapon;
+import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
 /**
  * You know what tanks are, silly.

@@ -54,10 +54,13 @@ public class ISMantaRayWeapon extends SubCapitalMissileWeapon {
         this.cost = 150000;
         this.shortAV = 5;
         this.maxRange = RANGE_SHORT;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, 3060, 3072);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+		rulesRefs = "345,TO";
+		techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+		        .setISAdvancement(3066, 3072, 3145, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setPrototypeFactions(F_WB, F_CGB, F_CNC)
+		        .setProductionFactions(F_WB);
     }
 
     /*

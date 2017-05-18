@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.weapons.lasers.EnergyWeapon;
+
 /**
  * @author Jay Lawson
  */

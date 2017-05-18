@@ -23,6 +23,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.server.Server;
 
 /**

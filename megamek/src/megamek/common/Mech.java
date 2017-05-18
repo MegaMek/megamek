@@ -31,10 +31,6 @@ import java.util.Vector;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.CLImprovedHeavyLargeLaser;
-import megamek.common.weapons.CLImprovedHeavyMediumLaser;
-import megamek.common.weapons.CLImprovedHeavySmallLaser;
-import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.ISMekTaser;
 import megamek.common.weapons.ISRISCHyperLaser;
@@ -44,6 +40,10 @@ import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.UACWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
+import megamek.common.weapons.lasers.CLImprovedHeavyLaserMedium;
+import megamek.common.weapons.lasers.CLImprovedHeavyLaserSmall;
+import megamek.common.weapons.lasers.EnergyWeapon;
 
 /**
  * You know what mechs are, silly.
@@ -3520,9 +3520,9 @@ public abstract class Mech extends Entity {
             // gauss rifles only subtract 1 point per slot, same for HVACs and
             // iHeavy Lasers and mektasers
             if ((etype instanceof GaussWeapon) || (etype instanceof HVACWeapon)
-                    || (etype instanceof CLImprovedHeavyLargeLaser)
-                    || (etype instanceof CLImprovedHeavyMediumLaser)
-                    || (etype instanceof CLImprovedHeavySmallLaser)
+                    || (etype instanceof CLImprovedHeavyLaserLarge)
+                    || (etype instanceof CLImprovedHeavyLaserMedium)
+                    || (etype instanceof CLImprovedHeavyLaserSmall)
                     || (etype instanceof ISRISCHyperLaser)
                     || (etype instanceof TSEMPWeapon)
                     || (etype instanceof ISMekTaser)) {

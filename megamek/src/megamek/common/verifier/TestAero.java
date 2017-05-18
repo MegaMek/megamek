@@ -33,8 +33,8 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.CLChemicalLaserWeapon;
 import megamek.common.weapons.VehicleFlamerWeapon;
+import megamek.common.weapons.lasers.CLChemicalLaserWeapon;
 
 /**
  * Class for testing and validating instantiations for Conventional Fighters and

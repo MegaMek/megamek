@@ -4508,7 +4508,7 @@ public class Server implements Runnable {
                     && !((Infantry) unit).isMechanized()) {
 
                // Handle zip lines
-                PilotingRollData psr = getEjectModifiers(game, unit, false,
+                PilotingRollData psr = getEjectModifiers(game, unit, 0, false,
                         unit.getPosition(), "Anti-mek skill");
                 // Factor in Elevation
                 if (unloader.getElevation() > 0) {
@@ -32312,8 +32312,6 @@ public class Server implements Runnable {
         // Mek pilots may get hurt during ejection,
         // and run around the board afterwards.
         if (entity instanceof Mech) {
-            PilotingRollData rollTarget = getEjectModifiers(game, entity,
-                    autoEject);
             int facing = entity.getFacing();
             Coords targetCoords = (null != entity.getPosition())
                 ? entity.getPosition().translated((facing + 3) % 6) : null;
@@ -32325,21 +32323,55 @@ public class Server implements Runnable {
                 r.indent(2);
                 vDesc.addElement(r);
             }
+
             // okay, print the info
+            PilotingRollData rollTarget = getEjectModifiers(game, entity,
+                    entity.getCrew().getCurrentPilotIndex(), autoEject);
             r = new Report(2180);
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(rollTarget.getLastPlainDesc(), true);
             r.indent();
             vDesc.addElement(r);
-            // roll
-            final int diceRoll = entity.getCrew().rollPilotingSkill();
-            r = new Report(2190);
-            r.subject = entity.getId();
-            r.add(rollTarget.getValueAsString());
-            r.add(rollTarget.getDesc());
-            r.add(diceRoll);
-            r.indent();
+            for (int crewPos = 0; crewPos < entity.getCrew().getSlotCount(); crewPos++) {
+                rollTarget = getEjectModifiers(game, entity, crewPos,
+                        autoEject);
+                // roll
+                final int diceRoll = entity.getCrew().rollPilotingSkill();
+                if (entity.getCrew().getSlotCount() > 1) {
+                    r = new Report(2193);
+                    r.add(entity.getCrew().getNameAndRole(crewPos));
+                } else {
+                    r = new Report(2190);
+                }
+                r.subject = entity.getId();
+                r.add(rollTarget.getValueAsString());
+                r.add(rollTarget.getDesc());
+                r.add(diceRoll);
+                r.indent();
+                if (diceRoll < rollTarget.getValue()) {
+                    r.choose(false);
+                    vDesc.addElement(r);
+                    Report.addNewline(vDesc);
+                    if ((rollTarget.getValue() - diceRoll) > 1) {
+                        int damage = (rollTarget.getValue() - diceRoll) / 2;
+                        if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)) {
+                            damage++;
+                        }
+                        vDesc.addAll(damageCrew(entity, damage, crewPos));
+                    }
+    
+                    // If this is a skin of the teeth ejection...
+                    if (skin_of_the_teeth && (entity.getCrew().getHits(crewPos) < 6)) {
+                        Report.addNewline(vDesc);
+                        vDesc.addAll(damageCrew(entity, 6 - entity.getCrew()
+                                                                .getHits(crewPos)));
+                    }
+                } else {
+                    r.choose(true);
+                    vDesc.addElement(r);
+                }
+            }
             // create the MechWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
             pilot.setDeployed(true);
@@ -32349,30 +32381,17 @@ public class Server implements Runnable {
             send(createAddEntityPacket(pilot.getId()));
             // make him not get a move this turn
             pilot.setDone(true);
-            if (diceRoll < rollTarget.getValue()) {
-                r.choose(false);
-                vDesc.addElement(r);
-                Report.addNewline(vDesc);
-                if ((rollTarget.getValue() - diceRoll) > 1) {
-                    int damage = (rollTarget.getValue() - diceRoll) / 2;
-                    if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)) {
-                        damage++;
-                    }
-                    vDesc.addAll(damageCrew(pilot, damage));
+            int living = 0;
+            for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
+                if (!entity.getCrew().isDead(i) && entity.getCrew().getHits(i) < Crew.DEATH) {
+                    living++;
                 }
-
-                // If this is a skin of the teeth ejection...
-                if (skin_of_the_teeth && (pilot.getCrew().getHits() < 6)) {
-                    Report.addNewline(vDesc);
-                    pilot.setDoomed(true); // Set them to doomed so they die
-                    // later by 'deadly ejection'
-                    vDesc.addAll(damageCrew(pilot, 6 - pilot.getCrew()
-                                                            .getHits()));
-                }
-            } else {
-                r.choose(true);
-                vDesc.addElement(r);
             }
+            pilot.setInternal(living, MechWarrior.LOC_INFANTRY);
+            if (entity.getCrew().isDead() || entity.getCrew().getHits() >= Crew.DEATH) {
+                pilot.setDoomed(true);
+            }
+
             if (entity.getCrew().isDoomed()) {
                 vDesc.addAll(destroyEntity(pilot, "deadly ejection", false,
                                            false));
@@ -32510,25 +32529,25 @@ public class Server implements Runnable {
     }
 
     public static PilotingRollData getEjectModifiers(IGame game,
-            Entity entity, boolean autoEject) {
+            Entity entity, int crewPos, boolean autoEject) {
         int facing = entity.getFacing();
         if(null == entity.getPosition()) {
             // Off-board unit?
             return new PilotingRollData(entity.getId(), entity.getCrew().getPiloting(), "ejecting");
         }
         Coords targetCoords = entity.getPosition().translated((facing + 3) % 6);
-        return getEjectModifiers(game, entity, autoEject, targetCoords,
+        return getEjectModifiers(game, entity, crewPos, autoEject, targetCoords,
                 "ejecting");
     }
 
-    public static PilotingRollData getEjectModifiers(IGame game, Entity entity,
+    public static PilotingRollData getEjectModifiers(IGame game, Entity entity, int crewPos,
             boolean autoEject, Coords targetCoords, String desc) {
         PilotingRollData rollTarget = new PilotingRollData(entity.getId(),
-                entity.getCrew().getPiloting(), desc);
+                entity.getCrew().getPiloting(crewPos), desc);
         if (entity.isProne()) {
             rollTarget.addModifier(5, "Mech is prone");
         }
-        if (entity.getCrew().isUnconscious()) {
+        if (entity.getCrew().isUnconscious(crewPos)) {
             rollTarget.addModifier(3, "pilot unconscious");
         }
         if (autoEject) {

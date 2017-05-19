@@ -61,10 +61,15 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         maxRange = RANGE_MED;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON)
                 .or(F_CWS);
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3071, DATE_NONE, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_F, RATING_F, RATING_F, RATING_X });
+        rulesRefs = "85,IO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_X)
+        .setISAdvancement(2762, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH);
     }
     
     /*

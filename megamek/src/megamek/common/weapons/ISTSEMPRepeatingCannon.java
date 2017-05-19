@@ -33,10 +33,15 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
         tonnage = 8;
         criticals  = 7;
         tankslots = 1;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3133, DATE_NONE, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
+		rulesRefs = "92,IO";
+		techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_F)
+		    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+		    .setISAdvancement(3133, DATE_NONE, DATE_NONE, 3138, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_RS);
     }
     
     //TODO - Implement Game Rules.  See IO pg 94 for specifics.

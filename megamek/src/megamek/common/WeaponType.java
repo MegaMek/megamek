@@ -185,6 +185,7 @@ import megamek.common.weapons.lasers.ISVariableSpeedPulseLaserMedium;
 import megamek.common.weapons.lasers.ISXPulseLaserMedium;
 import megamek.common.weapons.lasers.ISLaserSmall;
 import megamek.common.weapons.lasers.ISPulseLaserSmall;
+import megamek.common.weapons.lasers.ISRISCHyperLaser;
 import megamek.common.weapons.lasers.ISReengineeredLaserSmall;
 import megamek.common.weapons.lasers.ISVariableSpeedPulseLaserSmall;
 import megamek.common.weapons.lasers.ISXPulseLaserSmall;

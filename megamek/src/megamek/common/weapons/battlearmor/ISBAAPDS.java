@@ -46,9 +46,14 @@ public class ISBAAPDS extends Weapon {
         setInstantModeSwitch(false);
         cost = 50000;
         rulesRefs = "91, IO";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3132, 3134, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+        .setISAdvancement(3132, 3134, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_RS)
+        .setProductionFactions(F_RS);
     }
 }

@@ -58,6 +58,7 @@ public class ISRifleLight extends RifleWeapon {
         extAV = 8;
         maxRange = RANGE_MED;
         explosionDamage = 0;
+        rulesRefs = "338,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

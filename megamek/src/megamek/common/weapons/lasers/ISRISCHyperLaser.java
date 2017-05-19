@@ -15,9 +15,10 @@
  * Created on Sep 12, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.lasers;
 
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.LaserWeapon;
 
 /**
  * @author Andrew Hunter
@@ -34,6 +35,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
     public ISRISCHyperLaser() {
         super();
         name = "RISC Hyper Laser";
+        //FIXME - Needs full rules implemented
         setInternalName("ISRISCHyperLaser");
         heat = 24;
         damage = 20;
@@ -51,10 +53,21 @@ public class ISRISCHyperLaser extends LaserWeapon {
         maxRange = RANGE_EXT;
         explosionDamage = 10;
         explosive = true;
+        rulesRefs = "93,IO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
+            .setISAdvancement(3134, DATE_NONE, DATE_NONE, 3141, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_RS);
 
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3134, DATE_NONE, DATE_NONE);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_F });
     }
 }
+
+
+/*The part this is missing is - any unmodified attack roll result of 2 or 3 by a hyper
+laser will result in the same effects as a critical hit against the
+weapon, and will deliver no damage to the target (even if the roll
+would ordinarily result in a hit).*/

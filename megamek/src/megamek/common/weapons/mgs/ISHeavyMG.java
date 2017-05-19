@@ -63,8 +63,8 @@ public class ISHeavyMG extends MGWeapon {
         	.setUnofficial(false)
             .setTechRating(RATING_B)
             .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-            .setClanAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
+            .setISAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_TC)
             .setProductionFactions(F_TC);
     }

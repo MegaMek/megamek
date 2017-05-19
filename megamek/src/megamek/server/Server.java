@@ -19737,12 +19737,17 @@ public class Server implements Runnable {
                 }
                 // if this mech has 20+ damage, add another roll to the list.
                 // Hulldown 'mechs ignore this rule, TO Errata
-                if ((entity.damageThisPhase >= 20) && !entity.isHullDown()) {
+                int psrThreshold = 20;
+                if (((Mech)entity).getCockpitType() == Mech.COCKPIT_DUAL
+                        && entity.getCrew().hasDedicatedPilot()) {
+                    psrThreshold = 30;
+                }
+                if ((entity.damageThisPhase >= psrThreshold) && !entity.isHullDown()) {
                     if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE)) {
                         PilotingRollData damPRD = new PilotingRollData(
                                 entity.getId());
-                        int damMod = entity.damageThisPhase / 20;
-                        damPRD.addModifier(damMod, (damMod * 20) + "+ damage");
+                        int damMod = entity.damageThisPhase / psrThreshold;
+                        damPRD.addModifier(damMod, (damMod * psrThreshold) + "+ damage");
                         int weightMod = 0;
                         if (game.getOptions().booleanOption(
                                 OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
@@ -19775,7 +19780,7 @@ public class Server implements Runnable {
                         game.addPSR(damPRD);
                     } else {
                         PilotingRollData damPRD = new PilotingRollData(
-                                entity.getId(), 1, "20+ damage");
+                                entity.getId(), 1, psrThreshold + "+ damage");
                         if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
                             && (entity.getCrew().getPiloting() > 3)) {
                             damPRD.addModifier(-1, "easy to pilot");

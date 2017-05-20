@@ -808,6 +808,9 @@ public class EntityListFile {
                 output.write(CommonConstants.NL);
                 
                 for (int pos = 0; pos < crew.getSlotCount(); pos++) {
+                    if (crew.isMissing(pos)) {
+                        continue;
+                    }
                     output.write(indentStr(indentLvl+2) + "<crewMember slot=\"" + pos);
                     writePilotAttributes(output, entity, crew, pos);
                     output.write("\"/>");
@@ -1042,6 +1045,14 @@ public class EntityListFile {
         }
     }
 
+    /**
+     * Writes attributes that pertain to entire crew.
+     * 
+     * @param output
+     * @param entity
+     * @param crew
+     * @throws IOException
+     */
     private static void writeCrewAttributes(Writer output, final Entity entity, final Crew crew) throws IOException {
         if (crew.getInitBonus() != 0) {
             output.write("\" initB=\"");

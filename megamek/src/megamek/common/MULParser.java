@@ -801,6 +801,9 @@ public class MULParser {
         }
         setCrewAttributes(crew, crewAttr, entity);
         pilots.add(crew);
+        for (int i = 0; i < crew.getSlotCount(); i++) {
+            crew.setMissing(true, i);
+        }
         
         for (int n = 0; n < crewNode.getChildNodes().getLength(); n++) {
             final Node pilotNode = crewNode.getChildNodes().item(n);
@@ -822,6 +825,7 @@ public class MULParser {
                     warning.append("Illegal crew slot index for " + crewType + " cockpit: "
                             + slot);
                 } else {
+                    crew.setMissing(false, slot);
                     setPilotAttributes(crew, slot, pilotAttr);
                 }
             }

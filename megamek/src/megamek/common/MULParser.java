@@ -990,7 +990,7 @@ public class MULParser {
             }
 
             if ((null != extId) && (extId.length() > 0)) {
-                crew.setExternalIdAsString(extId);
+                crew.setExternalIdAsString(extId, 0);
             }           
 
             pilots.add(crew);

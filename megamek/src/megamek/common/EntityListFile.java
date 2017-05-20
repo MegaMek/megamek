@@ -899,9 +899,9 @@ public class EntityListFile {
                 output.write("\" portraitFile=\"");
                 output.write(crew.getPortraitFileName(0));
             }
-            if (!crew.getExternalIdAsString().equals("-1")) {
+            if (!crew.getExternalIdAsString(0).equals("-1")) {
                 output.write("\" externalId=\"");
-                output.write(crew.getExternalIdAsString());
+                output.write(crew.getExternalIdAsString(0));
             }
             output.write("\"/>");
             output.write(CommonConstants.NL);

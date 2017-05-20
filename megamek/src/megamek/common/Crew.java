@@ -51,7 +51,7 @@ public class Crew implements Serializable {
 
     private final String[] nickname;
 
-    private String externalId = "-1";
+    private final String[] externalId;
 
     private final boolean[] unconscious;
     private final boolean[] dead;
@@ -239,7 +239,10 @@ public class Crew implements Serializable {
         
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
-        externalId = UUID.randomUUID().toString();
+        externalId = new String[slots];
+        for (int i = 0; i < slots; i++) {
+            externalId[i] = UUID.randomUUID().toString();
+        }
     }
 
     public String getName() {
@@ -1000,20 +1003,20 @@ public class Crew implements Serializable {
         return s;
     }
 
-    public void setExternalIdAsString(String i) {
-        externalId = i;
+    public void setExternalIdAsString(String i, int pos) {
+        externalId[pos] = i;
     }
 
-    public void setExternalId(int i) {
-        externalId = Integer.toString(i);
+    public void setExternalId(int i, int pos) {
+        externalId[pos] = Integer.toString(i);
     }
 
-    public String getExternalIdAsString() {
-        return externalId;
+    public String getExternalIdAsString(int pos) {
+        return externalId[pos];
     }
 
-    public int getExternalId() {
-        return Integer.parseInt(externalId);
+    public int getExternalId(int pos) {
+        return Integer.parseInt(externalId[pos]);
     }
 
     public void setPortraitCategory(String name, int pos) {

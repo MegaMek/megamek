@@ -862,7 +862,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         int altitude = 0;
         int height = 0;
         int offBoardDistance;
-        String externalId = entities.get(0).getCrew().getExternalIdAsString();
         try {
             init = Integer.parseInt(fldInit.getText());
             fatigue = Integer.parseInt(fldFatigue.getText());
@@ -997,7 +996,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             entity.getCrew().setFatigue(fatigue);
             entity.getCrew().setInitBonus(init);
             entity.getCrew().setCommandBonus(command);
-            entity.getCrew().setExternalIdAsString(externalId);
 
             // update commander status
             entity.setCommander(chCommander.isSelected());

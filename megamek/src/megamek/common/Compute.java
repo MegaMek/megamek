@@ -1778,7 +1778,12 @@ public class Compute {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
             }
-            mods.addModifier(2, "attacker prone");
+            if (((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+                    && attacker.getCrew().hasDedicatedGunner()) {
+                mods.addModifier(1, "attacker prone");                
+            } else {
+                mods.addModifier(2, "attacker prone");
+            }
         } else {
             int l3ProneFiringArm = Entity.LOC_NONE;
 
@@ -1826,7 +1831,12 @@ public class Compute {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Can't fire leg-mounted weapons while prone.");
             }
-            mods.addModifier(2, "attacker prone");
+            if (((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+                    && attacker.getCrew().hasDedicatedGunner()) {
+                mods.addModifier(1, "attacker prone");                
+            } else {
+                mods.addModifier(2, "attacker prone");
+            }
 
             if (l3ProneFiringArm != Entity.LOC_NONE) {
                 mods.addModifier(1, "attacker propping on single arm");
@@ -1963,7 +1973,12 @@ public class Compute {
                 mods.addModifier(2, "attacker sensors damaged");
             }
         } else if (sensorHits > 0) {
-            mods.addModifier(2, "attacker sensors damaged");
+            if (attacker instanceof Mech && ((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+                    && attacker.getCrew().hasDedicatedGunner()) {
+                mods.addModifier(1, "attacker sensors damaged");
+            } else {
+                mods.addModifier(2, "attacker sensors damaged");
+            }
         }
 
         return mods;

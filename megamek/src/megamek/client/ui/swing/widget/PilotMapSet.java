@@ -169,63 +169,88 @@ public class PilotMapSet implements DisplayMapSet {
     }
     
     public void setEntity(Entity en, int slot) {
-
         if (en instanceof Infantry) {
             pilotL.setString(Messages.getString("PilotMapSet.pilotLAntiMech"));
         } else {
             pilotL.setString(Messages.getString("PilotMapSet.pilotL"));
         }
-        nameL.setString(en.getCrew().getName(slot));
-        nickL.setString(en.getCrew().getNickname(slot));
-        pilotR.setString(Integer.toString(en.getCrew().getPiloting(slot)));
-        gunneryR.setString(Integer.toString(en.getCrew().getGunnery(slot)));
-
-        if (null != getPortrait(en.getCrew(), slot)) {
-            portraitArea.setIdleImage(getPortrait(en.getCrew(), slot));
-        }
-
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-            gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL(slot)));
-            gunneryMR.setString(Integer.toString(en.getCrew().getGunneryM(slot)));
-            gunneryBR.setString(Integer.toString(en.getCrew().getGunneryB(slot)));
+        if (en.getCrew().isMissing(slot)) {
+            nameL.setString(Messages.getString("PilotMapSet.empty"));
+            nickL.setString("");
+            pilotL.setVisible(false);
+            pilotR.setVisible(false);
             gunneryL.setVisible(false);
             gunneryR.setVisible(false);
-            gunneryLL.setVisible(true);
-            gunneryLR.setVisible(true);
-            gunneryML.setVisible(true);
-            gunneryMR.setVisible(true);
-            gunneryBL.setVisible(true);
-            gunneryBR.setVisible(true);
-        } else {
             gunneryLL.setVisible(false);
             gunneryLR.setVisible(false);
             gunneryML.setVisible(false);
             gunneryMR.setVisible(false);
             gunneryBL.setVisible(false);
             gunneryBR.setVisible(false);
-            gunneryL.setVisible(true);
-            gunneryR.setVisible(true);
+        } else {
+            nameL.setString(en.getCrew().getName(slot));
+            nickL.setString(en.getCrew().getNickname(slot));
+            pilotR.setString(Integer.toString(en.getCrew().getPiloting(slot)));
+            gunneryR.setString(Integer.toString(en.getCrew().getGunnery(slot)));
+            pilotL.setVisible(true);
+            pilotR.setVisible(true);
+
+            if (null != getPortrait(en.getCrew(), slot)) {
+                portraitArea.setIdleImage(getPortrait(en.getCrew(), slot));
+            }
+
+            if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+                gunneryLR.setString(Integer.toString(en.getCrew().getGunneryL(slot)));
+                gunneryMR.setString(Integer.toString(en.getCrew().getGunneryM(slot)));
+                gunneryBR.setString(Integer.toString(en.getCrew().getGunneryB(slot)));
+                gunneryL.setVisible(false);
+                gunneryR.setVisible(false);
+                gunneryLL.setVisible(true);
+                gunneryLR.setVisible(true);
+                gunneryML.setVisible(true);
+                gunneryMR.setVisible(true);
+                gunneryBL.setVisible(true);
+                gunneryBR.setVisible(true);
+            } else {
+                gunneryLL.setVisible(false);
+                gunneryLR.setVisible(false);
+                gunneryML.setVisible(false);
+                gunneryMR.setVisible(false);
+                gunneryBL.setVisible(false);
+                gunneryBR.setVisible(false);
+                gunneryL.setVisible(true);
+                gunneryR.setVisible(true);
+            }
         }
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
+
+        if ((en.getGame() != null)
+                && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)
+                && !en.getCrew().isMissing(slot)) {
             toughBR.setString(Integer.toString(en.getCrew().getToughness(slot)));
         } else {
             toughBL.setVisible(false);
             toughBR.setVisible(false);
         }
         if ((en.getGame() != null)
-                && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
+                && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)
+                && !en.getCrew().isMissing(slot)) {
             initBR.setString(Integer.toString(en.getCrew().getInitBonus()));
         } else {
             initBL.setVisible(false);
             initBR.setVisible(false);
         }
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
+        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)
+                && !en.getCrew().isMissing(slot)) {
             commandBR.setString(Integer.toString(en.getCrew().getCommandBonus()));
         } else {
             commandBL.setVisible(false);
             commandBR.setVisible(false);
         }
-        hitsR.setString(en.getCrew().getStatusDesc());
+        if (en.getCrew().isMissing(slot)) {
+            hitsR.setString("");
+        } else {
+            hitsR.setString(en.getCrew().getStatusDesc());
+        }
         for (int i = 0; i < advantagesR.length; i++) {
             advantagesR[i].setString(""); //$NON-NLS-1$
         }

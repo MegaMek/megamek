@@ -747,7 +747,7 @@ public class MULParser {
         
         Crew crew = null;
         if (null != entity) {
-            crew = new Crew(entity.defaultCrewType());
+            crew = new Crew(entity.getCrew().getCrewType());
         } else {
             crew = new Crew(CrewType.SINGLE);
         }

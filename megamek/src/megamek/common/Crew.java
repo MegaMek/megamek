@@ -728,6 +728,9 @@ public class Crew implements Serializable {
     }
     
     public String getDesc(int pos) {
+        if (isMissing(pos)) {
+            return "[missing]";
+        }
         String s = new String(name[pos]);
         if (hits[pos] > 0) {
             s += " (" + hits[pos] + " hit(s)";

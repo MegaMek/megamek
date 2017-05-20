@@ -1376,8 +1376,12 @@ public class ChatLounge extends AbstractPhaseDisplay
         String value = "";
         if (!blindDrop && pilot.getSlotCount() > 1) {
             for (int i = 0; i < pilot.getSlotCount(); i++) {
-                value += "<b>" + pilot.getDesc(i) + "</b> (" + pilot.getCrewType().getRoleName(i) + "): ";
-                value += pilot.getGunnery(i) + "/" + pilot.getPiloting(i);
+                if (pilot.isMissing(i)) {
+                    value += "<b>No " + pilot.getCrewType().getRoleName(i) + "</b>";
+                } else {
+                    value += "<b>" + pilot.getDesc(i) + "</b> (" + pilot.getCrewType().getRoleName(i) + "): ";
+                    value += pilot.getGunnery(i) + "/" + pilot.getPiloting(i);
+                }
                 value += "<br/>";
             }
         } else {
@@ -1496,8 +1500,11 @@ public class ChatLounge extends AbstractPhaseDisplay
         // Pilot Info
         // Nickname > Name > "Pilot"
         for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
+            if (entity.getCrew().isMissing(i)) {
+                continue;
+            }
             String pnameStr = entity.getCrew().getCrewType().getRoleName(i);
-    
+
             if ((entity.getCrew().getName(i) != null) && !entity.getCrew().getName(i).equals(""))
                 pnameStr = entity.getCrew().getName(i);
     

@@ -719,6 +719,9 @@ class EntitySprite extends Sprite {
         for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
             String pnameStr = "Pilot";
     
+            if (entity.getCrew().isMissing(i)) {
+                continue;
+            }
             if ((entity.getCrew().getName(i) != null)
                     && !entity.getCrew().getName(i).equals("")) 
                 pnameStr = entity.getCrew().getName(i);

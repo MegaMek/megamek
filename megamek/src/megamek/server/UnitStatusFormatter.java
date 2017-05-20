@@ -71,10 +71,14 @@ public abstract class UnitStatusFormatter {
         sb.append("Model: ").append(e.getChassis()).append(" - ")
                 .append(e.getModel()).append(CommonConstants.NL);
         for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-            sb.append(e.getCrew().getCrewType().getRoleName(i)).append(": ")
-                .append(e.getCrew().getName(i));
-            sb.append(" (").append(e.getCrew().getGunnery()).append("/")
-                .append(e.getCrew().getPiloting()).append(")");
+            if (e.getCrew().isMissing(i)) {
+                sb.append("No ").append(e.getCrew().getCrewType().getRoleName(i));
+            } else {
+                sb.append(e.getCrew().getCrewType().getRoleName(i)).append(": ")
+                    .append(e.getCrew().getName(i));
+                sb.append(" (").append(e.getCrew().getGunnery()).append("/")
+                    .append(e.getCrew().getPiloting()).append(")");
+            }
             sb.append(CommonConstants.NL);
         }
         if (e.isCaptured()) {

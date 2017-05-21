@@ -24,12 +24,12 @@ package megamek.common;
 import java.math.BigInteger;
 
 import megamek.common.verifier.TestEntity;
-import megamek.common.weapons.CLERPPC;
-import megamek.common.weapons.ISERPPC;
-import megamek.common.weapons.ISHeavyPPC;
-import megamek.common.weapons.ISLightPPC;
-import megamek.common.weapons.ISPPC;
-import megamek.common.weapons.ISSnubNosePPC;
+import megamek.common.weapons.ppc.CLERPPC;
+import megamek.common.weapons.ppc.ISERPPC;
+import megamek.common.weapons.ppc.ISHeavyPPC;
+import megamek.common.weapons.ppc.ISLightPPC;
+import megamek.common.weapons.ppc.ISPPC;
+import megamek.common.weapons.ppc.ISSnubNosePPC;
 
 /**
  * @author Ben

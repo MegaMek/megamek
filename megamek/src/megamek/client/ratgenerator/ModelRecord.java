@@ -126,7 +126,7 @@ public class ModelRecord extends AbstractUnitRecord {
         		incendiary |= ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM
         				|| ((WeaponType)eq).getAmmoType() == AmmoType.T_MRM;
         		
-        		if (eq instanceof megamek.common.weapons.MGWeapon ||
+        		if (eq instanceof megamek.common.weapons.mgs.MGWeapon ||
         				eq instanceof megamek.common.weapons.defensivepods.BPodWeapon) {
         			apWeapons = true;
         		}

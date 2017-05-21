@@ -1,3 +1,5 @@
+package megamek.common.weapons.autocannons;
+
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * 
@@ -14,9 +16,6 @@
 /*
  * Created on Sep 25, 2004
  */
-package megamek.common.weapons.autocannons;
-
-import megamek.common.weapons.LACWeapon;
 
 public class ISLAC5 extends LACWeapon {
 

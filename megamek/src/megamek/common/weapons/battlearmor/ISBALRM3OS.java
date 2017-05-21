@@ -14,7 +14,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.LRMWeapon;
+import megamek.common.weapons.lrms.LRMWeapon;
 
 
 /**

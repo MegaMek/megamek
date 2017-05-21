@@ -64,8 +64,8 @@ import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.CLFireExtinguisher;
-import megamek.common.weapons.ISFireExtinguisher;
+import megamek.common.weapons.other.CLFireExtinguisher;
+import megamek.common.weapons.other.ISFireExtinguisher;
 
 /**
  * Context menu for the board.

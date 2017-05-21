@@ -34,6 +34,7 @@ import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.lrms.ExtendedLRMWeapon;
 import megamek.server.Server;
 
 /**

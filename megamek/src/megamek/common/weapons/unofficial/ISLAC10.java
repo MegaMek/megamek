@@ -16,7 +16,7 @@
  */
 package megamek.common.weapons.unofficial;
 
-import megamek.common.weapons.LACWeapon;
+import megamek.common.weapons.autocannons.LACWeapon;
 
 public class ISLAC10 extends LACWeapon {
 

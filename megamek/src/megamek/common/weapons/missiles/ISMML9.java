@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.weapons.MMLWeapon;
-
 /**
  * @author Sebastian Brocks
  */

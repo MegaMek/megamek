@@ -17,6 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
  * @author Sebastian Brocks

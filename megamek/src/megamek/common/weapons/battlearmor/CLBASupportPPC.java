@@ -19,7 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
  * @author Sebastian Brocks

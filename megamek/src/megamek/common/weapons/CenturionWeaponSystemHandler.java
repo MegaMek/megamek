@@ -37,7 +37,7 @@ import megamek.server.Server;
  * @author arlith
  *
  */ 
-class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
+public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
 
     /**
      * 

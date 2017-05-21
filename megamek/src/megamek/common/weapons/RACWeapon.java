@@ -23,6 +23,7 @@ import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.server.Server;
 
 /**

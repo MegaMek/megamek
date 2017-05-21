@@ -14,7 +14,6 @@
 package megamek.common.weapons.mgs;
 
 import megamek.common.WeaponType;
-import megamek.common.weapons.MGWeapon;
 
 /**
  * @author Sebastian Brocks

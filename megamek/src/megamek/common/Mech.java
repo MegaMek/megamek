@@ -31,19 +31,19 @@ import java.util.Vector;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.HVACWeapon;
-import megamek.common.weapons.ISMekTaser;
-import megamek.common.weapons.LBXACWeapon;
-import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.TSEMPWeapon;
-import megamek.common.weapons.UACWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
+import megamek.common.weapons.autocannons.HVACWeapon;
+import megamek.common.weapons.autocannons.LBXACWeapon;
+import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserLarge;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserMedium;
 import megamek.common.weapons.lasers.CLImprovedHeavyLaserSmall;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.lasers.ISRISCHyperLaser;
+import megamek.common.weapons.other.ISMekTaser;
+import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
  * You know what mechs are, silly.

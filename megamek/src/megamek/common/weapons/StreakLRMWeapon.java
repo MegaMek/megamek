@@ -18,6 +18,7 @@ import megamek.common.BattleForceElement;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.server.Server;
 
 /**

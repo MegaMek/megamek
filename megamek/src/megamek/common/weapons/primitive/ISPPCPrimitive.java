@@ -15,7 +15,7 @@
 package megamek.common.weapons.primitive;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)

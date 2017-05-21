@@ -40,10 +40,10 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.ISSnubNosePPC;
 import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
 import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.ppc.ISSnubNosePPC;
 
 public class CEntity {
 

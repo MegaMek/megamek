@@ -21,7 +21,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.LRMHandler;
-import megamek.common.weapons.LRMWeapon;
+import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.server.Server;
 
 /**

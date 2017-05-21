@@ -18,7 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.PulseLaserWeapon;
+import megamek.common.weapons.lasers.PulseLaserWeapon;
 
 
 /**

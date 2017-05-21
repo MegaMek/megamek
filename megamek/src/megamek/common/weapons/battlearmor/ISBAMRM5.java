@@ -14,7 +14,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.MRMWeapon;
+import megamek.common.weapons.missiles.MRMWeapon;
 
 /**
  * @author Sebastian Brocks

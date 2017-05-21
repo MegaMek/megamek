@@ -17,6 +17,7 @@ package megamek.common.weapons;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.lasers.LaserWeapon;
 import megamek.server.Server;
 
 public class ReengineeredLaserWeapon extends LaserWeapon {

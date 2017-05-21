@@ -18,7 +18,7 @@
 package megamek.common.weapons.unofficial;
 
 import megamek.common.AmmoType;
-import megamek.common.weapons.UACWeapon;
+import megamek.common.weapons.autocannons.UACWeapon;
 
 /**
  * @author Andrew Hunter

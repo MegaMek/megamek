@@ -1,3 +1,5 @@
+package megamek.common.weapons.lasers;
+
 /**
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  *
@@ -15,9 +17,6 @@
  * Created on Sep 8, 2005
  *
  */
-package megamek.common.weapons.lasers;
-
-import megamek.common.weapons.PulseLaserWeapon;
 
 /**
  * @author Sebastian Brocks

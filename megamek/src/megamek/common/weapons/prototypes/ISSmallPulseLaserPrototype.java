@@ -23,8 +23,8 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PulseLaserWeapon;
 import megamek.common.weapons.SmallPulseLaserPrototypeHandler;
+import megamek.common.weapons.lasers.PulseLaserWeapon;
 import megamek.server.Server;
 
 /**

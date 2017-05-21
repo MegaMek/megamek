@@ -14,7 +14,7 @@
 package megamek.common.weapons.unofficial;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.SRMWeapon;
+import megamek.common.weapons.srms.SRMWeapon;
 
 /**
  * @author Sebastian Brocks

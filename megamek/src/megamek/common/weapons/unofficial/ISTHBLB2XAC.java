@@ -18,7 +18,7 @@
 package megamek.common.weapons.unofficial;
 
 import megamek.common.AmmoType;
-import megamek.common.weapons.LBXACWeapon;
+import megamek.common.weapons.autocannons.LBXACWeapon;
 
 /**
  * @author Andrew Hunter

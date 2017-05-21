@@ -32,6 +32,7 @@ import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.server.Server;
 
 /**

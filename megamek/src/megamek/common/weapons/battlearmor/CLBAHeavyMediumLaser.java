@@ -18,7 +18,7 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.LaserWeapon;
+import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
  * @author Andrew Hunter

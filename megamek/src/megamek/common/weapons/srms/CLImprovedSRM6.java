@@ -14,7 +14,6 @@
 package megamek.common.weapons.srms;
 
 import megamek.common.AmmoType;
-import megamek.common.weapons.SRMWeapon;
 
 /**
  * @author Sebastian Brocks

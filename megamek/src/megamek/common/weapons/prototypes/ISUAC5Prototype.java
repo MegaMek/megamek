@@ -24,7 +24,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.PrototypeISUltraWeaponHandler;
-import megamek.common.weapons.UACWeapon;
+import megamek.common.weapons.autocannons.UACWeapon;
 import megamek.server.Server;
 
 /**

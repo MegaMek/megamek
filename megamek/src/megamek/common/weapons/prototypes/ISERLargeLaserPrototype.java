@@ -23,8 +23,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.LaserWeapon;
 import megamek.common.weapons.PrototypeLaserHandler;
+import megamek.common.weapons.lasers.LaserWeapon;
 import megamek.server.Server;
 
 /**

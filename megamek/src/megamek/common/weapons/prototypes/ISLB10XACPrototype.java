@@ -23,9 +23,9 @@ import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.LBXACWeapon;
 import megamek.common.weapons.PrototypeACWeaponHandler;
 import megamek.common.weapons.PrototypeLBXHandler;
+import megamek.common.weapons.autocannons.LBXACWeapon;
 import megamek.server.Server;
 
 /**

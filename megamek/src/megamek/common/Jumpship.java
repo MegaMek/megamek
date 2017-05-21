@@ -53,6 +53,9 @@ public class Jumpship extends Aero {
     // crew and passengers
     private int nCrew = 0;
     private int nPassenger = 0;
+    private int nMarines = 0;
+    private int nBattleArmor = 0;
+    private int nOtherCrew = 0;
     // lifeboats and escape pods
     private int lifeBoats = 0;
     private int escapePods = 0;
@@ -242,18 +245,42 @@ public class Jumpship extends Aero {
         nCrew = crew;
     }
 
-    public void setNPassenger(int pass) {
-        nPassenger = pass;
-    }
-
     @Override
     public int getNCrew() {
         return nCrew;
     }
 
+    public void setNPassenger(int pass) {
+        nPassenger = pass;
+    }
+
     @Override
     public int getNPassenger() {
         return nPassenger;
+    }
+
+    public void setNMarines(int m) {
+        nMarines = m;
+    }
+
+    public int getNMarines() {
+        return nMarines;
+    }
+
+    public void setNBattleArmor(int m) {
+        nBattleArmor = m;
+    }
+
+    public int getNBattleArmor() {
+        return nBattleArmor;
+    }
+
+    public void setNOtherCrew(int m) {
+        nOtherCrew = m;
+    }
+
+    public int getNOtherCrew() {
+        return nOtherCrew;
     }
 
     @Override

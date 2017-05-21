@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Sebastian Brocks
  */
@@ -46,9 +44,15 @@ public class CLSRT4 extends SRTWeapon {
         bv = 39;
         flags = flags.or(F_NO_FIRES);
         cost = 60000;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2824);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
+        rulesRefs = "230,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_C)
+            .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CSF)
+            .setProductionFactions(F_CSF);
     }
 }

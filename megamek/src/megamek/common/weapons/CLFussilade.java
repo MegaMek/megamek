@@ -14,7 +14,6 @@
 package megamek.common.weapons;
 
 import megamek.common.BattleForceElement;
-import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -30,6 +29,7 @@ public class CLFussilade extends ATMWeapon {
 
     public CLFussilade() {
         super();
+        //TODO Game Rules.
         flags = flags.or(WeaponType.F_PROTO_WEAPON);
         rackSize = 3;
         minimumRange = 4;
@@ -44,10 +44,16 @@ public class CLFussilade extends ATMWeapon {
         maxRange = RANGE_MED;
         cost = 100000;
         bv = 11;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(3072);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        rulesRefs = "65,IO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_X)
+            .setClanAdvancement(3072, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_CCY)
+            .setProductionFactions(F_CCY);
     }
 
     @Override

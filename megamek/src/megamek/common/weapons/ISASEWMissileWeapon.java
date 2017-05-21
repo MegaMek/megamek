@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
  * @author Jay Lawson

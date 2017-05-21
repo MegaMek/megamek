@@ -13,7 +13,6 @@ d * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  */
 package megamek.common.weapons.lrms;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.LRMWeapon;
 
 /**

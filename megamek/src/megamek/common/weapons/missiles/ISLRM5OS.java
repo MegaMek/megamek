@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.LRMWeapon;
 
 /**

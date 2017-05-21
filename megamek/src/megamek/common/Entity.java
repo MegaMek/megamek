@@ -70,7 +70,6 @@ import megamek.common.weapons.CLBombTAG;
 import megamek.common.weapons.ISBombTAG;
 import megamek.common.weapons.CLAAAMissileWeapon;
 import megamek.common.weapons.CLLAAMissileWeapon;
-import megamek.common.weapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.ISAAAMissileWeapon;
 import megamek.common.weapons.ISLAAMissileWeapon;
@@ -80,6 +79,7 @@ import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
+import megamek.common.weapons.capitalweapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.ISBombastLaser;
 

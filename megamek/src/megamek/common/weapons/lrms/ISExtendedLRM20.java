@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.lrms;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.ExtendedLRMWeapon;
 
 /**

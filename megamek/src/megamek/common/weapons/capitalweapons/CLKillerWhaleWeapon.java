@@ -22,7 +22,6 @@ import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.CapitalMissileWeapon;
 import megamek.common.weapons.KillerWhaleHandler;
 import megamek.common.weapons.SantaAnnaHandler;
 import megamek.common.weapons.TeleMissileHandler;

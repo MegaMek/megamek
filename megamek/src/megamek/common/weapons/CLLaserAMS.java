@@ -18,7 +18,6 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
 
 /**
  * @author Sebastian Brocks

@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.RLWeapon;
 
 /**
@@ -37,6 +36,7 @@ public class ISRL20 extends RLWeapon {
         addLookupName("ISRocketLauncher20");
         addLookupName("RL 20");
         addLookupName("IS RLauncher-20");
+        addLookupName("CLRocketLauncher20Prototype");
         heat = 5;
         rackSize = 20;
         shortRange = 3;

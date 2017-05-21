@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.defensivepods;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Jason Tighe
  */

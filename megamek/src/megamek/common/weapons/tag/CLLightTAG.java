@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.tag;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Sebastian Brocks
  */

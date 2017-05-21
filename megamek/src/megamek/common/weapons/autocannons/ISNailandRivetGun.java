@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.autocannons;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.NailRivetGunWeapon;
 
 /**
@@ -39,6 +38,7 @@ public class ISNailandRivetGun extends NailRivetGunWeapon {
         addLookupName("ISRivet Gun");
         addLookupName("CLRivet Gun");
         addLookupName("CLNailRivetGun");
+        addLookupName("Nail Gun");
         rulesRefs = "246,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(false)

@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Andrew Hunter
  */

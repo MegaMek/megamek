@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.unofficial;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.RACWeapon;
 
 /**

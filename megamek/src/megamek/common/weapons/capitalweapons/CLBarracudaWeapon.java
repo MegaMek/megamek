@@ -23,7 +23,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BarracudaHandler;
-import megamek.common.weapons.CapitalMissileWeapon;
 import megamek.server.Server;
 
 /**

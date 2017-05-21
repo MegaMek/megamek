@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.flamers;
 
-import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.VehicleFlamerWeapon;
 

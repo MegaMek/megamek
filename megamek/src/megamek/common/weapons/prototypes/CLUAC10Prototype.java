@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.CLPrototypeUACWeapon;
 
 /**

@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author beerockxs
  */

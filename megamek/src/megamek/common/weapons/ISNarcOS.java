@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Sebastian Brocks
  */
@@ -47,9 +45,17 @@ public class ISNarcOS extends NarcWeapon {
         bv = 6;
         cost = 100000;
         rulesRefs = "232, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 2660, 3055, 2795, 3049);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_C });
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+        .setISAdvancement(2665, 26767, 3045, 2795, 3055)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2665, 26767, 3045, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH)
+        .setReintroductionFactions(F_FS,F_LC);
     }
 }

@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.gaussrifles;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Sebastian Brocks
  */

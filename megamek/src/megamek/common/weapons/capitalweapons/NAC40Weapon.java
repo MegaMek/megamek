@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons.capitalweapons;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.NavalACWeapon;
 
 /**

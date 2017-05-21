@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.tag;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Sebastian Brocks This servers both as the Fa-Shih's Light TAG and the
  *         Kage's IS Compact TAG, as the stats are the same.

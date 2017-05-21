@@ -3235,6 +3235,8 @@ public class MiscType extends EquipmentType {
 		misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_BA_STEALTH));
 		misc.addLookupName("IS BA Stealth (Standard)");
 		misc.addLookupName("Clan BA Stealth (Standard)");
+		misc.addLookupName("Clan BA Stealth");
+		misc.addLookupName("IS BA Stealth");
 		misc.tonnage = 0;
 		misc.criticals = 4;
 		misc.spreadable = true;
@@ -3355,6 +3357,7 @@ public class MiscType extends EquipmentType {
 		misc.addLookupName("IS BA Reactive (Blazer)");
 		misc.addLookupName("Clan BA Reactive (Blazer)");
 		misc.addLookupName("IS BA Reactive");
+		misc.addLookupName("Clan BA Reactive");
 		misc.tonnage = 0;
 		misc.criticals = 7;
 		misc.spreadable = true;
@@ -3398,6 +3401,7 @@ public class MiscType extends EquipmentType {
 		misc.addLookupName("IS BA Laser Reflective (Reflec/Glazed)");
 		misc.addLookupName("Clan BA Laser Reflective (Reflec/Glazed)");
 		misc.addLookupName("IS BA Reflective");
+		misc.addLookupName("Clan BA Reflective");
 		misc.tonnage = 0;
 		misc.criticals = 7;
 		misc.spreadable = true;
@@ -7472,6 +7476,7 @@ public class MiscType extends EquipmentType {
 		misc.name = "Heavy-Duty Pile Driver";
 		misc.setInternalName(misc.name);
 		misc.addLookupName("PileDriver");
+		misc.addLookupName("Pile Driver");
 		misc.tonnage = 10;
 		misc.criticals = 8;
 		misc.cost = 100000;
@@ -8861,6 +8866,7 @@ public class MiscType extends EquipmentType {
 		MiscType misc = new MiscType();
 		misc.name = "HarJel Repair Systems (HarJel II)";
 		misc.setInternalName(misc.name);
+		misc.addLookupName("HarJel II Self-Repair System"  );
 		misc.tonnage = 2;
 		misc.criticals = 1;
 		misc.cost = 240000;
@@ -8886,6 +8892,7 @@ public class MiscType extends EquipmentType {
 	public static MiscType createHarJelIII() {
 		MiscType misc = new MiscType();
 		misc.name = "HarJel Repair Systems (HarJel III)";
+		misc.addLookupName("HarJel III Self-Repair System");
 		misc.setInternalName(misc.name);
 		misc.tonnage = 3;
 		misc.criticals = 2;

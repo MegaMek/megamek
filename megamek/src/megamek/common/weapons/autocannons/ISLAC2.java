@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons.autocannons;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.LACWeapon;
 
 public class ISLAC2 extends LACWeapon {

@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.lasers;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Jason Tighe
  */

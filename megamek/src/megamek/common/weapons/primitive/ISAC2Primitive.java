@@ -16,7 +16,6 @@ package megamek.common.weapons.primitive;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;

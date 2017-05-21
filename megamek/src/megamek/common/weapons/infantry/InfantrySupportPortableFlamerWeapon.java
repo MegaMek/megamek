@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.infantry;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Sebastian Brocks
  */

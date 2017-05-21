@@ -16,7 +16,6 @@
  */
 package megamek.common.weapons.unofficial;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.LACWeapon;
 
 public class ISLAC20 extends LACWeapon {

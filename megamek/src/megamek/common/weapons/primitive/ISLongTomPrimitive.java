@@ -18,7 +18,6 @@
 package megamek.common.weapons.primitive;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.ArtilleryWeapon;
 
 /**

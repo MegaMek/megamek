@@ -18,7 +18,6 @@
 package megamek.common.weapons.gaussrifles;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**

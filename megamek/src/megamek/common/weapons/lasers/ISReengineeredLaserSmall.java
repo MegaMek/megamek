@@ -14,7 +14,6 @@
  */
 package megamek.common.weapons.lasers;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.ReengineeredLaserWeapon;
 
 public class ISReengineeredLaserSmall extends ReengineeredLaserWeapon {

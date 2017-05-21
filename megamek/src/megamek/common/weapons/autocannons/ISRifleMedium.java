@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.autocannons;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.RifleWeapon;
 
 /**

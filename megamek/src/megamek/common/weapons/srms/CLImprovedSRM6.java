@@ -14,7 +14,6 @@
 package megamek.common.weapons.srms;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.SRMWeapon;
 
 /**

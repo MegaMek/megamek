@@ -17,7 +17,6 @@
 package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
 
 /**
  * @author Andrew Hunter

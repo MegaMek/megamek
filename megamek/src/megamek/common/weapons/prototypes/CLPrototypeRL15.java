@@ -54,3 +54,5 @@ public class CLPrototypeRL15 extends PrototypeRLWeapon {
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_X, RATING_X });
     }
 }
+
+//These have been merged with the IS RL's per IO

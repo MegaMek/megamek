@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.lasers;
 
-import megamek.common.TechAdvancement;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.LaserWeapon;

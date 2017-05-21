@@ -385,7 +385,17 @@ public class MechSearchFilter {
             while (eqIter.hasNext())
             {
                 String currEq = eqIter.next();
+                
+/*                if (currEq == null || n == null) {
+                    int tmp = 5;
+                    
+                }  */ //Leaving this in to help me test stuff. Will Remove at end of IO project.       
+                
+                
                 int currQty = qtyIter.next();
+                
+      
+                
                 if (currEq.equals(n.name) && currQty >= n.qty)
                     return true;
             }

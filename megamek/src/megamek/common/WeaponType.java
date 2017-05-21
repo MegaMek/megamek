@@ -252,6 +252,15 @@ import megamek.common.weapons.missiles.ISThunderBolt10;
 import megamek.common.weapons.missiles.ISThunderBolt15;
 import megamek.common.weapons.missiles.ISThunderBolt20;
 import megamek.common.weapons.missiles.ISThunderBolt5;
+import megamek.common.weapons.mortars.CLMekMortar1;
+import megamek.common.weapons.mortars.CLMekMortar2;
+import megamek.common.weapons.mortars.CLMekMortar4;
+import megamek.common.weapons.mortars.CLMekMortar8;
+import megamek.common.weapons.mortars.ISMekMortar1;
+import megamek.common.weapons.mortars.ISMekMortar2;
+import megamek.common.weapons.mortars.ISMekMortar4;
+import megamek.common.weapons.mortars.ISMekMortar8;
+import megamek.common.weapons.mortars.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.primitive.ISAC10Primitive;
 import megamek.common.weapons.primitive.ISAC20Primitive;
 import megamek.common.weapons.primitive.ISAC2Primitive;
@@ -1474,7 +1483,7 @@ public class WeaponType extends EquipmentType {
 
         // VGLs
         EquipmentType.addType(new ISVehicularGrenadeLauncher());
-        EquipmentType.addType(new CLVehicularGrenadeLauncher());
+//        EquipmentType.addType(new CLVehicularGrenadeLauncher());
         EquipmentType.addType(new ISC3RemoteSensorLauncher());
 
         //IO Weapons

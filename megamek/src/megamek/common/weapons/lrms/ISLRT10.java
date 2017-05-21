@@ -11,9 +11,9 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.lrms;
 
-import megamek.common.TechAdvancement;
+import megamek.common.weapons.LRTWeapon;
 
 /**
  * @author Sebastian Brocks
@@ -48,10 +48,15 @@ public class ISLRT10 extends LRTWeapon {
         this.criticals = 2;
         this.bv = 90;
         this.cost = 100000;
-        rulesRefs = "229, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2370, 2380, 2400);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        rulesRefs = "230, TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+        .setISAdvancement(2370, 2380, 2400, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
     }
 }

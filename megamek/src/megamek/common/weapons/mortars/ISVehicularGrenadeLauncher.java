@@ -15,9 +15,7 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
-
-import megamek.common.TechAdvancement;
+package megamek.common.weapons.mortars;
 
 /**
  * @author Sebastian Brocks
@@ -36,9 +34,8 @@ public class ISVehicularGrenadeLauncher extends VehicularGrenadeLauncherWeapon {
         super();
         name = "Vehicular Grenade Launcher";
         setInternalName("ISVehicularGrenadeLauncher");
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 1950, 3080);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_D, RATING_E, RATING_F, RATING_X });
+        addLookupName("CLVehicularGrenadeLauncher");
+        addLookupName("ISVehicularGrenadeLauncher");
+
     }
 }

@@ -5440,7 +5440,7 @@ public class MiscType extends EquipmentType {
 
 		misc.name = "C3 Emergency Master (C3EM)";
 		misc.setInternalName("ISC3EmergencyMaster");
-		misc.setInternalName("Emergency C3 Master");
+		misc.addLookupName("Emergency C3 Master");
 		misc.tonnage = 2;
 		misc.criticals = 2;
 		misc.cost = 2800000;
@@ -5639,7 +5639,7 @@ public class MiscType extends EquipmentType {
 		MiscType misc = new MiscType();
 		misc.name = "Cockpit Command Console";
 		misc.setInternalName("ISTankCockpitCommandConsole");
-		misc.setInternalName("CLTankCockpitCommandConsole");
+		misc.addLookupName("CLTankCockpitCommandConsole");
 		misc.tonnage = 3;
 		misc.cost = 500000;
 		misc.flags = misc.flags.or(F_COMMAND_CONSOLE).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
@@ -6480,7 +6480,7 @@ public class MiscType extends EquipmentType {
 		MiscType misc = new MiscType();
 		misc.name = "Recon Camera";
 		misc.setInternalName("ISReconCamera");
-		misc.setInternalName("CLReconCamera");
+		misc.addLookupName("CLReconCamera");
 		misc.tonnage = 0.5;
 		misc.criticals = 1;
 		misc.cost = 10000;
@@ -8003,7 +8003,7 @@ public class MiscType extends EquipmentType {
 		misc.cost = 100000;
 		misc.name = "Naval Tug Adaptor";
 		misc.setInternalName("ISNavalTugAdaptor");
-		misc.setInternalName("CLNavalTugAdaptor");
+		misc.addLookupName("CLNavalTugAdaptor");
 		misc.flags = misc.flags.andNot(F_AERO_EQUIPMENT).or(F_NAVAL_TUG_ADAPTOR);
 		misc.rulesRefs = "332,TO";
 		misc.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -8080,7 +8080,7 @@ public class MiscType extends EquipmentType {
 		MiscType misc = new MiscType();
 		misc.name = "Laser Insulator";
 		misc.setInternalName("ISLaserInsulator");
-		misc.setInternalName("CLLaserInsulator");
+		misc.addLookupName("CLLaserInsulator");
 		misc.tonnage = 0.5;
 		misc.criticals = 1;
 		misc.cost = 3500;
@@ -8147,11 +8147,12 @@ public class MiscType extends EquipmentType {
 
 	public static MiscType createBoobyTrap() {
 		MiscType misc = new MiscType();
+
+		misc.name = "Booby Trap";
+		misc.setInternalName("ISBoobyTrap");
 		misc.tonnage = TONNAGE_VARIABLE;
 		misc.cost = 100000;
 		misc.criticals = 1;
-		misc.name = "Booby Trap";
-		misc.setInternalName("ISBoobyTrap");
 		misc.flags = misc.flags.or(F_BOOBY_TRAP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT)
 		        .or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.rulesRefs = "297,TO";
@@ -8921,7 +8922,7 @@ public class MiscType extends EquipmentType {
 		MiscType misc = new MiscType();
 		misc.name = "Mobile Field Base";
 		misc.setInternalName("ISMobileFieldBase");
-		misc.setInternalName("CLMobileFieldBase");
+		misc.addLookupName("CLMobileFieldBase");
 		misc.tonnage = 20;
 		misc.cost = 150000;
 		misc.flags = misc.flags.or(F_MOBILE_FIELD_BASE).or(F_TANK_EQUIPMENT);

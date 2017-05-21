@@ -11,9 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons;
-
-import megamek.common.TechAdvancement;
+package megamek.common.weapons.mortars;
 
 /**
  * @author Jason Tighe
@@ -46,11 +44,15 @@ public class CLMekMortar1 extends MekMortarWeapon {
         criticals = 1;
         tonnage = 1;
         cost = 7000;
-        rulesRefs = "263, TM";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2830, 2840, DATE_NONE);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_F, RATING_E });
+        rulesRefs = "324,TO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_D, RATING_F, RATING_E, RATING_E)
+        .setClanAdvancement(2835, 2840, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CBR)
+        .setProductionFactions(F_CBR);
     }
 }

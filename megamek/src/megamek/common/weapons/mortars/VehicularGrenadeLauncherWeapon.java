@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+   * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -15,12 +15,15 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.mortars;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.VGLWeaponHandler;
 import megamek.server.Server;
 
 /**
@@ -35,6 +38,7 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
      */
     public VehicularGrenadeLauncherWeapon() {
         super();
+      
         heat = 1;
         damage = 0;
         ammoType = AmmoType.T_VGL;
@@ -51,6 +55,16 @@ public abstract class VehicularGrenadeLauncherWeapon extends AmmoWeapon {
         explosive = false;
         bv = 15;
         cost = 10000;
+        rulesRefs = "315,TO";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_D, RATING_E, RATING_F, RATING_E)
+            .setISAdvancement(DATE_PS, DATE_ES, 3078, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setClanAdvancement(DATE_PS, DATE_ES, 3078, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false);
     }
 
     /*

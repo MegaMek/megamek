@@ -11,9 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons;
-
-import megamek.common.TechAdvancement;
+package megamek.common.weapons.mortars;
 
 /**
  * @author Jason Tighe
@@ -46,10 +44,18 @@ public class ISMekMortar1 extends MekMortarWeapon {
         criticals = 1;
         tonnage = 2;
         cost = 7000;
-        rulesRefs = "263, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2521, 2531, 3052, 2819, 3043);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_D, RATING_F, RATING_F, RATING_E });
+        rulesRefs = "324,TO";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_D, RATING_F, RATING_F, RATING_E)
+            .setISAdvancement(2526, 2531, 3052, 2819, 3043)
+            .setISApproximate(true, false, false,false, false)
+            .setClanAdvancement(2526, 2531, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_FS,F_LC);
     }
 }

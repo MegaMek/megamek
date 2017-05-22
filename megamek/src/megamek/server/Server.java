@@ -20818,11 +20818,13 @@ public class Server implements Runnable {
                     && ((e instanceof Mech) || (e instanceof Protomech)
                             || (e instanceof MechWarrior) || ((e instanceof Aero) && !(e instanceof Jumpship)))) {
                 for (int pos = 0; pos < e.getCrew().getSlotCount(); pos++) {
+                    if (e.getCrew().isMissing(pos)) {
+                        continue;
+                    }
                     if (e.getCrew().isUnconscious(pos) && !e.getCrew().isKoThisRound(pos)) {
                         int roll = Compute.d6(2);
 
-                        if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
-                )) {
+                        if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE)) {
                             roll = Math.min(12, roll + 1);
                         }
 
@@ -24992,7 +24994,7 @@ public class Server implements Runnable {
                         int crewSlot = ((Mech)en).getCrewForCockpitSlot(cs);
                         if (crewSlot >= 0) {
                             for (int i = 0; i < en.getCrew().getSlotCount(); i++) {
-                                if (i != crewSlot && !en.getCrew().isDead(i)) {
+                                if (i != crewSlot && !en.getCrew().isDead(i) && !en.getCrew().isMissing(i)) {
                                     allDead = false;
                                 }
                             }
@@ -25004,8 +25006,8 @@ public class Server implements Runnable {
                                 en.getCrew().setDoomed(true);
                                 Report.addNewline(vDesc);
                                 vDesc.addAll(destroyEntity(en, "pilot death", true));
-                            }                            
-                        } else {
+                            }
+                        } else if (!en.getCrew().isMissing(crewSlot)){
                             en.getCrew().setDead(true, crewSlot);
                             r = new Report(6027);
                             r.subject = en.getId();
@@ -27390,6 +27392,9 @@ public class Server implements Runnable {
                     modifiers.remove(0);
                 }
                 for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
+                    if (entity.getCrew().isMissing(pos)) {
+                        continue;
+                    }
                     PilotingRollData prd;
                     if (entity.getCrew().isDead(pos)) {
                         continue;
@@ -32345,6 +32350,9 @@ public class Server implements Runnable {
             r.indent();
             vDesc.addElement(r);
             for (int crewPos = 0; crewPos < entity.getCrew().getSlotCount(); crewPos++) {
+                if (entity.getCrew().isMissing(crewPos)) {
+                    continue;
+                }
                 rollTarget = getEjectModifiers(game, entity, crewPos,
                         autoEject);
                 // roll
@@ -32727,7 +32735,7 @@ public class Server implements Runnable {
 
             // create the MechWarrior in any case, for campaign tracking
             MechWarrior pilot = new MechWarrior(entity);
-            pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious(), 0);
+            pilot.getCrew().setUnconscious(entity.getCrew().isUnconscious());
             pilot.setDeployed(true);
             pilot.setId(getFreeEntityId());
             game.addEntity(pilot);

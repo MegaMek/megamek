@@ -431,6 +431,10 @@ public class Crew implements Serializable {
     public boolean isUnconscious(int pos) {
         return unconscious[pos];
     }
+    
+    public void setUnconscious(boolean unconscious) {
+        Arrays.fill(this.unconscious, unconscious);
+    }
 
     public void setUnconscious(boolean unconscious, int pos) {
         this.unconscious[pos] = unconscious;
@@ -458,9 +462,7 @@ public class Crew implements Serializable {
     
     public void setDead(boolean dead) {
         if (!ejected) {
-            for (int i = 0; i < getSlotCount(); i++) {
-                setDead(dead, i);
-            }
+            Arrays.fill(this.dead, dead);
         }
     }
 
@@ -490,6 +492,7 @@ public class Crew implements Serializable {
      */
     public void setMissing(boolean missing, int pos) {
         this.missing[pos] = missing;
+        activeStatusChanged();
     }
 
     /**
@@ -556,9 +559,7 @@ public class Crew implements Serializable {
      * @param koThisRound Whether the crew will go unconscious during this round.
      */
     public void setKoThisRound(boolean koThisRound) {
-        for (int i = 0; i < getSlotCount(); i++) {
-            this.koThisRound[i] = koThisRound;
-        }
+        Arrays.fill(this.koThisRound, koThisRound);
     }
 
     public void setKoThisRound(boolean koThisRound, int pos) {
@@ -994,6 +995,9 @@ public class Crew implements Serializable {
      * @return A description of the status of a single crew member
      */
     public String getStatusDesc(int pos) {
+        if (isMissing(pos)) {
+            return "Missing";
+        }
         String s = new String("");
         if (getHits(pos) > 0) {
             s += hits + " hits";

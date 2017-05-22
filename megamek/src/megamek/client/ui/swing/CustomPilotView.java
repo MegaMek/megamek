@@ -12,7 +12,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.client.bot.ui.swing;
+package megamek.client.ui.swing;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -31,8 +31,6 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.client.ui.swing.PortraitChoiceDialog;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;

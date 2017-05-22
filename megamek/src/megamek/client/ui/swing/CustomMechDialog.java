@@ -48,7 +48,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.Client;
-import megamek.client.bot.ui.swing.CustomPilotView;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.Aero;

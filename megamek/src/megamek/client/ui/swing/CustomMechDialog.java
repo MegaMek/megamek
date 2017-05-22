@@ -31,6 +31,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -277,7 +278,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         JPanel panCrew = new JPanel(new GridBagLayout());
         panCrewMember = new CustomPilotView[entity.getCrew().getSlotCount()];
         for (int i = 0; i < panCrewMember.length; i++) {
-            panCrewMember[i] = new CustomPilotView(clientgui, entity, i, editable);
+            panCrewMember[i] = new CustomPilotView(this, entity, i, editable);
         }
         panDeploy = new JPanel(new GridBagLayout());
         quirks = entity.getQuirks();
@@ -834,13 +835,22 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             butOffBoardDistance.setText(Integer.toString(distance));
             return;
         }
-
+        
+        if (actionEvent.getSource().equals(butCancel)) {
+            setVisible(false);
+            return;
+        }
+        
         if (actionEvent.getSource().equals(chHidden)) {
             return;
         }
-
-        if (actionEvent.getSource().equals(butCancel)) {
-            setVisible(false);
+        
+        if (actionEvent.getActionCommand().equals("missing")) {
+            //If we're down to a single crew member, do not allow any more to be removed.
+            final long remaining = Arrays.stream(panCrewMember).filter(p -> !p.getMissing()).count();
+            for (CustomPilotView v : panCrewMember) {
+                v.enableMissing(remaining > 1 || v.getMissing());
+            }
             return;
         }
 
@@ -916,6 +926,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (int i = 0; i < entities.get(0).getCrew().getSlotCount(); i++) {
                 String name = panCrewMember[i].getPilotName();
                 String nick = panCrewMember[i].getNickname();
+                boolean missing = panCrewMember[i].getMissing();
                 int gunnery;
                 int gunneryL;
                 int gunneryM;
@@ -969,6 +980,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 } else {
                     entity.getCrew().setArtillery(entity.getCrew().getGunnery(i), i);
                 }
+                entity.getCrew().setMissing(missing, i);
                 entity.getCrew().setToughness(tough, i);
                 entity.getCrew().setName(name, i);
                 entity.getCrew().setNickname(nick, i);
@@ -1208,4 +1220,5 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         m_equip = new EquipChoicePanel(entity, clientgui, client);
         panEquip.add(m_equip, GBC.std());
     }
+    
 }

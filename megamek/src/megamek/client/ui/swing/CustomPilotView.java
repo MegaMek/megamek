@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -56,6 +57,7 @@ public class CustomPilotView extends JPanel {
 
     private final Entity entity;
 
+    private final JCheckBox chkMissing = new JCheckBox(Messages.getString("CustomMechDialog.chkMissing"));
     private final JTextField fldName = new JTextField(20);
     private final PortraitChoiceDialog portraitDialog;
     private final JTextField fldNick = new JTextField(20);
@@ -65,19 +67,26 @@ public class CustomPilotView extends JPanel {
     private final JTextField fldGunneryB = new JTextField(3);
     private final JTextField fldPiloting = new JTextField(3);
     private final JTextField fldArtillery = new JTextField(3);
-    private JTextField fldTough = new JTextField(3);
+    private final JTextField fldTough = new JTextField(3);
     
-    private JComboBox<String> cbBackup = new JComboBox<String>();
+    private final JComboBox<String> cbBackup = new JComboBox<String>();
     
-    private ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
-    private JComboBox<String> choUnitNum = new JComboBox<String>();
+    private final ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
+    private final JComboBox<String> choUnitNum = new JComboBox<String>();
 
-    public CustomPilotView(ClientGUI clientgui, Entity entity, int slot, boolean editable) {
+    public CustomPilotView(CustomMechDialog parent, Entity entity, int slot, boolean editable) {
         this.entity = entity;
-        
         setLayout(new GridBagLayout());
-
         JLabel label;
+        
+        if (entity.getCrew().getSlotCount() > 1) {
+            chkMissing.setActionCommand("missing");
+            chkMissing.addActionListener(parent);
+            chkMissing.addActionListener(e -> missingToggled());
+            chkMissing.setSelected(entity.getCrew().isMissing(slot));
+            add(chkMissing, GBC.eop());
+        }
+        
         JButton button = new JButton();
         button.setPreferredSize(new Dimension(72, 72));
         button.setText(Messages.getString("CustomMechDialog.labPortrait"));
@@ -88,18 +97,18 @@ public class CustomPilotView extends JPanel {
             }
         });
         
-        portraitDialog = new PortraitChoiceDialog(clientgui.getFrame(),
+        portraitDialog = new PortraitChoiceDialog(parent.clientgui.getFrame(),
                 button);
         portraitDialog.setPilot(entity.getCrew(), slot);
         add(button, GBC.std().gridheight(2));
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomName")); //$NON-NLS-1$
-        button.addActionListener(e -> fldName.setText(clientgui.getClient().getRandomNameGenerator().generate()));
+        button.addActionListener(e -> fldName.setText(parent.clientgui.getClient().getRandomNameGenerator().generate()));
         add(button, GBC.eop());
 
         button = new JButton(Messages.getString("CustomMechDialog.RandomSkill")); //$NON-NLS-1$
         button.addActionListener(e -> {
-            int[] skills = clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
+            int[] skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
             fldGunnery.setText(Integer.toString(skills[0]));
             fldPiloting.setText(Integer.toString(skills[1]));
         });
@@ -115,7 +124,7 @@ public class CustomPilotView extends JPanel {
         add(fldNick, GBC.eop());
         fldNick.setText(entity.getCrew().getNickname(slot));
 
-        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+        if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
 
             label = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
@@ -151,14 +160,14 @@ public class CustomPilotView extends JPanel {
         add(fldPiloting, GBC.eop());
         fldPiloting.setText(Integer.toString(entity.getCrew().getPiloting(slot)));
 
-        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
+        if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labArtillery"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldArtillery, GBC.eop());
         }
         fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery(slot)));
 
-        if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
+        if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labTough"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldTough, GBC.eop());
@@ -200,7 +209,7 @@ public class CustomPilotView extends JPanel {
 
             // Get the Protomechs of this entity's player
             // that *aren't* in the entity's unit.
-            Iterator<Entity> otherUnitEntities = clientgui.getClient().getGame()
+            Iterator<Entity> otherUnitEntities = parent.clientgui.getClient().getGame()
                     .getSelectedEntities(new EntitySelector() {
                         private final int ownerId = entity.getOwnerId();
 
@@ -225,11 +234,11 @@ public class CustomPilotView extends JPanel {
             }
         }
 
-        if (clientgui.getClient().getGame().getOptions()
+        if (parent.clientgui.getClient().getGame().getOptions()
                 .booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES) //$NON-NLS-1$
-                || clientgui.getClient().getGame().getOptions()
+                || parent.clientgui.getClient().getGame().getOptions()
                         .booleanOption(OptionsConstants.EDGE) //$NON-NLS-1$
-                || clientgui.getClient().getGame().getOptions()
+                || parent.clientgui.getClient().getGame().getOptions()
                         .booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { //$NON-NLS-1$
         }
         if (!editable) {
@@ -244,6 +253,7 @@ public class CustomPilotView extends JPanel {
             fldTough.setEnabled(false);
         }
 
+        missingToggled();
     }
     
     /**
@@ -278,6 +288,10 @@ public class CustomPilotView extends JPanel {
             choUnitNum.addItem(callsign.toString());
         }
         choUnitNum.setSelectedIndex(0);
+    }
+    
+    public boolean getMissing() {
+        return chkMissing.isSelected();
     }
     
     public String getPilotName() {
@@ -340,5 +354,17 @@ public class CustomPilotView extends JPanel {
             }
         }
         return -1;
+    }
+    
+    private void missingToggled() {
+        for (int i = 0; i < getComponentCount(); i++) {
+            if (!getComponent(i).equals(chkMissing)) {
+                getComponent(i).setEnabled(!chkMissing.isSelected());
+            }
+        }
+    }
+    
+    void enableMissing(boolean enable) {
+        chkMissing.setEnabled(enable);
     }
 }

@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Andrew Hunter
  */
@@ -54,10 +52,15 @@ public class CLERPPC extends PPCWeapon {
         this.medAV = 15;
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2826);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
+        rulesRefs = "233,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+            .setClanAdvancement(2823, 2826, 2828, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CSR)
+            .setProductionFactions(F_CSR);
     }
 }

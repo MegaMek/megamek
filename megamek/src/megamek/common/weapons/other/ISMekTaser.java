@@ -15,7 +15,6 @@ package megamek.common.weapons.other;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -38,7 +37,7 @@ public class ISMekTaser extends AmmoWeapon {
      */
     public ISMekTaser() {
         super();
-        name = "Mech Taser";
+        name = "BattleMech Taser";
         setInternalName("Mek Taser");
         addLookupName("ISMekTaser");
         addLookupName("ISBattleMechTaser");
@@ -59,10 +58,16 @@ public class ISMekTaser extends AmmoWeapon {
         explosive = true;
         flags = flags.or(F_MECH_WEAPON).or(F_BALLISTIC).or(F_DIRECT_FIRE)
                 .or(F_TASER).or(F_TANK_WEAPON);
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 3084, DATE_NONE);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+        rulesRefs = "346,TO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+            .setISAdvancement(3065, 3084, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_FS)
+            .setProductionFactions(F_FS);
     }
 
     /*

@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Andrew Hunter
  */
@@ -51,10 +49,19 @@ public class ISHERPPC extends PPCWeapon {
         this.bv = 229;
         this.cost = 450000;
         //Since this is a SL Era ER PPC variant mentioned in Spartan Fluff
-        //I'm using the ER PPC Rules and limiting it to the SL and Early Clan era.
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2751, 2828);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
+        //This weapons was actually blended into IO's Enhanced PPC and should be considered non-canon
+        //for IS factions
+        rulesRefs = "Unofficial";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(true)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+        .setISAdvancement(2740, 2751, DATE_NONE, 2860, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(2740, 2751, DATE_NONE, 2831, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH);
     }
 }

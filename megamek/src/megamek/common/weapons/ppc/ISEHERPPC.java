@@ -61,3 +61,6 @@ public class ISEHERPPC extends PPCWeapon {
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_X, RATING_X });
     }
 }
+
+//Replaced Per IO
+

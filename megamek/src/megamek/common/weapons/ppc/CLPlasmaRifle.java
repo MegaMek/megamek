@@ -18,7 +18,6 @@
 package megamek.common.weapons.ppc;
 
 import megamek.common.BattleForceElement;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.PlasmaMFUKWeapon;
 
 /**
@@ -58,11 +57,16 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         bv = 400;
         cost = 300000;
         //Gonna use the same tech info as the Cannon
-        
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3069);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "234,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(true)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setClanAdvancement(3068, 3069, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CSF)
+            .setProductionFactions(F_CSF);
     }
 
     @Override

@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.TSEMPWeapon;
 
 
@@ -32,13 +31,16 @@ public class ISTSEMPCannon extends TSEMPWeapon {
         this.addLookupName("ISTSEMP");
         tonnage = 6;
         criticals  = 5;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3085, 3109, DATE_NONE);
-        techAdvancement.setISApproximate(true,false,false);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_X, RATING_E });
-        techAdvancement.setPrototypeFactions(F_RS).setProductionFactions(F_RS);
-        rulesRefs = "91, IO";
+		rulesRefs = "91,IO";
+		techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_X, RATING_E)
+		    .setISAdvancement(3100, 3109, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(true, false, false,false, false)
+		    .setPrototypeFactions(F_RS)
+			.setProductionFactions(F_RS);
     }
 
     /*

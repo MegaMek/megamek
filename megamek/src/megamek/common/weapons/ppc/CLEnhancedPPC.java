@@ -17,12 +17,10 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Harold "BATTLEMASTER" N.
  */
-public class CLWERPPC extends PPCWeapon {
+public class CLEnhancedPPC extends PPCWeapon {
     /**
      * 
      */
@@ -31,12 +29,15 @@ public class CLWERPPC extends PPCWeapon {
     /**
      * 
      */
-    public CLWERPPC() {
+    public CLEnhancedPPC() {
         super();
-        this.name = "Wolverine ER PPC";
+        this.name = "Enhanced PPC";
         this.setInternalName("CLWERPPC");
         this.addLookupName("Wolverine ER PPC");
         this.addLookupName("CLWERPPC");
+        this.addLookupName("Wolverine ER PPC");
+        this.addLookupName("ISEHERPPC");
+        this.addLookupName("IS EH ER PPC");
         this.heat = 17;
         this.damage = 20;
         this.shortRange = 8;
@@ -55,10 +56,16 @@ public class CLWERPPC extends PPCWeapon {
         this.medAV = 20;
         this.longAV = 20;
         this.maxRange = RANGE_LONG;
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_F, RATING_X });
+        rulesRefs = "95,IO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_E, RATING_X, RATING_X)
+            .setClanAdvancement(2822, 2823, DATE_NONE, 2831, 3080)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CWV)
+            .setProductionFactions(F_CWV)
+            .setReintroductionFactions(F_EI);
     }
 }

@@ -20,7 +20,6 @@ package megamek.common.weapons.ppc;
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -60,10 +59,17 @@ public class ISPlasmaRifle extends AmmoWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3068);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "234,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_CC)
+            .setProductionFactions(F_CC);
+
     }
 
     /*

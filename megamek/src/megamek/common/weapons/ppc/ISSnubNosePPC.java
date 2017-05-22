@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Andrew Hunter
  */
@@ -60,10 +58,17 @@ public class ISSnubNosePPC extends PPCWeapon {
         medAV = 8;
         // with a capacitor
         explosive = true;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2784, DATE_NONE, 3067, 2790, 3067);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
+        rulesRefs = "234,TM";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_F, RATING_X, RATING_F, RATING_D)
+            .setISAdvancement(2779, 2784, 3068, 2790, 3067)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_DC,F_FW);
     }
 
     @Override

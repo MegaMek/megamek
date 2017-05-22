@@ -17,8 +17,6 @@
  */
 package megamek.common.weapons.ppc;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Andrew Hunter
  */
@@ -59,12 +57,19 @@ public class ISPPC extends PPCWeapon {
         maxRange = RANGE_MED;
         // with a capacitor
         explosive = true;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setISAdvancement(2435, 2460, 2500);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2500, 2825);
-        techAdvancement.setIntroLevel(true);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+        rulesRefs = "234,TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(true)
+        	.setUnofficial(false)
+            .setTechRating(RATING_D)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setISAdvancement(2440, 2460, 2500, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setClanAdvancement(2440, 2460, 2500, 2825, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH);
+
     }
 
 }

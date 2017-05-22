@@ -18,25 +18,25 @@
 package megamek.common.weapons.ppc;
 
 /**
- * @author Sebastian Brocks
+ * @author Andrew Hunter
  */
-public class ISLightPPC extends PPCWeapon {
+public class CLImprovedPPC extends PPCWeapon {
     /**
      *
      */
-    private static final long serialVersionUID = 1376257996653555538L;
+    private static final long serialVersionUID = 5775665622863346537L;
 
     /**
      *
      */
-    public ISLightPPC() {
+    public CLImprovedPPC() {
         super();
-        name = "Light PPC";
+        name = "Improved PPC";
         setInternalName(name);
-        addLookupName("ISLightPPC");
-        addLookupName("ISLPPC");
-        heat = 5;
-        damage = 5;
+        addLookupName("Improved Particle Cannon");
+        addLookupName("CLIMPPPC");
+        heat = 10;
+        damage = 10;
         minimumRange = 3;
         shortRange = 6;
         mediumRange = 12;
@@ -47,25 +47,27 @@ public class ISLightPPC extends PPCWeapon {
         waterLongRange = 10;
         waterExtremeRange = 14;
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
-        tonnage = 3.0f;
+        tonnage = 6.0f;
         criticals = 2;
-        bv = 88;
-        shortAV = 5;
-        medAV = 5;
+        bv = 176;
+        cost = 200000;
+        shortAV = 10;
+        medAV = 10;
         maxRange = RANGE_MED;
-        cost = 150000;
         // with a capacitor
         explosive = true;
-        rulesRefs = "234,TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-        	.setIntroLevel(false)
+        rulesRefs = "95,IO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(true)
         	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_X)
-            .setISAdvancement(3064, 3067, 3068, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_DC)
-            .setProductionFactions(F_DC,F_FW);
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+            .setClanAdvancement(2819, 2820, DATE_NONE, 2832, 3080)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CSR)
+            .setProductionFactions(F_CSR)
+            .setReintroductionFactions(F_EI);
+
     }
 
 }

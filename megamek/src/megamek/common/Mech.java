@@ -2951,40 +2951,50 @@ public abstract class Mech extends Entity {
             }
         }
     }
+  
+    //From IO pg 50
+    protected static final TechAdvancement TA_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2439, 2443, 2470, 2520).setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH).setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F);
     
     protected static final TechAdvancement TA_STANDARD_MECH = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH).setTechRating(RATING_D)
             .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+    
+    protected static final TechAdvancement TA_PRIMITIVE_INDUSTRIAL = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2300, 2350, 2425, 2520).setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TH).setTechRating(RATING_D)
+            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
+    
+    protected static final TechAdvancement TA_INDUSTRIAL = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH).setTechRating(RATING_C)
+            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+    
+    protected static final TechAdvancement TA_TRIPOD = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(F_FW)
+            .setProductionFactions(F_FW).setTechRating(RATING_D)
+            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E);
+    
     protected static final TechAdvancement TA_SUPERHEAVY = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(3077, 3078).setPrototypeFactions(F_WB)
             .setProductionFactions(F_WB).setTechRating(RATING_D)
             .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F);
+    
+    protected static final TechAdvancement TA_TRIPOD_SUPERHEAVY = new TechAdvancement(TECH_BASE_IS)
+            .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH).setTechRating(RATING_D)
+            .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F);
+    
     protected static final TechAdvancement TA_ULTRALIGHT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2500, 2519, 3075).setPrototypeFactions(F_TH, F_FW)
             .setProductionFactions(F_FW).setApproximate(true, false, true)
             .setTechRating(RATING_D)
             .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E);
-    protected static final TechAdvancement TA_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(2439, 2443, 2470, 2520).setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH).setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F);
-    protected static final TechAdvancement TA_PRIMITIVE_INDUSTRIAL = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(2300, 2350, 2425, 2520).setPrototypeFactions(F_TA)
-            .setProductionFactions(F_TH).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
-    protected static final TechAdvancement TA_INDUSTRIAL = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH).setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
-    protected static final TechAdvancement TA_TRIPOD = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH).setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F);
-    protected static final TechAdvancement TA_TRIPOD_SUPERHEAVY = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(F_FW)
-            .setProductionFactions(F_FW).setTechRating(RATING_D)
-            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E);
+ 
+
     
     @Override
     protected TechAdvancement getConstructionTechAdvancement() {

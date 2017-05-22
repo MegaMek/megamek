@@ -287,10 +287,10 @@ import megamek.common.weapons.other.ISTSEMPCannon;
 import megamek.common.weapons.other.ISTSEMPOneShot;
 import megamek.common.weapons.other.ISTSEMPRepeatingCannon;
 import megamek.common.weapons.ppc.CLERPPC;
+import megamek.common.weapons.ppc.CLImprovedPPC;
 import megamek.common.weapons.ppc.CLPlasmaCannon;
 import megamek.common.weapons.ppc.CLPlasmaRifle;
-import megamek.common.weapons.ppc.CLWERPPC;
-import megamek.common.weapons.ppc.ISEHERPPC;
+import megamek.common.weapons.ppc.CLEnhancedPPC;
 import megamek.common.weapons.ppc.ISERPPC;
 import megamek.common.weapons.ppc.ISHERPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
@@ -1111,7 +1111,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISPPC());
         EquipmentType.addType(new ISPPCPrimitive());
         EquipmentType.addType(new ISERPPC());
-        EquipmentType.addType(new ISEHERPPC());
+//        EquipmentType.addType(new ISEHERPPC());
         EquipmentType.addType(new CLERPPC());
         EquipmentType.addType(new ISSnubNosePPC());
         EquipmentType.addType(new ISLightPPC());
@@ -1545,6 +1545,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLongTomPrimitive());
         EquipmentType.addType(new CLImprovedLaserLarge());
         EquipmentType.addType(new CLImprovedPulseLaserLarge());
+        EquipmentType.addType(new CLImprovedPPC());
       
         // Infantry Attacks
         EquipmentType.addType(new LegAttack());
@@ -1984,7 +1985,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISGAC4());
         EquipmentType.addType(new ISGAC6());
         EquipmentType.addType(new ISGAC8());
-        EquipmentType.addType(new CLWERPPC());
+        EquipmentType.addType(new CLEnhancedPPC());
 
         // Naval weapons
         EquipmentType.addType(new ISNL35Weapon());

@@ -50,7 +50,7 @@ public class ISSRT2 extends SRTWeapon {
         	.setUnofficial(false)
             .setTechRating(RATING_C)
             .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
-            .setISAdvancement(2665, 2676, 3045, 2800, 3030)
+            .setISAdvancement(2665, 2676, 3045, DATE_NONE, DATE_NONE)
             .setISApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_TH)
             .setProductionFactions(F_TH)

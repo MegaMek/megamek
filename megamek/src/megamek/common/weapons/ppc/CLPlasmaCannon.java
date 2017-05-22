@@ -20,7 +20,6 @@ package megamek.common.weapons.ppc;
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoWeapon;
@@ -60,11 +59,16 @@ public class CLPlasmaCannon extends AmmoWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3069);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
+        rulesRefs = "234,TM";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setClanAdvancement(3068, 3069, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CSF)
+            .setProductionFactions(F_CSF);
     }
 
     /*

@@ -1272,7 +1272,7 @@ public class MiscType extends EquipmentType {
 		// EquipmentType.addType(MiscType.createCLAPPod());
 		EquipmentType.addType(MiscType.createSword());
 		EquipmentType.addType(MiscType.createISPPCCapacitor());
-		EquipmentType.addType(MiscType.createCLPPCCapacitor());
+//		EquipmentType.addType(MiscType.createCLPPCCapacitor());
 		EquipmentType.addType(MiscType.createRetractableBlade());
 		EquipmentType.addType(MiscType.createChainWhip());
 		EquipmentType.addType(MiscType.createISApolloFCS());
@@ -1374,7 +1374,7 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createISCASEII());
 		EquipmentType.addType(MiscType.createCLCASEII());
 		EquipmentType.addType(MiscType.createISAES());
-		EquipmentType.addType(MiscType.createCLAES());
+//		EquipmentType.addType(MiscType.createCLAES());
 		EquipmentType.addType(MiscType.createISModularArmor());
 		// EquipmentType.addType(MiscType.createCLModularArmor());
 		EquipmentType.addType(MiscType.createCommsGear1());
@@ -1452,21 +1452,21 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createISCollapsibleCommandModule());
 		EquipmentType.addType(MiscType.createHitch());
 		EquipmentType.addType(MiscType.createISFlotationHull());
-		EquipmentType.addType(MiscType.createCLFlotationHull());
+//		EquipmentType.addType(MiscType.createCLFlotationHull());
 		EquipmentType.addType(MiscType.createISLimitedAmphibiousChassis());
 		EquipmentType.addType(MiscType.createISFullyAmphibiousChassis());
-		EquipmentType.addType(MiscType.createCLLimitedAmphibiousChassis());
-		EquipmentType.addType(MiscType.createCLFullyAmphibiousChassis());
+//		EquipmentType.addType(MiscType.createCLLimitedAmphibiousChassis());
+//		EquipmentType.addType(MiscType.createCLFullyAmphibiousChassis());
 		EquipmentType.addType(MiscType.createISShoulderTurret());
-		EquipmentType.addType(MiscType.createCLShoulderTurret());
+//		EquipmentType.addType(MiscType.createCLShoulderTurret());
 		EquipmentType.addType(MiscType.createISHeadTurret());
-		EquipmentType.addType(MiscType.createCLHeadTurret());
+//		EquipmentType.addType(MiscType.createCLHeadTurret());
 		EquipmentType.addType(MiscType.createISQuadTurret());
-		EquipmentType.addType(MiscType.createCLQuadTurret());
+//		EquipmentType.addType(MiscType.createCLQuadTurret());
 		// EquipmentType.addType(MiscType.createCLTankCommandConsole());
 		EquipmentType.addType(MiscType.createISTankCommandConsole());
 		EquipmentType.addType(MiscType.createISSponsonTurret());
-		EquipmentType.addType(MiscType.createCLSponsonTurret());
+//		EquipmentType.addType(MiscType.createCLSponsonTurret());
 		EquipmentType.addType(MiscType.createPintleTurret());
 		EquipmentType.addType(MiscType.createISArmoredMotiveSystem());
 		EquipmentType.addType(MiscType.createCLArmoredMotiveSystem());
@@ -1600,12 +1600,12 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createBicycleModification());
 		EquipmentType.addType(MiscType.createConvertibleModification());
 		EquipmentType.addType(MiscType.createISDuneBuggyChassis());
-		EquipmentType.addType(MiscType.createCLDuneBuggyChassis());
+//		EquipmentType.addType(MiscType.createCLDuneBuggyChassis());
 		EquipmentType.addType(MiscType.createEnvironmentalSealedChassis());
 		EquipmentType.addType(MiscType.createHydroFoilChassisModification());
 		EquipmentType.addType(MiscType.createMonocycleModification());
 		EquipmentType.addType(MiscType.createISOffRoadChassis());
-		EquipmentType.addType(MiscType.createCLOffRoadChassis());
+//		EquipmentType.addType(MiscType.createCLOffRoadChassis());
 		EquipmentType.addType(MiscType.createPropChassisModification());
 		EquipmentType.addType(MiscType.createSnomobileChassis());
 		EquipmentType.addType(MiscType.createSTOLChassisMod());
@@ -1640,7 +1640,7 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createMaritimeLifeboat());
 		EquipmentType.addType(MiscType.createMaritimeEscapePod());
 		EquipmentType.addType(MiscType.createAtmossphericLifeboat());
-		EquipmentType.addType(MiscType.createMaritimeLifeboat());
+//		EquipmentType.addType(MiscType.createMaritimeLifeboat());
 
 		EquipmentType.addType(MiscType.createAntiPenetrativeAblation());
 		EquipmentType.addType(MiscType.createISHeatDissipating());
@@ -2304,8 +2304,7 @@ public class MiscType extends EquipmentType {
 	// TODO - Need to Develop Primitive Aerospace Fighter Armor see IO pg 35
 
 	// TODO - At some point the "Standard" below needs to be broken out as they
-	// all have
-	// Seperate Tech Advancement information.
+	// all have Seperate Tech Advancement information.
 
 	public static MiscType createStandard() {
 		// This is not really a single piece of equipment, it is used to
@@ -9634,23 +9633,967 @@ public class MiscType extends EquipmentType {
 		return misc;
 	}
 
+//PPC Stuff - All in weapons PPC except Capacitor.	
 
+	public static MiscType createISPPCCapacitor() {
+		MiscType misc = new MiscType();
+
+		misc.name = "PPC Capacitor";
+		misc.setInternalName(misc.name);
+		misc.addLookupName("ISPPCCapacitor");
+		misc.addLookupName("LPPC Capacitor");
+		misc.addLookupName("ISLightPPCCapacitor");
+		misc.addLookupName("SNPPC Capacitor");
+		misc.addLookupName("ISSNPPCCapacitor");
+		misc.addLookupName("ERPPC Capacitor");
+		misc.addLookupName("ISERPPCCapacitor");
+		misc.addLookupName("HPPC Capacitor");
+		misc.addLookupName("ISHeavyPPCCapacitor");
+		misc.addLookupName("CLPPCCapacitor");
+		misc.tonnage = 1.0;
+		misc.criticals = 1;
+		misc.tankslots = 0;
+		misc.cost = 150000;
+		misc.setModes(new String[] { "Off", "Charge" });
+		misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
+		        .or(F_AERO_EQUIPMENT);
+		misc.setInstantModeSwitch(false);
+		misc.explosive = true;
+		// misc.bv = 88;
+		misc.bv = 0;
+		misc.rulesRefs = "227,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+		    .setISAdvancement(3060, 3081, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(DATE_NONE, 3101, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_DC)
+		    .setProductionFactions(F_DC);
+		return misc;
+	}
+
+/*	public static MiscType createCLPPCCapacitor() {
+		MiscType misc = new MiscType();
+
+		misc.name = "PPC Capacitor";
+		misc.setInternalName("CLPPCCapacitor");
+		misc.tonnage = 1.0;
+		misc.criticals = 1;
+		misc.tankslots = 0;
+		misc.cost = 150000;
+		misc.setModes(new String[] { "Off", "Charge" });
+		misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
+		        .or(F_AERO_EQUIPMENT);
+		misc.setInstantModeSwitch(false);
+		misc.explosive = true;
+		misc.bv = 0;
+		misc.rulesRefs = "227,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+		    .setISAdvancement(3060, 3081, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(DATE_NONE, 3101, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_DC)
+		    .setProductionFactions(F_DC);
+		return misc;
+	}*/
+	
+//Structural Components (Mech)
+	//Standard - See note above the Armor Standard (search for createStandard)
 	
 
+	public static MiscType createISEndoSteel() {
+		MiscType misc = new MiscType();
 
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, false));
+		misc.addLookupName("IS EndoSteel");
+		misc.addLookupName("IS Endo-Steel");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = CRITICALS_VARIABLE;
+		misc.hittable = false;
+		misc.spreadable = true;
+		misc.flags = misc.flags.or(F_ENDO_STEEL);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "224,TM";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+		    .setISAdvancement(2480, 2487, 3040, 2850, 3035)
+		    .setISApproximate(true, false, false,false, false)
+		    .setPrototypeFactions(F_TH)
+		    .setProductionFactions(F_TH)
+		    .setReintroductionFactions(F_DC);		
+		return misc;
+	}
+	
+	public static MiscType createISEndoSteelPrototype() {
+		MiscType misc = new MiscType();
 
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE, false));
+		misc.addLookupName("IS Endo Steel Prototype");
+		misc.addLookupName("IS Endo-Steel Prototype");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 16;
+		misc.hittable = false;
+		misc.spreadable = true;
+		misc.flags = misc.flags.or(F_ENDO_STEEL_PROTO);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "224,TM";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+		    .setISAdvancement(2480, DATE_NONE, DATE_NONE, 2480, DATE_NONE)
+		    .setISApproximate(true, false, false,true, false)
+		    .setPrototypeFactions(F_TH);
+		return misc;
+	}
+	
+	public static MiscType createCLEndoSteel() {
+		MiscType misc = new MiscType();
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, true));
+		misc.addLookupName("Clan Endo-Steel");
+		misc.addLookupName("Clan EndoSteel");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 7;
+		misc.hittable = false;
+		misc.spreadable = true;
+		misc.flags = misc.flags.or(F_ENDO_STEEL);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "224,TM";
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_F)
+		    .setAvailability(RATING_X, RATING_E, RATING_D, RATING_D)
+		    .setClanAdvancement(2825, 2827, 2830, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(true, false, false,false, false)
+		    .setPrototypeFactions(F_CIH)
+		    .setProductionFactions(F_CIH);
+		return misc;
+	}
 	
 
+	public static MiscType createISCompositeStructure() {
+		MiscType misc = new MiscType();
 
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE, false));
+		misc.addLookupName("Composite");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.hittable = false;
+		misc.bv = 0;
+		misc.flags = misc.flags.or(F_COMPOSITE);
+		misc.omniFixedOnly = true;
+		misc.rulesRefs = "342,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+		    .setISAdvancement(3061, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_FS)
+		    .setProductionFactions(F_FS);
+		return misc;
+	}
+
+	public static MiscType createISEndoComposite() {
+		MiscType misc = new MiscType();
+
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE, false));
+		misc.addLookupName("IS Endo-Composite");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = CRITICALS_VARIABLE;
+		misc.hittable = false;
+		misc.spreadable = true;
+		misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "342,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+		    .setISAdvancement(3067, 3085, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, true, false,false, false)
+		    .setPrototypeFactions(F_LC)
+		    .setProductionFactions(F_LC);
+		return misc;
+	}
+
+
+	public static MiscType createCLEndoComposite() {
+		MiscType misc = new MiscType();
+
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE, true));
+		misc.addLookupName("Clan Endo-Composite");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 4;
+		misc.hittable = false;
+		misc.spreadable = true;
+		misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "342,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+		    .setClanAdvancement(3073, 3085, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, true, false,false, false)
+		    .setPrototypeFactions(F_CWX)
+		    .setProductionFactions(F_CWX);
+		return misc;
+	}
+
+	public static MiscType createISReinforcedStructure() {
+		MiscType misc = new MiscType();
+
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED, false));
+		misc.addLookupName("IS Reinforced");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.hittable = false;
+		misc.spreadable = true;
+		misc.bv = 0;
+		misc.flags = misc.flags.or(F_REINFORCED);
+		misc.omniFixedOnly = true;
+		misc.rulesRefs = "342,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+		    .setISAdvancement(3057, 3084, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, true, false,false, false)
+		    .setPrototypeFactions(F_CS)
+		    .setProductionFactions(F_CGB);
+		return misc;
+	}
+
+	public static MiscType createCLReinforcedStructure() {
+		MiscType misc = new MiscType();
+
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED, true));
+		misc.addLookupName("Clan Reinforced");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.hittable = false;
+		misc.spreadable = true;
+		misc.bv = 0;
+		misc.flags = misc.flags.or(F_REINFORCED);
+		misc.omniFixedOnly = true;
+		misc.rulesRefs = "342,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+		    .setISAdvancement(3065, 3084, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, true, false,false, false)
+		    .setPrototypeFactions(F_CGB)
+		    .setProductionFactions(F_CGB);
+		return misc;
+	}
+
+	public static MiscType createISIndustrialStructure() {
+		MiscType misc = new MiscType();
+
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL, false));
+		misc.addLookupName("IS Industrial Structure");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.bv = 0;
+		misc.industrial = true;
+		misc.flags = misc.flags.or(F_INDUSTRIAL_STRUCTURE);
+		misc.rulesRefs = "224,TM";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_C)
+		    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+		    .setISAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_TA)
+		    .setProductionFactions(F_TH);
+		return misc;
+	}
+
+	public static MiscType createCLIndustrialStructure() {
+		MiscType misc = new MiscType();
+
+		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL);
+		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL, true));
+		misc.addLookupName("Clan Industrial Structure");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.bv = 0;
+		misc.industrial = true;
+		misc.flags = misc.flags.or(F_INDUSTRIAL_STRUCTURE);
+		misc.rulesRefs = "224,TM";
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_C)
+		    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+		    .setISAdvancement(2300, 2350, 2490, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_TA)
+		    .setProductionFactions(F_TH);
+		return misc;
+	}
 	
-	
-	
+	/*TODO - IndustrialMech Structure w/ Environmental Sealing Per IO pg 48
+	 Looks like we the Enviro-sealing separate from the armor. Their is a TP
+	 difference between the two.
+	*/
 	
 
+	/*
+	 * Alot of the Structures on IO Pg 48 have been captured in Mech.java which
+	 * used Construction progression from IO pg 50. There are date differences
+	 * between the structures and construction dates. To be fully canon
+	 * components would need to be captured as part of the tech progression.
+	 */
+	
+	//Actuators and Actuator Systems IO pg 48
+	
+	public static MiscType createISAES() {
+		MiscType misc = new MiscType();
+		misc.name = "Actuator Enhancement System (AES)";
+		misc.setInternalName("ISAES");
+		misc.addLookupName("IS Actuator Enhancement System");
+		misc.addLookupName("ISActuatorEnhancementSystem");
+		misc.addLookupName("CLAES");
+		misc.addLookupName("CL Actuator Enhancement System");
+		misc.addLookupName("CLActuatorEnhancementSystem");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = CRITICALS_VARIABLE;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_ACTUATOR_ENHANCEMENT_SYSTEM).or(F_MECH_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = BV_VARIABLE;
+		misc.rulesRefs = "279,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+		    .setISAdvancement(3070, 3108, 3109, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(3070, 3108, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_MERC)
+		    .setProductionFactions(F_RD);
+		return misc;
+	}
+
+/*	public static MiscType createCLAES() {
+		MiscType misc = new MiscType();
+		misc.name = "AES";
+		misc.setInternalName("CLAES");
+		misc.addLookupName("CL Actuator Enhancement System");
+		misc.addLookupName("CLActuatorEnhancementSystem");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = CRITICALS_VARIABLE;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_ACTUATOR_ENHANCEMENT_SYSTEM).or(F_MECH_EQUIPMENT);
+		misc.bv = BV_VARIABLE;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(3070, 3109, DATE_NONE);
+		misc.techAdvancement.setTechRating(RATING_E);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+		return misc;
+	}*/
+	
+	//Musculature
+	public static MiscType createTSM() {
+		MiscType misc = new MiscType();
+
+		misc.name = "Triple Strength Myomer";
+		misc.setInternalName(misc.name);
+		misc.addLookupName("IS TSM");
+		misc.addLookupName("Triple Strength Myomer");
+		misc.tonnage = 0;
+		misc.criticals = 6;
+		misc.hittable = false;
+		misc.spreadable = true;
+		misc.flags = misc.flags.or(F_TSM).or(F_MECH_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "240,TSM";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+		    .setISAdvancement(3028, 3050, 3055, DATE_NONE, DATE_NONE)
+		    .setISApproximate(true, false, false,false, false)
+		    .setPrototypeFactions(F_FS,F_CC)
+		    .setProductionFactions(F_CC);
+
+		return misc;
+	}
+
+	public static MiscType createIndustrialTSM() {
+		MiscType misc = new MiscType();
+
+		misc.name = "Industrial Triple Strength Myomer";
+		misc.setInternalName(misc.name);
+		misc.addLookupName("IS Industrial TSM");
+		misc.addLookupName("Industrial TSM");
+		misc.tonnage = 0;
+		misc.criticals = 12;
+		misc.hittable = false;
+		misc.spreadable = true;
+		misc.flags = misc.flags.or(F_INDUSTRIAL_TSM).or(F_MECH_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.industrial = true;
+		misc.rulesRefs = "240,TSM";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_E)
+		    .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+		    .setISAdvancement(3035, 3045, 3055, DATE_NONE, DATE_NONE)
+		    .setISApproximate(true, false, false,false, false)
+		    .setPrototypeFactions(F_FS)
+		    .setProductionFactions(F_FS);
+		return misc;
+	}
+	
+	//Gyros - IO pg 48 - Located in Techconstants.java
+	
+	/*Structural Components (Non-Mech) - IO pg 48
+	 TODO - Almost all of these need to be reviewed when it comes time to
+	 properly implement Dropships,Jumpships,Warships
+	*/	
+
+	public static MiscType createISFlotationHull() {
+		MiscType misc = new MiscType();
+		misc.name = "Combat Vehicle Chassis Mod [Flotation Hull]";
+		misc.setInternalName("ISFlotationHull");
+		misc.addLookupName("ClanFlotationHull");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = EquipmentType.COST_VARIABLE;
+		misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+		misc.bv = 0;
+		misc.rulesRefs = "302,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_B)
+		    .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+		    .setISAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_TH)
+		    .setProductionFactions(F_TH)
+		    .setReintroductionFactions(F_TH);
+		return misc;
+	}
+	
+/*	public static MiscType createCLFlotationHull() {
+		MiscType misc = new MiscType();
+		misc.name = "Flotation Hull";
+		misc.setInternalName("ClanFlotationHull");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
+		return misc;
+	}*/
+
+	public static MiscType createISLimitedAmphibiousChassis() {
+		MiscType misc = new MiscType();
+		misc.name = "Combat Vehicle Chassis Mod [Limited Amphibious]";
+		misc.setInternalName("ISLimitedAmphibiousChassis");
+		misc.addLookupName("ISLimitedAmphibious");
+		misc.addLookupName("ClanLimitedAmphibiousChassis");
+		misc.addLookupName("ClanLimitedAmphibious");
+		misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "302,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_B)
+		    .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+		    .setISAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(2470, 2472, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_TH)
+		    .setProductionFactions(F_TH)
+		    .setReintroductionFactions(F_TH);
+		return misc;
+	}
+/*	
+	public static MiscType createCLLimitedAmphibiousChassis() {
+		MiscType misc = new MiscType();
+		misc.name = "Limited Amphibious";
+		misc.setInternalName("ClanLimitedAmphibiousChassis");
+		misc.addLookupName("ClanLimitedAmphibious");
+		misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
+		return misc;
+	}*/
+
+	public static MiscType createISFullyAmphibiousChassis() {
+		MiscType misc = new MiscType();
+		misc.name = "Combat Vehicle Chassis Mod [Fully Amphibious]";
+		misc.setInternalName("ISFullyAmphibiousChassis");
+		misc.addLookupName("ISFullyAmphibious");
+		misc.addLookupName("ClanFullyAmphibiousChassis");
+		misc.addLookupName("ClanFullyAmphibious");
+		misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "302,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_B)
+		    .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+		    .setISAdvancement(2470, 2474, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(2470, 2474, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_TH)
+		    .setProductionFactions(F_TH)
+		    .setReintroductionFactions(F_TH);
+		return misc;
+	}
+	
+
+/*	public static MiscType createCLFullyAmphibiousChassis() {
+		MiscType misc = new MiscType();
+		misc.name = "Fully Amphibious";
+		misc.setInternalName("ClanFullyAmphibiousChassis");
+		misc.addLookupName("ClanFullyAmphibious");
+		misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
+		return misc;
+	}*/
+	
+	public static MiscType createISDuneBuggyChassis() {
+		MiscType misc = new MiscType();
+		// TODO this is Combat Vee, and SV combined chassis. Their really needs
+		// to be two different chassis types.
+		misc.name = "Dune Buggy";
+		misc.setInternalName("ISDuneBuggyChassis");
+		misc.addLookupName("ISDuneBuggy");
+		misc.addLookupName("ClanDuneBuggyChassis");
+		misc.addLookupName("ClanDuneBuggy");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
+		        .or(F_SUPPORT_TANK_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "303,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_B)
+		    .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+		    .setISAdvancement(2470, 2471, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(2470, 2471, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false)
+		    .setPrototypeFactions(F_TH)
+		    .setProductionFactions(F_TH)
+		    .setReintroductionFactions(F_TH);
+		return misc;
+	}
+
+/*	public static MiscType createCLDuneBuggyChassis() {
+		MiscType misc = new MiscType();
+		misc.name = "Dune Buggy";
+		misc.setInternalName("ClanDuneBuggyChassis");
+		misc.addLookupName("ClanDuneBuggy");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
+		        .or(F_SUPPORT_TANK_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
+		return misc;
+	}*/
+
+	public static MiscType createEnvironmentalSealedChassis() {
+		MiscType misc = new MiscType();
+		
+		misc.name = "Combat Vehicle Chassis Mod [Environmental Sealing]";
+		misc.setInternalName("Environmental Sealed Chassis");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.tankslots = 0;
+		misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
+		        .or(F_SUPPORT_TANK_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "303,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_B)
+		    .setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
+		    .setISAdvancement(DATE_NONE, 2475, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(DATE_NONE, 2475, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false)
+		    .setProductionFactions(F_TH);
+		return misc;
+	}
+	
+	//Support Vee Chassis Mods - IO pg 49, TM pg 280
+	public static MiscType createAmphibiousChassis() {
+		MiscType misc = new MiscType();
+		misc.name = "SV Chassis Mod [Amphibious]";
+		misc.setInternalName("AmphibiousChassis");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_AMPHIBIOUS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2470);
+		misc.techAdvancement.setTechRating(RATING_C);
+		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
+		return misc;
+	}
+	public static MiscType createArmoredChassis() {
+		MiscType misc = new MiscType();
+
+		misc.name = "SV Chassis Mod [Armored Chassis]";
+		misc.setInternalName("Armored Chassis");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.tankslots = 0;
+		misc.flags = misc.flags.or(F_ARMORED_CHASSIS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
+		        .or(F_SUPPORT_TANK_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_A);
+		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_E, RATING_D, RATING_D });
+		return misc;
+	}
+	
+		public static MiscType createBicycleModification() {
+		MiscType misc = new MiscType();
+
+		misc.name = "SV Chassis Mod [Bicycle]";
+		misc.setInternalName("BicycleChassisMod");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_BICYCLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.tankslots = 0;
+		misc.industrial = true;
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_A);
+		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+		return misc;
+	}
+		
+	public static MiscType createConvertibleModification() {
+		MiscType misc = new MiscType();
+
+		misc.name = "SV Chassis Mod [Convertible]";
+		misc.setInternalName("ConvertibleChassisMod");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_CONVERTIBLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.tankslots = 0;
+		misc.industrial = true;
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_A);
+		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
+		return misc;
+	}
+	
+	//TODO -Dune Buggy Chassis - Per TM pg 280, there should be a SV only version of this.
+	
+		public static MiscType createEnvironmentalSealing() {
+		MiscType misc = new MiscType();
+		// TODO - Review how this impacts the chassis stuff. See
+		// IO pg 48 and search in here for IndustrialMech Structure w/
+		// Environmental Sealing. Also likely needs to have a SV version split out from it.
+		misc.name = "Environmental Sealing";
+		misc.setInternalName(misc.name);
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 8;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.spreadable = true;
+		misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
+		        .or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_C);
+		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_D, RATING_C, RATING_C });
+		return misc;
+	}
+	
+	
+	public static MiscType createHydroFoilChassisModification() {
+		MiscType misc = new MiscType();
+
+		misc.name = "SV Chassis Mod [HydroFoil]";
+		misc.setInternalName("HydroFoilChassisMod");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_HYDROFOIL).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.tankslots = 0;
+		misc.industrial = true;
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
+		return misc;
+	}
+	
+	
+	public static MiscType createMonocycleModification() {
+		MiscType misc = new MiscType();
+
+		misc.name = "SV Chassis Mod [Monocycle]";
+		misc.setInternalName("MonocycleChassisMod");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_MONOCYCLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.tankslots = 0;
+		misc.industrial = true;
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_D, RATING_D, RATING_D });
+		return misc;
+	}
+	
+	public static MiscType createISOffRoadChassis() {
+		MiscType misc = new MiscType();
+		misc.name = "SV Chassis Mod [Off-Road]";
+		misc.setInternalName("ISOffRoadChassis");
+		misc.addLookupName("ISOffRoad");
+		misc.addLookupName("ClanOffRoadChassis");
+		misc.addLookupName("CLOffRoad");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
+		        .or(F_SUPPORT_TANK_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2470);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_C, RATING_B, RATING_B });
+		return misc;
+	}
+
+/*	public static MiscType createCLOffRoadChassis() {
+		MiscType misc = new MiscType();
+		misc.name = "SV Chassis Mod [Off-Road";
+		misc.setInternalName("ClanOffRoadChassis");
+		misc.addLookupName("CLOffRoad");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
+		        .or(F_SUPPORT_TANK_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
+		return misc;
+	}	*/
+			
+	public static MiscType createPropChassisModification() {
+		MiscType misc = new MiscType();
+		misc.name = "SV Chassis Mod [Propeller-Driven]";
+		misc.setInternalName("PropChassisMod");
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.tankslots = 0;
+		misc.flags = misc.flags.andNot(F_AERO_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_PROP);
+		misc.omniFixedOnly = true;
+		// Setting this Pre-Spaceflight
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_C, RATING_B, RATING_X });
+		return misc;
+	}	
+		
+	public static MiscType createSnomobileChassis() {
+		MiscType misc = new MiscType();
+		misc.name = "SV Chassis Mod [Snowmobile]";
+		misc.setInternalName("SnowmobileChassis");
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.flags = misc.flags.or(F_SNOWMOBILE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		// TODO: implement game rules
+
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2470);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_E, RATING_D, RATING_D });
+		return misc;
+	}
+	
+	public static MiscType createSTOLChassisMod() {
+		MiscType misc = new MiscType();
+		misc.name = "SV Chassis Mod [STOL]";
+		misc.setInternalName("STOLChassisMod");
+		misc.tonnage = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_STOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.tankslots = 0;
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_C);
+		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_C, RATING_B, RATING_B });
+		return misc;
+	}	
+	
+	public static MiscType createSubmersibleChassisMod() {
+		MiscType misc = new MiscType();
+
+		misc.name = "SV Chassis Mod [Submersible]";
+		misc.setInternalName("SubmersibleChassisMod");
+		misc.tonnage = 0;
+		misc.criticals = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_SUBMERSIBLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.tankslots = 0;
+		misc.industrial = true;
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_B);
+		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
+		return misc;
+	}
+	
 	public static MiscType createTractorModification() {
 		MiscType misc = new MiscType();
 
-		misc.name = "Tractor";
+		misc.name = "SV Chassis Mod [Tractor]";
 		misc.setInternalName(misc.name);
 		misc.tonnage = 0; // accounted as part of the unit Construction
 		misc.criticals = 0;
@@ -9663,14 +10606,14 @@ public class MiscType extends EquipmentType {
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
 		misc.techAdvancement.setTechRating(RATING_A);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
 		return misc;
 	}
 
 	public static MiscType createTrailerModification() {
 		MiscType misc = new MiscType();
 
-		misc.name = "Trailer";
+		misc.name = "SV Chassis Mod [Trailer]";
 		misc.setInternalName(misc.name);
 		misc.tonnage = 0; // accounted as part of the unit Construction
 		misc.criticals = 0;
@@ -9684,111 +10627,254 @@ public class MiscType extends EquipmentType {
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
 		misc.techAdvancement.setTechRating(RATING_A);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_A });
 		return misc;
 	}
-
-	public static MiscType createMonocycleModification() {
+	
+		public static MiscType createUltraLightChassisModification() {
 		MiscType misc = new MiscType();
-
-		misc.name = "Monocycle";
-		misc.setInternalName("MonocycleChassisMod");
-		misc.tonnage = 0;
-		misc.criticals = 0;
+		misc.name = "SV Chassis Mod [Ultra-Light]";
+		misc.setInternalName("UltraLightChassisMod");
+		misc.tankslots = 0;
 		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_MONOCYCLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
+		misc.omniFixedOnly = true;
+		// Setting this Pre-Spaceflight
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
+		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_D);
+		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_E, RATING_D, RATING_D });
+		return misc;
+	}
+	
+	public static MiscType createVSTOLChassisMod() {
+		MiscType misc = new MiscType();
+		misc.name = "SV Chassis Mod [VSTOL]";
+		misc.setInternalName("VSTOLChassisMod");
+		misc.tonnage = 0;
+		misc.cost = 0; // Cost accounted as part of unit cost
+		misc.flags = misc.flags.or(F_VSTOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
 		misc.omniFixedOnly = true;
 		misc.bv = 0;
 		misc.tankslots = 0;
-		misc.industrial = true;
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
+		misc.techAdvancement.setTechRating(RATING_C);
+		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_C });
+		return misc;
+	}
+
+//Transport Launching/Recovery Systems - IO pg 49.
+	//Will all need to be added once DS/JS/WS editor is created.
+	
+
+//Transport Bays, Quarters, and Seating
+	//Currently captured as part of a transporter but should be expanded into equipment
+	
+//Turrets - IO pg 50
+	//TODO Turret Mount for Buildings
+	
+	public static MiscType createISShoulderTurret() {
+		MiscType misc = new MiscType();
+		misc.name = "BattleMech Turret (Shoulder)";
+		misc.setInternalName("ISShoulderTurret");
+		misc.addLookupName("CLShoulderTurret");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 1;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "347,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_C)
+		    .setAvailability(RATING_F, RATING_X, RATING_F, RATING_E)
+		    .setISAdvancement(2450, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, true, false,false, false)
+		    .setClanAdvancement(2450, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, true, false,false, false);
+		return misc;
+	}
+	
+/*	public static MiscType createCLShoulderTurret() {
+		MiscType misc = new MiscType();
+		misc.name = "Shoulder Turret";
+		misc.setInternalName("CLShoulderTurret");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 1;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(2820, 3082, DATE_NONE);
+		misc.techAdvancement.setTechRating(RATING_C);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_F, RATING_E, RATING_X });
+		return misc;
+	}*/
+	
+	public static MiscType createISHeadTurret() {
+		MiscType misc = new MiscType();
+		misc.name = "BattleMech Turret (Head)";
+		misc.setInternalName("ISHeadTurret");
+		misc.addLookupName("CLHeadTurret");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 1;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "347,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_C)
+		    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+		    .setISAdvancement(3055, 3082, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, true, false,false, false)
+		    .setPrototypeFactions(F_FS,F_LC);
+
+		return misc;
+	}
+
+/*	public static MiscType createCLHeadTurret() {
+		//Per IO pg 50 IS only.
+		MiscType misc = new MiscType();
+		misc.name = "Head Turret";
+		misc.setInternalName("CLHeadTurret");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 1;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3055);
+		misc.techAdvancement.setTechRating(RATING_C);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_F, RATING_F, RATING_X });
+		return misc;
+	}*/
+
+	public static MiscType createISQuadTurret() {
+		MiscType misc = new MiscType();
+		misc.name = "BattleMech Turret (Quad)";
+		misc.setInternalName("ISQuadTurret");
+		misc.addLookupName("CLQuadTurret");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 1;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "347,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_C)
+		    .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
+		    .setISAdvancement(2320, 3079, DATE_NONE, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, true, false,false, false);
+		return misc;
+	}
+
+/*	public static MiscType createCLQuadTurret() {
+		MiscType misc = new MiscType();
+		misc.name = "Quad Turret";
+		misc.setInternalName("CLQuadTurret");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 1;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(2820, 3082, DATE_NONE);
+		misc.techAdvancement.setTechRating(RATING_C);
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_F, RATING_F, RATING_X });
+		return misc;
+	}*/
+	
+/*	//Vehicular Dual Turret - IO pg 50 and TO pg 347/411 We support them but their is no construction data for them.
+*/
+	public static MiscType createISSponsonTurret() {
+		MiscType misc = new MiscType();
+		misc.name = "Vehicular Sponson Turret";
+		misc.setInternalName("ISSponsonTurret");
+		misc.addLookupName("CLSponsonTurret");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.hittable = false;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.rulesRefs = "348,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_B)
+		    .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
+		    .setISAdvancement(DATE_PS, 3079, 3080, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, true, false,false, false)
+		    .setClanAdvancement(DATE_PS, 3079, 3080, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, true, false,false, false);
+		return misc;
+	}
+
+/*	public static MiscType createCLSponsonTurret() {
+		MiscType misc = new MiscType();
+		misc.name = "Sponson Turret";
+		misc.setInternalName("CLSponsonTurret");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 0;
+		misc.tankslots = 0;
+		misc.hittable = false;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
+		misc.omniFixedOnly = true;
+		misc.bv = 0;
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
+		misc.techAdvancement.setClanAdvancement(2820, DATE_NONE, 3079);
 		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_D, RATING_D, RATING_X });
+		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_F, RATING_E, RATING_X });
 		return misc;
-	}
+	}*/
 
-	public static MiscType createBicycleModification() {
+	public static MiscType createPintleTurret() {
 		MiscType misc = new MiscType();
-
-		misc.name = "Bicycle";
-		misc.setInternalName("BicycleChassisMod");
-		misc.tonnage = 0;
+		misc.name = "Pintle Mount";
+		misc.setInternalName("PintleTurret");
+		misc.tonnage = TONNAGE_VARIABLE;
 		misc.criticals = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_BICYCLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
+		misc.tankslots = 0;
+		misc.hittable = false;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_PINTLE_TURRET).or(F_SUPPORT_TANK_EQUIPMENT);
 		misc.omniFixedOnly = true;
 		misc.bv = 0;
-		misc.tankslots = 0;
-		misc.industrial = true;
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_A);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
+		misc.rulesRefs = "348,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_ALL)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+		    .setTechRating(RATING_B)
+		    .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+		    .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		    .setISApproximate(false, false, false,false, false)
+		    .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		    .setClanApproximate(false, false, false,false, false);
 		return misc;
 	}
 
-	public static MiscType createHydroFoilChassisModification() {
-		MiscType misc = new MiscType();
 
-		misc.name = "HydroFoil";
-		misc.setInternalName("HydroFoilChassisMod");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_HYDROFOIL).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.tankslots = 0;
-		misc.industrial = true;
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_A);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-		return misc;
-	}
+	
+	
+	
+	
 
-	public static MiscType createSubmersibleChassisMod() {
-		MiscType misc = new MiscType();
 
-		misc.name = "Submersible";
-		misc.setInternalName("SubmersibleChassisMod");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_SUBMERSIBLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.tankslots = 0;
-		misc.industrial = true;
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_A);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createConvertibleModification() {
-		MiscType misc = new MiscType();
-
-		misc.name = "Convertible";
-		misc.setInternalName("ConvertibleChassisMod");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_CONVERTIBLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.tankslots = 0;
-		misc.industrial = true;
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_A);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-		return misc;
-	}
-
-	// Start of Level2 stuff
 
 	public static MiscType createCLBAMyomerBooster() {
 		MiscType misc = new MiscType();
@@ -9815,48 +10901,6 @@ public class MiscType extends EquipmentType {
 		return misc;
 	}
 
-	public static MiscType createTSM() {
-		MiscType misc = new MiscType();
-
-		misc.name = "TSM";
-		misc.setInternalName(misc.name);
-		misc.addLookupName("IS TSM");
-		misc.addLookupName("Triple Strength Myomer");
-		misc.tonnage = 0;
-		misc.criticals = 6;
-		misc.hittable = false;
-		misc.spreadable = true;
-		misc.flags = misc.flags.or(F_TSM).or(F_MECH_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3028, 3050, 3055)
-		        .setApproximate(true, false, false).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
-		return misc;
-	}
-
-	public static MiscType createIndustrialTSM() {
-		MiscType misc = new MiscType();
-
-		misc.name = "Industrial TSM";
-		misc.setInternalName(misc.name);
-		misc.addLookupName("IS Industrial TSM");
-		misc.addLookupName("Industrial Triple Strength Myomer");
-		misc.tonnage = 0;
-		misc.criticals = 12;
-		misc.hittable = false;
-		misc.spreadable = true;
-		misc.flags = misc.flags.or(F_INDUSTRIAL_TSM).or(F_MECH_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.industrial = true;
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3045);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-		return misc;
-	}
 
 
 
@@ -9866,47 +10910,10 @@ public class MiscType extends EquipmentType {
 
 
 
-	public static MiscType createArmoredChassis() {
-		MiscType misc = new MiscType();
 
-		misc.name = "Armored Chassis";
-		misc.setInternalName("Armored Chassis");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.tankslots = 0;
-		misc.flags = misc.flags.or(F_ARMORED_CHASSIS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
-		        .or(F_SUPPORT_TANK_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
 
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_E, RATING_D, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createEnvironmentalSealedChassis() {
-		MiscType misc = new MiscType();
 
-		misc.name = "Environmental Sealed Chassis";
-		misc.setInternalName("Environmental Sealed Chassis");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.tankslots = 0;
-		misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
-		        .or(F_SUPPORT_TANK_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_E, RATING_D, RATING_X });
-		return misc;
-	}
 
 	public static MiscType createArmoredCowl() {
 		MiscType misc = new MiscType();
@@ -10219,211 +11226,6 @@ public class MiscType extends EquipmentType {
 
 
 
-	public static MiscType createISEndoSteel() {
-		MiscType misc = new MiscType();
-
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, false));
-		misc.addLookupName("IS EndoSteel");
-		misc.addLookupName("IS Endo-Steel");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = CRITICALS_VARIABLE;
-		misc.hittable = false;
-		misc.spreadable = true;
-		misc.flags = misc.flags.or(F_ENDO_STEEL);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2487, 2850, 3035);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_F, RATING_E, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createISEndoComposite() {
-		MiscType misc = new MiscType();
-
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE, false));
-		misc.addLookupName("IS Endo-Composite");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = CRITICALS_VARIABLE;
-		misc.hittable = false;
-		misc.spreadable = true;
-		misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(3067, DATE_NONE, 3085);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createISEndoSteelPrototype() {
-		MiscType misc = new MiscType();
-
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_PROTOTYPE, false));
-		misc.addLookupName("IS Endo Steel Prototype");
-		misc.addLookupName("IS Endo-Steel Prototype");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 16;
-		misc.hittable = false;
-		misc.spreadable = true;
-		misc.flags = misc.flags.or(F_ENDO_STEEL_PROTO);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(2471, DATE_NONE, DATE_NONE, 2487, 3035);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_F, RATING_E, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLEndoSteel() {
-		MiscType misc = new MiscType();
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL, true));
-		misc.addLookupName("Clan Endo-Steel");
-		misc.addLookupName("Clan EndoSteel");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 7;
-		misc.hittable = false;
-		misc.spreadable = true;
-		misc.flags = misc.flags.or(F_ENDO_STEEL);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLEndoComposite() {
-		MiscType misc = new MiscType();
-
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_COMPOSITE, true));
-		misc.addLookupName("Clan Endo-Composite");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 4;
-		misc.hittable = false;
-		misc.spreadable = true;
-		misc.flags = misc.flags.or(F_ENDO_COMPOSITE);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(3073, DATE_NONE, 3085);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createISReinforcedStructure() {
-		MiscType misc = new MiscType();
-
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED, false));
-		misc.addLookupName("IS Reinforced");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.hittable = false;
-		misc.spreadable = true;
-		misc.bv = 0;
-		misc.flags = misc.flags.or(F_REINFORCED);
-		misc.omniFixedOnly = true;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(3057, DATE_NONE, 3084);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLReinforcedStructure() {
-		MiscType misc = new MiscType();
-
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_REINFORCED, true));
-		misc.addLookupName("Clan Reinforced");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.hittable = false;
-		misc.spreadable = true;
-		misc.bv = 0;
-		misc.flags = misc.flags.or(F_REINFORCED);
-		misc.omniFixedOnly = true;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(3065, DATE_NONE, 3084);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-		return misc;
-	}
-
-
-
-	public static MiscType createISCompositeStructure() {
-		MiscType misc = new MiscType();
-
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_COMPOSITE, false));
-		misc.addLookupName("Composite");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.hittable = false;
-		misc.bv = 0;
-		misc.flags = misc.flags.or(F_COMPOSITE);
-		misc.omniFixedOnly = true;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(3061, DATE_NONE, 3082);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createISIndustrialStructure() {
-		MiscType misc = new MiscType();
-
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL, false));
-		misc.addLookupName("IS Industrial Structure");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.bv = 0;
-		misc.industrial = true;
-		misc.flags = misc.flags.or(F_INDUSTRIAL_STRUCTURE);
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2350);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_C, RATING_C, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLIndustrialStructure() {
-		MiscType misc = new MiscType();
-
-		misc.name = EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL);
-		misc.setInternalName(EquipmentType.getStructureTypeName(T_STRUCTURE_INDUSTRIAL, true));
-		misc.addLookupName("Clan Industrial Structure");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.bv = 0;
-		misc.industrial = true;
-		misc.flags = misc.flags.or(F_INDUSTRIAL_STRUCTURE);
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_C, RATING_C, RATING_X });
-		return misc;
-	}
 
 	public static MiscType createISImprovedSensors() {
 		MiscType misc = new MiscType();
@@ -10903,27 +11705,7 @@ public class MiscType extends EquipmentType {
 		return misc;
 	}
 
-	public static MiscType createEnvironmentalSealing() {
-		MiscType misc = new MiscType();
 
-		misc.name = "Environmental Sealing";
-		misc.setInternalName(misc.name);
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 8;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.spreadable = true;
-		misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT)
-		        .or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-		return misc;
-	}
 
 	public static MiscType createDemolitionCharge() {
 		MiscType misc = new MiscType();
@@ -11037,44 +11819,6 @@ public class MiscType extends EquipmentType {
 
 
 
-	public static MiscType createISAES() {
-		MiscType misc = new MiscType();
-		misc.name = "AES";
-		misc.setInternalName("ISAES");
-		misc.addLookupName("IS Actuator Enhancement System");
-		misc.addLookupName("ISActuatorEnhancementSystem");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = CRITICALS_VARIABLE;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_ACTUATOR_ENHANCEMENT_SYSTEM).or(F_MECH_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = BV_VARIABLE;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(3070, 3109, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLAES() {
-		MiscType misc = new MiscType();
-		misc.name = "AES";
-		misc.setInternalName("CLAES");
-		misc.addLookupName("CL Actuator Enhancement System");
-		misc.addLookupName("CLActuatorEnhancementSystem");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = CRITICALS_VARIABLE;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_ACTUATOR_ENHANCEMENT_SYSTEM).or(F_MECH_EQUIPMENT);
-		misc.bv = BV_VARIABLE;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(3070, 3109, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-		return misc;
-	}
 
 
 
@@ -11117,60 +11861,10 @@ public class MiscType extends EquipmentType {
 		misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_D, RATING_D, RATING_X });
 		return misc;
 	}
+	
 
-	public static MiscType createCLPPCCapacitor() {
-		MiscType misc = new MiscType();
 
-		misc.name = "PPC Capacitor";
-		misc.setInternalName("CLPPCCapacitor");
-		misc.tonnage = 1.0;
-		misc.criticals = 1;
-		misc.tankslots = 0;
-		misc.cost = 150000;
-		misc.setModes(new String[] { "Off", "Charge" });
-		misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
-		        .or(F_AERO_EQUIPMENT);
-		misc.setInstantModeSwitch(false);
-		misc.explosive = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(3060, DATE_NONE, 3081);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createISPPCCapacitor() {
-		MiscType misc = new MiscType();
-
-		misc.name = "PPC Capacitor";
-		misc.setInternalName(misc.name);
-		misc.addLookupName("ISPPCCapacitor");
-		misc.addLookupName("LPPC Capacitor");
-		misc.addLookupName("ISLightPPCCapacitor");
-		misc.addLookupName("SNPPC Capacitor");
-		misc.addLookupName("ISSNPPCCapacitor");
-		misc.addLookupName("ERPPC Capacitor");
-		misc.addLookupName("ISERPPCCapacitor");
-		misc.addLookupName("HPPC Capacitor");
-		misc.addLookupName("ISHeavyPPCCapacitor");
-		misc.tonnage = 1.0;
-		misc.criticals = 1;
-		misc.tankslots = 0;
-		misc.cost = 150000;
-		misc.setModes(new String[] { "Off", "Charge" });
-		misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT)
-		        .or(F_AERO_EQUIPMENT);
-		misc.setInstantModeSwitch(false);
-		misc.explosive = true;
-		// misc.bv = 88;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(3060, DATE_NONE, 3081);
-		misc.techAdvancement.setTechRating(RATING_E);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_E, RATING_X });
-		return misc;
-	}
 
 
 
@@ -11671,347 +12365,17 @@ public class MiscType extends EquipmentType {
 		return misc;
 	}
 
-	public static MiscType createISFlotationHull() {
-		MiscType misc = new MiscType();
-		misc.name = "Flotation Hull";
-		misc.setInternalName("ISFlotationHull");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = EquipmentType.COST_VARIABLE;
-		misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-		misc.bv = 0;
 
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(DATE_NONE, 2470, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createISLimitedAmphibiousChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Limited Amphibious";
-		misc.setInternalName("ISLimitedAmphibiousChassis");
-		misc.addLookupName("ISLimitedAmphibious");
-		misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
 
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(DATE_NONE, 2470, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createISFullyAmphibiousChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Fully Amphibious";
-		misc.setInternalName("ISFullyAmphibiousChassis");
-		misc.addLookupName("ISFullyAmphibious");
-		misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
 
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(DATE_NONE, 2470, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createAmphibiousChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Amphibious";
-		misc.setInternalName("AmphibiousChassis");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_AMPHIBIOUS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
 
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2470);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createSnomobileChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Snowmobile";
-		misc.setInternalName("SnowmobileChassis");
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.flags = misc.flags.or(F_SNOWMOBILE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		// TODO: implement game rules
 
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2470);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_D, RATING_E, RATING_E, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createISDuneBuggyChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Dune Buggy";
-		misc.setInternalName("ISDuneBuggyChassis");
-		misc.addLookupName("ISDuneBuggy");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
-		        .or(F_SUPPORT_TANK_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
 
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(DATE_NONE, 2470, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createISOffRoadChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Off-Road";
-		misc.setInternalName("ISOffRoadChassis");
-		misc.addLookupName("ISOffRoad");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
-		        .or(F_SUPPORT_TANK_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2470);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_B, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLOffRoadChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Off-Road";
-		misc.setInternalName("ClanOffRoadChassis");
-		misc.addLookupName("CLOffRoad");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
-		        .or(F_SUPPORT_TANK_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2820);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLFlotationHull() {
-		MiscType misc = new MiscType();
-		misc.name = "Flotation Hull";
-		misc.setInternalName("ClanFlotationHull");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLLimitedAmphibiousChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Limited Amphibious";
-		misc.setInternalName("ClanLimitedAmphibiousChassis");
-		misc.addLookupName("ClanLimitedAmphibious");
-		misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLFullyAmphibiousChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Fully Amphibious";
-		misc.setInternalName("ClanFullyAmphibiousChassis");
-		misc.addLookupName("ClanFullyAmphibious");
-		misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLDuneBuggyChassis() {
-		MiscType misc = new MiscType();
-		misc.name = "Dune Buggy";
-		misc.setInternalName("ClanDuneBuggyChassis");
-		misc.addLookupName("ClanDuneBuggy");
-		misc.tonnage = 0;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
-		        .or(F_SUPPORT_TANK_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLShoulderTurret() {
-		MiscType misc = new MiscType();
-		misc.name = "Shoulder Turret";
-		misc.setInternalName("CLShoulderTurret");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 1;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(2820, 3082, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_F, RATING_E, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createISShoulderTurret() {
-		MiscType misc = new MiscType();
-		misc.name = "Shoulder Turret";
-		misc.setInternalName("ISShoulderTurret");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 1;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_SHOULDER_TURRET).or(F_MECH_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(2450, 3082, DATE_NONE, 2801, 3051);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_F, RATING_F, RATING_F, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLHeadTurret() {
-		MiscType misc = new MiscType();
-		misc.name = "Head Turret";
-		misc.setInternalName("CLHeadTurret");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 1;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3055);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_F, RATING_F, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createISHeadTurret() {
-		MiscType misc = new MiscType();
-		misc.name = "Head Turret";
-		misc.setInternalName("ISHeadTurret");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 1;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(3050, 3082, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLQuadTurret() {
-		MiscType misc = new MiscType();
-		misc.name = "Quad Turret";
-		misc.setInternalName("CLQuadTurret");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 1;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(2820, 3082, DATE_NONE);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_F, RATING_F, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createISQuadTurret() {
-		MiscType misc = new MiscType();
-		misc.name = "Quad Turret";
-		misc.setInternalName("ISQuadTurret");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 1;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(2320, 3082, DATE_NONE, 2801, 3051);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_F, RATING_F, RATING_F, RATING_X });
-		return misc;
-	}
 
 	public static MiscType createISBASpaceOperationsAdaptation() {
 		MiscType misc = new MiscType();
@@ -12123,96 +12487,8 @@ public class MiscType extends EquipmentType {
 	}
 
 
-	public static MiscType createSTOLChassisMod() {
-		MiscType misc = new MiscType();
-		misc.name = "STOL";
-		misc.setInternalName("STOLChassisMod");
-		misc.tonnage = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_STOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.tankslots = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createVSTOLChassisMod() {
-		MiscType misc = new MiscType();
-		misc.name = "VSTOL";
-		misc.setInternalName("VSTOLChassisMod");
-		misc.tonnage = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_VSTOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.tankslots = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_C);
-		misc.techAdvancement.setAvailability(new int[] { RATING_C, RATING_D, RATING_C, RATING_X });
-		return misc;
-	}
 
-	public static MiscType createISSponsonTurret() {
-		MiscType misc = new MiscType();
-		misc.name = "Sponson Turret";
-		misc.setInternalName("ISSponsonTurret");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.hittable = false;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_IS);
-		misc.techAdvancement.setISAdvancement(1950, DATE_NONE, 3079);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_F, RATING_F, RATING_F, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createCLSponsonTurret() {
-		MiscType misc = new MiscType();
-		misc.name = "Sponson Turret";
-		misc.setInternalName("CLSponsonTurret");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.hittable = false;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_SPONSON_TURRET).or(F_TANK_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN);
-		misc.techAdvancement.setClanAdvancement(2820, DATE_NONE, 3079);
-		misc.techAdvancement.setTechRating(RATING_B);
-		misc.techAdvancement.setAvailability(new int[] { RATING_X, RATING_F, RATING_E, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createPintleTurret() {
-		MiscType misc = new MiscType();
-		misc.name = "Pintle Turret";
-		misc.setInternalName("PintleTurret");
-		misc.tonnage = TONNAGE_VARIABLE;
-		misc.criticals = 0;
-		misc.tankslots = 0;
-		misc.hittable = false;
-		misc.cost = COST_VARIABLE;
-		misc.flags = misc.flags.or(F_PINTLE_TURRET).or(F_SUPPORT_TANK_EQUIPMENT);
-		misc.omniFixedOnly = true;
-		misc.bv = 0;
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_A);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-		return misc;
-	}
 
 
 	public static MiscType createISDroneExtra() {
@@ -12520,37 +12796,6 @@ public class MiscType extends EquipmentType {
 
 
 
-	public static MiscType createPropChassisModification() {
-		MiscType misc = new MiscType();
-		misc.name = "Prop";
-		misc.setInternalName("PropChassisMod");
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.tankslots = 0;
-		misc.flags = misc.flags.andNot(F_AERO_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_PROP);
-		misc.omniFixedOnly = true;
-		// Setting this Pre-Spaceflight
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_A);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-		return misc;
-	}
-
-	public static MiscType createUltraLightChassisModification() {
-		MiscType misc = new MiscType();
-		misc.name = "Ultra-Light";
-		misc.setInternalName("UltraLightChassisMod");
-		misc.tankslots = 0;
-		misc.cost = 0; // Cost accounted as part of unit cost
-		misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
-		misc.omniFixedOnly = true;
-		// Setting this Pre-Spaceflight
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
-		misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-		misc.techAdvancement.setTechRating(RATING_A);
-		misc.techAdvancement.setAvailability(new int[] { RATING_A, RATING_A, RATING_A, RATING_X });
-		return misc;
-	}
 
 
 	public static MiscType createLAMBombBay() {

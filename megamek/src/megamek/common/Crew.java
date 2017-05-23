@@ -98,6 +98,8 @@ public class Crew implements Serializable {
     //For cockpit command console, we need to track which crew members have acted as the pilot, making them
     //ineligible to provide command bonus the next round.
     private final boolean[] actedThisTurn;
+    //The crew slots in a command console can swap roles in the end phase of any turn.
+    private boolean swapConsoleRoles;
 
     /**
      * End RPG Skills **
@@ -1259,5 +1261,40 @@ public class Crew implements Serializable {
         Arrays.fill(actedThisTurn, false);
         actedThisTurn[getCurrentPilotIndex()] = true;
         actedThisTurn[getCurrentGunnerIndex()] = true;
+    }
+    
+    /**
+     * @return Whether the crew members in a command console-equipped unit are scheduled to swap roles at
+     *         the end of the turn. 
+     */
+    public boolean getSwapConsoleRoles() {
+        return swapConsoleRoles;
+    }
+    
+    /**
+     * Schedules or clears a scheduled swap of roles in a command console-equipped unit.
+     * @param swap
+     */
+    public void setSwapConsoleRoles(boolean swap) {
+        swapConsoleRoles = swap;
+    }
+
+    /**
+     * Checks whether a role swap is scheduled for a command-console equipped unit and (if the new pilot
+     * is active) performs the swap. The swap flag is cleared regardless of whether a swap took place.
+     * 
+     * @return True if a swap was performed, otherwise false.
+     */
+    public boolean doConsoleRoleSwap() {
+        if (swapConsoleRoles && crewType.equals(CrewType.COMMAND_CONSOLE)) {
+            int newPilotIndex = 1 - getCurrentPilotIndex();
+            if (isActive(newPilotIndex)) {
+                setCurrentPilot(newPilotIndex);
+                swapConsoleRoles = false;
+                return true;
+            }
+        }
+        swapConsoleRoles = false;
+        return false;
     }
 }

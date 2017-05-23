@@ -2524,6 +2524,7 @@ public class Server implements Runnable {
                 send(createFlarePacket());
                 resolveAmmoDumps();
                 resolveCrewWakeUp();
+                resolveConsoleCrewSwaps();
                 resolveSelfDestruct();
                 resolveShutdownCrashes();
                 checkForIndustrialEndOfTurn();
@@ -20849,6 +20850,26 @@ public class Server implements Runnable {
         }
     }
     
+    /**
+     * Check whether any <code>Entity</code> with a cockpit command console has been scheduled to swap
+     * roles between the two crew members.
+     */
+    private void resolveConsoleCrewSwaps() {
+        for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
+            final Entity e = i.next();
+            if (e.getCrew().doConsoleRoleSwap()) {
+                final Crew crew = e.getCrew();
+                final int current = crew.getCurrentPilotIndex();
+                Report r = new Report(5560);
+                r.subject = e.getId();
+                r.add(crew.getNameAndRole(current));
+                r.add(crew.getCrewType().getRoleName(0));
+                r.addDesc(e);
+                addReport(r);
+            }
+        }
+    }
+    
     /*
      * Resolve any outstanding self destructions...
      */
@@ -27409,7 +27430,7 @@ public class Server implements Runnable {
                     vPhaseReport.addAll(checkPilotDamageFromFall(entity, prd, pos));
                 }
             } else {
-                vPhaseReport.addAll(checkPilotDamageFromFall(entity, roll, -1));
+                vPhaseReport.addAll(checkPilotDamageFromFall(entity, roll, 0));
             }
         }
 

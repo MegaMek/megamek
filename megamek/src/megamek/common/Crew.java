@@ -66,7 +66,7 @@ public class Crew implements Serializable {
     private int fatigue;
     //also need to track turns for fatigue by pilot because some may have later deployment
     private int fatigueCount;
-
+    
     /**
      * Additional RPG Skills **
      */
@@ -94,6 +94,10 @@ public class Crew implements Serializable {
     //This is only relevant for superheavy tripods, as other types have at most a single other option.
     private int backupPilot;
     private int backupGunner;
+
+    //For cockpit command console, we need to track which crew members have acted as the pilot, making them
+    //ineligible to provide command bonus the next round.
+    private final boolean[] actedThisTurn;
 
     /**
      * End RPG Skills **
@@ -236,6 +240,8 @@ public class Crew implements Serializable {
             backupPilot = 1 - pilotPos;
             backupGunner = 1 - gunnerPos;
         }
+        actedThisTurn = new boolean[slots];
+        resetActedFlag();
         
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
@@ -1113,6 +1119,7 @@ public class Crew implements Serializable {
         if (crewType.getPilotPos() == crewType.getGunnerPos()) {
             gunnerPos = pos;
         }
+        actedThisTurn[pos] = true;
     }
     
     /**
@@ -1126,6 +1133,7 @@ public class Crew implements Serializable {
         if (crewType.getPilotPos() == crewType.getGunnerPos()) {
             pilotPos = pos;
         }
+        actedThisTurn[pos] = true;
     }
     
     /**
@@ -1234,12 +1242,22 @@ public class Crew implements Serializable {
     /**
      * Cockpit command console provides commander init bonus if both crew members are active
      * (also requires advanced fire control and heavy/assault unit, which is not checked here).
+     * Though the positions are named "pilot" and "commander" they can switch positions in the end
+     * phase of any turn so we need to check whichever is not currently acting as pilot.
      * 
-     * @return Whether the unit has a commander that is not also acting as pilot.
+     * @return Whether the unit has a commander that is not also acting as pilot currently or in the previous turn.
      */
     public boolean hasActiveCommandConsole() {
-        return crewType.getCommanderPos() >= 0
-                && isActive(crewType.getCommanderPos())
-                && crewType.getCommanderPos() != getCurrentPilotIndex(); 
+        int commandPos = 1 - getCurrentPilotIndex();
+        return isActive(commandPos) && !actedThisTurn[commandPos];
+    }
+    
+    /**
+     * Called after the initiative bonus for the round has been calculated.
+     */
+    public void resetActedFlag() {
+        Arrays.fill(actedThisTurn, false);
+        actedThisTurn[getCurrentPilotIndex()] = true;
+        actedThisTurn[getCurrentGunnerIndex()] = true;
     }
 }

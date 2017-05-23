@@ -1144,6 +1144,12 @@ public class Crew implements Serializable {
      * A pilot or gunner that wakes up will resume normal duties.
      */
     private void activeStatusChanged() {
+        //Cockpit command console can be swapped deliberately by the player and should not be changed
+        //automatically unless the current pilot becomes inactive.
+        if (crewType.equals(CrewType.COMMAND_CONSOLE)
+                && isActive(getCurrentPilotIndex())) {
+            return;
+        }
         //Start by checking whether the default pilot is available. If not, check the designated backup.
         //If still not available, select the first active slot. If none are active, it does not matter
         //which slot is designated and the value is not changed.

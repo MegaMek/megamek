@@ -460,7 +460,7 @@ public class Tank extends Entity {
     
     @Override
     public boolean hasCommandConsoleBonus() {
-        if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE) || isUsingConsoleCommander()) {
+        if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE) || isCommanderHit() || isUsingConsoleCommander()) {
             return false;
         }
         if (isSupportVehicle()) {

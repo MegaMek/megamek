@@ -1836,9 +1836,12 @@ public class MULParser {
             t.setDriverHit(true);
         }
 
-        if (commander.equalsIgnoreCase("hit")) {
+        if (commander.equalsIgnoreCase("console")) {
+            t.setUsingConsoleCommander(true);
+        } else if (commander.equalsIgnoreCase("hit")) {
             t.setCommanderHit(true);
         }
+        
     }
     
     /**

@@ -1216,6 +1216,10 @@ public class EntityListFile {
             critVal = critVal.concat(" commander=\"");
             critVal = critVal.concat("hit");
             critVal = critVal.concat("\"");
+        } else if (t.isUsingConsoleCommander()) {
+            critVal = critVal.concat(" commander=\"");
+            critVal = critVal.concat("console");
+            critVal = critVal.concat("\"");
         }
 
         if (!critVal.equals("")) {

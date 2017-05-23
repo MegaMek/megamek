@@ -76,8 +76,8 @@ public abstract class UnitStatusFormatter {
             } else {
                 sb.append(e.getCrew().getCrewType().getRoleName(i)).append(": ")
                     .append(e.getCrew().getName(i));
-                sb.append(" (").append(e.getCrew().getGunnery()).append("/")
-                    .append(e.getCrew().getPiloting()).append(")");
+                sb.append(" (").append(e.getCrew().getGunnery(i)).append("/")
+                    .append(e.getCrew().getPiloting(i)).append(")");
             }
             sb.append(CommonConstants.NL);
         }

@@ -4168,10 +4168,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                         if (swapper.isCapitalFighter()) {
                             continue;
                         }
-                        // only swap your own pilots and with the same unit type
+                        // only swap your own pilots and with the same unit and crew type
                         if ((swapper.getOwnerId() == entity.getOwnerId()) && (swapper.getId() != entity.getId())
                                 && (UnitType.determineUnitTypeCode(swapper) == UnitType
-                                        .determineUnitTypeCode(entity))) {
+                                        .determineUnitTypeCode(entity))
+                                && swapper.getCrew().getCrewType() == entity.getCrew().getCrewType()) {
                             canSwap = true;
                             menuItem = new JMenuItem(swapper.getShortName());
                             menuItem.setActionCommand("SWAP|" + swapper.getId());

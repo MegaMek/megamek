@@ -2375,6 +2375,9 @@ public class Server implements Runnable {
                 // roll 'em
                 resetActivePlayersDone();
                 rollInitiative();
+                //Cockpit command consoles that switched crew on the previous round are ineligible for force
+                //commander initiative bonus. Now that initiative is rolled, clear the flag.
+                game.getEntities().forEachRemaining(e -> e.getCrew().resetActedFlag());
 
                 if (!game.shouldDeployThisRound()) {
                     incrementAndSendGameRound();

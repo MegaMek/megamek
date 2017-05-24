@@ -538,7 +538,6 @@ public final class Player extends TurnOrdered implements IPlayer {
                 }
                 //Once we've gotten the status of the command console (if any), reset the flag that tracks
                 //the previous turn's action.
-                entity.getCrew().resetActedFlag();
                 if (bonus > commandb) {
                     commandb = bonus;
                 }

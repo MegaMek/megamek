@@ -249,7 +249,7 @@ public class PilotMapSet implements DisplayMapSet {
         if (en.getCrew().isMissing(slot)) {
             hitsR.setString("");
         } else {
-            hitsR.setString(en.getCrew().getStatusDesc());
+            hitsR.setString(en.getCrew().getStatusDesc(slot));
         }
         for (int i = 0; i < advantagesR.length; i++) {
             advantagesR[i].setString(""); //$NON-NLS-1$

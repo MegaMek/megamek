@@ -20688,6 +20688,7 @@ public class Server implements Runnable {
                 }
                 r.subject = en.getId();
                 r.indent(2);
+                r.add(crew.getCrewType().getRoleName(pos));
                 r.addDesc(en);
                 r.add(crew.getName(pos));
                 r.add(damage);
@@ -27505,8 +27506,9 @@ public class Server implements Runnable {
         if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(2320);
             r.subject = entity.getId();
+            r.add(entity.getCrew().getCrewType().getRoleName(crewPos));
             r.addDesc(entity);
-            r.add(entity.getCrew().getNameAndRole(crewPos));
+            r.add(entity.getCrew().getName(crewPos));
             r.indent();
             reports.add(r);
             reports.addAll(damageCrew(entity, 1, crewPos));
@@ -27515,6 +27517,7 @@ public class Server implements Runnable {
             int diceRoll = entity.getCrew().rollPilotingSkill();
             r = new Report(2325);
             r.subject = entity.getId();
+            r.add(entity.getCrew().getCrewType().getRoleName(crewPos));
             r.addDesc(entity);
             r.add(entity.getCrew().getName(crewPos));
             r.add(roll.getValueAsString());

@@ -18483,18 +18483,11 @@ public class Server implements Runnable {
                                 }
                             }
                             int sdroll = Compute.d6(2);
-                            if (entity.getCrew().hasActiveTechOfficer()) {
-                                sdroll += 2;
-                            }
                             r = new Report(5060);
                             r.subject = entity.getId();
                             r.addDesc(entity);
                             r.add(shutdown);
-                            if (entity.getCrew().hasActiveTechOfficer()) {
-                                r.add((sdroll - 2) + "(+2)");
-                            } else {
-                                r.add(sdroll);
-                            }
+                            r.add(sdroll);
                             if (sdroll >= shutdown) {
                                 // avoided
                                 r.choose(true);
@@ -18569,18 +18562,10 @@ public class Server implements Runnable {
                         // but automatic explosion.
                     }
                     int boomroll = Compute.d6(2);
-                    if (entity.getCrew().hasActiveTechOfficer()) {
-                        boomroll += 2;
-                    }
                     r = new Report(5065);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(boom);
-                    if (entity.getCrew().hasActiveTechOfficer()) {
-                        r.add(boomroll + "(" + (boomroll - 2) + "+2)");
-                    } else {
-                        r.add(boomroll);
-                    }
                     if (boomroll >= boom) {
                         // mech is ok
                         r.choose(true);
@@ -19098,7 +19083,12 @@ public class Server implements Runnable {
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         r.add(shutdown);
-                        r.add(sdroll);
+                        if (entity.getCrew().hasActiveTechOfficer()) {
+                            r.add((sdroll + 2) + " (" + sdroll + "+2)");
+                            sdroll += 2;
+                        } else {
+                            r.add(sdroll);
+                        }
                         if (sdroll >= shutdown) {
                             // avoided
                             r.choose(true);
@@ -19139,7 +19129,12 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(boom);
-                r.add(boomroll);
+                if (entity.getCrew().hasActiveTechOfficer()) {
+                    r.add((boomroll + 2) + " (" + boomroll + "+2)");
+                    boomroll += 2;
+                } else {
+                    r.add(boomroll);
+                }
                 if (boomroll >= boom) {
                     // mech is ok
                     r.choose(true);

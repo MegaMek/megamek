@@ -18577,7 +18577,7 @@ public class Server implements Runnable {
                     r.addDesc(entity);
                     r.add(boom);
                     if (entity.getCrew().hasActiveTechOfficer()) {
-                        r.add((boomroll - 2) + "(+2)");
+                        r.add(boomroll + "(" + (boomroll - 2) + "+2)");
                     } else {
                         r.add(boomroll);
                     }
@@ -18947,11 +18947,18 @@ public class Server implements Runnable {
                                                                                    : 0))
                                - hotDogMod;
                     int boomroll = Compute.d6(2);
+                    if (entity.getCrew().hasActiveTechOfficer()) {
+                        boomroll += 2;
+                    }
                     r = new Report(5040);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(boom);
-                    r.add(boomroll);
+                    if (entity.getCrew().hasActiveTechOfficer()) {
+                        r.add(boomroll + "(" + (boomroll - 2) + "+2)");
+                    } else {
+                        r.add(boomroll);
+                    }
 
                     if (boomroll >= boom) {
                         // avoided
@@ -20774,8 +20781,9 @@ public class Server implements Runnable {
                 Report r = new Report(6030);
                 r.indent(2);
                 r.subject = e.getId();
+                r.add(e.getCrew().getCrewType().getRoleName(crewPos));
                 r.addDesc(e);
-                r.add(e.getCrew().getNameAndRole(crewPos));
+                r.add(e.getCrew().getName(crewPos));
                 r.add(rollTarget);
                 r.add(roll);
                 if (roll >= rollTarget) {
@@ -20837,8 +20845,9 @@ public class Server implements Runnable {
                                                                          .getHits(pos));
                         Report r = new Report(6029);
                         r.subject = e.getId();
+                        r.add(e.getCrew().getCrewType().getRoleName(pos));
                         r.addDesc(e);
-                        r.add(e.getCrew().getNameAndRole(pos));
+                        r.add(e.getCrew().getName(pos));
                         r.add(rollTarget);
                         r.add(roll);
                         if (roll >= rollTarget) {

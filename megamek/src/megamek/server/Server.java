@@ -27516,7 +27516,6 @@ public class Server implements Runnable {
             r.indent();
             reports.add(r);
             reports.addAll(damageCrew(entity, 1, crewPos));
-            Report.addNewline(reports);
         } else {
             int diceRoll = entity.getCrew().rollPilotingSkill();
             r = new Report(2325);
@@ -27533,9 +27532,9 @@ public class Server implements Runnable {
                 r.choose(false);
                 reports.add(r);
                 reports.addAll(damageCrew(entity, 1, crewPos));
-                Report.addNewline(reports);
             }
         }
+        Report.addNewline(reports);
         return reports;
     }
 

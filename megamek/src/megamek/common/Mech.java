@@ -5228,9 +5228,9 @@ public abstract class Mech extends Entity {
         } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
             //Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner acting as pilot.
             if (getCrew().getCurrentPilotIndex() != getCrew().getCrewType().getPilotPos()) {
-                roll.addModifier(1, "Dual cockpit without active pilot");
+                roll.addModifier(1, "dual cockpit without active pilot");
             } else if (getCrew().hasDedicatedGunner() || !isAttackingThisTurn()) {
-                roll.addModifier(-1, "Dedicated pilot");
+                roll.addModifier(-1, "dedicated pilot");
             }
         }
 

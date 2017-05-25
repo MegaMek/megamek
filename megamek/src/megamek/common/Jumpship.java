@@ -17,6 +17,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -38,6 +39,9 @@ public class Jumpship extends Aero {
     public static final int LOC_FRS = 2;
     public static final int LOC_ALS = 4;
     public static final int LOC_ARS = 5;
+
+    public static final int GRAV_DECK_STANDARD_MAX = 100;
+    public static final int GRAV_DECK_LARGE_MAX = 250;
 
     private static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
     private static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side",
@@ -62,11 +66,14 @@ public class Jumpship extends Aero {
     // HPG
     private boolean hasHPG = false;
 
-    // grav decks (three different kinds)
-    // regular
-    private int gravDeck = 0;
-    private int gravDeckLarge = 0;
-    private int gravDeckHuge = 0;
+    /**
+     * Keep track of all of the grav decks and their sizes.
+     *
+     * This is a new approach for storing grav decks, which allows the size of each deck to be stored.  Previously,
+     * we just stored the number of standard, large and huge grav decks, and could not specify the exact size of the
+     * deck.
+     */
+    private List<Integer> gravDecks = new ArrayList<>();
 
     // station-keeping thrust and accumulated thrust
     private double stationThrust = 0.2;
@@ -86,32 +93,112 @@ public class Jumpship extends Aero {
         return 6;
     }
 
+    /**
+     * Get the number of grav decks on the ship.
+     *
+     * @return
+     */
     public int getTotalGravDeck() {
-        return (gravDeck + gravDeckLarge + gravDeckHuge);
+        return gravDecks.size();
     }
 
+    /**
+     * Adds a grav deck whose size in meters is specified.
+     *
+     * @param size  The size in meters of the grav deck.
+     */
+    public void addGravDeck(int size) {
+        gravDecks.add(size);
+    }
+
+    /**
+     * Get a list of all grav decks mounted on this ship, where each value
+     * represents the size in meters of the grav deck.
+     *
+     * @return
+     */
+    public List<Integer> getGravDecks() {
+        return gravDecks;
+    }
+
+    /**
+     * Old style for setting the number of grav decks.  This allows the user to specify N standard grav decks, which
+     * will get added at a default value.
+     *
+     * @param n
+     */
     public void setGravDeck(int n) {
-        gravDeck = n;
+        for (int i = 0; i < n; i++) {
+            gravDecks.add(GRAV_DECK_STANDARD_MAX / 2);
+        }
     }
 
+    /**
+     * Get the number of standard grav decks
+     * @return
+     */
     public int getGravDeck() {
-        return gravDeck;
+        int count = 0;
+        for (int size : gravDecks) {
+            if (size < GRAV_DECK_STANDARD_MAX) {
+                count++;
+            }
+        }
+        return count;
     }
 
+    /**
+     * Old style method for adding N large grav decks.  A default value is chosen that is half-way between the standard
+     * and huge sizes.
+     *
+     * @param n
+     */
     public void setGravDeckLarge(int n) {
-        gravDeckLarge = n;
+        for (int i = 0; i < n; i++) {
+            gravDecks.add(GRAV_DECK_STANDARD_MAX + (GRAV_DECK_LARGE_MAX - GRAV_DECK_STANDARD_MAX) / 2);
+        }
     }
 
+    /**
+     * Get the number of large grav decks.
+     *
+     * @return
+     */
     public int getGravDeckLarge() {
-        return gravDeckLarge;
+        int count = 0;
+        for (int size : gravDecks) {
+            if (size >= GRAV_DECK_STANDARD_MAX && size < GRAV_DECK_LARGE_MAX) {
+                count++;
+            }
+        }
+        return count;
     }
 
+    /**
+     * Old style method for adding N huge grav decks.  A default value is chosen that is the current large maximum plus
+     * half that value.
+     *
+     * @param n
+     */
     public void setGravDeckHuge(int n) {
-        gravDeckHuge = n;
+        for (int i = 0; i < n; i++) {
+            gravDecks.add(GRAV_DECK_LARGE_MAX + (GRAV_DECK_LARGE_MAX) / 2);
+        }
     }
 
+    /**
+     * Get the number of huge grav decks.
+     *
+     * @return
+     */
     public int getGravDeckHuge() {
-        return gravDeckHuge;
+        int count = 0;
+        for (int size : gravDecks) {
+            if (size >= GRAV_DECK_LARGE_MAX) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public void setHPG(boolean b) {

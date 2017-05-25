@@ -20679,10 +20679,12 @@ public class Server implements Runnable {
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
             for (int pos = 0; pos < en.getCrew().getSlotCount(); pos++) {
-                if ((crewPos >= 0 && crewPos != pos)
-                        || crew.isDead(crewPos)){
+                if (crewPos >= 0
+                        && (crewPos != pos || crew.isDead(crewPos))) {
                     continue;
                 }
+                boolean wasPilot = crew.getCurrentPilotIndex() == pos;
+                boolean wasGunner = crew.getCurrentGunnerIndex() == pos;
                 crew.setHits(crew.getHits(pos) + damage, pos);
                 if (Crew.DEATH > crew.getHits(pos)) {
                     r = new Report(6025);
@@ -20697,6 +20699,12 @@ public class Server implements Runnable {
                 r.add(damage);
                 r.add(crew.getHits(pos));
                 vDesc.addElement(r);
+                if (crew.isDead(pos)) {
+                    r = createCrewTakeoverReport(en, pos, wasPilot, wasGunner);
+                    if (null != r) {
+                        vDesc.addElement(r);                        
+                    }
+                }
                 if (Crew.DEATH > crew.getHits()) {
                     vDesc.addAll(resolveCrewDamage(en, damage, pos));
                 } else if (!crew.isDoomed()) {
@@ -20731,6 +20739,39 @@ public class Server implements Runnable {
             vDesc.add(r);
         }
         return vDesc;
+    }
+    
+    /**
+     * Convenience method that fills in a report showing that a crew member of a multicrew cockpit
+     * has taken over for another incapacitated crew member.
+     * 
+     * @param e         The <code>Entity</code> for the crew.
+     * @param slot      The slot index of the crew member that was incapacitated.
+     * @param wasPilot  Whether the crew member was the pilot before becoming incapacitated.
+     * @param wasGunner Whether the crew member was the gunner before becoming incapacitated.
+     * @return          A completed <code>Report</code> if the position was assumed by another
+     *                  crew members, otherwise null.
+     */
+    private Report createCrewTakeoverReport(Entity e, int slot, boolean wasPilot, boolean wasGunner) {
+        if (wasPilot && e.getCrew().getCurrentPilotIndex() != slot) {
+            Report r = new Report(5560);
+            r.subject = e.getId();
+            r.indent(4);
+            r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentPilotIndex()));
+            r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getPilotPos()));
+            r.addDesc(e);
+            return r;
+        }
+        if (wasGunner && e.getCrew().getCurrentGunnerIndex() != slot) {
+            Report r = new Report(5560);
+            r.subject = e.getId();
+            r.indent(4);
+            r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentGunnerIndex()));
+            r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getGunnerPos()));
+            r.addDesc(e);
+            return r;
+        }
+        return null;
     }
 
     /**
@@ -20810,19 +20851,8 @@ public class Server implements Runnable {
                 boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
                 boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
                 e.getCrew().setUnconscious(true, crewPos);
-                if (wasPilot && e.getCrew().getCurrentPilotIndex() != crewPos) {
-                    Report r = new Report(5560);
-                    r.subject = e.getId();
-                    r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentPilotIndex()));
-                    r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getPilotPos()));
-                    r.addDesc(e);
-                    vDesc.add(r);
-                } else if (wasGunner && e.getCrew().getCurrentGunnerIndex() != crewPos) {
-                    Report r = new Report(5560);
-                    r.subject = e.getId();
-                    r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentGunnerIndex()));
-                    r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getGunnerPos()));
-                    r.addDesc(e);
+                Report r = createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
+                if (null != r) {
                     vDesc.add(r);
                 }
                 return vDesc;
@@ -25066,19 +25096,8 @@ public class Server implements Runnable {
                             r.addDesc(en);
                             r.add(en.getCrew().getName(crewSlot));
                             vDesc.addElement(r);
-                            if (wasPilot && en.getCrew().getCurrentPilotIndex() != crewSlot) {
-                                r = new Report(5560);
-                                r.subject = en.getId();
-                                r.add(en.getCrew().getNameAndRole(en.getCrew().getCurrentPilotIndex()));
-                                r.add(en.getCrew().getCrewType().getRoleName(en.getCrew().getCrewType().getPilotPos()));
-                                r.addDesc(en);
-                                vDesc.add(r);
-                            } else if (wasGunner && en.getCrew().getCurrentGunnerIndex() != crewSlot) {
-                                r = new Report(5560);
-                                r.subject = en.getId();
-                                r.add(en.getCrew().getNameAndRole(en.getCrew().getCurrentGunnerIndex()));
-                                r.add(en.getCrew().getCrewType().getRoleName(en.getCrew().getCrewType().getGunnerPos()));
-                                r.addDesc(en);
+                            r = createCrewTakeoverReport(en, crewSlot, wasPilot, wasGunner);
+                            if (null != r) {
                                 vDesc.add(r);
                             }
                         }

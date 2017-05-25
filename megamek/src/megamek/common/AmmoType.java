@@ -8794,11 +8794,16 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 500;
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3060);
-        ammo.techAdvancement.setTechRating(RATING_F);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        ammo.rulesRefs = "253, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setClanAdvancement(3055, 3060, 3065, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_CCC)
+        .setProductionFactions(F_CCC);
         return ammo;
     }
 

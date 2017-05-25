@@ -20679,7 +20679,8 @@ public class Server implements Runnable {
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
             for (int pos = 0; pos < en.getCrew().getSlotCount(); pos++) {
-                if (crewPos >= 0 && crewPos != pos) {
+                if ((crewPos >= 0 && crewPos != pos)
+                        || crew.isDead(crewPos)){
                     continue;
                 }
                 crew.setHits(crew.getHits(pos) + damage, pos);
@@ -20806,7 +20807,24 @@ public class Server implements Runnable {
                      && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO));
             // end of do-while
             if (e.getCrew().isKoThisRound(crewPos)) {
+                boolean wasPilot = e.getCrew().getCurrentPilotIndex() == crewPos;
+                boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
                 e.getCrew().setUnconscious(true, crewPos);
+                if (wasPilot && e.getCrew().getCurrentPilotIndex() != crewPos) {
+                    Report r = new Report(5560);
+                    r.subject = e.getId();
+                    r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentPilotIndex()));
+                    r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getPilotPos()));
+                    r.addDesc(e);
+                    vDesc.add(r);
+                } else if (wasGunner && e.getCrew().getCurrentGunnerIndex() != crewPos) {
+                    Report r = new Report(5560);
+                    r.subject = e.getId();
+                    r.add(e.getCrew().getNameAndRole(e.getCrew().getCurrentGunnerIndex()));
+                    r.add(e.getCrew().getCrewType().getRoleName(e.getCrew().getCrewType().getGunnerPos()));
+                    r.addDesc(e);
+                    vDesc.add(r);
+                }
                 return vDesc;
             }
         }
@@ -20829,7 +20847,8 @@ public class Server implements Runnable {
                     if (e.getCrew().isMissing(pos)) {
                         continue;
                     }
-                    if (e.getCrew().isUnconscious(pos) && !e.getCrew().isKoThisRound(pos)) {
+                    if (e.getCrew().isUnconscious(pos)
+                            && !e.getCrew().isKoThisRound(pos)) {
                         int roll = Compute.d6(2);
 
                         if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE)) {
@@ -25037,6 +25056,8 @@ public class Server implements Runnable {
                                 vDesc.addAll(destroyEntity(en, "pilot death", true));
                             }
                         } else if (!en.getCrew().isMissing(crewSlot)){
+                            boolean wasPilot = en.getCrew().getCurrentPilotIndex() == crewSlot;
+                            boolean wasGunner = en.getCrew().getCurrentGunnerIndex() == crewSlot;
                             en.getCrew().setDead(true, crewSlot);
                             r = new Report(6027);
                             r.subject = en.getId();
@@ -25045,6 +25066,21 @@ public class Server implements Runnable {
                             r.addDesc(en);
                             r.add(en.getCrew().getName(crewSlot));
                             vDesc.addElement(r);
+                            if (wasPilot && en.getCrew().getCurrentPilotIndex() != crewSlot) {
+                                r = new Report(5560);
+                                r.subject = en.getId();
+                                r.add(en.getCrew().getNameAndRole(en.getCrew().getCurrentPilotIndex()));
+                                r.add(en.getCrew().getCrewType().getRoleName(en.getCrew().getCrewType().getPilotPos()));
+                                r.addDesc(en);
+                                vDesc.add(r);
+                            } else if (wasGunner && en.getCrew().getCurrentGunnerIndex() != crewSlot) {
+                                r = new Report(5560);
+                                r.subject = en.getId();
+                                r.add(en.getCrew().getNameAndRole(en.getCrew().getCurrentGunnerIndex()));
+                                r.add(en.getCrew().getCrewType().getRoleName(en.getCrew().getCrewType().getGunnerPos()));
+                                r.addDesc(en);
+                                vDesc.add(r);
+                            }
                         }
 
                         break;
@@ -27421,7 +27457,7 @@ public class Server implements Runnable {
                     modifiers.remove(0);
                 }
                 for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
-                    if (entity.getCrew().isMissing(pos)) {
+                    if (entity.getCrew().isMissing(pos) || entity.getCrew().isDead(pos)) {
                         continue;
                     }
                     PilotingRollData prd;

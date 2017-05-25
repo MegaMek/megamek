@@ -417,6 +417,9 @@ public class Crew implements Serializable {
         // Ejected pilots stop taking hits.
         if (!ejected && !missing[pos]) {
             this.hits[pos] = hits;
+            if (hits >= DEATH) {
+                setDead(true, pos);
+            }
         }
     }
     
@@ -437,11 +440,13 @@ public class Crew implements Serializable {
     }
 
     public boolean isUnconscious(int pos) {
-        return unconscious[pos];
+        return unconscious[pos] && !dead[pos] && hits[pos] < DEATH;
     }
     
     public void setUnconscious(boolean unconscious) {
-        Arrays.fill(this.unconscious, unconscious);
+        for (int i = 0; i < getSlotCount(); i++) {
+            setUnconscious(unconscious, i);
+        }
     }
 
     public void setUnconscious(boolean unconscious, int pos) {
@@ -470,7 +475,9 @@ public class Crew implements Serializable {
     
     public void setDead(boolean dead) {
         if (!ejected) {
-            Arrays.fill(this.dead, dead);
+            for (int i = 0; i < getSlotCount(); i++) {
+                setDead(dead, i);
+            }
         }
     }
 

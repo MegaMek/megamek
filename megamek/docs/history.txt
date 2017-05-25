@@ -12,6 +12,9 @@ v0.43.2 2017-05-1 22:00 UTC)
 	required, as they have default values if not defined)
 + Issue #529: Movement Interruption with Dialog Box Ends Turn
 + Data: New Sprites, Unit Fixes and RAT Fixes.
++ Added BLK <grav_decks> tag.  This allows uers to specify grav decks by size,
+	rather than just by class.  The old tags still work, but the grav decks are
+	added with a default value for the size class
 
 v0.43.1 (2017-03-31 01:15 UTC)
 + Feature: Added checks for null crew when checking for MD enhancements

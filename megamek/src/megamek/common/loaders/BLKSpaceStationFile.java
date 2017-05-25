@@ -139,7 +139,9 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
             a.setBattleStation(true);
         }
 
-        // grav decks
+        // Grav Decks - two approaches
+        // First, the old method, where a number of grav decks for each category is specified
+        //  This doesn't allow us to specify precise size
         if (dataFile.exists("grav_deck")) {
             a.setGravDeck(dataFile.getDataAsInt("grav_deck")[0]);
         }
@@ -149,7 +151,16 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("grav_deck_huge")) {
             a.setGravDeckHuge(dataFile.getDataAsInt("grav_deck_huge")[0]);
         }
+        // Second, the new method, where a white space separated list of numbers is given
+        //  Each number represents a distinct grav deck, with the specified size
+        if (dataFile.exists("grav_decks")) {
+            String[] toks = dataFile.getDataAsString("grav_decks");
+            for (String t : toks) {
+                a.addGravDeck(Integer.parseInt(t));
+            }
+        }
 
+        // Armor
         if (dataFile.exists("armor_type")) {
             a.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
         } else {

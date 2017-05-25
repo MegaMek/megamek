@@ -6614,17 +6614,26 @@ public abstract class Mech extends Entity {
     
     /**
      * Determines which crew slot is associated with a particular cockpit critical.
+     * 
      * @param cs    A cockpit critical slot
      * @return      The crew slot index associated with this critical slot, or -1 to indicate the entire crew.
      */
-    public int getCrewForCockpitSlot(CriticalSlot cs) {
+    public int getCrewForCockpitSlot(int loc, CriticalSlot cs) {
+        //For those with split cockpits, count the cockpit criticals in the location until we reach the correct
+        //one.
         if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
                 || getCockpitType() == COCKPIT_DUAL
                 || getCockpitType() == COCKPIT_QUADVEE) {
-            return cs.getIndex() / 3;
-        } else {
-            return -1;
+            int crewSlot = 0;
+            for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                if (getCritical(loc, i) == cs) {
+                    return crewSlot;
+                } else if (getCritical(loc, i).getIndex() == SYSTEM_COCKPIT) {
+                    crewSlot++;
+                }
+            }
         }
+        return -1;
     }
     
     @Override

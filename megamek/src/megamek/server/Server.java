@@ -25069,7 +25069,7 @@ public class Server implements Runnable {
                         //First check whether this hit takes out the whole crew; for multi-crew cockpits
                         //we need to check the other critical positions (if any).
                         boolean allDead = true;
-                        int crewSlot = ((Mech)en).getCrewForCockpitSlot(cs);
+                        int crewSlot = ((Mech)en).getCrewForCockpitSlot(loc, cs);
                         if (crewSlot >= 0) {
                             for (int i = 0; i < en.getCrew().getSlotCount(); i++) {
                                 if (i != crewSlot && !en.getCrew().isDead(i) && !en.getCrew().isMissing(i)) {

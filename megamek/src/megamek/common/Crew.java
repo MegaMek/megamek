@@ -1188,11 +1188,12 @@ public class Crew implements Serializable {
     
     /**
      * When assigning skills randomly, we want to make sure the skills are assigned to the most
-     * appropriate position. We're going to do it the simpler way and reassign the piloting and gunnery
+     * appropriate position in crews where the pilot and gunner are separate.
+     * We're going to do it the simpler way and reassign the piloting and gunnery
      * skills individually, resulting in a more specialized crew.
      */
     public void sortRandomSkills() {
-        if (crewType.getCrewSlots() < 2) {
+        if (crewType.getCrewSlots() < 2 || crewType.getPilotPos() == crewType.getGunnerPos()) {
             return;
         }
         int lowest = MAX_SKILL;

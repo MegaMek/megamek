@@ -900,10 +900,10 @@ public class TestBattleArmor extends TestEntity {
             if (m.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LARM) {
                     numLAManipulators++;
-                    laManipType = BAManipulator.getManipulator(m.getName());
+                    laManipType = BAManipulator.getManipulator(m.getType().getInternalName());
                 } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM) {
                     numRAManipulators++;
-                    raManipType = BAManipulator.getManipulator(m.getName());
+                    raManipType = BAManipulator.getManipulator(m.getType().getInternalName());
                 } else {
                     if (m.getBaMountLoc() != BattleArmor.MOUNT_LOC_NONE) {
                         buff.append(m.getName()

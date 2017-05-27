@@ -173,6 +173,22 @@ public class Crew implements Serializable {
     }
 
     /**
+     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int)}.
+     * 
+     * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
+     * result in a secondary target modifier for additional targets past the first.
+     * 
+     * @param name
+     * @param size
+     * @param gunnery
+     * @param piloting
+     */
+    @Deprecated
+    public Crew(String name, int size, int gunnery, int piloting) {
+        this(CrewType.SINGLE, name, size, gunnery, gunnery, gunnery, piloting);
+    }
+
+    /**
      * @param crewType the type of crew
      * @param name     the name of the crew or commander.
      * @param size     the crew size.
@@ -1310,5 +1326,33 @@ public class Crew implements Serializable {
         }
         swapConsoleRoles = false;
         return false;
+    }
+    
+    /*
+     * Legacy methods used by MekWars 
+     */
+    
+    /**
+     * @deprecated by multi-crew cockpits. Replaced by {@link #setHits(int)}
+     */  
+    @Deprecated
+    public void setHits(int hits) {
+        setHits(hits, 0);
+    }
+    
+    /**
+     * @deprecated by multi-crew cockpits. Replaced by {@link #setPiloting(int)}
+     */  
+    @Deprecated
+    public void setPiloting(int piloting) {
+        setPiloting(piloting, 0);
+    }
+    
+    /**
+     * @deprecated by multi-crew cockpits. Replaced by {@link #setGunnery(int)}
+     */  
+    @Deprecated
+    public void setGunnery(int gunnery) {
+        setGunnery(gunnery, 0);
     }
 }

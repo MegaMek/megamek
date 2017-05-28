@@ -18,7 +18,6 @@
 package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
 
 /**
  * @author Dave Nawton
@@ -42,10 +41,17 @@ public class InfantryProstheticVibroBladeWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.14;
         infantryRange = 0;
-        //Rating and Dates not available below is compiled from various books
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2393);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_F, RATING_E, RATING_D, RATING_D });
+		// Rating and Dates not available below is compiled from Specific
+		// Weapons in IO blended with the rating for the limb itself
+        rulesRefs = "84,IO";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_F, RATING_E, RATING_D, RATING_D)
+            .setISAdvancement(2398, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setClanAdvancement(2398, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false, false, false);
     }
 }

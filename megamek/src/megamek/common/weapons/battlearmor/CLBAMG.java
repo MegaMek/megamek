@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 
 /**
@@ -38,6 +37,10 @@ public class CLBAMG extends BAMGWeapon {
         name = "Machine Gun (Medium)";
         setInternalName("CLBAMG");
         addLookupName("Clan BA Machine Gun");
+        addLookupName("ISBAMG");
+        addLookupName("IS BA Machine Gun");
+        addLookupName("ISBAMachine Gun");
+        addLookupName("ISBAMachineGun");
         heat = 0;
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
@@ -52,11 +55,16 @@ public class CLBAMG extends BAMGWeapon {
         cost = 5000;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "258, TM";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 2868, 2870);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_B, RATING_B });
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_D, RATING_B, RATING_B)
+        .setISAdvancement(DATE_NONE, DATE_NONE, 3050, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false, false, false)
+        .setClanAdvancement(DATE_PS, 2868, 2870, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false, false, false)
+        .setProductionFactions(F_CWF);
     }
 
 }

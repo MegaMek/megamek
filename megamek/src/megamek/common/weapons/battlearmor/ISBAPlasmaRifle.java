@@ -18,7 +18,6 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
 import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
@@ -36,7 +35,7 @@ public class ISBAPlasmaRifle extends Weapon {
      */
     public ISBAPlasmaRifle() {
         super();
-        name = "Plasma Rifle";
+        name = "Plasma Rifle (Man-Portable)";
         setInternalName("ISBAPlasmaRifle");
         addLookupName("IS BA Plasma Rifle");
         damage = 2;
@@ -52,9 +51,14 @@ public class ISBAPlasmaRifle extends Weapon {
         cost = 28000;
         flags = flags.or(F_BA_WEAPON).or(F_DIRECT_FIRE).or(F_PLASMA).or(F_ENERGY).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         rulesRefs = "267, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3058, 3065, 3074);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_D, RATING_C });
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+        .setISAdvancement(3063, 3065, 3074, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_CC)
+        .setProductionFactions(F_CC);
     }
 }

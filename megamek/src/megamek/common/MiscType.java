@@ -5716,7 +5716,7 @@ public class MiscType extends EquipmentType {
 		misc.criticals = 0;
 		misc.cost = 250000;
 		misc.hittable = false;
-		misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BATTLEMECH_NIU);
+		misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_BATTLEMECH_NIU);
 
 		misc.rulesRefs = "68,IO";
 		misc.techAdvancement.setTechBase(TECH_BASE_IS)
@@ -9549,7 +9549,7 @@ public class MiscType extends EquipmentType {
 		misc.tonnage = 1;
 		misc.criticals = 1;
 		misc.cost = 120000;
-		misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_BA_EQUIPMENT).or(F_TANK_EQUIPMENT);
+		misc.flags = misc.flags.or(F_HARJEL).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
 		misc.omniFixedOnly = true;
 		misc.bv = 0;
 		misc.rulesRefs = "288,TO";
@@ -11240,6 +11240,7 @@ public class MiscType extends EquipmentType {
 
 		misc.name = "SV Chassis Mod [Tractor]";
 		misc.setInternalName(misc.name);
+		misc.addLookupName("Tractor");
 		misc.tonnage = 0; // accounted as part of the unit Construction
 		misc.criticals = 0;
 		misc.cost = 0; // Cost accounted as part of unit cost
@@ -11260,6 +11261,7 @@ public class MiscType extends EquipmentType {
 
 		misc.name = "SV Chassis Mod [Trailer]";
 		misc.setInternalName(misc.name);
+		misc.addLookupName("Trailer");
 		misc.tonnage = 0; // accounted as part of the unit Construction
 		misc.criticals = 0;
 		misc.cost = 0; // Cost accounted as part of unit cost

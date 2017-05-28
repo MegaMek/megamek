@@ -53,3 +53,5 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
     }
 }
+
+//Commented out in Weapontype. Clan version is same stats as IS one. And IS versions captures Tech progression for both.

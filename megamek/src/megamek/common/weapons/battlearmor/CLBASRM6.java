@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.srms.SRMWeapon;
 
 
@@ -50,9 +49,14 @@ public class CLBASRM6 extends SRMWeapon {
         shortAV = 8;
         maxRange = RANGE_SHORT;
 		rulesRefs = "261, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2860, 2868, 2870);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_B });
+		techAdvancement.setTechBase(TECH_BASE_CLAN)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+	    .setTechRating(RATING_F)
+	    .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
+	    .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(true, false, false, false, false)
+	    .setPrototypeFactions(F_CWF)
+	    .setProductionFactions(F_CWF);
     }
 }

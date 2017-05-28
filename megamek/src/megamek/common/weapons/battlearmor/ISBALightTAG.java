@@ -57,3 +57,5 @@ public class ISBALightTAG extends TAGWeapon {
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }
+
+//Commented out in Weapontype. Clan version is same stats as IS one. And Clan versions captures Tech progression for both.

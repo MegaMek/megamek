@@ -56,3 +56,6 @@ public class ISBAMG extends BAMGWeapon {
     }
 
 }
+
+
+//Commented out in Weapontype. Clan version is same stats as IS one. And Clan versions captures Tech progression for both.

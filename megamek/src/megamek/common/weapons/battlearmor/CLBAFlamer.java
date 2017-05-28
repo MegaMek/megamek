@@ -54,8 +54,9 @@ public class CLBAFlamer extends BAFlamerWeapon {
         rulesRefs = "255, TO";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setClanAdvancement(2860, 2868, 3050);
-        techAdvancement.setISAdvancement(DATE_NONE, 3050, 3050);
-        techAdvancement.setIntroLevel(true);
+        techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);
+        techAdvancement.setIntroLevel(false);
+        techAdvancement.setPrototypeFactions(F_CWF).setProductionFactions(F_CWF);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_B, RATING_B });
     }

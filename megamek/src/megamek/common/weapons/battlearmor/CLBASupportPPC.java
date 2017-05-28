@@ -18,7 +18,6 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.ppc.PPCWeapon;
 
 /**
@@ -35,9 +34,11 @@ public class CLBASupportPPC extends PPCWeapon {
      */
     public CLBASupportPPC() {
         super();
-        name = "BA Support PPC";
+        name = "Support PPC";
         setInternalName("BA Support PPC");
         addLookupName("CLBASupportPPC");
+        addLookupName("ISBASupportPPC");
+        addLookupName("IS BA Support PPC");
         damage = 2;
         ammoType = AmmoType.T_NA;
         shortRange = 2;
@@ -50,10 +51,16 @@ public class CLBASupportPPC extends PPCWeapon {
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         cost = 14000;
         rulesRefs = "267, TM";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 2945, 3056);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_D, RATING_C });
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+        .setISAdvancement(3051, 3053, 3056, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setClanAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, true, false, false)
+        .setPrototypeFactions(F_DC)	
+        .setProductionFactions(F_DC);
     }
 }

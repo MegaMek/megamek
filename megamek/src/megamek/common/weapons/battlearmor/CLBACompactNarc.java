@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.NarcWeapon;
 
 /**
@@ -37,6 +36,8 @@ public class CLBACompactNarc extends NarcWeapon {
         name = "Narc (Compact)";
         setInternalName("CLBACompactNarc");
         addLookupName("CLBACompact Narc");
+        addLookupName("ISBACompactNarc");
+        addLookupName("ISBACompact Narc");
         heat = 0;
         rackSize = 4;
         shortRange = 2;
@@ -49,10 +50,17 @@ public class CLBACompactNarc extends NarcWeapon {
         criticals = 1;
         cost = 15000;
         rulesRefs = "263, TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2865, 2875, 3065);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+        .setISAdvancement(DATE_NONE, DATE_NONE, 3060, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(2870, 2875, 3065, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_CSV)	
+        .setProductionFactions(F_CSV);
     }
 
 }

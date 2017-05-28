@@ -18,7 +18,6 @@
 package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.ArtilleryWeapon;
 
 /**
@@ -36,7 +35,7 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
      */
     public ISBATubeArtillery() {
         super();
-        name = "BA Tube Artillery";
+        name = "Tube Artillery (BA)";
         setInternalName("ISBATubeArtillery");
         rackSize = 3;
         ammoType = AmmoType.T_BA_TUBE;
@@ -49,11 +48,15 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         bv = 27;
         cost = 200000;
         rulesRefs = "284, TO";
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3065, 3075, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(3070, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false, false, false)
+        .setPrototypeFactions(F_CS)
+        .setProductionFactions(F_CS);
     }
 
 }

@@ -1117,7 +1117,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISLightPPC());
         EquipmentType.addType(new ISHeavyPPC());
         EquipmentType.addType(new ISHERPPC());
-        EquipmentType.addType(new ISBASupportPPC());
+//        EquipmentType.addType(new ISBASupportPPC());
         EquipmentType.addType(new CLBASupportPPC());
         // Flamers
         EquipmentType.addType(new CLFlamer());
@@ -1465,7 +1465,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISC3MBS());
         EquipmentType.addType(new CLLightTAG());
         EquipmentType.addType(new CLTAG());
-        EquipmentType.addType(new ISBALightTAG());
+//        EquipmentType.addType(new ISBALightTAG());
         EquipmentType.addType(new CLBALightTAG());
         // MMLs
         EquipmentType.addType(new ISMML3());
@@ -1853,24 +1853,24 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLAdvancedSRM6());
         EquipmentType.addType(new CLAdvancedSRM6OS());
         EquipmentType.addType(new CLBAAPGaussRifle());
-        EquipmentType.addType(new CLBABearhunterSuperheavyAC());
-        EquipmentType.addType(new CLBAERMediumLaser());
-        EquipmentType.addType(new CLBAERMediumPulseLaser());
-        EquipmentType.addType(new CLBAERMicroLaser());
-        EquipmentType.addType(new CLBAERSmallLaser());
-        EquipmentType.addType(new CLBAERSmallPulseLaser());
+        EquipmentType.addType(new CLBAMGBearhunterSuperheavy());
+        EquipmentType.addType(new CLBALaserERMedium());
+        EquipmentType.addType(new CLBAERPulseLaserMedium());
+        EquipmentType.addType(new CLBALaserERMicro());
+        EquipmentType.addType(new CLBALaserERSmall());
+        EquipmentType.addType(new CLBAERPulseLaserSmall());
         EquipmentType.addType(new CLBAFlamer());
-        EquipmentType.addType(new CLBAHeavyFlamer());
-        EquipmentType.addType(new CLBAHeavyGrenadeLauncher());
-        EquipmentType.addType(new CLBAHeavyMediumLaser());
-        EquipmentType.addType(new CLBAHeavyMG());
-        EquipmentType.addType(new CLBAHeavyMortar());  //added per IO Pg 53
-        EquipmentType.addType(new CLBAHeavyRecoillessRifle());
-        EquipmentType.addType(new CLBAHeavySmallLaser());
+        EquipmentType.addType(new CLBAFlamerHeavy());
+        EquipmentType.addType(new CLBAGrenadeLauncherHeavy());
+        EquipmentType.addType(new CLBALaserHeavyMedium());
+        EquipmentType.addType(new CLBAMGHeavy());
+        EquipmentType.addType(new CLBAMortarHeavy());  //added per IO Pg 53
+        EquipmentType.addType(new CLBARecoillessRifleHeavy());
+        EquipmentType.addType(new CLBALaserHeavySmall());
         EquipmentType.addType(new CLBALBX());
-        EquipmentType.addType(new CLBALightMG());
-        EquipmentType.addType(new CLBALightMortar()); //added per IO Pg 53
-        EquipmentType.addType(new CLBALightRecoillessRifle());
+        EquipmentType.addType(new CLBAMGLight());
+        EquipmentType.addType(new CLBAMortarLight()); //added per IO Pg 53
+        EquipmentType.addType(new CLBARecoillessRifleLight());
         EquipmentType.addType(new CLBALRM1());
         EquipmentType.addType(new CLBALRM1OS());
         EquipmentType.addType(new CLBALRM2());
@@ -1881,12 +1881,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBALRM4OS());
         EquipmentType.addType(new CLBALRM5());
         EquipmentType.addType(new CLBALRM5OS());
-        EquipmentType.addType(new CLBAMediumPulseLaser());
-        EquipmentType.addType(new CLBAMediumRecoillessRifle());
+        EquipmentType.addType(new CLBAPulseLaserMedium());
+        EquipmentType.addType(new CLBARecoillessRifleMedium());
         EquipmentType.addType(new CLBAMG());
-        EquipmentType.addType(new CLBAMicroPulseLaser());
-        EquipmentType.addType(new CLBASmallLaser());
-        EquipmentType.addType(new CLBASmallPulseLaser());
+        EquipmentType.addType(new CLBAPulseLaserMicro());
+        EquipmentType.addType(new CLBALaserSmall());
+        EquipmentType.addType(new CLBAPulseLaserSmall());
         EquipmentType.addType(new CLBASRM1());
         EquipmentType.addType(new CLBASRM1OS());
         EquipmentType.addType(new CLBASRM2());
@@ -1901,36 +1901,36 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBASRM6OS());
         EquipmentType.addType(new CLBAMicroBomb());
         EquipmentType.addType(new CLBACompactNarc());
-        EquipmentType.addType(new ISBAERMediumLaser());
-        EquipmentType.addType(new ISBAERSmallLaser());
-        EquipmentType.addType(new ISBAHeavyFlamer());
-        EquipmentType.addType(new ISBAHeavyMG());
-        EquipmentType.addType(new ISBALightMG());
-        EquipmentType.addType(new ISBAMagshotGaussRifle());
-        EquipmentType.addType(new ISBAMediumLaser());
-        EquipmentType.addType(new ISBAMediumPulseLaser());
-        EquipmentType.addType(new ISBAMG());
+        EquipmentType.addType(new ISBALaserERMedium());
+        EquipmentType.addType(new ISBALaserERSmall());
+//        EquipmentType.addType(new ISBAHeavyFlamer());
+        EquipmentType.addType(new ISBAMGHeavy());
+//        EquipmentType.addType(new ISBAMGLight());
+        EquipmentType.addType(new ISBAGaussRifleMagshot());
+        EquipmentType.addType(new ISBALaserMedium());
+        EquipmentType.addType(new ISBALaserPulseMedium());
+//        EquipmentType.addType(new ISBAMG());
         EquipmentType.addType(new ISBAPlasmaRifle());
-        EquipmentType.addType(new ISBASmallLaser());
-        EquipmentType.addType(new ISBASmallPulseLaser());
-        EquipmentType.addType(new ISBASmallVariableSpeedPulseLaser());
-        EquipmentType.addType(new ISBAMediumVariableSpeedPulseLaser());
+        EquipmentType.addType(new ISBALaserSmall());
+        EquipmentType.addType(new ISBALaserPulseSmall());
+        EquipmentType.addType(new ISBALaserVSPSmall());
+        EquipmentType.addType(new ISBALaserVSPMedium());
         EquipmentType.addType(new ISBATaser());
-        EquipmentType.addType(new ISBACompactNarc());
-        EquipmentType.addType(new ISBADavidLightGaussRifle());
+//        EquipmentType.addType(new ISBACompactNarc());
+        EquipmentType.addType(new ISBAGaussRifleDavidLight());
         EquipmentType.addType(new ISBAFiredrakeNeedler());
-        EquipmentType.addType(new ISBAGrandMaulerGaussCannon());
-        EquipmentType.addType(new ISBAHeavyGrenadeLauncher());
-        EquipmentType.addType(new ISBAHeavyMortar());
-        EquipmentType.addType(new ISBAHeavyRecoillessRifle());
-        EquipmentType.addType(new ISBAKingDavidLightGaussRifle());
-        EquipmentType.addType(new ISBALightMortar());
-        EquipmentType.addType(new ISBALightRecoillessRifle());
-        EquipmentType.addType(new ISBAMediumRecoillessRifle());
-        EquipmentType.addType(new ISBAMicroGrenadeLauncher());
+        EquipmentType.addType(new ISBAGaussRifleGrandMauler());
+//        EquipmentType.addType(new ISBAGrenadeLauncherHeavy());
+//        EquipmentType.addType(new ISBAMortarHeavy());
+//        EquipmentType.addType(new ISBARecoillessRifleHeavy());
+        EquipmentType.addType(new ISBAGaussRifleKingDavidLight());
+//        EquipmentType.addType(new ISBAMortarLight());
+//        EquipmentType.addType(new ISBARecoillessRifleLight());
+//        EquipmentType.addType(new ISBARecoillessRifleMedium());
+        EquipmentType.addType(new ISBAGrenadeLauncherMicro());
 //        EquipmentType.addType(new ISBAGrenadeLauncher()); //See note in ISBAGrenadeLauncher File.
         EquipmentType.addType(new ISBAPopUpMineLauncher());
-        EquipmentType.addType(new ISBATsunamiGaussRifle());
+        EquipmentType.addType(new ISBAGaussRifleTsunami());
         EquipmentType.addType(new ISBASRM1());
         EquipmentType.addType(new ISBASRM2());
         EquipmentType.addType(new ISBASRM3());
@@ -1970,7 +1970,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBARL5());
 
         // Unofficial BA Weapons
-        EquipmentType.addType(new CLBABearhunterSuperheavyACi());
+        EquipmentType.addType(new CLBAMGBearhunterSuperheavyACi());
 
         // Cruise Missiles
         EquipmentType.addType(new ISCruiseMissile50());

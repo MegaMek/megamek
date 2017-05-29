@@ -1,0 +1,148 @@
+Version:1.0
+Viper
+VPR-3X-TF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:35
+Engine:210 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:12
+RA Armor:12
+LT Armor:12
+RT Armor:12
+CT Armor:17
+HD Armor:8
+LL Armor:15
+RL Armor:15
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:3
+1 ISLBXAC10, Right Torso, Ammo:20
+1 ISStreakSRM2, Left Torso, Ammo:50
+1 ISSmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISStreakSRM2
+ISStreakSRM2 Ammo
+Heat Sink
+Heat Sink
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Ferro-Fibrous
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

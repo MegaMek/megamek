@@ -1,0 +1,81 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Mobile Long Tom
+</Name>
+
+<Model>
+LT-MOB-35
+</Model>
+
+<year>
+2600
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<tonnage>
+55.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor>
+16
+16
+16
+16
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+IS Ammo MG - Full
+ISLongTom Ammo
+ISLongTom Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISLongTomArtillery
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun
+Machine Gun
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun
+Machine Gun
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+Star League
+</source>
+

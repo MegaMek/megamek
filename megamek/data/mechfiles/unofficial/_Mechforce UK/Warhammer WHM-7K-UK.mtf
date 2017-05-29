@@ -1,0 +1,153 @@
+Version:1.0
+Warhammer
+WHM-7K-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3060
+Rules Level:5
+
+Mass:70
+Engine:280 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:22
+RA Armor:22
+LT Armor:22
+RT Armor:22
+CT Armor:33
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:8
+1 ISERPPC, Right Arm
+1 ISERPPC, Left Arm
+1 ISERMediumLaser, Right Torso
+1 ISERSmallLaser, Right Torso
+1 ISStreakSRM6, Right Torso, Ammo:15
+1 ISERMediumLaser, Left Torso
+1 ISERSmallLaser, Left Torso
+1 ISGuardianECM, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISERMediumLaser
+ISERSmallLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+
+Right Torso:
+ISCASE
+ISERMediumLaser
+ISERSmallLaser
+ISStreakSRM6
+ISStreakSRM6
+ISStreakSRM6 Ammo
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECM
+ISGuardianECM
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

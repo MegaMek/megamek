@@ -1,0 +1,155 @@
+Version:1.0
+Awesome
+AWS-8-KH-UK
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3058
+Rules Level:5
+
+Mass:80
+Engine:240 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:21 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:30
+HD Armor:9
+LL Armor:33
+RL Armor:33
+RTL Armor:10
+RTR Armor:10
+RTC Armor:19
+
+Weapons:10
+1 CLERPPC, Right Arm
+1 CLTAG, Left Arm
+1 ISC3SlaveUnit, Left Arm
+1 CLERPPC, Right Torso
+1 CLERPPC, Left Torso
+1 CLECMSuite, Center Torso
+1 CLActiveProbe, Center Torso
+1 CLERSmallLaser, Head
+2 CLAntiPersonnelPod, Left Leg
+2 CLAntiPersonnelPod, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLTAG
+ISC3SlaveUnit
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERPPC
+CLERPPC
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+
+Left Torso:
+CLERPPC
+CLERPPC
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Torso:
+CLERPPC
+CLERPPC
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLECMSuite
+CLActiveProbe
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLAntiPersonnelPod
+CLAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLAntiPersonnelPod
+CLAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

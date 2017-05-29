@@ -1,0 +1,149 @@
+Version:1.0
+Shadow Hawk
+SHD-2-GD-UK
+
+Config:Biped
+TechBase:Clan
+Era:3058
+Rules Level:5
+
+Mass:55
+Engine:275 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:5
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:16
+RA Armor:16
+LT Armor:18
+RT Armor:18
+CT Armor:27
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:4
+1 CLERMediumLaser, Right Arm
+1 CLStreakSRM6, Left Arm, Ammo:15
+1 CLLRM15, Right Torso, Ammo:16
+1 CLERLargeLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLERLargeLaser
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+CLLRM15
+CLLRM15
+CLLRM15 Ammo
+CLLRM15 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

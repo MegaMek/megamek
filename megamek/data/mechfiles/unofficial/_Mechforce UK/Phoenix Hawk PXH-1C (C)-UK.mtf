@@ -1,0 +1,151 @@
+Version:1.0
+Phoenix Hawk
+PXH-1C (C)-UK
+
+Config:Biped
+TechBase:Clan
+Era:3050
+Rules Level:5
+
+Mass:45
+Engine:270 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous
+LA Armor:14
+RA Armor:14
+LT Armor:16
+RT Armor:16
+CT Armor:22
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:6
+RTR Armor:6
+RTC Armor:6
+
+Weapons:6
+1 CLLargePulseLaser, Right Arm
+1 CLMediumPulseLaser, Right Arm
+2 CLERSmallLaser, Left Arm
+1 CLMediumPulseLaser, Left Arm
+1 CLActiveProbe, Center Torso
+1 CLECMSuite, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLMediumPulseLaser
+CLERSmallLaser
+CLERSmallLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLMASC
+CLMASC
+Jump Jet
+Jump Jet
+Jump Jet
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLActiveProbe
+CLECMSuite
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

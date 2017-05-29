@@ -1,0 +1,154 @@
+Version:1.0
+Black Knight
+BL-6-KNT-KH-UK
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:3058
+Rules Level:5
+
+Mass:75
+Engine:300 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:21 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:29
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:9
+1 CLERPPC, Right Arm
+1 CLERMediumLaser, Right Arm
+1 CLERMediumLaser, Left Arm
+1 CLERMediumLaser, Right Torso
+1 CLERLargeLaser, Right Torso
+1 CLERMediumLaser, Left Torso
+1 CLLargePulseLaser, Left Torso
+1 CLActiveProbe, Center Torso
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERPPC
+CLERPPC
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLERMediumLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+CLERMediumLaser
+CLERLargeLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLActiveProbe
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

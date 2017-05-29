@@ -1,0 +1,151 @@
+Version:1.0
+Linesman
+LMN-1PT-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:90
+Engine:270 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:21
+RA Armor:21
+LT Armor:20
+RT Armor:20
+CT Armor:31
+HD Armor:9
+LL Armor:27
+RL Armor:27
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:6
+1 ISMediumLaser, Right Arm
+1 ISMediumLaser, Left Arm
+1 ISLRM15, Right Torso, Ammo:32
+2 ISAC2, Right Torso, Ammo:90
+1 ISLRM15, Left Torso
+2 ISAC2, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISAC2
+ISAC2
+ISAC2 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISLRM15
+ISLRM15
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISAC2
+ISAC2
+ISAC2 Ammo
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

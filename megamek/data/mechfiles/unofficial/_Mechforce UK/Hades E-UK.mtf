@@ -1,0 +1,153 @@
+Version:1.0
+Hades
+E-UK
+
+Config:Biped Omnimech
+TechBase:Mixed (Clan Chassis)
+Era:3060
+Rules Level:5
+
+Mass:65
+Engine:325 XL (Clan) Engine
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Base Chassis Heat Sinks:13
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:23
+RT Armor:23
+CT Armor:35
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:7
+RTR Armor:7
+RTC Armor:7
+
+Weapons:6
+LRM 15, Left Arm
+LRM 15, Left Arm
+LRM 15, Right Arm
+LRM 15, Right Arm
+ER Medium Laser, Left Torso
+ER Small Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ferro-Fibrous
+Clan Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+CLLRM15 (omnipod)
+CLLRM15 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ferro-Fibrous
+Clan Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERSmallLaser (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-15 (Clan) Artemis-capable (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+ISC3SlaveUnit
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

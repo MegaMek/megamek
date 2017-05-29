@@ -1,0 +1,154 @@
+Version:1.0
+Mad Cat (Timber Wolf)
+WDR-3-UK
+
+Config:Biped Omnimech
+TechBase:Mixed (Clan Chassis)
+Era:3060
+Rules Level:5
+
+Mass:75
+Engine:375 XL (Clan) Engine
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:15 Double
+Base Chassis Heat Sinks:15
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:25
+RT Armor:25
+CT Armor:36
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:7
+RTR Armor:7
+RTC Armor:9
+
+Weapons:7
+ER PPC, Left Arm
+AMS, Left Arm
+ER PPC, Right Arm
+AMS, Right Arm
+C3 Master with TAG, Left Torso
+C3 Master with TAG, Right Torso
+ER Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+CLECMSuite (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+ISC3MasterUnit (omnipod)
+CLActiveProbe (omnipod)
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser (omnipod)
+Clan Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

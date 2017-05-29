@@ -1,0 +1,70 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Sabre Support Tank
+</Name>
+<Model>
+UK
+</Model>
+<Tonnage>
+65
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+50
+40
+40
+22
+50
+</Armor>
+<Turret Equipment>
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+</Turret Equipment>
+<Front Equipment>
+CLERMediumLaser
+CLERMediumLaser
+</Front Equipment>
+<Body Equipment>
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 5
+</type>
+<year>
+3058
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

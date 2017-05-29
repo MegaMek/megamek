@@ -1,0 +1,156 @@
+Version:1.0
+Daishi (Dire Wolf)
+WDR-UK
+
+Config:Biped Omnimech
+TechBase:Mixed (Clan Chassis)
+Era:3060
+Rules Level:5
+
+Mass:100
+Engine:300 XL (Clan) Engine
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:17 Double
+Base Chassis Heat Sinks:12
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:47
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:9
+AMS, Left Arm
+Medium Pulse Laser, Left Arm
+ER PPC, Left Arm
+Gauss Rifle, Left Arm
+AMS, Right Arm
+Medium Pulse Laser, Right Arm
+ER PPC, Right Arm
+Gauss Rifle, Right Arm
+ER Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLAntiMissileSystem (omnipod)
+CLMediumPulseLaser (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLAntiMissileSystem (omnipod)
+CLMediumPulseLaser (omnipod)
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+CLGaussRifle (omnipod)
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLAMS Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLAMS Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+Clan Gauss Ammo (omnipod)
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser (omnipod)
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit (omnipod)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

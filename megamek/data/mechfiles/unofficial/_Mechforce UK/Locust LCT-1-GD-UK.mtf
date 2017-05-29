@@ -1,0 +1,149 @@
+Version:1.0
+Locust
+LCT-1-GD-UK
+
+Config:Biped
+TechBase:Clan
+Era:3058
+Rules Level:5
+
+Mass:20
+Engine:160 Fusion Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:10 Single
+Walk MP:8
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:6
+RA Armor:6
+LT Armor:8
+RT Armor:8
+CT Armor:8
+HD Armor:9
+LL Armor:8
+RL Armor:8
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:4
+1 CLERSmallLaser, Right Arm
+1 CLERSmallLaser, Left Arm
+1 CLMediumPulseLaser, Center Torso
+1 CLERSmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERSmallLaser
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERSmallLaser
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMASC
+CLMediumPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

@@ -1,0 +1,149 @@
+Version:1.0
+Cricket
+CRK-7J-TF
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3025
+Rules Level:5
+
+Mass:55
+Engine:275 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:13 Single
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:18
+RA Armor:18
+LT Armor:20
+RT Armor:20
+CT Armor:27
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:4
+1 ISMediumLaser, Right Torso
+2 ISLRM5, Right Torso, Ammo:24
+1 ISLargeLaser, Left Torso
+1 ISMediumLaser, Left Torso
+
+Left Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+Heat Sink
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISLRM5
+ISLRM5
+ISLRM5 Ammo
+ISMediumLaser
+Heat Sink
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

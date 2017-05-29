@@ -1,0 +1,152 @@
+Version:1.0
+Firestarter
+FS9-OG-DR
+
+Config:Biped Omnimech
+TechBase:Mixed (IS Chassis)
+Era:3059
+Rules Level:5
+
+Mass:45
+Engine:270 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:10
+Walk MP:6
+Jump MP:6
+
+Armor:Standard(Inner Sphere)
+LA Armor:12
+RA Armor:12
+LT Armor:16
+RT Armor:16
+CT Armor:20
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:5
+ER Large Laser, Left Arm
+ER Large Laser, Left Arm
+LRM 10, Right Arm
+Flamer, Center Torso
+Flamer, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser (omnipod)
+CLERLargeLaser (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM10 (omnipod)
+CLArtemisIV (omnipod)
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Endo Steel
+IS Endo Steel
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
+Clan Ammo LRM-10 (Clan) Artemis-capable (omnipod)
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Flamer
+Flamer (R)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

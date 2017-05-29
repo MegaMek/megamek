@@ -1,0 +1,147 @@
+Version:1.0
+Napoleon
+NAP-MC-S7
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3053
+Rules Level:5
+
+Mass:35
+Engine:245 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:7
+RA Armor:7
+LT Armor:11
+RT Armor:11
+CT Armor:13
+HD Armor:9
+LL Armor:9
+RL Armor:9
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:2
+2 ISStreakSRM2, Right Torso, Ammo:100
+6 ISMachine Gun, Left Torso, Ammo:200
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+ISCASE
+
+Right Torso:
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2 Ammo
+ISStreakSRM2 Ammo
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo-Steel
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

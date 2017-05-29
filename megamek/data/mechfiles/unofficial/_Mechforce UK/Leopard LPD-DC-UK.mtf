@@ -1,0 +1,152 @@
+Version:1.0
+Leopard
+LPD-DC-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:80
+Engine:320 Fusion Engine
+Structure:Endo Steel
+Myomer:Triple-Strength
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:26
+RA Armor:26
+LT Armor:25
+RT Armor:25
+CT Armor:34
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:9
+RTR Armor:9
+RTC Armor:16
+
+Weapons:7
+1 ISLargeLaser, Right Arm
+1 ISLargeLaser, Left Arm
+1 ISMediumLaser, Right Torso
+2 ISSmallLaser, Right Torso
+1 ISMediumLaser, Left Torso
+2 ISSmallLaser, Left Torso
+1 ISMediumLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Claw (THB)
+Claw (THB)
+Claw (THB)
+Claw (THB)
+Claw (THB)
+Claw (THB)
+ISLargeLaser
+ISLargeLaser
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Claw (THB)
+Claw (THB)
+Claw (THB)
+Claw (THB)
+Claw (THB)
+Claw (THB)
+ISLargeLaser
+ISLargeLaser
+
+Left Torso:
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+Jump Jet
+Jump Jet
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Torso:
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+Jump Jet
+Jump Jet
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo-Steel
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

@@ -1,0 +1,153 @@
+Version:1.0
+Firefly
+FFL-7A-WDR-UK
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:3060
+Rules Level:5
+
+Mass:30
+Engine:150 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:10
+RA Armor:10
+LT Armor:11
+RT Armor:11
+CT Armor:15
+HD Armor:8
+LL Armor:14
+RL Armor:14
+RTL Armor:3
+RTR Armor:3
+RTC Armor:5
+
+Weapons:8
+2 CLMG, Right Arm, Ammo:200
+2 CLMG, Left Arm
+1 CLERMediumLaser, Right Torso
+2 CLLRM5, Right Torso, Ammo:48
+1 CLERMediumLaser, Left Torso
+1 CLERMediumLaser, Center Torso
+1 CLFlamer, Center Torso
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLMG
+CLMG
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLMG
+CLMG
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLLRM5 Ammo
+CLLRM5 Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLLRM5
+CLLRM5
+CLMG Ammo (200)
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLFlamer
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

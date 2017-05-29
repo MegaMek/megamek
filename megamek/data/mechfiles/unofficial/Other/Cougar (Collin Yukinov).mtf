@@ -1,0 +1,149 @@
+Version:1.0
+Cougar
+(Collin Yukinov)
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3132
+Rules Level:5
+
+Mass:35
+Engine:175 XL (Clan) Engine(IS)
+Structure:UNKNOWN
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:7
+Walk MP:5
+Jump MP:7
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:11
+RA Armor:11
+LT Armor:12
+RT Armor:12
+CT Armor:14
+HD Armor:8
+LL Armor:12
+RL Armor:12
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:2
+ER PPC, Left Arm
+ER PPC, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Improved Jump Jet (omnipod)
+Clan Improved Jump Jet (omnipod)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

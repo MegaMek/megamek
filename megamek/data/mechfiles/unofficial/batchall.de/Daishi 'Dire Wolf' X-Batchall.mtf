@@ -1,0 +1,158 @@
+Version:1.0
+Daishi (Dire Wolf)
+X-Batchall
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3050
+Rules Level:5
+
+Mass:100
+Engine:300 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:15 Double
+Base Chassis Heat Sinks:12
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:47
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:11
+LB 10-X AC, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+Ultra AC/10, Right Arm
+ER Large Laser, Right Arm
+ATM 6, Left Torso
+SRM 6, Left Torso
+ATM 6, Right Torso
+SRM 6, Right Torso
+ER Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLLBXAC10 (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
+Clan LB 10-X AC Ammo (omnipod)
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLUltraAC10 (omnipod)
+CLERLargeLaser (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+Clan Ultra AC/10 Ammo (omnipod)
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLSRM6 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 HE (omnipod)
+Clan Ammo SRM-6 (Clan) Artemis-capable (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLATM6 (omnipod)
+CLSRM6 (omnipod)
+CLArtemisIV (omnipod)
+Clan Ammo ATM-6 (omnipod)
+Clan Ammo ATM-6 ER (omnipod)
+Clan Ammo SRM-6 (Clan) Artemis-capable (omnipod)
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser (omnipod)
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLECMSuite (omnipod)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,154 @@
+Version:1.0
+Osprey
+H-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3058
+Rules Level:5
+
+Mass:40
+Engine:280 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:15 Double
+Base Chassis Heat Sinks:10
+Walk MP:7
+Jump MP:7
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:10
+RA Armor:10
+LT Armor:15
+RT Armor:15
+CT Armor:16
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:7
+Heavy Large Laser, Right Arm
+Heavy Medium Laser, Left Torso
+Heavy Small Laser, Left Torso
+Heavy Medium Laser, Right Torso
+AMS, Right Torso
+Heavy Small Laser, Right Torso
+Heavy Small Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLHeavyLargeLaser (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLHeavySmallLaser (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLHeavyMediumLaser (omnipod)
+CLHeavyMediumLaser (omnipod)
+CLAntiMissileSystem (omnipod)
+CLAMS Ammo (omnipod)
+CLHeavySmallLaser (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+Jump Jet (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLHeavySmallLaser (omnipod)
+Jump Jet (omnipod)
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

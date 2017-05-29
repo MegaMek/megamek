@@ -1,0 +1,55 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Athena Fire Direction Control Carrier
+</Name>
+<Model>
+BT
+</Model>
+<Tonnage>
+20
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+18
+12
+12
+10
+20
+</Armor>
+<Turret Equipment>
+ISMachine Gun
+ISMachine Gun
+</Turret Equipment>
+<Body Equipment>
+ISMG Ammo (200)
+</Body Equipment>
+<type>
+IS Level 5
+</type>
+<year>
+3025
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

@@ -1,0 +1,152 @@
+Version:1.0
+Awesome Jr.
+AWS-JR-TF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3025
+Rules Level:5
+
+Mass:75
+Engine:225 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:26 Single
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:7
+1 ISLargeLaser, Right Arm
+1 ISLargeLaser, Right Torso
+1 ISSmallLaser, Right Torso
+1 ISLargeLaser, Left Torso
+1 ISSmallLaser, Left Torso
+1 ISMediumLaser, Center Torso
+1 ISMediumLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargeLaser
+ISLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISLargeLaser
+ISLargeLaser
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+Jump Jet
+Heat Sink
+Heat Sink
+ISSmallLaser
+-Empty-
+-Empty-
+
+Right Torso:
+ISLargeLaser
+ISLargeLaser
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+Jump Jet
+Heat Sink
+Heat Sink
+ISSmallLaser
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

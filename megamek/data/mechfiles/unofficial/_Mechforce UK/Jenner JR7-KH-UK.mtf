@@ -1,0 +1,151 @@
+Version:1.0
+Jenner
+JR7-KH-UK
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:3058
+Rules Level:5
+
+Mass:35
+Engine:245 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:5
+
+Armor:Ferro-Fibrous
+LA Armor:6
+RA Armor:6
+LT Armor:12
+RT Armor:12
+CT Armor:12
+HD Armor:9
+LL Armor:9
+RL Armor:9
+RTL Armor:4
+RTR Armor:4
+RTC Armor:3
+
+Weapons:6
+2 CLMediumPulseLaser, Right Arm
+2 CLMediumPulseLaser, Left Arm
+1 CLActiveProbe, Left Torso
+1 CLECMSuite, Left Torso
+1 CLStreakSRM4, Center Torso, Ammo:25
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLMediumPulseLaser
+CLMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLMediumPulseLaser
+CLMediumPulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+CLActiveProbe
+CLECMSuite
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+CLStreakSRM4 Ammo
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLStreakSRM4
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

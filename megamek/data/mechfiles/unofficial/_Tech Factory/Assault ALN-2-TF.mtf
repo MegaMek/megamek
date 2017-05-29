@@ -1,0 +1,152 @@
+Version:1.0
+Assault
+ALN-2-TF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:100
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Triple-Strength
+
+Heat Sinks:16 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:30
+RT Armor:30
+CT Armor:45
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:12
+RTR Armor:12
+RTC Armor:16
+
+Weapons:7
+1 ISMediumPulseLaser, Right Arm
+1 ISGaussRifle, Right Arm, Ammo:16
+2 ISERPPC, Left Arm
+3 ISMediumPulseLaser, Right Torso
+3 ISMediumPulseLaser, Left Torso
+2 ISMediumPulseLaser, Center Torso
+1 ISSmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISMediumPulseLaser
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo
+ISGauss Ammo
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser
+ISMediumPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Triple Strength Myomer
+Triple Strength Myomer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

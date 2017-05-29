@@ -1,0 +1,150 @@
+Version:1.0
+Thing
+THN-1G-FW
+
+Config:Biped
+TechBase:Clan
+Era:3050
+Rules Level:5
+
+Mass:85
+Engine:340 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:28
+RA Armor:28
+LT Armor:27
+RT Armor:27
+CT Armor:44
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:9
+RTR Armor:9
+RTC Armor:10
+
+Weapons:5
+2 CLLargePulseLaser, Right Arm
+1 CLLBXAC10, Left Arm, Ammo:20
+1 CLStreakSRM6, Right Torso, Ammo:30
+1 CLStreakSRM6, Left Torso
+1 CLERSmallLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10 CL Ammo
+CLLBXAC10 Ammo
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo
+CLERSmallLaser
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

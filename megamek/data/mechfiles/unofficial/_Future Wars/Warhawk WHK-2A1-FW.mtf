@@ -1,0 +1,149 @@
+Version:1.0
+Warhawk
+WHK-2A1-FW
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:90
+Engine:360 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:30
+RA Armor:30
+LT Armor:30
+RT Armor:30
+CT Armor:46
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:4
+1 ISGaussRifle, Right Arm, Ammo:16
+2 ISLRM5, Left Arm, Ammo:48
+1 ISSRM6, Right Torso, Ammo:30
+1 ISSRM6, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLRM5
+ISLRM5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+ISLRM5 Ammo
+ISLRM5 Ammo
+-Empty-
+-Empty-
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+ISGauss Ammo
+ISGauss Ammo
+-Empty-
+-Empty-
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

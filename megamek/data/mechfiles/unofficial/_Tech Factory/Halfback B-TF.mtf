@@ -1,0 +1,149 @@
+Version:1.0
+Halfback
+B-TF
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3055
+Rules Level:5
+
+Mass:50
+Engine:300 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Base Chassis Heat Sinks:10
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:16
+RA Armor:16
+LT Armor:17
+RT Armor:17
+CT Armor:25
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:7
+RTR Armor:7
+RTC Armor:7
+
+Weapons:2
+LB 20-X AC, Left Arm
+ER PPC, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+CLLBXAC20 (omnipod)
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan LB 20-X Cluster Ammo (omnipod)
+Clan LB 20-X AC Ammo (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMASC
+CLMASC
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

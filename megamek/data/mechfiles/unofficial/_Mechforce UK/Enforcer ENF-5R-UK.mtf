@@ -1,0 +1,148 @@
+Version:1.0
+Enforcer
+ENF-5R-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:50
+Engine:250 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:16
+RA Armor:16
+LT Armor:18
+RT Armor:18
+CT Armor:23
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:3
+1 ISLBXAC10, Right Arm, Ammo:20
+1 ISERPPC, Left Arm
+1 ISBeagleActiveProbe, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISBeagleActiveProbe
+ISBeagleActiveProbe
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISCASE
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

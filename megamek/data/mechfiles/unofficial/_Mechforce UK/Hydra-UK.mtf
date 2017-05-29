@@ -1,0 +1,153 @@
+Version:1.0
+Hydra
+HY-UK
+
+Config:Biped
+TechBase:Clan
+Era:3055
+Rules Level:5
+
+Mass:70
+Engine:280 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:17 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:22
+RA Armor:22
+LT Armor:23
+RT Armor:23
+CT Armor:32
+HD Armor:9
+LL Armor:28
+RL Armor:28
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:8
+1 CLLargePulseLaser, Right Arm
+1 CLMG, Right Arm, Ammo:100
+1 CLLargePulseLaser, Left Arm
+1 CLMG, Left Arm
+1 CLUltraAC20, Right Torso, Ammo:10
+1 CLLRM5, Left Torso, Ammo:24
+1 CLECMSuite, Left Torso
+1 CLTAG, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLLargePulseLaser
+CLLargePulseLaser
+CLMG
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLLargePulseLaser
+CLLargePulseLaser
+CLMG
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+CLLRM5
+CLECMSuite
+CLMG Ammo (100)
+CLLRM5 Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Ferro-Fibrous
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLTAG
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

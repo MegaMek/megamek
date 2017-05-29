@@ -1,0 +1,152 @@
+Version:1.0
+Awesome
+Smith-FLU
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3055
+Rules Level:5
+
+Mass:80
+Engine:320 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:20 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:26
+RA Armor:26
+LT Armor:24
+RT Armor:24
+CT Armor:30
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:10
+RTR Armor:10
+RTC Armor:20
+
+Weapons:7
+1 CLERPPC, Left Torso
+1 CLUltraAC5, Right Torso, Ammo:40
+1 CLERPPC, Right Arm
+1 ISMediumPulseLaser, Center Torso
+1 ISStreakSRM2, Center Torso
+1 ISStreakSRM2, Left Arm, Ammo:50
+1 ISSmallPulseLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISStreakSRM2
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+CLERPPC
+CLERPPC
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+CLERPPC
+CLERPPC
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser
+ISStreakSRM2
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISStreakSRM2 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLUltraAC5 Ammo
+CLUltraAC5 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

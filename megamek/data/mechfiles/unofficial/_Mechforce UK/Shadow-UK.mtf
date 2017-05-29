@@ -1,0 +1,150 @@
+Version:1.0
+Shadow
+SHO-UK
+
+Config:Biped
+TechBase:Clan
+Era:3050
+Rules Level:5
+
+Mass:25
+Engine:175 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:6
+
+Armor:Ferro-Fibrous
+LA Armor:7
+RA Armor:7
+LT Armor:10
+RT Armor:10
+CT Armor:13
+HD Armor:9
+LL Armor:7
+RL Armor:7
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:5
+1 CLMG, Right Arm, Ammo:100
+1 CLMG, Left Arm
+1 CLERLargeLaser, Head
+1 CLAntiPersonnelPod, Left Leg
+1 CLAntiPersonnelPod, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLMG
+CLMG Ammo (100)
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLMG
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+CLDouble Heat Sink
+CLDouble Heat Sink
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+CLMASC
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLTargeting Computer
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERLargeLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

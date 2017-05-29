@@ -1,0 +1,150 @@
+Version:1.0
+Ostwar
+OWR-2M-FLU
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:65
+Engine:325 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:19 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:18
+RA Armor:18
+LT Armor:22
+RT Armor:22
+CT Armor:32
+HD Armor:9
+LL Armor:21
+RL Armor:21
+RTL Armor:6
+RTR Armor:6
+RTC Armor:9
+
+Weapons:5
+1 ISERLargeLaser, Right Arm
+1 ISERLargeLaser, Left Arm
+1 ISERLargeLaser, Center Torso
+1 ISSRM6, Left Leg, Ammo:15
+1 ISSRM6, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSRM6 Ammo
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSRM6
+ISSRM6
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSRM6
+ISSRM6
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

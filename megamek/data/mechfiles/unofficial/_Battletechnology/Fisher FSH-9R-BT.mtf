@@ -1,0 +1,150 @@
+Version:1.0
+Fisher
+FSH-9R-BT
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:45
+Engine:315 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:7
+
+Armor:Standard Armor
+LA Armor:14
+RA Armor:14
+LT Armor:12
+RT Armor:12
+CT Armor:17
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:5
+1 ISLargeLaser, Right Arm
+2 ISMediumLaser, Left Arm
+1 ISBeagleActiveProbe, Right Torso
+1 ISMediumLaser, Left Torso
+1 ISAntiMissileSystem, Left Torso, Ammo:12
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+ISMediumLaser
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargeLaser
+ISLargeLaser
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISMediumLaser
+ISAntiMissileSystem
+ISAMS Ammo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISBeagleActiveProbe
+ISBeagleActiveProbe
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

@@ -1,0 +1,154 @@
+Version:1.0
+Berserker
+BRZ-A5-WDR-UK
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:3060
+Rules Level:5
+
+Mass:100
+Engine:400 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:16 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:31
+RT Armor:31
+CT Armor:46
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:9
+1 CLERPPC, Left Arm
+1 CLLargePulseLaser, Right Torso
+1 CLMediumPulseLaser, Right Torso
+1 CLECMSuite, Right Torso
+1 CLLargePulseLaser, Left Torso
+1 CLMediumPulseLaser, Left Torso
+1 CLAntiMissileSystem, Center Torso, Ammo:24
+1 ISC3SlaveUnit, Center Torso
+1 CLFlamer, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERPPC
+CLERPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+Hatchet
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMASC
+CLMASC
+CLMASC
+CLMASC
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLAMS Ammo
+CLECMSuite
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLAntiMissileSystem
+ISC3SlaveUnit
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLFlamer
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

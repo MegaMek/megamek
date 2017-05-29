@@ -1,0 +1,66 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Goblin IIC
+</Name>
+<Model>
+UK
+</Model>
+<Tonnage>
+50
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+40
+35
+35
+31
+38
+</Armor>
+<Turret Equipment>
+CLLargePulseLaser
+CLStreakSRM6
+CLStreakSRM6
+CLTAG
+</Turret Equipment>
+<Front Equipment>
+CLLightMG
+CLLightMG
+</Front Equipment>
+<transporters>
+TroopSpace:6
+</transporters>
+<Body Equipment>
+CLStreakSRM6 Ammo
+CLLightMG Ammo (200)
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 5
+</type>
+<year>
+3058
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

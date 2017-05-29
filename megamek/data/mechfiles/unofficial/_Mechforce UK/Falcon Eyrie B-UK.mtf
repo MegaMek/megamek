@@ -1,0 +1,162 @@
+Version:1.0
+Falcon Eyrie
+B-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3058
+Rules Level:5
+
+Mass:90
+Engine:360 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:22 Double
+Base Chassis Heat Sinks:14
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:25
+RA Armor:25
+LT Armor:25
+RT Armor:25
+CT Armor:35
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:15
+ER PPC, Left Arm
+SRM 6, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+SRM 6, Right Arm
+SRM 6, Right Arm
+SRM 6, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Streak SRM 2 (OS), Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Center Torso
+AMS, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC (omnipod)
+CLERPPC (omnipod)
+CLSRM6 (omnipod)
+CLERMediumLaser (omnipod)
+CLERMediumLaser (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+CLSRM6 (omnipod)
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+CLStreakSRM2 (OS) (omnipod)
+Clan Ammo SRM-6 (omnipod)
+Clan Ammo SRM-6 (omnipod)
+CLAMS Ammo (omnipod)
+Clan Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser (omnipod)
+CLMASC
+CLMASC
+CLMASC
+CLMASC
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+Clan Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser (omnipod)
+CLMediumPulseLaser (omnipod)
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLAntiMissileSystem (omnipod)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink (omnipod)
+CLDoubleHeatSink (omnipod)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLAntiPersonnelPod (omnipod)
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

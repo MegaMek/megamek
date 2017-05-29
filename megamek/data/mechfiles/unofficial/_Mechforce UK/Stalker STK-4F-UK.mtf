@@ -1,0 +1,151 @@
+Version:1.0
+Stalker
+STK-4F-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:85
+Engine:255 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:15 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:25
+RA Armor:25
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:6
+2 ISMediumPulseLaser, Right Arm
+1 ISMRM30, Right Arm, Ammo:32
+2 ISMediumPulseLaser, Left Arm
+1 ISMRM30, Left Arm
+1 ISERLargeLaser, Right Torso
+1 ISERLargeLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30 Ammo
+ISMRM30 Ammo
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30
+ISMRM30 Ammo
+ISMRM30 Ammo
+Endo-Steel
+
+Left Torso:
+ISERLargeLaser
+ISERLargeLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+
+Right Torso:
+ISERLargeLaser
+ISERLargeLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo-Steel
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

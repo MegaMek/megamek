@@ -1,0 +1,153 @@
+Version:1.0
+Longbow
+LGB-8C-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3025
+Rules Level:5
+
+Mass:85
+Engine:255 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:22 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:20
+RA Armor:20
+LT Armor:25
+RT Armor:25
+CT Armor:35
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:8
+1 ISLRM20, Right Arm, Ammo:24
+1 ISLRM20, Left Arm
+1 ISLRM5, Right Torso, Ammo:24
+1 ISMediumLaser, Right Torso (R)
+1 ISMediumLaser, Right Torso
+1 ISLRM5, Left Torso
+1 ISMediumLaser, Left Torso (R)
+1 ISMediumLaser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM5
+ISMediumLaser (R)
+ISMediumLaser
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM5
+ISMediumLaser (R)
+ISMediumLaser
+Heat Sink
+Heat Sink
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLRM5 Ammo
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

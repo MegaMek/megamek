@@ -1,0 +1,160 @@
+Version:1.1
+Ymir (3075 Version)
+BWP-X1 'Bipedal Weapons Platform'
+
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2462
+Source:TRO 3075
+Rules Level:5
+
+Mass:90
+Engine:325 Fusion Engine
+Structure:Standard
+Myomer:Standard
+Cockpit:Primitive Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:16 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Primitive(Inner Sphere)
+LA Armor:18
+RA Armor:18
+LT Armor:17
+RT Armor:17
+CT Armor:23
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:10
+Autocannon/5, Left Arm
+Large Laser, Right Arm
+Flamer, Right Arm
+Flamer, Right Arm
+SRM 2, Left Torso
+SRM 2, Left Torso
+SRM 2, Left Torso
+SRM 2, Left Torso
+LRM 5, Right Torso
+LRM 5, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Large Laser
+Large Laser
+Flamer
+Flamer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+SRM 2
+SRM 2
+SRM 2
+SRM 2
+IS Ammo SRM-2
+IS Ammo SRM-2
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+LRM 5
+LRM 5
+IS Ammo LRM-5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

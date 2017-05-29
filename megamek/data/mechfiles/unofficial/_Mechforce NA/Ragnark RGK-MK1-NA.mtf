@@ -1,0 +1,151 @@
+Version:1.0
+Ragnark
+RGK-MK1-NA
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3058
+Rules Level:5
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:31
+RA Armor:31
+LT Armor:23
+RT Armor:23
+CT Armor:34
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:6
+1 ISLargePulseLaser, Center Torso
+1 ISMediumPulseLaser, Left Torso
+1 ISMediumPulseLaser, Right Torso
+1 ISSmallPulseLaser, Head
+1 ISGaussRifle, Right Torso, Ammo:32
+1 ISGaussRifle, Left Torso
+
+Left Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+ISMediumPulseLaser
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo
+ISGauss Ammo
+-Empty-
+
+Right Torso:
+Heat Sink
+ISMediumPulseLaser
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo
+ISGauss Ammo
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLargePulseLaser
+ISLargePulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

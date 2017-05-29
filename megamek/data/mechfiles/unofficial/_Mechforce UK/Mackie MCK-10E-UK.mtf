@@ -1,0 +1,150 @@
+Version:1.0
+Mackie
+MCK-10E-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:100
+Engine:400 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:46
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:5
+1 ISGaussRifle, Right Arm, Ammo:16
+1 ISERPPC, Left Arm
+2 ISMediumLaser, Center Torso
+1 ISSRM4, Left Leg, Ammo:25
+1 ISSRM4, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGauss Ammo
+ISGauss Ammo
+ISSRM4 Ammo
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSRM4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSRM4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

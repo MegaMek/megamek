@@ -1,0 +1,157 @@
+Version:1.0
+Hades
+F-UK
+
+Config:Biped Omnimech
+TechBase:Mixed (Clan Chassis)
+Era:3060
+Rules Level:5
+
+Mass:65
+Engine:325 XL (Clan) Engine
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Base Chassis Heat Sinks:13
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:19
+RA Armor:19
+LT Armor:22
+RT Armor:22
+CT Armor:29
+HD Armor:9
+LL Armor:29
+RL Armor:29
+RTL Armor:7
+RTR Armor:7
+RTC Armor:9
+
+Weapons:10
+Large Pulse Laser, Left Arm
+Ultra AC/2, Left Arm
+Light Machine Gun, Left Arm
+Light Machine Gun, Left Arm
+Heavy Machine Gun, Left Arm
+Large Pulse Laser, Right Arm
+Ultra AC/2, Right Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
+Heavy Machine Gun, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLLightMG (omnipod)
+CLLightMG (omnipod)
+CLHeavyMG (omnipod)
+Clan Ferro-Fibrous
+Clan Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLargePulseLaser (omnipod)
+CLLargePulseLaser (omnipod)
+CLUltraAC2 (omnipod)
+CLUltraAC2 (omnipod)
+CLLightMG (omnipod)
+CLLightMG (omnipod)
+CLHeavyMG (omnipod)
+Clan Ferro-Fibrous
+Clan Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Ultra AC/2 Ammo (omnipod)
+Clan Heavy Machine Gun Ammo - Full (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Clan Ultra AC/2 Ammo (omnipod)
+Clan Light Machine Gun Ammo - Full (omnipod)
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+ISC3SlaveUnit
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

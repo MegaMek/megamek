@@ -1,0 +1,155 @@
+Version:1.0
+Loper
+LPR-3M-FW
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:75
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:32
+RA Armor:32
+LT Armor:24
+RT Armor:24
+CT Armor:36
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:10
+1 ISLRM5, Right Arm, Ammo:48
+1 ISLRM5, Left Arm
+1 ISLRM5, Right Torso
+1 ISMediumLaser, Right Torso
+1 ISERPPC, Right Torso
+1 ISAntiMissileSystem, Right Torso, Ammo:12
+1 ISLRM5, Left Torso
+1 ISMediumLaser, Left Torso
+1 ISLargePulseLaser, Left Torso
+2 ISMediumLaser, Center Torso
+
+Left Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISLRM5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISLRM5
+ISAMS Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISLRM5
+ISMediumLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISLRM5
+ISMediumLaser
+ISERPPC
+ISERPPC
+ISERPPC
+ISAntiMissileSystem
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISLRM5 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISLRM5 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

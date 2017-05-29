@@ -1,0 +1,151 @@
+Version:1.0
+Dreadnought MK I
+DNT-1-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3025
+Rules Level:5
+
+Mass:85
+Engine:255 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:26
+RA Armor:26
+LT Armor:27
+RT Armor:27
+CT Armor:37
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:9
+RTR Armor:9
+RTC Armor:10
+
+Weapons:6
+1 ISAC10, Right Arm, Ammo:40
+1 ISAC10, Left Arm
+2 ISMediumLaser, Right Torso
+1 ISMachine Gun, Right Torso, Ammo:100
+1 ISPPC, Left Torso
+1 ISMachine Gun, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+
+Left Torso:
+ISPPC
+ISPPC
+ISPPC
+ISMachine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISMediumLaser
+ISMediumLaser
+ISMachine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+ISMG Ammo (100)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

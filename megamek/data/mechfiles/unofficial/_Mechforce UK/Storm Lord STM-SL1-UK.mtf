@@ -1,0 +1,151 @@
+Version:1.0
+Storm Lord
+STM-SL1-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:5
+
+Mass:80
+Engine:320 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard Armor
+LA Armor:25
+RA Armor:25
+LT Armor:25
+RT Armor:25
+CT Armor:40
+HD Armor:9
+LL Armor:33
+RL Armor:33
+RTL Armor:8
+RTR Armor:8
+RTC Armor:9
+
+Weapons:6
+2 ISMediumLaser, Right Arm
+2 ISMediumLaser, Left Arm
+1 ISERPPC, Right Torso
+2 ISMediumLaser, Right Torso
+1 ISAC20, Left Torso, Ammo:15
+1 ISSRM2, Head, Ammo:50
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumLaser
+ISMediumLaser
+ISAC20 Ammo
+ISAC20 Ammo
+ISSRM2 Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAC20 (Split)
+ISAC20 Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSRM2
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

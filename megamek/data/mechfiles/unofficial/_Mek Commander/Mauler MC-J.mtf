@@ -1,0 +1,152 @@
+Version:1.0
+Mauler
+MC-J
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3059
+Rules Level:5
+
+Mass:90
+Engine:270 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:27
+RA Armor:27
+LT Armor:26
+RT Armor:26
+CT Armor:36
+HD Armor:9
+LL Armor:35
+RL Armor:35
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:7
+1 ISLBXAC2, Right Arm, Ammo:45
+1 ISLightGaussRifle, Right Arm, Ammo:48
+1 ISLBXAC2, Left Arm
+1 ISLightGaussRifle, Left Arm
+1 ISLRM5, Right Torso, Ammo:24
+1 ISLargeLaser, Right Torso
+1 ISLRM5, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLRM5
+ISLBXAC2 CL Ammo
+ISLRM5 Ammo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLRM5
+ISLargeLaser
+ISLargeLaser
+ISLightGauss Ammo
+ISLightGauss Ammo
+ISLightGauss Ammo
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

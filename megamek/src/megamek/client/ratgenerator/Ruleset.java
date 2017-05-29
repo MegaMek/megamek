@@ -338,6 +338,16 @@ public class Ruleset {
 		
 		loadConstants(new File(dir, CONSTANTS_FILE));
 		
+		//We need this so we can determine parent faction if not stated explicitly.
+		while (!RATGenerator.getInstance().isInitialized()) {
+	        try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                // Ignore
+                e.printStackTrace();
+            }
+		}
+		
 		for (File f : dir.listFiles()) {
 			if (!f.getPath().endsWith(".xml")) {
 				continue;

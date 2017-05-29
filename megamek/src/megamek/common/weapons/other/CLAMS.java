@@ -24,45 +24,42 @@ import megamek.common.weapons.AmmoWeapon;
  * @author Sebastian Brocks
  */
 public class CLAMS extends AmmoWeapon {
-    /**
-     *
-     */
-    private static final long serialVersionUID = 7447941274169853546L;
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 7447941274169853546L;
 
-    /**
-     *
-     */
-    public CLAMS() {
-        super();
-        name = "Anti-Missile System";
-        setInternalName("CLAntiMissileSystem");
-        addLookupName("Clan Anti-Missile Sys");
-        addLookupName("Clan AMS");
-        addLookupName("ClanAMS");
-        addLookupName("ClAMS");
-        heat = 1;
-        rackSize = 2;
-        damage = 2; // # of d6 of missiles affected
-        ammoType = AmmoType.T_AMS;
-        tonnage = 0.5f;
-        criticals = 1;
-        bv = 32;
-        flags = flags.or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC)
-                .or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON)
-                .or(F_PROTO_WEAPON);
-        setModes(new String[] { "On", "Off" });
-        setInstantModeSwitch(false);
-        cost = 100000;
-        atClass = CLASS_POINT_DEFENSE;
-        rulesRefs = "204,TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
-            .setISAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
-            .setISApproximate(true, false, false,false, false)
-            .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CSA)
-            .setProductionFactions(F_CSA);
-    }
+	/**
+	 *
+	 */
+	public CLAMS() {
+		super();
+		name = "Anti-Missile System";
+		setInternalName("CLAntiMissileSystem");
+		addLookupName("Clan Anti-Missile Sys");
+		addLookupName("Clan AMS");
+		addLookupName("ClanAMS");
+		addLookupName("ClAMS");
+		heat = 1;
+		rackSize = 2;
+		damage = 2; // # of d6 of missiles affected
+		ammoType = AmmoType.T_AMS;
+		tonnage = 0.5f;
+		criticals = 1;
+		bv = 32;
+		flags = flags.or(F_AUTO_TARGET).or(F_AMS).or(F_BALLISTIC).or(F_MECH_WEAPON).or(F_AERO_WEAPON).or(F_TANK_WEAPON)
+		        .or(F_PROTO_WEAPON);
+		setModes(new String[] { "On", "Off" });
+		setInstantModeSwitch(false);
+		cost = 100000;
+		atClass = CLASS_POINT_DEFENSE;
+		rulesRefs = "204,TM";
+		techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
+		        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
+		        .setISAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
+		        .setProductionFactions(F_CSA);
+	}
 }

@@ -39,6 +39,9 @@ public class CLBARecoillessRifleLight extends Weapon {
         setInternalName("CLBALight Recoilless Rifle");
         addLookupName("CLBALight Recoilless Rifle");
         addLookupName("CLBALightRecoillessRifle");
+        addLookupName("ISBALightRecoillessRifle");
+        addLookupName("ISLight Recoilless Rifle");
+        addLookupName("ISBALight Recoilless Rifle");
         damage = 2;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
         ammoType = AmmoType.T_NA;

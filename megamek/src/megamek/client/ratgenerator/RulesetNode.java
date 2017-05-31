@@ -142,6 +142,11 @@ public class RulesetNode {
 						!matches(fd.getEschelon().toString(), predicates.getProperty((String)key))) {
 					return false;
 				}
+				break;
+            case "ifIndex":
+                if (!matches(String.valueOf(fd.getIndex()), predicates.getProperty((String)key))) {
+                    return false;
+                }
 			}
 		}
 		return true;

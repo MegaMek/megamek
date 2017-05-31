@@ -15,6 +15,7 @@ elementFormDefault="qualified">
 		<xs:attribute name="ifName" type="xs:string" />
 		<xs:attribute name="ifFaction" type="xs:string" />
 		<xs:attribute name="ifFlags" type="xs:string" />
+		<xs:attribute name="ifIndex" type="xs:string" />
 	</xs:attributeGroup>
 	
 	<xs:attributeGroup name="assertionAttributeGroup">
@@ -39,7 +40,8 @@ elementFormDefault="qualified">
 			<xs:element name="unitType" type="optionGroupType" />
 			<xs:element name="chassis" type="optionGroupType" />
 			<xs:element name="variant" type="optionGroupType" />
-			<xs:element name="motive" type="optionGroupType" />	
+			<xs:element name="motive" type="optionGroupType" />
+			<xs:element name="formation" type="optionGroupType" />
 			<xs:element name="role" type="optionGroupType" />	
 			<xs:element name="flags" type="optionGroupType" />	
 			<xs:element name="changeEschelon" type="optionGroupType" />	

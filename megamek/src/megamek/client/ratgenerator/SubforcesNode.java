@@ -38,11 +38,11 @@ public class SubforcesNode extends RulesetNode {
 		optionSubforces = new ArrayList<OptionGroupNode>();
 	}
 	
-	public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd, boolean generateSubs) {
-		return generateSubforces(fd, generateSubs, true);
+	public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd) {
+		return generateSubforces(fd, true);
 	}
 	
-	public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd, boolean generateSubs,
+	public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd,
 			boolean useSizeMod) {
 		ArrayList<ForceDescriptor> retVal = new ArrayList<ForceDescriptor>();
 		for (ValueNode n : subforces) {
@@ -56,17 +56,14 @@ public class SubforcesNode extends RulesetNode {
 							&& i == n.getNum() / 2) {
 						continue;
 					}
-					ForceDescriptor sub = fd.createChild();
+					ForceDescriptor sub = fd.createChild(i);
 					sub.setEschelon(Integer.parseInt(n.getContent()));
 					apply(sub, i);
 					n.apply(sub, i);
-//					if (sub.getEschelon() == 0) {
-//						sub.generate(false);
-//					}
 					subs.add(sub);
 				}
 				if (useSizeMod && fd.getSizeMod() == ForceDescriptor.REINFORCED) {
-					ForceDescriptor sub = fd.createChild();
+					ForceDescriptor sub = fd.createChild(subs.size());
 					sub.setEschelon(Integer.parseInt(n.getContent()));
 					apply(sub, n.getNum() / 2);
 					n.apply(sub, n.getNum() / 2);
@@ -74,21 +71,7 @@ public class SubforcesNode extends RulesetNode {
 					
 				}
 				retVal.addAll(subs);
-				if (n.assertions.containsKey("generate")) {
-					if (n.assertions.getProperty("generate").equals("group")) {
-						fd.generateLance(subs);
-					} else {
-						fd.generate(n.assertions.getProperty("generate"), false);
-					}
-				} else if (assertions.containsKey("generate")) {
-					if (assertions.getProperty("generate").equals("group")) {
-						fd.generateLance(subs);
-					} else {
-						fd.generate(assertions.getProperty("generate"), false);
-					}
-				} else if (generateSubs) {
-					fd.generateLance(subs);
-				}
+				fd.setGenerationRule(findGenerateProperty(n, this));
 			}
 		}
 		for (OptionGroupNode n : optionSubforces) {
@@ -101,7 +84,7 @@ public class SubforcesNode extends RulesetNode {
 								&& i == vn.getNum() / 2) {
 							continue;
 						}
-						ForceDescriptor sub = fd.createChild();
+						ForceDescriptor sub = fd.createChild(i);
 						if (vn.getContent().endsWith("+")) {
 							sub.setSizeMod(ForceDescriptor.REINFORCED);
 							sub.setEschelon(Integer.parseInt(vn.getContent().replace("+", "")));
@@ -120,7 +103,7 @@ public class SubforcesNode extends RulesetNode {
 						subs.add(sub);
 					}
 					if (fd.getSizeMod() == ForceDescriptor.REINFORCED) {
-						ForceDescriptor sub = fd.createChild();
+						ForceDescriptor sub = fd.createChild(subs.size());
 						sub.setEschelon(Integer.parseInt(vn.getContent()));
 						apply(sub, vn.getNum() / 2);
 						n.apply(sub, vn.getNum() / 2);
@@ -128,31 +111,27 @@ public class SubforcesNode extends RulesetNode {
 						
 					}
 					retVal.addAll(subs);
-					if (vn.assertions.containsKey("generate")) {
-						if (vn.assertions.getProperty("generate").equals("group")) {
-							fd.generateLance(subs);
-						} else {
-							fd.generate(vn.assertions.getProperty("generate"), false);
-						}
-					} else if (n.assertions.containsKey("generate")) {
-						if (n.assertions.getProperty("generate").equals("group")) {
-							fd.generateLance(subs);
-						} else {
-							fd.generate(n.assertions.getProperty("generate"), false);
-						}
-					} else if (assertions.containsKey("generate")) {
-						if (assertions.getProperty("generate").equals("group")) {
-							fd.generateLance(subs);
-						} else {
-							fd.generate(assertions.getProperty("generate"), false);
-						}
-					} else if (generateSubs) {
-						fd.generateLance(subs);
-					}
+	                fd.setGenerationRule(findGenerateProperty(vn, n, this));
 				}
 			}
 		}
 		return retVal;
+	}
+	
+	/**
+	 * Used to check the element hierarchy looking for a node with a "generate" assertion set.
+	 * 
+	 * @param nodes A series of ruleset nodes, sorted from the innermost to the outermost.
+	 * @return The value of the innermost "generate" property that is set, or null if none are set. 
+	 */
+	private String findGenerateProperty(RulesetNode... nodes) {
+	    for (RulesetNode n : nodes) {
+	        final String prop = n.assertions.getProperty("generate");
+	        if (null != prop) {
+	            return prop;
+	        }
+	    }
+	    return null;
 	}
 	
 	public String getAltFaction() {

@@ -121,6 +121,19 @@ public class ForceNode extends RulesetNode {
 						fd.getMovementModes().add(EntityMovementMode.getMode(p));
 					}
 					break;
+				case "formation":
+				    n = rule.selectOption(fd, true);
+				    if (n == null) {
+				        break;
+				    }
+				    content = n.getContent();
+				    if (content != null) {
+				        FormationType ft = FormationType.getFormationType(content);
+				        if (null == ft) {
+				            System.err.println("Force generator: could not parse formation type " + content);
+				        }
+				        fd.setFormationType(ft);
+				    }
 				case "role":
 					n = rule.selectOption(fd, true);
 					if (n == null) {
@@ -229,7 +242,7 @@ public class ForceNode extends RulesetNode {
 		
 		for (SubforcesNode n : attached) {
 			if (n.matches(fd)) {
-				ArrayList<ForceDescriptor> subs = n.generateSubforces(fd, false, false);
+				ArrayList<ForceDescriptor> subs = n.generateSubforces(fd, false);
 				if (subs != null) {
 					for (ForceDescriptor sub : subs) {
 						fd.addAttached(sub);
@@ -400,6 +413,7 @@ public class ForceNode extends RulesetNode {
 							|| wn2.getNodeName().equals("chassis")
 							|| wn2.getNodeName().equals("variant")
 							|| wn2.getNodeName().equals("motive")
+							|| wn2.getNodeName().equals("formation")
 							|| wn2.getNodeName().equals("role")
 							|| wn2.getNodeName().equals("flags")
 							|| wn2.getNodeName().equals("changeEschelon")) {

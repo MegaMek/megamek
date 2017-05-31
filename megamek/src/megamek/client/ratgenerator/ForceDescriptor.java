@@ -80,6 +80,7 @@ public class ForceDescriptor {
 		"I", "II", "III", "IV", "V", "VI", "VIII", "IX", "X"
 	};
 	
+	private int index;
 	private String name;
 	private String faction;
 	private Integer year;
@@ -90,7 +91,6 @@ public class ForceDescriptor {
 	private Integer unitType;
 	private HashSet<EntityMovementMode> movementModes;
 	private HashSet<MissionRole> roles;
-	private FormationType formationType;
 	private String rating;
 	private Integer experience;
 	private Integer rankSystem;
@@ -104,6 +104,8 @@ public class ForceDescriptor {
 	
 	private HashSet<String> flags;
 	
+    private FormationType formationType;
+    private String generationRule;
 	private boolean topLevel;
 	private boolean element;
 	private int positionIndex;
@@ -159,41 +161,42 @@ public class ForceDescriptor {
 		return true;
 	}
 
-/*
-	private ArrayList<String> getMotiveTypes() {
-		return motive;
-		ArrayList<String> retVal = new ArrayList<String>();
-		if (motive == null) {
-			return retVal;
-		}
-		for (String m : motive.split(",")) {
-			switch (m) {
-			case "t":
-				retVal.add("Tracked");
-				break;
-			case "w":
-				retVal.add("Wheeled");
-				break;
-			case "h":
-				retVal.add("Hover");
-				break;
-			case "v":
-				retVal.add("VTOL");
-				break;
-			case "n":
-				retVal.add("Naval");
-				break;
-			case "u":
-				retVal.add("Underwater");
-				break;
-			case "g":
-				retVal.add("WiGE");
-				break;
-			}
-		}
-		return retVal;
+	/**
+	 * Goes through the force tree structure and generates units for all leaf nodes.
+	 */
+	public void generateUnits() {
+	    //If the parent node has a chassis or model assigned, it carries through to the children.
+	    if (null != parent) {
+	        chassis.addAll(parent.getChassis());
+	        models.addAll(parent.getModels());
+	    }
+	    //First see if a formation has been assigned. If unable to fulfill the formation requirements, generate using default parameters.
+	    if (isElement()) {
+	        setUnit(generate());
+	    } else {
+    	    if (null != formationType) {
+    	        if (!generateFormation(subforces, ModelRecord.NETWORK_NONE)) {
+    	            formationType = null;
+    	        }
+    	    }
+    	    if (null == formationType) {
+    	        if (null != generationRule) {
+    	            switch(generationRule) {
+    	            case "chassis":
+    	            case "model":
+    	                generate(generationRule);
+    	                break;
+    	            case "group":
+    	                generateLance(subforces);
+    	                break;
+    	            }
+    	        } else {
+    	            subforces.forEach(fd -> fd.generateUnits());
+    	        }
+    	    }
+	    }
+	    attached.forEach(fd -> fd.generateUnits());
 	}
-	*/
 	
 	public boolean generateFormation(List<ForceDescriptor> subs, int networkMask) {
 	    if (null == formationType) {
@@ -236,6 +239,8 @@ public class ForceDescriptor {
 		if (null != formationType && generateFormation(subs, ModelRecord.NETWORK_NONE)) {
 		    return;
 		}
+		formationType = null;
+		
 		ModelRecord unit = null;
 		if (chassis.size() > 0 || models.size() > 0) {
 			for (ForceDescriptor sub : subs) {
@@ -421,7 +426,7 @@ public class ForceDescriptor {
 				unit = sub.generate();
 				if (unit == null) {
 					sub.getMovementModes().clear();
-					sub.generate();
+					unit = sub.generate();
 				}
 				if (unit != null) {
 					sub.setUnit(unit);
@@ -466,12 +471,10 @@ public class ForceDescriptor {
 		}
 	}
 	
-	public void generate(String level, boolean set) {
+	public void generate(String level) {
 		ModelRecord mRec = generate();
 		if (mRec != null) {
-			if (set) {
-				setUnit(mRec);
-			} else if (level.equals("chassis")) {
+			if (level.equals("chassis")) {
 				getChassis().add(mRec.getChassis());
 			} else {
 				getModels().add(mRec.getKey());
@@ -493,7 +496,7 @@ public class ForceDescriptor {
 				{4, 3, 2, 1, 0}  //SH
 		};
 		/* Work with a copy */
-		ForceDescriptor fd = createChild();
+		ForceDescriptor fd = createChild(index);
 		fd.setEschelon(eschelon);
 		fd.setCoRank(coRank);
 		fd.getRoles().clear();
@@ -890,6 +893,14 @@ public class ForceDescriptor {
 		return retVal;
 	}
 	
+    public int getIndex() {
+        return index;
+    }
+    
+    public void setIndex(int index) {
+        this.index = index;
+    }
+    
 	public String getName() {
 		return name;
 	}
@@ -970,6 +981,9 @@ public class ForceDescriptor {
 		
 		if (eschName != null) {
 			retVal.append(" ").append(eschName);
+		}
+		if (null != formationType) {
+		    retVal.append(" (").append(formationType.getName()).append(")");
 		}
 		return retVal.toString();
 	}
@@ -1066,6 +1080,22 @@ public class ForceDescriptor {
 			}
 		}
 		return -1;
+	}
+	
+	public FormationType getFormation() {
+	    return formationType;
+	}
+	
+	public void setFormationType(FormationType ft) {
+	    formationType = ft;
+	}
+	
+	public String getGenerationRule() {
+	    return generationRule;
+	}
+	
+	public void setGenerationRule(String rule) {
+	    generationRule = rule;
 	}
 
 	public Set<MissionRole> getRoles() {
@@ -1221,8 +1251,9 @@ public class ForceDescriptor {
 		attached.stream().forEach(sf -> sf.addAllEntities(list));
 	}
 
-	public ForceDescriptor createChild() {
+	public ForceDescriptor createChild(int index) {
 		ForceDescriptor retVal = new ForceDescriptor();
+		retVal.index = index;
 		retVal.name = null;
 		retVal.faction = faction;
 		retVal.year = year;
@@ -1231,7 +1262,6 @@ public class ForceDescriptor {
 		retVal.movementModes.addAll(movementModes);
 		retVal.roles.addAll(roles);
 		retVal.roles.remove("command");
-		retVal.formationType = formationType;
 		retVal.models.addAll(models);
 		retVal.chassis.addAll(chassis);
 		retVal.variants.addAll(variants);
@@ -1264,6 +1294,5 @@ public class ForceDescriptor {
 			sub.show(indent + " +");
 		}
 	}
-	
 }
 

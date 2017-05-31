@@ -197,6 +197,7 @@ public class Ruleset {
 		}
 
 		if (fd.isTopLevel()) {
+		    fd.generateUnits();
 			fd.assignCommanders();
 			fd.assignPositions();
 			fd.loadEntities();

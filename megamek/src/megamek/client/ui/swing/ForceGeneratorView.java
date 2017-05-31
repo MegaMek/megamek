@@ -462,6 +462,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 				}
 				break;
 			case UnitType.INFANTRY:
+			case UnitType.BATTLE_ARMOR:
 				if (chkRoleFieldGun.isSelected()) {
 					fd.getRoles().add(MissionRole.FIELD_GUN);
 				}

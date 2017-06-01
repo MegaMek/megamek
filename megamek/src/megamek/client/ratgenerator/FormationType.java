@@ -259,13 +259,30 @@ public class FormationType {
         p.add(params);
         List<Integer> n = new ArrayList<>();
         n.add(numUnits);
-        return generateFormation(p, n, networkMask, bestEffort);
+        return generateFormation(p, n, networkMask, bestEffort, -1, -1);
     }
     
     public List<MechSummary> generateFormation(List<UnitTable.Parameters> params, List<Integer> numUnits,
             int networkMask, boolean bestEffort) {
+        return generateFormation(params, numUnits, networkMask, bestEffort, -1, -1);
+    }
+    
+    public List<MechSummary> generateFormation(List<UnitTable.Parameters> params, List<Integer> numUnits,
+            int networkMask, boolean bestEffort, int groupSize, int nGroups) {
         if (params.size() != numUnits.size() || params.isEmpty()) {
             throw new IllegalArgumentException("Formation parameter list and numUnit list must have the same number of elements.");
+        }
+        final GroupingConstraint useGrouping;
+        if (null == groupingCriteria) {
+            useGrouping = null;
+        } else {
+            useGrouping = groupingCriteria.copy();
+            if (groupSize >= 0) {
+                useGrouping.groupSize = groupSize;
+            }
+            if (nGroups >= 0) {
+                useGrouping.numGroups =  nGroups;
+            }
         }
         
         List<Integer> wcs = IntStream.rangeClosed(minWeightClass,
@@ -388,7 +405,7 @@ public class FormationType {
         int cUnits = (int)numUnits.stream().mapToInt(Integer::intValue).sum();
 
         /* Simple case: all units have the same requirements. */
-        if (otherCriteria.isEmpty() && groupingCriteria == null
+        if (otherCriteria.isEmpty() && useGrouping == null
                 && networkMask == ModelRecord.NETWORK_NONE) {
             List<MechSummary> retVal = new ArrayList<>();
             for (int i = 0; i < params.size(); i++) {
@@ -405,7 +422,7 @@ public class FormationType {
         }
         
         /* Simple case: single set of parameters and single additional criterion. */
-        if (params.size() == 1 && otherCriteria.size() == 1 && groupingCriteria == null
+        if (params.size() == 1 && otherCriteria.size() == 1 && useGrouping == null
                 && networkMask == ModelRecord.NETWORK_NONE) {
             List<MechSummary> retVal = new ArrayList<>();
             retVal.addAll(tables.get(0).generateUnits(otherCriteria.get(0).getMinimum(numUnits.get(0)),
@@ -543,12 +560,12 @@ public class FormationType {
 	        			int utIndex = Compute.randomInt(unitTypeGroupings.size());
 	        			combo = unitTypeGroupings.get(utIndex);
 	
-	        			if (groupingCriteria != null
-	        					&& params.stream().anyMatch(p -> groupingCriteria.appliesTo(p.getUnitType()))) {
+	        			if (useGrouping != null
+	        					&& params.stream().anyMatch(p -> useGrouping.appliesTo(p.getUnitType()))) {
 	        				/* Create a temporary map that only includes units that have a grouping criterion */
 	        				Map<Integer,Integer> groupedUnits = new LinkedHashMap<>();
 	        				for (int p = 0; p < params.size(); p++) {
-	        					if (groupingCriteria.appliesTo(params.get(p).getUnitType())) {
+	        					if (useGrouping.appliesTo(params.get(p).getUnitType())) {
 	        						for (Integer i : combo.keySet()) {
 	        							if ((i & (1 << (p + otherCriteria.size() + POS_C3_NUM))) != 0) {
 	        								groupedUnits.merge(i, combo.get(i), Integer::sum);
@@ -556,7 +573,7 @@ public class FormationType {
 	        						}
 	    						}
 	    					}
-	    					List<List<Map<Integer,Integer>>> groups = findMatchedGroups(groupedUnits);
+	    					List<List<Map<Integer,Integer>>> groups = findMatchedGroups(groupedUnits, useGrouping);
 	
 	    					while (groups.size() > 0) {
 	    						int gIndex = Compute.randomInt(groups.size());
@@ -597,10 +614,10 @@ public class FormationType {
 		    										} else {
 		    											final MechSummary b = base;
 		    											MechSummary unit = tables.get(tableIndex).generateUnit(ms -> filter.test(ms)
-		    													&& groupingCriteria.matches(ms, b));
+		    													&& useGrouping.matches(ms, b));
 		    											if (unit != null) {
 		    											    found.putIfAbsent(tableIndex, new ArrayList<>());
-                                                            found.get(tableIndex).add(base);
+                                                            found.get(tableIndex).add(unit);
 		    											}
 		    										}
 		    									}
@@ -955,10 +972,18 @@ public class FormationType {
      * @return	A list of possible groupings. Each entry is a list of size() equal to numGroups.
      * 			The entry for each group is a map of the same format as <code>combination</code>. 
      */
-    private List<List<Map<Integer,Integer>>> findMatchedGroups(Map<Integer,Integer> combination) {
+    private List<List<Map<Integer,Integer>>> findMatchedGroups(Map<Integer,Integer> combination,
+            GroupingConstraint groupingCriteria) {
     	int numUnits = combination.values().stream().mapToInt(Integer::intValue).sum();
-    	int size = Math.min(numUnits, groupingCriteria.getGroupSize());
-    	int numGroups = Math.min(groupingCriteria.getNumGroups(), numUnits / size);
+        int size = Math.min(groupingCriteria.getGroupSize(), numUnits);
+    	int numGroups = Math.max(groupingCriteria.getNumGroups(), 1);
+    	if (groupingCriteria.getGroupSize() == 0 && groupingCriteria.getNumGroups() > 0) {
+    	    numGroups = groupingCriteria.getNumGroups();
+    	    size = Math.max(1, numUnits / numGroups);
+    	} else if (groupingCriteria.getNumGroups() == 0 && groupingCriteria.getGroupSize() > 0) {
+            size = groupingCriteria.getGroupSize();
+            numGroups = Math.max(1, numUnits / size);
+    	}
     	List<Integer> keyList = new ArrayList<>(combination.keySet());
     	
     	List<int[][]> list = new ArrayList<>();
@@ -1532,9 +1557,9 @@ public class FormationType {
         FormationType ft = new FormationType("Order", "Command");
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.exclusiveFaction = "DC";
-        ft.groupingCriteria = new GroupingConstraint(FLAG_GROUND, Integer.MAX_VALUE, 1,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_GROUND, 0, 1,
                 ms -> true,
-                (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis())
+                (ms0, ms1) -> ms0.getName().equals(ms1.getName())
                     && ms0.getWeightClass() == ms1.getWeightClass(),
                 "Same chassis");
         allFormationTypes.put(ft.name, ft);
@@ -1826,7 +1851,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> EnumSet.of(UnitRole.INTERCEPTOR, UnitRole.FAST_DOGFIGHTER).contains(getUnitRole(ms)),
                 "Interceptor/Fast Dogfighter"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1843,7 +1868,7 @@ public class FormationType {
                             (((MiscType)et).hasFlag(MiscType.F_BAP)
                             || ((MiscType)et).hasFlag(MiscType.F_ECM)))),
                 "Probe, ECM, TAG"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1860,7 +1885,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> getUnitRole(ms).equals(UnitRole.FIRE_SUPPORT),
                 "Fire Support"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1873,7 +1898,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> getUnitRole(ms).equals(UnitRole.INTERCEPTOR),
                 "Interceptor"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1886,7 +1911,7 @@ public class FormationType {
         ft.otherCriteria.add(new PercentConstraint(0.51,
                 ms -> EnumSet.of(UnitRole.ATTACK_FIGHTER,
                         UnitRole.DOGFIGHTER).contains(getUnitRole(ms)), "Attack, Dogfighter"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -1898,7 +1923,7 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_FIGHTER | FLAG_SMALL_CRAFT | FLAG_DROPSHIP;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> getUnitRole(ms).equals(UnitRole.TRANSPORT), "Transport"));
-        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, Integer.MAX_VALUE,
+        ft.groupingCriteria = new GroupingConstraint(FLAG_FIGHTER, 2, 0,
                 ms -> true,
                 (ms0, ms1) -> ms0.getChassis().equals(ms1.getChassis()),
                 "Same chassis");
@@ -2073,6 +2098,11 @@ public class FormationType {
         
         public boolean hasGeneralCriteria() {
             return criterion != null;
+        }
+        
+        public GroupingConstraint copy() {
+            return new GroupingConstraint(this.unitTypes, this.groupSize, this.numGroups,
+                this.criterion, this.groupConstraint, this.description);
         }
     }
 }

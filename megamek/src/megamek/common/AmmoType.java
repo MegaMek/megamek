@@ -1219,17 +1219,21 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for IS Mek mortars
         munitions.clear();
         munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL,
-                TECH_BASE_IS, new int[] { 2521, DATE_NONE, 2531 },
-                RATING_B, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, "374, TM"));
+                new TechAdvancement(TECH_BASE_IS).setISAdvancement(2521, DATE_NONE, 2531)
+                    .setTechRating(RATING_B).setAvailability(RATING_B, RATING_B, RATING_B, RATING_B),
+                    "374, TM"));
         munitions.add(new MunitionMutator("Flare", 1, M_FLARE,
-                TECH_BASE_IS, new int[] { 2528, DATE_NONE, 2536 },
-                RATING_B, new int[] { RATING_A, RATING_A, RATING_A, RATING_A }, "374, TM"));
+                new TechAdvancement(TECH_BASE_IS).setISAdvancement(2528, DATE_NONE, 2536)
+                    .setTechRating(RATING_B).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A),
+                    "374, TM"));
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED,
-                TECH_BASE_IS, new int[] { 3050, DATE_NONE, 3064 },
-                RATING_C, new int[] { RATING_X, RATING_X, RATING_E, RATING_D }, "374, TM"));
+                new TechAdvancement(TECH_BASE_IS).setISAdvancement(3050, DATE_NONE, 3064)
+                    .setTechRating(RATING_C).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D),
+                    "374, TM"));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TECH_BASE_IS, new int[] { 2521, DATE_NONE, 2531 },
-                RATING_B, new int[] { RATING_A, RATING_A, RATING_A, RATING_A }, "375, TM"));
+                new TechAdvancement(TECH_BASE_IS).setISAdvancement(2521, DATE_NONE, 2531)
+                    .setTechRating(RATING_B).setAvailability(RATING_A, RATING_A, RATING_A, RATING_A),
+                    "375, TM"));
              
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -14101,6 +14105,17 @@ public class AmmoType extends EquipmentType {
             }
             techAdvancement.setTechRating(techRating);
             techAdvancement.setAvailability(availRating);
+            this.rulesRefs = rulesRefs;
+        }
+        
+        
+        public MunitionMutator(String munitionName, int weightRatio,
+                long munitionType, TechAdvancement techAdvancement,
+                String rulesRefs) {
+            name = munitionName;
+            weight = weightRatio;
+            type = munitionType;
+            this.techAdvancement = new TechAdvancement(techAdvancement);
             this.rulesRefs = rulesRefs;
         }
         

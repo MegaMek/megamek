@@ -55,6 +55,37 @@ public class TechAdvancement implements ITechnology {
         this.techBase = techBase;
     }
     
+    /**
+     * Copy constructor
+     */
+    public TechAdvancement(TechAdvancement ta) {
+        this(ta.techBase);
+        System.arraycopy(ta.isAdvancement, 0, this.isAdvancement, 0, ta.isAdvancement.length);
+        System.arraycopy(ta.clanAdvancement, 0, this.clanAdvancement, 0, ta.clanAdvancement.length);
+        System.arraycopy(ta.isApproximate, 0, this.isApproximate, 0, ta.isApproximate.length);
+        System.arraycopy(ta.clanApproximate, 0, this.clanApproximate, 0, ta.clanApproximate.length);
+        if (prototypeFactions.length > 0) {
+            this.prototypeFactions = new int[prototypeFactions.length];
+            System.arraycopy(ta.productionFactions, 0, this.prototypeFactions, 0, ta.prototypeFactions.length);
+        }
+        if (prototypeFactions.length > 0) {
+            this.prototypeFactions = new int[prototypeFactions.length];
+            System.arraycopy(ta.productionFactions, 0, this.prototypeFactions, 0, ta.prototypeFactions.length);
+        }
+        if (extinctionFactions.length > 0) {
+            this.extinctionFactions = new int[extinctionFactions.length];
+            System.arraycopy(ta.extinctionFactions, 0, this.extinctionFactions, 0, ta.extinctionFactions.length);
+        }
+        if (reintroductionFactions.length > 0) {
+            this.reintroductionFactions = new int[reintroductionFactions.length];
+            System.arraycopy(ta.reintroductionFactions, 0, this.reintroductionFactions, 0, ta.reintroductionFactions.length);
+        }
+        this.isIntroLevel = ta.isIntroLevel;
+        this.unofficial = ta.unofficial;
+        this.techRating = ta.techRating;
+        System.arraycopy(ta.availability, 0, this.availability, 0, ta.availability.length);
+    }
+    
     public TechAdvancement setTechBase(int base) {
         techBase = base;
         return this;

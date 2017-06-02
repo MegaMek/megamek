@@ -492,7 +492,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 			}
 		}
 		
-		Ruleset.findRuleset(fd).process(fd);
+		Ruleset.findRuleset(fd).processRoot(fd);
 
 		forceDesc = fd;
 		if (onGenerate != null) {

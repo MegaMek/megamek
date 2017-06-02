@@ -630,14 +630,13 @@ public class ForceDescriptor {
 				}
 			}
 		}
-		subforces.stream().forEach(sf -> sf.loadEntities());
-		attached.stream().forEach(sf -> sf.loadEntities());
+		subforces.forEach(ForceDescriptor::loadEntities);
+		attached.forEach(ForceDescriptor::loadEntities);
 	}
 	
 	public void assignCommanders() {
-		for (ForceDescriptor fd : subforces) {
-			fd.assignCommanders();
-		}
+        subforces.forEach(ForceDescriptor::assignCommanders);
+
 		Ruleset rules = Ruleset.findRuleset(this);
 		CommanderNode coNode = null;
 		CommanderNode xoNode = null;
@@ -792,6 +791,8 @@ public class ForceDescriptor {
 			}
 		}
 		
+		attached.forEach(ForceDescriptor::assignCommanders);
+		
 //		setIcon();
 	}
 	
@@ -830,6 +831,7 @@ public class ForceDescriptor {
 			}
 			sub.assignPositions();
 		}
+		attached.forEach(ForceDescriptor::assignPositions);
 	}
 	
 	private Comparator<? super ForceDescriptor> forceSorter = new Comparator<ForceDescriptor>() {

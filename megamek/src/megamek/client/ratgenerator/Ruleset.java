@@ -144,11 +144,22 @@ public class Ruleset {
 		return customRanks;
 	}
 	
-	public void process(ForceDescriptor fd) {
-		if (fd.isTopLevel()) {
-			defaults.apply(fd);
-		}
-		
+	public void processRoot(ForceDescriptor fd) {
+	    defaults.apply(fd);
+        // save the setting so it can be restored after assigning names
+        String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
+        	    
+	    buildForceTree(fd);
+        fd.generateUnits();
+        fd.assignCommanders();
+        fd.assignPositions();
+        fd.loadEntities();
+//      fd.assignBloodnames();
+
+        RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
+	}
+	
+	private void buildForceTree (ForceDescriptor fd) {
 		Ruleset rs = findRuleset(fd.getFaction());
 		boolean applied = false;
 		ForceNode fn = null;
@@ -177,34 +188,21 @@ public class Ruleset {
 				rs = findRuleset(sub.getFaction());
 			}
 			if (rs == null) {
-				process(sub);
+				buildForceTree(sub);
 			} else {
-				rs.process(sub);
+				rs.buildForceTree(sub);
 			}
 		}
 		for (ForceDescriptor sub : fd.getAttached()) {
-			process(sub);
+			buildForceTree(sub);
 		}
 
-		// save the setting so it can be restored after assigning names
-		String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
-		
 		for (ForceDescriptor sub : fd.getAttached()) {
 			sub.assignCommanders();
 			sub.assignPositions();
 			sub.loadEntities();
 //			sub.assignBloodnames();
 		}
-
-		if (fd.isTopLevel()) {
-		    fd.generateUnits();
-			fd.assignCommanders();
-			fd.assignPositions();
-			fd.loadEntities();
-//			fd.assignBloodnames();
-		}
-
-		RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
 	}
 	
 	public int getRatingIndex(String key) {

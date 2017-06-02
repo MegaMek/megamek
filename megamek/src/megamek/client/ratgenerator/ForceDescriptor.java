@@ -175,11 +175,34 @@ public class ForceDescriptor {
 	        setUnit(generate());
 	    } else {
     	    if (null != formationType) {
-    	        if (!generateFormation(subforces, ModelRecord.NETWORK_NONE)) {
-    	            formationType = null;
+    	        //Simple leaf node (Lance, Star, etc.
+    	        if (null != generationRule && generationRule.equals("group")) {
+    	            //In cases like Novas and air lances the formation rules only apply to some of the units 
+                    if (!generateAndAssignFormation(subforces, false, 0)) {
+                        generateLance(subforces);
+                        formationType = null;
+                    }
+    	        } else {
+    	            //If group generation is not set, then either this is a compound formation (e.g. squadron,
+    	            //aero/vehicle Point) or we are generating uniform subforces such as companies in SL line units
+    	            Map<String,List<ForceDescriptor>> byGenRule = subforces.stream()
+    	                    .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
+    	            if (byGenRule.containsKey("group")) {
+    	                if (!generateAndAssignFormation(byGenRule.get("group").stream()
+    	                        .map(fd -> fd.getSubforces()).flatMap(sf -> sf.stream())
+    	                        .collect(Collectors.toList()), false, byGenRule.get("group").size())) {
+    	                    formationType = null;
+                            subforces.forEach(fd -> fd.generateUnits());    	                    
+    	                }
+                    } else if (byGenRule.containsKey("model")) {
+                        generateAndAssignFormation(byGenRule.get("model"), false, 0);
+                        subforces.forEach(fd -> fd.generateUnits());
+                    } else if (byGenRule.containsKey("chassis")) {
+                        generateAndAssignFormation(byGenRule.get("chassis"), true, 0);
+                        subforces.forEach(fd -> fd.generateUnits());
+    	            }
     	        }
-    	    }
-    	    if (null == formationType) {
+    	    } else {
     	        if (null != generationRule) {
     	            switch(generationRule) {
     	            case "chassis":
@@ -198,11 +221,63 @@ public class ForceDescriptor {
 	    attached.forEach(fd -> fd.generateUnits());
 	}
 	
-	public boolean generateFormation(List<ForceDescriptor> subs, int networkMask) {
-	    if (null == formationType) {
-	        return false;
-	    }
-	    
+	/**
+	 * Sorts out all subforce nodes eligible for the <code>FormationType</code> and attempts to generate
+	 * a formation based on their parameters. If the formation is successfully generated, it is distributed
+	 * to the subforces in the order provided. For leaf node, the unit is set. For non-final nodes,
+	 * the unit is added to either the model or chassis list depending on the provided grouping rule.
+	 * Any subforces that are not eligible for the formation are then generated.
+	 * 
+	 * @param subs             The subforces to generate unit for. These need not be direct children of
+	 *                         <code>this</code>.
+	 * @param generationRule   If true, any non-final subforce node will have the generated unit added to the
+	 *                         chassis list instead of the model list.  
+	 * @param numGroups        The number of groups to pass on to formation generation; used to override
+	 *                         standard grouping constraints (e.g. matched pairs in fighter squadrons).
+	 * @return                 Whether the formation was successfully generated.
+	 */
+	private boolean generateAndAssignFormation(List<ForceDescriptor> subs, boolean chassis, int numGroups) {
+        Map<Boolean,List<ForceDescriptor>> eligibleSubs = subs.stream()
+                .collect(Collectors.groupingBy(fd -> null != fd.getUnitType() && formationType.isAllowedUnitType(fd.getUnitType())));
+        if (eligibleSubs.containsKey(true)) {
+            if (eligibleSubs.get(true).isEmpty()) {
+                return false;
+            } else {
+                List<ModelRecord> list = generateFormation(eligibleSubs.get(true), ModelRecord.NETWORK_NONE, numGroups);
+                if (list.isEmpty()) {
+                    formationType = null;
+                    return false;
+                } else {
+                    for (int i = 0; i < list.size(); i++) {
+                        if (eligibleSubs.get(true).get(i).isElement()) {
+                            eligibleSubs.get(true).get(i).setUnit(list.get(i));                            
+                        } else if (chassis) {
+                            eligibleSubs.get(true).get(i).getChassis().add(list.get(i).getChassis());
+                        } else {
+                            eligibleSubs.get(true).get(i).getChassis().add(list.get(i).getKey());
+                        }
+                    }
+                }
+            }
+            if (eligibleSubs.containsKey(false)) {
+                generateLance(eligibleSubs.get(false));
+            }
+        }
+        return true;
+	}
+	
+	/**
+	 * Translates <code>ForceDescriptor</code> list into parameters to pass to the formation builder.
+	 * 
+	 * @param subs         A list of <ForceDescriptor</code> nodes.
+	 * @param networkMask  The type of C3 network that should be used in generating the formation.
+	 * @param numGroups    Overrides the default value for formation grouping constraints (e.g. some
+	 *                     Capellan squadrons have two groups of three instead of the standard three groups
+	 *                     of two).
+	 * @return             The list of units that make up the formation, or an empty list if a formation
+	 *                     could not be generated with the given parameters.
+	 */
+	private List<ModelRecord> generateFormation (List<ForceDescriptor> subs, int networkMask, int numGroups) {
         Map<UnitTable.Parameters, Integer> paramCount = new HashMap<>();
 	    for (ForceDescriptor sub : subs) {
 	        paramCount.merge(new UnitTable.Parameters(sub.getFactionRec(),
@@ -217,30 +292,15 @@ public class ForceDescriptor {
 	        params.add(e.getKey());
 	        numUnits.add(e.getValue());
 	    }
-	    List<MechSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false);
-	    if (unitList.isEmpty()) {
-	        return false;
-	    } else {
-	        assert unitList.size() == subs.size();
-	        for (int i = 0; i < unitList.size(); i++) {
-	            ModelRecord mr = RATGenerator.getInstance().getModelRecord(unitList.get(i).getName());
-	            subs.get(i).setUnit(mr);
-	        }
-	    }
-	    return true;
+	    List<MechSummary> unitList = formationType.generateFormation(params, numUnits, networkMask, false, 0, numGroups);
+	    return unitList.stream().map(ms -> RATGenerator.getInstance().getModelRecord(ms.getName()))
+	            .collect(Collectors.toList());
 	}
 	
 	public void generateLance(List<ForceDescriptor> subs) {
 		if (subs.size() == 0) {
 			return;
 		}
-		//If the formation type is set, use it instead. If the formation cannot be generated,
-		//continue with the generic method.
-		if (null != formationType && generateFormation(subs, ModelRecord.NETWORK_NONE)) {
-		    return;
-		}
-		formationType = null;
-		
 		ModelRecord unit = null;
 		if (chassis.size() > 0 || models.size() > 0) {
 			for (ForceDescriptor sub : subs) {

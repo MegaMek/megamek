@@ -134,6 +134,7 @@ public class ForceNode extends RulesetNode {
 				        }
 				        fd.setFormationType(ft);
 				    }
+				    break;
 				case "role":
 					n = rule.selectOption(fd, true);
 					if (n == null) {

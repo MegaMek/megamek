@@ -122,18 +122,21 @@ public class ForceNode extends RulesetNode {
 					}
 					break;
 				case "formation":
-				    n = rule.selectOption(fd, true);
-				    if (n == null) {
-				        break;
-				    }
-				    content = n.getContent();
-				    if (content != null) {
-				        FormationType ft = FormationType.getFormationType(content);
-				        if (null == ft) {
-				            System.err.println("Force generator: could not parse formation type " + content);
-				        }
-				        fd.setFormationType(ft);
-				    }
+                    if (null == fd.getFormation()
+                        || rule.predicates.containsKey("ifFormation")) {
+    				    n = rule.selectOption(fd, true);
+    				    if (n == null) {
+    				        break;
+    				    }
+    				    content = n.getContent();
+    				    if (content != null) {
+    				        FormationType ft = FormationType.getFormationType(content);
+    				        if (null == ft) {
+    				            System.err.println("Force generator: could not parse formation type " + content);
+    				        }
+    				        fd.setFormationType(ft);
+    				    }
+                    }
 				    break;
 				case "role":
 					n = rule.selectOption(fd, true);

@@ -209,6 +209,13 @@
 			<option ifTopLevel="1" weight="2"></option>
 		</role>
 		
+		<!-- If the artillery role is set, preempt formation assignment -->
+		<ruleGroup>
+			<formation ifRole="artillery|missile_artillery">
+				<option>Artillery Fire</option>
+			</formation>
+		</ruleGroup>
+		
 		<ruleGroup>
 			<formation ifRole="command">
 				<option weight="66">Command</option>
@@ -258,7 +265,7 @@
 				<option weight="1">Fire</option>
 				<option weight="1">Security</option>
 			</formation>
-
+<!--
 			<role ifWeightClass="L" ifRole="">
 				<option weight="8">recon</option>
 				<option weight="2">fire_support</option>
@@ -278,7 +285,8 @@
 				<option weight="1">urban</option>
 				<option weight="6" />
 			</role>
-		</ruleGroup>
+ -->
+ 		</ruleGroup>
 		
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">
@@ -325,6 +333,13 @@
 			<option>+command</option>
 			<option ifTopLevel="1" weight="2"></option>
 		</role>
+		
+		<!-- If the artillery role is set, preempt formation assignment -->
+		<ruleGroup>
+			<formation ifRole="artillery|missile_artillery">
+				<option>Artillery Fire</option>
+			</formation>
+		</ruleGroup>
 		
 		<ruleGroup>
 			<formation ifRole="command">
@@ -375,6 +390,7 @@
 				<option weight="1">Security</option>
 			</formation>
 
+<!--
 			<role ifWeightClass="L" ifRole="">
 				<option weight="6">recon</option>
 				<option weight="2">urban</option>
@@ -392,6 +408,7 @@
 				<option weight="1">urban</option>
 				<option weight="6" />
 			</role>
+-->
 		</ruleGroup>
 
 		<subforces generate="group">

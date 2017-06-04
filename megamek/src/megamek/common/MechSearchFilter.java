@@ -388,6 +388,11 @@ public class MechSearchFilter {
                          
                 int currQty = qtyIter.next();
                 
+                if (currEq == null || n == null) {
+                    int tmp = 5;
+                    
+                }
+                
       
                 
                 if (currEq.equals(n.name) && currQty >= n.qty)

@@ -982,6 +982,7 @@ public class ForceDescriptor {
 			retVal = retVal.replace("{latin:parent}", LATIN[getParent().getNameIndex()]);
 			retVal = retVal.replace("{roman:parent}", ROMAN[getParent().getNameIndex()]);
 			retVal = retVal.replace("{cardinal:parent}", Integer.toString(getParent().getNameIndex() + 1));
+			retVal = retVal.replace("{alpha:parent}", Character.toString((char)(getParent().getNameIndex() + 'A')));
 		}
 		if (getParent() != null && retVal.contains("{name:parent}")) {
 			String parentName = getParent().getName().replaceAll(".*\\[", "").replaceAll("\\].*", "");
@@ -996,6 +997,15 @@ public class ForceDescriptor {
 			retVal = retVal.replace("{latin}", LATIN[getNameIndex()]);
 			retVal = retVal.replace("{roman}", ROMAN[getNameIndex()]);
 			retVal = retVal.replace("{cardinal}", Integer.toString(getNameIndex() + 1));
+            retVal = retVal.replace("{alpha}", Character.toString((char)(getNameIndex() + 'A')));
+            if (retVal.contains("{formation}")) {
+                if (null != formationType && null != formationType.getCategory()) {
+                    retVal = retVal.replace("{formation}", formationType.getCategory()
+                            .replace("Striker/Cavalry", "Striker").replaceAll(" Squadron", ""));
+                } else {
+                    retVal = retVal.replace("{formation} ", "");
+                }
+            }
 		}
 		retVal = retVal.replaceAll("\\{.*?\\}", "");
 		retVal = retVal.replaceAll("[\\[\\]]", "").replaceAll("\\s+", " ");

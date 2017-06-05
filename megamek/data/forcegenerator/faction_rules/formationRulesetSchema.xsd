@@ -7,6 +7,7 @@ elementFormDefault="qualified">
 		<xs:attribute name="ifUnitType" type="xs:string" />
 		<xs:attribute name="ifWeightClass" type="xs:string" />
 		<xs:attribute name="ifRating" type="xs:string" />
+		<xs:attribute name="ifFormation" type="xs:string" />
 		<xs:attribute name="ifRole" type="xs:string" />
 		<xs:attribute name="ifMotive" type="xs:string" />
 		<xs:attribute name="ifAugmented" type="xs:boolean" />

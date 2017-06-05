@@ -88,6 +88,7 @@
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="Mek|Tank">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<weightClass>
@@ -150,6 +151,7 @@
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Mek|Tank">
 		<name ifRole="command">Command Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>
@@ -192,7 +194,7 @@
 	</force>
 	
 	<force eschelon="%LANCE%" eschName="Lance" ifUnitType="Mek">
-		<name ifRole="command">Command Lance</name>
+		<name>{formation} Lance</name>
 		<co>%LT%</co>
 		
 		<weightClass>
@@ -317,6 +319,7 @@
 	</force>
 	
 	<force eschelon="%LANCE%" eschName="Lance" ifUnitType="Tank">
+		<name>{formation} Lance</name>
 		<name ifRole="command">Command Lance</name>
 		<co>%LT%</co>
 		
@@ -442,6 +445,7 @@
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="VTOL">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		<xo>%CAPTAIN%</xo>
 
@@ -452,6 +456,7 @@
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="VTOL">
 		<name ifRole="command">Command Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		<xo>%LT%</xo>
 		
@@ -461,7 +466,7 @@
 	</force>
 	
 	<force eschelon="%LANCE%" eschName="Lance" ifUnitType="VTOL">
-		<name ifRole="command">Command Company</name>
+		<name>{formation} Lance</name>
 		<co>%LT%</co>
 		
 		<formation>
@@ -553,6 +558,7 @@
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="Infantry|BattleArmor">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<unitType ifUnitType="Infantry" ifDateBetween="3051,"
@@ -620,7 +626,7 @@
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Infantry" ifRole="engineer">
-		<name>{ordinal} Engineer Company</name>
+		<name>{alpha} Engineer Company</name>
 		<co>%CAPTAIN%</co>
 
 		<subforces generate="group">
@@ -632,7 +638,7 @@
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Infantry" ifRole="field_gun">
-		<name>{ordinal} Field Gun Company</name>
+		<name>{alpha} Field Gun Company</name>
 		<co>%CAPTAIN%</co>
 
 		<subforces generate="group">
@@ -642,7 +648,7 @@
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Infantry"
 			ifRole="artillery|missle_artillery">
-		<name>{ordinal} Field Artillery Company</name>
+		<name>{alpha} Field Artillery Company</name>
 		<co>%CAPTAIN%</co>
 
 		<subforces generate="group">
@@ -652,7 +658,7 @@
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Infantry|BattleArmor">
 		<name ifRole="command">Command Company</name>
-		<name>{ordinal} Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<unitType ifUnitType="Infantry" ifDateBetween="3051,"
@@ -774,6 +780,7 @@
 	</force>
 	
 	<force eschelon="%SQUADRON%" eschName="Squadron" ifUnitType="Aero|Conventional Fighter">
+		<name>{formation} Squadron</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>
@@ -825,6 +832,7 @@
 	
 	<force eschelon="%FLIGHT%" eschName="Flight" ifUnitType="Aero|Conventional Fighter">
 		<name ifRole="command">Command Flight</name>
+		<name>Flight {cardinal}</name>
 		<co>%LT%</co>
 		
 		<weightClass>

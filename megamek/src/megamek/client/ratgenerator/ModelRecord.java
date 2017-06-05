@@ -98,6 +98,13 @@ public class ModelRecord extends AbstractUnitRecord {
     	double ammoBV = 0.0;
     	boolean losTech = false;
     	for (int i = 0; i < ms.getEquipmentNames().size(); i++) {
+    	    //EquipmentType.get is throwing an NPE intermittently, and the only possibility I can see
+    	    //is that there is a null equipment name.
+    	    if (null == ms.getEquipmentNames().get(i)) {
+    	        System.err.println("RATGenerator ModelRecord encountered null equipment name in MechSummary for "
+    	                + ms.getName() + ", index " + i);
+    	        continue;
+    	    }
     		EquipmentType eq = EquipmentType.get(ms.getEquipmentNames().get(i));
     		if (eq == null) {
     			continue;

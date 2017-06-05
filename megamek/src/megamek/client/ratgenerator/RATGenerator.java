@@ -806,6 +806,13 @@ public class RATGenerator {
 			System.err.println("Unable to read RAT generator file for era " + era); //$NON-NLS-1$
 			return;
 		}
+		while (!MechSummaryCache.getInstance().isInitialized()) {
+		    try {
+		        Thread.sleep(50);
+		    } catch (InterruptedException ex) {
+		        //do nothing
+		    }
+		}
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		Document xmlDoc = null;

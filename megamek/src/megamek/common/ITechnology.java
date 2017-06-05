@@ -172,7 +172,7 @@ public interface ITechnology {
         } else if (year >= getPrototypeDate(clan) && getPrototypeDate(clan) != DATE_NONE) {
             return clan? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
         } else {
-            return TechConstants.T_TECH_UNKNOWN;
+            return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
         }
     }
     

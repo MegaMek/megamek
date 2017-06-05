@@ -1669,43 +1669,37 @@ public class AmmoType extends EquipmentType {
 		        "353, TO"));*/
        
         munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
-        		new TechAdvancement(TECH_BASE_ALL)
+        		new TechAdvancement(TECH_BASE_IS)
         		.setIntroLevel(false)
         		.setUnofficial(false)
 				.setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
             	.setISAdvancement(2594, 2600, DATE_NONE, 2830, 3047)
             	.setISApproximate(false,false,false,false,false)
-            	.setClanAdvancement(2594, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false)
             	.setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_CC),"354, TO"));
         
         munitions.add(new MunitionMutator("Homing", 1, M_HOMING,
-        		new TechAdvancement(TECH_BASE_ALL)
+        		new TechAdvancement(TECH_BASE_IS)
         		.setIntroLevel(false)
         		.setUnofficial(false)
 				.setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
             	.setISAdvancement(2593, 2600, DATE_NONE, 2830, 3045)
             	.setISApproximate(false,false,false,false,false)
-            	.setClanAdvancement(2593, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_CC),"354, TO"));
         
         munitions.add(new MunitionMutator("Illumination", 1, M_FLARE,
-        		new TechAdvancement(TECH_BASE_ALL)
+        		new TechAdvancement(TECH_BASE_IS)
         		.setIntroLevel(false)
         		.setUnofficial(false)
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
             	.setISAdvancement(2615, 2621, DATE_NONE, 2800, 3047)
             	.setISApproximate(false,false,false,false,false)
-            	.setClanAdvancement(2615, 2621, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_CC),"355, TO"));
@@ -1717,7 +1711,7 @@ public class AmmoType extends EquipmentType {
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
             	.setISAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setApproximate(false,false,false,false,false)
+            	.setISApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_CC)
                 .setProductionFactions(F_CC),"355, TO"));
         
@@ -1733,28 +1727,24 @@ public class AmmoType extends EquipmentType {
                 .setProductionFactions(F_FS,F_LC),"355, TO"));
         
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-        		new TechAdvancement(TECH_BASE_ALL)
+        		new TechAdvancement(TECH_BASE_IS)
         		.setIntroLevel(false)
         		.setUnofficial(false)
 				.setTechRating(RATING_E)
                 .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
             	.setISAdvancement(2595, 2600, DATE_NONE, 2840, 3044)
             	.setISApproximate(false,false,false,false,false)
-            	.setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH),"356, TO"));
                 
         munitions.add(new MunitionMutator("Thunder (FASCAM)", 1, M_FASCAM,
-        		new TechAdvancement(TECH_BASE_ALL)
+        		new TechAdvancement(TECH_BASE_IS)
         		.setIntroLevel(false)
         		.setUnofficial(false)
 				.setTechRating(RATING_C)
                 .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
             	.setISAdvancement(2621, 2844, DATE_NONE, 2770, 3051)
             	.setISApproximate(false,false,false,false,false)
-            	.setClanAdvancement(2621, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
-            	.setClanApproximate(false,false,false,false,false)
                 .setPrototypeFactions(F_TH)
                 .setProductionFactions(F_CHH)
                 .setReintroductionFactions(F_CC),"356, TO"));
@@ -1794,54 +1784,115 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan Arrow IV launchers.
         munitions.clear();
-/*        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
+        //TODO
+/*		munitions.add(new MunitionMutator("Air-Defense Arrow (ADA) Missiles", 1, M_XXXXXXX,
+		        new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
+		                .setISAdvancement(3068, 3080, DATE_NONE, DATE_NONE, DATE_NONE)
+		                .setApproximate(false, false, false, false, false).setTechRating(RATING_E)
+		                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E).setPrototypeFactions(F_CC)
+		                .setProductionFactions(F_CC),
+		        "353, TO"));*/
+       
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER,
         		new TechAdvancement(TECH_BASE_CLAN)
         		.setIntroLevel(false)
         		.setUnofficial(false)
 				.setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
-            	.setISAdvancement(2594, 2600, DATE_NONE, 2830, 3047)
-            	.setApproximate(false,false,false,false,false)
-                .setPrototypeFactions(F_TH)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+            	.setClanAdvancement(2594, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false)
+            	.setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH)
                 .setReintroductionFactions(F_CC),"354, TO"));
         
         munitions.add(new MunitionMutator("Homing", 1, M_HOMING,
-                TECH_BASE_CLAN, new int[] { 2593, 2600, DATE_NONE, DATE_NONE, DATE_NONE },
-                RATING_E, new int[] { RATING_E, RATING_F, RATING_E, RATING_D }, "354, TO"));
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_E)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+            	.setClanAdvancement(2593, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_CC),"354, TO"));
         
         munitions.add(new MunitionMutator("Illumination", 1, M_FLARE,
-                TECH_BASE_CLAN, new int[] { 2615, 2621, DATE_NONE, DATE_NONE, DATE_NONE },
-                RATING_C, new int[] { RATING_D, RATING_D, RATING_D, RATING_D }, "355, TO"));
-        
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TECH_BASE_CLAN, new int[] { 2595, 2600, DATE_NONE, 2840, 3044 },
-                RATING_B, new int[] { RATING_E, RATING_F, RATING_E, RATING_D }, "356, TO"));
-                
-        munitions.add(new MunitionMutator("Thunder (FASCAM)", 1, M_FASCAM,
-                TECH_BASE_CLAN, new int[] { 2621, 2844, DATE_NONE, 2770, 3051 },
-                RATING_C, new int[] { RATING_E, RATING_F, RATING_D, RATING_D }, "357, TO"));
-        
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M,
-                TECH_BASE_CLAN, new int[] { 2844, DATE_NONE, DATE_NONE },
-                RATING_D, new int[] { RATING_F, RATING_F, RATING_F, RATING_F }, "174, IO"));
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_C)
+                .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+            	.setClanAdvancement(2615, 2621, DATE_NONE, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH)
+                .setReintroductionFactions(F_CC),"355, TO"));
 
-        //Below are Unoffical for the Clans per IO pg 59
         munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV,
-                TECH_BASE_CLAN, new int[] { 3053, 3055, DATE_NONE },
-                RATING_C, new int[] { RATING_X, RATING_X, RATING_D, RATING_D }, "356, TO")
-        		.setUnofficial(true));
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(true)
+				.setTechRating(RATING_C)
+                .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+            	.setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_CC)
+                .setProductionFactions(F_CC),"355, TO"));
         
         munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB,
-                TECH_BASE_CLAN, new int[] { 3053, 3055, DATE_NONE },
-                RATING_E, new int[] { RATING_X, RATING_X, RATING_F, RATING_F }, "356, TO")
-        		.setUnofficial(true));
-      
-        munitions.add(new MunitionMutator("Thunder Vibrabomb-IV", 1, M_VIBRABOMB_IV,
-                TECH_BASE_CLAN, new int[] { 3056, 3065, DATE_NONE },
-                RATING_D, new int[] { RATING_X, RATING_X, RATING_E, RATING_E }, "357, TO")
-        		.setUnofficial(true));
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(true)
+				.setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
+            	.setClanAdvancement(3053, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_FS,F_LC)
+                .setProductionFactions(F_FS,F_LC),"355, TO"));
         
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_E)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+            	.setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_TH),"356, TO"));
+                
+        munitions.add(new MunitionMutator("Thunder (FASCAM)", 1, M_FASCAM,
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_C)
+                .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+            	.setClanAdvancement(2621, 2844, DATE_NONE, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_TH)
+                .setProductionFactions(F_CHH)
+                .setReintroductionFactions(F_CC),"356, TO"));
+
+        //TODO - Implement them.
+/*		munitions.add(new MunitionMutator("Thunder-Active-IV", 1, M_ACTIVE_IV,
+		        new TechAdvancement(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
+		                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+		                .setISAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
+		                .setApproximate(false, false, false, false, false).setPrototypeFactions(F_CC)
+		                .setProductionFactions(F_CCC),
+		        "356, TO"));*/
+                
+        munitions.add(new MunitionMutator("Thunder Vibrabomb-IV", 1, M_VIBRABOMB_IV,
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(true)
+				.setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+            	.setClanAdvancement(3056, 3065, DATE_NONE, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false)
+                .setPrototypeFactions(F_CC)
+                .setProductionFactions(F_CC),"357, TO"));        
 
      
         //TODO:
@@ -1849,7 +1900,7 @@ public class AmmoType extends EquipmentType {
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-*/        AmmoType.createMunitions(clanArrowAmmos, munitions);
+        AmmoType.createMunitions(clanArrowAmmos, munitions);
 
         // create the munition types for clan vehicular grenade launchers
         munitions.clear();

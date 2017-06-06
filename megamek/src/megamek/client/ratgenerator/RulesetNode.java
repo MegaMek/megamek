@@ -139,7 +139,7 @@ public class RulesetNode {
 				break;
 			case "ifEschelon":
 				if (fd.getEschelon() == null ||
-						!matches(fd.getEschelon().toString(), predicates.getProperty((String)key))) {
+						!matches(fd.getEschelonCode(), predicates.getProperty((String)key))) {
 					return false;
 				}
 				break;

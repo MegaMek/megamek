@@ -1168,7 +1168,7 @@ public class ForceDescriptor {
 	public String getEschelonCode() {
 		String retVal = eschelon.toString();
 		if (augmented) {
-			retVal += "*";
+			retVal += "^";
 		}
 		return retVal;
 	}

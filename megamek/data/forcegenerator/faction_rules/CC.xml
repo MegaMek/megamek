@@ -33,7 +33,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			<option ifUnitType="Mek|Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="BattleArmor">%BATTALION%,%COMPANY%,%PLATOON%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%WING%,%SQUADRON%,%FLIGHT%+,%FLIGHT%</option>
+			<option ifUnitType="Aero|Conventional Fighter">%REGIMENT%,%WING%+,%WING%,%SQUADRON%^,%SQUADRON%,%FLIGHT%^,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -42,7 +42,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		
 		<flags>
 			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Mek">:+Vehicle,ba:+BattleArmor</option>
-			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Tank">mekVee:+Mek,ba:+BattleArmor,inf:+Infantry</option>
+			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Tank">mekVee:+Mek,ba:+BattleArmor</option>
 		</flags>
 	</toc>
 	
@@ -185,6 +185,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifAugmented="0" ifUnitType="Mek|Tank">
+		<name>{ordinal} Battalion</name>
 		<co ifUnitType="Mek">%LT_COLONEL%</co>
 		<co>%MAJOR%</co>
 		
@@ -232,6 +233,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Augmented Battalion" ifAugmented="1" ifUnitType="Mek">
+		<name>{ordinal} Battalion (Augmented)</name>
 		<co>%LT_COLONEL%</co>
 
 		<weightClass>
@@ -309,6 +311,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifAugmented="0" ifUnitType="Mek">
+		<name ifRole="command">Command Company</name>
+		<name>{alpha} Company</name>
 		<co>%MAJOR%</co>
 		
 		<!-- Up to 3065 about 1/5 is augmented, then 1/4 3066-3070, then 1/3 3070-3080.
@@ -369,6 +373,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Augmented Company" ifAugmented="1" ifUnitType="Mek">
+		<name ifRole="command">Command Company (Augmented)</name>
+		<name>{alpha} Company (Augmented)</name>
 		<co>%MAJOR%</co>
 		
 		<!-- Lower-rated units are more likely to have 4 Vee / 2 Mek lances. -->
@@ -382,7 +388,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 
 		<ruleGroup>
 			<flags ifTopLevel="1">
-				<option weight="2"/>
+				<option weight="3"/>
 				<option>ba</option>
 			</flags>
 		
@@ -417,6 +423,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 	
 	<force eschelon="%LANCE%" eschName="Augmented Lance" ifAugmented="1" ifUnitType="Mek">
+		<name>{formation} Lance (Augmented)</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>
@@ -425,8 +432,71 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			<option weight="7">M</option>
 			<option weight="6">L</option>
 		</weightClass>
+
+		<!-- The first Lance in a company has the command role. If this is toplevel we are only
+		generating a single lance, which gives it a 1/3 chance of being the command unit. -->
+		<role ifIndex="0">
+			<option>+command</option>
+			<option ifTopLevel="1" weight="2"></option>
+		</role>
+		
+		<!-- If the artillery role is set, preempt formation assignment -->
+		<ruleGroup>
+			<formation ifRole="artillery|missile_artillery">
+				<option>Artillery Fire</option>
+			</formation>
+		</ruleGroup>
 		
 		<ruleGroup>
+			<formation ifRole="command">
+				<option weight="66">Command</option>
+				<option weight="4" ifWeightClass="H|A">Assault</option>
+				<option weight="1" ifWeightClass="H|A">Fast Assault</option>
+				<option weight="1" ifWeightClass="H|A">Hunter</option>
+			</formation>
+			
+			<formation ifIndex="0|1" ifRole="!command">
+				<option weight="32">Fire</option>
+				<option weight="6">Fire Support</option>
+				<option weight="4">Direct Fire</option>
+				<option weight="4" ifWeightClass="L|M">Light Fire</option>
+				<option weight="2">Anti-Air</option>
+				<option weight="17">Battle</option>
+				<option weight="8" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="4" ifWeightClass="M">Medium Battle</option>
+				<option weight="2" ifWeightClass="L">Light Battle</option>
+				<option weight="3" ifWeightClass="H|A">Assault</option>
+				<option weight="1" ifWeightClass="H|A">Berserker/Close</option>
+				<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1">Urban</option>
+				<option weight="31" ifIndex="0">Recon</option>
+				<option weight="10" ifIndex="0" ifWeightClass="H|A">Heavy Recon</option>
+				<option weight="10" ifIndex="0" ifWeightClass="L">Light Recon</option>				
+			</formation>
+
+			<formation ifIndex="2">
+				<option weight="31">Recon</option>
+				<option weight="10" ifWeightClass="H|A">Heavy Recon</option>
+				<option weight="10" ifWeightClass="L">Light Recon</option>
+				<option weight="21">Battle</option>
+				<option weight="10" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="5" ifWeightClass="M">Medium Battle</option>
+				<option weight="2" ifWeightClass="L">Light Battle</option>
+				<option weight="7" ifWeightClass="H|A">Assault</option>
+				<option weight="2" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+				<option weight="1">Fire</option>
+				<option weight="1">Security</option>
+			</formation>
+<!--
 			<role ifWeightClass="L" ifRole="">
 				<option weight="8">recon</option>
 				<option weight="2">fire_support</option>
@@ -445,7 +515,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weight="2">fire_support</option>
 				<option weight="1">urban</option>
 				<option weight="6" />
-			</role>
+			</role>-->
 		</ruleGroup>
 		
 		<subforces generate="group">
@@ -503,11 +573,13 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		
 		<subforces generate="group" ifFlags="ba">
 			<subforce num="2" unitType="BattleArmor"
-				role="mechanized_ba">%ELEMENT%</subforce>
+				flags="+nova">%ELEMENT%</subforce>
 		</subforces>
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifAugmented="0" ifUnitType="Tank">
+		<name ifRole="command">Command Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<flags ifTopLevel="1" ifDateBetween="3060," ifFaction="!CC.WHO">
@@ -547,25 +619,10 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Augmented Company" ifAugmented="1" ifUnitType="Tank">
+		<name ifRole="command">Command Company (Augmented)</name>
+		<name>{alpha} Company (Augmented)</name>
 		<co>%CAPTAIN%</co>
 		
-		<!-- Augmented companies that have not already been flagged as 4 Vee/2 Mek have
-		a chance of being 4 Vee/2 BA or 4 Vee/2 inf. By 3081 the standardization of Mek
-		regiments with one augmented battalion and a number of ad-hoc Mek/BA lances
-		makes it more likely that armor augmented lances will be Vee/inf. -->
-		
-		<changeEschelon ifFlags="!mekVee">
-			<option weight="1" ifRating="D"/>
-			<option weight="2" ifRating="C"/>
-			<option weight="3" ifRating="B"/>
-			<option weight="4" ifRating="A"/>
-			<option unitType="Tank" flags="inf" weight="5">%COMPANY%</option>
-			<option unitType="Tank" flags="ba" ifRating="A|B">%COMPANY%</option>
-
-			<option unitType="Tank" flags="inf" ifDateBetween="3081,"
-				weight="6">%COMPANY%</option>
-		</changeEschelon>
-
 		<ruleGroup>
 			<flags ifTopLevel="1">
 				<option weight="2"/>
@@ -603,6 +660,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 	
 	<force eschelon="%LANCE%" eschName="Augmented Lance" ifAugmented="1" ifUnitType="Tank">
+		<name>{formation} Lance (Augmented)</name>
 		<co>%LT%</co>
 		
 		<weightClass>
@@ -612,13 +670,72 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			<option weight="6">L</option>
 		</weightClass>
 		
+		<!-- The first Lance in a company has the command role. If this is toplevel we are only
+		generating a single lance, which gives it a 1/3 chance of being the command unit. -->
+		<role ifIndex="0">
+			<option>+command</option>
+			<option ifTopLevel="1" weight="2"></option>
+		</role>
+		
+		<!-- If the artillery role is set, preempt formation assignment -->
 		<ruleGroup>
-			<role ifFlags="ba|inf">
-				<option/>
-				<option weight="2">infantry_support</option>
-			</role>
+			<formation ifRole="artillery|missile_artillery">
+				<option>Artillery Fire</option>
+			</formation>
 		</ruleGroup>
 		
+		<ruleGroup>
+			<formation ifRole="command">
+				<option weight="66">Vehicle Command</option>
+				<option weight="4" ifWeightClass="H|A">Assault</option>
+				<option weight="1" ifWeightClass="H|A">Fast Assault</option>
+				<option weight="1" ifWeightClass="H|A">Hunter</option>
+			</formation>
+			
+			<formation ifIndex="0|1" ifRole="!command">
+				<option weight="32">Fire</option>
+				<option weight="6">Fire Support</option>
+				<option weight="4">Direct Fire</option>
+				<option weight="4" ifWeightClass="L|M">Light Fire</option>
+				<option weight="2">Anti-Air</option>
+				<option weight="17">Battle</option>
+				<option weight="8" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="4" ifWeightClass="M">Medium Battle</option>
+				<option weight="2" ifWeightClass="L">Light Battle</option>
+				<option weight="3" ifWeightClass="H|A">Assault</option>
+				<option weight="1" ifWeightClass="H|A">Berserker/Close</option>
+				<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="31" ifIndex="0">Recon</option>
+				<option weight="10" ifIndex="0" ifWeightClass="H|A">Heavy Recon</option>
+				<option weight="10" ifIndex="0" ifWeightClass="L">Light Recon</option>
+				<option weight="10" ifFlags="ba|inf">Urban</option>				
+			</formation>
+
+			<formation ifIndex="2">
+				<option weight="31">Recon</option>
+				<option weight="10" ifWeightClass="H|A">Heavy Recon</option>
+				<option weight="10" ifWeightClass="L">Light Recon</option>
+				<option weight="21">Battle</option>
+				<option weight="10" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="5" ifWeightClass="M">Medium Battle</option>
+				<option weight="2" ifWeightClass="L">Light Battle</option>
+				<option weight="7" ifWeightClass="H|A">Assault</option>
+				<option weight="2" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+				<option weight="1">Fire</option>
+				<option weight="1">Security</option>
+				<option weight="10" ifFlags="ba|inf">Urban</option>				
+			</formation>
+		</ruleGroup>
+<!-- 		
 		<ruleGroup>
 			<role ifWeightClass="L" ifRole="">
 				<option weight="6">recon</option>
@@ -637,7 +754,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weight="1">urban</option>
 				<option weight="6" />
 			</role>
-		</ruleGroup>
+		</ruleGroup>-->
 
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">
@@ -687,11 +804,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</subforces>
 		
 		<subforces generate="group" ifFlags="ba">
-			<subforce num="2" unitType="BattleArmor">%SQUAD%</subforce>
-		</subforces>
-
-		<subforces generate="group" ifFlags="inf">
-			<subforce num="2" unitType="Infantry">%PLATOON%</subforce>
+			<subforce num="4" unitType="BattleArmor" flags="+nova">%SQUAD%</subforce>
 		</subforces>
 	</force>
 	
@@ -765,12 +878,6 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 					weight="3">%COMPANY%</option>
 				<option unitType="Tank" role="infantry_support"
 					weight="1">%BATTALION%</option>
-				<option unitType="Tank" ifDateBetween="3060,"
-					augmented="1" flags="+inf"
-					role="infantry_support">%COMPANY%</option>
-				<option unitType="Tank" ifDateBetween="3070,"
-					augmented="1" flags="+inf"
-					role="infantry_support">%COMPANY%</option>
 				<option weight="2" />
 				<option weight="1" ifWeightClass="M"/>
 				<option weight="2" ifWeightClass="L"/>
@@ -779,6 +886,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="Infantry|BattleArmor">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<unitType ifUnitType="Infantry" ifDateBetween="3051,"
@@ -860,20 +968,20 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			<subforce role="command" augmented="1" num="2">%FLIGHT%</subforce>
 			
 			<subforceOption ifWeightClass="H" ifUnitType="Aero">
-				<option weightClass="H,H,H">%SQUADRON%</option>
-				<option weightClass="H,H,M">%SQUADRON%</option>
-				<option weightClass="H,H,L">%SQUADRON%</option>
+				<option weightClass="H,H,H">%WING%</option>
+				<option weightClass="H,H,M">%WING%</option>
+				<option weightClass="H,H,L">%WING%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M" ifUnitType="Aero">
-				<option weightClass="H,M,M">%SQUADRON%</option>
-				<option weightClass="M,M,M">%SQUADRON%</option>
-				<option weightClass="H,M,L">%SQUADRON%</option>
-				<option weightClass="M,M,L">%SQUADRON%</option>
+				<option weightClass="H,M,M">%WING%</option>
+				<option weightClass="M,M,M">%WING%</option>
+				<option weightClass="H,M,L">%WING%</option>
+				<option weightClass="M,M,L">%WING%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L" ifUnitType="Aero">
-				<option weightClass="H,L,L">%SQUADRON%</option>
-				<option weightClass="M,L,L">%SQUADRON%</option>
-				<option weightClass="L,L,L">%SQUADRON%</option>
+				<option weightClass="H,L,L">%WING%</option>
+				<option weightClass="M,L,L">%WING%</option>
+				<option weightClass="L,L,L">%WING%</option>
 			</subforceOption>
 		</subforces>
 	</force>
@@ -891,22 +999,51 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			<subforce role="command" augmented="1">%FLIGHT%</subforce>
 			
 			<subforceOption ifWeightClass="H" ifUnitType="Aero">
-				<option weightClass="H,H,H">%SQUADRON%</option>
-				<option weightClass="H,H,M">%SQUADRON%</option>
-				<option weightClass="H,H,L">%SQUADRON%</option>
+				<option weightClass="H,H,H" augmented="1">%SQUADRON%</option>
+				<option weightClass="H,H,M" augmented="1">%SQUADRON%</option>
+				<option weightClass="H,H,L" augmented="1">%SQUADRON%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M" ifUnitType="Aero">
-				<option weightClass="H,M,M">%SQUADRON%</option>
-				<option weightClass="M,M,M">%SQUADRON%</option>
-				<option weightClass="H,M,L">%SQUADRON%</option>
-				<option weightClass="M,M,L">%SQUADRON%</option>
+				<option weightClass="H,M,M" augmented="1">%SQUADRON%</option>
+				<option weightClass="M,M,M" augmented="1">%SQUADRON%</option>
+				<option weightClass="H,M,L" augmented="1">%SQUADRON%</option>
+				<option weightClass="M,M,L" augmented="1">%SQUADRON%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L" ifUnitType="Aero">
-				<option weightClass="H,L,L">%SQUADRON%</option>
-				<option weightClass="M,L,L">%SQUADRON%</option>
-				<option weightClass="L,L,L">%SQUADRON%</option>
+				<option weightClass="H,L,L" augmented="1">%SQUADRON%</option>
+				<option weightClass="M,L,L" augmented="1">%SQUADRON%</option>
+				<option weightClass="L,L,L" augmented="1">%SQUADRON%</option>
 			</subforceOption>
-			<subforce ifUnitType="Conventional Fighter" num="3">%SQUADRON%</subforce>
+			<subforce ifUnitType="Conventional Fighter" augmented="1" num="3">%SQUADRON%</subforce>
+		</subforces>
+	</force>
+	
+	<force eschelon="%SQUADRON%" eschName="Flight" ifAugmented="1" ifUnitType="Aero|Conventional Fighter">
+		<co>%MAJOR%</co>
+		
+		<weightClass>
+			<option weight="3">L</option>
+			<option weight="4">M</option>
+			<option weight="3">H</option>
+		</weightClass>
+		
+		<subforces>
+			<subforce role="command" augmented="1">%FLIGHT%</subforce>
+			
+			<subforceOption ifWeightClass="H" ifUnitType="Aero">
+				<option weightClass="H,H" augmented="0" weight="2">%SQUADRON%</option>
+				<option weightClass="H,M" augmented="0">%SQUADRON%</option>
+			</subforceOption>
+			<subforceOption ifWeightClass="M" ifUnitType="Aero">
+				<option weightClass="H,M" augmented="0">%SQUADRON%</option>
+				<option weightClass="M,L" augmented="0">%SQUADRON%</option>
+				<option weightClass="H,L" augmented="0">%SQUADRON%</option>
+			</subforceOption>
+			<subforceOption ifWeightClass="L" ifUnitType="Aero">
+				<option weightClass="M,L" augmented="0">%SQUADRON%</option>
+				<option weightClass="L,L" augmented="0" weight="2">%SQUADRON%</option>
+			</subforceOption>
+			<subforce ifUnitType="Conventional Fighter" num="2" augmented="0">%SQUADRON%</subforce>
 		</subforces>
 		
 		<attachedForces>
@@ -918,7 +1055,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</attachedForces>
 	</force>
 	
-	<force eschelon="%SQUADRON%" eschName="Squadron" ifUnitType="Aero|Conventional Fighter">
+	<force eschelon="%SQUADRON%" eschName="Squadron" ifAugmented="0" ifUnitType="Aero|Conventional Fighter">
+		<name>{formation} Squadron</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>
@@ -926,6 +1064,15 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			<option>M</option>
 			<option>L</option>
 		</weightClass>
+
+		<ruleGroup>
+			<formation>
+				<option weight="3" ifWeightClass="L|M">Aerospace Superiority Squadron</option>
+				<option>Fire Support Squadron</option>
+				<option weight="2" ifWeightClass="L|M">Interceptor Squadron</option>
+				<option weight="3" ifWeightClass="M|H">Strike Squadron</option>
+			</formation>
+		</ruleGroup>
 
 		<subforces>
 			<subforceOption ifWeightClass="H" ifUnitType="Aero">
@@ -966,6 +1113,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 	
 	<force eschelon="%FLIGHT%" eschName="Triple" ifAugmented="1" ifUnitType="Aero|Conventional Fighter">
+		<name ifRole="command">Command Element</name>
+		<name>Element {cardinal}</name>
 		<co>%LT%</co>
 		
 		<weightClass>
@@ -980,6 +1129,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 	</force>
 
 	<force eschelon="%FLIGHT%" eschName="Element" ifAugmented="0" ifUnitType="Aero|Conventional Fighter">
+		<name>Element {cardinal}</name>
 		<co>%LT%</co>
 		
 		<weightClass>

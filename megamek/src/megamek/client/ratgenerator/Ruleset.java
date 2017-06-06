@@ -159,10 +159,19 @@ public class Ruleset {
         RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
 	}
 	
+	/**
+	 * Recursively build the force structure by assigning appropriate values to the current node,
+	 * including number and type of subforce and attached force nodes, and process those as well.
+	 * 
+	 * @param fd
+	 */
 	private void buildForceTree (ForceDescriptor fd) {
+	    //Find the most specific ruleset for this faction.
 		Ruleset rs = findRuleset(fd.getFaction());
 		boolean applied = false;
 		ForceNode fn = null;
+		//Find the first node matching node in the ruleset and apply the options to the current force descriptor.
+		//If no matching node is found in the ruleset, move to the parent ruleset.
 		do {
 			fn = rs.findForceNode(fd);
 			if (fn == null) {
@@ -175,13 +184,8 @@ public class Ruleset {
 				applied = fn.apply(fd);
 			}
 		} while (rs != null && (fn == null || !applied));
-		
-		if (!applied && fd.getEschelon() == 1 && !fd.isElement()) {
-			ModelRecord mRec = fd.generate();
-			if (mRec != null) {
-				fd.setUnit(mRec);
-			}
-		}
+		//Process subforces recursively. It is possible that the subforce has
+		//a different faction, in which case the ruleset appropriate to that faction is used.
 		for (ForceDescriptor sub : fd.getSubforces()) {
 			rs = this;
 			if (!fd.getFaction().equals(sub.getFaction())) {
@@ -193,10 +197,12 @@ public class Ruleset {
 				rs.buildForceTree(sub);
 			}
 		}
+		
+		//Any attached support units are then built.
 		for (ForceDescriptor sub : fd.getAttached()) {
 			buildForceTree(sub);
 		}
-
+		//Each attached formation is essentially a new top-level node
 		for (ForceDescriptor sub : fd.getAttached()) {
 			sub.assignCommanders();
 			sub.assignPositions();

@@ -204,6 +204,7 @@ public class Ruleset {
 		}
 		//Each attached formation is essentially a new top-level node
 		for (ForceDescriptor sub : fd.getAttached()) {
+		    sub.generateUnits();
 			sub.assignCommanders();
 			sub.assignPositions();
 			sub.loadEntities();

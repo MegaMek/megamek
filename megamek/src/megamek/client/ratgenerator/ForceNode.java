@@ -224,31 +224,12 @@ public class ForceNode extends RulesetNode {
 		if (subforces.size() == 0) {
 			generate = "model";
 		}
-		/*
-		if (subforces.size() == 0 || (generate != null &&
-				(generate.equals("model") || generate.equals("chassis")))) {
-			if (fd.getUnitType() == null) {
-				System.err.println("Attempted to generate units of unknown type.");
-			} else {
-				ModelRecord mRec = fd.generate();
-				if (mRec != null) {
-					if (subforces.size() == 0) {
-						fd.setUnit(mRec);
-					} else if (generate.equals("chassis")) {
-						fd.getChassis().add(mRec.getChassis());
-					} else {
-						fd.getModels().add(mRec.getKey());
-					}
-				}
-			}
-		}
-		*/
 		
 		processSubforces(fd, generate);
 		
 		for (SubforcesNode n : attached) {
 			if (n.matches(fd)) {
-				ArrayList<ForceDescriptor> subs = n.generateSubforces(fd, false);
+				ArrayList<ForceDescriptor> subs = n.generateSubforces(fd, true);
 				if (subs != null) {
 					for (ForceDescriptor sub : subs) {
 						fd.addAttached(sub);
@@ -308,7 +289,7 @@ public class ForceNode extends RulesetNode {
 						} while (rs != null && fn == null);
 					}
 				} else {
-					subs = n.generateSubforces(fd, true);
+					subs = n.generateSubforces(fd, false);
 				}
 				if (subs != null) {
 					for (ForceDescriptor sub : subs) {
@@ -400,6 +381,7 @@ public class ForceNode extends RulesetNode {
 			case "chassis":
 			case "variant":
 			case "motive":
+			case "formation":
 			case "role":
 			case "flags":
 			case "changeEschelon":

@@ -651,7 +651,7 @@ public class ForceDescriptor {
 		while (wtIndex < 5) {
 			for (int roleStrictness = 3; roleStrictness >= 0; roleStrictness--) {
 				List<Integer> wcs = new ArrayList<>();
-				if (useWeightClass() && fd.getWeightClass() >= 0) {
+				if (useWeightClass() && null != fd.getWeightClass() && fd.getWeightClass() >= 0) {
 					wcs.add(fd.getWeightClass());
 				}
 /*				System.out.println("Getting table: " + fd.getFaction() + ","
@@ -690,7 +690,7 @@ public class ForceDescriptor {
 						&& fd.getMovementModes().size() > 0) {
 					fd.getMovementModes().clear();
 				} else {
-					if (useWeightClass() && weightClass != -1 && weightClass < altWeights.length && wtIndex < altWeights[weightClass].length) {
+					if (useWeightClass() && null != weightClass && weightClass != -1 && weightClass < altWeights.length && wtIndex < altWeights[weightClass].length) {
 						fd.setWeightClass(altWeights[weightClass][wtIndex]);
 					}
 					wtIndex++;

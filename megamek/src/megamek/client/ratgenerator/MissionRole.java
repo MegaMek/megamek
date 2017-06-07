@@ -66,11 +66,13 @@ public enum MissionRole {
 		case FIRE_SUPPORT:
 		case CAVALRY:
 		case RAIDER:
-		case ARTILLERY:
-		case MISSILE_ARTILLERY:
 		case APC:
 			return unitType <= UnitType.TANK || unitType == UnitType.VTOL;
 			
+        case ARTILLERY:
+        case MISSILE_ARTILLERY:
+            return unitType < UnitType.CONV_FIGHTER;
+            
 		case INCENDIARY:
 		case ANTI_AIRCRAFT:
 			return unitType <= UnitType.PROTOMEK; // all ground units

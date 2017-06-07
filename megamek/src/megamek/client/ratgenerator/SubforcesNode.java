@@ -39,11 +39,11 @@ public class SubforcesNode extends RulesetNode {
 	}
 	
 	public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd) {
-		return generateSubforces(fd, true);
+		return generateSubforces(fd, false);
 	}
 	
 	public ArrayList<ForceDescriptor> generateSubforces(ForceDescriptor fd,
-			boolean useSizeMod) {
+			boolean isAttached) {
 		ArrayList<ForceDescriptor> retVal = new ArrayList<ForceDescriptor>();
 		for (ValueNode n : subforces) {
 			if (n.matches(fd)) {
@@ -52,7 +52,7 @@ public class SubforcesNode extends RulesetNode {
 					/* Remove the middle weight class to keep the overall weight class
 					 * roughly the same.
 					 */
-					if (useSizeMod && fd.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
+					if (!isAttached && fd.getSizeMod() == ForceDescriptor.UNDERSTRENGTH
 							&& i == n.getNum() / 2) {
 						continue;
 					}
@@ -62,7 +62,7 @@ public class SubforcesNode extends RulesetNode {
 					n.apply(sub, i);
 					subs.add(sub);
 				}
-				if (useSizeMod && fd.getSizeMod() == ForceDescriptor.REINFORCED) {
+				if (!isAttached && fd.getSizeMod() == ForceDescriptor.REINFORCED) {
 					ForceDescriptor sub = fd.createChild(subs.size());
 					sub.setEschelon(Integer.parseInt(n.getContent()));
 					apply(sub, n.getNum() / 2);
@@ -71,7 +71,9 @@ public class SubforcesNode extends RulesetNode {
 					
 				}
 				retVal.addAll(subs);
-				fd.setGenerationRule(findGenerateProperty(n, this));
+				if (!isAttached) {
+				    fd.setGenerationRule(findGenerateProperty(n, this));
+				}
 			}
 		}
 		for (OptionGroupNode n : optionSubforces) {
@@ -111,7 +113,9 @@ public class SubforcesNode extends RulesetNode {
 						
 					}
 					retVal.addAll(subs);
-	                fd.setGenerationRule(findGenerateProperty(vn, n, this));
+					if (!isAttached) {
+					    fd.setGenerationRule(findGenerateProperty(vn, n, this));
+					}
 				}
 			}
 		}

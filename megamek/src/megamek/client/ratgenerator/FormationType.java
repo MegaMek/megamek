@@ -1456,7 +1456,7 @@ public class FormationType {
                     "Brawler, Sniper, Skirmisher"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY,
-                (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
+                FormationType::checkUnitMatch,
                 "Same model, Heavy");
         allFormationTypes.put(ft.name, ft);
     }
@@ -1473,8 +1473,7 @@ public class FormationType {
                 "Scout"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT,
-                (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
-                "Same model, Light");
+                FormationType::checkUnitMatch, "Same model, Light");
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -1487,8 +1486,7 @@ public class FormationType {
                 "Medium"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM,
-                (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
-                "Same model, Medium");
+                FormationType::checkUnitMatch, "Same model, Medium");
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -1501,8 +1499,7 @@ public class FormationType {
                 "Heavy+"));
         ft.groupingCriteria = new GroupingConstraint(FLAG_VEHICLE, 2, 2,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,
-                (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
-                "Same model, Heavy+");
+                FormationType::checkUnitMatch, "Same model, Heavy+");
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -1560,10 +1557,7 @@ public class FormationType {
         ft.allowedUnitTypes = FLAG_GROUND;
         ft.exclusiveFaction = "DC";
         ft.groupingCriteria = new GroupingConstraint(FLAG_GROUND, 0, 1,
-                ms -> true,
-                (ms0, ms1) -> ms0.getName().equals(ms1.getName())
-                    && ms0.getWeightClass() == ms1.getWeightClass(),
-                "Same chassis");
+                ms -> true, FormationType::checkUnitMatch, "Same model");
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -1581,8 +1575,7 @@ public class FormationType {
                 ms -> EnumSet.of(UnitRole.SNIPER, UnitRole.MISSILE_BOAT, UnitRole.SKIRMISHER,
                         UnitRole.JUGGERNAUT)
                     .contains(getUnitRole(ms)),
-                    (ms0, ms1) -> ms0.getName().equals(ms1.getName()),
-                "Same model");
+                FormationType::checkUnitMatch, "Same model");
         allFormationTypes.put(ft.name, ft);
     }
     
@@ -1932,6 +1925,24 @@ public class FormationType {
         allFormationTypes.put(ft.name, ft);                
     }
 
+    /**
+     * Helper function used by some grouping constraints to compare units. Units are considered to match
+     * if they are the same model, but omnis can match with different configurations. This is used primarily
+     * for ground units; aerospace units match based on chassis.
+     * 
+     * @param ms0
+     * @param ms1
+     * @return    Whether the two units are considered the same for grouping considerations.
+     */
+    private static boolean checkUnitMatch(final MechSummary ms0, final MechSummary ms1) {
+        final ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms0.getName());
+        if (null != mRec && mRec.isOmni()) {
+            return ms0.getChassis().equals(ms1.getChassis());
+        } else {
+            return ms0.getName().equals(ms1.getName());
+        }
+    }
+    
     /**
      * base class for limitations on formation type 
      */

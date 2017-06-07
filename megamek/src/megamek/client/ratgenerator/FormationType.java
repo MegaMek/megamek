@@ -277,11 +277,13 @@ public class FormationType {
             useGrouping = null;
         } else {
             useGrouping = groupingCriteria.copy();
-            if (groupSize >= 0) {
+            if (groupSize > 0) {
                 useGrouping.groupSize = groupSize;
+                useGrouping.numGroups = 0;
             }
-            if (nGroups >= 0) {
+            if (nGroups > 0) {
                 useGrouping.numGroups =  nGroups;
+                useGrouping.groupSize = 0;
             }
         }
         

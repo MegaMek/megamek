@@ -306,7 +306,7 @@ public class ForceNode extends RulesetNode {
 						} while (rs != null && fn == null);
 					}
 				} else {
-					subs = n.generateSubforces(fd, generate != null && generate.equals("group"));
+					subs = n.generateSubforces(fd, true);
 				}
 				if (subs != null) {
 					for (ForceDescriptor sub : subs) {

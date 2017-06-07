@@ -224,6 +224,7 @@ public class ForceNode extends RulesetNode {
 		if (subforces.size() == 0) {
 			generate = "model";
 		}
+		/*
 		if (subforces.size() == 0 || (generate != null &&
 				(generate.equals("model") || generate.equals("chassis")))) {
 			if (fd.getUnitType() == null) {
@@ -241,6 +242,7 @@ public class ForceNode extends RulesetNode {
 				}
 			}
 		}
+		*/
 		
 		processSubforces(fd, generate);
 		

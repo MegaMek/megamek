@@ -68,6 +68,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private boolean apWeapons; //used to determine suitability for anti-infantry role
 	
 	private boolean mechanizedBA;
+	private boolean magClamp;
 
 	public ModelRecord(String chassis, String model) {
 		super(chassis);
@@ -158,16 +159,20 @@ public class ModelRecord extends AbstractUnitRecord {
    						networkMask |= NETWORK_COMPANY_COMMAND;
     				}        			
         		}
-    		} else if (eq.hasFlag(MiscType.F_UMU)){
+    		} else if (eq instanceof MiscType) {
+    		    if (eq.hasFlag(MiscType.F_UMU)) {
    				movementMode = EntityMovementMode.BIPED_SWIM;
-    		} else if (eq.hasFlag(MiscType.F_C3S)) {
-    			networkMask |= NETWORK_C3_SLAVE;
-    		} else if (eq.hasFlag(MiscType.F_C3I)) {
-    			networkMask |= NETWORK_C3I;
-    		} else if (eq.hasFlag(MiscType.F_C3SBS)) {
-    			networkMask |= NETWORK_BOOSTED_SLAVE;
-    		} else if (eq.hasFlag(MiscType.F_NOVA)) {
-    			networkMask |= NETWORK_NOVA;
+        		} else if (eq.hasFlag(MiscType.F_C3S)) {
+        			networkMask |= NETWORK_C3_SLAVE;
+        		} else if (eq.hasFlag(MiscType.F_C3I)) {
+        			networkMask |= NETWORK_C3I;
+        		} else if (eq.hasFlag(MiscType.F_C3SBS)) {
+        			networkMask |= NETWORK_BOOSTED_SLAVE;
+        		} else if (eq.hasFlag(MiscType.F_NOVA)) {
+        			networkMask |= NETWORK_NOVA;
+        		} else if (eq.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+        		    magClamp = true;
+        		}
     		}
     	}
 		if (totalBV > 0 &&
@@ -345,6 +350,14 @@ public class ModelRecord extends AbstractUnitRecord {
 	
 	public void setMechanizedBA(boolean mech) {
 		mechanizedBA = mech;
+	}
+	
+	public boolean hasMagClamp() {
+	    return magClamp;
+	}
+	
+	public void setMagClamp(boolean magClamp) {
+	    this.magClamp = magClamp;
 	}
 }
 

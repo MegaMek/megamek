@@ -238,7 +238,11 @@ public class ForceDescriptor {
 	 */
 	private boolean generateAndAssignFormation(List<ForceDescriptor> subs, boolean chassis, int numGroups) {
         Map<Boolean,List<ForceDescriptor>> eligibleSubs = subs.stream()
-                .collect(Collectors.groupingBy(fd -> null != fd.getUnitType() && formationType.isAllowedUnitType(fd.getUnitType())));
+                .collect(Collectors.groupingBy(fd -> null != fd.getUnitType()
+                    && (formationType.isAllowedUnitType(fd.getUnitType()))
+                        || (flags.contains("nova")
+                                && (fd.getUnitType() == UnitType.BATTLE_ARMOR)
+                                    || fd.getUnitType() == UnitType.INFANTRY)));
         if (eligibleSubs.containsKey(true)) {
             if (eligibleSubs.get(true).isEmpty()) {
                 return false;
@@ -365,9 +369,12 @@ public class ForceDescriptor {
         //Any BA in exceess of the number of omni base units will require mag clamps, up to the number of base units.
         int magReq = Math.min((int)(baSubs.size() - baseUnitList.stream().filter(mr -> mr.isOmni()).count()),
                 baSubs.size());
-        for (int i = 0; i < magReq; i++) {
-            baSubs.get(i).getFlags().add("mag_clamp");
-            magReq--;
+        for (int i = 0; i < baSubs.size(); i++) {
+            if (i < magReq) {
+                baSubs.get(i).getRoles().add(MissionRole.MAG_CLAMP);
+            } else {
+                baSubs.get(i).getRoles().add(MissionRole.MECHANIZED_BA);
+            }
         }
         generateLance(baSubs);
         
@@ -666,12 +673,12 @@ public class ForceDescriptor {
 						fd.getYear(), ratGenRating, wcs, ModelRecord.NETWORK_NONE,
 						fd.getMovementModes(), fd.getRoles(), roleStrictness);
 				MechSummary ms = null;
-				if (fd.getMovementModes().isEmpty() && fd.getChassis().isEmpty() && fd.getModels().isEmpty()) {
-					ms = table.generateUnit();
+				if (!fd.getModels().isEmpty()) {
+				    ms = table.generateUnit(u -> fd.getModels().contains(u.getName()));
+				} else if (!fd.getChassis().isEmpty()) {
+				    ms = table.generateUnit(u -> fd.getChassis().contains(u.getChassis()));
 				} else {
-					ms = table.generateUnit(u -> (fd.getMovementModes().isEmpty() || fd.getMovementModes().contains(u.getUnitSubType()))
-							&& (fd.getChassis().isEmpty() || fd.getChassis().contains(u.getChassis()))
-							&& (fd.getModels().isEmpty() || fd.getModels().contains(u.getName())));
+				    ms = table.generateUnit();
 				}
 				if (ms != null && RATGenerator.getInstance().getModelRecord(ms.getName()) != null) {
 					return RATGenerator.getInstance().getModelRecord(ms.getName());

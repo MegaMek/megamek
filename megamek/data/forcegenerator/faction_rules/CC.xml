@@ -41,8 +41,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</rating>
 		
 		<flags>
-			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Mek">:+Vehicle,ba:+BattleArmor</option>
-			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Tank">mekVee:+Mek,ba:+BattleArmor</option>
+			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Mek">:+Vehicle,nova:+BattleArmor</option>
+			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Tank">mekVee:+Mek,nova:+BattleArmor</option>
 		</flags>
 	</toc>
 	
@@ -329,8 +329,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option flags="-testAugmented" weight="2"
 					augmented="1" ifDateBetween=",3080">%COMPANY%</option>
 				
-				<option flags="-testAugmented,+ba" augmented="1">%COMPANY%</option>
-				<option flags="-testAugmented,+ba" augmented="1"
+				<option flags="-testAugmented,+nova" augmented="1">%COMPANY%</option>
+				<option flags="-testAugmented,+nova" augmented="1"
 					ifDateBetween="3081,">%COMPANY%</option>
 	
 				<option flags="-testAugmented" weight="3" augmented="1"
@@ -389,7 +389,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		<ruleGroup>
 			<flags ifTopLevel="1">
 				<option weight="3"/>
-				<option>ba</option>
+				<option>+nova</option>
 			</flags>
 		
 			<weightClass>
@@ -432,7 +432,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			<option weight="7">M</option>
 			<option weight="6">L</option>
 		</weightClass>
-
+		
 		<!-- The first Lance in a company has the command role. If this is toplevel we are only
 		generating a single lance, which gives it a 1/3 chance of being the command unit. -->
 		<role ifIndex="0">
@@ -545,7 +545,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			</subforceOption>
 		</subforces>
 
-		<subforces generate="group" ifFlags="!ba">
+		<subforces generate="group" ifFlags="!nova">
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A,A" weight="2"
 					unitType="Tank">%ELEMENT%</option>
@@ -571,9 +571,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			</subforceOption>
 		</subforces>
 		
-		<subforces generate="group" ifFlags="ba">
-			<subforce num="2" unitType="BattleArmor"
-				flags="+nova">%ELEMENT%</subforce>
+		<subforces generate="group" ifFlags="nova">
+			<subforce num="2" unitType="BattleArmor">%ELEMENT%</subforce>
 		</subforces>
 	</force>
 	
@@ -626,7 +625,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		<ruleGroup>
 			<flags ifTopLevel="1">
 				<option weight="2"/>
-				<option>ba</option>
+				<option>nova</option>
 			</flags>
 		
 			<weightClass>
@@ -711,7 +710,6 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weight="31" ifIndex="0">Recon</option>
 				<option weight="10" ifIndex="0" ifWeightClass="H|A">Heavy Recon</option>
 				<option weight="10" ifIndex="0" ifWeightClass="L">Light Recon</option>
-				<option weight="10" ifFlags="ba|inf">Urban</option>				
 			</formation>
 
 			<formation ifIndex="2">
@@ -732,7 +730,6 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
 				<option weight="1">Fire</option>
 				<option weight="1">Security</option>
-				<option weight="10" ifFlags="ba|inf">Urban</option>				
 			</formation>
 		</ruleGroup>
 <!-- 		
@@ -777,7 +774,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			</subforceOption>
 		</subforces>
 
-		<subforces generate="group" ifFlags="!ba|inf">
+		<subforces generate="group" ifFlags="!nova">
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A,A" weight="2"
 					unitType="Mek">%ELEMENT%</option>
@@ -803,8 +800,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			</subforceOption>
 		</subforces>
 		
-		<subforces generate="group" ifFlags="ba">
-			<subforce num="4" unitType="BattleArmor" flags="+nova">%SQUAD%</subforce>
+		<subforces generate="group" ifFlags="nova">
+			<subforce num="4" unitType="BattleArmor">%SQUAD%</subforce>
 		</subforces>
 	</force>
 	

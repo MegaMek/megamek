@@ -40,8 +40,8 @@ public enum MissionRole {
 	TUG, POCKET_WARSHIP,
 	/* WarShip roles */
 	CORVETTE, DESTROYER, FRIGATE, CRUISER, BATTLESHIP,
-	/* Battle armor */
-	MECHANIZED_BA,
+	/* Mechanized Battle armor */
+	OMNI, MECHANIZED_BA, MAG_CLAMP,
 	/* Infantry roles */
 	MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN,
 	/* allows artillery but does not filter out all other roles */
@@ -117,8 +117,12 @@ public enum MissionRole {
 		case BATTLESHIP:
 			return unitType == UnitType.WARSHIP;
 			
+		case OMNI:
+		    return unitType <= UnitType.TANK;
+		    
 		case MECHANIZED_BA:
-			return unitType <= UnitType.TANK || unitType == UnitType.BATTLE_ARMOR;
+		case MAG_CLAMP:
+			return unitType == UnitType.BATTLE_ARMOR;
 			
 		case MARINE:
 		case XCT:
@@ -258,19 +262,23 @@ public enum MissionRole {
 						}
 					}
 					break;
-				case MECHANIZED_BA:
-					if (isSpecialized(desiredRoles, mRec)) {
-						return null;
-					}
-					if ((mRec.getUnitType() <= UnitType.TANK)
-							&& !mRec.isOmni()) {
-						return null;
-					}
-					if (mRec.getUnitType() == UnitType.BATTLE_ARMOR
-							&& !mRec.canDoMechanizedBA()) {
-						return null;						
-					}
-					break;
+				case OMNI:
+                    if (isSpecialized(desiredRoles, mRec) || !mRec.isOmni()) {
+				        return null;
+				    }
+				    break;
+                case MECHANIZED_BA:
+                    if (mRec.getUnitType() == UnitType.BATTLE_ARMOR
+                            && !mRec.canDoMechanizedBA()) {
+                        return null;                        
+                    }
+                    break;
+                case MAG_CLAMP:
+                    if (mRec.getUnitType() == UnitType.BATTLE_ARMOR
+                            && !mRec.hasMagClamp()) {
+                        return null;                        
+                    }
+                    break;
 				case URBAN:
 					if (mRec.getRoles().contains(URBAN)) {
 						avRating += avAdj[2];
@@ -563,9 +571,12 @@ public enum MissionRole {
 		case "anti-mek":
 		case "anti mek":
 			return ANTI_MEK;
+        case "omni":
+            return OMNI;
 		case "mechanized ba":
-		case "omni":
 			return MECHANIZED_BA;
+		case "mag clamp":
+		    return MAG_CLAMP;
 		case "field gun":
 			return FIELD_GUN;
 		case "civilian":

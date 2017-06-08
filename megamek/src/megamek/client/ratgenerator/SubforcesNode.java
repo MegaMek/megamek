@@ -71,7 +71,7 @@ public class SubforcesNode extends RulesetNode {
 					
 				}
 				retVal.addAll(subs);
-				if (!isAttached) {
+				if (!isAttached && null == fd.getGenerationRule()) {
 				    fd.setGenerationRule(findGenerateProperty(n, this));
 				}
 			}
@@ -113,7 +113,7 @@ public class SubforcesNode extends RulesetNode {
 						
 					}
 					retVal.addAll(subs);
-					if (!isAttached) {
+					if (!isAttached && null == fd.getGenerationRule()) {
 					    fd.setGenerationRule(findGenerateProperty(vn, n, this));
 					}
 				}

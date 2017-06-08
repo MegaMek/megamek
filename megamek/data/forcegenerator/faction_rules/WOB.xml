@@ -1155,6 +1155,7 @@
             <subforce num="1" flags="0330">%LEVEL_II%</subforce>
         </subforces>
     </force>
+    
     <force eschelon="%CHOIR%" eschName="Choir">
         <name>Choir</name>
         <co>%ADEPT%</co>
@@ -1167,7 +1168,7 @@
 		</weightClass>
 		
 		<role>
-		    <option>mechanized_ba</option>
+		    <option flags="+nova">+omni</option>
 		</role>
 						
 		<subforces generate="group">

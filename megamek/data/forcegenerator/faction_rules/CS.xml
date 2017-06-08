@@ -143,6 +143,17 @@
             <subforce ifFlags="phi|chi|psi" flags="psi">%LEVEL_III%</subforce>
             <subforce ifFlags="chi|psi|omega" flags="omega">%LEVEL_III%</subforce>
         </subforces>
+    
+    	<!-- While artillery support could be integrated, it is much easier to get the general level
+    	of artillery support closer to typical IS levels by adding 1-3 additional support LIIs to the LIV. -->    
+        <attachedForces>
+        	<subforceOption>
+        		<option num="1" role="artillery" name="Artillery Support">%LEVEL_II%</option>
+        		<option num="2" role="artillery" name="Artillery Support">%LEVEL_II%</option>
+        		<option num="3" role="artillery" name="Artillery Support">%LEVEL_II%</option>
+        	</subforceOption>
+        </attachedForces>
+        
     </force>
     
     <force eschelon="%LEVEL_III%" eschName="Level III" ifRole="command" ifFlags="alpha">
@@ -1096,10 +1107,30 @@
     </force>
 
     <force eschelon="%LEVEL_II%" eschName="Level II">
-        <name>II</name>
+        <name>II {formation}</name>
         <co>%ADEPT%</co>
         
-        <flags ifFlags="!4200|0402|2400|4002|6000|2040|0240|3300|0060|0330|2022|0042|3030|2202|4020|0222|0600|3003">
+		<weightClass>
+			<option weight="3">A</option>
+			<option weight="7">H</option>
+			<option weight="7">M</option>
+			<option weight="6">L</option>
+		</weightClass>
+		
+        <flags ifRole="artillery">
+            <option weight="25">0600</option>
+            <option weight="10">0060</option>
+            <option weight="3">4200</option>
+            <option weight="2">4020</option>
+            <option weight="2">2400</option>
+            <option weight="2">2040</option>
+            <option weight="6">0240</option>
+            <option weight="9">3300</option>
+            <option weight="9">0330</option>
+        </flags>
+        
+        <flags ifRole="!artillery"
+        		ifFlags="!4200|0402|2400|4002|6000|2040|0240|3300|0060|0330|2022|0042|3030|2202|4020|0222|0600|3003">
             <option weight="32">4002</option>
             <option weight="17">0402</option>
             <option weight="29">0042</option>
@@ -1120,32 +1151,49 @@
             <option weight="21">3003</option>
         </flags>
         
-		<weightClass>
-			<option weight="3">A</option>
-			<option weight="7">H</option>
-			<option weight="7">M</option>
-			<option weight="6">L</option>
-		</weightClass>
+        <ruleGroup>
+			<flags ifFlags="4020|0420|3030|0330">
+				<option>+nova</option>
+			</flags>
+		</ruleGroup>
 		
 		<ruleGroup>
-			<role ifWeightClass="L" ifRole="">
-				<option weight="6">recon</option>
-				<option weight="2">urban</option>
-				<option weight="4" />
-			</role>
-		
-			<role ifWeightClass="M" ifRole="">
-				<option weight="2">recon</option>
-				<option weight="2">urban</option>
-				<option weight="6" />
-			</role>
-
-			<role ifWeightClass="H|A" ifRole="">
-				<option weight="3">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="6" />
-			</role>
+			<formation ifRole="command">
+				<option ifFlags="6000|4200|4020|4002|3300|3030|3003">Command</option>
+				<option ifFlags="0600|2400|0420|0402|3300|0330|0303">Vehicle Command</option>
+			</formation>
+			
+			<formation ifRole="artillery" ifFlags="!0060|2040|0240">
+				<option>Artillery Fire</option>
+			</formation>
 		</ruleGroup>
+		
+		<ruleGroup>
+			<formation ifFlags="!0060|0042|2040|0240|2022|0222">
+				<option weight="32">Fire</option>
+				<option weight="6">Fire Support</option>
+				<option weight="4">Direct Fire</option>
+				<option weight="4" ifWeightClass="L|M">Light Fire</option>
+				<option weight="2" role="+anti_aircraft">Anti-Air</option>
+				<option weight="7" ifWeightClass="H|A">Assault</option>
+				<option weight="20">Battle</option>
+				<option weight="10" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="5" ifWeightClass="M">Medium Battle</option>
+				<option weight="2" ifWeightClass="L">Light Battle</option>
+				<option weight="3" ifWeightClass="H|A">Assault</option>
+				<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+				<option weight="1" role="+urban">Urban</option>
+				<option weight="31" ifIndex="0" role="+recon">Recon</option>
+				<option weight="10" ifIndex="0" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+				<option weight="10" ifIndex="0" ifWeightClass="L" role="+recon">Light Recon</option>				
+			</formation>
+ 		</ruleGroup>		
 		
 		<!-- Nearly all ComGuard infantry is mechanized, with some
 		foot and jump limited to special missions.-->
@@ -1164,6 +1212,7 @@
 				<option weight="1" ifRole="recon">+vtol</option>
 			</flags>
 		</ruleGroup>
+		
 		
 		<subforces generate="group" ifFlags="6000">
 			<subforceOption ifWeightClass="A">
@@ -1277,11 +1326,11 @@
     		        motive="Wheeled" unitType="Infantry">%ELEMENT%</option>
     		    <option weight="10" num="6" ifFlags="infHover"
     		        motive="Hover" unitType="Infantry">%ELEMENT%</option>
-			    <option weight="1" num="6" ifDateBetween="3051,"
+			    <option weight="1" num="6" ifDateBetween="3051," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
-			    <option weight="1" num="6" ifDateBetween="3061,"
+			    <option weight="1" num="6" ifDateBetween="3061," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
-			    <option weight="1" num="6" ifDateBetween="3076,"
+			    <option weight="1" num="6" ifDateBetween="3076," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
 		    </subforceOption>
 		</subforces>
@@ -1382,11 +1431,11 @@
     		        motive="Wheeled" unitType="Infantry">%ELEMENT%</option>
     		    <option weight="10" num="4" ifFlags="infHover"
     		        motive="Hover" unitType="Infantry">%ELEMENT%</option>
-			    <option weight="1" num="4" ifDateBetween="3051,"
+			    <option weight="1" num="4" ifDateBetween="3051," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
-			    <option weight="1" num="4" ifDateBetween="3061,"
+			    <option weight="1" num="4" ifDateBetween="3061," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
-			    <option weight="1" num="4" ifDateBetween="3076,"
+			    <option weight="1" num="4" ifDateBetween="3076," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
 		    </subforceOption>
 		</subforces>
@@ -1471,11 +1520,11 @@
     		        motive="Wheeled" unitType="Infantry">%ELEMENT%</option>
     		    <option weight="10" num="3" ifFlags="infHover"
     		        motive="Hover" unitType="Infantry">%ELEMENT%</option>
-			    <option weight="1" num="3" ifDateBetween="3051,"
+			    <option weight="1" num="3" ifDateBetween="3051," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
-			    <option weight="1" num="3" ifDateBetween="3061,"
+			    <option weight="1" num="3" ifDateBetween="3061," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
-			    <option weight="1" num="3" ifDateBetween="3076,"
+			    <option weight="1" num="3" ifDateBetween="3076," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
 		    </subforceOption>
 		</subforces>
@@ -1552,11 +1601,11 @@
     		        motive="Wheeled" unitType="Infantry">%ELEMENT%</option>
     		    <option weight="10" num="2" ifFlags="infHover"
     		        motive="Hover" unitType="Infantry">%ELEMENT%</option>
-			    <option weight="1" num="2" ifDateBetween="3051,"
+			    <option weight="1" num="2" ifDateBetween="3051," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
-			    <option weight="1" num="2" ifDateBetween="3061,"
+			    <option weight="1" num="2" ifDateBetween="3061," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
-			    <option weight="1" num="2" ifDateBetween="3076,"
+			    <option weight="1" num="2" ifDateBetween="3076," ifRole="!artillery"
 			        unitType="BattleArmor">%ELEMENT%</option>
 		    </subforceOption>
 		</subforces>

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -185,22 +186,26 @@ public class ForceDescriptor {
     	        } else {
     	            //If group generation is not set, then either this is a compound formation (e.g. squadron,
     	            //aero/vehicle Point) or we are generating uniform subforces such as companies in SL line units
-    	            Map<String,List<ForceDescriptor>> byGenRule = subforces.stream()
-    	                    .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
-    	            if (byGenRule.containsKey("group")) {
-    	                if (!generateAndAssignFormation(byGenRule.get("group").stream()
-    	                        .map(fd -> fd.getSubforces()).flatMap(sf -> sf.stream())
-    	                        .collect(Collectors.toList()), false, byGenRule.get("group").size())) {
-    	                    formationType = null;
-                            subforces.forEach(fd -> fd.generateUnits());    	                    
-    	                }
-                    } else if (byGenRule.containsKey("model")) {
-                        generateAndAssignFormation(byGenRule.get("model"), false, 0);
-                        subforces.forEach(fd -> fd.generateUnits());
-                    } else if (byGenRule.containsKey("chassis")) {
-                        generateAndAssignFormation(byGenRule.get("chassis"), true, 0);
-                        subforces.forEach(fd -> fd.generateUnits());
-    	            }
+    	            try {
+        	            Map<String,List<ForceDescriptor>> byGenRule = subforces.stream()
+        	                    .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
+        	            if (byGenRule.containsKey("group")) {
+        	                if (!generateAndAssignFormation(byGenRule.get("group").stream()
+        	                        .map(fd -> fd.getSubforces()).flatMap(sf -> sf.stream())
+        	                        .collect(Collectors.toList()), false, byGenRule.get("group").size())) {
+        	                    formationType = null;
+                                subforces.forEach(fd -> fd.generateUnits());    	                    
+        	                }
+                        } else if (byGenRule.containsKey("model")) {
+                            generateAndAssignFormation(byGenRule.get("model"), false, 0);
+                            subforces.forEach(fd -> fd.generateUnits());
+                        } else if (byGenRule.containsKey("chassis")) {
+                            generateAndAssignFormation(byGenRule.get("chassis"), true, 0);
+                            subforces.forEach(fd -> fd.generateUnits());
+        	            }
+                    } catch (NullPointerException ex) {
+                        System.err.println("Found null generation rule in force node with formation set.");
+                    }
     	        }
     	    } else {
     	        if (null != generationRule) {
@@ -364,7 +369,15 @@ public class ForceDescriptor {
             }
         }
         //Generate the base units according to the formation type.
-        List<ModelRecord> baseUnitList = generateFormation(baseSubs, networkMask, numGroups);
+        List<ModelRecord> baseUnitList = null;
+        if (!baseSubs.isEmpty()) {
+            baseUnitList = generateFormation(baseSubs, networkMask, numGroups);
+        } else {
+            generateLance(baseSubs);
+            baseUnitList = baseSubs.stream().map(ForceDescriptor::getModelName)
+                    .map(m -> RATGenerator.getInstance().getModelRecord(m))
+                    .filter(Objects::nonNull).collect(Collectors.toList());
+        }
 
         //Any BA in exceess of the number of omni base units will require mag clamps, up to the number of base units.
         int magReq = Math.min((int)(baSubs.size() - baseUnitList.stream().filter(mr -> mr.isOmni()).count()),

@@ -682,7 +682,6 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weight="4" ifWeightClass="M">Medium Battle</option>
 				<option weight="2" ifWeightClass="L">Light Battle</option>
 				<option weight="3" ifWeightClass="H|A">Assault</option>
-				<option weight="1" ifWeightClass="H|A">Berserker/Close</option>
 				<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
 				<option weight="2" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
 				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>

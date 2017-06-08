@@ -1525,7 +1525,7 @@ public class FormationType {
     
     private static void createBerserkerLance() {
         FormationType ft = new FormationType("Berserker/Close", "Battle");
-        ft.allowedUnitTypes = FLAG_GROUND_NO_LIGHT;
+        ft.allowedUnitTypes = FLAG_MEK | FLAG_PROTOMEK;
         ft.idealRole = UnitRole.BRAWLER;
         ft.otherCriteria.add(new PercentConstraint(0.5,
                 ms -> ms.getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY,

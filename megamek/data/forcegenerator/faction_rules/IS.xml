@@ -299,7 +299,6 @@
 	
 	<force eschelon="%LANCE%" eschName="Lance" ifUnitType="Tank">
 		<name>{formation} Lance</name>
-		<name ifRole="command">Command Lance</name>
 		<co>%LT%</co>
 		
 		<weightClass>

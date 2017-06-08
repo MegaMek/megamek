@@ -97,6 +97,7 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 	regiment, though FM:FS doesn't indicate how common it is.-->
 	
 	<force eschelon="%REGIMENT%" eschName="Regiment" ifUnitType="Mek|Tank">
+		<name ifFlags="reinforced">Reinforced Regiment</name>
 		<co>%COLONEL%</co>
 		
 		<weightClass>
@@ -112,35 +113,32 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 		
 		<subforces ifFlags="reinforced">
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="A" role="command">%COMPANY%</option>
-				<option weightClass="H" role="command">%COMPANY%</option>
+				<option weightClass="A" role="command" flags="-reinforced">%COMPANY%</option>
+				<option weightClass="H" role="command" flags="-reinforced">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" weight="2" role="command">%COMPANY%</option>
-				<option weightClass="M" role="command">%COMPANY%</option>
+				<option weightClass="H" weight="2" role="command" flags="-reinforced">%COMPANY%</option>
+				<option weightClass="M" role="command" flags="-reinforced">%COMPANY%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M" weight="3" role="command">%COMPANY%</option>
-				<option weightClass="L" role="command">%COMPANY%</option>				
+				<option weightClass="M" weight="3" role="command" flags="-reinforced">%COMPANY%</option>
+				<option weightClass="L" role="command" flags="-reinforced">%COMPANY%</option>
 			</subforceOption>
 			
 			<subforceOption ifWeightClass="H|A">
-				<option weightClass="A" flags="-reinforced">%BATTALION%</option>
-				<option weightClass="H" weight="2"
-					flags="-reinforced">%BATTALION%</option>
+				<option weightClass="A">%BATTALION%</option>
+				<option weightClass="H" weight="2">%BATTALION%</option>
 				<option weight="3"/>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
-				<option weightClass="H" flags="-reinforced">%BATTALION%</option>
-				<option weightClass="M" weight="2"
-					flags="-reinforced">%BATTALION%</option>
-				<option weightClass="L" flags="-reinforced">%BATTALION%</option>
+				<option weightClass="H">%BATTALION%</option>
+				<option weightClass="M" weight="2">%BATTALION%</option>
+				<option weightClass="L">%BATTALION%</option>
 				<option weight="4"/>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
-				<option weightClass="M" flags="-reinforced">%BATTALION%</option>
-				<option weightClass="L" weight="2"
-					flags="-reinforced">%BATTALION%</option>
+				<option weightClass="M">%BATTALION%</option>
+				<option weightClass="L" weight="2">%BATTALION%</option>
 				<option weight="3"/>
 			</subforceOption>
 		</subforces>
@@ -207,7 +205,8 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 	not part of a RCT. -->
 	 
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="Mek|Tank">
-		<name ifFlags="reinforced">Reinforced Battalion</name>
+		<name ifFlags="reinforced">{ordinal} Battalion (Reinforced)</name>
+		<name>{ordinal} Battalion</name>
 		<name>Battalion</name>
 		<co>%MAJOR%</co>
 		
@@ -217,11 +216,18 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 			<option weight="4">M</option>
 			<option weight="3">L</option>
 		</weightClass>
-		
-		<flags ifTopLevel="1">
-			<option weight="4"/>
-			<option>+reinforced</option>
+
+		<!-- Clear flag that may be inherited from reinforced regiment. -->		
+		<flags>
+			<option>-reinforced</option>
 		</flags>
+		
+		<ruleGroup>
+			<flags ifTopLevel="1">
+				<option weight="4"/>
+				<option>+reinforced</option>
+			</flags>
+		</ruleGroup>
 		
 		<subforces ifFlags="reinforced|lct">
 			<subforceOption ifWeightClass="H|A">
@@ -318,6 +324,8 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Mek|Tank">
+		<name ifRole="command">Command Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>
@@ -340,6 +348,7 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 	</force>
 		
 	<force eschelon="%LANCE%" eschName="Lance" ifUnitType="Mek">
+		<name>{formation} Lance</name>
 		<co>%LT%</co>
 		
 		<weightClass>
@@ -349,29 +358,72 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 			<option weight="3">L</option>
 		</weightClass>
 		
-		<ruleGroup>
-			<role ifWeightClass="L" ifRole="">
-				<option weight="8" ifFlags="!lct">recon</option>
-				<option weight="5" ifFlags="lct"/>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
+		<!-- The first Lance in a company has the command role. If this is toplevel we are only
+		generating a single lance, which gives it a 1/3 chance of being the command unit. -->
+		<role ifIndex="0">
+			<option>+command</option>
+			<option ifTopLevel="1" weight="2"></option>
+		</role>
 		
-			<role ifWeightClass="M" ifRole="">
-				<option weight="2" ifFlags="!lct">recon</option>
-				<option weight="2" ifFlags="lct"/>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
-
-			<role ifWeightClass="H|A" ifRole="">
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="6" />
-			</role>
+		<!-- If the artillery role is set, preempt formation assignment -->
+		<ruleGroup>
+			<formation ifRole="artillery|missile_artillery">
+				<option>Artillery Fire</option>
+			</formation>
 		</ruleGroup>
+		
+		<ruleGroup>
+			<formation ifRole="command">
+				<option weight="66">Command</option>
+				<option weight="4" ifWeightClass="H|A">Assault</option>
+				<option weight="1" ifWeightClass="H|A">Fast Assault</option>
+				<option weight="1" ifWeightClass="H|A">Hunter</option>
+			</formation>
+			
+			<formation ifIndex="0|1" ifRole="!command">
+				<option weight="32">Fire</option>
+				<option weight="6">Fire Support</option>
+				<option weight="4">Direct Fire</option>
+				<option weight="4" ifWeightClass="L|M">Light Fire</option>
+				<option weight="2" role="+anti_aircraft">Anti-Air</option>
+				<option weight="15">Battle</option>
+				<option weight="8" ifWeightClass="H|A" name="Rifle Lance">Rifle</option>
+				<option weight="6" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="4" ifWeightClass="M">Medium Battle</option>
+				<option weight="2" ifWeightClass="L">Light Battle</option>
+				<option weight="3" ifWeightClass="H|A">Assault</option>
+				<option weight="1" ifWeightClass="H|A">Berserker/Close</option>
+				<option weight="8" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="4" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" role="+urban">Urban</option>
+				<option weight="31" ifIndex="0" role="+recon">Recon</option>
+				<option weight="10" ifIndex="0" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+				<option weight="10" ifIndex="0" ifWeightClass="L" role="+recon">Light Recon</option>				
+			</formation>
+
+			<formation ifIndex="2">
+				<option weight="31" role="+recon">Recon</option>
+				<option weight="10" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+				<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>
+				<option weight="20">Battle</option>
+				<option weight="8" ifWeightClass="H|A" name="Rifle Lance">Rifle</option>
+				<option weight="8" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="5" ifWeightClass="M">Medium Battle</option>
+				<option weight="2" ifWeightClass="L">Light Battle</option>
+				<option weight="7" ifWeightClass="H|A">Assault</option>
+				<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="2" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+				<option weight="1">Fire</option>
+				<option weight="1">Security</option>
+			</formation>
+ 		</ruleGroup>
 		
 		<subforces>
 			<asParent/>
@@ -380,6 +432,7 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 	
 	<force eschelon="%LANCE%" eschName="Lance" ifUnitType="VTOL">
 		<name ifRole="command">Command Company</name>
+		<name>{alpha} Company</name>
 		<co>%LT%</co>
 		
 		<role ifRole="lct">
@@ -513,16 +566,16 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 				<option weight="10" />
 			</subforceOption>
 			<subforceOption>
-				<option unitType="VTOL" weight="1">%COMPANY%</option>
-				<option unitType="VTOL" weight="1" num="2">%COMPANY%</option>
+				<option unitType="VTOL" weight="1" name="Air Cavalry">%COMPANY%</option>
+				<option unitType="VTOL" weight="1" num="2" name="Air Cavalry">%COMPANY%</option>
 				<option weight="5" />
 				<option weight="5" ifWeightClass="A" />
 				<option weight="2" ifWeightClass="H" />
 			</subforceOption>
 			<subforceOption>
-				<option unitType="Tank" role="infantry_support"
+				<option unitType="Tank" role="infantry_support" name="Armor Support"
 					weight="3">%COMPANY%</option>
-				<option unitType="Tank" role="infantry_support"
+				<option unitType="Tank" role="infantry_support" name="Armor Support"
 					weight="1">%BATTALION%</option>
 				<option weight="2" />
 				<option weight="1" ifWeightClass="M"/>
@@ -532,6 +585,7 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="Infantry">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<unitType ifUnitType="Infantry" ifDateBetween="3051,"
@@ -555,9 +609,9 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 		
 		<attachedForces>
 			<subforceOption ifWeightClass="A|H">
-				<option unitType="Infantry" role="artillery"
+				<option unitType="Infantry" role="artillery" name="Artillery Company"
 					ifDateBetween="3050," weight="1">%COMPANY%</option>
-				<option unitType="Infantry" role="field_gun"
+				<option unitType="Infantry" role="field_gun" name="Battery Company"
 					ifDateBetween="3050," weight="2">%COMPANY%</option>
 				<option weight="3" ifWeightClass="H" />
 			</subforceOption>
@@ -580,7 +634,7 @@ a regimental combat team. Average unit weight tends to be lighter than other fac
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Infantry|BattleArmor">
-		<name>{ordinal} Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<unitType ifUnitType="Infantry" ifDateBetween="3051,"

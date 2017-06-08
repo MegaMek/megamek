@@ -39,9 +39,9 @@ are often combined down to the company level. -->
 		<subforces>
 			<subforce num="3">%BRIGADE%</subforce>
 			<subforceOption>
-				<option num="1" unitType="Tank" role="artillery">%BATTALION%</option>
-				<option num="2" unitType="Tank" role="artillery">%BATTALION%</option>
-				<option num="3" unitType="Tank" role="artillery">%BATTALION%</option>
+				<option num="1" unitType="Tank" role="artillery" name="Artillery Support">%BATTALION%</option>
+				<option num="2" unitType="Tank" role="artillery" name="Artillery Support">%BATTALION%</option>
+				<option num="3" unitType="Tank" role="artillery" name="Artillery Support">%BATTALION%</option>
 			</subforceOption>
 			<subforce num="2" unitType="Aero">%WING%</subforce>
 		</subforces>
@@ -82,6 +82,7 @@ are often combined down to the company level. -->
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<weightClass>
@@ -118,6 +119,7 @@ are often combined down to the company level. -->
 	<!-- We'll make about half the companies pure Mek or Armor formations. -->
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="">
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>

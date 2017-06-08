@@ -150,8 +150,8 @@ each Mek regiment. -->
 	not part of a RCT. -->
 	 
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="Mek|Tank">
-		<name ifFlags="reinforced">Reinforced Battalion</name>
-		<name>Battalion</name>
+		<name ifFlags="reinforced">{ordinal} Battalion (Reinforced)</name>
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<weightClass>
@@ -252,6 +252,96 @@ each Mek regiment. -->
 		</attachedForces>
 	</force>
 	
+	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Mek">
+		<name ifRole="command">Command Company</name>
+		<name>{alpha} Company</name>
+		<co>%CAPTAIN%</co>
+		
+		<weightClass>
+			<option weight="3">A</option>
+			<option weight="8">H</option>
+			<option weight="9">M</option>
+			<option weight="5">L</option>
+		</weightClass>
+		
+		<subforces>
+			<asParent/>
+		</subforces>
+	</force>
+	
+	<force eschelon="%LANCE%" eschName="Lance" ifUnitType="Mek">
+		<name>{formation} Lance</name>
+		<co>%LT%</co>
+		
+		<weightClass>
+			<option weight="4">A</option>
+			<option weight="9">H</option>
+			<option weight="8">M</option>
+			<option weight="4">L</option>
+		</weightClass>
+		
+		<!-- The first Lance in a company has the command role. If this is toplevel we are only
+		generating a single lance, which gives it a 1/3 chance of being the command unit. -->
+		<role ifIndex="0">
+			<option>+command</option>
+			<option ifTopLevel="1" weight="2"></option>
+		</role>
+		
+		<ruleGroup>
+			<formation ifRole="command">
+				<option weight="66">Command</option>
+				<option weight="8" ifWeightClass="H|A">Assault</option>
+				<option weight="2" ifWeightClass="H|A">Fast Assault</option>
+				<option weight="1" ifWeightClass="H|A">Hunter</option>
+			</formation>
+			
+			<formation ifIndex="0|1" ifRole="!command">
+				<option weight="32">Fire</option>
+				<option weight="6">Fire Support</option>
+				<option weight="4">Direct Fire</option>
+				<option weight="2" ifWeightClass="L|M">Light Fire</option>
+				<option weight="2" role="+anti_aircraft">Anti-Air</option>
+				<option weight="20">Battle</option>
+				<option weight="14" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="2" ifWeightClass="M">Medium Battle</option>
+				<option weight="1" ifWeightClass="L">Light Battle</option>
+				<option weight="6" ifWeightClass="H|A">Assault</option>
+				<option weight="2" ifWeightClass="H|A">Berserker/Close</option>
+				<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="3" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" role="+urban">Urban</option>
+				<option weight="31" ifIndex="0" role="+recon">Recon</option>
+				<option weight="16" ifIndex="0" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+				<option weight="4" ifIndex="0" ifWeightClass="L" role="+recon">Light Recon</option>				
+			</formation>
+
+			<formation ifIndex="2">
+				<option weight="31" role="+recon">Recon</option>
+				<option weight="16" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+				<option weight="4" ifWeightClass="L" role="+recon">Light Recon</option>
+				<option weight="20">Battle</option>
+				<option weight="12" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="3" ifWeightClass="M">Medium Battle</option>
+				<option weight="1" ifWeightClass="L">Light Battle</option>
+				<option weight="8" ifWeightClass="H|A">Assault</option>
+				<option weight="2" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+				<option weight="1">Fire</option>
+				<option weight="1">Security</option>
+			</formation>
+ 		</ruleGroup>
+		
+		<subforces generate="group">
+			<asParent/>
+		</subforces>
+	</force>
+	
 	<force eschelon="%BRIGADE%" eschName="Brigade" ifUnitType="Tank">
 		<name>Armor Brigade</name>
 		<co position="0">%COLONEL%</co>
@@ -280,6 +370,8 @@ each Mek regiment. -->
 	<!-- Companies contain 2-3 platoons -->
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Tank">
+		<name ifRole="command">Command Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>
@@ -331,6 +423,7 @@ each Mek regiment. -->
 	</force>
 	
 	<force eschelon="%LANCE%" eschName="Platoon" ifUnitType="Tank">
+		<name>{formation} Platoon</name>
 		<co>%LT%</co>
 		
 		<weightClass>
@@ -340,24 +433,67 @@ each Mek regiment. -->
 			<option weight="4">L</option>
 		</weightClass>
 		
-		<ruleGroup>
-			<role ifWeightClass="L" ifRole="">
-				<option weight="6">recon</option>
-				<option weight="2">urban</option>
-				<option weight="4" />
-			</role>
+		<!-- The first Lance in a company has the command role. If this is toplevel we are only
+		generating a single lance, which gives it a 1/3 chance of being the command unit. -->
+		<role ifIndex="0">
+			<option>+command</option>
+			<option ifTopLevel="1" weight="2"></option>
+		</role>
 		
-			<role ifWeightClass="M" ifRole="">
-				<option weight="2">recon</option>
-				<option weight="2">urban</option>
-				<option weight="6" />
-			</role>
+		<!-- If the artillery role is set, preempt formation assignment -->
+		<ruleGroup>
+			<formation ifRole="artillery|missile_artillery">
+				<option>Artillery Fire</option>
+			</formation>
+		</ruleGroup>
+		
+		<ruleGroup>
+			<formation ifRole="command">
+				<option weight="66">Vehicle Command</option>
+				<option weight="8" ifWeightClass="H|A">Assault</option>
+				<option weight="2" ifWeightClass="H|A">Fast Assault</option>
+				<option weight="1" ifWeightClass="H|A">Hunter</option>
+			</formation>
+			
+			<formation ifIndex="0|1" ifRole="!command">
+				<option weight="32">Fire</option>
+				<option weight="6">Fire Support</option>
+				<option weight="4">Direct Fire</option>
+				<option weight="1" ifWeightClass="L|M">Light Fire</option>
+				<option weight="2" role="+anti_aircraft">Anti-Air</option>
+				<option weight="20">Battle</option>
+				<option weight="14" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="2" ifWeightClass="M">Medium Battle</option>
+				<option weight="1" ifWeightClass="L">Light Battle</option>
+				<option weight="6" ifWeightClass="H|A">Assault</option>
+				<option weight="2" ifWeightClass="H|A">Berserker/Close</option>
+				<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="3" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="31" ifIndex="0" role="+recon">Recon</option>
+				<option weight="16" ifIndex="0" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+				<option weight="4" ifIndex="0" ifWeightClass="L" role="+recon">Light Recon</option>				
+			</formation>
 
-			<role ifWeightClass="H|A" ifRole="">
-				<option weight="3">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="6" />
-			</role>
+			<formation ifIndex="2">
+				<option weight="31" role="+recon">Recon</option>
+				<option weight="16" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+				<option weight="4" ifWeightClass="L" role="+recon">Light Recon</option>
+				<option weight="18">Battle</option>
+				<option weight="15" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="2" ifWeightClass="M">Medium Battle</option>
+				<option weight="1" ifWeightClass="L">Light Battle</option>
+				<option weight="9" ifWeightClass="H|A">Assault</option>
+				<option weight="2" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+				<option weight="1">Fire</option>
+				<option weight="1">Security</option>
+			</formation>
 		</ruleGroup>
 
 		<subforces>
@@ -434,16 +570,16 @@ each Mek regiment. -->
 				<option weight="10" />
 			</subforceOption>
 			<subforceOption>
-				<option unitType="VTOL" weight="1">%COMPANY%</option>
-				<option unitType="VTOL" weight="1" num="2">%COMPANY%</option>
+				<option unitType="VTOL" weight="1" name="Air Cavalry">%COMPANY%</option>
+				<option unitType="VTOL" weight="1" num="2" name="Air Cavalry">%COMPANY%</option>
 				<option weight="5" />
 				<option weight="5" ifWeightClass="A" />
 				<option weight="2" ifWeightClass="H" />
 			</subforceOption>
 			<subforceOption>
-				<option unitType="Tank" role="infantry_support"
+				<option unitType="Tank" role="infantry_support" name="Armor Support"
 					weight="3">%COMPANY%</option>
-				<option unitType="Tank" role="infantry_support"
+				<option unitType="Tank" role="infantry_support" name="Armor Support"
 					weight="1">%BATTALION%</option>
 				<option weight="2" />
 				<option weight="1" ifWeightClass="M"/>
@@ -455,6 +591,7 @@ each Mek regiment. -->
 	<!-- LAAF makes more use of field guns in heavy infantry units. -->
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="Infantry">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<unitType ifUnitType="Infantry" ifDateBetween="3051,"
@@ -478,9 +615,9 @@ each Mek regiment. -->
 		
 		<attachedForces>
 			<subforceOption ifWeightClass="A|H">
-				<option unitType="Infantry" role="artillery"
+				<option unitType="Infantry" role="artillery" name="Artillery Company"
 					ifDateBetween="3050," weight="1">%COMPANY%</option>
-				<option unitType="Infantry" role="field_gun"
+				<option unitType="Infantry" role="field_gun" name="Battery Company"
 					ifDateBetween="3050," weight="3">%COMPANY%</option>
 				<option weight="1" ifWeightClass="H" />
 			</subforceOption>
@@ -488,6 +625,7 @@ each Mek regiment. -->
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="BattleArmor">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<weightClass>
@@ -503,7 +641,7 @@ each Mek regiment. -->
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Infantry|BattleArmor">
-		<name>{ordinal} Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<unitType ifUnitType="Infantry" ifDateBetween="3051,"

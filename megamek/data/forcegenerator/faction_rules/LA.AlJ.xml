@@ -62,6 +62,7 @@ that all infantry units are BattleArmor. -->
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<weightClass>

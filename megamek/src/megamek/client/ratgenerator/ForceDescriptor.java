@@ -171,7 +171,7 @@ public class ForceDescriptor {
 	        models.addAll(parent.getModels());
 	    }
 	    //First see if a formation has been assigned. If unable to fulfill the formation requirements, generate using default parameters.
-	    if (isElement()) {
+	    if (subforces.isEmpty()) {
 	        setUnit(generate());
 	    } else {
     	    if (null != formationType) {

@@ -335,14 +335,14 @@
 				<option weight="10" />
 			</subforceOption>
 			<subforceOption>
-				<option unitType="VTOL" weight="1">%COMPANY%</option>
-				<option unitType="VTOL" weight="1" num="2">%COMPANY%</option>
+				<option unitType="VTOL" weight="1" name="Air Cavalry">%COMPANY%</option>
+				<option unitType="VTOL" weight="1" num="2" name="Air Cavalry">%COMPANY%</option>
 				<option weight="5" />
 			</subforceOption>
 			<subforceOption>
-				<option unitType="Tank" role="infantry_support"
+				<option unitType="Tank" role="infantry_support" name="Armor Support"
 					weight="3">%COMPANY%</option>
-				<option unitType="Tank" role="infantry_support"
+				<option unitType="Tank" role="infantry_support" name="Armor Support"
 					weight="1">%LANCE%</option>
 				<option weight="2" />
 			</subforceOption>
@@ -379,10 +379,9 @@
 		
 		<attachedForces>
 			<subforceOption>
-				<option unitType="Infantry" chassis="Field Artillery"
-					role="artillery" ifDateBetween="3050,"
-					weight="1">%COMPANY%</option>
-				<option unitType="Infantry" chassis="Field Gunners"
+				<option unitType="Infantry" role="artillery" ifDateBetween="3050,"
+					name="Artillery Company" weight="1">%COMPANY%</option>
+				<option unitType="Infantry" role="field_gun" name="Battery Company"
 					ifDateBetween="3050," weight="2">%COMPANY%</option>
 				<option weight="3" />
 			</subforceOption>

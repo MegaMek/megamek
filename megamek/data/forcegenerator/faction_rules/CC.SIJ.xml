@@ -37,8 +37,8 @@ with a wing of aerospace support and a battalion of BattleArmor. -->
 		</subforces>
 		
 		<attachedForces>
-			<subforce unitType="Aero">%WING%</subforce>
-			<subforce unitType="BattleArmor">%BATTALION%</subforce>			
+			<subforce unitType="Aero" name="Aerospace Support">%WING%</subforce>
+			<subforce unitType="BattleArmor" name="Infantry Support">%BATTALION%</subforce>			
 		</attachedForces>
 	</force>
 	
@@ -84,7 +84,7 @@ with a wing of aerospace support and a battalion of BattleArmor. -->
 		</subforces>
 		
 		<attachedForces ifTopLevel="1">
-			<subforce unitType="BattleArmor">%COMPANY%</subforce>
+			<subforce unitType="BattleArmor" name="Infantry Support">%COMPANY%</subforce>
 		</attachedForces>
 	</force>
 	
@@ -254,26 +254,6 @@ with a wing of aerospace support and a battalion of BattleArmor. -->
 				<option weight="1">Fire</option>
 				<option weight="1">Security</option>
 			</formation>
-<!-- 
-			<role ifWeightClass="L" ifRole="">
-				<option weight="8">recon</option>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
-		
-			<role ifWeightClass="M" ifRole="">
-				<option weight="2">recon</option>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
-
-			<role ifWeightClass="H|A" ifRole="">
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="6" />
-			</role>-->
 		</ruleGroup>
 		
 		<subforces generate="group">

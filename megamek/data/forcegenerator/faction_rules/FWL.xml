@@ -540,7 +540,7 @@
 		<attachedForces>
 			<subforceOption>
 				<option unitType="Infantry" role="artillery" ifDateBetween="3050," flags="+support"
-					weight="1" name="Artillery Support Company">%COMPANY%</option>
+					weight="1" name="Artillery Company">%COMPANY%</option>
 				<option unitType="Infantry" role="field gun" flags="+support"
 					ifDateBetween="3050," weight="2" name="Battery Company">%COMPANY%</option>
 				<option weight="3" />

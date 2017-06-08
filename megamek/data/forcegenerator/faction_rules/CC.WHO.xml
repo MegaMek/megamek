@@ -201,7 +201,7 @@ had been upgraded to BA by that date. -->
 		</subforces>
 		
 		<attachedForces ifUnitType="Mek">
-			<subforce unitType="BattleArmor" augmented="1">%BATTALION%</subforce>
+			<subforce unitType="BattleArmor" augmented="1" name="Infantry Support">%BATTALION%</subforce>
 			<subforceOption>
 				<option unitType="Aero"
 					name="Aerospace Support">%FLIGHT%</option>
@@ -299,28 +299,6 @@ had been upgraded to BA by that date. -->
 				<option weight="1">Security</option>
 			</formation>
 		</ruleGroup>
-		<!-- 
-					<ruleGroup>
-			<role ifWeightClass="L" ifRole="">
-				<option weight="8">recon</option>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
-		
-			<role ifWeightClass="M" ifRole="">
-				<option weight="2">recon</option>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
-
-			<role ifWeightClass="H|A" ifRole="">
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="6" />
-			</role>
-		</ruleGroup>-->
 		
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">
@@ -399,29 +377,6 @@ had been upgraded to BA by that date. -->
 			<option weight="7">M</option>
 			<option weight="6">L</option>
 		</weightClass>
-		
-		<!-- 
-		<ruleGroup>
-			<role ifWeightClass="L" ifRole="">
-				<option weight="8">recon</option>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
-		
-			<role ifWeightClass="M" ifRole="">
-				<option weight="2">recon</option>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
-
-			<role ifWeightClass="H|A" ifRole="">
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="6" />
-			</role>
-		</ruleGroup>-->
 		
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">

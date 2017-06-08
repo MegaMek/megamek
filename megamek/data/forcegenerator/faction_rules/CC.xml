@@ -496,26 +496,6 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weight="1">Fire</option>
 				<option weight="1">Security</option>
 			</formation>
-<!--
-			<role ifWeightClass="L" ifRole="">
-				<option weight="8">recon</option>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
-		
-			<role ifWeightClass="M" ifRole="">
-				<option weight="2">recon</option>
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="4" />
-			</role>
-
-			<role ifWeightClass="H|A" ifRole="">
-				<option weight="2">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="6" />
-			</role>-->
 		</ruleGroup>
 		
 		<subforces generate="group">
@@ -732,26 +712,6 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weight="1">Security</option>
 			</formation>
 		</ruleGroup>
-<!-- 		
-		<ruleGroup>
-			<role ifWeightClass="L" ifRole="">
-				<option weight="6">recon</option>
-				<option weight="2">urban</option>
-				<option weight="4" />
-			</role>
-		
-			<role ifWeightClass="M" ifRole="">
-				<option weight="2">recon</option>
-				<option weight="2">urban</option>
-				<option weight="6" />
-			</role>
-
-			<role ifWeightClass="H|A" ifRole="">
-				<option weight="3">fire_support</option>
-				<option weight="1">urban</option>
-				<option weight="6" />
-			</role>
-		</ruleGroup>-->
 
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">
@@ -864,17 +824,17 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option weight="10" />
 			</subforceOption>
 			<subforceOption>
-				<option unitType="VTOL" weight="1">%COMPANY%</option>
-				<option unitType="VTOL" weight="1" num="2">%COMPANY%</option>
+				<option unitType="VTOL" weight="1" name="Air Cavalry">%COMPANY%</option>
+				<option unitType="VTOL" weight="1" name="Air Cavalry" num="2">%COMPANY%</option>
 				<option weight="5" />
 				<option weight="5" ifWeightClass="A" />
 				<option weight="2" ifWeightClass="H" />
 			</subforceOption>
 			<subforceOption>
 				<option unitType="Tank" role="infantry_support"
-					weight="3">%COMPANY%</option>
+					weight="3" name="Armor Support">%COMPANY%</option>
 				<option unitType="Tank" role="infantry_support"
-					weight="1">%BATTALION%</option>
+					weight="1" name="Armor Support">%BATTALION%</option>
 				<option weight="2" />
 				<option weight="1" ifWeightClass="M"/>
 				<option weight="2" ifWeightClass="L"/>
@@ -943,9 +903,9 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		
 		<attachedForces>
 			<subforceOption ifWeightClass="A|H">
-				<option unitType="Infantry" role="artillery"
+				<option unitType="Infantry" role="artillery" name="Artillery Company"
 					ifDateBetween="3050," weight="1">%COMPANY%</option>
-				<option unitType="Infantry" role="field_gun"
+				<option unitType="Infantry" role="field_gun" name="Battery Company"
 					ifDateBetween="3050," weight="2">%COMPANY%</option>
 				<option weight="3" ifWeightClass="H" />
 			</subforceOption>

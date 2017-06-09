@@ -93,6 +93,7 @@ but a wing per corps seemed reasonable. -->
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="">
+		<name>{ordinal} Battalion</name>
 		<co>%MAJOR%</co>
 		
 		<weightClass>
@@ -131,6 +132,8 @@ but a wing per corps seemed reasonable. -->
 	armor or infantry, and the third will always be infantry. -->
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="">
+		<name ifRole="command">Command Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>

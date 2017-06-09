@@ -54,6 +54,8 @@ brigada seems reasonable. -->
 	works out to about one Mek lance for every four companies. -->
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="">
+		<name ifRole="command">Command Company</name>
+		<name>{formation} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>

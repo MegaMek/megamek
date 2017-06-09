@@ -89,6 +89,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 	</force>
 	
 	<force eschelon="%WING%" eschName="Regiment" ifUnitType="Aero|Conventional Fighter" ifDateBetween="2840,">
+		<name>{ordinal} Regiment</name>
 		<co>%MAJOR%</co>
 		
 		<weightClass>
@@ -127,6 +128,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 	</force>
 	
 	<force eschelon="%SQUADRON%" eschName="Squadron" ifUnitType="Aero|Conventional Fighter">
+		<name>{phonetic} Squadron</name>
 		<co>%CAPTAIN%</co>
 		
 		<weightClass>
@@ -134,6 +136,15 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 			<option>M</option>
 			<option>L</option>
 		</weightClass>
+
+		<ruleGroup>
+			<formation>
+				<option weight="3" ifWeightClass="L|M">Aerospace Superiority Squadron</option>
+				<option>Fire Support Squadron</option>
+				<option weight="2" ifWeightClass="L|M">Interceptor Squadron</option>
+				<option weight="3" ifWeightClass="M|H">Strike Squadron</option>
+			</formation>
+		</ruleGroup>
 
 		<subforces>
 			<subforceOption ifWeightClass="H" ifUnitType="Aero">
@@ -168,6 +179,7 @@ units attached to Mek regiments. 2840+ follows AMC organization. -->
 	</force>
 	
 	<force eschelon="%FLIGHT%" eschName="Flight" ifUnitType="Aero|Conventional Fighter">
+		<name>Flight {cardinal}</name>
 		<co>%LT%</co>
 		
 		<weightClass>

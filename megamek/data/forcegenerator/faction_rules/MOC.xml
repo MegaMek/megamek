@@ -149,7 +149,7 @@ expanding to a full wing per regiment by the Dark Age. -->
 	</force>
 	
 	<force eschelon="%COMPANY%" eschName="Company" ifUnitType="Infantry|BattleArmor">
-		<name>{ordinal} Company</name>
+		<name>{alpha} Company</name>
 		<co>%CAPTAIN%</co>
 		
 		<unitType ifUnitType="Infantry" ifDateBetween="3051,"
@@ -208,6 +208,15 @@ expanding to a full wing per regiment by the Dark Age. -->
 			<option>M</option>
 			<option>L</option>
 		</weightClass>
+
+		<ruleGroup>
+			<formation>
+				<option weight="3" ifWeightClass="L|M">Aerospace Superiority Squadron</option>
+				<option>Fire Support Squadron</option>
+				<option weight="2" ifWeightClass="L|M">Interceptor Squadron</option>
+				<option weight="3" ifWeightClass="M|H">Strike Squadron</option>
+			</formation>
+		</ruleGroup>
 
 		<subforces generate="group">
 			<subforce num="2">%ELEMENT%</subforce>

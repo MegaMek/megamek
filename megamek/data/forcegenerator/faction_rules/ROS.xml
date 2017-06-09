@@ -114,6 +114,7 @@
 	</force>
 	
 	<force eschelon="%BATTALION%" eschName="Battalion" ifUnitType="Mek" ifRating="TP">
+		<name>{ordinal} Battalion</name>
 		<co>%COLONEL%</co>
 		
 		<weightClass>

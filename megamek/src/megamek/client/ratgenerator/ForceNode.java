@@ -247,7 +247,7 @@ public class ForceNode extends RulesetNode {
 	public void processSubforces(ForceDescriptor fd, String generate, Ruleset ruleset) {
 		for (SubforcesNode n : subforces) {
 			if (n.matches(fd)) {
-				
+/*				
 				if (n.assertions.containsKey("generate") &&
 						(n.assertions.getProperty("generate").equals("chassis")
 								|| n.assertions.getProperty("generate").equals("model"))) {
@@ -266,7 +266,7 @@ public class ForceNode extends RulesetNode {
 						}
 					}
 				}
-
+*/
 				ArrayList<ForceDescriptor> subs = null;
 				if (n.getAltFaction() != null || n.useParentFaction()) {
 					String faction = n.getAltFaction();

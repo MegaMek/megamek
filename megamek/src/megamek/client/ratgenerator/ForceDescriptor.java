@@ -173,13 +173,21 @@ public class ForceDescriptor {
 	    }
 	    //First see if a formation has been assigned. If unable to fulfill the formation requirements, generate using default parameters.
 	    if (subforces.isEmpty()) {
-	        setUnit(generate());
+	        ModelRecord mr = generate();
+	        if (null == mr && !models.isEmpty()) {
+	            mr = RATGenerator.getInstance().getModelRecord(getModelName());
+	        }
+	        if (null != mr) {
+	            setUnit(mr);
+	        } else {
+	            System.err.println("Could not generate unit");
+	        }
 	    } else {
     	    if (null != formationType) {
     	        //Simple leaf node (Lance, Star, etc.
-    	        if (null != generationRule && generationRule.equals("group")) {
+    	        if (null != generationRule) {
     	            //In cases like Novas and air lances the formation rules only apply to some of the units 
-                    if (!generateAndAssignFormation(subforces, false, 0)) {
+                    if (!generateAndAssignFormation(subforces, generationRule.equals("chassis"), 0)) {
                         generateLance(subforces);
                         formationType = null;
                     }
@@ -194,35 +202,38 @@ public class ForceDescriptor {
         	                        .map(fd -> fd.getSubforces()).flatMap(sf -> sf.stream())
         	                        .collect(Collectors.toList()), false, byGenRule.get("group").size())) {
         	                    formationType = null;
-                                subforces.forEach(fd -> fd.generateUnits());    	                    
         	                }
                         } else if (byGenRule.containsKey("model")) {
                             generateAndAssignFormation(byGenRule.get("model"), false, 0);
-                            subforces.forEach(fd -> fd.generateUnits());
                         } else if (byGenRule.containsKey("chassis")) {
                             generateAndAssignFormation(byGenRule.get("chassis"), true, 0);
-                            subforces.forEach(fd -> fd.generateUnits());
         	            }
                     } catch (NullPointerException ex) {
                         System.err.println("Found null generation rule in force node with formation set.");
+                        ex.printStackTrace();
                     }
     	        }
     	    } else {
     	        if (null != generationRule) {
     	            switch(generationRule) {
     	            case "chassis":
-    	            case "model":
-    	                generate(generationRule);
+    	                if (getChassis().isEmpty()) {
+                            generate(generationRule);
+    	                }
     	                break;
+    	            case "model":
+                        if (getModels().isEmpty()) {
+                            generate(generationRule);
+                        }
+                        break;
     	            case "group":
     	                generateLance(subforces);
     	                break;
     	            }
-    	        } else {
-    	            subforces.forEach(fd -> fd.generateUnits());
     	        }
     	    }
 	    }
+        subforces.forEach(fd -> fd.generateUnits());
 	    attached.forEach(fd -> fd.generateUnits());
 	}
 	
@@ -259,7 +270,6 @@ public class ForceDescriptor {
                     list = generateFormation(eligibleSubs.get(true), ModelRecord.NETWORK_NONE, numGroups);
                 }
                 if (list.isEmpty()) {
-                    formationType = null;
                     return false;
                 } else {
                     for (int i = 0; i < list.size(); i++) {
@@ -606,25 +616,27 @@ public class ForceDescriptor {
 		if (useWeightClass()) {
 			weightClass = unit.getWeightClass();
 		}
-		element = true;
-		movementModes.clear();
-		movementModes.add(unit.getMovementMode());
-		if ((unitType.equals("Mek") || unitType.equals("Aero")
-				|| unitType.equals("Tank"))
-				&&unit.isOmni()) {
-			flags.add("omni");
-		}
-		if (unit.getRoles().contains(MissionRole.ARTILLERY)) {
-			roles.add(MissionRole.ARTILLERY);
-		}
-		if (unit.getRoles().contains(MissionRole.MISSILE_ARTILLERY)) {
-			roles.add(MissionRole.MISSILE_ARTILLERY);
-		}
-		if (unit.getRoles().contains(MissionRole.ANTI_MEK)) {
-			roles.add(MissionRole.ANTI_MEK);
-		}
-		if (unit.getRoles().contains(MissionRole.FIELD_GUN)) {
-			roles.add(MissionRole.FIELD_GUN);
+		if (subforces.isEmpty()) {
+    		element = true;
+    		movementModes.clear();
+    		movementModes.add(unit.getMovementMode());
+    		if ((unitType.equals("Mek") || unitType.equals("Aero")
+    				|| unitType.equals("Tank"))
+    				&&unit.isOmni()) {
+    			flags.add("omni");
+    		}
+    		if (unit.getRoles().contains(MissionRole.ARTILLERY)) {
+    			roles.add(MissionRole.ARTILLERY);
+    		}
+    		if (unit.getRoles().contains(MissionRole.MISSILE_ARTILLERY)) {
+    			roles.add(MissionRole.MISSILE_ARTILLERY);
+    		}
+    		if (unit.getRoles().contains(MissionRole.ANTI_MEK)) {
+    			roles.add(MissionRole.ANTI_MEK);
+    		}
+    		if (unit.getRoles().contains(MissionRole.FIELD_GUN)) {
+    			roles.add(MissionRole.FIELD_GUN);
+    		}
 		}
 	}
 	

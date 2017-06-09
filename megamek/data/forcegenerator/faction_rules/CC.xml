@@ -41,8 +41,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		</rating>
 		
 		<flags>
-			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Mek">:+Vehicle,nova:+BattleArmor</option>
-			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Tank">mekVee:+Mek,nova:+BattleArmor</option>
+			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Mek">:+Vehicle,ba:+BattleArmor</option>
+			<option ifDateBetween="3060," ifEschelon="%COMPANY%^|%LANCE%^" ifUnitType="Tank">mekVee:+Mek,ba:+BattleArmor</option>
 		</flags>
 	</toc>
 	
@@ -329,8 +329,8 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 				<option flags="-testAugmented" weight="2"
 					augmented="1" ifDateBetween=",3080">%COMPANY%</option>
 				
-				<option flags="-testAugmented,+nova" augmented="1">%COMPANY%</option>
-				<option flags="-testAugmented,+nova" augmented="1"
+				<option flags="-testAugmented,+ba" augmented="1">%COMPANY%</option>
+				<option flags="-testAugmented,+ba" augmented="1"
 					ifDateBetween="3081,">%COMPANY%</option>
 	
 				<option flags="-testAugmented" weight="3" augmented="1"
@@ -389,7 +389,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		<ruleGroup>
 			<flags ifTopLevel="1">
 				<option weight="3"/>
-				<option>+nova</option>
+				<option>+ba</option>
 			</flags>
 		
 			<weightClass>
@@ -525,7 +525,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			</subforceOption>
 		</subforces>
 
-		<subforces generate="group" ifFlags="!nova">
+		<subforces generate="group" ifFlags="!ba">
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A,A" weight="2"
 					unitType="Tank">%ELEMENT%</option>
@@ -551,7 +551,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			</subforceOption>
 		</subforces>
 		
-		<subforces generate="group" ifFlags="nova">
+		<subforces generate="group" ifFlags="ba">
 			<subforce num="2" unitType="BattleArmor">%ELEMENT%</subforce>
 		</subforces>
 	</force>
@@ -605,7 +605,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 		<ruleGroup>
 			<flags ifTopLevel="1">
 				<option weight="2"/>
-				<option>nova</option>
+				<option>ba</option>
 			</flags>
 		
 			<weightClass>
@@ -733,7 +733,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			</subforceOption>
 		</subforces>
 
-		<subforces generate="group" ifFlags="!nova">
+		<subforces generate="group" ifFlags="!ba">
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A,A" weight="2"
 					unitType="Mek">%ELEMENT%</option>
@@ -759,7 +759,7 @@ use of augmented 4 Vee/2 inf lances in independent armor regiments. -->
 			</subforceOption>
 		</subforces>
 		
-		<subforces generate="group" ifFlags="nova">
+		<subforces generate="group" ifFlags="ba">
 			<subforce num="4" unitType="BattleArmor">%SQUAD%</subforce>
 		</subforces>
 	</force>

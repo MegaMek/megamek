@@ -239,7 +239,7 @@ had been upgraded to BA by that date. -->
 		</weightClass>
 		
 		<flags>
-			<option>nova</option>
+			<option>ba</option>
 		</flags>
 		
 		<!-- The first Lance in a company has the command role. If this is toplevel we are only

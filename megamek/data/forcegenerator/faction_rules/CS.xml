@@ -1153,7 +1153,7 @@
         
         <ruleGroup>
 			<flags ifFlags="4020|0420|3030|0330">
-				<option>+nova</option>
+				<option augmented="1"/>
 			</flags>
 		</ruleGroup>
 		

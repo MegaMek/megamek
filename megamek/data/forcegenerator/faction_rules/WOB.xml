@@ -1168,7 +1168,7 @@
 		</weightClass>
 		
 		<role>
-		    <option flags="+nova">+omni</option>
+		    <option augmented="1">+omni</option>
 		</role>
 						
 		<subforces generate="group">

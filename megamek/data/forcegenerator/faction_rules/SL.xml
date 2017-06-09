@@ -22,7 +22,7 @@ division where most factions organize around a regiment. -->
 			<option ifUnitType="Mek">%DIVISION%,%BRIGADE%,%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
 			<option ifUnitType="Infantry">%DIVISION%,%BRIGADE%,%REGIMENT%,%BATTALION%,%COMPANY%</option>
 			<option ifUnitType="Tank|VTOL">%REGIMENT%,%BATTALION%,%COMPANY%,%LANCE%</option>
-			<option ifUnitType="Aero|Conventional Fighter">%AIR_REGIMENT%,%GROUP%,%WING%,%SQUADRON%,%FLIGHT%</option>
+			<option ifUnitType="Aero|Conventional Fighter">%AIR_REGIMENT%,%WING%,%SQUADRON%,%FLIGHT%</option>
 		</eschelon>
 		
 		<rating>
@@ -850,6 +850,15 @@ division where most factions organize around a regiment. -->
 			<option>M</option>
 			<option>L</option>
 		</weightClass>
+
+		<ruleGroup>
+			<formation>
+				<option weight="3" ifWeightClass="L|M">Aerospace Superiority Squadron</option>
+				<option>Fire Support Squadron</option>
+				<option weight="2" ifWeightClass="L|M">Interceptor Squadron</option>
+				<option weight="3" ifWeightClass="M|H">Strike Squadron</option>
+			</formation>
+		</ruleGroup>
 
 		<subforces generate="model">
 			<subforce num="3">%FLIGHT%</subforce>

@@ -1112,10 +1112,13 @@
 				<option weight="4" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
 				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
 				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
 				<option weight="1" role="+urban">Urban</option>
-				<option weight="31" ifWeightClass="L|M" role="+recon">Recon</option>
-				<option weight="10" ifWeightClass="H" role="+recon">Heavy Recon</option>
-				<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>				
+				<option weight="24" ifWeightClass="L|M" role="+recon">Recon</option>
+				<option weight="8" ifWeightClass="H" role="+recon">Heavy Recon</option>
+				<option weight="6" ifWeightClass="L" role="+recon">Light Recon</option>				
 			</formation>
 		</ruleGroup>
 
@@ -1165,8 +1168,7 @@
 	</force>
 	
 	<force eschelon="%STAR%" eschName="Nova" ifAugmented="1" ifUnitType="Mek">
-		<name ifRole="command"
-			>{phonetic} Command  Nova</name>
+		<name ifRole="command">{phonetic} Command  Nova</name>
 		<name>{phonetic} Nova</name>
 		<co>%NOVA_CMDR%</co>
 		<xo unitType="other">%STAR_CMDR%</xo>
@@ -1218,10 +1220,13 @@
 				<option weight="4" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
 				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
 				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
 				<option weight="1" role="+urban">Urban</option>
-				<option weight="31" ifWeightClass="L|M" role="+recon">Recon</option>
-				<option weight="10" ifWeightClass="H" role="+recon">Heavy Recon</option>
-				<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>				
+				<option weight="24" ifWeightClass="L|M" role="+recon">Recon</option>
+				<option weight="8" ifWeightClass="H" role="+recon">Heavy Recon</option>
+				<option weight="6" ifWeightClass="L" role="+recon">Light Recon</option>				
 			</formation>
 		</ruleGroup>
 		
@@ -1289,6 +1294,7 @@
 				<option weight="4">Direct Fire</option>
 				<option weight="4">Light Fire</option>
 				<option weight="2" role="+anti_aircraft">Anti-Air</option>
+				<option weight="8">Artillery Fire</option>
 				<option weight="30">Battle</option>
 				<option weight="12" ifWeightClass="H|A">Heavy Battle</option>
 				<option weight="8" ifWeightClass="M">Medium Battle</option>
@@ -1298,7 +1304,10 @@
 				<option weight="2" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
 				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
 				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
-				<option weight="31" ifWeightClass="L|M" role="+recon">Recon</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+				<option weight="32" ifWeightClass="L|M" role="+recon">Recon</option>
 				<option weight="10" ifWeightClass="H" role="+recon">Heavy Recon</option>
 				<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>				
 			</formation>
@@ -1449,10 +1458,13 @@
 				<option weight="4" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
 				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
 				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
 				<option weight="1" role="+urban">Urban</option>
-				<option weight="31" ifWeightClass="L|M" role="+recon">Recon</option>
-				<option weight="10" ifWeightClass="H" role="+recon">Heavy Recon</option>
-				<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>				
+				<option weight="24" ifWeightClass="L|M" role="+recon">Recon</option>
+				<option weight="8" ifWeightClass="H" role="+recon">Heavy Recon</option>
+				<option weight="6" ifWeightClass="L" role="+recon">Light Recon</option>				
 			</formation>
 		</ruleGroup>
 

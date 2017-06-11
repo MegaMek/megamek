@@ -74,7 +74,7 @@
     </force>
     
     <!-- Higher chance of close combat/berserker lance  -->
-	<force eschelon="%LANCE%" eschName="Lance" ifUnitType="Mek">
+	<force eschelon="%LANCE%" eschName="Lance" ifUnitType="Mek" ifDateBetween=",3075">
 		<name>{formation} Lance</name>
 		<co>%LT%</co>
 		
@@ -535,6 +535,49 @@
 		<name>{phonetic} {name:parent} Star</name>
 		<co>%STAR_CMDR%</co>
 		
+		<formation ifIndex="0">
+			<option weight="32">Fire</option>
+			<option weight="6">Fire Support</option>
+			<option weight="4">Direct Fire</option>
+			<option weight="4" ifWeightClass="L|M">Light Fire</option>
+			<option weight="2" role="+anti_aircraft">Anti-Air</option>
+			<option weight="12">Battle</option>
+			<option weight="6" ifWeightClass="H|A">Heavy Battle</option>
+			<option weight="4" ifWeightClass="M">Medium Battle</option>
+			<option weight="2" ifWeightClass="L">Light Battle</option>
+			<option weight="3" ifWeightClass="H|A">Assault</option>
+			<option weight="8" ifWeightClass="H|A" name="Berserker Lance">Berserker/Close</option>
+			<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+			<option weight="2" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+			<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
+			<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+			<option weight="1" role="+urban">Urban</option>
+			<option weight="31" ifTopLevel="1" role="+recon">Recon</option>
+			<option weight="10" ifTopLevel="1" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+			<option weight="10" ifTopLevel="1" ifWeightClass="L" role="+recon">Light Recon</option>				
+		</formation>
+
+		<formation ifIndex="!0">
+			<option weight="31" role="+recon">Recon</option>
+			<option weight="10" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+			<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>
+			<option weight="18">Battle</option>
+			<option weight="8" ifWeightClass="H|A">Heavy Battle</option>
+			<option weight="4" ifWeightClass="M">Medium Battle</option>
+			<option weight="2" ifWeightClass="L">Light Battle</option>
+			<option weight="6" ifWeightClass="H|A" name="Berserker Lance">Berserker/Close</option>
+			<option weight="7" ifWeightClass="H|A">Assault</option>
+			<option weight="2" ifWeightClass="L|M|H">Striker/Cavalry</option>
+			<option weight="1" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+			<option weight="1" ifWeightClass="L">Light Striker/Cavalry</option>
+			<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+			<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+			<option weight="1" ifWeightClass="L|M|H">Probe</option>
+			<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+			<option weight="1">Fire</option>
+			<option weight="1">Security</option>
+		</formation>
+
 		<subforces generate="group" ifUnitType="Mek">
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A,A,A,H,H">%ELEMENT%</option>
@@ -581,6 +624,37 @@
 		<name>{phonetic} {name:parent} Star</name>
 		<co>%STAR_CMDR%</co>
 		
+		<formation ifUnitType="Tank">
+			<option weight="32">Fire</option>
+			<option weight="6">Fire Support</option>
+			<option weight="4">Direct Fire</option>
+			<option weight="4" ifWeightClass="L|M">Light Fire</option>
+			<option weight="2" role="+anti_aircraft">Anti-Air</option>
+			<option weight="17">Battle</option>
+			<option weight="8" ifWeightClass="H|A">Heavy Battle</option>
+			<option weight="4" ifWeightClass="M">Medium Battle</option>
+			<option weight="2" ifWeightClass="L">Light Battle</option>
+			<option weight="3" ifWeightClass="H|A">Assault</option>
+			<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+			<option weight="2" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+			<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
+			<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+			<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+			<option weight="1" ifWeightClass="L|M|H">Probe</option>
+			<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+			<option weight="31" role="+recon">Recon</option>
+			<option weight="10" ifWeightClass="H|A" role="+recon">Heavy Recon</option>
+			<option weight="10" ifWeightClass="L" role="+recon">Light Recon</option>				
+		</formation>
+		
+		<formation ifUnitType="VTOL">
+			<option weight="4" role="+recon">Recon</option>
+			<option weight="4">Striker/Cavalry</option>
+			<option weight="3">Pursuit</option>
+			<option weight="1">Fire</option>
+			<option weight="1">Light Battle</option>
+		</formation>
+
 		<subforces>
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A,A,A,H,H">%POINT%</option>
@@ -657,6 +731,15 @@
 			<option ifRole="command" weight="1">M</option>			
 		</weightClass>
 		
+		<ruleGroup>
+			<formation>
+				<option weight="3" ifWeightClass="L|M">Aerospace Superiority Squadron</option>
+				<option>Fire Support Squadron</option>
+				<option weight="2" ifWeightClass="L|M">Interceptor Squadron</option>
+				<option weight="3" ifWeightClass="M|H">Strike Squadron</option>
+			</formation>
+		</ruleGroup>
+
 		<subforces>
 			<asFaction>CLAN</asFaction>
 		</subforces>

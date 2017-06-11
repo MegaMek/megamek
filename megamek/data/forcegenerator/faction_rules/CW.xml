@@ -205,11 +205,11 @@
 		<name ifRating="SL">Wolf Regulars</name>
 		<name ifRating="PG">Wolf Garrison Cluster</name>
 		<co>%STAR_COL%</co>
-		
+
 		<weightClass>
-			<option weight="2">H</option>
-			<option weight="2">M</option>
-			<option weight="1">L</option>
+			<option>H</option>
+			<option>M</option>
+			<option>L</option>
 		</weightClass>
 		
 		<!--Typical clusters contain a command trinary (which can
@@ -827,6 +827,10 @@
 			<option weight="2">M</option>
 			<option weight="1">L</option>
 		</weightClass>
+		
+		<formation>
+			<option>Command</option>
+		</formation>
 
 		<subforces generate="group" ifUnitType="Mek">
 			<subforceOption ifWeightClass="A">
@@ -870,30 +874,30 @@
 			<subforce unitType="BattleArmor" num="4">%POINT%</subforce>
 		</subforces>
 		
-		<subforces>
+		<subforces generate="group">
 			<subforceOption ifWeightClass="A|H">
 				<option unitType="Aero"
-					weightClass="H" weight="3">%POINT%</option>
+					weightClass="H,H" weight="3">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="M" weight="2">%POINT%</option>
+					weightClass="M,M" weight="2">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="L" weight="1">%POINT%</option>
+					weightClass="L,L" weight="1">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option unitType="Aero"
-					weightClass="H" weight="2">%POINT%</option>
+					weightClass="H,H" weight="2">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="M" weight="3">%POINT%</option>
+					weightClass="M,M" weight="3">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="L" weight="2">%POINT%</option>
+					weightClass="L,L" weight="2">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option unitType="Aero"
-					weightClass="H" weight="1">%POINT%</option>
+					weightClass="H,H" weight="1">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="M" weight="2">%POINT%</option>
+					weightClass="M,M" weight="2">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="L" weight="3">%POINT%</option>
+					weightClass="L,L" weight="3">%ELEMENT%</option>
 			</subforceOption>
 		</subforces>
 	</force>
@@ -919,8 +923,12 @@
 		</weightClass>
 		
 		<role>
-			<option>+mechanized_ba</option>
+			<option>+omni</option>
 		</role>
+		
+		<formation>
+			<option>Command</option>
+		</formation>
 
 		<subforces>
 			<asParent />

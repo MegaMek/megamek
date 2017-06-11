@@ -784,6 +784,10 @@ but with more independence.-->
 			<option weight="2">M</option>
 			<option weight="1">L</option>
 		</weightClass>
+		
+		<formation>
+			<option>Command</option>
+		</formation>
 
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">
@@ -823,30 +827,30 @@ but with more independence.-->
 			</subforceOption>
 		</subforces>
 		
-		<subforces>
+		<subforces generate="group">
 			<subforceOption ifWeightClass="A|H">
 				<option unitType="Aero"
-					weightClass="H" weight="3">%POINT%</option>
+					weightClass="H,H" weight="3">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="M" weight="2">%POINT%</option>
+					weightClass="M,M" weight="2">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="L" weight="1">%POINT%</option>
+					weightClass="L,L" weight="1">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="M">
 				<option unitType="Aero"
-					weightClass="H" weight="2">%POINT%</option>
+					weightClass="H,H" weight="2">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="M" weight="3">%POINT%</option>
+					weightClass="M,M" weight="3">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="L" weight="2">%POINT%</option>
+					weightClass="L,L" weight="2">%ELEMENT%</option>
 			</subforceOption>
 			<subforceOption ifWeightClass="L">
 				<option unitType="Aero"
-					weightClass="H" weight="1">%POINT%</option>
+					weightClass="H,H" weight="1">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="M" weight="2">%POINT%</option>
+					weightClass="M,M" weight="2">%ELEMENT%</option>
 				<option unitType="Aero"
-					weightClass="L" weight="3">%POINT%</option>
+					weightClass="L,L" weight="3">%ELEMENT%</option>
 			</subforceOption>
 		</subforces>
 	</force>

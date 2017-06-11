@@ -875,6 +875,46 @@ ranked SL units.-->
 			<option ifRating="FL|SL" ifDateBetween="3070,">ProtoMek</option>
 		</unitType>
 
+        <ruleGroup>
+			<formation ifIndex="0">
+				<option weight="30">Battle</option>
+				<option weight="16" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="4" ifWeightClass="M">Medium Battle</option>
+				<option weight="1" ifWeightClass="L">Light Battle</option>
+				<option weight="16" ifWeightClass="H|A">Assault</option>
+				<option weight="8" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="6" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" role="+urban">Urban</option>
+			</formation>
+
+			<formation ifIndex="!0">
+				<option weight="20">Fire</option>
+				<option weight="3">Fire Support</option>
+				<option weight="2">Direct Fire</option>
+				<option weight="2" ifWeightClass="L|M">Light Fire</option>
+				<option weight="1" role="+anti_aircraft">Anti-Air</option>
+				<option weight="24">Battle</option>
+				<option weight="6" ifIndex="0,1">Battle</option>
+				<option weight="15" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="3" ifWeightClass="M">Medium Battle</option>
+				<option weight="1" ifWeightClass="L">Light Battle</option>
+				<option weight="8" ifWeightClass="H|A">Assault</option>
+				<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="4" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+				<option weight="1" role="+urban">Urban</option>
+				<option weight="24" ifWeightClass="L|M" role="+recon">Recon</option>
+				<option weight="12" ifWeightClass="H" role="+recon">Heavy Recon</option>
+				<option weight="2" ifWeightClass="L" role="+recon">Light Recon</option>				
+			</formation>
+		</ruleGroup>
+		
 		<subforces generate="group" ifUnitType="Mek">
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A,A,A,H,H">%ELEMENT%</option>
@@ -941,9 +981,49 @@ ranked SL units.-->
 		</weightClass>
 		
 		<role>
-			<option>+mechanized_ba</option>
+			<option>+omni</option>
 		</role>
 
+        <ruleGroup>
+			<formation ifIndex="0">
+				<option weight="30">Battle</option>
+				<option weight="16" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="4" ifWeightClass="M">Medium Battle</option>
+				<option weight="1" ifWeightClass="L">Light Battle</option>
+				<option weight="16" ifWeightClass="H|A">Assault</option>
+				<option weight="8" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="6" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="2" ifWeightClass="L">Light Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" role="+urban">Urban</option>
+			</formation>
+
+			<formation ifIndex="!0">
+				<option weight="20">Fire</option>
+				<option weight="3">Fire Support</option>
+				<option weight="2">Direct Fire</option>
+				<option weight="2" ifWeightClass="L|M">Light Fire</option>
+				<option weight="1" role="+anti_aircraft">Anti-Air</option>
+				<option weight="24">Battle</option>
+				<option weight="6" ifIndex="0,1">Battle</option>
+				<option weight="15" ifWeightClass="H|A">Heavy Battle</option>
+				<option weight="3" ifWeightClass="M">Medium Battle</option>
+				<option weight="1" ifWeightClass="L">Light Battle</option>
+				<option weight="8" ifWeightClass="H|A">Assault</option>
+				<option weight="4" ifWeightClass="L|M|H">Striker/Cavalry</option>
+				<option weight="4" ifWeightClass="H|A">Heavy Striker/Cavalry</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Ranger</option>
+				<option weight="1" ifWeightClass="L|M|H">Pursuit</option>
+				<option weight="1" ifWeightClass="L|M|H">Probe</option>
+				<option weight="1" ifWeightClass="L|M|H">Sweep</option>
+				<option weight="1" role="+urban">Urban</option>
+				<option weight="24" ifWeightClass="L|M" role="+recon">Recon</option>
+				<option weight="12" ifWeightClass="H" role="+recon">Heavy Recon</option>
+				<option weight="2" ifWeightClass="L" role="+recon">Light Recon</option>				
+			</formation>
+		</ruleGroup>
+		
 		<subforces generate="group">
 			<subforceOption ifWeightClass="A">
 				<option weightClass="A,A,A,H,H">%ELEMENT%</option>

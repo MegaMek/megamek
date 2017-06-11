@@ -2243,11 +2243,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 10000;
         ammo.rulesRefs = "284, TO";
         ammo.rulesRefs = "284,TO";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_E)
-            .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+            .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D) 
             .setClanAdvancement(2593, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(false, false, false, false, false)
             .setPrototypeFactions(F_TH)	

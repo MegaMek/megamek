@@ -1454,7 +1454,7 @@
 		</unitType>
 		
 		<ruleGroup>
-			<formation>
+			<formation ifRole="command">
 				<option>Command</option>
 			</formation>
 		</ruleGroup>

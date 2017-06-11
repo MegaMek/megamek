@@ -212,12 +212,7 @@ public class ForceNode extends RulesetNode {
 		}
 
 		if (fd.getName() == null) {
-			for (ValueNode n : nameNodes) {
-				if (n.matches(fd)) {
-					fd.setName(n.getContent());
-					break;
-				}
-			}
+		    fd.setNameNodes(nameNodes);
 		}
 		
 		String generate = assertions.getProperty("generate");

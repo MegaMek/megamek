@@ -29,12 +29,12 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import megamek.client.RandomNameGenerator;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import megamek.client.RandomNameGenerator;
 
 /**
  * Container for all the rule nodes for a faction. Has methods for processing the rules to
@@ -151,6 +151,7 @@ public class Ruleset {
         	    
 	    buildForceTree(fd);
         fd.generateUnits();
+        fd.recalcWeightClass();
         fd.assignCommanders();
         fd.assignPositions();
         fd.loadEntities();

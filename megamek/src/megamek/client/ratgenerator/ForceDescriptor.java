@@ -113,6 +113,7 @@ public class ForceDescriptor {
 	private int nameIndex;
 	private String fluffName;
 	private Entity entity;
+	private List<ValueNode> nameNodes;
 	
 	private ForceDescriptor parent;
 	private ArrayList<ForceDescriptor> subforces;
@@ -1057,6 +1058,37 @@ public class ForceDescriptor {
 						ut == UnitType.BATTLE_ARMOR);
 	}
 	
+	/**
+	 * Weight class can differ from the target once units are generated. Weight class is recalculated
+	 * based on actual units present and eschelon name is set.
+	 * 
+	 * @return The weight class of this force node
+	 */
+	public double recalcWeightClass() {
+	    double wc;
+	    if (subforces.size() > 0) {
+	        wc = subforces.stream().mapToDouble(ForceDescriptor::recalcWeightClass)
+	                .sum() / subforces.size();
+	    } else if (null != weightClass || weightClass < 0) {
+	        wc = weightClass;
+	    } else {
+	        wc = EntityWeightClass.WEIGHT_MEDIUM;
+	    }
+	    weightClass = (int)Math.round(wc);
+	    
+	    //Some names require knowing the weight class first.
+	    if (null != nameNodes) {
+            for (ValueNode n : nameNodes) {
+                if (n.matches(this)) {
+                    setName(n.getContent());
+                    break;
+                }
+            }
+        }
+	    
+	    return wc;
+	}
+	
 	public ArrayList<Object> getAllChildren() {
 		ArrayList<Object> retVal = new ArrayList<Object>();
 		retVal.addAll(subforces);
@@ -1350,6 +1382,17 @@ public class ForceDescriptor {
 		this.camo = camo;
 	}
 
+	/**
+	 * Because some eschelon names depend on knowing the actual weight class, we save a copy
+	 * of the possibilities for this node and defer selection until after the final weight class
+	 * determination.
+	 * 
+	 * @param nameNodes
+	 */
+    public void setNameNodes(List<ValueNode> nameNodes) {
+        this.nameNodes = nameNodes;
+    }
+    
 	public ForceDescriptor getParent() {
 		return parent;
 	}

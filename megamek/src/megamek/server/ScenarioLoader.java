@@ -150,10 +150,9 @@ public class ScenarioLoader {
             System.err.println(String.format("Equipment %s is not an ammo type", newAmmoType.getName())); //$NON-NLS-1$
             return null;
         }
-        if(!TechConstants.isLegal(
-            TechConstants.getGameTechLevel(game, e.isClan()),
-            newAmmoType.getTechLevel(year), true,
-            e.isMixedTech())) {
+        if(!newAmmoType.isLegal(year,
+            TechConstants.getSimpleLevel(game),
+            e.isClan(), e.isMixedTech())) {
             System.out.println(String.format("Ammo %s (TL %d) is not legal for year %d (TL %d)", //$NON-NLS-1$
                 newAmmoType.getName(), newAmmoType.getTechLevel(year), year,
                 TechConstants.getGameTechLevel(game, e.isClan())));

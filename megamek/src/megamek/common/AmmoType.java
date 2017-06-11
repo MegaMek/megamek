@@ -457,12 +457,9 @@ public class AmmoType extends EquipmentType {
         for (int i = 0; i < vAmmo.size(); i++) {
             at = vAmmo.elementAt(i);
             if ((at.getRackSize() == wt.getRackSize())
-                    && (TechConstants.isLegal(
-                    mounted.getType().getTechLevel(
-                            mounted.getEntity().getTechLevelYear()), at
-                    .getTechLevel(mounted.getEntity()
-                            .getTechLevelYear()), false,
-                    mounted.getEntity().isMixedTech()))) {
+                    && at.isLegal(mounted.getEntity().getTechLevelYear(),
+                            mounted.getType().getTechLevel(mounted.getEntity().getTechLevelYear()),
+                           mounted.getEntity().isMixedTech())) {
                 return at;
             }
         }

@@ -159,25 +159,29 @@ public interface ITechnology {
     }
     
     default int getTechLevel(int year, boolean clan) {
-        if (isUnofficial()) {
-            return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
-        } else if (year >= getCommonDate(clan) && getCommonDate(clan) != DATE_NONE) {
-            if (clan) {
-                return TechConstants.T_CLAN_TW;
-            } else {
-                return isIntroLevel()? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX;
-            }
-        } else if (year >= getProductionDate(clan) && getProductionDate(clan) != DATE_NONE) {
-            return clan? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
-        } else if (year >= getPrototypeDate(clan) && getPrototypeDate(clan) != DATE_NONE) {
-            return clan? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
-        } else {
-            return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
-        }
+        return TechConstants.convertFromSimplelevel(getSimpleLevel(year, clan), clan);
     }
     
     default int getTechLevel(int year) {
         return getTechLevel(year, isClan());
+    }
+    
+    default int getSimpleLevel(int year, boolean clan) {
+        if (isUnofficial()) {
+            return TechConstants.T_SIMPLE_UNOFFICIAL;
+        } else if (year >= getCommonDate(clan) && getCommonDate(clan) != DATE_NONE) {
+            if (isIntroLevel()) {
+                return TechConstants.T_SIMPLE_INTRO;
+            } else {
+                return TechConstants.T_SIMPLE_STANDARD;
+            }
+        } else if (year >= getProductionDate(clan) && getProductionDate(clan) != DATE_NONE) {
+            return TechConstants.T_SIMPLE_ADVANCED;
+        } else if (year >= getPrototypeDate(clan) && getPrototypeDate(clan) != DATE_NONE) {
+            return TechConstants.T_SIMPLE_EXPERIMENTAL;
+        } else {
+            return TechConstants.T_SIMPLE_UNOFFICIAL;
+        }
     }
     
     /**
@@ -240,6 +244,30 @@ public interface ITechnology {
         return year >= getIntroductionDate() && getIntroductionDate() != DATE_NONE && !isExtinct(year);
     }
     
+    default boolean isLegal(int year, int techLevel, boolean mixedTech) {
+        return isLegal(year, TechConstants.convertFromNormalToSimple(techLevel),
+                TechConstants.isClan(techLevel), mixedTech);
+    }
+
+    default boolean isLegal(int year, int simpleRulesLevel, boolean clanBase, boolean mixedTech) {
+        if (mixedTech) {
+            if (!isAvailableIn(year)) {
+                return false;
+            } else {
+                return getTechLevel(year) <= simpleRulesLevel;
+            }
+        } else {
+            if (getTechBase() != TECH_BASE_ALL
+                    && clanBase != isClan()) {
+                return false;
+            }
+            if (!isAvailableIn(year, clanBase)) {
+                return false;
+            }
+            return getSimpleLevel(year, clanBase) <= simpleRulesLevel;
+        }
+    }
+
     /**
      * Adjusts availability for certain combinations of era and IS/Clan use
      * @param era - one of the four tech eras

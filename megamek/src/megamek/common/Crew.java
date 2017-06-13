@@ -1052,6 +1052,19 @@ public class Crew implements Serializable {
     public String getExternalIdAsString(int pos) {
         return externalId[pos];
     }
+    
+    /**
+     * Use the first assigned slot as a general id for the crew.
+     * @return The id of the first slot that is not set to "-1" 
+     */
+    public String getExternalIdAsString() {
+        for (int i = 0; i < getSlotCount(); i++) {
+            if (!externalId[i].equals("-1")) {
+                return externalId[i];
+            }
+        }
+        return "-1";
+    }
 
     public int getExternalId(int pos) {
         return Integer.parseInt(externalId[pos]);

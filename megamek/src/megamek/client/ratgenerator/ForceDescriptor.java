@@ -166,7 +166,7 @@ public class ForceDescriptor {
 	/**
 	 * Goes through the force tree structure and generates units for all leaf nodes.
 	 */
-	public void generateUnits() {
+	public void generateUnits(Ruleset.ProgressListener l, double progress) {
 	    //If the parent node has a chassis or model assigned, it carries through to the children.
 	    if (null != parent) {
 	        chassis.addAll(parent.getChassis());
@@ -234,8 +234,12 @@ public class ForceDescriptor {
     	        }
     	    }
 	    }
-        subforces.forEach(fd -> fd.generateUnits());
-	    attached.forEach(fd -> fd.generateUnits());
+	    int count = subforces.size() + attached.size();
+        subforces.forEach(fd -> fd.generateUnits(l, progress / count));
+        attached.forEach(fd -> fd.generateUnits(l, progress / count));
+        if (count == 0 && null != l) {
+            l.updateProgress(progress, "Populating force tree");
+        }
 	}
 	
 	/**
@@ -728,7 +732,7 @@ public class ForceDescriptor {
 		return null;
 	}
 	
-	public void loadEntities() {
+	public void loadEntities(Ruleset.ProgressListener l, double progress) {
 		if (element) {
 			MechSummary ms = MechSummaryCache.getInstance().getMech(getModelName());
 			if (ms != null) {
@@ -740,8 +744,12 @@ public class ForceDescriptor {
 				}
 			}
 		}
-		subforces.forEach(ForceDescriptor::loadEntities);
-		attached.forEach(ForceDescriptor::loadEntities);
+		int count = subforces.size() + attached.size();
+        subforces.forEach(fd -> fd.loadEntities(l, progress / count));
+        attached.forEach(fd -> fd.loadEntities(l, progress / count));
+        if (count == 0 && null != l) {
+            l.updateProgress(progress, "Loading entities");
+        }
 	}
 	
 	public void assignCommanders() {
@@ -1069,7 +1077,7 @@ public class ForceDescriptor {
 	    if (subforces.size() > 0) {
 	        wc = subforces.stream().mapToDouble(ForceDescriptor::recalcWeightClass)
 	                .sum() / subforces.size();
-	    } else if (null != weightClass || weightClass < 0) {
+	    } else if (null != weightClass && weightClass >= 0) {
 	        wc = weightClass;
 	    } else {
 	        wc = EntityWeightClass.WEIGHT_MEDIUM;
@@ -1085,6 +1093,7 @@ public class ForceDescriptor {
                 }
             }
         }
+	    attached.forEach(ForceDescriptor::recalcWeightClass);
 	    
 	    return wc;
 	}

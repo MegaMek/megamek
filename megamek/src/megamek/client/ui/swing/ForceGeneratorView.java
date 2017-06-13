@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,6 +31,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.ProgressMonitor;
+import javax.swing.SwingWorker;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
@@ -492,12 +495,17 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
 			}
 		}
 		
-		Ruleset.findRuleset(fd).processRoot(fd);
-
-		forceDesc = fd;
-		if (onGenerate != null) {
-			onGenerate.accept(fd);
-		}
+		ProgressMonitor monitor = new ProgressMonitor(this, "Generate Formation", "", 0, 100);
+		monitor.setProgress(0);
+		GenerateTask task = new GenerateTask(fd);
+		task.addPropertyChangeListener(e -> {
+		    monitor.setProgress(task.getProgress());
+		    monitor.setNote(task.getMessage());
+		    if (monitor.isCanceled()) {
+		        task.cancel(true);
+		    }
+		});
+		task.execute();
 	}
 	
 	public ForceDescriptor getForceDescriptor() {
@@ -1016,5 +1024,54 @@ public class ForceGeneratorView extends JPanel implements FocusListener, ActionL
             }
             return this;
         }
-    }    
+    }
+    
+    private class GenerateTask extends SwingWorker<ForceDescriptor,Double> implements Ruleset.ProgressListener {
+        
+        private ForceDescriptor fd;
+        private double progress = 0;
+        private String message = "";
+        
+        GenerateTask(ForceDescriptor fd) {
+            this.fd = fd;
+        }
+
+        @Override
+        protected ForceDescriptor doInBackground() throws Exception {
+            btnGenerate.setEnabled(false);
+            Ruleset.findRuleset(fd).processRoot(fd, this);
+            return fd;
+        }
+        
+        @Override
+        protected void done() {
+            try {
+                forceDesc = get();
+                if (onGenerate != null) {
+                    onGenerate.accept(forceDesc);
+                }
+            } catch (InterruptedException ex) {
+                //Ignore
+            } catch (ExecutionException e) {
+                e.getCause().printStackTrace();
+            } finally {
+                btnGenerate.setEnabled(true);
+            }
+        }
+
+        @Override
+        public void updateProgress(double progress, String message) {
+            this.progress += progress;
+            synchronized (this.message) {
+                this.message = message;
+            }
+            setProgress((int)Math.round(this.progress * 100));
+        }
+        
+        public String getMessage() {
+            synchronized (message) {
+                return message;
+            }
+        }
+    }
 }

@@ -144,18 +144,36 @@ public class Ruleset {
 		return customRanks;
 	}
 	
-	public void processRoot(ForceDescriptor fd) {
+	@FunctionalInterface
+	public interface ProgressListener {
+	    /**
+	     * Notifies listener of progress in generating force.
+	     * 
+         * @param progress The fraction of the task that has been completed in this step.
+         * @param message A message that describes the current step.
+         *
+	     */
+	    void updateProgress(double progress, String message);
+	}
+	
+	public void processRoot(ForceDescriptor fd, ProgressListener l) {
 	    defaults.apply(fd);
         // save the setting so it can be restored after assigning names
         String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
         	    
-	    buildForceTree(fd);
-        fd.generateUnits();
+	    buildForceTree(fd, l, 0.05);
+        fd.generateUnits(l, 0.5);
+        l.updateProgress(0, "Finalizing formation");
         fd.recalcWeightClass();
         fd.assignCommanders();
         fd.assignPositions();
-        fd.loadEntities();
+        l.updateProgress(0.05, "Finalizing formation");
+        fd.loadEntities(l, 0.4);
 //      fd.assignBloodnames();
+        
+        if (null != l) {
+            l.updateProgress(0, "Complete");
+        }
 
         RandomNameGenerator.getInstance().setChosenFaction(rngFaction);
 	}
@@ -166,7 +184,7 @@ public class Ruleset {
 	 * 
 	 * @param fd
 	 */
-	private void buildForceTree (ForceDescriptor fd) {
+	private void buildForceTree (ForceDescriptor fd, ProgressListener l, double progress) {
 	    //Find the most specific ruleset for this faction.
 		Ruleset rs = findRuleset(fd.getFaction());
 		boolean applied = false;
@@ -185,6 +203,9 @@ public class Ruleset {
 				applied = fn.apply(fd);
 			}
 		} while (rs != null && (fn == null || !applied));
+
+		int count = fd.getSubforces().size() + fd.getAttached().size();
+		
 		//Process subforces recursively. It is possible that the subforce has
 		//a different faction, in which case the ruleset appropriate to that faction is used.
 		for (ForceDescriptor sub : fd.getSubforces()) {
@@ -193,24 +214,29 @@ public class Ruleset {
 				rs = findRuleset(sub.getFaction());
 			}
 			if (rs == null) {
-				buildForceTree(sub);
+				buildForceTree(sub, l, progress / count);
 			} else {
-				rs.buildForceTree(sub);
+				rs.buildForceTree(sub, l, progress / count);
 			}
 		}
 		
 		//Any attached support units are then built.
 		for (ForceDescriptor sub : fd.getAttached()) {
-			buildForceTree(sub);
+			buildForceTree(sub, l, progress / count);
 		}
+		/*
 		//Each attached formation is essentially a new top-level node
 		for (ForceDescriptor sub : fd.getAttached()) {
-		    sub.generateUnits();
+		    sub.generateUnits(l, progress * 0.7 / count);
 			sub.assignCommanders();
 			sub.assignPositions();
-			sub.loadEntities();
+			sub.loadEntities(l, progress * 0.1 / count);
 //			sub.assignBloodnames();
 		}
+		*/
+        if (count == 0 && null != l) {
+            l.updateProgress(progress, "Building force tree");
+        }
 	}
 	
 	public int getRatingIndex(String key) {

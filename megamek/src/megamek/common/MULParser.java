@@ -783,6 +783,8 @@ public class MULParser {
             final Node node = crewNode.getAttributes().item(i);        
             crewAttr.put(node.getNodeName(), node.getTextContent());
         }
+        //Do not assign crew attributes until after individual crew members have been processed because
+        //we cannot assign hits to ejected crew.
         
         Crew crew = null;
         CrewType crewType = null;
@@ -799,7 +801,6 @@ public class MULParser {
         } else {
             crew = new Crew(CrewType.SINGLE);
         }
-        setCrewAttributes(crew, crewAttr, entity);
         pilots.add(crew);
         for (int i = 0; i < crew.getSlotCount(); i++) {
             crew.setMissing(true, i);
@@ -830,6 +831,7 @@ public class MULParser {
                 }
             }
         }
+        setCrewAttributes(crew, crewAttr, entity);
     }
         
     /**

@@ -5955,6 +5955,9 @@ public class Compute {
             return (getFullCrewSize(entity) - 1);
         } else if (entity instanceof Infantry) {
             return getFullCrewSize(entity);
+        } else if (entity.getCrew().getCrewType().getGunnerPos() > 0) {
+            //Tripod, QuadVee, or dual cockpit
+            return 1;
         }
         return 0;
     }
@@ -6028,6 +6031,9 @@ public class Compute {
             if (entity instanceof SmallCraft) {
                 return 3;
             }
+            return 2;
+        }
+        if (entity.getCrew().getCrewType() == CrewType.COMMAND_CONSOLE) {
             return 2;
         }
         if (entity instanceof Mech || entity instanceof Tank || entity instanceof Aero || entity instanceof Protomech) {

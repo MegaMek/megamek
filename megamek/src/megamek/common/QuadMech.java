@@ -82,46 +82,76 @@ public class QuadMech extends Mech {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int wmp = getOriginalWalkMP();
+        //Wheeled QuadVees get +1 cruising MP.
+        if (movementMode == EntityMovementMode.WHEELED) {
+            wmp++;
+        }
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
 
-        for (int i = 0; i < locations(); i++) {
-            if (locationIsLeg(i)) {
-                if (!isLocationBad(i)) {
-                    if (legHasHipCrit(i)) {
-                        hipHits++;
-                        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                            continue;
+        //A Mech using tracks has its movement reduced by 25% per leg or track destroyed.
+        //IO does not make any explicit statement about movement reduction due to missing tracks, but
+        //the construction rules identify QuadVee tracks and 'Mech tracks as the same equipment,
+        //so for now I'm assuming that the same rules apply.
+        if (movementMode == EntityMovementMode.TRACKED
+                || movementMode == EntityMovementMode.WHEELED) {
+            if (this instanceof QuadVee) {
+                for (int loc = 0; loc < locations(); loc++) {
+                    if (locationIsLeg(loc)) {
+                        if (isLocationBad(loc) || getCritical(loc, 5).isHit()) {
+                            legsDestroyed++;                            
                         }
                     }
-                    actuatorHits += countLegActuatorCrits(i);
-                } else {
-                    legsDestroyed++;
                 }
-            }
-        }
-        // leg damage effects
-        if (legsDestroyed > 0) {
-            if (legsDestroyed == 1) {
-                wmp--;
-            } else if (legsDestroyed == 2) {
-                wmp = 1;
             } else {
-                wmp = 0;
-            }
-        }
-        if (wmp > 0) {
-            if (hipHits > 0) {
-                if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                    wmp = wmp - (2 * hipHits);
-                } else {
-                    for (int i = 0; i < hipHits; i++) {
-                        wmp = (int) Math.ceil(wmp / 2.0);
+                for (Mounted m : getMisc()) {
+                    if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                        if (m.isHit() || isLocationBad(m.getLocation())) {
+                            legsDestroyed++;
+                        }
                     }
                 }
             }
-            wmp -= actuatorHits;
+            wmp = (wmp * (4 - legsDestroyed)) / 4;
+        } else {
+            for (int i = 0; i < locations(); i++) {
+                if (locationIsLeg(i)) {
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            hipHits++;
+                            if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                continue;
+                            }
+                        }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
+                    }
+                }
+            }
+            // leg damage effects
+            if (legsDestroyed > 0) {
+                if (legsDestroyed == 1) {
+                    wmp--;
+                } else if (legsDestroyed == 2) {
+                    wmp = 1;
+                } else {
+                    wmp = 0;
+                }
+            }        
+            if (wmp > 0) {
+                if (hipHits > 0) {
+                    if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                        wmp = wmp - (2 * hipHits);
+                    } else {
+                        for (int i = 0; i < hipHits; i++) {
+                            wmp = (int) Math.ceil(wmp / 2.0);
+                        }
+                    }
+                }
+                wmp -= actuatorHits;
+            }
         }
 
         if (!ignoremodulararmor && hasModularArmor() ) {
@@ -147,8 +177,10 @@ public class QuadMech extends Mech {
             } else {
                 wmp -= (heat / 5);
             }
-            // TSM negates some heat
-            if ((heat >= 9) && hasTSM()) {
+            // TSM negates some heat but has no benefit for 'Mechs using tracks or QuadVees in vehicle mode.
+            if ((heat >= 9) && hasTSM() && legsDestroyed < 2
+                    && movementMode != EntityMovementMode.TRACKED
+                    && movementMode != EntityMovementMode.WHEELED) {
                 wmp += 2;
             }
         }

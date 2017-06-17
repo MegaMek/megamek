@@ -789,7 +789,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setChargeEnabled(ce.canCharge());
         setDFAEnabled(ce.canDFA());
         setRamEnabled(ce.canRam());
-        setModeQuadVeeEnabled(!ce.isUnderwater()
+        setModeConvertEnabled(!ce.isUnderwater()
                 //non-QuadVees with tracks have no conversion cost
                 && (!(ce instanceof QuadVee) || ((QuadVee)ce).conversionCost() <= ce.getRunMP()));
 
@@ -999,7 +999,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setClearEnabled(false);
         setHullDownEnabled(false);
         setSwimEnabled(false);
-        setModeQuadVeeEnabled(false);
+        setModeConvertEnabled(false);
         setAccEnabled(false);
         setDecEnabled(false);
         setEvadeEnabled(false);
@@ -4756,7 +4756,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         clientgui.getMenuBar().setMoveJumpEnabled(enabled);
     }
     
-    private void setModeQuadVeeEnabled(boolean enabled) {
+    private void setModeConvertEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_MODE_CONVERT).setEnabled(enabled);
         clientgui.getMenuBar().setMoveModeQuadVeeEnabled(enabled);
     }

@@ -3,6 +3,8 @@
  */
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * Quad Mek that can convert into either tracked or wheeled vehicle mode.
  * 

@@ -127,37 +127,50 @@ public class TripodMech extends Mech {
         int hipHits = 0;
         int actuatorHits = 0;
 
-        for (int i = 0; i < locations(); i++) {
-            if (locationIsLeg(i)) {
-                if (!isLocationBad(i)) {
-                    if (legHasHipCrit(i)) {
-                        hipHits++;
-                        if ((game == null)
-                            || !game.getOptions().booleanOption(
-                                OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                            continue;
-                        }
+        //A Mech using tracks has its movement reduced by 1/3 per leg or track destroyed, based
+        //on analogy with biped and quad mechs.
+        if (getMovementMode() == EntityMovementMode.TRACKED) {
+            for (Mounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                    if (m.isHit() || isLocationBad(m.getLocation())) {
+                        legsDestroyed++;
                     }
-                    actuatorHits += countLegActuatorCrits(i);
-                } else {
-                    legsDestroyed++;
                 }
             }
-        }
-
-        // leg damage effects
-        if (legsDestroyed > 0) {
-            wmp = (legsDestroyed == 1) ? 1 : 0;
+            wmp = (wmp * (3 - legsDestroyed)) / 3; 
         } else {
-            if (hipHits > 0) {
-                if ((game != null)
-                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                    wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
-                } else {
-                    wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
+            for (int i = 0; i < locations(); i++) {
+                if (locationIsLeg(i)) {
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            hipHits++;
+                            if ((game == null)
+                                || !game.getOptions().booleanOption(
+                                    OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                continue;
+                            }
+                        }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
+                    }
                 }
             }
-            wmp -= actuatorHits;
+
+            // leg damage effects
+            if (legsDestroyed > 0) {
+                wmp = (legsDestroyed == 1) ? 1 : 0;
+            } else {
+                if (hipHits > 0) {
+                    if ((game != null)
+                        && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                        wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
+                    } else {
+                        wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
+                    }
+                }
+                wmp -= actuatorHits;
+            }
         }
 
         if (hasShield()) {
@@ -190,7 +203,7 @@ public class TripodMech extends Mech {
                 wmp -= (heat / 5);
             }
             // TSM negates some heat
-            if ((heat >= 9) && hasTSM()) {
+            if ((heat >= 9) && hasTSM() && legsDestroyed == 0 && movementMode != EntityMovementMode.TRACKED) {
                 wmp += 2;
             }
         }

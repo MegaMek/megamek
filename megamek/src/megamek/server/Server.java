@@ -20652,7 +20652,6 @@ public class Server implements Runnable {
         }
         return vReport;
     }
-    
 
     /**
      * Inflict damage on a pilot
@@ -20926,7 +20925,7 @@ public class Server implements Runnable {
             }
         }
     }
-    
+
     /*
      * Resolve any outstanding self destructions...
      */
@@ -23966,838 +23965,10 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
-        // Handle hits on "critical slots" of tanks.
         if (en instanceof Tank) {
-            Tank t = (Tank) en;
-            HitData hit;
-            switch (cs.getIndex()) {
-                case Tank.CRIT_NONE:
-                    // no effect
-                    r = new Report(6005);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    break;
-                case Tank.CRIT_AMMO:
-                    // ammo explosion
-                    r = new Report(6610);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    int damage = 0;
-                    for (Mounted m : t.getAmmo()) {
-                        // Don't include ammo of one-shot weapons.
-                        if (m.getLocation() == Entity.LOC_NONE) {
-                            continue;
-                        }
-                        m.setHit(true);
-                        int tmp = m.getHittableShotsLeft()
-                                  * ((AmmoType) m.getType()).getDamagePerShot()
-                                  * ((AmmoType) m.getType()).getRackSize();
-                        m.setShotsLeft(0);
-                        // non-explosive ammo can't explode
-                        if (!m.getType().isExplosive(m)) {
-                            continue;
-                        }
-                        damage += tmp;
-                        r = new Report(6390);
-                        r.subject = t.getId();
-                        r.add(m.getName());
-                        r.add(tmp);
-                        vDesc.add(r);
-                    }
-                    hit = new HitData(loc);
-                    vDesc.addAll(damageEntity(t, hit, damage, true));
-                    break;
-                case Tank.CRIT_CARGO:
-                    // Cargo/infantry damage
-                    r = new Report(6615);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    List<Entity> passengers = t.getLoadedUnits();
-                    if (passengers.size() > 0) {
-                        Entity target = passengers.get(Compute.randomInt(passengers
-                                                                                 .size()));
-                        hit = target.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                     ToHitData.SIDE_FRONT);
-                        vDesc.addAll(damageEntity(target, hit, damageCaused));
-                    }
-                    break;
-                case Tank.CRIT_COMMANDER:
-                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
-                        r = new Report(6191);
-                        r.subject = t.getId();
-                        vDesc.add(r);
-                        vDesc.addAll(damageCrew(en, 1));
-                    } else {
-                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
-                            && !t.isCommanderHitPS()) {
-                            r = new Report(6606);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                            t.setCommanderHitPS(true);
-                        } else if (en.hasWorkingMisc(MiscType.F_COMMAND_CONSOLE)
-                                && !((Tank)en).isUsingConsoleCommander()) {
-                            r = new Report(6607);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                            t.setUsingConsoleCommander(true);
-                        } else {
-                            r = new Report(6605);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                            t.setCommanderHit(true);
-                        }
-                    }
-                    // fall through here, because effects of crew stunned also
-                    // apply
-                case Tank.CRIT_CREW_STUNNED:
-                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
-                        r = new Report(6191);
-                        r.subject = t.getId();
-                        vDesc.add(r);
-                        vDesc.addAll(damageCrew(en, 1));
-                    } else {
-                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
-                            || en.getCrew().getOptions()
-                                 .booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
-                            r = new Report(6186);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                        } else {
-                            t.stunCrew();
-                            r = new Report(6185);
-                            r.add(t.getStunnedTurns() - 1);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                        }
-                    }
-                    break;
-                case Tank.CRIT_DRIVER:
-                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
-                        r = new Report(6191);
-                        r.subject = t.getId();
-                        vDesc.add(r);
-                        vDesc.addAll(damageCrew(en, 1));
-                    } else {
-                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
-                            && !t.isDriverHitPS()) {
-                            r = new Report(6601);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                            t.setDriverHitPS(true);
-                        } else {
-                            r = new Report(6600);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                            t.setDriverHit(true);
-                        }
-                    }
-                    break;
-                case Tank.CRIT_CREW_KILLED:
-                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
-                        r = new Report(6191);
-                        r.subject = t.getId();
-                        vDesc.add(r);
-                        vDesc.addAll(damageCrew(en, 1));
-                    } else {
-                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
-                            && !t.isCrewHitPS()) {
-                            r = new Report(6191);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                            t.setCrewHitPS(true);
-                        } else {
-                            r = new Report(6190);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                            t.getCrew().setDoomed(true);
-                            if (en.isAirborneVTOLorWIGE()) {
-                                vDesc.addAll(crashVTOLorWiGE((Tank)en));
-                            }
-                        }
-                    }
-                    break;
-                case Tank.CRIT_ENGINE:
-                    r = new Report(6210);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.engineHit();
-                    t.engineHitsThisPhase++;
-                    boolean engineExploded = checkEngineExplosion(t, vDesc, 1);
-                    if (engineExploded) {
-                        vDesc.addAll(destroyEntity(en, "engine destruction", true,
-                                                   true));
-                        t.setSelfDestructing(false);
-                        t.setSelfDestructInitiated(false);
-                    }
-                    if (t.isAirborneVTOLorWIGE()
-                        && !(t.isDestroyed() || t.isDoomed())) {
-                        t.immobilize();
-                        vDesc.addAll(forceLandVTOLorWiGE(t));
-                    }
-                    break;
-                case Tank.CRIT_FUEL_TANK:
-                    r = new Report(6215);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    vDesc.addAll(destroyEntity(t, "fuel explosion", false, false));
-                    break;
-                case Tank.CRIT_SENSOR:
-                    r = new Report(6620);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.setSensorHits(t.getSensorHits() + 1);
-                    break;
-                case Tank.CRIT_STABILIZER:
-                    r = new Report(6625);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.setStabiliserHit(loc);
-                    break;
-                case Tank.CRIT_TURRET_DESTROYED:
-                    r = new Report(6630);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.destroyLocation(t.getLocTurret());
-                    vDesc.addAll(destroyEntity(t, "turret blown off", true, true));
-                    break;
-                case Tank.CRIT_TURRET_JAM:
-                    if (t.isTurretEverJammed(loc)) {
-                        r = new Report(6640);
-                        r.subject = t.getId();
-                        vDesc.add(r);
-                        t.lockTurret(loc);
-                        break;
-                    }
-                    r = new Report(6635);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.jamTurret(loc);
-                    break;
-                case Tank.CRIT_TURRET_LOCK:
-                    r = new Report(6640);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.lockTurret(loc);
-                    break;
-                case Tank.CRIT_WEAPON_DESTROYED: {
-                    r = new Report(6305);
-                    r.subject = t.getId();
-                    ArrayList<Mounted> weapons = new ArrayList<Mounted>();
-                    for (Mounted weap : t.getWeaponList()) {
-                        if ((weap.getLocation() == loc) && !weap.isHit()
-                            && !weap.isDestroyed()) {
-                            weapons.add(weap);
-                        }
-                    }
-                    // sort weapons by BV
-                    Collections.sort(weapons, new WeaponComparatorBV());
-                    int roll = Compute.d6();
-                    Mounted weapon;
-                    if (roll < 4) {
-                        // defender should choose, we'll just use the lowest BV
-                        // weapon
-                        weapon = weapons.get(weapons.size() - 1);
-                    } else {
-                        // attacker chooses, we'll use the highest BV weapon
-                        weapon = weapons.get(0);
-                    }
-                    r.add(weapon.getName());
-                    vDesc.add(r);
-                    // explosive weapons e.g. gauss now explode
-                    if (weapon.getType().isExplosive(weapon) && !weapon.isHit()
-                        && !weapon.isDestroyed()) {
-                        vDesc.addAll(explodeEquipment(t, loc, weapon));
-                    }
-                    weapon.setHit(true);
-                    //Taharqa: We should also damage the critical slot, or
-                    //MM and MHQ won't remember that this weapon is damaged on the MUL
-                    //file
-                    for (int i = 0; i < t.getNumberOfCriticals(loc); i++) {
-                        CriticalSlot slot1 = t.getCritical(loc, i);
-                        if ((slot1 == null) ||
-                                (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                            continue;
-                        }
-                        Mounted mounted = slot1.getMount();
-                        if (mounted.equals(weapon)) {
-                            t.hitAllCriticals(loc, i);
-                            break;
-                        }
-                    }
-                    break;
-                }
-                case Tank.CRIT_WEAPON_JAM: {
-                    r = new Report(6645);
-                    r.subject = t.getId();
-                    ArrayList<Mounted> weapons = new ArrayList<Mounted>();
-                    for (Mounted weap : t.getWeaponList()) {
-                        if ((weap.getLocation() == loc) && !weap.isJammed()
-                            && !weap.jammedThisPhase() && !weap.isHit()
-                            && !weap.isDestroyed()) {
-                            weapons.add(weap);
-                        }
-                    }
-                    if (weapons.size() > 0) {
-                        Mounted weapon = weapons.get(Compute.randomInt(weapons
-                                                                               .size()));
-                        weapon.setJammed(true);
-                        t.addJammedWeapon(weapon);
-                        r.add(weapon.getName());
-                        vDesc.add(r);
-                    }
-                    break;
-                }
-                case VTOL.CRIT_PILOT:
-                    r = new Report(6650);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.setDriverHit(true);
-                    PilotingRollData psr = t.getBasePilotingRoll();
-                    psr.addModifier(0, "pilot injury");
-                    if (!doSkillCheckInPlace(t, psr)) {
-                        r = new Report(6675);
-                        r.subject = t.getId();
-                        r.addDesc(t);
-                        vDesc.add(r);
-                        boolean crash = true;
-                        if (t.canGoDown()) {
-                            t.setElevation(t.getElevation() - 1);
-                            crash = !t.canGoDown();
-                        }
-                        if (crash) {
-                            vDesc.addAll(crashVTOLorWiGE(t));
-                        }
-                    }
-                    break;
-                case VTOL.CRIT_COPILOT:
-                    r = new Report(6655);
-                    r.subject = t.getId();
-                    vDesc.add(r);
-                    t.setCommanderHit(true);
-                    break;
-                case VTOL.CRIT_ROTOR_DAMAGE: {
-                    // Only resolve rotor crits if the rotor was actually still
-                    // there.
-                    if (!(t.isLocationBad(VTOL.LOC_ROTOR) || t
-                            .isLocationDoomed(VTOL.LOC_ROTOR))) {
-                        r = new Report(6660);
-                        r.subject = t.getId();
-                        vDesc.add(r);
-                        t.setMotiveDamage(t.getMotiveDamage() + 1);
-                        if (t.getMotiveDamage() >= t.getOriginalWalkMP()) {
-                            t.immobilize();
-                            if (t.isAirborneVTOLorWIGE()
-                                // Don't bother with forcing a landing if
-                                // we're already otherwise destroyed.
-                                && !(t.isDestroyed() || t.isDoomed())) {
-                                vDesc.addAll(forceLandVTOLorWiGE(t));
-                            }
-                        }
-                    }
-                    break;
-                }
-                case VTOL.CRIT_ROTOR_DESTROYED:
-                    // Only resolve rotor crits if the rotor was actually still
-                    // there. Note that despite the name this critical hit does
-                    // not in itself physically destroy the rotor *location*
-                    // (which would simply kill the VTOL).
-                    if (!(t.isLocationBad(VTOL.LOC_ROTOR) || t
-                            .isLocationDoomed(VTOL.LOC_ROTOR))) {
-                        r = new Report(6670);
-                        r.subject = t.getId();
-                        vDesc.add(r);
-                        t.immobilize();
-                        vDesc.addAll(crashVTOLorWiGE(t, true));
-                    }
-                    break;
-                case VTOL.CRIT_FLIGHT_STABILIZER:
-                    // Only resolve rotor crits if the rotor was actually still
-                    // there.
-                    if (!(t.isLocationBad(VTOL.LOC_ROTOR) || t
-                            .isLocationDoomed(VTOL.LOC_ROTOR))) {
-                        r = new Report(6665);
-                        r.subject = t.getId();
-                        vDesc.add(r);
-                        t.setStabiliserHit(VTOL.LOC_ROTOR);
-                    }
-                    break;
-            }
+            vDesc.addAll(applyTankCritical((Tank)en, loc, cs, damageCaused));
         } else if (en instanceof Aero) {
-            Aero a = (Aero) en;
-
-            Jumpship js = new Jumpship();
-            if (en instanceof Jumpship) {
-                js = (Jumpship) en;
-            } else {
-                js = null;
-            }
-
-            switch (cs.getIndex()) {
-                case Aero.CRIT_NONE:
-                    // no effect
-                    r = new Report(6005);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    break;
-                case Aero.CRIT_FCS:
-                    // Fire control system
-                    r = new Report(9105);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    a.setFCSHits(a.getFCSHits() + 1);
-                    break;
-                case Aero.CRIT_SENSOR:
-                    // sensors
-                    r = new Report(6620);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    a.setSensorHits(a.getSensorHits() + 1);
-                    break;
-                case Aero.CRIT_AVIONICS:
-                    // avionics
-                    r = new Report(9110);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    a.setAvionicsHits(a.getAvionicsHits() + 1);
-                    if (a.isPartOfFighterSquadron()) {
-                        game.addControlRoll(new PilotingRollData(
-                                a.getTransportId(), 1, "avionics hit"));
-                    } else if (a.isCapitalFighter()) {
-                        game.addControlRoll(new PilotingRollData(a.getId(), 1,
-                                                                 "avionics hit"));
-                    } else {
-                        game.addControlRoll(new PilotingRollData(a.getId(), 0,
-                                                                 "avionics hit"));
-                    }
-                    break;
-                case Aero.CRIT_CONTROL:
-                    // force control roll
-                    r = new Report(9115);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    if (a.isPartOfFighterSquadron()) {
-                        game.addControlRoll(new PilotingRollData(
-                                a.getTransportId(), 1, "critical hit"));
-                    } else if (a.isCapitalFighter()) {
-                        game.addControlRoll(new PilotingRollData(a.getId(), 1,
-                                                                 "critical hit"));
-                    } else {
-                        game.addControlRoll(new PilotingRollData(a.getId(), 0,
-                                                                 "critical hit"));
-                    }
-                    break;
-                case Aero.CRIT_FUEL_TANK:
-                    // fuel tank
-                    r = new Report(9120);
-                    r.subject = a.getId();
-                    int boomTarget = 9;
-                    if (a.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
-                        boomTarget = 7;
-                    }
-                    if (a.isLargeCraft() && a.isClan()
-                        && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
-                        boomTarget = 11;
-                    }
-                    // check for possible explosion
-                    int fuelroll = Compute.d6(2);
-                    if (fuelroll > boomTarget) {
-                        r.choose(true);
-                        vDesc.add(r);
-                        vDesc.addAll(destroyEntity(a, "fuel explosion", false,
-                                                   false));
-                    } else {
-                        r.choose(false);
-                        vDesc.add(r);
-                    }
-                    break;
-                case Aero.CRIT_CREW:
-                    // pilot hit
-                    r = new Report(6650);
-                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
-                        r = new Report(6651);
-                        r.subject = a.getId();
-                        vDesc.add(r);
-                        break;
-                    } else if (en.getCrew().getOptions()
-                                 .booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
-                        r = new Report(6652);
-                        r.subject = a.getId();
-                        vDesc.add(r);
-                        break;
-                    }
-                    if ((a instanceof SmallCraft) || (a instanceof Jumpship)) {
-                        r = new Report(9197);
-                    }
-                    if (a.isLargeCraft() && a.isClan()
-                        && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)
-                        && (a.getIgnoredCrewHits() < 2)) {
-                        a.setIgnoredCrewHits(a.getIgnoredCrewHits() + 1);
-                        r = new Report(9198);
-                        r.subject = a.getId();
-                        vDesc.add(r);
-                        break;
-                    }
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    vDesc.addAll(damageCrew(a, 1));
-                    // The pilot may have just expired.
-                    if ((a.getCrew().isDead() || a.getCrew().isDoomed())
-                        && !a.getCrew().isEjected()) {
-                        vDesc.addAll(destroyEntity(a, "pilot death", true, true));
-                    }
-                    break;
-                case Aero.CRIT_GEAR:
-                    // landing gear
-                    r = new Report(9125);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    a.setGearHit(true);
-                    break;
-                case Aero.CRIT_BOMB:
-                    // bomb destroyed
-                    // go through bomb list and choose one
-                    ArrayList<Mounted> bombs = new ArrayList<Mounted>();
-                    for (Mounted bomb : a.getBombs()) {
-                        if (bomb.getType().isHittable()
-                            && (bomb.getHittableShotsLeft() > 0)) {
-                            bombs.add(bomb);
-                        }
-                    }
-                    if (bombs.size() > 0) {
-                        Mounted hitbomb = bombs
-                                .get(Compute.randomInt(bombs.size()));
-                        hitbomb.setShotsLeft(0);
-                        hitbomb.setDestroyed(true);
-                        r = new Report(9130);
-                        r.subject = a.getId();
-                        r.add(hitbomb.getDesc());
-                        vDesc.add(r);
-                        // If we are part of a squadron, we should recalculate
-                        // the bomb salvo for the squadron
-                        if (a.getTransportId() != Entity.NONE) {
-                            Entity e = game.getEntity(a.getTransportId());
-                            if (e instanceof FighterSquadron) {
-                                ((FighterSquadron) e).computeSquadronBombLoadout();
-                            }
-                        }
-                    } else {
-                        r = new Report(9131);
-                        r.subject = a.getId();
-                        vDesc.add(r);
-                    }
-                    break;
-                case Aero.CRIT_HEATSINK:
-                    // heat sink hit
-                    int sinksLost = 1;
-                    if (isCapital) {
-                        sinksLost = 10;
-                    }
-                    r = new Report(9135);
-                    r.subject = a.getId();
-                    r.add(sinksLost);
-                    vDesc.add(r);
-                    a.setHeatSinks(Math.max(0, a.getHeatSinks() - sinksLost));
-                    break;
-                case Aero.CRIT_WEAPON_BROAD:
-                    if (a instanceof Warship) {
-                        if ((loc == Jumpship.LOC_ALS) || (loc == Jumpship.LOC_FLS)) {
-                            loc = Warship.LOC_LBS;
-                        } else if ((loc == Jumpship.LOC_ARS)
-                                   || (loc == Jumpship.LOC_FRS)) {
-                            loc = Warship.LOC_RBS;
-                        }
-                    }
-                case Aero.CRIT_WEAPON:
-                    if (a.isCapitalFighter()) {
-                        boolean destroyAll = false;
-                        if ((loc == Aero.LOC_NOSE) || (loc == Aero.LOC_AFT)) {
-                            destroyAll = true;
-                        }
-                        if (loc == Aero.LOC_WINGS) {
-                            if (a.areWingsHit()) {
-                                destroyAll = true;
-                            } else {
-                                a.setWingsHit(true);
-                            }
-                        }
-                        for (Mounted weap : a.getWeaponList()) {
-                            if (weap.getLocation() == loc) {
-                                if (destroyAll) {
-                                    weap.setHit(true);
-                                } else {
-                                    weap.setNWeapons(weap.getNWeapons() / 2);
-                                }
-                            }
-                        }
-                        // also destroy any ECM or BAP in this location
-                        for (Mounted misc : a.getMisc()) {
-                            if (misc.getType().hasFlag(MiscType.F_ECM)
-                                || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
-                                || misc.getType().hasFlag(MiscType.F_BAP)) {
-                                misc.setHit(true);
-                            }
-                        }
-                        r = new Report(9152);
-                        r.subject = a.getId();
-                        r.add(a.getLocationName(loc));
-                        vDesc.add(r);
-                        break;
-                    }
-                    r = new Report(9150);
-                    r.subject = a.getId();
-                    ArrayList<Mounted> weapons = new ArrayList<Mounted>();
-                    for (Mounted weap : a.getWeaponList()) {
-                        if ((weap.getLocation() == loc) && !weap.isDestroyed()
-                            && weap.getType().isHittable()) {
-                            weapons.add(weap);
-                        }
-                    }
-                    // add in in hittable misc equipment
-                    for (Mounted misc : a.getMisc()) {
-                        if (misc.getType().isHittable()
-                            && (misc.getLocation() == loc)
-                            && !misc.isDestroyed()) {
-                            weapons.add(misc);
-                        }
-                    }
-                    if (weapons.size() > 0) {
-                        Mounted weapon = weapons.get(Compute.randomInt(weapons
-                                                                               .size()));
-                        // possibly check for an ammo explosion
-                        // don't allow ammo explosions on fighter squadrons
-                        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
-                            && !(a instanceof FighterSquadron)
-                            && (weapon.getType() instanceof WeaponType)) {
-                            // does it use Ammo?
-                            WeaponType wtype = (WeaponType) weapon.getType();
-                            if (wtype.getAmmoType() != AmmoType.T_NA) {
-                                Mounted m = weapon.getLinked();
-                                int ammoroll = Compute.d6(2);
-                                if (ammoroll >= 10) {
-                                    r = new Report(9151);
-                                    r.subject = a.getId();
-                                    r.add(m.getName());
-                                    r.newlines = 0;
-                                    vDesc.add(r);
-                                    vDesc.addAll(explodeEquipment(a, loc, m));
-                                    break;
-                                }
-                            }
-                        }
-                        r.add(weapon.getName());
-                        vDesc.add(r);
-                        // explosive weapons e.g. gauss now explode
-                        if (weapon.getType().isExplosive(weapon) && !weapon.isHit()
-                            && !weapon.isDestroyed()) {
-                            vDesc.addAll(explodeEquipment(a, loc, weapon));
-                        }
-                        weapon.setHit(true);
-                        //Taharqa: We should also damage the critical slot, or
-                        //MM and MHQ won't remember that this weapon is damaged on the MUL
-                        //file
-                        for (int i = 0; i < a.getNumberOfCriticals(loc); i++) {
-                            CriticalSlot slot1 = a.getCritical(loc, i);
-                            if ((slot1 == null) ||
-                                    (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                                continue;
-                            }
-                            Mounted mounted = slot1.getMount();
-                            if (mounted.equals(weapon)) {
-                                a.hitAllCriticals(loc, i);
-                                break;
-                            }
-                        }
-                        //if this is a weapons bay then also hit all the other weapons
-                        for(int wId : weapon.getBayWeapons()) {
-                            Mounted bayWeap = a.getEquipment(wId);
-                            if(null != bayWeap) {
-                                bayWeap.setHit(true);
-                                //Taharqa: We should also damage the critical slot, or
-                                //MM and MHQ won't remember that this weapon is damaged on the MUL
-                                //file
-                                for (int i = 0; i < a.getNumberOfCriticals(loc); i++) {
-                                    CriticalSlot slot1 = a.getCritical(loc, i);
-                                    if ((slot1 == null) ||
-                                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                                        continue;
-                                    }
-                                    Mounted mounted = slot1.getMount();
-                                    if (mounted.equals(bayWeap)) {
-                                        a.hitAllCriticals(loc, i);
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        r = new Report(9155);
-                        r.subject = a.getId();
-                        vDesc.add(r);
-                    }
-                    break;
-                case Aero.CRIT_ENGINE:
-                    // engine hit
-                    r = new Report(9140);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    a.engineHitsThisPhase++;
-                    boolean engineExploded = checkEngineExplosion(a, vDesc, 1);
-                    a.setEngineHits(a.getEngineHits() + 1);
-                    if ((a.getEngineHits() >= a.getMaxEngineHits())
-                        || engineExploded) {
-                        // this engine hit puts the ASF out of commission
-                        vDesc.addAll(destroyEntity(a, "engine destruction", true,
-                                                   true));
-                        a.setSelfDestructing(false);
-                        a.setSelfDestructInitiated(false);
-                    }
-                    break;
-                case Aero.CRIT_LEFT_THRUSTER:
-                    // thruster hit
-                    r = new Report(9160);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    a.setLeftThrustHits(a.getLeftThrustHits() + 1);
-                    break;
-                case Aero.CRIT_RIGHT_THRUSTER:
-                    // thruster hit
-                    r = new Report(9160);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    a.setRightThrustHits(a.getRightThrustHits() + 1);
-                    break;
-                case Aero.CRIT_CARGO:
-                    // cargo hit
-                    // First what percentage of the cargo did the hit destroy?
-                    double percentDestroyed = 0.0;
-                    double mult = 2.0;
-                    if (a.isLargeCraft() && a.isClan()
-                        && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
-                        mult = 4.0;
-                    }
-                    if (damageCaused > 0) {
-                        percentDestroyed = Math.min(
-                                damageCaused / (mult * a.getSI()), 1.0);
-                    }
-                    // did it hit cargo or units
-                    int roll = Compute.d6(1);
-                    if (roll < 4) {
-                        // cargo was hit
-                        // just report; no game effect
-                        r = new Report(9165);
-                        r.subject = a.getId();
-                        r.add((int) (percentDestroyed * 100));
-                        vDesc.add(r);
-                    } else {
-                        // units were hit
-                        // get a list of units
-                        Vector<Entity> passengers = en.getBayLoadedUnits();
-                        int unitsDestroyed = (int) Math.ceil(percentDestroyed
-                                                             * passengers.size());
-                        r = new Report(9166);
-                        r.subject = a.getId();
-                        r.add(unitsDestroyed);
-                        vDesc.add(r);
-                        while (unitsDestroyed > 0) {
-                            // redraw loaded units to make sure I don't get ones
-                            // already destroyed
-                            List<Entity> units = en.getLoadedUnits();
-                            if (units.size() > 0) {
-                                Entity target = units.get(Compute.randomInt(units
-                                                                                    .size()));
-                                vDesc.addAll(destroyEntity(target, "cargo damage",
-                                                           false, false));
-                            }
-                            unitsDestroyed--;
-                        }
-                    }
-                    break;
-                case Aero.CRIT_DOOR:
-                    // door hit
-                    // choose a random bay
-                    String bayType = en.damageBayDoor();
-                    if (!bayType.equals("none")) {
-                        r = new Report(9170);
-                        r.subject = a.getId();
-                        r.add(bayType);
-                        vDesc.add(r);
-                    } else {
-                        r = new Report(9171);
-                        r.subject = a.getId();
-                        vDesc.add(r);
-                    }
-                    break;
-                case Aero.CRIT_DOCK_COLLAR:
-                    // docking collar hit
-                    // different effect for dropships and jumpships
-                    if (en instanceof Dropship) {
-                        Dropship ds = (Dropship) en;
-                        ds.setDamageDockCollar(true);
-                        r = new Report(9175);
-                        r.subject = a.getId();
-                        vDesc.add(r);
-                    }
-                    if (en instanceof Jumpship) {
-                        // damage the docking collar
-                        if (en.damageDockCollar()) {
-                            r = new Report(9176);
-                            r.subject = a.getId();
-                            vDesc.add(r);
-                        } else {
-                            r = new Report(9177);
-                            r.subject = a.getId();
-                            vDesc.add(r);
-                        }
-                    }
-                    break;
-                case Aero.CRIT_KF_BOOM:
-                    // KF boom hit
-                    // no real effect yet
-                    r = new Report(9180);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    break;
-                case Aero.CRIT_CIC:
-                    if (js == null) {
-                        break;
-                    }
-                    // CIC hit
-                    r = new Report(9185);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    js.setCICHits(js.getCICHits() + 1);
-                    break;
-                case Aero.CRIT_KF_DRIVE:
-                    if (js == null) {
-                        break;
-                    }
-                    // KF Drive hit
-                    r = new Report(9190);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    js.setKFIntegrity(js.getKFIntegrity() - 1);
-                    break;
-                case Aero.CRIT_GRAV_DECK:
-                    if (js == null) {
-                        break;
-                    }
-                    // Grave Deck hit
-                    r = new Report(9195);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    break;
-                case Aero.CRIT_LIFE_SUPPORT:
-                    // Life Support hit
-                    a.setLifeSupport(false);
-                    r = new Report(9196);
-                    r.subject = a.getId();
-                    vDesc.add(r);
-                    break;
-            }
+            vDesc.addAll(applyAeroCritical((Aero)en, loc, cs, damageCaused, isCapital));
         } else if (en instanceof BattleArmor) {
             // We might as well handle this here.
             // However, we're considering a crit against BA as a "crew kill".
@@ -24812,445 +23983,12 @@ public class Server implements Runnable {
             // Handle critical hits on system slots.
             cs.setHit(true);
             if (en instanceof Protomech) {
-                int numHit = ((Protomech) en).getCritsHit(loc);
-                if ((cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_A)
-                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_B)
-                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_C)
-                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_D)
-                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_E)
-                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_F)) {
-                    r = new Report(6225);
-                    r.subject = en.getId();
-                    r.indent(3);
-                    r.add(Protomech.systemNames[cs.getIndex()]);
-                    vDesc.addElement(r);
-                }
-                switch (cs.getIndex()) {
-                    case Protomech.SYSTEM_HEADCRIT:
-                        if (2 == numHit) {
-                            r = new Report(6230);
-                            r.subject = en.getId();
-                            vDesc.addElement(r);
-                            en.destroyLocation(loc);
-                        }
-                        break;
-                    case Protomech.SYSTEM_ARMCRIT:
-                        if (2 == numHit) {
-                            r = new Report(6235);
-                            r.subject = en.getId();
-                            vDesc.addElement(r);
-                            en.destroyLocation(loc);
-                        }
-                        break;
-                    case Protomech.SYSTEM_LEGCRIT:
-                        if (3 == numHit) {
-                            r = new Report(6240);
-                            r.subject = en.getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                            en.destroyLocation(loc);
-                        }
-                        break;
-                    case Protomech.SYSTEM_TORSOCRIT:
-                        if (3 == numHit) {
-                            vDesc.addAll(destroyEntity(en, "torso destruction"));
-                        }
-                        // Torso weapon hits are secondary effects and
-                        // do not occur when loading from a scenario.
-                        else if (secondaryEffects) {
-                            int tweapRoll = Compute.d6(1);
-                            CriticalSlot newSlot = null;
-
-                            switch (tweapRoll) {
-                                case 1:
-                                    if (((Protomech) en).isQuad()) {
-                                        newSlot = new CriticalSlot(
-                                                CriticalSlot.TYPE_SYSTEM,
-                                                Protomech.SYSTEM_TORSO_WEAPON_A);
-                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE,
-                                                                      newSlot, secondaryEffects,
-                                                                      damageCaused, isCapital));
-                                        break;
-                                    }
-                                case 2:
-                                    if (((Protomech) en).isQuad()) {
-                                        newSlot = new CriticalSlot(
-                                                CriticalSlot.TYPE_SYSTEM,
-                                                Protomech.SYSTEM_TORSO_WEAPON_B);
-                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE,
-                                                                      newSlot, secondaryEffects,
-                                                                      damageCaused, isCapital));
-                                        break;
-                                    }
-                                    newSlot = new CriticalSlot(
-                                            CriticalSlot.TYPE_SYSTEM,
-                                            Protomech.SYSTEM_TORSO_WEAPON_A);
-                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE,
-                                                                  newSlot, secondaryEffects, damageCaused,
-                                                                  isCapital));
-                                    break;
-                                case 3:
-                                    if (((Protomech) en).isQuad()) {
-                                        newSlot = new CriticalSlot(
-                                                CriticalSlot.TYPE_SYSTEM,
-                                                Protomech.SYSTEM_TORSO_WEAPON_C);
-                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE,
-                                                                      newSlot, secondaryEffects,
-                                                                      damageCaused, isCapital));
-                                        break;
-                                    }
-                                case 4:
-                                    if (((Protomech) en).isQuad()) {
-                                        newSlot = new CriticalSlot(
-                                                CriticalSlot.TYPE_SYSTEM,
-                                                Protomech.SYSTEM_TORSO_WEAPON_D);
-                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE,
-                                                                      newSlot, secondaryEffects,
-                                                                      damageCaused, isCapital));
-                                        break;
-                                    }
-                                    newSlot = new CriticalSlot(
-                                            CriticalSlot.TYPE_SYSTEM,
-                                            Protomech.SYSTEM_TORSO_WEAPON_B);
-                                    vDesc.addAll(applyCriticalHit(en, Entity.NONE,
-                                                                  newSlot, secondaryEffects, damageCaused,
-                                                                  isCapital));
-                                    break;
-                                case 5:
-                                    if (en.getWeight() > 9) {
-                                        if (((Protomech) en).isQuad()) {
-                                            newSlot = new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM,
-                                                    Protomech.SYSTEM_TORSO_WEAPON_E);
-                                            vDesc.addAll(applyCriticalHit(en,
-                                                                          Entity.NONE, newSlot,
-                                                                          secondaryEffects, damageCaused,
-                                                                          isCapital));
-                                            break;
-                                        }
-                                        newSlot = new CriticalSlot(
-                                                CriticalSlot.TYPE_SYSTEM,
-                                                Protomech.SYSTEM_TORSO_WEAPON_C);
-                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE,
-                                                                      newSlot, secondaryEffects,
-                                                                      damageCaused, isCapital));
-                                        break;
-                                    }
-                                case 6:
-                                    if (en.getWeight() > 9) {
-                                        if (((Protomech) en).isQuad()) {
-                                            newSlot = new CriticalSlot(
-                                                    CriticalSlot.TYPE_SYSTEM,
-                                                    Protomech.SYSTEM_TORSO_WEAPON_F);
-                                            vDesc.addAll(applyCriticalHit(en,
-                                                                          Entity.NONE, newSlot,
-                                                                          secondaryEffects, damageCaused,
-                                                                          isCapital));
-                                            break;
-                                        }
-                                        newSlot = new CriticalSlot(
-                                                CriticalSlot.TYPE_SYSTEM,
-                                                Protomech.SYSTEM_TORSO_WEAPON_C);
-                                        vDesc.addAll(applyCriticalHit(en, Entity.NONE,
-                                                                      newSlot, secondaryEffects,
-                                                                      damageCaused, isCapital));
-                                        break;
-                                    }
-                            }
-                        }
-                        break;
-                    case Protomech.SYSTEM_TORSO_WEAPON_A:
-                        Mounted weaponA = ((Protomech) en).getTorsoWeapon(cs
-                                                                                  .getIndex());
-                        if (null != weaponA) {
-                            weaponA.setHit(true);
-                            r = new Report(6245);
-                            r.subject = en.getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        }
-                        break;
-                    case Protomech.SYSTEM_TORSO_WEAPON_B:
-                        Mounted weaponB = ((Protomech) en).getTorsoWeapon(cs
-                                                                                  .getIndex());
-                        if (null != weaponB) {
-                            weaponB.setHit(true);
-                            r = new Report(6250);
-                            r.subject = en.getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        }
-                        break;
-                    case Protomech.SYSTEM_TORSO_WEAPON_C:
-                        Mounted weaponC = ((Protomech) en).getTorsoWeapon(cs
-                                                                                  .getIndex());
-                        if (null != weaponC) {
-                            weaponC.setHit(true);
-                            r = new Report(6245);
-                            r.subject = en.getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        }
-                        break;
-                    case Protomech.SYSTEM_TORSO_WEAPON_D:
-                        Mounted weaponD = ((Protomech) en).getTorsoWeapon(cs
-                                                                                  .getIndex());
-                        if (null != weaponD) {
-                            weaponD.setHit(true);
-                            r = new Report(6250);
-                            r.subject = en.getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        }
-                        break;
-                    case Protomech.SYSTEM_TORSO_WEAPON_E:
-                        Mounted weaponE = ((Protomech) en).getTorsoWeapon(cs
-                                                                                  .getIndex());
-                        if (null != weaponE) {
-                            weaponE.setHit(true);
-                            r = new Report(6245);
-                            r.subject = en.getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        }
-                        break;
-                    case Protomech.SYSTEM_TORSO_WEAPON_F:
-                        Mounted weaponF = ((Protomech) en).getTorsoWeapon(cs
-                                                                                  .getIndex());
-                        if (null != weaponF) {
-                            weaponF.setHit(true);
-                            r = new Report(6250);
-                            r.subject = en.getId();
-                            r.newlines = 0;
-                            vDesc.addElement(r);
-                        }
-                        break;
-                } // End switch( cs.getType() )
-
-                // Shaded hits cause pilot damage.
-                if (((Protomech) en).shaded(loc, numHit)) {
-                    // Destroyed Protomech sections have
-                    // already damaged the pilot.
-                    int pHits = Protomech.POSSIBLE_PILOT_DAMAGE[loc]
-                                - ((Protomech) en).getPilotDamageTaken(loc);
-                    if (Math.min(1, pHits) > 0) {
-                        Report.addNewline(vDesc);
-                        vDesc.addAll(damageCrew(en, 1));
-                        pHits = 1 + ((Protomech) en).getPilotDamageTaken(loc);
-                        ((Protomech) en).setPilotDamageTaken(loc, pHits);
-                    }
-                } // End have-shaded-hit
-
-            } // End entity-is-protomech
-            else {
-                r = new Report(6225);
-                r.subject = en.getId();
-                r.indent(3);
-                r.add(((Mech) en).getSystemName(cs.getIndex()));
-                vDesc.addElement(r);
-                switch (cs.getIndex()) {
-                    case Mech.SYSTEM_COCKPIT:
-                        // Lets auto-eject if we can!
-                        if (en instanceof Mech) {
-                            Mech mech = (Mech) en;
-                            if (game.getOptions().booleanOption(
-                                    OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
-                                if (mech.isAutoEject()
-                                    && (!game.getOptions().booleanOption(
-                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
-                                                                            .getOptions().booleanOption(
-                                                OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
-                                                                            .isCondEjectHeadshot()))) {
-                                    vDesc.addAll(ejectEntity(en, true, true));
-                                }
-                            }
-                        }
-                        
-                        //First check whether this hit takes out the whole crew; for multi-crew cockpits
-                        //we need to check the other critical positions (if any).
-                        boolean allDead = true;
-                        int crewSlot = ((Mech)en).getCrewForCockpitSlot(loc, cs);
-                        if (crewSlot >= 0) {
-                            for (int i = 0; i < en.getCrew().getSlotCount(); i++) {
-                                if (i != crewSlot && !en.getCrew().isDead(i) && !en.getCrew().isMissing(i)) {
-                                    allDead = false;
-                                }
-                            }
-                        }
-                        if (allDead) {
-                            // Don't kill a pilot multiple times.
-                            if (Crew.DEATH > en.getCrew().getHits()) {
-                                // Single pilot or tripod cockpit; all crew are killed.
-                                en.getCrew().setDoomed(true);
-                                Report.addNewline(vDesc);
-                                vDesc.addAll(destroyEntity(en, "pilot death", true));
-                            }
-                        } else if (!en.getCrew().isMissing(crewSlot)){
-                            boolean wasPilot = en.getCrew().getCurrentPilotIndex() == crewSlot;
-                            boolean wasGunner = en.getCrew().getCurrentGunnerIndex() == crewSlot;
-                            en.getCrew().setDead(true, crewSlot);
-                            r = new Report(6027);
-                            r.subject = en.getId();
-                            r.indent(2);
-                            r.add(en.getCrew().getCrewType().getRoleName(crewSlot));
-                            r.addDesc(en);
-                            r.add(en.getCrew().getName(crewSlot));
-                            vDesc.addElement(r);
-                            r = createCrewTakeoverReport(en, crewSlot, wasPilot, wasGunner);
-                            if (null != r) {
-                                vDesc.add(r);
-                            }
-                        }
-
-                        break;
-                    case Mech.SYSTEM_ENGINE:
-                        // if the slot is missing, the location was previously
-                        // destroyedd and the enginehit was then counted already
-                        if (!cs.isMissing()) {
-                            en.engineHitsThisPhase++;
-                        }
-                        int numEngineHits = en.getEngineHits();
-                        boolean engineExploded = checkEngineExplosion(en, vDesc,
-                                                                      numEngineHits);
-                        int hitsToDestroy = 3;
-                        if ((en instanceof Mech)
-                            && ((Mech) en).isSuperHeavy() && en.hasEngine()
-                            && (en.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
-                            hitsToDestroy = 2;
-                        }
-
-                        if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
-                            // third engine hit
-                            vDesc.addAll(destroyEntity(en, "engine destruction"));
-                            if (game.getOptions()
-                                    .booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
-                                vDesc.addAll(abandonEntity(en));
-                            }
-                            en.setSelfDestructing(false);
-                            en.setSelfDestructInitiated(false);
-                        }
-                        break;
-                    case Mech.SYSTEM_GYRO:
-                        int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                          Mech.SYSTEM_GYRO, loc);
-                        if (en.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
-                            gyroHits++;
-                        }
-                        switch (gyroHits) {
-                            case 3:
-                                // HD 3 hits, standard 2 hits
-                                game.addPSR(new PilotingRollData(en.getId(),
-                                                                 TargetRoll.AUTOMATIC_FAIL, 1, "gyro destroyed"));
-                                // Gyro destroyed entities may not be hull down
-                                en.setHullDown(false);
-                                break;
-                            case 2:
-                                // HD 2 hits, standard 1 hit
-                                game.addPSR(new PilotingRollData(en.getId(), 3,
-                                                                 "gyro hit"));
-                                break;
-                            case 1:
-                                // HD 1 hit
-                                game.addPSR(new PilotingRollData(en.getId(), 2,
-                                                                 "gyro hit"));
-                                break;
-                            default:
-                                // ignore if >4 hits (don't over do it, the auto
-                                // fail
-                                // already happened.)
-                        }
-                        break;
-                    case Mech.ACTUATOR_UPPER_LEG:
-                    case Mech.ACTUATOR_LOWER_LEG:
-                    case Mech.ACTUATOR_FOOT:
-                        // leg/foot actuator piloting roll
-                        game.addPSR(new PilotingRollData(en.getId(), 1,
-                                                         "leg/foot actuator hit"));
-                        break;
-                    case Mech.ACTUATOR_HIP:
-                        // hip piloting roll
-                        game.addPSR(new PilotingRollData(en.getId(), 2,
-                                                         "hip actuator hit"));
-                        break;
-                }
-
-            } // End entity-is-mek
-
-        } // End crit-on-system-slot
-
-        // Handle critical hits on equipment slots.
-        else if (CriticalSlot.TYPE_EQUIPMENT == cs.getType()) {
-            cs.setHit(true);
-            Mounted mounted = cs.getMount();
-            EquipmentType eqType = mounted.getType();
-            boolean hitBefore = mounted.isHit();
-
-            r = new Report(6225);
-            r.subject = en.getId();
-            r.indent(3);
-            r.add(mounted.getDesc());
-            vDesc.addElement(r);
-
-            // Shield objects are not useless when they take one crit.
-            // Shields can be critted and still be usable.
-            if ((eqType instanceof MiscType) && ((MiscType) eqType).isShield()) {
-                mounted.setHit(false);
+                vDesc.addAll(applyProtomechCritical((Protomech)en, loc, cs, secondaryEffects, damageCaused, isCapital));
             } else {
-                mounted.setHit(true);
+                vDesc.addAll(applyMechSystemCritical(en, loc, cs));
             }
-
-            if ((eqType instanceof MiscType)
-                    && eqType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
-                ((Mech)en).setHasDamagedCoolantSystem(true);
-            }
-
-            if ((eqType instanceof MiscType)
-                && eqType.hasFlag(MiscType.F_HARJEL)) {
-                vDesc.addAll(breachLocation(en, loc, null, true));
-            }
-
-            // HarJel II/III hits trigger another possible critical hit on
-            // the same location
-            // it's like an ammunition explosion---a secondary effect
-            if (secondaryEffects && (eqType instanceof MiscType)
-                && (eqType.hasFlag(MiscType.F_HARJEL_II)
-                || eqType.hasFlag(MiscType.F_HARJEL_III))
-                && !hitBefore) {
-                r = new Report(9852);
-                r.subject = en.getId();
-                r.indent(2);
-                vDesc.addElement(r);
-                vDesc.addAll(criticalEntity(en, loc, false, 0, 0));
-            }
-
-            // If the item is the ECM suite of a Mek Stealth system
-            // then it's destruction turns off the stealth.
-            if (!hitBefore && (eqType instanceof MiscType)
-                && eqType.hasFlag(MiscType.F_ECM)
-                && (mounted.getLinkedBy() != null)) {
-                Mounted stealth = mounted.getLinkedBy();
-                r = new Report(6255);
-                r.subject = en.getId();
-                r.indent(2);
-                r.add(stealth.getType().getName());
-                vDesc.addElement(r);
-                stealth.setMode("Off");
-            }
-
-            // Handle equipment explosions.
-            // Equipment explosions are secondary effects and
-            // do not occur when loading from a scenario.
-            if (((secondaryEffects && eqType.isExplosive(mounted))
-                 || mounted.isHotLoaded() || (mounted.hasChargedCapacitor() != 0))
-                && !hitBefore) {
-                vDesc.addAll(explodeEquipment(en, loc, mounted));
-            }
-
-            // Make sure that ammo in this slot is exhaused.
-            if (mounted.getBaseShotsLeft() > 0) {
-                mounted.setShotsLeft(0);
-            }
-
+        } else if (CriticalSlot.TYPE_EQUIPMENT == cs.getType()) {
+            vDesc.addAll(applyEquipmentCritical(en, loc, cs, secondaryEffects));
         } // End crit-on-equipment-slot
         // mechs with TSM hit by anti-tsm missiles this round get another
         // crit
@@ -25289,6 +24027,1348 @@ public class Server implements Runnable {
 
         // Return the results of the damage.
         return vDesc;
+    }
+
+    /**
+     * Apply a single critical hit to an equipment slot.
+     *
+     * @param en               the <code>Entity</code> that is being damaged. This value may
+     *                         not be <code>null</code>.
+     * @param loc              the <code>int</code> location of critical hit.
+     * @param cs               the <code>CriticalSlot</code> being damaged.
+     * @param secondaryEffects the <code>boolean</code> flag that indicates whether to allow
+     *                         critical hits to cause secondary effects (such as triggering
+     *                         an ammo explosion, sending hovercraft to watery graves, or
+     *                         damaging Protomech torso weapons). This value is normally
+     *                         <code>true</code>, but it will be <code>false</code> when the
+     *                         hit is being applied from a saved game or scenario.
+     */
+    private Vector<Report> applyEquipmentCritical(Entity en, int loc,
+            CriticalSlot cs, boolean secondaryEffects) {
+        Vector<Report> reports = new Vector<>();
+        Report r;
+        cs.setHit(true);
+        Mounted mounted = cs.getMount();
+        EquipmentType eqType = mounted.getType();
+        boolean hitBefore = mounted.isHit();
+
+        r = new Report(6225);
+        r.subject = en.getId();
+        r.indent(3);
+        r.add(mounted.getDesc());
+        reports.addElement(r);
+
+        // Shield objects are not useless when they take one crit.
+        // Shields can be critted and still be usable.
+        if ((eqType instanceof MiscType) && ((MiscType) eqType).isShield()) {
+            mounted.setHit(false);
+        } else {
+            mounted.setHit(true);
+        }
+
+        if ((eqType instanceof MiscType)
+                && eqType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+            ((Mech)en).setHasDamagedCoolantSystem(true);
+        }
+
+        if ((eqType instanceof MiscType)
+            && eqType.hasFlag(MiscType.F_HARJEL)) {
+            reports.addAll(breachLocation(en, loc, null, true));
+        }
+
+        // HarJel II/III hits trigger another possible critical hit on
+        // the same location
+        // it's like an ammunition explosion---a secondary effect
+        if (secondaryEffects && (eqType instanceof MiscType)
+            && (eqType.hasFlag(MiscType.F_HARJEL_II)
+            || eqType.hasFlag(MiscType.F_HARJEL_III))
+            && !hitBefore) {
+            r = new Report(9852);
+            r.subject = en.getId();
+            r.indent(2);
+            reports.addElement(r);
+            reports.addAll(criticalEntity(en, loc, false, 0, 0));
+        }
+
+        // If the item is the ECM suite of a Mek Stealth system
+        // then it's destruction turns off the stealth.
+        if (!hitBefore && (eqType instanceof MiscType)
+            && eqType.hasFlag(MiscType.F_ECM)
+            && (mounted.getLinkedBy() != null)) {
+            Mounted stealth = mounted.getLinkedBy();
+            r = new Report(6255);
+            r.subject = en.getId();
+            r.indent(2);
+            r.add(stealth.getType().getName());
+            reports.addElement(r);
+            stealth.setMode("Off");
+        }
+
+        // Handle equipment explosions.
+        // Equipment explosions are secondary effects and
+        // do not occur when loading from a scenario.
+        if (((secondaryEffects && eqType.isExplosive(mounted))
+             || mounted.isHotLoaded() || (mounted.hasChargedCapacitor() != 0))
+            && !hitBefore) {
+            reports.addAll(explodeEquipment(en, loc, mounted));
+        }
+
+        // Make sure that ammo in this slot is exhaused.
+        if (mounted.getBaseShotsLeft() > 0) {
+            mounted.setShotsLeft(0);
+        }
+        return reports;
+    }
+
+    /**
+     * Apply a single critical hit to a Mech system.
+     *
+     * @param en               the <code>Entity</code> that is being damaged. This value may
+     *                         not be <code>null</code>.
+     * @param loc              the <code>int</code> location of critical hit.
+     * @param cs               the <code>CriticalSlot</code> being damaged. This value may
+     *                         not be <code>null</code>.
+     */
+    private Vector<Report> applyMechSystemCritical(Entity en, int loc, CriticalSlot cs) {
+        Vector<Report> reports = new Vector<>();
+        Report r;
+        r = new Report(6225);
+        r.subject = en.getId();
+        r.indent(3);
+        r.add(((Mech) en).getSystemName(cs.getIndex()));
+        reports.addElement(r);
+        switch (cs.getIndex()) {
+            case Mech.SYSTEM_COCKPIT:
+                // Lets auto-eject if we can!
+                if (en instanceof Mech) {
+                    Mech mech = (Mech) en;
+                    if (game.getOptions().booleanOption(
+                            OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
+                        if (mech.isAutoEject()
+                            && (!game.getOptions().booleanOption(
+                                OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
+                                                                    .getOptions().booleanOption(
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
+                                                                    .isCondEjectHeadshot()))) {
+                            reports.addAll(ejectEntity(en, true, true));
+                        }
+                    }
+                }
+                
+                //First check whether this hit takes out the whole crew; for multi-crew cockpits
+                //we need to check the other critical positions (if any).
+                boolean allDead = true;
+                int crewSlot = ((Mech)en).getCrewForCockpitSlot(loc, cs);
+                if (crewSlot >= 0) {
+                    for (int i = 0; i < en.getCrew().getSlotCount(); i++) {
+                        if (i != crewSlot && !en.getCrew().isDead(i) && !en.getCrew().isMissing(i)) {
+                            allDead = false;
+                        }
+                    }
+                }
+                if (allDead) {
+                    // Don't kill a pilot multiple times.
+                    if (Crew.DEATH > en.getCrew().getHits()) {
+                        // Single pilot or tripod cockpit; all crew are killed.
+                        en.getCrew().setDoomed(true);
+                        Report.addNewline(reports);
+                        reports.addAll(destroyEntity(en, "pilot death", true));
+                    }
+                } else if (!en.getCrew().isMissing(crewSlot)){
+                    boolean wasPilot = en.getCrew().getCurrentPilotIndex() == crewSlot;
+                    boolean wasGunner = en.getCrew().getCurrentGunnerIndex() == crewSlot;
+                    en.getCrew().setDead(true, crewSlot);
+                    r = new Report(6027);
+                    r.subject = en.getId();
+                    r.indent(2);
+                    r.add(en.getCrew().getCrewType().getRoleName(crewSlot));
+                    r.addDesc(en);
+                    r.add(en.getCrew().getName(crewSlot));
+                    reports.addElement(r);
+                    r = createCrewTakeoverReport(en, crewSlot, wasPilot, wasGunner);
+                    if (null != r) {
+                        reports.add(r);
+                    }
+                }
+
+                break;
+            case Mech.SYSTEM_ENGINE:
+                // if the slot is missing, the location was previously
+                // destroyedd and the enginehit was then counted already
+                if (!cs.isMissing()) {
+                    en.engineHitsThisPhase++;
+                }
+                int numEngineHits = en.getEngineHits();
+                boolean engineExploded = checkEngineExplosion(en, reports,
+                                                              numEngineHits);
+                int hitsToDestroy = 3;
+                if ((en instanceof Mech)
+                    && ((Mech) en).isSuperHeavy() && en.hasEngine()
+                    && (en.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
+                    hitsToDestroy = 2;
+                }
+
+                if (!engineExploded && (numEngineHits >= hitsToDestroy)) {
+                    // third engine hit
+                    reports.addAll(destroyEntity(en, "engine destruction"));
+                    if (game.getOptions()
+                            .booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
+                        reports.addAll(abandonEntity(en));
+                    }
+                    en.setSelfDestructing(false);
+                    en.setSelfDestructInitiated(false);
+                }
+                break;
+            case Mech.SYSTEM_GYRO:
+                int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                                  Mech.SYSTEM_GYRO, loc);
+                if (en.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
+                    gyroHits++;
+                }
+                switch (gyroHits) {
+                    case 3:
+                        // HD 3 hits, standard 2 hits
+                        game.addPSR(new PilotingRollData(en.getId(),
+                                                         TargetRoll.AUTOMATIC_FAIL, 1, "gyro destroyed"));
+                        // Gyro destroyed entities may not be hull down
+                        en.setHullDown(false);
+                        break;
+                    case 2:
+                        // HD 2 hits, standard 1 hit
+                        game.addPSR(new PilotingRollData(en.getId(), 3,
+                                                         "gyro hit"));
+                        break;
+                    case 1:
+                        // HD 1 hit
+                        game.addPSR(new PilotingRollData(en.getId(), 2,
+                                                         "gyro hit"));
+                        break;
+                    default:
+                        // ignore if >4 hits (don't over do it, the auto
+                        // fail
+                        // already happened.)
+                }
+                break;
+            case Mech.ACTUATOR_UPPER_LEG:
+            case Mech.ACTUATOR_LOWER_LEG:
+            case Mech.ACTUATOR_FOOT:
+                // leg/foot actuator piloting roll
+                game.addPSR(new PilotingRollData(en.getId(), 1,
+                                                 "leg/foot actuator hit"));
+                break;
+            case Mech.ACTUATOR_HIP:
+                // hip piloting roll
+                game.addPSR(new PilotingRollData(en.getId(), 2,
+                                                 "hip actuator hit"));
+                break;
+        }
+        return reports;
+    }
+
+    /**
+     * Apply a single critical hit to a Protomech.
+     *
+     * @param pm               the <code>Protomech</code> that is being damaged. This value may
+     *                         not be <code>null</code>.
+     * @param loc              the <code>int</code> location of critical hit. This value may
+     *                         be <code>Entity.NONE</code> for hits to a <code>Protomech</code>
+     *                         torso weapon.
+     * @param cs               the <code>CriticalSlot</code> being damaged. This value may
+     *                         not be <code>null</code>.
+     * @param secondaryEffects the <code>boolean</code> flag that indicates whether to allow
+     *                         critical hits to cause secondary effects (such as damaging
+     *                         Protomech torso weapons). This value is normally
+     *                         <code>true</code>, but it will be <code>false</code> when the
+     *                         hit is being applied from a saved game or scenario.
+     * @param damageCaused     the amount of damage causing this critical.
+     * @param isCapital        whether it was capital scale damage that caused critical
+     */
+    private Vector<Report> applyProtomechCritical(Protomech pm, int loc, CriticalSlot cs, boolean secondaryEffects,
+            int damageCaused, boolean isCapital) {
+        Vector<Report> reports = new Vector<>();
+        Report r;
+        int numHit = pm.getCritsHit(loc);
+        if ((cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_A)
+            && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_B)
+            && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_C)
+            && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_D)
+            && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_E)
+            && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_F)) {
+            r = new Report(6225);
+            r.subject = pm.getId();
+            r.indent(3);
+            r.add(Protomech.systemNames[cs.getIndex()]);
+            reports.addElement(r);
+        }
+        switch (cs.getIndex()) {
+            case Protomech.SYSTEM_HEADCRIT:
+                if (2 == numHit) {
+                    r = new Report(6230);
+                    r.subject = pm.getId();
+                    reports.addElement(r);
+                    pm.destroyLocation(loc);
+                }
+                break;
+            case Protomech.SYSTEM_ARMCRIT:
+                if (2 == numHit) {
+                    r = new Report(6235);
+                    r.subject = pm.getId();
+                    reports.addElement(r);
+                    pm.destroyLocation(loc);
+                }
+                break;
+            case Protomech.SYSTEM_LEGCRIT:
+                if (3 == numHit) {
+                    r = new Report(6240);
+                    r.subject = pm.getId();
+                    r.newlines = 0;
+                    reports.addElement(r);
+                    pm.destroyLocation(loc);
+                }
+                break;
+            case Protomech.SYSTEM_TORSOCRIT:
+                if (3 == numHit) {
+                    reports.addAll(destroyEntity(pm, "torso destruction"));
+                }
+                // Torso weapon hits are secondary effects and
+                // do not occur when loading from a scenario.
+                else if (secondaryEffects) {
+                    int tweapRoll = Compute.d6(1);
+                    CriticalSlot newSlot = null;
+
+                    switch (tweapRoll) {
+                        case 1:
+                            if (pm.isQuad()) {
+                                newSlot = new CriticalSlot(
+                                        CriticalSlot.TYPE_SYSTEM,
+                                        Protomech.SYSTEM_TORSO_WEAPON_A);
+                                reports.addAll(applyCriticalHit(pm, Entity.NONE,
+                                                              newSlot, secondaryEffects,
+                                                              damageCaused, isCapital));
+                                break;
+                            }
+                        case 2:
+                            if (pm.isQuad()) {
+                                newSlot = new CriticalSlot(
+                                        CriticalSlot.TYPE_SYSTEM,
+                                        Protomech.SYSTEM_TORSO_WEAPON_B);
+                                reports.addAll(applyCriticalHit(pm, Entity.NONE,
+                                                              newSlot, secondaryEffects,
+                                                              damageCaused, isCapital));
+                                break;
+                            }
+                            newSlot = new CriticalSlot(
+                                    CriticalSlot.TYPE_SYSTEM,
+                                    Protomech.SYSTEM_TORSO_WEAPON_A);
+                            reports.addAll(applyCriticalHit(pm, Entity.NONE,
+                                                          newSlot, secondaryEffects, damageCaused,
+                                                          isCapital));
+                            break;
+                        case 3:
+                            if (pm.isQuad()) {
+                                newSlot = new CriticalSlot(
+                                        CriticalSlot.TYPE_SYSTEM,
+                                        Protomech.SYSTEM_TORSO_WEAPON_C);
+                                reports.addAll(applyCriticalHit(pm, Entity.NONE,
+                                                              newSlot, secondaryEffects,
+                                                              damageCaused, isCapital));
+                                break;
+                            }
+                        case 4:
+                            if (pm.isQuad()) {
+                                newSlot = new CriticalSlot(
+                                        CriticalSlot.TYPE_SYSTEM,
+                                        Protomech.SYSTEM_TORSO_WEAPON_D);
+                                reports.addAll(applyCriticalHit(pm, Entity.NONE,
+                                                              newSlot, secondaryEffects,
+                                                              damageCaused, isCapital));
+                                break;
+                            }
+                            newSlot = new CriticalSlot(
+                                    CriticalSlot.TYPE_SYSTEM,
+                                    Protomech.SYSTEM_TORSO_WEAPON_B);
+                            reports.addAll(applyCriticalHit(pm, Entity.NONE,
+                                                          newSlot, secondaryEffects, damageCaused,
+                                                          isCapital));
+                            break;
+                        case 5:
+                            if (pm.getWeight() > 9) {
+                                if (pm.isQuad()) {
+                                    newSlot = new CriticalSlot(
+                                            CriticalSlot.TYPE_SYSTEM,
+                                            Protomech.SYSTEM_TORSO_WEAPON_E);
+                                    reports.addAll(applyCriticalHit(pm,
+                                                                  Entity.NONE, newSlot,
+                                                                  secondaryEffects, damageCaused,
+                                                                  isCapital));
+                                    break;
+                                }
+                                newSlot = new CriticalSlot(
+                                        CriticalSlot.TYPE_SYSTEM,
+                                        Protomech.SYSTEM_TORSO_WEAPON_C);
+                                reports.addAll(applyCriticalHit(pm, Entity.NONE,
+                                                              newSlot, secondaryEffects,
+                                                              damageCaused, isCapital));
+                                break;
+                            }
+                        case 6:
+                            if (pm.getWeight() > 9) {
+                                if (pm.isQuad()) {
+                                    newSlot = new CriticalSlot(
+                                            CriticalSlot.TYPE_SYSTEM,
+                                            Protomech.SYSTEM_TORSO_WEAPON_F);
+                                    reports.addAll(applyCriticalHit(pm,
+                                                                  Entity.NONE, newSlot,
+                                                                  secondaryEffects, damageCaused,
+                                                                  isCapital));
+                                    break;
+                                }
+                                newSlot = new CriticalSlot(
+                                        CriticalSlot.TYPE_SYSTEM,
+                                        Protomech.SYSTEM_TORSO_WEAPON_C);
+                                reports.addAll(applyCriticalHit(pm, Entity.NONE,
+                                                              newSlot, secondaryEffects,
+                                                              damageCaused, isCapital));
+                                break;
+                            }
+                    }
+                }
+                break;
+            case Protomech.SYSTEM_TORSO_WEAPON_A:
+                Mounted weaponA = pm.getTorsoWeapon(cs.getIndex());
+                if (null != weaponA) {
+                    weaponA.setHit(true);
+                    r = new Report(6245);
+                    r.subject = pm.getId();
+                    r.newlines = 0;
+                    reports.addElement(r);
+                }
+                break;
+            case Protomech.SYSTEM_TORSO_WEAPON_B:
+                Mounted weaponB = pm.getTorsoWeapon(cs.getIndex());
+                if (null != weaponB) {
+                    weaponB.setHit(true);
+                    r = new Report(6250);
+                    r.subject = pm.getId();
+                    r.newlines = 0;
+                    reports.addElement(r);
+                }
+                break;
+            case Protomech.SYSTEM_TORSO_WEAPON_C:
+                Mounted weaponC = pm.getTorsoWeapon(cs.getIndex());
+                if (null != weaponC) {
+                    weaponC.setHit(true);
+                    r = new Report(6245);
+                    r.subject = pm.getId();
+                    r.newlines = 0;
+                    reports.addElement(r);
+                }
+                break;
+            case Protomech.SYSTEM_TORSO_WEAPON_D:
+                Mounted weaponD = pm.getTorsoWeapon(cs.getIndex());
+                if (null != weaponD) {
+                    weaponD.setHit(true);
+                    r = new Report(6250);
+                    r.subject = pm.getId();
+                    r.newlines = 0;
+                    reports.addElement(r);
+                }
+                break;
+            case Protomech.SYSTEM_TORSO_WEAPON_E:
+                Mounted weaponE = pm.getTorsoWeapon(cs.getIndex());
+                if (null != weaponE) {
+                    weaponE.setHit(true);
+                    r = new Report(6245);
+                    r.subject = pm.getId();
+                    r.newlines = 0;
+                    reports.addElement(r);
+                }
+                break;
+            case Protomech.SYSTEM_TORSO_WEAPON_F:
+                Mounted weaponF = pm.getTorsoWeapon(cs.getIndex());
+                if (null != weaponF) {
+                    weaponF.setHit(true);
+                    r = new Report(6250);
+                    r.subject = pm.getId();
+                    r.newlines = 0;
+                    reports.addElement(r);
+                }
+                break;
+        } // End switch( cs.getType() )
+
+        // Shaded hits cause pilot damage.
+        if (pm.shaded(loc, numHit)) {
+            // Destroyed Protomech sections have
+            // already damaged the pilot.
+            int pHits = Protomech.POSSIBLE_PILOT_DAMAGE[loc]
+                        - pm.getPilotDamageTaken(loc);
+            if (Math.min(1, pHits) > 0) {
+                Report.addNewline(reports);
+                reports.addAll(damageCrew(pm, 1));
+                pHits = 1 + pm.getPilotDamageTaken(loc);
+                pm.setPilotDamageTaken(loc, pHits);
+            }
+        } // End have-shaded-hit
+        return reports;
+    }
+
+    /**
+     * Apply a single critical hit to an aerospace unit.
+     *
+     * @param aero             the <code>Aero</code> that is being damaged. This value may
+     *                         not be <code>null</code>.
+     * @param loc              the <code>int</code> location of critical hit.
+     * @param cs               the <code>CriticalSlot</code> being damaged. This value may
+     *                         not be <code>null</code>.
+     * @param damageCaused     the amount of damage causing this critical.
+     * @param isCapital        whether it was capital scale damage that caused critical
+     */
+    private Vector<Report> applyAeroCritical(Aero aero, int loc, CriticalSlot cs, int damageCaused, boolean isCapital) {
+        Vector<Report> reports = new Vector<>();
+        Report r;
+        Jumpship js = null;
+        if (aero instanceof Jumpship) {
+            js = (Jumpship)aero;
+        }
+
+        switch (cs.getIndex()) {
+            case Aero.CRIT_NONE:
+                // no effect
+                r = new Report(6005);
+                r.subject = aero.getId();
+                reports.add(r);
+                break;
+            case Aero.CRIT_FCS:
+                // Fire control system
+                r = new Report(9105);
+                r.subject = aero.getId();
+                reports.add(r);
+                aero.setFCSHits(aero.getFCSHits() + 1);
+                break;
+            case Aero.CRIT_SENSOR:
+                // sensors
+                r = new Report(6620);
+                r.subject = aero.getId();
+                reports.add(r);
+                aero.setSensorHits(aero.getSensorHits() + 1);
+                break;
+            case Aero.CRIT_AVIONICS:
+                // avionics
+                r = new Report(9110);
+                r.subject = aero.getId();
+                reports.add(r);
+                aero.setAvionicsHits(aero.getAvionicsHits() + 1);
+                if (aero.isPartOfFighterSquadron()) {
+                    game.addControlRoll(new PilotingRollData(
+                            aero.getTransportId(), 1, "avionics hit"));
+                } else if (aero.isCapitalFighter()) {
+                    game.addControlRoll(new PilotingRollData(aero.getId(), 1,
+                                                             "avionics hit"));
+                } else {
+                    game.addControlRoll(new PilotingRollData(aero.getId(), 0,
+                                                             "avionics hit"));
+                }
+                break;
+            case Aero.CRIT_CONTROL:
+                // force control roll
+                r = new Report(9115);
+                r.subject = aero.getId();
+                reports.add(r);
+                if (aero.isPartOfFighterSquadron()) {
+                    game.addControlRoll(new PilotingRollData(
+                            aero.getTransportId(), 1, "critical hit"));
+                } else if (aero.isCapitalFighter()) {
+                    game.addControlRoll(new PilotingRollData(aero.getId(), 1,
+                                                             "critical hit"));
+                } else {
+                    game.addControlRoll(new PilotingRollData(aero.getId(), 0,
+                                                             "critical hit"));
+                }
+                break;
+            case Aero.CRIT_FUEL_TANK:
+                // fuel tank
+                r = new Report(9120);
+                r.subject = aero.getId();
+                int boomTarget = 9;
+                if (aero.hasQuirk(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
+                    boomTarget = 7;
+                }
+                if (aero.isLargeCraft() && aero.isClan()
+                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
+                    boomTarget = 11;
+                }
+                // check for possible explosion
+                int fuelroll = Compute.d6(2);
+                if (fuelroll > boomTarget) {
+                    r.choose(true);
+                    reports.add(r);
+                    reports.addAll(destroyEntity(aero, "fuel explosion", false,
+                                               false));
+                } else {
+                    r.choose(false);
+                    reports.add(r);
+                }
+                break;
+            case Aero.CRIT_CREW:
+                // pilot hit
+                r = new Report(6650);
+                if (aero.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                    r = new Report(6651);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                    break;
+                } else if (aero.getCrew().getOptions()
+                             .booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+                    r = new Report(6652);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                    break;
+                }
+                if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
+                    r = new Report(9197);
+                }
+                if (aero.isLargeCraft() && aero.isClan()
+                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)
+                    && (aero.getIgnoredCrewHits() < 2)) {
+                    aero.setIgnoredCrewHits(aero.getIgnoredCrewHits() + 1);
+                    r = new Report(9198);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                    break;
+                }
+                r.subject = aero.getId();
+                reports.add(r);
+                reports.addAll(damageCrew(aero, 1));
+                // The pilot may have just expired.
+                if ((aero.getCrew().isDead() || aero.getCrew().isDoomed())
+                    && !aero.getCrew().isEjected()) {
+                    reports.addAll(destroyEntity(aero, "pilot death", true, true));
+                }
+                break;
+            case Aero.CRIT_GEAR:
+                // landing gear
+                r = new Report(9125);
+                r.subject = aero.getId();
+                reports.add(r);
+                aero.setGearHit(true);
+                break;
+            case Aero.CRIT_BOMB:
+                // bomb destroyed
+                // go through bomb list and choose one
+                ArrayList<Mounted> bombs = new ArrayList<Mounted>();
+                for (Mounted bomb : aero.getBombs()) {
+                    if (bomb.getType().isHittable()
+                        && (bomb.getHittableShotsLeft() > 0)) {
+                        bombs.add(bomb);
+                    }
+                }
+                if (bombs.size() > 0) {
+                    Mounted hitbomb = bombs
+                            .get(Compute.randomInt(bombs.size()));
+                    hitbomb.setShotsLeft(0);
+                    hitbomb.setDestroyed(true);
+                    r = new Report(9130);
+                    r.subject = aero.getId();
+                    r.add(hitbomb.getDesc());
+                    reports.add(r);
+                    // If we are part of a squadron, we should recalculate
+                    // the bomb salvo for the squadron
+                    if (aero.getTransportId() != Entity.NONE) {
+                        Entity e = game.getEntity(aero.getTransportId());
+                        if (e instanceof FighterSquadron) {
+                            ((FighterSquadron) e).computeSquadronBombLoadout();
+                        }
+                    }
+                } else {
+                    r = new Report(9131);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                }
+                break;
+            case Aero.CRIT_HEATSINK:
+                // heat sink hit
+                int sinksLost = 1;
+                if (isCapital) {
+                    sinksLost = 10;
+                }
+                r = new Report(9135);
+                r.subject = aero.getId();
+                r.add(sinksLost);
+                reports.add(r);
+                aero.setHeatSinks(Math.max(0, aero.getHeatSinks() - sinksLost));
+                break;
+            case Aero.CRIT_WEAPON_BROAD:
+                if (aero instanceof Warship) {
+                    if ((loc == Jumpship.LOC_ALS) || (loc == Jumpship.LOC_FLS)) {
+                        loc = Warship.LOC_LBS;
+                    } else if ((loc == Jumpship.LOC_ARS)
+                               || (loc == Jumpship.LOC_FRS)) {
+                        loc = Warship.LOC_RBS;
+                    }
+                }
+            case Aero.CRIT_WEAPON:
+                if (aero.isCapitalFighter()) {
+                    boolean destroyAll = false;
+                    if ((loc == Aero.LOC_NOSE) || (loc == Aero.LOC_AFT)) {
+                        destroyAll = true;
+                    }
+                    if (loc == Aero.LOC_WINGS) {
+                        if (aero.areWingsHit()) {
+                            destroyAll = true;
+                        } else {
+                            aero.setWingsHit(true);
+                        }
+                    }
+                    for (Mounted weap : aero.getWeaponList()) {
+                        if (weap.getLocation() == loc) {
+                            if (destroyAll) {
+                                weap.setHit(true);
+                            } else {
+                                weap.setNWeapons(weap.getNWeapons() / 2);
+                            }
+                        }
+                    }
+                    // also destroy any ECM or BAP in this location
+                    for (Mounted misc : aero.getMisc()) {
+                        if (misc.getType().hasFlag(MiscType.F_ECM)
+                            || misc.getType().hasFlag(MiscType.F_ANGEL_ECM)
+                            || misc.getType().hasFlag(MiscType.F_BAP)) {
+                            misc.setHit(true);
+                        }
+                    }
+                    r = new Report(9152);
+                    r.subject = aero.getId();
+                    r.add(aero.getLocationName(loc));
+                    reports.add(r);
+                    break;
+                }
+                r = new Report(9150);
+                r.subject = aero.getId();
+                ArrayList<Mounted> weapons = new ArrayList<Mounted>();
+                for (Mounted weap : aero.getWeaponList()) {
+                    if ((weap.getLocation() == loc) && !weap.isDestroyed()
+                        && weap.getType().isHittable()) {
+                        weapons.add(weap);
+                    }
+                }
+                // add in in hittable misc equipment
+                for (Mounted misc : aero.getMisc()) {
+                    if (misc.getType().isHittable()
+                        && (misc.getLocation() == loc)
+                        && !misc.isDestroyed()) {
+                        weapons.add(misc);
+                    }
+                }
+                if (weapons.size() > 0) {
+                    Mounted weapon = weapons.get(Compute.randomInt(weapons
+                                                                           .size()));
+                    // possibly check for an ammo explosion
+                    // don't allow ammo explosions on fighter squadrons
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
+                        && !(aero instanceof FighterSquadron)
+                        && (weapon.getType() instanceof WeaponType)) {
+                        // does it use Ammo?
+                        WeaponType wtype = (WeaponType) weapon.getType();
+                        if (wtype.getAmmoType() != AmmoType.T_NA) {
+                            Mounted m = weapon.getLinked();
+                            int ammoroll = Compute.d6(2);
+                            if (ammoroll >= 10) {
+                                r = new Report(9151);
+                                r.subject = aero.getId();
+                                r.add(m.getName());
+                                r.newlines = 0;
+                                reports.add(r);
+                                reports.addAll(explodeEquipment(aero, loc, m));
+                                break;
+                            }
+                        }
+                    }
+                    r.add(weapon.getName());
+                    reports.add(r);
+                    // explosive weapons e.g. gauss now explode
+                    if (weapon.getType().isExplosive(weapon) && !weapon.isHit()
+                        && !weapon.isDestroyed()) {
+                        reports.addAll(explodeEquipment(aero, loc, weapon));
+                    }
+                    weapon.setHit(true);
+                    //Taharqa: We should also damage the critical slot, or
+                    //MM and MHQ won't remember that this weapon is damaged on the MUL
+                    //file
+                    for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                        CriticalSlot slot1 = aero.getCritical(loc, i);
+                        if ((slot1 == null) ||
+                                (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                            continue;
+                        }
+                        Mounted mounted = slot1.getMount();
+                        if (mounted.equals(weapon)) {
+                            aero.hitAllCriticals(loc, i);
+                            break;
+                        }
+                    }
+                    //if this is a weapons bay then also hit all the other weapons
+                    for(int wId : weapon.getBayWeapons()) {
+                        Mounted bayWeap = aero.getEquipment(wId);
+                        if(null != bayWeap) {
+                            bayWeap.setHit(true);
+                            //Taharqa: We should also damage the critical slot, or
+                            //MM and MHQ won't remember that this weapon is damaged on the MUL
+                            //file
+                            for (int i = 0; i < aero.getNumberOfCriticals(loc); i++) {
+                                CriticalSlot slot1 = aero.getCritical(loc, i);
+                                if ((slot1 == null) ||
+                                        (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                    continue;
+                                }
+                                Mounted mounted = slot1.getMount();
+                                if (mounted.equals(bayWeap)) {
+                                    aero.hitAllCriticals(loc, i);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    r = new Report(9155);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                }
+                break;
+            case Aero.CRIT_ENGINE:
+                // engine hit
+                r = new Report(9140);
+                r.subject = aero.getId();
+                reports.add(r);
+                aero.engineHitsThisPhase++;
+                boolean engineExploded = checkEngineExplosion(aero, reports, 1);
+                aero.setEngineHits(aero.getEngineHits() + 1);
+                if ((aero.getEngineHits() >= aero.getMaxEngineHits())
+                    || engineExploded) {
+                    // this engine hit puts the ASF out of commission
+                    reports.addAll(destroyEntity(aero, "engine destruction", true,
+                                               true));
+                    aero.setSelfDestructing(false);
+                    aero.setSelfDestructInitiated(false);
+                }
+                break;
+            case Aero.CRIT_LEFT_THRUSTER:
+                // thruster hit
+                r = new Report(9160);
+                r.subject = aero.getId();
+                reports.add(r);
+                aero.setLeftThrustHits(aero.getLeftThrustHits() + 1);
+                break;
+            case Aero.CRIT_RIGHT_THRUSTER:
+                // thruster hit
+                r = new Report(9160);
+                r.subject = aero.getId();
+                reports.add(r);
+                aero.setRightThrustHits(aero.getRightThrustHits() + 1);
+                break;
+            case Aero.CRIT_CARGO:
+                // cargo hit
+                // First what percentage of the cargo did the hit destroy?
+                double percentDestroyed = 0.0;
+                double mult = 2.0;
+                if (aero.isLargeCraft() && aero.isClan()
+                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
+                    mult = 4.0;
+                }
+                if (damageCaused > 0) {
+                    percentDestroyed = Math.min(
+                            damageCaused / (mult * aero.getSI()), 1.0);
+                }
+                // did it hit cargo or units
+                int roll = Compute.d6(1);
+                if (roll < 4) {
+                    // cargo was hit
+                    // just report; no game effect
+                    r = new Report(9165);
+                    r.subject = aero.getId();
+                    r.add((int) (percentDestroyed * 100));
+                    reports.add(r);
+                } else {
+                    // units were hit
+                    // get a list of units
+                    Vector<Entity> passengers = aero.getBayLoadedUnits();
+                    int unitsDestroyed = (int) Math.ceil(percentDestroyed
+                                                         * passengers.size());
+                    r = new Report(9166);
+                    r.subject = aero.getId();
+                    r.add(unitsDestroyed);
+                    reports.add(r);
+                    while (unitsDestroyed > 0) {
+                        // redraw loaded units to make sure I don't get ones
+                        // already destroyed
+                        List<Entity> units = aero.getLoadedUnits();
+                        if (units.size() > 0) {
+                            Entity target = units.get(Compute.randomInt(units
+                                                                                .size()));
+                            reports.addAll(destroyEntity(target, "cargo damage",
+                                                       false, false));
+                        }
+                        unitsDestroyed--;
+                    }
+                }
+                break;
+            case Aero.CRIT_DOOR:
+                // door hit
+                // choose a random bay
+                String bayType = aero.damageBayDoor();
+                if (!bayType.equals("none")) {
+                    r = new Report(9170);
+                    r.subject = aero.getId();
+                    r.add(bayType);
+                    reports.add(r);
+                } else {
+                    r = new Report(9171);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                }
+                break;
+            case Aero.CRIT_DOCK_COLLAR:
+                // docking collar hit
+                // different effect for dropships and jumpships
+                if (aero instanceof Dropship) {
+                    ((Dropship)aero).setDamageDockCollar(true);
+                    r = new Report(9175);
+                    r.subject = aero.getId();
+                    reports.add(r);
+                }
+                if (aero instanceof Jumpship) {
+                    // damage the docking collar
+                    if (aero.damageDockCollar()) {
+                        r = new Report(9176);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                    } else {
+                        r = new Report(9177);
+                        r.subject = aero.getId();
+                        reports.add(r);
+                    }
+                }
+                break;
+            case Aero.CRIT_KF_BOOM:
+                // KF boom hit
+                // no real effect yet
+                r = new Report(9180);
+                r.subject = aero.getId();
+                reports.add(r);
+                break;
+            case Aero.CRIT_CIC:
+                if (js == null) {
+                    break;
+                }
+                // CIC hit
+                r = new Report(9185);
+                r.subject = aero.getId();
+                reports.add(r);
+                js.setCICHits(js.getCICHits() + 1);
+                break;
+            case Aero.CRIT_KF_DRIVE:
+                if (js == null) {
+                    break;
+                }
+                // KF Drive hit
+                r = new Report(9190);
+                r.subject = aero.getId();
+                reports.add(r);
+                js.setKFIntegrity(js.getKFIntegrity() - 1);
+                break;
+            case Aero.CRIT_GRAV_DECK:
+                if (js == null) {
+                    break;
+                }
+                // Grave Deck hit
+                r = new Report(9195);
+                r.subject = aero.getId();
+                reports.add(r);
+                break;
+            case Aero.CRIT_LIFE_SUPPORT:
+                // Life Support hit
+                aero.setLifeSupport(false);
+                r = new Report(9196);
+                r.subject = aero.getId();
+                reports.add(r);
+                break;
+        }
+        return reports;
+    }
+
+    /**
+     * Apply a single critical hit to a vehicle.
+     *
+     * @param tank             the <code>Tank</code> that is being damaged. This value may
+     *                         not be <code>null</code>.
+     * @param loc              the <code>int</code> location of critical hit. This value may
+     *                         be <code>Entity.NONE</code> for hits to <code>Tank</code>s and
+     *                         for hits to a <code>Protomech</code> torso weapon.
+     * @param cs               the <code>CriticalSlot</code> being damaged. This value may
+     *                         not be <code>null</code>. The index of the slot should be the index
+     *                         of the critical hit table.
+     * @param damageCaused     the amount of damage causing this critical.
+     */
+    private Vector<Report> applyTankCritical(Tank tank, int loc, CriticalSlot cs, int damageCaused) {
+        Vector<Report> reports = new Vector<>();
+        Report r;
+        HitData hit;
+        switch (cs.getIndex()) {
+            case Tank.CRIT_NONE:
+                // no effect
+                r = new Report(6005);
+                r.subject = tank.getId();
+                reports.add(r);
+                break;
+            case Tank.CRIT_AMMO:
+                // ammo explosion
+                r = new Report(6610);
+                r.subject = tank.getId();
+                reports.add(r);
+                int damage = 0;
+                for (Mounted m : tank.getAmmo()) {
+                    // Don't include ammo of one-shot weapons.
+                    if (m.getLocation() == Entity.LOC_NONE) {
+                        continue;
+                    }
+                    m.setHit(true);
+                    int tmp = m.getHittableShotsLeft()
+                              * ((AmmoType) m.getType()).getDamagePerShot()
+                              * ((AmmoType) m.getType()).getRackSize();
+                    m.setShotsLeft(0);
+                    // non-explosive ammo can't explode
+                    if (!m.getType().isExplosive(m)) {
+                        continue;
+                    }
+                    damage += tmp;
+                    r = new Report(6390);
+                    r.subject = tank.getId();
+                    r.add(m.getName());
+                    r.add(tmp);
+                    reports.add(r);
+                }
+                hit = new HitData(loc);
+                reports.addAll(damageEntity(tank, hit, damage, true));
+                break;
+            case Tank.CRIT_CARGO:
+                // Cargo/infantry damage
+                r = new Report(6615);
+                r.subject = tank.getId();
+                reports.add(r);
+                List<Entity> passengers = tank.getLoadedUnits();
+                if (passengers.size() > 0) {
+                    Entity target = passengers.get(Compute.randomInt(passengers
+                                                                             .size()));
+                    hit = target.rollHitLocation(ToHitData.HIT_NORMAL,
+                                                 ToHitData.SIDE_FRONT);
+                    reports.addAll(damageEntity(target, hit, damageCaused));
+                }
+                break;
+            case Tank.CRIT_COMMANDER:
+                if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                    || tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                    r = new Report(6191);
+                    r.subject = tank.getId();
+                    reports.add(r);
+                    reports.addAll(damageCrew(tank, 1));
+                } else {
+                    if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
+                        && !tank.isCommanderHitPS()) {
+                        r = new Report(6606);
+                        r.subject = tank.getId();
+                        reports.add(r);
+                        tank.setCommanderHitPS(true);
+                    } else if (tank.hasWorkingMisc(MiscType.F_COMMAND_CONSOLE)
+                            && !tank.isUsingConsoleCommander()) {
+                        r = new Report(6607);
+                        r.subject = tank.getId();
+                        reports.add(r);
+                        tank.setUsingConsoleCommander(true);
+                    } else {
+                        r = new Report(6605);
+                        r.subject = tank.getId();
+                        reports.add(r);
+                        tank.setCommanderHit(true);
+                    }
+                }
+                // fall through here, because effects of crew stunned also
+                // apply
+            case Tank.CRIT_CREW_STUNNED:
+                if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                    || tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                    r = new Report(6191);
+                    r.subject = tank.getId();
+                    reports.add(r);
+                    reports.addAll(damageCrew(tank, 1));
+                } else {
+                    if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
+                        || tank.getCrew().getOptions()
+                             .booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
+                        r = new Report(6186);
+                        r.subject = tank.getId();
+                        reports.add(r);
+                    } else {
+                        tank.stunCrew();
+                        r = new Report(6185);
+                        r.add(tank.getStunnedTurns() - 1);
+                        r.subject = tank.getId();
+                        reports.add(r);
+                    }
+                }
+                break;
+            case Tank.CRIT_DRIVER:
+                if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                    || tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                    r = new Report(6191);
+                    r.subject = tank.getId();
+                    reports.add(r);
+                    reports.addAll(damageCrew(tank, 1));
+                } else {
+                    if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
+                        && !tank.isDriverHitPS()) {
+                        r = new Report(6601);
+                        r.subject = tank.getId();
+                        reports.add(r);
+                        tank.setDriverHitPS(true);
+                    } else {
+                        r = new Report(6600);
+                        r.subject = tank.getId();
+                        reports.add(r);
+                        tank.setDriverHit(true);
+                    }
+                }
+                break;
+            case Tank.CRIT_CREW_KILLED:
+                if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                    || tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                    r = new Report(6191);
+                    r.subject = tank.getId();
+                    reports.add(r);
+                    reports.addAll(damageCrew(tank, 1));
+                } else {
+                    if (tank.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
+                        && !tank.isCrewHitPS()) {
+                        r = new Report(6191);
+                        r.subject = tank.getId();
+                        reports.add(r);
+                        tank.setCrewHitPS(true);
+                    } else {
+                        r = new Report(6190);
+                        r.subject = tank.getId();
+                        reports.add(r);
+                        tank.getCrew().setDoomed(true);
+                        if (tank.isAirborneVTOLorWIGE()) {
+                            reports.addAll(crashVTOLorWiGE(tank));
+                        }
+                    }
+                }
+                break;
+            case Tank.CRIT_ENGINE:
+                r = new Report(6210);
+                r.subject = tank.getId();
+                reports.add(r);
+                tank.engineHit();
+                tank.engineHitsThisPhase++;
+                boolean engineExploded = checkEngineExplosion(tank, reports, 1);
+                if (engineExploded) {
+                    reports.addAll(destroyEntity(tank, "engine destruction", true,
+                                               true));
+                    tank.setSelfDestructing(false);
+                    tank.setSelfDestructInitiated(false);
+                }
+                if (tank.isAirborneVTOLorWIGE()
+                    && !(tank.isDestroyed() || tank.isDoomed())) {
+                    tank.immobilize();
+                    reports.addAll(forceLandVTOLorWiGE(tank));
+                }
+                break;
+            case Tank.CRIT_FUEL_TANK:
+                r = new Report(6215);
+                r.subject = tank.getId();
+                reports.add(r);
+                reports.addAll(destroyEntity(tank, "fuel explosion", false, false));
+                break;
+            case Tank.CRIT_SENSOR:
+                r = new Report(6620);
+                r.subject = tank.getId();
+                reports.add(r);
+                tank.setSensorHits(tank.getSensorHits() + 1);
+                break;
+            case Tank.CRIT_STABILIZER:
+                r = new Report(6625);
+                r.subject = tank.getId();
+                reports.add(r);
+                tank.setStabiliserHit(loc);
+                break;
+            case Tank.CRIT_TURRET_DESTROYED:
+                r = new Report(6630);
+                r.subject = tank.getId();
+                reports.add(r);
+                tank.destroyLocation(tank.getLocTurret());
+                reports.addAll(destroyEntity(tank, "turret blown off", true, true));
+                break;
+            case Tank.CRIT_TURRET_JAM:
+                if (tank.isTurretEverJammed(loc)) {
+                    r = new Report(6640);
+                    r.subject = tank.getId();
+                    reports.add(r);
+                    tank.lockTurret(loc);
+                    break;
+                }
+                r = new Report(6635);
+                r.subject = tank.getId();
+                reports.add(r);
+                tank.jamTurret(loc);
+                break;
+            case Tank.CRIT_TURRET_LOCK:
+                r = new Report(6640);
+                r.subject = tank.getId();
+                reports.add(r);
+                tank.lockTurret(loc);
+                break;
+            case Tank.CRIT_WEAPON_DESTROYED: {
+                r = new Report(6305);
+                r.subject = tank.getId();
+                ArrayList<Mounted> weapons = new ArrayList<Mounted>();
+                for (Mounted weap : tank.getWeaponList()) {
+                    if ((weap.getLocation() == loc) && !weap.isHit()
+                        && !weap.isDestroyed()) {
+                        weapons.add(weap);
+                    }
+                }
+                // sort weapons by BV
+                Collections.sort(weapons, new WeaponComparatorBV());
+                int roll = Compute.d6();
+                Mounted weapon;
+                if (roll < 4) {
+                    // defender should choose, we'll just use the lowest BV
+                    // weapon
+                    weapon = weapons.get(weapons.size() - 1);
+                } else {
+                    // attacker chooses, we'll use the highest BV weapon
+                    weapon = weapons.get(0);
+                }
+                r.add(weapon.getName());
+                reports.add(r);
+                // explosive weapons e.g. gauss now explode
+                if (weapon.getType().isExplosive(weapon) && !weapon.isHit()
+                    && !weapon.isDestroyed()) {
+                    reports.addAll(explodeEquipment(tank, loc, weapon));
+                }
+                weapon.setHit(true);
+                //Taharqa: We should also damage the critical slot, or
+                //MM and MHQ won't remember that this weapon is damaged on the MUL
+                //file
+                for (int i = 0; i < tank.getNumberOfCriticals(loc); i++) {
+                    CriticalSlot slot1 = tank.getCritical(loc, i);
+                    if ((slot1 == null) ||
+                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        continue;
+                    }
+                    Mounted mounted = slot1.getMount();
+                    if (mounted.equals(weapon)) {
+                        tank.hitAllCriticals(loc, i);
+                        break;
+                    }
+                }
+                break;
+            }
+            case Tank.CRIT_WEAPON_JAM: {
+                r = new Report(6645);
+                r.subject = tank.getId();
+                ArrayList<Mounted> weapons = new ArrayList<Mounted>();
+                for (Mounted weap : tank.getWeaponList()) {
+                    if ((weap.getLocation() == loc) && !weap.isJammed()
+                        && !weap.jammedThisPhase() && !weap.isHit()
+                        && !weap.isDestroyed()) {
+                        weapons.add(weap);
+                    }
+                }
+                if (weapons.size() > 0) {
+                    Mounted weapon = weapons.get(Compute.randomInt(weapons
+                                                                           .size()));
+                    weapon.setJammed(true);
+                    tank.addJammedWeapon(weapon);
+                    r.add(weapon.getName());
+                    reports.add(r);
+                }
+                break;
+            }
+            case VTOL.CRIT_PILOT:
+                r = new Report(6650);
+                r.subject = tank.getId();
+                reports.add(r);
+                tank.setDriverHit(true);
+                PilotingRollData psr = tank.getBasePilotingRoll();
+                psr.addModifier(0, "pilot injury");
+                if (!doSkillCheckInPlace(tank, psr)) {
+                    r = new Report(6675);
+                    r.subject = tank.getId();
+                    r.addDesc(tank);
+                    reports.add(r);
+                    boolean crash = true;
+                    if (tank.canGoDown()) {
+                        tank.setElevation(tank.getElevation() - 1);
+                        crash = !tank.canGoDown();
+                    }
+                    if (crash) {
+                        reports.addAll(crashVTOLorWiGE(tank));
+                    }
+                }
+                break;
+            case VTOL.CRIT_COPILOT:
+                r = new Report(6655);
+                r.subject = tank.getId();
+                reports.add(r);
+                tank.setCommanderHit(true);
+                break;
+            case VTOL.CRIT_ROTOR_DAMAGE: {
+                // Only resolve rotor crits if the rotor was actually still
+                // there.
+                if (!(tank.isLocationBad(VTOL.LOC_ROTOR) || tank
+                        .isLocationDoomed(VTOL.LOC_ROTOR))) {
+                    r = new Report(6660);
+                    r.subject = tank.getId();
+                    reports.add(r);
+                    tank.setMotiveDamage(tank.getMotiveDamage() + 1);
+                    if (tank.getMotiveDamage() >= tank.getOriginalWalkMP()) {
+                        tank.immobilize();
+                        if (tank.isAirborneVTOLorWIGE()
+                            // Don't bother with forcing a landing if
+                            // we're already otherwise destroyed.
+                            && !(tank.isDestroyed() || tank.isDoomed())) {
+                            reports.addAll(forceLandVTOLorWiGE(tank));
+                        }
+                    }
+                }
+                break;
+            }
+            case VTOL.CRIT_ROTOR_DESTROYED:
+                // Only resolve rotor crits if the rotor was actually still
+                // there. Note that despite the name this critical hit does
+                // not in itself physically destroy the rotor *location*
+                // (which would simply kill the VTOL).
+                if (!(tank.isLocationBad(VTOL.LOC_ROTOR) || tank
+                        .isLocationDoomed(VTOL.LOC_ROTOR))) {
+                    r = new Report(6670);
+                    r.subject = tank.getId();
+                    reports.add(r);
+                    tank.immobilize();
+                    reports.addAll(crashVTOLorWiGE(tank, true));
+                }
+                break;
+            case VTOL.CRIT_FLIGHT_STABILIZER:
+                // Only resolve rotor crits if the rotor was actually still
+                // there.
+                if (!(tank.isLocationBad(VTOL.LOC_ROTOR) || tank
+                        .isLocationDoomed(VTOL.LOC_ROTOR))) {
+                    r = new Report(6665);
+                    r.subject = tank.getId();
+                    reports.add(r);
+                    tank.setStabiliserHit(VTOL.LOC_ROTOR);
+                }
+                break;
+        }
+        return reports;
     }
 
     /**

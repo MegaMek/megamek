@@ -28,11 +28,21 @@ public class LandAirMech extends BipedMech {
 
     public static final String systemNames[] =
         { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot", "Avionics", "Landing Gear" };
+    
+    public static final int LAM_UNKNOWN  = -1;
+    public static final int LAM_STANDARD = 0;
+    public static final int LAM_BIMODAL  = 1;
+    
+    public static final String[] LAM_STRING = { "Standard", "Bimodal" };
 
     private int fuel;
+    private int lamType;
+    private EntityMovementMode previousMovementMode;
 
-    public LandAirMech(int inGyroType, int inCockpitType) {
+    public LandAirMech(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
+        lamType = inLAMType;
+
         setTechLevel(TechConstants.T_IS_ADVANCED);
         setCritical(Mech.LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
         setCritical(Mech.LOC_LT, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS));
@@ -40,6 +50,8 @@ public class LandAirMech extends BipedMech {
         setCritical(Mech.LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
         setCritical(Mech.LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
         setCritical(Mech.LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR));
+
+        previousMovementMode = movementMode;
         setFuel(80);
     }
 
@@ -65,6 +77,37 @@ public class LandAirMech extends BipedMech {
     @Override
     public String getRawSystemName(int index) {
         return systemNames[index];
+    }
+    
+    public int getLAMType() {
+        return lamType;
+    }
+    
+    public void setLAMType(int lamType) {
+        this.lamType = lamType;
+    }
+    
+    public String getLAMTypeString(int lamType) {
+        if (lamType < 0 || lamType >= LAM_STRING.length) {
+            return LAM_STRING[LAM_UNKNOWN];
+        }
+        return LAM_STRING[lamType];
+    }
+    
+    public String getLAMTypeString() {
+        return getLAMTypeString(getLAMType());
+    }
+
+    public static int getLAMTypeForString(String inType) {
+        if ((inType == null) || (inType.length() < 1)) {
+            return LAM_UNKNOWN;
+        }
+        for (int x = 0; x < LAM_STRING.length; x++) {
+            if (inType.equals(LAM_STRING[x])) {
+                return x;
+            }
+        }
+        return LAM_UNKNOWN;
     }
 
     public int getAirMechWalkMP(boolean gravity, boolean ignoremodulararmor) {
@@ -97,6 +140,56 @@ public class LandAirMech extends BipedMech {
 
     public int getFighterModeRunMP() {
         return getFighterModeRunMP(true, false);
+    }
+    
+    /**
+     * When cycling through possible movement modes, we need to know if we've returned to the previous
+     * mode, which means that no conversion is actually going to take place.
+     * 
+     * @return The movement mode on the previous turn.
+     */
+    public EntityMovementMode getPreviousMovementMode() {
+        return previousMovementMode;
+    }
+    
+    /**
+     * Start a new round
+     *
+     * @param roundNumber the <code>int</code> number of the new round
+     */
+    @Override
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        previousMovementMode = movementMode;
+    }
+    
+    /*
+     * Cycling through conversion modes for LAMs in 'Mech or fighter mode is simple toggling between
+     * two states. LAMs in AirMech mode have three possible states.
+     */
+    @Override
+    public EntityMovementMode nextConversionMode() {
+        if (previousMovementMode == EntityMovementMode.AIRMECH) {
+            if (movementMode == EntityMovementMode.BIPED) {
+                return EntityMovementMode.AIRMECH;
+            } else if (movementMode == EntityMovementMode.AIRMECH) {
+                return EntityMovementMode.AERODYNE;
+            } else {
+                return EntityMovementMode.BIPED;
+            }
+        } else if (movementMode == EntityMovementMode.AIRMECH) {
+            return previousMovementMode;
+        } else if (movementMode == EntityMovementMode.AERODYNE) {
+            return lamType == LAM_BIMODAL? EntityMovementMode.BIPED : EntityMovementMode.AIRMECH;
+        } else {
+            return lamType == LAM_BIMODAL? EntityMovementMode.AERODYNE : EntityMovementMode.AIRMECH;
+        }
+    }
+    
+    @Override
+    public void resetModeConversion() {
+        movementMode = previousMovementMode;
+        convertingNow = false;
     }
     
     @Override

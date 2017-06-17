@@ -48,6 +48,7 @@ public class TripodMech extends Mech {
         super(inGyroType, inCockpitType);
 
         movementMode = EntityMovementMode.TRIPOD;
+        originalMovementMode = EntityMovementMode.TRIPOD;
 
         setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                                                   ACTUATOR_SHOULDER));

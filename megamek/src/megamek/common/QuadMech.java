@@ -45,6 +45,7 @@ public class QuadMech extends Mech {
         super(inGyroType, inCockpitType);
 
         movementMode = EntityMovementMode.QUAD;
+        originalMovementMode = EntityMovementMode.QUAD;
 
         setCritical(LOC_RARM, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
         setCritical(LOC_RARM, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));

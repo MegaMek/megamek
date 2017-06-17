@@ -40,6 +40,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.TechConstants;
 import megamek.common.TripodMech;
 import megamek.common.WeaponType;
@@ -66,6 +67,8 @@ public class MtfFile implements IMechLoader {
     String myomerType;
     String gyroType;
     String cockpitType;
+    String lamType;
+    String motiveType;
     String ejectionType;
 
     String heatSinks;
@@ -224,7 +227,27 @@ public class MtfFile implements IMechLoader {
             if (chassisConfig.indexOf("Quad") != -1) {
                 mech = new QuadMech(iGyroType, iCockpitType);
             } else if (chassisConfig.indexOf("LAM") != -1) {
-                mech = new LandAirMech(iGyroType, iCockpitType);
+                int iLAMType = LandAirMech.LAM_STANDARD;
+                try {
+                    iLAMType = LandAirMech.getLAMTypeForString(lamType.substring(4));
+                    if (iCockpitType == LandAirMech.LAM_UNKNOWN) {
+                        iCockpitType = LandAirMech.LAM_STANDARD;
+                    }
+                } catch (Exception e) {
+                    iLAMType = LandAirMech.LAM_STANDARD;
+                }
+                mech = new LandAirMech(iGyroType, iCockpitType, iLAMType);
+            } else if (chassisConfig.indexOf("QuadVee") != -1) {
+                int iMotiveType = QuadVee.MOTIVE_TRACK;
+                try {
+                    iMotiveType = QuadVee.getMotiveTypeForString(motiveType.substring(7));
+                    if (iMotiveType == QuadVee.MOTIVE_UNKNOWN) {
+                        iMotiveType = QuadVee.MOTIVE_TRACK;
+                    }
+                } catch (Exception e) {
+                    iMotiveType = QuadVee.MOTIVE_TRACK;
+                }
+                mech = new QuadVee(iGyroType, iMotiveType);
             } else if (chassisConfig.indexOf("Tripod") != -1) {
                 mech = new TripodMech(iGyroType, iCockpitType);
             } else {
@@ -895,6 +918,16 @@ public class MtfFile implements IMechLoader {
 
         if (line.trim().toLowerCase().startsWith("gyro:")) {
             gyroType = line;
+            return true;
+        }
+        
+        if (line.trim().toLowerCase().startsWith("lam:")) {
+            lamType = line;
+            return true;
+        }
+        
+        if (line.trim().toLowerCase().startsWith("motive:")) {
+            motiveType = line;
             return true;
         }
 

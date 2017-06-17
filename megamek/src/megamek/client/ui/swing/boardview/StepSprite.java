@@ -408,6 +408,21 @@ class StepSprite extends Sprite {
                 graph.setColor(col);
                 graph.drawString(land, landX - 1, landY);
                 break;
+            case CONVERT_MODE:
+                // show new movement mode
+                String mode = step.getEntity().getMovementMode().toString();
+                if (step.getMp() > 0) {
+                    mode = mode + "(" + step.getMp() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int modeX = (stepPos.x + 42)
+                        - (graph.getFontMetrics(graph.getFont())
+                                .stringWidth(mode) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(mode, modeX, stepPos.y + 39);
+                graph.setColor(col);
+                graph.drawString(mode, modeX - 1, stepPos.y + 38);
+                break;
             default:
                 break;
         }

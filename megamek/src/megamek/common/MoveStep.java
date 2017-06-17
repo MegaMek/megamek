@@ -32,7 +32,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 
 /**
- * A single step in the entity's movment.  Since the path planner uses shallow
+ * A single step in the entity's movement.  Since the path planner uses shallow
  * copies of MovePaths, multiple paths may share the same MoveStep, so this
  * class needs to be agnostic of what path it belongs to.
  */
@@ -109,7 +109,7 @@ public class MoveStep implements Serializable {
      * carefully.
      */
     private boolean isCarefulPath = true;
-
+    
     /*
      * Aero related stuf
      */
@@ -364,6 +364,8 @@ public class MoveStep implements Serializable {
                 return "Flee";
             case EVADE:
                 return "Evade";
+            case CONVERT_MODE:
+                return "ConvMode";
             default:
                 return "???";
         }
@@ -994,6 +996,14 @@ public class MoveStep implements Serializable {
             case LOOP:
                 setVelocityLeft(getVelocityLeft() - 4);
                 setMp(0);
+                break;
+            case CONVERT_MODE:
+                if (entity instanceof QuadVee) {
+                    setMp(((QuadVee)entity).conversionCost());
+                } else {
+                    setMp(0);
+                }
+                break;
             default:
                 setMp(0);
         }
@@ -1155,6 +1165,12 @@ public class MoveStep implements Serializable {
 
         // tanks with stunned crew can't flank
         if ((entity instanceof Tank) && (((Tank) entity).getStunnedTurns() > 0)) {
+            isRunProhibited = true;
+        }
+        
+        //Cannot run while using Mek tracks
+        if (entity instanceof Mech && entity.getMovementMode() == EntityMovementMode.TRACKED
+                && !(entity instanceof QuadVee)) {
             isRunProhibited = true;
         }
 
@@ -2036,6 +2052,9 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_NONE;
         }
         if (type == MoveStepType.SELF_DESTRUCT) {
+            movementType = EntityMovementType.MOVE_NONE;
+        }
+        if (type == MoveStepType.CONVERT_MODE) {
             movementType = EntityMovementType.MOVE_NONE;
         }
 
@@ -3523,5 +3542,4 @@ public class MoveStep implements Serializable {
     public boolean isCareful() {
         return isCarefulPath;
     }
-
 }

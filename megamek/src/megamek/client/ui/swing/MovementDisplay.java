@@ -59,6 +59,7 @@ import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
+import megamek.common.LandAirMech;
 import megamek.common.ManeuverType;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -69,6 +70,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.Report;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
@@ -106,6 +108,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_INF = 1 << 3;
     public static final int CMD_AERO = 1 << 4;
     public static final int CMD_AERO_VECTORED = 1 << 5;
+    public static final int CMD_MODE_CONV = 1 << 6;
     // Convenience defines for common combinations
     public static final int CMD_AERO_BOTH = CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_GROUND = CMD_MECH | CMD_TANK | CMD_VTOL
@@ -116,6 +119,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                       | CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL
                                           | CMD_AERO | CMD_AERO_VECTORED;
+    public static final int CMD_QUADVEE_LAM = CMD_MECH | CMD_MODE_CONV;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
@@ -151,9 +155,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_CLIMB_MODE("moveClimbMode", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$
         MOVE_SWIM("moveSwim", CMD_MECH), //$NON-NLS-1$
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
-        MOVE_MODE_MECH("moveModeMech", CMD_NONE), //$NON-NLS-1$
-        MOVE_MODE_AIRMECH("moveModeAirmech", CMD_NONE), //$NON-NLS-1$
-        MOVE_MODE_AIRCRAFT("moveModeAircraft", CMD_NONE), //$NON-NLS-1$
+        MOVE_MODE_CONVERT("moveModeConvert", CMD_QUADVEE_LAM), //$NON-NLS-1$
         MOVE_RECKLESS("moveReckless", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE), //$NON-NLS-1$
         MOVE_EVADE("MoveEvade", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
@@ -269,7 +271,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
 
                 // Check unit type flag
-                if ((cmd.flag & f) == f) {
+                if ((cmd.flag & f) != 0) {
                     flaggedCmds.add(cmd);
                 }
             }
@@ -636,6 +638,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 } else {
                     flag = CMD_TANK;
                 }
+            } else if (ce instanceof Mech) {
+                if (ce instanceof QuadVee || ce instanceof LandAirMech || ((Mech)ce).hasTracks()) {
+                    flag = CMD_QUADVEE_LAM;
+                }
             }
         }
         return getButtonList(flag);
@@ -783,6 +789,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setChargeEnabled(ce.canCharge());
         setDFAEnabled(ce.canDFA());
         setRamEnabled(ce.canRam());
+        setModeQuadVeeEnabled(!ce.isUnderwater()
+                //non-QuadVees with tracks have no conversion cost
+                && (!(ce instanceof QuadVee) || ((QuadVee)ce).conversionCost() <= ce.getRunMP()));
 
         if (isInfantry) {
             if (clientgui.getClient().getGame()
@@ -990,6 +999,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setClearEnabled(false);
         setHullDownEnabled(false);
         setSwimEnabled(false);
+        setModeQuadVeeEnabled(false);
         setAccEnabled(false);
         setDecEnabled(false);
         setEvadeEnabled(false);
@@ -1054,6 +1064,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             ce.setMovementMode(EntityMovementMode.BIPED);
         } else if (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM) {
             ce.setMovementMode(EntityMovementMode.QUAD);
+        }
+        
+        if (cmd != null && cmd.isChangingMode()) {
+            ce.resetModeConversion();
         }
 
         // create new current and considered paths
@@ -1130,6 +1144,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if ((gear == MovementDisplay.GEAR_JUMP) && 
                     (!cmd.isJumping())) {
                 cmd.addStep(MoveStepType.START_JUMP);
+            } else if (ce().isConvertingNow()) {
+                cmd.addStep(MoveStepType.CONVERT_MODE);
             }
         } else {
             clientgui.bv.drawMovementData(ce(), cmd);
@@ -1420,7 +1436,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return null;
         }
     }
-
+    
     /**
      * Returns new MovePath for the currently selected movement type
      */
@@ -3778,6 +3794,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             maxMP = en.getJumpMP();
         } else if (mvMode == GEAR_BACKUP) {
             maxMP = en.getWalkMP();
+        } else if (ce() instanceof Mech && !(ce() instanceof QuadVee)
+                && ce().getMovementMode() == EntityMovementMode.TRACKED) {
+            //A non-QuadVee 'Mech that is using tracked movement is limited to walking
+            maxMP = en.getWalkMP();
         } else {
             if (clientgui.getClient().getGame().getOptions()
                          .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
@@ -3813,6 +3833,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (gear == GEAR_JUMP) {
             maxMP = ce().getJumpMP();
         } else if (gear == GEAR_BACKUP) {
+            maxMP = ce().getWalkMP();
+        } else if (ce() instanceof Mech && !(ce() instanceof QuadVee)
+                && ce().getMovementMode() == EntityMovementMode.TRACKED){
+            //A non-QuadVee 'Mech that is using tracked movement (or converting to it) is limited to walking
             maxMP = ce().getWalkMP();
         } else {
             maxMP = ce().getRunMP();
@@ -3938,6 +3962,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             gear = MovementDisplay.GEAR_SWIM;
             ce.setMovementMode((ce instanceof BipedMech) ? EntityMovementMode.BIPED_SWIM
                     : EntityMovementMode.QUAD_SWIM);
+        } else if (actionCmd.equals(MoveCommand.MOVE_MODE_CONVERT.getCmd())) {
+            ce.setMovementMode(ce.nextConversionMode());
+            if (ce instanceof LandAirMech) {
+                ce.setConvertingNow(ce.getMovementMode() != ((LandAirMech)ce).getPreviousMovementMode());
+            } else {
+                ce.setConvertingNow(!ce.isConvertingNow());
+            }
+            if (!ce.isConvertingNow()) {
+                clear();
+            } else {
+                cmd.addStep(MoveStepType.CONVERT_MODE);
+            }
+            clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_TURN.getCmd())) {
             gear = MovementDisplay.GEAR_TURN;
         } else if (actionCmd.equals(MoveCommand.MOVE_BACK_UP.getCmd())) {
@@ -4717,6 +4754,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void setJumpEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_JUMP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveJumpEnabled(enabled);
+    }
+    
+    private void setModeQuadVeeEnabled(boolean enabled) {
+        buttons.get(MoveCommand.MOVE_MODE_CONVERT).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveModeQuadVeeEnabled(enabled);
     }
 
     private void setSwimEnabled(boolean enabled) {

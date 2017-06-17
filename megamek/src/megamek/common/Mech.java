@@ -81,10 +81,10 @@ public abstract class Mech extends Entity {
     public static final int ACTUATOR_LOWER_LEG = 13;
 
     public static final int ACTUATOR_FOOT = 14;
-
+    
     public static final String systemNames[] = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
-            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot" };
+            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot"};
 
     // locations
     public static final int LOC_HEAD = 0;
@@ -277,6 +277,9 @@ public abstract class Mech extends Entity {
 
     // Cooling System Flaws quirk
     private boolean coolingFlawActive = false;
+    
+    // QuadVees, LAMs, and tracked 'Mechs can change movement mode.
+    protected EntityMovementMode originalMovementMode = EntityMovementMode.BIPED;
 
     /**
      * Construct a new, blank, mech.
@@ -1452,7 +1455,16 @@ public abstract class Mech extends Entity {
 
         return jump;
     }
-
+    
+    @Override
+    public EntityMovementMode nextConversionMode() {
+        if (hasTracks() && movementMode != EntityMovementMode.TRACKED) {
+                return EntityMovementMode.TRACKED;
+        } else {
+            return originalMovementMode;
+        }
+    }
+    
     /**
      * Return the height of this mech above the terrain.
      */

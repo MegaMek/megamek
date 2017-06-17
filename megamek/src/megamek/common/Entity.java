@@ -291,6 +291,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected int[] armorType;
     protected int[] armorTechLevel;
     protected boolean isJumpingNow = false;
+    protected boolean convertingNow = false;
+    protected EntityMovementMode previousMovementMode;
 
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -5506,6 +5508,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         mpUsedLastRound = mpUsed;
         mpUsed = 0;
         isJumpingNow = false;
+        convertingNow = false;
         damageThisRound = 0;
         if (assaultDropInProgress == 2) {
             assaultDropInProgress = 0;
@@ -13451,7 +13454,34 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean getIsJumpingNow() {
         return isJumpingNow;
     }
-
+    
+    public void setConvertingNow(boolean converting) {
+        convertingNow = converting;
+    }
+    
+    public boolean isConvertingNow() {
+        return convertingNow;
+    }
+    
+    /**
+     * Entities that can convert movement modes (LAMs, QuadVees) report the next mode when conversion is toggled
+     */
+    public EntityMovementMode nextConversionMode() {
+        return movementMode;
+    }
+    
+    /**
+     * When a movment path is canceled, clear any planned mode conversions by toggling the movement mode
+     * and clearing the <code>convertingNow</code> flag. Units with more than two possible modes (i.e. LAMs)
+     * will need to override this.
+     */
+    public void resetModeConversion() {
+        if (convertingNow) {
+            movementMode = nextConversionMode();
+            convertingNow = false;
+        }
+    }
+    
     public void setTraitorId(int id) {
         traitorId = id;
     }

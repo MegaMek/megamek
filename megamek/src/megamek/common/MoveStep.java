@@ -2168,8 +2168,7 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
                 }
-            } else if ((entity instanceof Tank) && !(entity instanceof VTOL)
-                    && (getEntity().getMovementMode() != EntityMovementMode.WIGE)
+            } else if (entity.isEligibleForPavementBonus()
                     && isOnlyPavement() && (getMpUsed() == (tmpWalkMP + 1))) {
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr
@@ -2198,7 +2197,7 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
-            } else if ((entity instanceof Tank) && !(entity instanceof VTOL)
+            } else if (entity.isEligibleForPavementBonus()
                     && isOnlyPavement()
                     && (getMpUsed() <= (runMP + 1))
                     && !isRunProhibited()) {

@@ -600,9 +600,7 @@ class StepSprite extends Sprite {
         
         // If the step is using a road bonus, mark it.
         if (step.isOnlyPavement()
-                && (e instanceof Tank)
-                && !(e instanceof VTOL)
-                && (e.getMovementMode() != EntityMovementMode.WIGE)) {
+                && e.isEligibleForPavementBonus()) {
             costStringBuf.append("+"); //$NON-NLS-1$
         }
 

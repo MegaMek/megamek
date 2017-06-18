@@ -94,10 +94,14 @@ public class QuadVee extends QuadMech {
     }
     
     @Override
+    public boolean isEligibleForPavementBonus() {
+        return isInVehicleMode() && !convertingNow;
+    }
+    
+    @Override
     public boolean canFall(boolean gyroLegDamage) {
         //QuadVees cannot fall due to failed PSR in vehicle mode.
-        return movementMode != EntityMovementMode.TRACKED
-                && movementMode != EntityMovementMode.WHEELED;
+        return !isInVehicleMode();
     }
     
     /**
@@ -115,5 +119,10 @@ public class QuadVee extends QuadMech {
             }
         }
         return cost;
+    }
+
+    public boolean isInVehicleMode() {
+        return movementMode == EntityMovementMode.TRACKED
+                || movementMode == EntityMovementMode.WHEELED;
     }
 }

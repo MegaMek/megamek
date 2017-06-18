@@ -2392,6 +2392,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getJumpMPWithTerrain() {
         return getJumpMP();
     }
+    
+    /**
+     * Tanks and certain other units can get a +1 bonus to MP if their move is entirely on pavement.
+     * 
+     * @return true if the <code>Entity</code> gets a movement bonus on pavement
+     */
+    public boolean isEligibleForPavementBonus() {
+        return false;
+    }
 
     /**
      * Returns the absolute elevation above ground level 0 that this entity
@@ -6495,7 +6504,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * return a <code>PilotingRollData</code> checking for wether this Entity
+     * return a <code>PilotingRollData</code> checking for whether this Entity
      * moved too fast due to low gravity
      *
      * @param step
@@ -6511,7 +6520,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case MOVE_VTOL_WALK:
             case MOVE_VTOL_RUN:
                 int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5);
-                if ((this instanceof Tank) && gotPavementBonus) {
+                if (isEligibleForPavementBonus() && gotPavementBonus) {
                     maxSafeMP++;
                 }
                 if (step.getMpUsed() > maxSafeMP) {

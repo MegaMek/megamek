@@ -31,7 +31,6 @@ import java.util.Vector;
 import megamek.common.loaders.MtfFile;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.autocannons.HVACWeapon;
 import megamek.common.weapons.autocannons.LBXACWeapon;
@@ -43,6 +42,7 @@ import megamek.common.weapons.lasers.CLImprovedHeavyLaserSmall;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.lasers.ISRISCHyperLaser;
 import megamek.common.weapons.other.ISMekTaser;
+import megamek.common.weapons.other.TSEMPWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 
 /**

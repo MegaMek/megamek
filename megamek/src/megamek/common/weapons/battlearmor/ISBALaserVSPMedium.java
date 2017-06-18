@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
+import megamek.common.weapons.lasers.VariableSpeedPulseLaserWeapon;
 
 /**
  * @author Jason Tighe

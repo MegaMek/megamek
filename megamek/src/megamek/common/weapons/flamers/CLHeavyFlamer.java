@@ -18,7 +18,6 @@ package megamek.common.weapons.flamers;
 
 import megamek.common.AmmoType;
 import megamek.common.WeaponType;
-import megamek.common.weapons.VehicleFlamerWeapon;
 
 /**
  * @author Klaus Mittag (based on ISHeavyFlamer by Andrew Hunter)

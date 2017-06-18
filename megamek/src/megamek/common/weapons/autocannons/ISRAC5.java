@@ -1,3 +1,5 @@
+package megamek.common.weapons.autocannons;
+
 /**
  * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 
@@ -15,9 +17,6 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons.autocannons;
-
-import megamek.common.weapons.RACWeapon;
 
 /**
  * @author Andrew Hunter

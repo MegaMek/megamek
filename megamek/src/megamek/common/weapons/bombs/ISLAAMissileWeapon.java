@@ -15,7 +15,6 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
@@ -31,7 +30,7 @@ public class ISLAAMissileWeapon extends CapitalMissileWeapon {
     public ISLAAMissileWeapon() {
         super();
 
-        this.name = "LAA Missile";
+        this.name = "Light Air-to-Air (LAA) Missiles";
         this.setInternalName("IS " + BombType.getBombWeaponName(BombType.B_LAA));
         this.heat = 0;
         this.damage = 6;
@@ -52,10 +51,14 @@ public class ISLAAMissileWeapon extends CapitalMissileWeapon {
         this.ammoType = AmmoType.T_LAA_MISSILE;
         this.capital = false;
         rulesRefs = "359, TO";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3064, 3072, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_D });
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+        .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_FW)
+        .setProductionFactions(F_FW);
     }
 }

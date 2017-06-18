@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.weapons.TSEMPWeapon;
-
 public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
 
     /**

@@ -60,12 +60,9 @@ import megamek.common.util.StringUtil;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.BayWeapon;
-import megamek.common.weapons.CLBombTAG;
-import megamek.common.weapons.CLLAAMissileWeapon;
 import megamek.common.weapons.DiveBombAttack;
 import megamek.common.weapons.SCLBayWeapon;
 import megamek.common.weapons.SpaceBombAttack;
-import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.autocannons.ACWeapon;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
@@ -74,6 +71,8 @@ import megamek.common.weapons.bombs.BombISRL10;
 import megamek.common.weapons.bombs.CLAAAMissileWeapon;
 import megamek.common.weapons.bombs.CLASEWMissileWeapon;
 import megamek.common.weapons.bombs.CLASMissileWeapon;
+import megamek.common.weapons.bombs.CLBombTAG;
+import megamek.common.weapons.bombs.CLLAAMissileWeapon;
 import megamek.common.weapons.bombs.ISAAAMissileWeapon;
 import megamek.common.weapons.bombs.ISASEWMissileWeapon;
 import megamek.common.weapons.bombs.ISASMissileWeapon;
@@ -82,6 +81,7 @@ import megamek.common.weapons.bombs.ISLAAMissileWeapon;
 import megamek.common.weapons.capitalweapons.CapitalLaserBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 import megamek.common.weapons.lasers.ISBombastLaser;
+import megamek.common.weapons.other.TSEMPWeapon;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.

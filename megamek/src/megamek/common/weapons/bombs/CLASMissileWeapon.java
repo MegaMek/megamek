@@ -15,7 +15,6 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
@@ -53,11 +52,12 @@ public class CLASMissileWeapon extends CapitalMissileWeapon {
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;
         rulesRefs = "358, TO";
-
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, 3076, DATE_NONE);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false, false, false);
     }
 }

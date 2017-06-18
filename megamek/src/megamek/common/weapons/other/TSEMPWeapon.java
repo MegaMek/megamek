@@ -11,11 +11,13 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.other;
 
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.TSEMPHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.server.Server;
 

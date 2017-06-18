@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.unofficial;
 
-import megamek.common.weapons.RACWeapon;
+import megamek.common.weapons.autocannons.RACWeapon;
 
 /**
  * @author Sebastian Brocks

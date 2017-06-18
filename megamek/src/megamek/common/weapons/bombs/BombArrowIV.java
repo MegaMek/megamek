@@ -19,7 +19,6 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.AmmoWeapon;
 
 /**
@@ -34,7 +33,7 @@ public class BombArrowIV extends AmmoWeapon {
 
     public BombArrowIV() {
         super();
-        this.name = "Arrow IV (Bomb)";
+        this.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_ARROW));
         this.heat = 0;
         this.rackSize = 20;
@@ -48,9 +47,18 @@ public class BombArrowIV extends AmmoWeapon {
         this.hittable = false;
         this.bv = 0;
         this.cost = 0;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 2623, DATE_NONE, 2859, 3046);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
+        rulesRefs = "359,TO";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+            .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3047)
+            .setISApproximate(true, false, false,true, false)
+            .setClanAdvancement(2622, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false, false, false)
+            .setPrototypeFactions(F_TH)	
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_CC);
     }
 }

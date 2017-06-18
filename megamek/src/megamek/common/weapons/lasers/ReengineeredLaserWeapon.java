@@ -12,12 +12,13 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.lasers;
 
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.lasers.LaserWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.ReengineeredLaserWeaponHandler;
 import megamek.server.Server;
 
 public class ReengineeredLaserWeapon extends LaserWeapon {

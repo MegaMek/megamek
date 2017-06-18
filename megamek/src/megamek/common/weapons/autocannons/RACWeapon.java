@@ -15,7 +15,7 @@
  * Created on Oct 19, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
@@ -23,7 +23,9 @@ import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.autocannons.UACWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.RACHandler;
+import megamek.common.weapons.UltraWeaponHandler;
 import megamek.server.Server;
 
 /**

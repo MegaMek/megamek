@@ -18,7 +18,6 @@
 package megamek.common.weapons.flamers;
 
 import megamek.common.WeaponType;
-import megamek.common.weapons.VehicleFlamerWeapon;
 
 /**
  * @author Sebastian Brocks

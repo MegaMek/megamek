@@ -15,7 +15,6 @@ package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 
 /**
@@ -31,7 +30,7 @@ public class CLASEWMissileWeapon extends CapitalMissileWeapon {
     public CLASEWMissileWeapon() {
         super();
 
-        this.name = "ASEW Missile";
+        this.name = "Anti-Ship Electronic Warfare (ASEW) Missiles";
         this.setInternalName("Clan " + BombType.getBombWeaponName(BombType.B_ASEW));
         this.heat = 0;
         this.damage = 0;
@@ -52,9 +51,13 @@ public class CLASEWMissileWeapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_MED;
         this.ammoType = AmmoType.T_ASEW_MISSILE;
         this.capital = false;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 3073);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_F });
+        rulesRefs = "358, TO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(true)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+        .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false, false, false);
     }
 }

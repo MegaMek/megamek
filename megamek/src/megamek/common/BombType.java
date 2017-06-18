@@ -231,567 +231,553 @@ public class BombType extends AmmoType {
                 return null;
         }
     }
-
-    private static BombType createHighExplosiveBomb() {
-        BombType bomb = new BombType();
-
-        bomb.name = "HE Bomb";
-        bomb.shortName = "HEBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_HE));
-        bomb.damagePerShot = 10;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_HE;
-        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 12;
-        bomb.cost = 5000;
-        bomb.rulesRefs = "246, TW";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        bomb.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        bomb.techAdvancement.setTechRating(RATING_B);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
-
-        return bomb;
-    }
-
-    private static BombType createClusterBomb() {
-        BombType bomb = new BombType();
-
-        bomb.name = "Cluster Bomb";
-        bomb.shortName = "ClusterBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_CLUSTER));
-        bomb.damagePerShot = 5;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_CLUSTER;
-        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 13;
-        bomb.cost = 8000;
-        bomb.rulesRefs = "246, TW";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        bomb.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        bomb.techAdvancement.setTechRating(RATING_B);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_D, RATING_D, RATING_D, RATING_D });
-
-        return bomb;
-    }
-
-    private static BombType createISLaserGuidedBomb() {
-        BombType bomb = new BombType();
-
-        bomb.name = "Laser-Guided Bomb";
-        bomb.shortName = "ISLGBomb";
-        bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_LG));
-        bomb.damagePerShot = 10;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_LG;
-        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 20;
-        bomb.cost = 10000;
-        bomb.rulesRefs = "247, TW";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        bomb.techAdvancement.setISAdvancement(DATE_NONE, 2200, 3065, 2800, 3060);
-        bomb.techAdvancement.setTechRating(RATING_C);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_D });
-
-        return bomb;
-    }
     
-    private static BombType createCLLaserGuidedBomb() {
-        BombType bomb = new BombType();
+	// START OF BOMBS
 
-        bomb.name = "Laser-Guided Bomb";
-        bomb.shortName = "ClanLGBomb";
-        bomb.setInternalName("Clan " + BombType.getBombInternalName(BombType.B_LG));
-        bomb.damagePerShot = 10;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_LG;
-        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 20;
-        bomb.cost = 10000;
-        bomb.rulesRefs = "247, TW";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 2807, 3065);
-        bomb.techAdvancement.setTechRating(RATING_C);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_D });
+	private static BombType createISAAAMissileBomb() {
+		BombType bomb = new BombType();
 
-        return bomb;
-    }
+		bomb.name = "Air-to-Air (AAA) Arrow Ammo";
+		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_AAA));
+		bomb.damagePerShot = 20;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_AAA_MISSILE;
+		bomb.bombType = BombType.B_AAA;
+		bomb.shots = 1;
+		bomb.bv = 57;
+		bomb.cost = 9000;
+		bomb.rulesRefs = "357, TO";
+		bomb.rulesRefs = "357, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+		        .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC);
 
-    private static BombType createISTAGBomb() {
-        BombType bomb = new BombType();
+		return bomb;
+	}
 
-        bomb.name = "TAG Pod";
-        bomb.shortName = "ISTAGPod";
-        bomb.setInternalName("IS "+BombType.getBombInternalName(BombType.B_TAG));
-        bomb.addLookupName("ISTAGBomb");
-        bomb.damagePerShot = 0;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_TAG;
-        bomb.shots = 1;
-        bomb.bv = 0;
-        bomb.cost = 50000;
-        bomb.rulesRefs = "238, TM";
-        bomb.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
-        .setISAdvancement(2600, 2605, 2645, 2835, 3035)
-        .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
+	private static BombType createCLAAAMissileBomb() {
+		BombType bomb = new BombType();
 
-        return bomb;
-    }
-    
-    private static BombType createCLTAGBomb() {
-        BombType bomb = new BombType();
+		bomb.name = "Air-to-Air (AAA) Arrow Ammo";
+		bomb.setInternalName("Clan " + BombType.getBombInternalName(BombType.B_AAA));
+		bomb.damagePerShot = 20;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_AAA_MISSILE;
+		bomb.bombType = BombType.B_AAA;
+		bomb.shots = 1;
+		bomb.bv = 57;
+		bomb.cost = 9000;
+		bomb.rulesRefs = "357, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+		        .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_CWX);
 
-        bomb.name = "TAG Pod";
-        bomb.shortName = "ClanTAGPod";
-        bomb.setInternalName("Clan "+BombType.getBombInternalName(BombType.B_TAG));
-        bomb.addLookupName("CLTAGBomb");
-        bomb.damagePerShot = 0;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_TAG;
-        bomb.shots = 1;
-        bomb.bv = 0;
-        bomb.cost = 50000;
-        bomb.rulesRefs = "238, TM";
-        bomb.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
-        .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH);
+		return bomb;
+	}
 
-        return bomb;
-    }
+	private static BombType createISASMissileBomb() {
+		BombType bomb = new BombType();
 
-    private static BombType createRocketBomb() {
-        BombType bomb = new BombType();
+		bomb.name = "Anti-Ship (AS) Missiles Ammo";
+		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_AS));
+		bomb.damagePerShot = 20;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_AS_MISSILE;
+		bomb.bombType = BombType.B_AS;
+		bomb.shots = 1;
+		bomb.bv = 114;
+		bomb.cost = 0;
+		bomb.rulesRefs = "358, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
+		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+		        .setISAdvancement(3071, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, true, false, false, false).setPrototypeFactions(F_FS)
+		        .setProductionFactions(F_FS);
 
-        bomb.name = "Rocket Launcher Pod";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_RL));
-        bomb.addLookupName("RL 10 (Bomb)");
-        bomb.damagePerShot = 1;
-        bomb.rackSize = 10;
-        bomb.ammoType = AmmoType.T_RL_BOMB;
-        bomb.bombType = BombType.B_RL;
-        bomb.shots = 1;
-        bomb.bv = 18;
-        bomb.cost = 15000;
-        bomb.rulesRefs = "229, TM";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        bomb.techAdvancement.setISAdvancement(3055, 3064, 3067);
-        bomb.techAdvancement.setTechRating(RATING_B);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
-        
-        return bomb;
-    }
+		return bomb;
+	}
 
-    private static BombType createISAAAMissileBomb() {
-        BombType bomb = new BombType();
+	private static BombType createCLASMissileBomb() {
+		BombType bomb = new BombType();
 
-        bomb.name = "AAA Missile Ammo";
-        bomb.setInternalName("IS "+BombType.getBombInternalName(BombType.B_AAA));
-        bomb.damagePerShot = 20;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_AAA_MISSILE;
-        bomb.bombType = BombType.B_AAA;;
-        bomb.shots = 1;
-        bomb.bv = 57;
-        bomb.cost = 9000;
-        bomb.rulesRefs = "357, TO";
-        bomb.rulesRefs = "357, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-     
-        return bomb;
-    }
-    
-    private static BombType createCLAAAMissileBomb() {
-        BombType bomb = new BombType();
+		bomb.name = "Anti-Ship (AS) Missiles Ammo";
+		bomb.setInternalName("Clan " + BombType.getBombInternalName(BombType.B_AS));
+		bomb.damagePerShot = 20;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_AS_MISSILE;
+		bomb.bombType = BombType.B_AS;
+		bomb.shots = 1;
+		bomb.bv = 114;
+		bomb.cost = 0;
+		bomb.rulesRefs = "358, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_D).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+		        .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false);
 
-        bomb.name = "AAA Missile Ammo";
-        bomb.setInternalName("Clan "+BombType.getBombInternalName(BombType.B_AAA));
-        bomb.damagePerShot = 20;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_AAA_MISSILE;
-        bomb.bombType = BombType.B_AAA;;
-        bomb.shots = 1;
-        bomb.bv = 57;
-        bomb.cost = 9000;
-        bomb.rulesRefs = "357, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_CWX);
-     
-        return bomb;
-    }
+		return bomb;
+	}
 
+	private static BombType createISASEWMissileBomb() {
+		BombType bomb = new BombType();
 
-    private static BombType createISASMissileBomb() {
-        BombType bomb = new BombType();
+		bomb.name = "Anti-Ship Electronic Warfare (ASEW) Ammo";
+		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_ASEW));
+		bomb.damagePerShot = 0;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_ASEW_MISSILE;
+		bomb.bombType = BombType.B_ASEW;
+		bomb.shots = 1;
+		bomb.bv = 75;
+		bomb.cost = 0;
+		bomb.rulesRefs = "358, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+		        .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_LC)
+		        .setProductionFactions(F_LC);
 
-        bomb.name = "Anti-Ship Missile Ammo";
-        bomb.setInternalName("IS "+BombType.getBombInternalName(BombType.B_AS));
-        bomb.damagePerShot = 20;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_AS_MISSILE;
-        bomb.bombType = BombType.B_AS;
-        bomb.shots = 1;
-        bomb.bv = 114;
-        bomb.cost = 0;
-        bomb.rulesRefs = "358, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setISAdvancement(3071, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, true, false, false, false)
-        .setPrototypeFactions(F_FS)
-        .setProductionFactions(F_FS);
+		return bomb;
+	}
 
-        return bomb;
-    }
-    
-    private static BombType createCLASMissileBomb() {
-        BombType bomb = new BombType();
+	private static BombType createCLASEWMissileBomb() {
+		BombType bomb = new BombType();
 
-        bomb.name = "Anti-Ship Missile Ammo";
-        bomb.setInternalName("Clan "+BombType.getBombInternalName(BombType.B_AS));
-        bomb.damagePerShot = 20;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_AS_MISSILE;
-        bomb.bombType = BombType.B_AS;
-        bomb.shots = 1;
-        bomb.bv = 114;
-        bomb.cost = 0;
-        bomb.rulesRefs = "358, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_D)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setISAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false, false, false);
+		bomb.name = "Anti-Ship Electronic Warfare (ASEW) Ammo";
+		bomb.setInternalName("Clan " + BombType.getBombInternalName(BombType.B_ASEW));
+		bomb.damagePerShot = 0;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_ASEW_MISSILE;
+		bomb.bombType = BombType.B_ASEW;
+		bomb.shots = 1;
+		bomb.bv = 75;
+		bomb.cost = 0;
+		bomb.rulesRefs = "358, TO";
+		bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
+		bomb.techAdvancement.setClanAdvancement(3067, 3073);
+		bomb.techAdvancement.setUnofficial(true);
+		bomb.techAdvancement.setTechRating(RATING_E);
+		bomb.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
 
-        return bomb;
-    }
-    
-    private static BombType createISASEWMissileBomb() {
-        BombType bomb = new BombType();
+		return bomb;
+	}
 
-        bomb.name = "Anti-Ship Electronic Warfare (ASEW) Ammo";
-        bomb.setInternalName("IS "+BombType.getBombInternalName(BombType.B_ASEW));
-        bomb.damagePerShot = 0;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_ASEW_MISSILE;
-        bomb.bombType = BombType.B_ASEW;
-        bomb.shots = 1;
-        bomb.bv = 75;
-        bomb.cost = 0;
-        bomb.rulesRefs = "358, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-        .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false, false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
+	private static BombType createISArrowIVHomingBomb() {
+		BombType bomb = new BombType();
 
-        return bomb;
-    }
-    
-    private static BombType createCLASEWMissileBomb() {
-        BombType bomb = new BombType();
+		bomb.name = "Arrow IV Homing Missile (Air-Launched Version)";
+		bomb.shortName = "IS Arrow IV AL-Homing";
+		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_HOMING));
+		bomb.damagePerShot = 1;
+		bomb.rackSize = 20;
+		bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
+		bomb.bombType = BombType.B_HOMING;
+		bomb.munitionType = AmmoType.M_HOMING;
+		// Allow Homing munitions to instantly switch between modes
+		bomb.instantModeSwitch = true;
+		bomb.setModes(new String[] { "Homing", "Non-Homing" });
+		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 0;
+		bomb.cost = 0;
+		bomb.rulesRefs = "358, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+		        .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+		        .setISAdvancement(2595, 2600, DATE_NONE, 2835, 3047).setISApproximate(true, false, false, true, false)
+		        .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_CC);
 
-        bomb.name = "Anti-Ship Electronic Warfare (ASEW) Ammo";
-        bomb.setInternalName("Clan "+BombType.getBombInternalName(BombType.B_ASEW));
-        bomb.damagePerShot = 0;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_ASEW_MISSILE;
-        bomb.bombType = BombType.B_ASEW;
-        bomb.shots = 1;
-        bomb.bv = 75;
-        bomb.cost = 0;
-        bomb.rulesRefs = "358, TO";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        bomb.techAdvancement.setClanAdvancement(3067, 3073);
-        bomb.techAdvancement.setUnofficial(true);
-        bomb.techAdvancement.setTechRating(RATING_E);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
+		return bomb;
+	}
 
-        return bomb;
-    }
+	private static BombType createCLArrowIVHomingBomb() {
+		BombType bomb = new BombType();
 
-    private static BombType createISArrowIVBomb() {
-        BombType bomb = new BombType();
+		bomb.name = "Arrow IV Homing Missile (Air-Launched Version)";
+		bomb.shortName = "Clan Arrow IV AL-Homing";
+		bomb.setInternalName("Clan " + BombType.getBombInternalName(BombType.B_HOMING));
+		bomb.damagePerShot = 1;
+		bomb.rackSize = 20;
+		bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
+		bomb.bombType = BombType.B_HOMING;
+		bomb.munitionType = AmmoType.M_HOMING;
+		// Allow Homing munitions to instantly switch between modes
+		bomb.instantModeSwitch = true;
+		bomb.setModes(new String[] { "Homing", "Non-Homing" });
+		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 0;
+		bomb.cost = 0;
+		bomb.rulesRefs = "358, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+		        .setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH);
 
-        bomb.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
-        bomb.shortName = "IS Arrow IV (Air-Launched Version)";
-        bomb.setInternalName("IS "+BombType.getBombInternalName(BombType.B_ARROW));
-        bomb.damagePerShot=1;
-        bomb.rackSize = 20;
-        bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
-        bomb.bombType = BombType.B_ARROW;
-        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 34;
-        bomb.cost = 0;
-        bomb.rulesRefs = "359, TO";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        bomb.techAdvancement.setISAdvancement(2617, 2623, DATE_NONE, 2855, 3046);
-        bomb.techAdvancement.setTechRating(RATING_E);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_E });
-       
-        return bomb;
-    }
-    
-    private static BombType createCLArrowIVBomb() {
-        BombType bomb = new BombType();
+		return bomb;
+	}
 
-        bomb.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
-        bomb.shortName = "Clan Arrow IV (Air-Launched Version)";
-        bomb.setInternalName("Clan "+BombType.getBombInternalName(BombType.B_ARROW));
-        bomb.damagePerShot=1;
-        bomb.rackSize = 20;
-        bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
-        bomb.bombType = BombType.B_ARROW;
-        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 34;
-        bomb.cost = 0;
-        bomb.rulesRefs = "359, TO";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 2807, DATE_NONE);
-        bomb.techAdvancement.setTechRating(RATING_E);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_E });
-       
-        return bomb;
-    }
+	private static BombType createISArrowIVBomb() {
+		BombType bomb = new BombType();
 
-    private static BombType createISArrowIVHomingBomb() {
-        BombType bomb = new BombType();
+		bomb.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
+		bomb.shortName = "IS Arrow IV (Air-Launched Version)";
+		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_ARROW));
+		bomb.damagePerShot = 1;
+		bomb.rackSize = 20;
+		bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
+		bomb.bombType = BombType.B_ARROW;
+		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 34;
+		bomb.cost = 0;
+		bomb.rulesRefs = "359, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+		        .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+		        .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3046).setISApproximate(true, false, false, true, false)
+		        .setPrototypeFactions(F_TH).setProductionFactions(F_TH);
 
-        bomb.name = "Arrow IV Homing Missile (Air-Launched Version)";
-        bomb.shortName = "IS Arrow IV AL-Homing)";
-        bomb.setInternalName("IS "+BombType.getBombInternalName(BombType.B_HOMING));
-        bomb.damagePerShot=1;
-        bomb.rackSize = 20;
-        bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
-        bomb.bombType = BombType.B_HOMING;
-        bomb.munitionType = AmmoType.M_HOMING;
-        // Allow Homing munitions to instantly switch between modes
-        bomb.instantModeSwitch = true;
-        bomb.setModes(new String[] { "Homing", "Non-Homing" });
-        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 0;
-        bomb.cost = 0;
-        bomb.rulesRefs = "358, TO";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        bomb.techAdvancement.setISAdvancement(2590, 2600, DATE_NONE, 2840, 3047);
-        bomb.techAdvancement.setTechRating(RATING_E);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_E });
+		return bomb;
+	}
 
-        return bomb;
-    }
-    
-    private static BombType createCLArrowIVHomingBomb() {
-        BombType bomb = new BombType();
+	private static BombType createCLArrowIVBomb() {
+		BombType bomb = new BombType();
 
-        bomb.name = "Arrow IV Homing Missile (Air-Launched Version)";
-        bomb.shortName = "Clan Arrow IV AL-Homing";
-        bomb.setInternalName("Clan "+BombType.getBombInternalName(BombType.B_HOMING));
-        bomb.damagePerShot=1;
-        bomb.rackSize = 20;
-        bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
-        bomb.bombType = BombType.B_HOMING;
-        bomb.munitionType = AmmoType.M_HOMING;
-        // Allow Homing munitions to instantly switch between modes
-        bomb.instantModeSwitch = true;
-        bomb.setModes(new String[] { "Homing", "Non-Homing" });
-        bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 0;
-        bomb.cost = 0;
-        bomb.rulesRefs = "358, TO";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        bomb.techAdvancement.setClanAdvancement(DATE_NONE, 2807, DATE_NONE);
-        bomb.techAdvancement.setTechRating(RATING_E);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_E, RATING_E });
+		bomb.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
+		bomb.shortName = "Clan Arrow IV (Air-Launched Version)";
+		bomb.setInternalName("Clan " + BombType.getBombInternalName(BombType.B_ARROW));
+		bomb.damagePerShot = 1;
+		bomb.rackSize = 20;
+		bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
+		bomb.bombType = BombType.B_ARROW;
+		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 34;
+		bomb.cost = 0;
+		bomb.rulesRefs = "359, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+		        .setClanAdvancement(2622, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false);
 
-        return bomb;
-    }
+		return bomb;
+	}
 
-    private static BombType createInfernoBomb() {
-        BombType bomb = new BombType();
+	private static BombType createClusterBomb() {
+		BombType bomb = new BombType();
 
-        bomb.name = "Inferno Bomb";
-        bomb.shortName = "InfernoBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_INFERNO));
-        bomb.damagePerShot = 5;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_INFERNO;
-        bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 16;
-        bomb.cost = 0;
-        bomb.rulesRefs = "359, TO";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        bomb.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        bomb.techAdvancement.setTechRating(RATING_B);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_D, RATING_D, RATING_D, RATING_C });
+		bomb.name = "Cluster Bomb";
+		bomb.shortName = "ClusterBomb";
+		bomb.setInternalName(BombType.getBombInternalName(BombType.B_CLUSTER));
+		bomb.damagePerShot = 5;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_BOMB;
+		bomb.bombType = BombType.B_CLUSTER;
+		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 13;
+		bomb.cost = 8000;
+		bomb.rulesRefs = "246, TW";
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_B).setAvailability(RATING_D, RATING_D, RATING_D, RATING_D)
+		        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false);
 
-        return bomb;
-    }
+		return bomb;
+	}
 
-    private static BombType createISLAAMissileBomb() {
-        BombType bomb = new BombType();
+	// TODO Fuel-Air Bombs (See IO 165)
 
-        bomb.name = "Light Air-to-Air (LAA) Missiles Ammo";
-        bomb.setInternalName("IS "+BombType.getBombInternalName(BombType.B_LAA));
-        bomb.damagePerShot = 6;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_LAA_MISSILE;
-        bomb.bombType = BombType.B_LAA;;
-        bomb.shots = 1;
-        bomb.bv = 17;
-        bomb.cost = 0;
-        bomb.rulesRefs = "359, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
-        .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false, false, false)
-        .setPrototypeFactions(F_FW)
-        .setProductionFactions(F_FW);
+	private static BombType createHighExplosiveBomb() {
+		BombType bomb = new BombType();
 
-        return bomb;
-    }
-    
-    private static BombType createCLLAAMissileBomb() {
-        BombType bomb = new BombType();
+		bomb.name = "High-Explosive (Standard) Bomb";
+		bomb.shortName = "HEBomb";
+		bomb.setInternalName(BombType.getBombInternalName(BombType.B_HE));
+		bomb.damagePerShot = 10;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_BOMB;
+		bomb.bombType = BombType.B_HE;
+		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 12;
+		bomb.cost = 5000;
+		bomb.rulesRefs = "246, TW";
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+		        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false);
 
-        bomb.name = "Light Air-to-Air (LAA) Missiles Ammo";
-        bomb.setInternalName("Clan "+BombType.getBombInternalName(BombType.B_LAA));
-        bomb.damagePerShot = 6;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_LAA_MISSILE;
-        bomb.bombType = BombType.B_LAA;;
-        bomb.shots = 1;
-        bomb.bv = 17;
-        bomb.cost = 0;
-        bomb.rulesRefs = "359, TO";
-        bomb.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
-        .setClanAdvancement(DATE_NONE, DATE_NONE, 3074, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false, false, false);
+		return bomb;
+	}
 
-        return bomb;
-    }
+	private static BombType createInfernoBomb() {
+		BombType bomb = new BombType();
 
-    private static BombType createThunderBomb() {
-        BombType bomb = new BombType();
+		bomb.name = "Inferno Bomb";
+		bomb.shortName = "InfernoBomb";
+		bomb.setInternalName(BombType.getBombInternalName(BombType.B_INFERNO));
+		bomb.damagePerShot = 5;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_BOMB;
+		bomb.bombType = BombType.B_INFERNO;
+		bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 16;
+		bomb.cost = 0;
+		bomb.rulesRefs = "359, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_C).setAvailability(RATING_D, RATING_D, RATING_D, RATING_C)
+		        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false);
 
-        bomb.name = "Thunder Bomb";
-        bomb.shortName = "ThunderBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_THUNDER));
-        bomb.damagePerShot = 20;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_THUNDER;
-        bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
-        bomb.shots = 1;
-        bomb.bv = 0;
-        bomb.cost = 0;
-        bomb.rulesRefs = "360, TO";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        bomb.techAdvancement.setISAdvancement(3055, 3065, DATE_NONE);
-        bomb.techAdvancement.setTechRating(RATING_E);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_D });
+		return bomb;
+	}
 
+	private static BombType createISLaserGuidedBomb() {
+		BombType bomb = new BombType();
 
-        return bomb;
-    }
+		bomb.name = "Laser-Guided (LG) Bomb";
+		bomb.shortName = "ISLGBomb";
+		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_LG));
+		bomb.damagePerShot = 10;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_BOMB;
+		bomb.bombType = BombType.B_LG;
+		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 20;
+		bomb.cost = 10000;
+		bomb.rulesRefs = "247, TW";
+		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_C)
+		        .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+		        .setISAdvancement(DATE_ES, DATE_ES, 3065, 2800, 3060)
+		        .setISApproximate(false, false, false, false, false).setReintroductionFactions(F_FW);
 
-    private static BombType createTorpedoBomb() {
-        BombType bomb = new BombType();
+		return bomb;
+	}
 
-        bomb.name = "Torpedo Bomb";
-        bomb.shortName = "TorpedoBomb";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_TORPEDO));
-        bomb.damagePerShot = 10;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_BOMB;
-        bomb.bombType = BombType.B_TORPEDO;
-        bomb.shots = 1;
-        bomb.bv = 10;
-        bomb.cost = 0;
-        bomb.rulesRefs = "360, TO";
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
-        bomb.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
-        bomb.techAdvancement.setTechRating(RATING_B);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_C, RATING_C, RATING_C, RATING_C });
+	private static BombType createCLLaserGuidedBomb() {
+		BombType bomb = new BombType();
 
-        return bomb;
-    }
+		bomb.name = "Laser-Guided (LG) Bomb";
+		bomb.shortName = "ClanLGBomb";
+		bomb.setInternalName("Clan " + BombType.getBombInternalName(BombType.B_LG));
+		bomb.damagePerShot = 10;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_BOMB;
+		bomb.bombType = BombType.B_LG;
+		bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB).or(AmmoType.F_GROUND_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 20;
+		bomb.cost = 10000;
+		bomb.rulesRefs = "247, TW";
+		bomb.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+		        .setClanAdvancement(DATE_ES, DATE_ES, 3065, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false);
 
-    private static BombType createAlamoBomb() {
-        BombType bomb = new BombType();
+		return bomb;
+	}
 
-        bomb.name = "Alamo Missile Ammo";
-        bomb.setInternalName(BombType.getBombInternalName(BombType.B_ALAMO));
-        bomb.damagePerShot = 10;
-        bomb.rackSize = 1;
-        bomb.ammoType = AmmoType.T_ALAMO;
-        bomb.bombType = BombType.B_ALAMO;
-        bomb.shots = 1;
-        bomb.bv = 0;
-        bomb.cost = 0;
-        bomb.flags = bomb.flags.or(F_NUCLEAR);
-        bomb.capital = true;
-        bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        bomb.techAdvancement.setISAdvancement(3071, DATE_NONE, DATE_NONE);
-        bomb.techAdvancement.setTechRating(RATING_C);
-        bomb.techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+	private static BombType createISLAAMissileBomb() {
+		BombType bomb = new BombType();
 
-        return bomb;
-    }
+		bomb.name = "Light Air-to-Air (LAA) Missiles Ammo";
+		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_LAA));
+		bomb.damagePerShot = 6;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_LAA_MISSILE;
+		bomb.bombType = BombType.B_LAA;
+		;
+		bomb.shots = 1;
+		bomb.bv = 17;
+		bomb.cost = 0;
+		bomb.rulesRefs = "359, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+		        .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FW)
+		        .setProductionFactions(F_FW);
+
+		return bomb;
+	}
+
+	private static BombType createCLLAAMissileBomb() {
+		BombType bomb = new BombType();
+
+		bomb.name = "Light Air-to-Air (LAA) Missiles Ammo";
+		bomb.setInternalName("Clan " + BombType.getBombInternalName(BombType.B_LAA));
+		bomb.damagePerShot = 6;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_LAA_MISSILE;
+		bomb.bombType = BombType.B_LAA;
+		;
+		bomb.shots = 1;
+		bomb.bv = 17;
+		bomb.cost = 0;
+		bomb.rulesRefs = "359, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_F, RATING_D)
+		        .setClanAdvancement(DATE_NONE, DATE_NONE, 3074, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false);
+
+		return bomb;
+	}
+
+	// TODO Mine Bombs
+
+	private static BombType createRocketBomb() {
+		BombType bomb = new BombType();
+
+		bomb.name = "Rocket Launcher Pod";
+		bomb.setInternalName(BombType.getBombInternalName(BombType.B_RL));
+		bomb.addLookupName("RL 10 (Bomb)");
+		bomb.damagePerShot = 1;
+		bomb.rackSize = 10;
+		bomb.ammoType = AmmoType.T_RL_BOMB;
+		bomb.bombType = BombType.B_RL;
+		bomb.shots = 1;
+		bomb.bv = 18;
+		bomb.cost = 15000;
+		bomb.rulesRefs = "229, TM";
+		bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+		bomb.techAdvancement.setISAdvancement(3055, 3064, 3067);
+		bomb.techAdvancement.setTechRating(RATING_B);
+		bomb.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_B, RATING_B });
+
+		return bomb;
+	}
+
+	private static BombType createISTAGBomb() {
+		BombType bomb = new BombType();
+
+		bomb.name = "TAG Pod";
+		bomb.shortName = "ISTAGPod";
+		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_TAG));
+		bomb.addLookupName("ISTAGBomb");
+		bomb.damagePerShot = 0;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_BOMB;
+		bomb.bombType = BombType.B_TAG;
+		bomb.shots = 1;
+		bomb.bv = 0;
+		bomb.cost = 50000;
+		bomb.rulesRefs = "238, TM";
+		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+		        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D).setISAdvancement(2600, 2605, 2645, 2835, 3035)
+		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH);
+
+		return bomb;
+	}
+
+	private static BombType createCLTAGBomb() {
+		BombType bomb = new BombType();
+
+		bomb.name = "TAG Pod";
+		bomb.shortName = "ClanTAGPod";
+		bomb.setInternalName("Clan " + BombType.getBombInternalName(BombType.B_TAG));
+		bomb.addLookupName("CLTAGBomb");
+		bomb.damagePerShot = 0;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_BOMB;
+		bomb.bombType = BombType.B_TAG;
+		bomb.shots = 1;
+		bomb.bv = 0;
+		bomb.cost = 50000;
+		bomb.rulesRefs = "238, TM";
+		bomb.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+		        .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH);
+
+		return bomb;
+	}
+
+	private static BombType createThunderBomb() {
+		BombType bomb = new BombType();
+
+		bomb.name = "Thunder (FASCAM) Bombs";
+		bomb.shortName = "ThunderBomb";
+		bomb.setInternalName(BombType.getBombInternalName(BombType.B_THUNDER));
+		bomb.damagePerShot = 20;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_BOMB;
+		bomb.bombType = BombType.B_THUNDER;
+		bomb.flags = bomb.flags.or(AmmoType.F_GROUND_BOMB);
+		bomb.shots = 1;
+		bomb.bv = 0;
+		bomb.cost = 0;
+		bomb.rulesRefs = "360, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_C).setAvailability(RATING_E, RATING_E, RATING_D, RATING_D)
+		        .setISAdvancement(2600, 2623, DATE_NONE, 2850, 3052).setISApproximate(true, false, false, false, false)
+		        .setClanAdvancement(2600, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
+		        .setProductionFactions(F_TH);
+
+		return bomb;
+	}
+
+	// TODO Thunder Active Bombs, Thunder Vibro Bombs - See IO pg 60 and TO pg
+	// 360
+
+	private static BombType createTorpedoBomb() {
+		BombType bomb = new BombType();
+
+		bomb.name = "Torpedo Bomb";
+		bomb.shortName = "TorpedoBomb";
+		bomb.setInternalName(BombType.getBombInternalName(BombType.B_TORPEDO));
+		bomb.damagePerShot = 10;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_BOMB;
+		bomb.bombType = BombType.B_TORPEDO;
+		bomb.shots = 1;
+		bomb.bv = 10;
+		bomb.cost = 0;
+		bomb.rulesRefs = "360, TO";
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
+		        .setTechRating(RATING_B).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+		        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		        .setISApproximate(false, false, false, false, false)
+		        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+		        .setClanApproximate(false, false, false, false, false);
+
+		return bomb;
+	}
+
+	private static BombType createAlamoBomb() {
+		BombType bomb = new BombType();
+
+		bomb.name = "Std. Nuclear Weapon (Type II/Alamo)";
+		bomb.setInternalName(BombType.getBombInternalName(BombType.B_ALAMO));
+		bomb.damagePerShot = 10;
+		bomb.rackSize = 1;
+		bomb.ammoType = AmmoType.T_ALAMO;
+		bomb.bombType = BombType.B_ALAMO;
+		bomb.shots = 1;
+		bomb.bv = 0;
+		bomb.cost = 0;
+		bomb.flags = bomb.flags.or(F_NUCLEAR);
+		bomb.capital = true;
+		bomb.techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
+		bomb.techAdvancement.setISAdvancement(2200, DATE_NONE, DATE_NONE);
+		bomb.techAdvancement.setTechRating(RATING_E);
+		bomb.techAdvancement.setPrototypeFactions(F_TA);
+		bomb.techAdvancement.setAvailability(new int[] { RATING_F, RATING_F, RATING_F, RATING_F });
+
+		return bomb;
+	}
 
 }

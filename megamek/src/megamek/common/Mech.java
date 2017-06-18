@@ -5285,6 +5285,9 @@ public abstract class Mech extends Entity {
 
     @Override
     public int getMaxElevationChange() {
+        if (movementMode == EntityMovementMode.TRACKED) {
+            return 1;
+        }
         return 2;
     }
 

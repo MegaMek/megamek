@@ -132,4 +132,12 @@ public class QuadVee extends QuadMech {
         return movementMode == EntityMovementMode.TRACKED
                 || movementMode == EntityMovementMode.WHEELED;
     }
+    
+    @Override
+    public int getMaxElevationChange() {
+        if (isInVehicleMode() || convertingNow) {
+            return 1;
+        }
+        return 2;
+    }
 }

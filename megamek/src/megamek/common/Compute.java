@@ -4643,6 +4643,10 @@ public class Compute {
             toReturn.addModifier(modifier, men + " trooper(s) active");
         }
         
+        if (defender instanceof Mech && ((Mech)defender).hasTracks()) {
+            toReturn.addModifier(-2, "has tracks");
+        }
+        
         // If the swarm is impossible, ToHitData wasn't created
         if (toReturn == null) {
             toReturn = new ToHitData(TargetRoll.IMPOSSIBLE, reason.toString(),

@@ -1466,6 +1466,21 @@ public abstract class Mech extends Entity {
     }
     
     /**
+     * QuadVees, LAMs, and Mechs with tracks don't make PSRs for gyro or leg damage,
+     * and QuadVees and LAMs don't make PSRs for falling if they are not using a legged
+     * movement mode.
+     *  
+     * @return true if the Mech is using its legs in the current movement mode
+     */
+    public boolean isInLegMode() {
+        return movementMode == EntityMovementMode.BIPED
+                || movementMode == EntityMovementMode.QUAD
+                || movementMode == EntityMovementMode.BIPED_SWIM
+                || movementMode == EntityMovementMode.QUAD_SWIM
+                || movementMode == EntityMovementMode.TRIPOD;
+    }
+    
+    /**
      * Return the height of this mech above the terrain.
      */
     @Override

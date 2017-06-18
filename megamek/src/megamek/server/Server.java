@@ -24220,6 +24220,10 @@ public class Server implements Runnable {
                 }
                 break;
             case Mech.SYSTEM_GYRO:
+                //No PSR for Mechs in non-leg mode
+                if (!((Mech)en).isInLegMode()) {
+                    break;
+                }
                 int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                                                   Mech.SYSTEM_GYRO, loc);
                 if (en.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
@@ -24252,14 +24256,18 @@ public class Server implements Runnable {
             case Mech.ACTUATOR_UPPER_LEG:
             case Mech.ACTUATOR_LOWER_LEG:
             case Mech.ACTUATOR_FOOT:
-                // leg/foot actuator piloting roll
-                game.addPSR(new PilotingRollData(en.getId(), 1,
-                                                 "leg/foot actuator hit"));
+                if (((Mech)en).isInLegMode()) {
+                    // leg/foot actuator piloting roll
+                    game.addPSR(new PilotingRollData(en.getId(), 1,
+                                                     "leg/foot actuator hit"));
+                }
                 break;
             case Mech.ACTUATOR_HIP:
-                // hip piloting roll
-                game.addPSR(new PilotingRollData(en.getId(), 2,
-                                                 "hip actuator hit"));
+                if (((Mech)en).isInLegMode()) {
+                    // hip piloting roll
+                    game.addPSR(new PilotingRollData(en.getId(), 2,
+                                                     "hip actuator hit"));
+                }
                 break;
         }
         return reports;

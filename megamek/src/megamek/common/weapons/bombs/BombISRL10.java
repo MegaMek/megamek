@@ -11,11 +11,12 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.MissileWeapon;
 
 /**
  * @author Jay Lawson

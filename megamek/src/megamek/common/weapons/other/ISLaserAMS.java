@@ -14,7 +14,7 @@
 /*
  * Created on Sep 25, 2004
  */
-package megamek.common.weapons;
+package megamek.common.weapons.other;
 
 import megamek.common.AmmoType;
 import megamek.common.weapons.lasers.LaserWeapon;

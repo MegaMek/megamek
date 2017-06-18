@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bombs;
 
 import megamek.common.AmmoType;
 import megamek.common.BombType;
@@ -21,41 +21,43 @@ import megamek.common.weapons.capitalweapons.CapitalMissileWeapon;
 /**
  * @author Jay Lawson
  */
-public class ISASEWMissileWeapon extends CapitalMissileWeapon {
+public class ISAAAMissileWeapon extends CapitalMissileWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -2094737986722961212L;
+    private static final long serialVersionUID = -2043203178614130517L;
 
-    public ISASEWMissileWeapon() {
+    public ISAAAMissileWeapon() {
         super();
 
-        this.name = "ASEW Missile";
-        this.setInternalName("IS " + BombType.getBombWeaponName(BombType.B_ASEW));
+        this.name = "AAA Missile";
+        this.setInternalName("IS " + BombType.getBombWeaponName(BombType.B_AAA));
         this.heat = 0;
-        this.damage = 0;
+        this.damage = 20;
         this.rackSize = 1;
-        this.minimumRange = 7;
-        this.shortRange = 14;
-        this.mediumRange = 21;
-        this.longRange = 28;
-        this.extremeRange = 42;
-        this.tonnage = 2;
+        this.minimumRange = 6;
+        this.shortRange = 12;
+        this.mediumRange = 18;
+        this.longRange = 24;
+        this.extremeRange = 36;
+        this.tonnage = 1;
         this.criticals = 0;
         this.hittable = false;
         this.bv = 0;
-        this.cost = 20000;
-        this.shortAV = 0;
-        this.medAV = 0;
-        this.longAV = 0;
+        this.cost = 9000;
+        this.shortAV = 20;
+        this.medAV = 20;
         this.maxRange = RANGE_MED;
-        this.ammoType = AmmoType.T_ASEW_MISSILE;
+        this.ammoType = AmmoType.T_AAA_MISSILE;
         this.capital = false;
-        rulesRefs = "358, TO";
+        cost = 9000;
+        this.rulesRefs = "357, TO";
+
+
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3067, 3073, DATE_NONE);
+        techAdvancement.setISAdvancement(3064, 3072, DATE_NONE);
         techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
+        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_E });
     }
 }

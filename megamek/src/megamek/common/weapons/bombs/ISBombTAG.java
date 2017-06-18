@@ -12,44 +12,47 @@
  *  for more details.
  */
 /*
- * Created on Oct 20, 2004
+ * Created on Sep 7, 2005
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bombs;
 
-import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.tag.TAGWeapon;
 
 /**
- * @author Jay Lawson
+ * @author Sebastian Brocks
  */
-public class BombArrowIV extends AmmoWeapon {
+public class ISBombTAG extends TAGWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -1321502140176775035L;
+    private static final long serialVersionUID = -7692653575300083613L;
 
-    public BombArrowIV() {
+    public ISBombTAG() {
         super();
-        this.name = "Arrow IV (Bomb)";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_ARROW));
-        this.heat = 0;
-        this.rackSize = 20;
-        this.ammoType = AmmoType.T_ARROW_IV_BOMB;
-        this.shortRange = 1; //
-        this.mediumRange = 2;
-        this.longRange = 9;
-        this.extremeRange = 9; // No extreme range.
+
+        this.name = "TAG Pod";
+        this.setInternalName("IS " + BombType.getBombWeaponName(BombType.B_TAG));
         this.tonnage = 0;
         this.criticals = 0;
         this.hittable = false;
+        this.spreadable = false;
+        this.heat = 0;
+        this.damage = 0;
+        this.shortRange = 5;
+        this.mediumRange = 10;
+        this.longRange = 15;
+        this.extremeRange = 20;
         this.bv = 0;
-        this.cost = 0;
+        this.cost = 50000;
+        rulesRefs = "238, TM";
+
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(DATE_NONE, 2623, DATE_NONE, 2859, 3046);
+        techAdvancement.setISAdvancement(2595, 2605, 2645, 2835, 3035);
         techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_D });
     }
 }

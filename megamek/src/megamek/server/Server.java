@@ -12154,7 +12154,7 @@ public class Server implements Runnable {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
         }
         // mechs that were stuck will automatically fall in their new hex
-        if (wasStuck && (entity instanceof Mech) && !entity.isProne()) {
+        if (wasStuck && entity.canFall()) {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();
             }
@@ -15031,8 +15031,7 @@ public class Server implements Runnable {
             }
         }
 
-        if ((te.getMovementMode() == EntityMovementMode.BIPED)
-            || (te.getMovementMode() == EntityMovementMode.QUAD)) {
+        if (te.canFall()) {
             PilotingRollData kickPRD = getKickPushPSR(te, ae, te, "was kicked");
             game.addPSR(kickPRD);
         }
@@ -16439,12 +16438,16 @@ public class Server implements Runnable {
                 r.add(targetPushResult.roll);
                 r.addDesc(ae);
                 addReport(r);
-                PilotingRollData targetPushPRD = getKickPushPSR(te, ae, te,
-                                                                "was pushed");
-                PilotingRollData pushPRD = getKickPushPSR(ae, ae, te,
-                                                          "was pushed");
-                game.addPSR(pushPRD);
-                game.addPSR(targetPushPRD);
+                if (ae.canFall()) {
+                    PilotingRollData pushPRD = getKickPushPSR(ae, ae, te,
+                            "was pushed");
+                    game.addPSR(pushPRD);
+                }
+                if (te.canFall()) {
+                    PilotingRollData targetPushPRD = getKickPushPSR(te, ae, te,
+                                                                    "was pushed");
+                    game.addPSR(targetPushPRD);
+                }
                 return;
             }
             // report the miss
@@ -16503,7 +16506,9 @@ public class Server implements Runnable {
             r = new Report(4185);
             r.subject = ae.getId();
             addReport(r);
-            game.addPSR(pushPRD);
+            if (te.canFall()) {
+                game.addPSR(pushPRD);
+            }
         }
 
         // if the target is an industrial mech, it needs to check for crits
@@ -16569,9 +16574,10 @@ public class Server implements Runnable {
         }
 
         // we hit...
-        PilotingRollData pushPRD = getKickPushPSR(te, ae, te, "was tripped");
-
-        game.addPSR(pushPRD);
+        if (te.canFall()) {
+            PilotingRollData pushPRD = getKickPushPSR(te, ae, te, "was tripped");
+            game.addPSR(pushPRD);
+        }
 
         r = new Report(4040);
         r.subject = ae.getId();
@@ -19046,9 +19052,11 @@ public class Server implements Runnable {
                     r.addDesc(entity);
                     addReport(r);
                     // add a piloting roll and resolve immediately
-                    game.addPSR(new PilotingRollData(entity.getId(), 3,
-                                                     "reactor shutdown"));
-                    addReport(resolvePilotingRolls());
+                    if (entity.canFall()) {
+                        game.addPSR(new PilotingRollData(entity.getId(), 3,
+                                                         "reactor shutdown"));
+                        addReport(resolvePilotingRolls());
+                    }
                     // okay, now mark shut down
                     entity.setShutDown(true);
                 } else if (entity.heat >= 14) {
@@ -19098,9 +19106,11 @@ public class Server implements Runnable {
                             r.choose(false);
                             addReport(r);
                             // add a piloting roll and resolve immediately
-                            game.addPSR(new PilotingRollData(entity.getId(), 3,
-                                                             "reactor shutdown"));
-                            addReport(resolvePilotingRolls());
+                            if (entity.canFall()) {
+                                game.addPSR(new PilotingRollData(entity.getId(), 3,
+                                                                 "reactor shutdown"));
+                                addReport(resolvePilotingRolls());
+                            }
                             // okay, now mark shut down
                             entity.setShutDown(true);
                         }
@@ -19735,7 +19745,7 @@ public class Server implements Runnable {
     private void checkForPSRFromDamage() {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
-            if (entity instanceof Mech) {
+            if (entity.canFall()) {
                 if (entity.isAirborne()) {
                     // you can't fall over when you are combat dropping because
                     // you are already falling!
@@ -23612,14 +23622,10 @@ public class Server implements Runnable {
         // check at +6.
         for (int i : blastedUnitsVec) {
             Entity o = game.getEntity(i);
-            if (o instanceof Mech) {
-                Mech bm = (Mech) o;
+            if (o.canFall()) {
                 // Needs a piloting check at +6 to avoid falling over.
-                // Obviously not if it's already prone, though.
-                if (!bm.isProne()) {
-                    game.addPSR(new PilotingRollData(bm.getId(), 6,
-                                                     "hit by nuclear blast"));
-                }
+                game.addPSR(new PilotingRollData(o.getId(), 6,
+                        "hit by nuclear blast"));
             } else if (o instanceof VTOL) {
                 // Needs a piloting check at +6 to avoid crashing.
                 // Wheeeeee!
@@ -24221,7 +24227,7 @@ public class Server implements Runnable {
                 break;
             case Mech.SYSTEM_GYRO:
                 //No PSR for Mechs in non-leg mode
-                if (!((Mech)en).isInLegMode()) {
+                if (en.canFall(true)) {
                     break;
                 }
                 int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
@@ -24256,14 +24262,14 @@ public class Server implements Runnable {
             case Mech.ACTUATOR_UPPER_LEG:
             case Mech.ACTUATOR_LOWER_LEG:
             case Mech.ACTUATOR_FOOT:
-                if (((Mech)en).isInLegMode()) {
+                if (en.canFall(true)) {
                     // leg/foot actuator piloting roll
                     game.addPSR(new PilotingRollData(en.getId(), 1,
                                                      "leg/foot actuator hit"));
                 }
                 break;
             case Mech.ACTUATOR_HIP:
-                if (((Mech)en).isInLegMode()) {
+                if (en.canFall(true)) {
                     // hip piloting roll
                     game.addPSR(new PilotingRollData(en.getId(), 2,
                                                      "hip actuator hit"));
@@ -26512,7 +26518,7 @@ public class Server implements Runnable {
                 if (cs != null) {
                     // for every undamaged actuator destroyed by breaching,
                     // we make a PSR (see bug 1040858)
-                    if (entity.locationIsLeg(loc)) {
+                    if (entity.locationIsLeg(loc) && entity.canFall(true)) {
                         if (cs.isHittable()) {
                             switch (cs.getIndex()) {
                                 case Mech.ACTUATOR_UPPER_LEG:

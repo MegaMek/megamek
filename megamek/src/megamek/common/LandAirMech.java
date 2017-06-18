@@ -193,6 +193,12 @@ public class LandAirMech extends BipedMech {
     }
     
     @Override
+    public boolean canFall(boolean gyroLegDamage) {
+        //TODO: in AirMech mode it is possible to fall if using walk/run (or standing) but not cruise/flank
+        return movementMode != EntityMovementMode.AERODYNE;
+    }
+    
+    @Override
     public void setBattleForceMovement(Map<String,Integer> movement) {
     	super.setBattleForceMovement(movement);
     	movement.put("g", getAirMechWalkMP(true, false));

@@ -1464,20 +1464,18 @@ public abstract class Mech extends Entity {
             return originalMovementMode;
         }
     }
-    
+        
     /**
-     * QuadVees, LAMs, and Mechs with tracks don't make PSRs for gyro or leg damage,
-     * and QuadVees and LAMs don't make PSRs for falling if they are not using a legged
-     * movement mode.
-     *  
-     * @return true if the Mech is using its legs in the current movement mode
+     * QuadVees and LAMs may not have to make PSRs to avoid falling depending on their mode,
+     * and Mechs using tracks for movement do not have to make PSRs for damage to gyro or leg
+     * actuators.
+     * 
+     * @param gyroLegDamage Whether the PSR is due to damage to gyro or leg actuators
+     * @return              true if the Mech can fall due to failed PSR.
      */
-    public boolean isInLegMode() {
-        return movementMode == EntityMovementMode.BIPED
-                || movementMode == EntityMovementMode.QUAD
-                || movementMode == EntityMovementMode.BIPED_SWIM
-                || movementMode == EntityMovementMode.QUAD_SWIM
-                || movementMode == EntityMovementMode.TRIPOD;
+    @Override
+    public boolean canFall(boolean gyroLegDamage) {
+        return !isProne() && !(gyroLegDamage && movementMode == EntityMovementMode.TRACKED);
     }
     
     /**
@@ -7036,7 +7034,7 @@ public abstract class Mech extends Entity {
         }
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
-        if (locationIsLeg(loc)) {
+        if (locationIsLeg(loc) && canFall()) {
             game.addPSR(new PilotingRollData(getId(),
                     TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }

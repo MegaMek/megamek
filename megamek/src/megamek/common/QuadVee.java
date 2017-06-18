@@ -3,8 +3,6 @@
  */
 package megamek.common;
 
-import megamek.common.options.OptionsConstants;
-
 /**
  * Quad Mek that can convert into either tracked or wheeled vehicle mode.
  * 
@@ -93,6 +91,13 @@ public class QuadVee extends QuadMech {
         } else {
             return EntityMovementMode.TRACKED;
         }
+    }
+    
+    @Override
+    public boolean canFall(boolean gyroLegDamage) {
+        //QuadVees cannot fall due to failed PSR in vehicle mode.
+        return movementMode != EntityMovementMode.TRACKED
+                && movementMode != EntityMovementMode.WHEELED;
     }
     
     /**

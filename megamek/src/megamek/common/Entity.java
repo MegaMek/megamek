@@ -6300,7 +6300,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             gyroDamage--; // HD gyro ignores 1st damage
         }
         if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
-            && !isProne() && ((gyroDamage > 0) || hasHipCrit())) {
+            && canFall() && ((gyroDamage > 0) || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
                                              "running with damaged hip actuator or gyro"));
@@ -13468,6 +13468,30 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public EntityMovementMode nextConversionMode() {
         return movementMode;
+    }
+    
+    /**
+     * Only applicable to Mechs, but here for convenience. Mechs that are already prone, or
+     * QuadVees and LAMs in non-leg mode are not subject to PSRs for falling. Note that PSRs
+     * are sometimes required for other reasons.
+     * 
+     * @param gyroLegDamage Whether the potential fall is due to damage to gyro or leg actuators,
+     *                      in which case Mechs using tracks are not subject to falls.
+     * @return              Whether the <code>Entity</code> is required to make PSRs to avoid falling.
+     */
+    public boolean canFall(boolean gyroLegDamage) {
+        return false;
+    }
+    
+    /**
+     * Only applicable to Mechs, but here for convenience. Mechs that are already prone, or
+     * QuadVees and LAMs in non-leg mode are not subject to PSRs for falling. Note that PSRs
+     * are sometimes required for other reasons.
+     * 
+     * @return              Whether the <code>Entity</code> is required to make PSRs to avoid falling.
+     */
+    public boolean canFall() {
+        return canFall(false);
     }
     
     /**

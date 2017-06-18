@@ -2110,6 +2110,12 @@ public class MoveStep implements Serializable {
                     && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMech)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
+            //LAMs cannot convert with a destroyed gyro.
+            if (getEntity() instanceof LandAirMech
+                    && entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                            Mech.LOC_CT) > 1) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
         }
         
         if ((getEntity().getMovementMode() == EntityMovementMode.INF_UMU)
@@ -2274,10 +2280,20 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_SPRINT;
         }
 
-        // Mechs with busted Gyro may make only one facing change
-        if ((entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) > 1) && !isFirstStep()) {
-            movementType = EntityMovementType.MOVE_ILLEGAL;
+        // Mechs with busted Gyro may make only one facing change, unless using tracks or
+        // QuadVee in vehicle mode or LAM in fighter mode.
+        if (!isFirstStep() && entity instanceof Mech
+                && (entity.getMovementMode() != EntityMovementMode.TRACKED
+                && entity.getMovementMode() != EntityMovementMode.WHEELED
+                && entity.getMovementMode() != EntityMovementMode.AERODYNE)
+                || (entity instanceof QuadVee && entity.isConvertingNow())) {
+            int gyroHits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+            if (((Mech)entity).getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+                gyroHits--;
+            }
+            if (gyroHits > 1) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
         }
 
         // Mechs with no arms and a missing leg cannot attempt to stand

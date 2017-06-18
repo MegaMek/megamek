@@ -68,6 +68,13 @@ public class QuadVee extends QuadMech {
     public String getRawSystemName(int index) {
         return systemNames[index];
     }
+    
+    /**
+     * @return MOTIVE_TRACK or MOTIVE_WHEEL
+     */
+    public int getMotiveType() {
+        return motiveType;
+    }
 
     public static int getMotiveTypeForString(String inType) {
         if ((inType == null) || (inType.length() < 1)) {

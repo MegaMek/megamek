@@ -2099,6 +2099,19 @@ public class MoveStep implements Serializable {
 
         IHex currHex = game.getBoard().getHex(curPos);
         IHex lastHex = game.getBoard().getHex(lastPos);
+        if (stepType == MoveStepType.CONVERT_MODE) {
+            //QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
+            if (currHex.containsTerrain(Terrains.WATER)) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
+            //QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
+            //and can switch to track mode while prone then stand.
+            if (getEntity().isProne()
+                    && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMech)) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
+        }
+        
         if ((getEntity().getMovementMode() == EntityMovementMode.INF_UMU)
                 && (currHex.containsTerrain(Terrains.WATER)
                 && lastHex.containsTerrain(Terrains.WATER) && (entity
@@ -3076,6 +3089,8 @@ public class MoveStep implements Serializable {
                 && (type != MoveStepType.UNLOAD)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
+                // QuadVees can convert to vehicle mode even if they cannot enter the terrain
+                && (type != MoveStepType.CONVERT_MODE)
                 && (!isPavementStep() || (nMove == EntityMovementMode.NAVAL)
                 || (nMove == EntityMovementMode.HYDROFOIL) || (nMove == EntityMovementMode.SUBMARINE))
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
@@ -3125,6 +3140,8 @@ public class MoveStep implements Serializable {
                 && (type != MoveStepType.UNLOAD)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
+                // QuadVees can still convert to vehicle mode in prohibited terrain, but cannot leave
+                && (type != MoveStepType.CONVERT_MODE)
                 && entity.isLocationProhibited(src, getElevation()) && !isPavementStep()) {
             // System.err.println("in restriced terrain");
             return false;

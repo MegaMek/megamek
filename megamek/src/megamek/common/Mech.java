@@ -6090,6 +6090,31 @@ public abstract class Mech extends Entity {
                 return true;
             }
         }
+        // Mechs using tracks and QuadVees in vehicle mode (or converting to or from) have the same
+        // restrictions and combat vehicles with the exception that QuadVees can enter water hexes.
+        if (movementMode == EntityMovementMode.TRACKED
+                || (this instanceof QuadVee && convertingNow
+                        && ((QuadVee)this).getMotiveType() == QuadVee.MOTIVE_TRACK)) {
+                return (hex.terrainLevel(Terrains.WOODS) > 1)
+                        || ((hex.terrainLevel(Terrains.WATER) > 0)
+                                && !hex.containsTerrain(Terrains.ICE)
+                                && !(this instanceof QuadVee))
+                        || hex.containsTerrain(Terrains.JUNGLE)
+                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                        || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                        || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+        }
+        if (movementMode == EntityMovementMode.WHEELED
+                || (this instanceof QuadVee && convertingNow
+                        && ((QuadVee)this).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
+            return hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.ROUGH)
+                    || hex.containsTerrain(Terrains.RUBBLE)
+                    || hex.containsTerrain(Terrains.MAGMA)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.SNOW) > 1)
+                    || (hex.terrainLevel(Terrains.GEYSER) == 2);
+        }
 
         return (hex.terrainLevel(Terrains.WOODS) > 2)
                 || (hex.terrainLevel(Terrains.JUNGLE) > 2);

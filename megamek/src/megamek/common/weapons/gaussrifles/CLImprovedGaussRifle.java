@@ -66,7 +66,7 @@ public class CLImprovedGaussRifle extends GaussWeapon {
     	.setUnofficial(false)
         .setTechRating(RATING_E)
         .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
-        .setClanAdvancement(2818, 2821, 2822, 2827, 3080)
+        .setClanAdvancement(2818, 2821, 2822, 2837, 3080)
         .setClanApproximate(true, false, false,false, false)
         .setPrototypeFactions(F_CGS)
         .setProductionFactions(F_CGS)

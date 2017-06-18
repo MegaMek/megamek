@@ -1142,9 +1142,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createLightNGaussAmmo());
         EquipmentType.addType(AmmoType.createMediumNGaussAmmo());
         EquipmentType.addType(AmmoType.createHeavyNGaussAmmo());
-        EquipmentType.addType(AmmoType.createCLLightNGaussAmmo());
-        EquipmentType.addType(AmmoType.createCLMediumNGaussAmmo());
-        EquipmentType.addType(AmmoType.createCLHeavyNGaussAmmo());
+//        EquipmentType.addType(AmmoType.createCLLightNGaussAmmo());
+//        EquipmentType.addType(AmmoType.createCLMediumNGaussAmmo());
+//        EquipmentType.addType(AmmoType.createCLHeavyNGaussAmmo());
         EquipmentType.addType(AmmoType.createKrakenAmmo());
         EquipmentType.addType(AmmoType.createCLKrakenAmmo());
         EquipmentType.addType(AmmoType.createKillerWhaleAmmo());
@@ -1955,14 +1955,33 @@ public class AmmoType extends EquipmentType {
         // create the munition types for clan vehicular grenade launchers
         munitions.clear();
         munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF,
-                TECH_BASE_CLAN, new int[] { 3063, DATE_NONE, DATE_NONE },
-                RATING_B, new int[] { RATING_D, RATING_E, RATING_E, RATING_E }, "363, TO"));
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_B)
+                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_E)
+            	.setClanAdvancement(3050, 3052, DATE_NONE, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(true,false,false,false,false)
+                .setPrototypeFactions(F_DC)
+                .setProductionFactions(F_DC),"363, TO"));
+        
         munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY,
-                TECH_BASE_CLAN, new int[] { DATE_NONE, DATE_NONE, DATE_NONE },
-                RATING_B, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, "364, TO"));
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_B)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            	.setClanAdvancement(DATE_PS, DATE_PS, 3070, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,true,false,false),"364, TO"));
+        
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TECH_BASE_CLAN, new int[] { DATE_NONE, DATE_NONE, DATE_NONE },
-                RATING_A, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, "364, TO"));
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_B)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            	.setClanAdvancement(DATE_PS, DATE_PS, 3070, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,true,false,false),"364, TO"));
 
 
         AmmoType.createMunitions(clanVGLAmmos, munitions);
@@ -1970,14 +1989,31 @@ public class AmmoType extends EquipmentType {
         // create the munition types for IS vehicular grenade launchers
         munitions.clear();
         munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF,
-                TECH_BASE_IS, new int[] { 3045, 3052, DATE_NONE },
-                RATING_B, new int[] { RATING_D, RATING_E, RATING_E, RATING_E }, "363, TO"));
+				new TechAdvancement(TECH_BASE_IS)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_B)
+                .setAvailability(RATING_X, RATING_E, RATING_E, RATING_E)
+            	.setISAdvancement(DATE_NONE, DATE_NONE, 3063, DATE_NONE, DATE_NONE)
+            	.setISApproximate(false,false,false,false,false),"363, TO"));
+        
         munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY,
-                TECH_BASE_IS, new int[] { DATE_NONE, DATE_ES, 3065 },
-                RATING_B, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, "364, TO"));
+        		new TechAdvancement(TECH_BASE_IS)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_B)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            	.setISAdvancement(DATE_PS, DATE_PS, 3070, DATE_NONE, DATE_NONE)
+            	.setISApproximate(false,false,true,false,false),"364, TO"));
+        
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE,
-                TECH_BASE_IS, new int[] { DATE_NONE, DATE_ES, 3065 },
-                RATING_A, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, "364, TO"));
+        		new TechAdvancement(TECH_BASE_IS)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_B)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            	.setISAdvancement(DATE_PS, DATE_PS, 3070, DATE_NONE, DATE_NONE)
+            	.setISApproximate(false,false,true,false,false),"364, TO"));
 
         AmmoType.createMunitions(vglAmmos, munitions);
 
@@ -2236,12 +2272,17 @@ public class AmmoType extends EquipmentType {
         AmmoType.createMunitions(clanLrtAmmos, munitions);
 
         
-        //TODO: Need Corrosive, Flame-Retardant,Oil Slick,Paint and Water Ammo's for all Fluid Guns/Sprayers 
+        //TODO: Need Corrosive, Flame-Retardant, Oil Slick, Paint and Water Ammo's for all Fluid Guns/Sprayers 
         // Create the munition types for vehicle flamers
         munitions.clear();
         munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT,
-                TECH_BASE_IS, new int[] { DATE_NONE, DATE_NONE, DATE_ES },
-                RATING_C, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, "360, TO"));
+        		new TechAdvancement(TECH_BASE_IS)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            	.setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+            	.setISApproximate(false,false,false,false,false),"360, TO"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -2249,8 +2290,13 @@ public class AmmoType extends EquipmentType {
 
         munitions.clear();
         munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT,
-                TECH_BASE_CLAN, new int[] { DATE_NONE, DATE_NONE, DATE_ES },
-                RATING_C, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, "360, TO"));
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            	.setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false),"360, TO"));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -2259,16 +2305,26 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for heavy flamers
         munitions.clear();
         munitions.add(new MunitionMutator("Coolant", 1, M_COOLANT,
-                TECH_BASE_IS, new int[] { DATE_NONE, DATE_NONE, DATE_ES },
-                RATING_C, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, "360, TO"));
+        		new TechAdvancement(TECH_BASE_IS)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            	.setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+            	.setISApproximate(false,false,false,false,false),"360, TO"));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(heavyFlamerAmmos, munitions);
 
         munitions.clear();
         munitions.add(new MunitionMutator("(Clan) Coolant", 1, M_COOLANT,
-                TECH_BASE_CLAN, new int[] { DATE_NONE, DATE_NONE, DATE_ES },
-                RATING_C, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, "360, TO"));
+        		new TechAdvancement(TECH_BASE_CLAN)
+        		.setIntroLevel(false)
+        		.setUnofficial(false)
+				.setTechRating(RATING_C)
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            	.setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
+            	.setClanApproximate(false,false,false,false,false),"360, TO"));
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(clanHeavyFlamerAmmos, munitions);
@@ -4000,16 +4056,992 @@ public class AmmoType extends EquipmentType {
             .setReintroductionFactions(F_PER);
         return ammo;
     }
+    
+//Chemical Laser Ammos
+    
+    private static AmmoType createCLSmallChemicalLaserAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Small Chemical Laser Ammo";
+        ammo.shortName = "Small Chemical Laser";
+        ammo.setInternalName("CLSmallChemLaserAmmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_CHEMICAL_LASER;
+        ammo.shots = 60;
+        ammo.bv = 1;
+        ammo.cost = 30000;
+        ammo.rulesRefs = "320,TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+            .setClanAdvancement(3059, 3083, 3145, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CHH);
+        return ammo;
+    }
+
+    private static AmmoType createCLMediumChemicalLaserAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Medium Chemical Laser Ammo";
+        ammo.shortName = "Medium Chemical Laser";
+        ammo.setInternalName("CLMediumChemLaserAmmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_CHEMICAL_LASER;
+        ammo.shots = 30;
+        ammo.bv = 5;
+        ammo.cost = 30000;
+        ammo.rulesRefs = "320,TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+            .setClanAdvancement(3059, 3083, 3145, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CHH);
+        return ammo;
+    }
+
+    private static AmmoType createCLLargeChemicalLaserAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Large Chemical Laser Ammo";
+        ammo.shortName = "Large Chemical Laser";
+        ammo.setInternalName("CLLargeChemLaserAmmo");
+        ammo.damagePerShot = 8;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_CHEMICAL_LASER;
+        ammo.shots = 10;
+        ammo.bv = 12;
+        ammo.cost = 30000;
+        ammo.rulesRefs = "320,TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+            .setClanAdvancement(3059, 3083, 3145, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CHH);
+        return ammo;
+
+    }
+
+//Flamer and Fluid Gun/Sprayer Ammo (Mutators Above)
+    
+
+    private static AmmoType createISHeavyFlamerAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Heavy Flamer Ammo";
+        ammo.shortName = "Heavy Flamer";
+        ammo.setInternalName("IS Heavy Flamer Ammo");
+        ammo.addLookupName("IS Ammo Heavy Flamer");
+        ammo.addLookupName("ISHeavyFlamer Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_HEAVY_FLAMER;
+        ammo.shots = 10;
+        ammo.bv = 2;
+        ammo.cost = 2000;
+        ammo.rulesRefs = "312, TO";;
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+        return ammo;
+    }
+
+    private static AmmoType createCLHeavyFlamerAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Heavy Flamer Ammo";
+        ammo.shortName = "Heavy Flamer";
+        ammo.setInternalName("CL Heavy Flamer Ammo");
+        ammo.addLookupName("CL Ammo Heavy Flamer");
+        ammo.addLookupName("Clan Ammo Heavy Flamer");
+        ammo.addLookupName("Clan Heavy Flamer Ammo");
+        ammo.addLookupName("CLHeavyFlamer Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_HEAVY_FLAMER;
+        ammo.shots = 10;
+        ammo.bv = 2;
+        ammo.cost = 2000;
+        ammo.rulesRefs = "312, TO";;
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+    	.setTechRating(RATING_C)
+    	.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setClanAdvancement(3065, 3067, 3079, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CJF)
+        .setProductionFactions(F_CJF);
+        return ammo;
+    }
+
+    
+    private static AmmoType createISVehicleFlamerAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Vehicle Flamer Ammo";
+        ammo.shortName = "Flamer";
+        ammo.setInternalName("IS Vehicle Flamer Ammo");
+        ammo.addLookupName("IS Ammo Vehicle Flamer");
+        ammo.addLookupName("ISVehicleFlamer Ammo");
+        ammo.addLookupName("Clan Vehicle Flamer Ammo");
+        ammo.addLookupName("Clan Ammo Vehicle Flamer");
+        ammo.addLookupName("CLVehicleFlamer Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_VEHICLE_FLAMER;
+        ammo.shots = 20;
+        ammo.bv = 1;
+        ammo.cost = 1000;
+        ammo.rulesRefs = "218, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(true)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false);
+        return ammo;
+    }
+    
+
+    private static AmmoType createISFluidGunAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Fluid Gun Ammo";
+        ammo.shortName = "Fluid Gun";
+        ammo.setInternalName("ISFluidGun Ammo");
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_FLUID_GUN;
+        ammo.shots = 20;
+        ammo.bv = 1;
+        ammo.cost = 500;
+        ammo.explosive = false;
+        ammo.rulesRefs = "313, TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false);
+        return ammo;
+    }
+
+    private static AmmoType createCLFluidGunAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Fluid Gun Ammo";
+        ammo.shortName = "Fluid Gun";
+        ammo.setInternalName("CLFluidGun Ammo");
+        ammo.damagePerShot = 2; // only used for ammo crits
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_FLUID_GUN;
+        ammo.shots = 20;
+        ammo.bv = 1;
+        ammo.cost = 500;
+        ammo.rulesRefs = "313, TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+        .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setClanApproximate(false, false, false,false, false);
+        return ammo;
+    }
+
+//Gauss Rifle Ammos
+    
+    private static AmmoType createISGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Gauss Rifle Ammo [IS]";
+        ammo.shortName = "Gauss";
+        ammo.setInternalName("IS Gauss Ammo");
+        ammo.addLookupName("IS Ammo Gauss");
+        ammo.addLookupName("ISGauss Ammo");
+        ammo.addLookupName("IS Gauss Rifle Ammo");
+        ammo.addLookupName("ISGaussRifle Ammo");
+        ammo.damagePerShot = 15;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_GAUSS;
+        ammo.shots = 8;
+        ammo.bv = 40;
+        ammo.cost = 20000;
+        ammo.rulesRefs = "219, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
+        .setISAdvancement(2587, 2590, 3045, 2865, 3040)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH)
+        .setReintroductionFactions(F_FC,F_FW,F_DC);	
+
+        return ammo;
+    }
+    
+    private static AmmoType createCLImprovedGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Improved Gauss Rifle Ammo";
+        ammo.shortName = "Improved Gauss";
+        ammo.setInternalName("CLImpGaussAmmo");
+        ammo.damagePerShot = 15;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_GAUSS_IMP;
+        ammo.shots = 8;
+        ammo.bv = 40;
+        ammo.cost = 20000;
+        ammo.kgPerShot = 125;
+        ammo.rulesRefs = "96, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
+        .setClanAdvancement(2818, 2821, 2822, 2837, 3080)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CGS)
+        .setProductionFactions(F_CGS)
+        .setReintroductionFactions(F_EI);
+        return ammo;
+    }
+    
+    private static AmmoType createCLGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Gauss Rifle Ammo [Clan]";
+        ammo.shortName = "Gauss";
+        ammo.setInternalName("Clan Gauss Ammo");
+        ammo.addLookupName("Clan Ammo Gauss");
+        ammo.addLookupName("CLGauss Ammo");
+        ammo.addLookupName("Clan Gauss Rifle Ammo");
+        ammo.damagePerShot = 15;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_GAUSS;
+        ammo.shots = 8;
+        ammo.bv = 40;
+        ammo.cost = 20000;
+        ammo.kgPerShot = 125;
+        ammo.rulesRefs = "219, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
+        .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CBR)
+        .setProductionFactions(F_CBR);
+        return ammo;
+    }
+    
+    private static AmmoType createISLTGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Light Gauss Rifle Ammo";
+        ammo.shortName = "Light Gauss";
+        ammo.setInternalName("IS Light Gauss Ammo");
+        ammo.addLookupName("ISLightGauss Ammo");
+        ammo.addLookupName("IS Light Gauss Rifle Ammo");
+        ammo.addLookupName("ISLightGaussRifle Ammo");
+        ammo.damagePerShot = 8;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_GAUSS_LIGHT;
+        ammo.shots = 16;
+        ammo.bv = 20;
+        ammo.cost = 20000;
+        ammo.rulesRefs = "219, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3049, 3056, 3065, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FW)
+        .setProductionFactions(F_FW);
+        return ammo;
+    }
+
+    private static AmmoType createISHVGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Heavy Gauss Rifle Ammo";
+        ammo.shortName = "Heavy Gauss";
+        ammo.setInternalName("ISHeavyGauss Ammo");
+        ammo.addLookupName("IS Heavy Gauss Rifle Ammo");
+        ammo.addLookupName("ISHeavyGaussRifle Ammo");
+        ammo.damagePerShot = 25; // actually variable
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_GAUSS_HEAVY;
+        ammo.shots = 4;
+        ammo.bv = 43;
+        ammo.cost = 20000;
+        ammo.rulesRefs = "218, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setISAdvancement(3051, 3061, 3067, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FW)
+        .setProductionFactions(F_FC);
+        return ammo;
+    }
+    
+
+    private static AmmoType createCLAPGaussRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Anti-Personnel Gauss Rifle Ammo";
+        ammo.shortName = "AP Gauss";
+        ammo.setInternalName("CLAPGaussRifle Ammo");
+        ammo.addLookupName("Clan AP Gauss Rifle Ammo");
+        ammo.addLookupName("Clan Anti-Personnel Gauss Rifle Ammo");
+        ammo.damagePerShot = 3;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_APGAUSS;
+        ammo.shots = 40;
+        ammo.bv = 3;
+        ammo.cost = 1000;
+        ammo.kgPerShot = 25;
+        ammo.rulesRefs = "218, TM";
+        ammo.rulesRefs = "218,TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+        .setClanAdvancement(3065, 3069, 3072, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CJF)
+        .setProductionFactions(F_CJF);
+        return ammo;
+    }
+    
+
+    private static AmmoType createCLHAG20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Hyper-Assault Gauss Rifle/20 Ammo";
+        ammo.shortName = "HAG 20";
+        ammo.setInternalName(ammo.name);
+        ammo.addLookupName("CLHAG20 Ammo");
+        ammo.addLookupName("Clan HAG 20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_HAG;
+        ammo.shots = 6;
+        ammo.bv = 33;
+        ammo.cost = 30000;
+        ammo.kgPerShot = 166.66;
+        ammo.explosive = false;
+        ammo.rulesRefs = "219, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+        .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CHH)
+        .setProductionFactions(F_CHH);
+        return ammo;
+    }
+
+    private static AmmoType createCLHAG30Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Hyper-Assault Gauss Rifle/30 Ammo";
+        ammo.shortName = "HAG 30";
+        ammo.setInternalName(ammo.name);
+        ammo.addLookupName("CLHAG30 Ammo");
+        ammo.addLookupName("Clan HAG 30 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 30;
+        ammo.ammoType = AmmoType.T_HAG;
+        ammo.shots = 4;
+        ammo.bv = 50;
+        ammo.cost = 30000;
+        ammo.explosive = false;
+        ammo.rulesRefs = "219, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+        .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CHH)
+        .setProductionFactions(F_CHH);
+        return ammo;
+    }
+
+    private static AmmoType createCLHAG40Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Hyper-Assault Gauss Rifle/40 Ammo";
+        ammo.shortName = "HAG 40";
+        ammo.setInternalName(ammo.name);
+        ammo.addLookupName("CLHAG40 Ammo");
+        ammo.addLookupName("Clan HAG 40 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 40;
+        ammo.ammoType = AmmoType.T_HAG;
+        ammo.shots = 3;
+        ammo.bv = 67;
+        ammo.cost = 30000;
+        ammo.explosive = false;
+        ammo.rulesRefs = "219, TM";
+        ammo.rulesRefs = "219, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_F)
+        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+        .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CHH)
+        .setProductionFactions(F_CHH);
+        return ammo;
+    }
+
+    private static AmmoType createISIHVGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Improved Heavy Gauss Rifle Ammo";
+        ammo.shortName = "iHeavy Gauss";
+        ammo.setInternalName("ISImprovedHeavyGauss Ammo");
+        ammo.addLookupName("IS Improved Heavy Gauss Rifle Ammo");
+        ammo.addLookupName("ISImprovedHeavyGaussRifle Ammo");
+        ammo.damagePerShot = 22;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_IGAUSS_HEAVY;
+        ammo.shots = 4;
+        ammo.bv = 48;
+        ammo.cost = 20000;
+        ammo.rulesRefs = "313, TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(3065, 3081, 3090, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_LC)
+        .setProductionFactions(F_LC);
+        return ammo;
+    }
+        
+    private static AmmoType createISMagshotGRAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Magshot Gauss Rifle Ammo";
+        ammo.shortName = "Magshot";
+        ammo.setInternalName("ISMagshotGR Ammo");
+        ammo.addLookupName("IS Magshot GR Ammo");
+        ammo.damagePerShot = 2;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_MAGSHOT;
+        ammo.shots = 50;
+        ammo.bv = 2;
+        ammo.cost = 1000;
+        ammo.rulesRefs = "314, TO";
+        ammo.rulesRefs = "314, TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
+        .setISAdvancement(3059, 3072, 3090, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_FS)
+        .setProductionFactions(F_FS);
+        return ammo;
+    }
+    
+    private static AmmoType createISSBGaussRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Silver Bullet Gauss Rifle Ammo";
+        ammo.shortName = "Silver Bullet";
+        ammo.setInternalName("Silver Bullet Gauss Ammo");
+        ammo.addLookupName("IS SBGauss Rifle Ammo");
+        ammo.addLookupName("ISSBGauss Ammo");
+        ammo.addLookupName("ISSBGaussRifleAmmo");
+        ammo.explosive = false;
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_SBGAUSS;
+        ammo.munitionType = M_CLUSTER;
+        ammo.shots = 8;
+        ammo.bv = 25;
+        ammo.cost = 25000;
+        ammo.toHitModifier = -1;
+        ammo.rulesRefs = "314, TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+        .setISAdvancement(3051, 3080, 3090, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+        .setPrototypeFactions(F_FS,F_LC)
+        .setProductionFactions(F_FC);
+        return ammo;
+    }
 
 
+//Grenade Launcher Ammo (See Mutators above)
+    
 
+    private static AmmoType createISVGLAmmo() {
+        AmmoType ammo = new AmmoType();
 
+        ammo.name = "Fragmentation Grenades [VGL]";
+        ammo.subMunitionBegin = 4;
+        ammo.subMunitionLength = 13;
+        ammo.shortName = "VGL Fragmentation";
+        ammo.setInternalName("IS Ammo VGL");
+        ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
+        ammo.damagePerShot = 0;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_VGL;
+        ammo.munitionType = AmmoType.M_STANDARD;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 0;
+        ammo.tonnage = 0;
+        ammo.rulesRefs = "315,TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            .setISAdvancement(DATE_PS, DATE_ES, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,true, false);
+        return ammo;
+    }
 
+    private static AmmoType createCLVGLAmmo() {
+        AmmoType ammo = new AmmoType();
 
+        ammo.name = "Fragmentation Grenades [VGL]";
+        ammo.subMunitionBegin = 4;
+        ammo.subMunitionLength = 13;
+        ammo.shortName = "VGL Fragmentation";
+        ammo.setInternalName("CL Ammo VGL");
+        ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
+        ammo.damagePerShot = 0;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_VGL;
+        ammo.munitionType = AmmoType.M_STANDARD;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 0;
+        ammo.tonnage = 0;
+        ammo.rulesRefs = "315,TO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+            .setClanAdvancement(DATE_PS, DATE_ES, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, false, false,true, false);
+        return ammo;
+    }
+   
+//Machine Gun Ammos
+    //Standard MGs
+    private static AmmoType createISMGAmmo() {
+        AmmoType ammo = new AmmoType();
 
+        ammo.name = "Machine Gun Ammo";
+        ammo.shortName = "Machine Gun";
+        ammo.setInternalName("IS Ammo MG - Full");
+        ammo.addLookupName("ISMG Ammo (200)");
+        ammo.addLookupName("ISMG Ammo Full");
+        ammo.addLookupName("IS Machine Gun Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_MG;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 200;
+        ammo.bv = 1;
+        ammo.cost = 1000;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+    	.setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, 2826, DATE_NONE)
+    	.setClanApproximate(false, false, false,false, false);
+        return ammo;
+    }
+        
+    private static AmmoType createCLMGAmmo() {
+        AmmoType ammo = new AmmoType();
 
+        ammo.name = "Machine Gun Ammo";
+        ammo.shortName = "Machine Gun";
+        ammo.setInternalName("Clan Machine Gun Ammo - Full");
+        ammo.addLookupName("Clan Ammo MG - Full");
+        ammo.addLookupName("CLMG Ammo (200)");
+        ammo.addLookupName("Clan Machine Gun Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_MG;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 200;
+        ammo.bv = 1;
+        ammo.cost = 1000;
+        ammo.kgPerShot = 5;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_B, RATING_B, RATING_A )
+        .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CSF)
+        .setProductionFactions(F_CSF);
+        return ammo;
+    }
 
+    private static AmmoType createISMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
 
+        ammo.name = "Half Machine Gun Ammo";
+        ammo.shortName = "Machine Gun";
+        ammo.setInternalName("IS Machine Gun Ammo - Half");
+        ammo.addLookupName("IS Ammo MG - Half");
+        ammo.addLookupName("ISMG Ammo (100)");
+        ammo.addLookupName("ISMG Ammo Half");
+        ammo.addLookupName("IS Machine Gun Ammo (1/2 ton)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_MG;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 100;
+        ammo.bv = 0.5f;
+        ammo.tonnage = 0.5f;
+        ammo.cost = 500;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
+        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false,false, false)
+    	.setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, 2826, DATE_NONE)
+    	.setClanApproximate(false, false, false,false, false);
+        return ammo;
+    }
+
+    private static AmmoType createCLMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Half Machine Gun Ammo";
+        ammo.shortName = "Machine Gun";
+        ammo.setInternalName("Clan Machine Gun Ammo - Half");
+        ammo.addLookupName("Clan Ammo MG - Half");
+        ammo.addLookupName("CLMG Ammo (100)");
+        ammo.addLookupName("Clan Machine Gun Ammo (1/2 ton)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_MG;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 100;
+        ammo.tonnage = 0.5f;
+        ammo.bv = 0.5f;
+        ammo.cost = 500;
+        ammo.kgPerShot = 5;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_B, RATING_B, RATING_A )
+        .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CSF)
+        .setProductionFactions(F_CSF);
+        return ammo;
+    }
+    
+    //Light MGs
+    
+    private static AmmoType createISLightMGAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Light Machine Gun Ammo [Full]";
+        ammo.shortName = "Light Machine Gun";
+        ammo.setInternalName("IS Light Machine Gun Ammo - Full");
+        ammo.addLookupName("ISLightMG Ammo (200)");
+        ammo.addLookupName("IS Light Machine Gun Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MG_LIGHT;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 200;
+        ammo.bv = 1;
+        ammo.cost = 500;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+        .setISAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CC)
+        .setProductionFactions(F_CC);
+        return ammo;
+    }
+    
+
+    private static AmmoType createCLLightMGAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Light Machine Gun Ammo [Full]";
+        ammo.shortName = "Light Machine Gun";
+        ammo.setInternalName("Clan Light Machine Gun Ammo - Full");
+        ammo.addLookupName("CLLightMG Ammo (200)");
+        ammo.addLookupName("Clan Light Machine Gun Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MG_LIGHT;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 200;
+        ammo.bv = 1;
+        ammo.cost = 500;
+        ammo.kgPerShot = 5;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+        .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CSJ)
+        .setProductionFactions(F_CSJ);
+        return ammo;
+    }
+
+    private static AmmoType createISLightMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Light Machine Gun Ammo [Half]";
+        ammo.shortName = "Light Machine Gun";
+        ammo.setInternalName("IS Light Machine Gun Ammo - Half");
+        ammo.addLookupName("ISLightMG Ammo (100)");
+        ammo.addLookupName("IS Light Machine Gun Ammo (1/2 ton)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MG_LIGHT;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 100;
+        ammo.tonnage = 0.5f;
+        ammo.bv = 0.5f;
+        ammo.cost = 250;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+        .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CSJ)
+        .setProductionFactions(F_CSJ);
+        return ammo;
+    }
+    
+    private static AmmoType createCLLightMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Light Machine Gun Ammo [Half]";
+        ammo.shortName = "Light Machine Gun";
+        ammo.setInternalName("Clan Light Machine Gun Ammo - Half");
+        ammo.addLookupName("CLLightMG Ammo (100)");
+        ammo.addLookupName("Clan Light Machine Gun Ammo (1/2 ton)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MG_LIGHT;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 100;
+        ammo.tonnage = 0.5f;
+        ammo.bv = 0.5f;
+        ammo.cost = 250;
+        ammo.kgPerShot = 5;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+        .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_CSJ)
+        .setProductionFactions(F_CSJ);
+        return ammo;
+    }
+    
+    //Heavy MGs
+    
+
+    private static AmmoType createISHeavyMGAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Heavy Machine Gun Ammo [Full]";
+        ammo.shortName = "Heavy Machine Gun";
+        ammo.setInternalName("IS Heavy Machine Gun Ammo - Full");
+        ammo.addLookupName("ISHeavyMG Ammo (100)");
+        ammo.addLookupName("IS Heavy Machine Gun Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_MG_HEAVY;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 100;
+        ammo.bv = 1;
+        ammo.cost = 1000;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+        .setISAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TC)
+        .setProductionFactions(F_TC);
+        return ammo;
+    }
+
+    private static AmmoType createISHeavyMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Heavy Machine Gun Ammo [Half]";
+        ammo.shortName = "Heavy Machine Gun";
+        ammo.setInternalName("IS Heavy Machine Gun Ammo - Half");
+        ammo.addLookupName("ISHeavyMG Ammo (50)");
+        ammo.addLookupName("IS Heavy Machine Gun Ammo (1/2 ton)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_MG_HEAVY;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 50;
+        ammo.tonnage = 0.5f;
+        ammo.bv = 0.5f;
+        ammo.cost = 500;
+        ammo.rulesRefs = "228, TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_B)
+        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+        .setISAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
+        .setISApproximate(true, false, false,false, false)
+        .setPrototypeFactions(F_TC)
+        .setProductionFactions(F_TC);
+        return ammo;
+    }
+   
+    private static AmmoType createCLHeavyMGAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Heavy Machine Gun Ammo [Full]";
+        ammo.shortName = "Heavy Machine Gun";
+        ammo.setInternalName("Clan Heavy Machine Gun Ammo - Full");
+        ammo.addLookupName("CLHeavyMG Ammo (100)");
+        ammo.addLookupName("Clan Heavy Machine Gun Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_MG_HEAVY;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 100;
+        ammo.bv = 1;
+        ammo.cost = 1000;
+        ammo.kgPerShot = 10;
+        ammo.rulesRefs = "228,TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+            .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CSJ);
+        return ammo;
+    }
+
+    private static AmmoType createCLHeavyMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Heavy Machine Gun Ammo [Half]";
+        ammo.shortName = "Heavy Machine Gun";
+        ammo.setInternalName("Clan Heavy Machine Gun Ammo - Half");
+        ammo.addLookupName("CLHeavyMG Ammo (50)");
+        ammo.addLookupName("Clan Heavy Machine Gun Ammo (1/2 ton)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_MG_HEAVY;
+        ammo.flags = ammo.flags.or(F_MG);
+        ammo.shots = 50;
+        ammo.tonnage = 0.5f;
+        ammo.bv = 0.5f;
+        ammo.cost = 500;
+        ammo.kgPerShot = 10;
+        ammo.rulesRefs = "228,TM";
+        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
+            .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_CHH)
+            .setProductionFactions(F_CSJ);
+        return ammo;
+    }
+    
+    //Mines - See Minefield.java TODO - Need EMP mines (See IO pg 61 and TO 365)
+            
 //TODO HERE
     
   
@@ -4396,205 +5428,8 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    private static AmmoType createISVehicleFlamerAmmo() {
-        AmmoType ammo = new AmmoType();
 
-        ammo.name = "Vehicle Flamer Ammo";
-        ammo.shortName = "Flamer";
-        ammo.setInternalName("IS Vehicle Flamer Ammo");
-        ammo.addLookupName("IS Ammo Vehicle Flamer");
-        ammo.addLookupName("ISVehicleFlamer Ammo");
-        ammo.addLookupName("Clan Vehicle Flamer Ammo");
-        ammo.addLookupName("Clan Ammo Vehicle Flamer");
-        ammo.addLookupName("CLVehicleFlamer Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_VEHICLE_FLAMER;
-        ammo.shots = 20;
-        ammo.bv = 1;
-        ammo.cost = 1000;
-        ammo.rulesRefs = "218, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_ALL);
-        ammo.techAdvancement.setISAdvancement(DATE_PS, DATE_PS, DATE_PS);
-        ammo.techAdvancement.setIntroLevel(true);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_A });
-        return ammo;
-    }
 
-    private static AmmoType createISMGAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Machine Gun Ammo";
-        ammo.shortName = "Machine Gun";
-        ammo.setInternalName("IS Ammo MG - Full");
-        ammo.addLookupName("ISMG Ammo (200)");
-        ammo.addLookupName("ISMG Ammo Full");
-        ammo.addLookupName("IS Machine Gun Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 200;
-        ammo.bv = 1;
-        ammo.cost = 1000;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_B)
-        .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
-        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-    	.setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, 2826, DATE_NONE)
-    	.setClanApproximate(false, false, false,false, false);
-        return ammo;
-    }
-
-    private static AmmoType createISMGAmmoHalf() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Half Machine Gun Ammo";
-        ammo.shortName = "Machine Gun";
-        ammo.setInternalName("IS Machine Gun Ammo - Half");
-        ammo.addLookupName("IS Ammo MG - Half");
-        ammo.addLookupName("ISMG Ammo (100)");
-        ammo.addLookupName("ISMG Ammo Half");
-        ammo.addLookupName("IS Machine Gun Ammo (1/2 ton)");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 100;
-        ammo.bv = 0.5f;
-        ammo.tonnage = 0.5f;
-        ammo.cost = 500;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_B)
-        .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
-        .setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-    	.setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, 2826, DATE_NONE)
-    	.setClanApproximate(false, false, false,false, false);
-        return ammo;
-    }
-
-    private static AmmoType createISHeavyMGAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Heavy Machine Gun Ammo";
-        ammo.shortName = "Heavy Machine Gun";
-        ammo.setInternalName("IS Heavy Machine Gun Ammo - Full");
-        ammo.addLookupName("ISHeavyMG Ammo (100)");
-        ammo.addLookupName("IS Heavy Machine Gun Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 100;
-        ammo.bv = 1;
-        ammo.cost = 1000;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_B)
-        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-        .setClanAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TC)
-        .setProductionFactions(F_TC);
-        return ammo;
-    }
-
-    private static AmmoType createISHeavyMGAmmoHalf() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Half Heavy Machine Gun Ammo";
-        ammo.shortName = "Heavy Machine Gun";
-        ammo.setInternalName("IS Heavy Machine Gun Ammo - Half");
-        ammo.addLookupName("ISHeavyMG Ammo (50)");
-        ammo.addLookupName("IS Heavy Machine Gun Ammo (1/2 ton)");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 50;
-        ammo.tonnage = 0.5f;
-        ammo.bv = 0.5f;
-        ammo.cost = 500;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_B)
-        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-        .setClanAdvancement(3063, 3068, 3070, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_TC)
-        .setProductionFactions(F_TC);
-        return ammo;
-    }
-
-    private static AmmoType createISLightMGAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Light Machine Gun Ammo";
-        ammo.shortName = "Light Machine Gun";
-        ammo.setInternalName("IS Light Machine Gun Ammo - Full");
-        ammo.addLookupName("ISLightMG Ammo (200)");
-        ammo.addLookupName("IS Light Machine Gun Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 200;
-        ammo.bv = 1;
-        ammo.cost = 500;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_B)
-        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-        .setClanAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CC)
-        .setProductionFactions(F_CC);
-        return ammo;
-    }
-
-    private static AmmoType createISLightMGAmmoHalf() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Half Light Machine Gun Ammo";
-        ammo.shortName = "Light Machine Gun";
-        ammo.setInternalName("IS Light Machine Gun Ammo - Half");
-        ammo.addLookupName("ISLightMG Ammo (100)");
-        ammo.addLookupName("IS Light Machine Gun Ammo (1/2 ton)");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 100;
-        ammo.tonnage = 0.5f;
-        ammo.bv = 0.5f;
-        ammo.cost = 250;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_B)
-        .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-        .setClanAdvancement(3064, 3068, 3070, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CC)
-        .setProductionFactions(F_CC);
-        return ammo;
-    }
 
     private static AmmoType createISLRM5Ammo() {
         AmmoType ammo = new AmmoType();
@@ -5011,118 +5846,6 @@ public class AmmoType extends EquipmentType {
 
 
 
-    private static AmmoType createISGaussAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Gauss Ammo";
-        ammo.shortName = "Gauss";
-        ammo.setInternalName("IS Gauss Ammo");
-        ammo.addLookupName("IS Ammo Gauss");
-        ammo.addLookupName("ISGauss Ammo");
-        ammo.addLookupName("IS Gauss Rifle Ammo");
-        ammo.addLookupName("ISGaussRifle Ammo");
-        ammo.damagePerShot = 15;
-        ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_GAUSS;
-        ammo.shots = 8;
-        ammo.bv = 40;
-        ammo.cost = 20000;
-        ammo.rulesRefs = "219, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
-        .setISAdvancement(2587, 2590, 3045, 2865, 3040)
-        .setISApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_TH)
-        .setProductionFactions(F_TH)
-        .setReintroductionFactions(F_FC,F_FW,F_DC);	
-
-        return ammo;
-    }
-
-    private static AmmoType createISLTGaussAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Light Gauss Ammo";
-        ammo.shortName = "Light Gauss";
-        ammo.setInternalName("IS Light Gauss Ammo");
-        ammo.addLookupName("ISLightGauss Ammo");
-        ammo.addLookupName("IS Light Gauss Rifle Ammo");
-        ammo.addLookupName("ISLightGaussRifle Ammo");
-        ammo.damagePerShot = 8;
-        ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_GAUSS_LIGHT;
-        ammo.shots = 16;
-        ammo.bv = 20;
-        ammo.cost = 20000;
-        ammo.rulesRefs = "219, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_C, RATING_X, RATING_E, RATING_D)
-        .setISAdvancement(3049, 3056, 3065, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_FW)
-        .setProductionFactions(F_FW);
-        return ammo;
-    }
-
-    private static AmmoType createISHVGaussAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Heavy Gauss Ammo";
-        ammo.shortName = "Heavy Gauss";
-        ammo.setInternalName("ISHeavyGauss Ammo");
-        ammo.addLookupName("IS Heavy Gauss Rifle Ammo");
-        ammo.addLookupName("ISHeavyGaussRifle Ammo");
-        ammo.damagePerShot = 25; // actually variable
-        ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_GAUSS_HEAVY;
-        ammo.shots = 4;
-        ammo.bv = 43;
-        ammo.cost = 20000;
-        ammo.rulesRefs = "218, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setISAdvancement(3051, 3061, 3067, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_FW)
-        .setProductionFactions(F_FC);
-        return ammo;
-    }
-
-    private static AmmoType createISIHVGaussAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Improved Heavy Gauss Ammo";
-        ammo.shortName = "iHeavy Gauss";
-        ammo.setInternalName("ISImprovedHeavyGauss Ammo");
-        ammo.addLookupName("IS Improved Heavy Gauss Rifle Ammo");
-        ammo.addLookupName("ISImprovedHeavyGaussRifle Ammo");
-        ammo.damagePerShot = 22;
-        ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_IGAUSS_HEAVY;
-        ammo.shots = 4;
-        ammo.bv = 48;
-        ammo.cost = 20000;
-        ammo.rulesRefs = "313, TO";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setISAdvancement(3065, 3081, 3090, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-        return ammo;
-    }
 
     private static AmmoType createISStreakSRM2Ammo() {
         AmmoType ammo = new AmmoType();
@@ -5633,280 +6356,8 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    private static AmmoType createISFluidGunAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Fluid Gun Ammo";
-        ammo.shortName = "Fluid Gun";
-        ammo.setInternalName("ISFluidGun Ammo");
-        ammo.damagePerShot = 2; // only used for ammo crits
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_FLUID_GUN;
-        ammo.shots = 20;
-        ammo.bv = 1;
-        ammo.cost = 500;
-        ammo.explosive = false;
-        ammo.rulesRefs = "313, TO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_B });
-        return ammo;
-    }
-
-    private static AmmoType createCLFluidGunAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Fluid Gun Ammo";
-        ammo.shortName = "Fluid Gun";
-        ammo.setInternalName("CLFluidGun Ammo");
-        ammo.damagePerShot = 2; // only used for ammo crits
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_FLUID_GUN;
-        ammo.shots = 20;
-        ammo.bv = 1;
-        ammo.cost = 500;
-        ammo.rulesRefs = "313, TO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2807);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_B });
-        return ammo;
-    }
-
-    private static AmmoType createCLGaussAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Gauss Ammo";
-        ammo.shortName = "Gauss";
-        ammo.setInternalName("Clan Gauss Ammo");
-        ammo.addLookupName("Clan Ammo Gauss");
-        ammo.addLookupName("CLGauss Ammo");
-        ammo.addLookupName("Clan Gauss Rifle Ammo");
-        ammo.damagePerShot = 15;
-        ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_GAUSS;
-        ammo.shots = 8;
-        ammo.bv = 40;
-        ammo.cost = 20000;
-        ammo.kgPerShot = 125;
-        ammo.rulesRefs = "219, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_D)
-        .setClanAdvancement(2822, 2828, 2830, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CBR)
-        .setProductionFactions(F_CBR);
-        return ammo;
-    }
-    
-    private static AmmoType createCLImprovedGaussAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Improved Gauss Ammo";
-        ammo.shortName = "Improved Gauss";
-        ammo.setInternalName("CLImpGaussAmmo");
-        ammo.damagePerShot = 15;
-        ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_GAUSS_IMP;
-        ammo.shots = 8;
-        ammo.bv = 40;
-        ammo.cost = 20000;
-        ammo.kgPerShot = 125;
-        ammo.rulesRefs = "96, IO";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_E, RATING_X, RATING_E)
-        .setClanAdvancement(2818, 2821, 2822, 2827, 3080)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CGS)
-        .setProductionFactions(F_CGS)
-        .setReintroductionFactions(F_EI);
-        return ammo;
-    }
 
 
-    private static AmmoType createCLHeavyMGAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Heavy Machine Gun Ammo";
-        ammo.shortName = "Heavy Machine Gun";
-        ammo.setInternalName("Clan Heavy Machine Gun Ammo - Full");
-        ammo.addLookupName("CLHeavyMG Ammo (100)");
-        ammo.addLookupName("Clan Heavy Machine Gun Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 100;
-        ammo.bv = 1;
-        ammo.cost = 1000;
-        ammo.kgPerShot = 10;
-        ammo.rulesRefs = "228,TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-            .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CSJ);
-        return ammo;
-    }
-
-    private static AmmoType createCLHeavyMGAmmoHalf() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Half Heavy Machine Gun Ammo";
-        ammo.shortName = "Heavy Machine Gun";
-        ammo.setInternalName("Clan Heavy Machine Gun Ammo - Half");
-        ammo.addLookupName("CLHeavyMG Ammo (50)");
-        ammo.addLookupName("Clan Heavy Machine Gun Ammo (1/2 ton)");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_MG_HEAVY;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 50;
-        ammo.tonnage = 0.5f;
-        ammo.bv = 0.5f;
-        ammo.cost = 500;
-        ammo.kgPerShot = 10;
-        ammo.rulesRefs = "228,TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_C)
-            .setAvailability(RATING_X, RATING_C, RATING_C, RATING_B)
-            .setClanAdvancement(3054, 3059, 3070, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CSJ);
-        return ammo;
-    }
-
-    private static AmmoType createCLMGAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Machine Gun Ammo";
-        ammo.shortName = "Machine Gun";
-        ammo.setInternalName("Clan Machine Gun Ammo - Full");
-        ammo.addLookupName("Clan Ammo MG - Full");
-        ammo.addLookupName("CLMG Ammo (200)");
-        ammo.addLookupName("Clan Machine Gun Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 200;
-        ammo.bv = 1;
-        ammo.cost = 1000;
-        ammo.kgPerShot = 5;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_B, RATING_B, RATING_A )
-        .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CSF)
-        .setProductionFactions(F_CSF);
-        return ammo;
-    }
-
-    private static AmmoType createCLMGAmmoHalf() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Half Machine Gun Ammo";
-        ammo.shortName = "Machine Gun";
-        ammo.setInternalName("Clan Machine Gun Ammo - Half");
-        ammo.addLookupName("Clan Ammo MG - Half");
-        ammo.addLookupName("CLMG Ammo (100)");
-        ammo.addLookupName("Clan Machine Gun Ammo (1/2 ton)");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_MG;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 100;
-        ammo.tonnage = 0.5f;
-        ammo.bv = 0.5f;
-        ammo.cost = 500;
-        ammo.kgPerShot = 5;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_B, RATING_B, RATING_A )
-        .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CSF)
-        .setProductionFactions(F_CSF);
-        return ammo;
-    }
-
-    private static AmmoType createCLLightMGAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Light Machine Gun Ammo";
-        ammo.shortName = "Light Machine Gun";
-        ammo.setInternalName("Clan Light Machine Gun Ammo - Full");
-        ammo.addLookupName("CLLightMG Ammo (200)");
-        ammo.addLookupName("Clan Light Machine Gun Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 200;
-        ammo.bv = 1;
-        ammo.cost = 500;
-        ammo.kgPerShot = 5;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-        .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false);
-        return ammo;
-    }
-
-    private static AmmoType createCLLightMGAmmoHalf() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Half Light Machine Gun Ammo";
-        ammo.shortName = "Light Machine Gun";
-        ammo.setInternalName("Clan Light Machine Gun Ammo - Half");
-        ammo.addLookupName("CLLightMG Ammo (100)");
-        ammo.addLookupName("Clan Light Machine Gun Ammo (1/2 ton)");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_MG_LIGHT;
-        ammo.flags = ammo.flags.or(F_MG);
-        ammo.shots = 100;
-        ammo.tonnage = 0.5f;
-        ammo.bv = 0.5f;
-        ammo.cost = 250;
-        ammo.kgPerShot = 5;
-        ammo.rulesRefs = "228, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
-        .setClanAdvancement(DATE_NONE, DATE_NONE, 3069, DATE_NONE, DATE_NONE)
-        .setClanApproximate(false, false, false,false, false);
-        return ammo;
-    }
 
 
     private static AmmoType createCLRotary2Ammo() {
@@ -7923,81 +8374,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    private static AmmoType createCLSmallChemicalLaserAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Small Chemical Laser Ammo";
-        ammo.shortName = "Small Chemical Laser";
-        ammo.setInternalName("CLSmallChemLaserAmmo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 3;
-        ammo.ammoType = AmmoType.T_CHEMICAL_LASER;
-        ammo.shots = 60;
-        ammo.bv = 1;
-        ammo.cost = 30000;
-        ammo.rulesRefs = "320,TO";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-            .setClanAdvancement(3059, 3083, 3145, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CHH);
-        return ammo;
-    }
-
-    private static AmmoType createCLMediumChemicalLaserAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Medium Chemical Laser Ammo";
-        ammo.shortName = "Medium Chemical Laser";
-        ammo.setInternalName("CLMediumChemLaserAmmo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_CHEMICAL_LASER;
-        ammo.shots = 30;
-        ammo.bv = 5;
-        ammo.cost = 30000;
-        ammo.rulesRefs = "320,TO";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-            .setClanAdvancement(3059, 3083, 3145, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CHH);
-        return ammo;
-    }
-
-    private static AmmoType createCLLargeChemicalLaserAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Large Chemical Laser Ammo";
-        ammo.shortName = "Large Chemical Laser";
-        ammo.setInternalName("CLLargeChemLaserAmmo");
-        ammo.damagePerShot = 8;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_CHEMICAL_LASER;
-        ammo.shots = 10;
-        ammo.bv = 12;
-        ammo.cost = 30000;
-        ammo.rulesRefs = "320,TO";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_E)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
-            .setClanAdvancement(3059, 3083, 3145, DATE_NONE, DATE_NONE)
-            .setClanApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CHH);
-        return ammo;
-
-    }
 
     private static AmmoType createISMML3LRMAmmo() {
         AmmoType ammo = new AmmoType();
@@ -10886,64 +11262,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-
-
-    private static AmmoType createISHeavyFlamerAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Heavy Flamer Ammo";
-        ammo.shortName = "Heavy Flamer";
-        ammo.setInternalName("IS Heavy Flamer Ammo");
-        ammo.addLookupName("IS Ammo Heavy Flamer");
-        ammo.addLookupName("ISHeavyFlamer Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_HEAVY_FLAMER;
-        ammo.shots = 10;
-        ammo.bv = 2;
-        ammo.cost = 2000;
-        ammo.rulesRefs = "312, TO";;
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setISAdvancement(DATE_NONE, 3068, 3079, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_LC)
-        .setProductionFactions(F_LC);
-        return ammo;
-    }
-
-    private static AmmoType createCLHeavyFlamerAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Heavy Flamer Ammo";
-        ammo.shortName = "Heavy Flamer";
-        ammo.setInternalName("CL Heavy Flamer Ammo");
-        ammo.addLookupName("CL Ammo Heavy Flamer");
-        ammo.addLookupName("Clan Ammo Heavy Flamer");
-        ammo.addLookupName("Clan Heavy Flamer Ammo");
-        ammo.addLookupName("CLHeavyFlamer Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_HEAVY_FLAMER;
-        ammo.shots = 10;
-        ammo.bv = 2;
-        ammo.cost = 2000;
-        ammo.rulesRefs = "312, TO";;
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-    	.setTechRating(RATING_C)
-    	.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setClanAdvancement(3065, 3067, 3079, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CJF)
-        .setProductionFactions(F_CJF);
-        return ammo;
-    }
-
     private static AmmoType createISCoolantPod() {
         AmmoType ammo = new AmmoType();
 
@@ -11248,62 +11566,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    private static AmmoType createISMagshotGRAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Magshot GR Ammo";
-        ammo.shortName = "Magshot";
-        ammo.setInternalName("ISMagshotGR Ammo");
-        ammo.addLookupName("IS Magshot GR Ammo");
-        ammo.damagePerShot = 2;
-        ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_MAGSHOT;
-        ammo.shots = 50;
-        ammo.bv = 2;
-        ammo.cost = 1000;
-        ammo.rulesRefs = "314, TO";
-        ammo.rulesRefs = "314, TO";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_D, RATING_C)
-        .setISAdvancement(3059, 3072, 3090, DATE_NONE, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_FS)
-        .setProductionFactions(F_FS);
-        return ammo;
-    }
-
-    private static AmmoType createCLAPGaussRifleAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "AP Gauss Rifle Ammo";
-        ammo.shortName = "AP Gauss";
-        ammo.setInternalName("CLAPGaussRifle Ammo");
-        ammo.addLookupName("Clan AP Gauss Rifle Ammo");
-        ammo.addLookupName("Clan Anti-Personnel Gauss Rifle Ammo");
-        ammo.damagePerShot = 3;
-        ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_APGAUSS;
-        ammo.shots = 40;
-        ammo.bv = 3;
-        ammo.cost = 1000;
-        ammo.kgPerShot = 25;
-        ammo.rulesRefs = "218, TM";
-        ammo.rulesRefs = "218,TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-        .setClanAdvancement(3065, 3069, 3072, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CJF)
-        .setProductionFactions(F_CJF);
-        return ammo;
-    }
-
 
     private static AmmoType createISMPodAmmo() {
         AmmoType ammo = new AmmoType();
@@ -11362,122 +11624,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    private static AmmoType createISSBGaussRifleAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "Silver Bullet Gauss Ammo";
-        ammo.shortName = "Silver Bullet";
-        ammo.setInternalName("Silver Bullet Gauss Ammo");
-        ammo.addLookupName("IS SBGauss Rifle Ammo");
-        ammo.addLookupName("ISSBGauss Ammo");
-        ammo.addLookupName("ISSBGaussRifleAmmo");
-        ammo.explosive = false;
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 15;
-        ammo.ammoType = AmmoType.T_SBGAUSS;
-        ammo.munitionType = M_CLUSTER;
-        ammo.shots = 8;
-        ammo.bv = 25;
-        ammo.cost = 25000;
-        ammo.toHitModifier = -1;
-        ammo.rulesRefs = "314, TO";
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_E)
-        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-        .setISAdvancement(3051, 3080, 3090, DATE_NONE, DATE_NONE)
-        .setISApproximate(false, false, false,false, false)
-        .setPrototypeFactions(F_FS,F_LC)
-        .setProductionFactions(F_FC);
-        return ammo;
-    }
-
-    private static AmmoType createCLHAG20Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "HAG/20 Ammo";
-        ammo.shortName = "HAG 20";
-        ammo.setInternalName(ammo.name);
-        ammo.addLookupName("CLHAG20 Ammo");
-        ammo.addLookupName("Clan HAG 20 Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 20;
-        ammo.ammoType = AmmoType.T_HAG;
-        ammo.shots = 6;
-        ammo.bv = 33;
-        ammo.cost = 30000;
-        ammo.kgPerShot = 166.66;
-        ammo.explosive = false;
-        ammo.rulesRefs = "219, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
-        .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CHH)
-        .setProductionFactions(F_CHH);
-        return ammo;
-    }
-
-    private static AmmoType createCLHAG30Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "HAG/30 Ammo";
-        ammo.shortName = "HAG 30";
-        ammo.setInternalName(ammo.name);
-        ammo.addLookupName("CLHAG30 Ammo");
-        ammo.addLookupName("Clan HAG 30 Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 30;
-        ammo.ammoType = AmmoType.T_HAG;
-        ammo.shots = 4;
-        ammo.bv = 50;
-        ammo.cost = 30000;
-        ammo.explosive = false;
-        ammo.rulesRefs = "219, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
-        .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CHH)
-        .setProductionFactions(F_CHH);
-        return ammo;
-    }
-
-    private static AmmoType createCLHAG40Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "HAG/40 Ammo";
-        ammo.shortName = "HAG 40";
-        ammo.setInternalName(ammo.name);
-        ammo.addLookupName("CLHAG40 Ammo");
-        ammo.addLookupName("Clan HAG 40 Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 40;
-        ammo.ammoType = AmmoType.T_HAG;
-        ammo.shots = 3;
-        ammo.bv = 67;
-        ammo.cost = 30000;
-        ammo.explosive = false;
-        ammo.rulesRefs = "219, TM";
-        ammo.rulesRefs = "219, TM";
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN)
-    	.setIntroLevel(false)
-    	.setUnofficial(false)
-        .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
-        .setClanAdvancement(3062, 3068, 3072, DATE_NONE, DATE_NONE)
-        .setClanApproximate(true, false, false,false, false)
-        .setPrototypeFactions(F_CHH)
-        .setProductionFactions(F_CHH);
-        return ammo;
-    }
 
     private static AmmoType createCLPlasmaCannonAmmo() {
         AmmoType ammo = new AmmoType();
@@ -14257,53 +14403,6 @@ public class AmmoType extends EquipmentType {
 
 
 
-    private static AmmoType createCLVGLAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "VGL Fragmentation Grenade";
-        ammo.subMunitionBegin = 4;
-        ammo.subMunitionLength = 13;
-        ammo.shortName = "VGL Fragmentation";
-        ammo.setInternalName("CL Ammo VGL");
-        ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
-        ammo.damagePerShot = 0;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_VGL;
-        ammo.munitionType = AmmoType.M_STANDARD;
-        ammo.shots = 1;
-        ammo.bv = 0;
-        ammo.cost = 0;
-        ammo.tonnage = 0;
-        ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-        ammo.techAdvancement.setClanAdvancement(DATE_NONE, 2820, DATE_NONE);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_B, RATING_X });
-        return ammo;
-    }
-
-    private static AmmoType createISVGLAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.name = "VGL Fragmentation Grenade";
-        ammo.subMunitionBegin = 4;
-        ammo.subMunitionLength = 13;
-        ammo.shortName = "VGL Fragmentation";
-        ammo.setInternalName("IS Ammo VGL");
-        ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
-        ammo.damagePerShot = 0;
-        ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_VGL;
-        ammo.munitionType = AmmoType.M_STANDARD;
-        ammo.shots = 1;
-        ammo.bv = 0;
-        ammo.cost = 0;
-        ammo.tonnage = 0;
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_B, RATING_B, RATING_B, RATING_X });
-        return ammo;
-    }
 
     private static AmmoType createISC3RemoteSensorAmmo() {
         AmmoType ammo = new AmmoType();

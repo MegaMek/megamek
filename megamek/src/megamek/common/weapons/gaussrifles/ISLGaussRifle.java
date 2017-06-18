@@ -66,7 +66,7 @@ public class ISLGaussRifle extends GaussWeapon {
     	.setIntroLevel(false)
     	.setUnofficial(false)
         .setTechRating(RATING_E)
-        .setAvailability(RATING_C, RATING_X, RATING_E, RATING_D)
+        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
         .setISAdvancement(3049, 3056, 3065, DATE_NONE, DATE_NONE)
         .setISApproximate(true, false, false,false, false)
         .setPrototypeFactions(F_FW)

@@ -45,7 +45,7 @@ public class BombType extends AmmoType {
                                               "Alamo Missile"};
     
     public static final String[] bombInternalNames = {"HEBomb","ClusterBomb","LGBomb",
-                                                      "RL 10 Ammo (bomb)", "TAGBomb", "AAAMissile Ammo",
+                                                      "RL 10 Ammo (Bomb)", "TAGBomb", "AAAMissile Ammo",
                                                       "ASMissile Ammo",
                                                       "ASEWMissile Ammo", "ArrowIVMissile Ammo",
                                                       "ArrowIVHomingMissile Ammo", "InfernoBomb",
@@ -140,24 +140,24 @@ public class BombType extends AmmoType {
     public static void initializeTypes() {
         EquipmentType.addType(BombType.createHighExplosiveBomb());
         EquipmentType.addType(BombType.createClusterBomb());
-        EquipmentType.addType(BombType.createISLaserGuidedBomb());
-        EquipmentType.addType(BombType.createCLLaserGuidedBomb());
+        EquipmentType.addType(BombType.createLaserGuidedBomb());
+//        EquipmentType.addType(BombType.createCLLaserGuidedBomb());
         EquipmentType.addType(BombType.createRocketBomb());
-        EquipmentType.addType(BombType.createISTAGBomb());
-        EquipmentType.addType(BombType.createCLTAGBomb());
-        EquipmentType.addType(BombType.createISAAAMissileBomb());
-        EquipmentType.addType(BombType.createCLAAAMissileBomb());
-        EquipmentType.addType(BombType.createISASMissileBomb());
-        EquipmentType.addType(BombType.createCLASMissileBomb());
+        EquipmentType.addType(BombType.createTAGBomb());
+//        EquipmentType.addType(BombType.createCLTAGBomb());
+        EquipmentType.addType(BombType.createAAAMissileBomb());
+//        EquipmentType.addType(BombType.createCLAAAMissileBomb());
+        EquipmentType.addType(BombType.createASMissileBomb());
+//        EquipmentType.addType(BombType.createCLASMissileBomb());
         EquipmentType.addType(BombType.createISASEWMissileBomb());
-        EquipmentType.addType(BombType.createCLASEWMissileBomb());
-        EquipmentType.addType(BombType.createISArrowIVBomb());
-        EquipmentType.addType(BombType.createCLArrowIVBomb());
-        EquipmentType.addType(BombType.createISArrowIVHomingBomb());
-        EquipmentType.addType(BombType.createCLArrowIVHomingBomb());
+//        EquipmentType.addType(BombType.createCLASEWMissileBomb());
+        EquipmentType.addType(BombType.createArrowIVBomb());
+//        EquipmentType.addType(BombType.createCLArrowIVBomb());
+        EquipmentType.addType(BombType.createArrowIVHomingBomb());
+//        EquipmentType.addType(BombType.createCLArrowIVHomingBomb());
         EquipmentType.addType(BombType.createInfernoBomb());
-        EquipmentType.addType(BombType.createISLAAMissileBomb());
-        EquipmentType.addType(BombType.createCLLAAMissileBomb());
+        EquipmentType.addType(BombType.createLAAMissileBomb());
+//        EquipmentType.addType(BombType.createCLLAAMissileBomb());
         EquipmentType.addType(BombType.createThunderBomb());
         EquipmentType.addType(BombType.createTorpedoBomb());
         EquipmentType.addType(BombType.createAlamoBomb());
@@ -170,57 +170,25 @@ public class BombType extends AmmoType {
             case B_CLUSTER:
                 return createClusterBomb();
             case B_LG:
-            	if(isClan){
-            		return createCLLaserGuidedBomb(); 
-            	}	else   {
-        			return createISLaserGuidedBomb();           		
-            	}
+       			return createLaserGuidedBomb();           		          	
             case B_RL:
                 return createRocketBomb();
             case B_TAG:
-            	if(isClan){
-            		return createCLTAGBomb(); 
-            	}	else   {
-        			return createISTAGBomb();           		
-            	}
+       			return createTAGBomb();           		          	
             case B_AAA:
-            	if(isClan){
-            		return createCLLaserGuidedBomb(); 
-            	}	else   {
-        			return createISLaserGuidedBomb();           		
-            	}
+           		return createAAAMissileBomb(); 
             case B_AS:
-            	if(isClan){
-            		return createCLASMissileBomb(); 
-            	}	else   {
-        			return createISASMissileBomb();           		
-            	}
+           		return createASMissileBomb(); 
             case B_ASEW:
-            	if(isClan){
-            		return createCLASEWMissileBomb(); 
-            	}	else   {
-        			return createISASEWMissileBomb();           		
-            	}
+       			return createISASEWMissileBomb();           		
             case B_ARROW:
-            	if(isClan){
-            		return createCLArrowIVBomb(); 
-            	}	else   {
-        			return createISArrowIVBomb();           		
-            	}
+           		return createArrowIVBomb(); 
             case B_HOMING:
-            	if(isClan){
-            		return createCLArrowIVHomingBomb(); 
-            	}	else   {
-        			return createISArrowIVHomingBomb();           		
-            	}
+           		return createArrowIVHomingBomb(); 
             case B_INFERNO:
                 return createInfernoBomb();
             case B_LAA:
-            	if(isClan){
-            		return createCLLAAMissileBomb(); 
-            	}	else   {
-        			return createISLAAMissileBomb();           		
-            	}
+       			return createLAAMissileBomb();           		
             case B_THUNDER:
                 return createThunderBomb();
             case B_TORPEDO:
@@ -234,11 +202,13 @@ public class BombType extends AmmoType {
     
 	// START OF BOMBS
 
-	private static BombType createISAAAMissileBomb() {
+	private static BombType createAAAMissileBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Air-to-Air (AAA) Arrow Ammo";
 		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_AAA));
+		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AAA));
+		bomb.addLookupName("AAAMissile Ammo");
 		bomb.damagePerShot = 20;
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_AAA_MISSILE;
@@ -247,17 +217,22 @@ public class BombType extends AmmoType {
 		bomb.bv = 57;
 		bomb.cost = 9000;
 		bomb.rulesRefs = "357, TO";
-		bomb.rulesRefs = "357, TO";
-		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-		        .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC)
-		        .setProductionFactions(F_LC);
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+	    .setTechRating(RATING_E)
+	    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+	    .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)
+	    .setISApproximate(true, false, false,false, false)
+	    .setClanAdvancement(3069, DATE_NONE, 3072, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(true, false, false, false, false)
+	    .setPrototypeFactions(F_LC,F_CWX)	
+	    .setProductionFactions(F_LC);
 
 		return bomb;
 	}
 
-	private static BombType createCLAAAMissileBomb() {
+/*	private static BombType createCLAAAMissileBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Air-to-Air (AAA) Arrow Ammo";
@@ -276,13 +251,15 @@ public class BombType extends AmmoType {
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_CWX);
 
 		return bomb;
-	}
+	}*/
 
-	private static BombType createISASMissileBomb() {
+	private static BombType createASMissileBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Anti-Ship (AS) Missiles Ammo";
 		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_AS));
+		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_AS));
+		bomb.addLookupName("ASMissile Ammo");
 		bomb.damagePerShot = 20;
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_AS_MISSILE;
@@ -291,16 +268,22 @@ public class BombType extends AmmoType {
 		bomb.bv = 114;
 		bomb.cost = 0;
 		bomb.rulesRefs = "358, TO";
-		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
-		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-		        .setISAdvancement(3071, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setISApproximate(false, true, false, false, false).setPrototypeFactions(F_FS)
-		        .setProductionFactions(F_FS);
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+	    .setTechRating(RATING_D)
+	    .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
+	    .setISAdvancement(3071, 3075, DATE_NONE, DATE_NONE, DATE_NONE)
+	    .setISApproximate(false, true, false,false, false)
+	    .setClanAdvancement(DATE_NONE, DATE_NONE, 3076, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(false, false, false, false, false)
+	    .setPrototypeFactions(F_FS)	
+	    .setProductionFactions(F_FS);
 
 		return bomb;
 	}
 
-	private static BombType createCLASMissileBomb() {
+/*	private static BombType createCLASMissileBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Anti-Ship (AS) Missiles Ammo";
@@ -319,13 +302,15 @@ public class BombType extends AmmoType {
 		        .setISApproximate(false, false, false, false, false);
 
 		return bomb;
-	}
+	}*/
 
 	private static BombType createISASEWMissileBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Anti-Ship Electronic Warfare (ASEW) Ammo";
 		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_ASEW));
+//		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_ASEW)); Not available to the Clans
+		bomb.addLookupName("ASEWMissile Ammo");
 		bomb.damagePerShot = 0;
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_ASEW_MISSILE;
@@ -343,7 +328,7 @@ public class BombType extends AmmoType {
 		return bomb;
 	}
 
-	private static BombType createCLASEWMissileBomb() {
+/*	private static BombType createCLASEWMissileBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Anti-Ship Electronic Warfare (ASEW) Ammo";
@@ -363,14 +348,16 @@ public class BombType extends AmmoType {
 		bomb.techAdvancement.setAvailability(new int[] { RATING_X, RATING_X, RATING_E, RATING_E });
 
 		return bomb;
-	}
+	}*/
 
-	private static BombType createISArrowIVHomingBomb() {
+	private static BombType createArrowIVHomingBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Arrow IV Homing Missile (Air-Launched Version)";
-		bomb.shortName = "IS Arrow IV AL-Homing";
+		bomb.shortName = "Arrow IV Homing (Air-Launch)";
 		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_HOMING));
+		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_HOMING));
+		bomb.addLookupName("ArrowIVHomingMissile Ammo");
 		bomb.damagePerShot = 1;
 		bomb.rackSize = 20;
 		bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
@@ -384,15 +371,23 @@ public class BombType extends AmmoType {
 		bomb.bv = 0;
 		bomb.cost = 0;
 		bomb.rulesRefs = "358, TO";
-		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
-		        .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
-		        .setISAdvancement(2595, 2600, DATE_NONE, 2835, 3047).setISApproximate(true, false, false, true, false)
-		        .setPrototypeFactions(F_TH).setProductionFactions(F_TH).setReintroductionFactions(F_CC);
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+	    .setTechRating(RATING_E)
+	    .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+	    .setISAdvancement(2595, 2600, DATE_NONE, 2835, 3047)
+	    .setISApproximate(true, false, false,true, false)
+	    .setClanAdvancement(2595, 2600, DATE_NONE, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(true, false, false, false, false)
+	    .setPrototypeFactions(F_TH)	
+	    .setProductionFactions(F_TH)
+	    .setReintroductionFactions(F_CC);
 
 		return bomb;
 	}
 
-	private static BombType createCLArrowIVHomingBomb() {
+/*	private static BombType createCLArrowIVHomingBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Arrow IV Homing Missile (Air-Launched Version)";
@@ -418,14 +413,16 @@ public class BombType extends AmmoType {
 		        .setProductionFactions(F_TH);
 
 		return bomb;
-	}
+	}*/
 
-	private static BombType createISArrowIVBomb() {
+	private static BombType createArrowIVBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
-		bomb.shortName = "IS Arrow IV (Air-Launched Version)";
+		bomb.shortName = "Arrow IV (Air-Launched Version)";
 		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_ARROW));
+		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_ARROW));
+		bomb.addLookupName("ArrowIVMissile Ammo");
 		bomb.damagePerShot = 1;
 		bomb.rackSize = 20;
 		bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
@@ -435,15 +432,23 @@ public class BombType extends AmmoType {
 		bomb.bv = 34;
 		bomb.cost = 0;
 		bomb.rulesRefs = "359, TO";
-		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
-		        .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
-		        .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3046).setISApproximate(true, false, false, true, false)
-		        .setPrototypeFactions(F_TH).setProductionFactions(F_TH);
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+	    .setTechRating(RATING_E)
+	    .setAvailability(RATING_E,RATING_F, RATING_E, RATING_E)
+	    .setISAdvancement(2622, 2623, DATE_NONE, 2850, 3046)
+	    .setISApproximate(true, false, false, true, false)
+	    .setClanAdvancement(2622, 2623, DATE_NONE, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(true, false, false, false, false)
+	    .setPrototypeFactions(F_TH)	
+	    .setProductionFactions(F_TH)
+	    .setReintroductionFactions(F_CC);
 
 		return bomb;
 	}
 
-	private static BombType createCLArrowIVBomb() {
+/*	private static BombType createCLArrowIVBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Arrow IV Non-Homing Missile (Air-Launched Version)";
@@ -464,7 +469,7 @@ public class BombType extends AmmoType {
 		        .setClanApproximate(true, false, false, false, false);
 
 		return bomb;
-	}
+	}*/
 
 	private static BombType createClusterBomb() {
 		BombType bomb = new BombType();
@@ -543,12 +548,14 @@ public class BombType extends AmmoType {
 		return bomb;
 	}
 
-	private static BombType createISLaserGuidedBomb() {
+	private static BombType createLaserGuidedBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Laser-Guided (LG) Bomb";
-		bomb.shortName = "ISLGBomb";
+		bomb.shortName = "LGBomb";
 		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_LG));
+		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_LG));
+		bomb.addLookupName("LGBomb");
 		bomb.damagePerShot = 10;
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_BOMB;
@@ -558,15 +565,21 @@ public class BombType extends AmmoType {
 		bomb.bv = 20;
 		bomb.cost = 10000;
 		bomb.rulesRefs = "247, TW";
-		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_C)
-		        .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
-		        .setISAdvancement(DATE_ES, DATE_ES, 3065, 2800, 3060)
-		        .setISApproximate(false, false, false, false, false).setReintroductionFactions(F_FW);
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+	    .setTechRating(RATING_C)
+	    .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+	    .setISAdvancement(DATE_ES, DATE_ES, 3065, 2800, 3060)
+	    .setISApproximate(false, false, false, true, false)
+	    .setClanAdvancement(DATE_ES, DATE_ES, 3065, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(false, false, false, false, false)
+	    .setReintroductionFactions(F_FW);
 
 		return bomb;
 	}
 
-	private static BombType createCLLaserGuidedBomb() {
+/*	private static BombType createCLLaserGuidedBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Laser-Guided (LG) Bomb";
@@ -587,13 +600,15 @@ public class BombType extends AmmoType {
 		        .setClanApproximate(false, false, false, false, false);
 
 		return bomb;
-	}
+	}*/
 
-	private static BombType createISLAAMissileBomb() {
+	private static BombType createLAAMissileBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "Light Air-to-Air (LAA) Missiles Ammo";
 		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_LAA));
+		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_LAA));
+		bomb.addLookupName("LAAMissile Ammo");
 		bomb.damagePerShot = 6;
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_LAA_MISSILE;
@@ -611,7 +626,7 @@ public class BombType extends AmmoType {
 
 		return bomb;
 	}
-
+/*
 	private static BombType createCLLAAMissileBomb() {
 		BombType bomb = new BombType();
 
@@ -632,7 +647,7 @@ public class BombType extends AmmoType {
 		        .setClanApproximate(false, false, false, false, false);
 
 		return bomb;
-	}
+	}*/
 
 	// TODO Mine Bombs
 
@@ -658,13 +673,16 @@ public class BombType extends AmmoType {
 		return bomb;
 	}
 
-	private static BombType createISTAGBomb() {
+	private static BombType createTAGBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "TAG Pod";
-		bomb.shortName = "ISTAGPod";
+		bomb.shortName = "TAGPod";
 		bomb.setInternalName("IS " + BombType.getBombInternalName(BombType.B_TAG));
+		bomb.addLookupName("Clan " + BombType.getBombInternalName(BombType.B_TAG));
+		bomb.addLookupName("CLTAGBomb");
 		bomb.addLookupName("ISTAGBomb");
+		bomb.addLookupName("TAGBomb");
 		bomb.damagePerShot = 0;
 		bomb.rackSize = 1;
 		bomb.ammoType = AmmoType.T_BOMB;
@@ -673,15 +691,23 @@ public class BombType extends AmmoType {
 		bomb.bv = 0;
 		bomb.cost = 50000;
 		bomb.rulesRefs = "238, TM";
-		bomb.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
-		        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D).setISAdvancement(2600, 2605, 2645, 2835, 3035)
-		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH)
-		        .setProductionFactions(F_TH);
+		bomb.techAdvancement.setTechBase(TECH_BASE_ALL)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+	    .setTechRating(RATING_E)
+	    .setAvailability(RATING_E, RATING_F, RATING_D, RATING_D)
+	    .setISAdvancement(2600, 2605, 2645, 2835, 3035)
+	    .setISApproximate(false, false, false, true, false)
+	    .setClanAdvancement(2600, 2605, 2645, DATE_NONE, DATE_NONE)
+	    .setClanApproximate(false, false, false, false, false)
+	    .setPrototypeFactions(F_TH)
+	    .setProductionFactions(F_TH)
+	    .setReintroductionFactions(F_FW);
 
 		return bomb;
 	}
 
-	private static BombType createCLTAGBomb() {
+/*	private static BombType createCLTAGBomb() {
 		BombType bomb = new BombType();
 
 		bomb.name = "TAG Pod";
@@ -703,7 +729,7 @@ public class BombType extends AmmoType {
 		        .setProductionFactions(F_TH);
 
 		return bomb;
-	}
+	}*/
 
 	private static BombType createThunderBomb() {
 		BombType bomb = new BombType();

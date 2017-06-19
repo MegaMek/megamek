@@ -146,7 +146,7 @@ public class CustomPilotView extends JPanel {
         fldGunneryL.setText(Integer.toString(entity.getCrew().getGunneryL(slot)));
         fldGunneryM.setText(Integer.toString(entity.getCrew().getGunneryM(slot)));
         fldGunneryB.setText(Integer.toString(entity.getCrew().getGunneryB(slot)));
-        fldGunnery.setText(Integer.toString(entity.getCrew().getGunneryL(slot)));
+        fldGunnery.setText(Integer.toString(entity.getCrew().getGunnery(slot)));
 
         label = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT); //$NON-NLS-1$
         if (entity instanceof Tank) {

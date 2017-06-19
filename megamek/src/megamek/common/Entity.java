@@ -14159,4 +14159,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getSpriteDrawPriority() {
         return 0;
     }
+
+    /**
+     * Entities that use different sprites for different modes should override this
+     * @return a code identifying the mode, or an empty string for the default sprite
+     */
+    public String getTilesetModeString() {
+        return "";
+    }
 }

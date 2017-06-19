@@ -140,4 +140,13 @@ public class QuadVee extends QuadMech {
         }
         return 2;
     }
+
+    @Override
+    public String getTilesetModeString() {
+        if (isInVehicleMode()) {
+            return "_VEHICLE";
+        } else {
+            return "";
+        }
+    }
 }

@@ -3,6 +3,8 @@
  */
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * Quad Mek that can convert into either tracked or wheeled vehicle mode.
  * 
@@ -144,6 +146,42 @@ public class QuadVee extends QuadMech {
             return 1;
         }
         return 2;
+    }
+
+    @Override
+    public boolean canChangeSecondaryFacing() {
+        return !isProne();
+    }
+    
+    /**
+     * Can this mech torso twist in the given direction?
+     */
+    @Override
+    public boolean isValidSecondaryFacing(int dir) {
+        if (!canChangeSecondaryFacing()) {
+            return dir == 0;
+        }
+        //Turret rotation always works in vehicle mode.
+        if (isInVehicleMode()) {
+            return true;
+        }
+        
+        //In 'Mech mode the torso rotation can be limited by gyro damage.
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO, LOC_CT);
+        if (getGyroType() == GYRO_HEAVY_DUTY) {
+            gyroHits--;
+        }
+        //No damage gives full rotation
+        if (gyroHits <= 0) {
+            return true;
+        }
+        int rotate = Math.abs(dir - getFacing());
+        //The first hit prevents rotating directly to the rear
+        if (gyroHits == 1) {
+            return rotate != 3;
+        }
+        //Destroyed gyro limits to normal biped torso rotation
+        return rotate <= 1 || rotate == 5;
     }
 
     /**

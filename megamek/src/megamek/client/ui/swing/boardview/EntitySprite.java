@@ -25,14 +25,15 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
-import megamek.common.IBoard;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.RangeType;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
@@ -527,7 +528,8 @@ class EntitySprite extends Sprite {
 
             // determine secondary facing for non-mechs & flipped arms
             int secFacing = entity.getFacing();
-            if (!((entity instanceof Mech) || (entity instanceof Protomech))) {
+            if (!((entity instanceof Mech) || (entity instanceof Protomech))
+                    || (entity instanceof QuadVee)) {
                 secFacing = entity.getSecondaryFacing();
             } else if (entity.getArmsFlipped()) {
                 secFacing = (entity.getFacing() + 3) % 6;

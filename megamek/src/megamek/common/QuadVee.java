@@ -146,6 +146,20 @@ public class QuadVee extends QuadMech {
         return 2;
     }
 
+    /**
+     * Add in any piloting skill mods
+     */
+    @Override
+    public PilotingRollData addEntityBonuses(PilotingRollData roll) {
+        if (getCrew().hasDedicatedPilot()) {
+            roll.addModifier(-1, "dedicated pilot");
+        } else {
+            roll.addModifier(2, "pilot incapacitated");
+        }
+        
+        return super.addEntityBonuses(roll);
+    }
+    
     @Override
     public String getTilesetModeString() {
         if (isInVehicleMode()) {

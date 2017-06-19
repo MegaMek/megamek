@@ -2111,10 +2111,15 @@ public class MoveStep implements Serializable {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
             //LAMs cannot convert with a destroyed gyro.
-            if (getEntity() instanceof LandAirMech
-                    && entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                            Mech.LOC_CT) > 1) {
-                movementType = EntityMovementType.MOVE_ILLEGAL;
+            if (getEntity() instanceof LandAirMech) {
+                int gyroHits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                            Mech.LOC_CT);
+                if (((Mech)entity).getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+                    gyroHits--;
+                }
+                if (gyroHits > 1) {
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                }
             }
         }
         

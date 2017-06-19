@@ -46,6 +46,7 @@ import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.CriticalSlot;
 import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Entity;
@@ -789,9 +790,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setChargeEnabled(ce.canCharge());
         setDFAEnabled(ce.canDFA());
         setRamEnabled(ce.canRam());
-        setModeConvertEnabled(!ce.isUnderwater()
-                //non-QuadVees with tracks have no conversion cost
-                && (!(ce instanceof QuadVee) || ((QuadVee)ce).conversionCost() <= ce.getRunMP()));
 
         if (isInfantry) {
             if (clientgui.getClient().getGame()
@@ -857,6 +855,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateFlyOffButton();
         updateLaunchButton();
         updateDropButton();
+        updateConvertModeButton();
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
@@ -1095,6 +1094,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateFlyOffButton();
         updateLaunchButton();
         updateDropButton();
+        updateConvertModeButton();
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
@@ -1856,6 +1856,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateFlyOffButton();
             updateLaunchButton();
             updateDropButton();
+            updateConvertModeButton();
             updateRecklessButton();
             updateHoverButton();
             updateManeuverButton();
@@ -2434,6 +2435,40 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         setTraitorEnabled(true);
+    }
+    
+    private void updateConvertModeButton() {
+
+        if (cmd.length() > 0 && cmd.getLastStep().getType() != MoveStepType.CONVERT_MODE) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
+        final Entity ce = ce();
+        
+        IHex currHex =  clientgui.getClient().getGame().getBoard().getHex(ce.getPosition());
+        if (currHex.containsTerrain(Terrains.WATER)) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
+        if (ce instanceof LandAirMech) {
+            int gyroHits = ce.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+            if (((Mech)ce).getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+                gyroHits--;
+            }
+            if (gyroHits > 1) {
+                setModeConvertEnabled(false);
+                return;
+            }
+        }
+        
+        if (ce instanceof QuadVee && ((QuadVee)ce).conversionCost() > ce.getRunMP()) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
+        setModeConvertEnabled(true);
     }
 
     private void updateRecklessButton() {
@@ -4574,6 +4609,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateLaunchButton();
         updateLoadButtons();
         updateDropButton();
+        updateConvertModeButton();
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();

@@ -11,6 +11,11 @@ package megamek.common;
  */
 public class QuadVee extends QuadMech {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1283551018632228647L;
+
     public static final int SYSTEM_CONVERSION_GEAR = 15;
     
     public static final int SYSTEM_TRACK = 16;
@@ -148,5 +153,10 @@ public class QuadVee extends QuadMech {
         } else {
             return "";
         }
+    }
+    
+    @Override
+    public long getEntityType() {
+        return Entity.ETYPE_MECH | Entity.ETYPE_QUAD_MECH | Entity.ETYPE_QUADVEE;
     }
 }

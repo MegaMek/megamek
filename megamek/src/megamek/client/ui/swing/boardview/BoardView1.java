@@ -5041,6 +5041,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             GUIPreferences guip = GUIPreferences.getInstance();
 
             updateEcmList();
+            //For Entities that have converted to another mode, check for a different sprite
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                    && en.isConvertingNow()) {
+                tileManager.reloadImage(en);
+            }
             redrawAllEntities();
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();

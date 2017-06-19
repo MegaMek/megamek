@@ -425,6 +425,14 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         started = true;
     }
+    
+    public synchronized void reloadImage(Entity en) {
+        if (en.getSecondaryPositions().isEmpty()) {
+            loadImage(en, -1);
+        } else {
+            en.getSecondaryPositions().keySet().forEach(p -> loadImage(en, p));
+        }
+    }
 
     /**
      * Loads the image(s) for this hex into the tracker.

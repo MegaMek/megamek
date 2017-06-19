@@ -6636,7 +6636,7 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             return;
         }
-
+        
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
@@ -6916,6 +6916,12 @@ public class Server implements Runnable {
                 } else {
                     addReport(vReport);
                 }
+            }
+            
+            if (step.getType() == MoveStepType.CONVERT_MODE) {
+                entity.setConvertingNow(true);
+                entity.setMovementMode(entity.nextConversionMode());
+                continue;
             }
 
             // did the entity move?

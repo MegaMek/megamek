@@ -1066,9 +1066,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             ce.setMovementMode(EntityMovementMode.QUAD);
         }
         
-        if (cmd != null && cmd.isChangingMode()) {
-            ce.resetModeConversion();
-        }
+        ce.resetModeConversion();
 
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
@@ -3963,16 +3961,28 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             ce.setMovementMode((ce instanceof BipedMech) ? EntityMovementMode.BIPED_SWIM
                     : EntityMovementMode.QUAD_SWIM);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_CONVERT.getCmd())) {
-            ce.setMovementMode(ce.nextConversionMode());
-            if (ce instanceof LandAirMech) {
-                ce.setConvertingNow(ce.getMovementMode() != ((LandAirMech)ce).getPreviousMovementMode());
-            } else {
-                ce.setConvertingNow(!ce.isConvertingNow());
-            }
-            if (!ce.isConvertingNow()) {
+            if (ce instanceof LandAirMech
+                    && ((LandAirMech)ce).getPreviousMovementMode() == EntityMovementMode.AIRMECH) {
+                //We need to cycle among three options (fighter, biped, no conversion), which requires
+                //one, two, or zero conversion steps.
+                EntityMovementMode nextMode = ce.nextConversionMode();
                 clear();
+                if (nextMode != EntityMovementMode.AIRMECH) {
+                    cmd.addStep(MoveStepType.CONVERT_MODE);
+                    if (nextMode != EntityMovementMode.AERODYNE) {
+                        cmd.addStep(MoveStepType.CONVERT_MODE);
+                    }
+                    ce.setMovementMode(nextMode);
+                }
             } else {
-                cmd.addStep(MoveStepType.CONVERT_MODE);
+                //Otherwise we're just toggling conversion on or off.
+                boolean wasConverting = ce.isConvertingNow();
+                clear();
+                if (!wasConverting) {
+                    ce.setMovementMode(ce.nextConversionMode());
+                    ce.setConvertingNow(true);
+                    cmd.addStep(MoveStepType.CONVERT_MODE);
+                }
             }
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_TURN.getCmd())) {

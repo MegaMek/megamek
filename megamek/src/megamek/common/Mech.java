@@ -342,6 +342,9 @@ public abstract class Mech extends Entity {
         case COCKPIT_COMMAND_CONSOLE:
             setCrew(new Crew(CrewType.COMMAND_CONSOLE));
             break;
+        case COCKPIT_QUADVEE:
+            setCrew(new Crew(CrewType.QUADVEE));
+            break;
         }
     }
 
@@ -6588,9 +6591,6 @@ public abstract class Mech extends Entity {
         return true;
     }
 
-    /**
-     * Dual Cockpits need to be implemented everywhere except here. FIXME
-     */
     public boolean addCommandConsole() {
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
@@ -6608,9 +6608,23 @@ public abstract class Mech extends Entity {
         return true;
     }
 
-    /**
-     * Dual Cockpits need to be implemented everywhere except here. FIXME
-     */
+    public boolean addQuadVeeCockpit() {
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_QUADVEE);
+        return true;
+    }
+
     public boolean addDualCockpit() {
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));

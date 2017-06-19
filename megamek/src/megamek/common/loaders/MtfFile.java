@@ -224,7 +224,18 @@ public class MtfFile implements IMechLoader {
                 fullHead = ejectionType.substring(9).equals(Mech.FULL_HEAD_EJECT_STRING);
             } catch (Exception e) {
             }
-            if (chassisConfig.indexOf("Quad") != -1) {
+            if (chassisConfig.indexOf("QuadVee") != -1) {
+                int iMotiveType = QuadVee.MOTIVE_TRACK;
+                try {
+                    iMotiveType = QuadVee.getMotiveTypeForString(motiveType.substring(7));
+                    if (iMotiveType == QuadVee.MOTIVE_UNKNOWN) {
+                        iMotiveType = QuadVee.MOTIVE_TRACK;
+                    }
+                } catch (Exception e) {
+                    iMotiveType = QuadVee.MOTIVE_TRACK;
+                }
+                mech = new QuadVee(iGyroType, iMotiveType);
+            } else if (chassisConfig.indexOf("Quad") != -1) {
                 mech = new QuadMech(iGyroType, iCockpitType);
             } else if (chassisConfig.indexOf("LAM") != -1) {
                 int iLAMType = LandAirMech.LAM_STANDARD;
@@ -237,17 +248,6 @@ public class MtfFile implements IMechLoader {
                     iLAMType = LandAirMech.LAM_STANDARD;
                 }
                 mech = new LandAirMech(iGyroType, iCockpitType, iLAMType);
-            } else if (chassisConfig.indexOf("QuadVee") != -1) {
-                int iMotiveType = QuadVee.MOTIVE_TRACK;
-                try {
-                    iMotiveType = QuadVee.getMotiveTypeForString(motiveType.substring(7));
-                    if (iMotiveType == QuadVee.MOTIVE_UNKNOWN) {
-                        iMotiveType = QuadVee.MOTIVE_TRACK;
-                    }
-                } catch (Exception e) {
-                    iMotiveType = QuadVee.MOTIVE_TRACK;
-                }
-                mech = new QuadVee(iGyroType, iMotiveType);
             } else if (chassisConfig.indexOf("Tripod") != -1) {
                 mech = new TripodMech(iGyroType, iCockpitType);
             } else {

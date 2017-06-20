@@ -3,8 +3,6 @@
  */
 package megamek.common;
 
-import megamek.common.options.OptionsConstants;
-
 /**
  * Quad Mek that can convert into either tracked or wheeled vehicle mode.
  * 
@@ -150,7 +148,7 @@ public class QuadVee extends QuadMech {
 
     @Override
     public boolean canChangeSecondaryFacing() {
-        return !isProne();
+        return true;
     }
     
     /**

@@ -2096,6 +2096,14 @@ public class MoveStep implements Serializable {
         final boolean isMASCUsed = entity.isMASCUsed();
         final boolean hasPoorPerformance = entity
                 .hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE);
+        boolean gyroDestroyed = false;
+        if (entity instanceof Mech) {
+            int gyroHits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+            if (((Mech)entity).getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+                gyroHits--;
+            }
+            gyroDestroyed = gyroHits > 1;
+        }
 
         IHex currHex = game.getBoard().getHex(curPos);
         IHex lastHex = game.getBoard().getHex(lastPos);
@@ -2284,22 +2292,24 @@ public class MoveStep implements Serializable {
                 && (prev.movementType == EntityMovementType.MOVE_SPRINT)) {
             movementType = EntityMovementType.MOVE_SPRINT;
         }
-
-        // Mechs with busted Gyro may make only one facing change, unless using tracks or
-        // QuadVee in vehicle mode or LAM in fighter mode.
-        if (!isFirstStep() && entity instanceof Mech
-                && (entity.getMovementMode() != EntityMovementMode.TRACKED
-                && entity.getMovementMode() != EntityMovementMode.WHEELED
-                && entity.getMovementMode() != EntityMovementMode.AERODYNE)
-                || (entity instanceof QuadVee && entity.isConvertingNow())) {
-            int gyroHits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
-            if (((Mech)entity).getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-                gyroHits--;
+        
+        //We've already invalidated conversion for LAMs with destroyed gyro and fighter mode ignores it.
+        if (gyroDestroyed && entity.getMovementMode() != EntityMovementMode.AERODYNE) {
+            //QuadVees in 'Mech mode cannot expend mp except to convert. Others can change hex side
+            if (entity instanceof QuadVee &&
+                    //If it is not in vehicle mode and not converting or is converting and ends in vehicle mode
+                    //then it started in 'Mech mode
+                    (((QuadVee)entity).isInVehicleMode() == entity.isConvertingNow())) {
+                if (stepType != MoveStepType.CONVERT_MODE && getMp() > 0) {
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                }
+            } else {
+                if ((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
+                        || getMpUsed() > 1) {
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                }
             }
-            if (gyroHits > 1) {
-                movementType = EntityMovementType.MOVE_ILLEGAL;
-            }
-        }
+        }                
 
         // Mechs with no arms and a missing leg cannot attempt to stand
         if (((stepType == MoveStepType.GET_UP) ||
@@ -2348,7 +2358,7 @@ public class MoveStep implements Serializable {
         if (isFirstStep() && (movementType == EntityMovementType.MOVE_ILLEGAL)
                 && (entity.getWalkMP() > 0) && !entity.isProne()
                 && !entity.isHullDown() && !entity.isStuck()
-                && (stepType == MoveStepType.FORWARDS)) {
+                && !gyroDestroyed && (stepType == MoveStepType.FORWARDS)) {
             movementType = EntityMovementType.MOVE_RUN;
         }
 

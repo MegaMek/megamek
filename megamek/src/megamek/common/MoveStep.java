@@ -2096,7 +2096,6 @@ public class MoveStep implements Serializable {
         final boolean isMASCUsed = entity.isMASCUsed();
         final boolean hasPoorPerformance = entity
                 .hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE);
-        final boolean gyroDestroyed = entity.isGyroDestroyed();
 
         IHex currHex = game.getBoard().getHex(curPos);
         IHex lastHex = game.getBoard().getHex(lastPos);
@@ -2280,19 +2279,33 @@ public class MoveStep implements Serializable {
         }
         
         //We've already invalidated conversion for LAMs with destroyed gyro and fighter mode ignores it.
-        if (gyroDestroyed && entity.getMovementMode() != EntityMovementMode.AERODYNE) {
-            //QuadVees in 'Mech mode cannot expend mp except to convert. Others can change hex side
-            if (entity instanceof QuadVee &&
-                    //If it is not in vehicle mode and not converting or is converting and ends in vehicle mode
-                    //then it started in 'Mech mode
-                    (((QuadVee)entity).isInVehicleMode() == entity.isConvertingNow())) {
-                if (stepType != MoveStepType.CONVERT_MODE && getMp() > 0) {
-                    movementType = EntityMovementType.MOVE_ILLEGAL;
-                }
-            } else {
+        if (entity.isGyroDestroyed() && entity.getMovementMode() != EntityMovementMode.AERODYNE) {
+            //A prone 'Mech with a destroyed gyro can only change a single hex side.
+            if (entity.isProne()) {
                 if ((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
                         || getMpUsed() > 1) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
+                }                
+            } else {
+                //Normally a 'Mech falls immediately when the gyro is destroyed and can't stand again.
+                //QuadVees using vehicle mode and 'Mechs using tracks do not fall and can continue to
+                //stand, but cannot use non-tracked/wheeled MP except for a QuadVee converting back to
+                //vehicle mode. This also covers a 'Mech that started with a destroyed gyro but was not
+                //set to deploy prone. Perhaps that should not be allowed.
+                if (getMp() > 0) {
+                    boolean isTracked = entity.getMovementMode() == EntityMovementMode.TRACKED
+                            || entity.getMovementMode() == EntityMovementMode.WHEELED;
+                    if (entity instanceof QuadVee) {
+                        //We are in 'Mech/non-tracked mode if the end mode is vee and we are converting
+                        //of the end mode is 'Mech and we are not converting.
+                        if (isTracked == entity.isConvertingNow() && stepType != MoveStepType.CONVERT_MODE) {
+                            movementType = EntityMovementType.MOVE_ILLEGAL;
+                        }
+                    } else if (!isTracked) {
+                        //Non QuadVee tracked 'Mechs don't actually convert. They just go, so we only need to
+                        //know the end mode.
+                        movementType = EntityMovementType.MOVE_ILLEGAL;
+                    }
                 }
             }
         }                
@@ -2344,7 +2357,7 @@ public class MoveStep implements Serializable {
         if (isFirstStep() && (movementType == EntityMovementType.MOVE_ILLEGAL)
                 && (entity.getWalkMP() > 0) && !entity.isProne()
                 && !entity.isHullDown() && !entity.isStuck()
-                && !gyroDestroyed && (stepType == MoveStepType.FORWARDS)) {
+                && !entity.isGyroDestroyed() && (stepType == MoveStepType.FORWARDS)) {
             movementType = EntityMovementType.MOVE_RUN;
         }
 

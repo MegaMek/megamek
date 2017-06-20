@@ -502,12 +502,22 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         setLocationRelativeTo(clientgui);
     }
 
-    public int getSelectedTab() {
-        return tabAll.getSelectedIndex();
+    public String getSelectedTab() {
+        return tabAll.getTitleAt(tabAll.getSelectedIndex());
     }
 
     public void setSelectedTab(int idx) {
-        tabAll.setSelectedIndex(idx);
+        if (idx < tabAll.getTabCount()) {
+            tabAll.setSelectedIndex(idx);
+        }
+    }
+    
+    public void setSelectedTab(String tabName) {
+        for (int i = 0; i < tabAll.getTabCount(); i++) {
+            if (tabAll.getTitleAt(i).equals(tabName)) {
+                tabAll.setSelectedIndex(i);
+            }
+        }
     }
 
     private void setupButtons() {

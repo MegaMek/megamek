@@ -1743,8 +1743,8 @@ public class Compute {
         Mounted weapon = attacker.getEquipment(weaponId);
         if (attacker.entityIsQuad()) {
             int legsDead = ((Mech) attacker).countBadLegs();
-            if (legsDead == 0) {
-                // No legs destroyed: no penalty and can fire all weapons
+            if (legsDead == 0 && !((Mech)attacker).hasHipCrit()) {
+                // No legs destroyed and no hip crits: no penalty and can fire all weapons
                 return null; // no modifier
             } else if (legsDead >= 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,

@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.43.3-git
 + Added support for specifying # of marines, BA & other for large craft
 + New Sprites
++ Bug: Quads not getting +2 mod for firing while prone with bad hip.
 
 v0.43.2 2017-05-1 22:00 UTC)
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist

@@ -376,6 +376,8 @@ class EntitySprite extends Sprite {
                 stStr.add(new Status(Color.RED, "ACTIVATING"));
             if (entity.isHidden())
                 stStr.add(new Status(Color.RED, "HIDDEN"));
+            if (entity.isGyroDestroyed())
+                stStr.add(new Status(Color.RED, "NO_GYRO"));
             if (entity.isHullDown())
                 stStr.add(new Status(Color.ORANGE, "HULLDOWN"));
             if ((entity.isStuck()))

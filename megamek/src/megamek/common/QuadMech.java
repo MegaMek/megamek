@@ -914,11 +914,7 @@ public class QuadMech extends Mech {
             return false;
         }
         //check the Gyro
-        int gyroHits = getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
-        if (getGyroType() != Mech.GYRO_HEAVY_DUTY) {
-            gyroHits++;
-        }
-        return (gyroHits < 3);
+        return !isGyroDestroyed();
     }
 
     /**

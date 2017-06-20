@@ -2096,14 +2096,7 @@ public class MoveStep implements Serializable {
         final boolean isMASCUsed = entity.isMASCUsed();
         final boolean hasPoorPerformance = entity
                 .hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE);
-        boolean gyroDestroyed = false;
-        if (entity instanceof Mech) {
-            int gyroHits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
-            if (((Mech)entity).getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-                gyroHits--;
-            }
-            gyroDestroyed = gyroHits > 1;
-        }
+        final boolean gyroDestroyed = entity.isGyroDestroyed();
 
         IHex currHex = game.getBoard().getHex(curPos);
         IHex lastHex = game.getBoard().getHex(lastPos);
@@ -2119,15 +2112,8 @@ public class MoveStep implements Serializable {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
             //LAMs cannot convert with a destroyed gyro.
-            if (getEntity() instanceof LandAirMech) {
-                int gyroHits = entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                            Mech.LOC_CT);
-                if (((Mech)entity).getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-                    gyroHits--;
-                }
-                if (gyroHits > 1) {
-                    movementType = EntityMovementType.MOVE_ILLEGAL;
-                }
+            if (getEntity() instanceof LandAirMech && getEntity().isGyroDestroyed()) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
             }
         }
         
@@ -2446,17 +2432,9 @@ public class MoveStep implements Serializable {
                     .containsTerrain(Terrains.FORTIFIED))) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
-            if (entity instanceof Mech) {
-                // Mechs need to check for valid Gyros
-                int gyroHits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.SYSTEM_GYRO, Mech.LOC_CT);
-                if (entity.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
-                    gyroHits++;
-                }
-                // destrotyed Gyros means that the unit can not go HD
-                if (gyroHits > 2) {
-                    movementType = EntityMovementType.MOVE_ILLEGAL;
-                }
+            // Mechs need to check for valid Gyros
+            if (entity.isGyroDestroyed()) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
             }
         }
 

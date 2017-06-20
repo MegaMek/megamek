@@ -3941,6 +3941,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getGyroType() {
         return -1;
     }
+    
+    /**
+     * Only Mechs have gyros, but this helps keep the code a bit cleaner.
+     *  
+     * @return true if the <code>Entity</code> is a Mech and has taken enough gyro hits to destroy it
+     */
+    public boolean isGyroDestroyed() {
+        return false;
+    }
 
     /**
      * Returns the number of operational critical slots of the specified type in
@@ -6121,15 +6130,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                         "Pilot unconscious");
         }
         // gyro operational?
-        if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                             Mech.LOC_CT) > 1) && (getGyroType() != Mech.GYRO_HEAVY_DUTY)) {
-            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                                        getCrew().getPiloting() + 6, "Gyro destroyed");
-        }
-
-        // Takes 3+ hits to kill an HD Gyro.
-        if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                             Mech.LOC_CT) > 2) && (getGyroType() == Mech.GYRO_HEAVY_DUTY)) {
+        if (isGyroDestroyed()) {
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
                                         getCrew().getPiloting() + 6, "Gyro destroyed");
         }
@@ -6280,9 +6281,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return roll;
         }
 
-        if (!needsRollToStand()
-                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                        Mech.LOC_CT) < 2)) {
+        if (!needsRollToStand() && !isGyroDestroyed()) {
             roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "\n"
                     + getDisplayName()
                     + " does not need to make a piloting skill check "
@@ -6422,12 +6421,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData checkLandingWithDamage(
             EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
-        if (((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                              Mech.LOC_CT) > 0) && (getGyroType() != Mech.GYRO_HEAVY_DUTY))
-            || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                 Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() == Mech.GYRO_HEAVY_DUTY))
-            || hasLegActuatorCrit()) {
+        
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+        //Heavy duty gyro does not force PSR until second hit
+        if (getGyroType() == Mech.GYRO_HEAVY_DUTY || getGyroType() == Mech.GYRO_SUPERHEAVY) {
+            gyroHits--;
+        }
+        if (gyroHits > 0 || hasLegActuatorCrit()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
                                              "landing with damaged leg actuator or gyro"));

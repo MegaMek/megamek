@@ -7215,8 +7215,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getHQIniBonus() {
         int bonus = super.getHQIniBonus();
-        if (((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) > 0) || hasHipCrit()) && (mpUsedLastRound > 0)) {
+        if (((getGyroHits() > 0) || hasHipCrit()) && (mpUsedLastRound > 0)) {
             return 0;
         }
         return bonus;
@@ -7846,6 +7845,15 @@ public abstract class Mech extends Entity {
     public int getGyroHits() {
         return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
                 Mech.LOC_CT);
+    }
+    
+    @Override
+    public boolean isGyroDestroyed() {
+        if (getGyroType() == GYRO_HEAVY_DUTY) {
+            return getGyroHits() > 2;
+        } else {
+            return getGyroHits() > 1;
+        }
     }
 
     @Override

@@ -892,12 +892,7 @@ public class TripodMech extends Mech {
             return false;
         }
         // check the Gyro
-        int gyroHits = getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                       Mech.SYSTEM_GYRO, Mech.LOC_CT);
-        if (getGyroType() != Mech.GYRO_HEAVY_DUTY) {
-            gyroHits++;
-        }
-        return (gyroHits < 3);
+        return !isGyroDestroyed();
     }
 
     @Override
@@ -966,11 +961,7 @@ public class TripodMech extends Mech {
         if (isLocationBad(LOC_CLEG)) {
             i++;
         }
-        return (i >= 1)
-               || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() != Mech.GYRO_HEAVY_DUTY))
-               || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2) && (getGyroType() == Mech.GYRO_HEAVY_DUTY));
+        return (i >= 1) || isGyroDestroyed();
     }
 
     @Override

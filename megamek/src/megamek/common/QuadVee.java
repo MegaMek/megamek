@@ -176,7 +176,7 @@ public class QuadVee extends QuadMech {
         }
         
         //In 'Mech mode the torso rotation can be limited by gyro damage.
-        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO, LOC_CT);
+        int gyroHits = getGyroHits();
         if (getGyroType() == GYRO_HEAVY_DUTY) {
             gyroHits--;
         }

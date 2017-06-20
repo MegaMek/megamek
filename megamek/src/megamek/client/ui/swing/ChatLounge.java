@@ -227,7 +227,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     private boolean mscLoaded = false;
     private boolean rngLoaded = false;
 
-    private int cmdSelectedTab = -1;
+    private String cmdSelectedTab = null;
 
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         @Override
@@ -2295,7 +2295,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
 
-    public void setCMDSelectedTab(int tab) {
+    public void setCMDSelectedTab(String tab) {
         cmdSelectedTab = tab;
     }
 
@@ -2336,7 +2336,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             cmd.refreshQuirks();
             cmd.refreshPartReps();
             cmd.setTitle(entity.getShortName());
-            if (cmdSelectedTab != -1) {
+            if (cmdSelectedTab != null) {
                 cmd.setSelectedTab(cmdSelectedTab);
             }
             cmd.setVisible(true);

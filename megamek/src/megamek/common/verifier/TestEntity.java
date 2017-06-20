@@ -38,6 +38,7 @@ import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
+import megamek.common.Transporter;
 import megamek.common.TripodMech;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
@@ -1614,6 +1615,19 @@ public abstract class TestEntity implements TestEntityOption {
                 if (m.isOmniPodMounted() && m.getType().isOmniFixedOnly()) {
                     illegal = true;
                     buff.append(m.getType().getName() + " cannot be pod mounted.");
+                }
+            }
+        } else {
+            for (Mounted m : getEntity().getEquipment()) {
+                if (m.isOmniPodMounted()) {
+                    buff.append(m.getType().getName() + " is pod mounted in non-omni unit\n");
+                    illegal = true;
+                }
+            }
+            for (Transporter t : getEntity().getTransports()) {
+                if (getEntity().isPodMountedTransport(t)) {
+                    buff.append("Pod mounted troop space in non-omni unit\n");
+                    illegal = true;
                 }
             }
         }

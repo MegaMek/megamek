@@ -6154,6 +6154,8 @@ public abstract class Mech extends Entity {
             sb.append("LAM");
         } else if (this instanceof BipedMech) {
             sb.append("Biped");
+        } else if (this instanceof QuadVee) {
+            sb.append("QuadVee");
         } else if (this instanceof QuadMech) {
             sb.append("Quad");
         } else if (this instanceof TripodMech) {
@@ -6213,6 +6215,17 @@ public abstract class Mech extends Entity {
             sb.append("Standard");
         }
         sb.append(newLine);
+        
+        if (this instanceof LandAirMech) {
+            sb.append("LAM:");
+            sb.append(((LandAirMech)this).getLAMTypeString());
+            sb.append(newLine);
+        } else if (this instanceof QuadVee) {
+            sb.append("Motive:");
+            sb.append(((QuadVee)this).getMotiveTypeString());
+            sb.append(newLine);
+        }
+
 
         if (!standard) {
             sb.append("Cockpit:");

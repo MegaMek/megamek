@@ -81,6 +81,17 @@ public class QuadVee extends QuadMech {
         return motiveType;
     }
 
+    public String getMotiveTypeString(int motiveType) {
+        if (motiveType < 0 || motiveType >= MOTIVE_STRING.length) {
+            return MOTIVE_STRING[MOTIVE_UNKNOWN];
+        }
+        return MOTIVE_STRING[motiveType];
+    }
+    
+    public String getMotiveTypeString() {
+        return getMotiveTypeString(getMotiveType());
+    }
+
     public static int getMotiveTypeForString(String inType) {
         if ((inType == null) || (inType.length() < 1)) {
             return MOTIVE_UNKNOWN;
@@ -92,7 +103,7 @@ public class QuadVee extends QuadMech {
         }
         return MOTIVE_UNKNOWN;
     }
-
+    
     @Override
     public EntityMovementMode nextConversionMode() {
         if (movementMode == EntityMovementMode.TRACKED

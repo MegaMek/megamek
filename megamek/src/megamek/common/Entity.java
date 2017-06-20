@@ -6067,6 +6067,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return "Rail";
             case MAGLEV:
                 return "MagLev";
+            case AIRMECH:
+                return "AirMech";
             default:
                 return "ERROR";
         }

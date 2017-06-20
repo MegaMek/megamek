@@ -19,10 +19,8 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.MiscType;
-import megamek.common.MoveStep;
-import megamek.common.Tank;
-import megamek.common.VTOL;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStep;
 
 /**
  * Sprite for a step in a movement path. Only one sprite should exist for
@@ -409,19 +407,29 @@ class StepSprite extends Sprite {
                 graph.drawString(land, landX - 1, landY);
                 break;
             case CONVERT_MODE:
-                // show new movement mode
-                String mode = step.getEntity().getMovementMode().toString();
+                int modePos = stepPos.y + 38;
                 if (step.getMp() > 0) {
-                    mode = mode + "(" + step.getMp() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    // draw movement cost
+                    drawMovementCost(step, isLastStep, stepPos, graph, col, true);
+                    modePos += 16;
+                }
+                // show new movement mode
+                String mode = Messages.getString("MovementType."
+                        + step.getEntity().getMovementModeAsString());
+                //The LAM ASF mode is called Fighter, not Aerodyne
+                if ((step.getEntity().getEntityType() & Entity.ETYPE_LAND_AIR_MECH) != 0
+                        && step.getEntity().getMovementMode() == EntityMovementMode.AERODYNE) {
+                    mode = Messages.getString("BoardView1.FighterMode");
                 }
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int modeX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont())
                                 .stringWidth(mode) / 2);
                 graph.setColor(Color.darkGray);
-                graph.drawString(mode, modeX, stepPos.y + 39);
+                graph.drawString(mode, modeX, modePos - 1);
                 graph.setColor(col);
-                graph.drawString(mode, modeX - 1, stepPos.y + 38);
+                graph.drawString(mode, modeX - 1, modePos);
+
                 break;
             default:
                 break;

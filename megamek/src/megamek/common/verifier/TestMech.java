@@ -408,9 +408,10 @@ public class TestMech extends TestEntity {
         return false;
     }
 
-    public void checkCriticalSlotsForEquipment(Entity entity,
+    public boolean checkCriticalSlotsForEquipment(Entity entity,
             Vector<Mounted> unallocated, Vector<Serializable> allocation,
             Vector<Integer> heatSinks, StringBuffer buff) {
+        boolean legal = true;
         int countInternalHeatSinks = 0;
         for (Mounted m : entity.getEquipment()) {
             int loc = m.getLocation();
@@ -458,10 +459,10 @@ public class TestMech extends TestEntity {
                 if (entity.hasSystem(Mech.ACTUATOR_LOWER_ARM, loc)
                         || entity.hasSystem(Mech.ACTUATOR_HAND, loc)) {
                     buff.append("Omni mechs with arm mounted " + weapon
-                            + " cannot have lower armor or hand actuators!");
+                            + " cannot have lower armor or hand actuators!\n");
+                    legal = false;
                 }
             }
-            
         }
         if ((countInternalHeatSinks > engine.integralHeatSinkCapacity(mech
                 .hasCompactHeatSinks()))
@@ -471,15 +472,15 @@ public class TestMech extends TestEntity {
                                 .heatSinks()) && !entity.isOmni())) {
             heatSinks.addElement(new Integer(countInternalHeatSinks));
         }
+        return legal;
     }
 
     public boolean correctCriticals(StringBuffer buff) {
         Vector<Mounted> unallocated = new Vector<Mounted>();
         Vector<Serializable> allocation = new Vector<Serializable>();
         Vector<Integer> heatSinks = new Vector<Integer>();
-        checkCriticalSlotsForEquipment(mech, unallocated, allocation,
+        boolean correct = checkCriticalSlotsForEquipment(mech, unallocated, allocation,
                 heatSinks, buff);
-        boolean correct = true;
         /*
          * StringBuffer critAlloc = new StringBuffer(); need to redo this, in
          * MML, spread equipment gets one mounted per block that needs to be

@@ -82,34 +82,17 @@ public class QuadMech extends Mech {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int wmp = getOriginalWalkMP();
-        //Wheeled QuadVees get +1 cruising MP.
-        if (movementMode == EntityMovementMode.WHEELED) {
-            wmp++;
-        }
+
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
 
         //A Mech using tracks has its movement reduced by 25% per leg or track destroyed.
-        //IO does not make any explicit statement about movement reduction due to missing tracks, but
-        //the construction rules identify QuadVee tracks and 'Mech tracks as the same equipment,
-        //so for now I'm assuming that the same rules apply.
-        if (movementMode == EntityMovementMode.TRACKED
-                || movementMode == EntityMovementMode.WHEELED) {
-            if (this instanceof QuadVee) {
-                for (int loc = 0; loc < locations(); loc++) {
-                    if (locationIsLeg(loc)) {
-                        if (isLocationBad(loc) || getCritical(loc, 5).isHit()) {
-                            legsDestroyed++;                            
-                        }
-                    }
-                }
-            } else {
-                for (Mounted m : getMisc()) {
-                    if (m.getType().hasFlag(MiscType.F_TRACKS)) {
-                        if (m.isHit() || isLocationBad(m.getLocation())) {
-                            legsDestroyed++;
-                        }
+        if (movementMode == EntityMovementMode.TRACKED) {
+            for (Mounted m : getMisc()) {
+                if (m.getType().hasFlag(MiscType.F_TRACKS)) {
+                    if (m.isHit() || isLocationBad(m.getLocation())) {
+                        legsDestroyed++;
                     }
                 }
             }
@@ -205,7 +188,8 @@ public class QuadMech extends Mech {
 
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (countBadLegs() <= 1) {
+        if (countBadLegs() <= 1
+                || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode() && !convertingNow)) {
             return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
         return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
@@ -216,7 +200,8 @@ public class QuadMech extends Mech {
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (countBadLegs() <= 1) {
+        if (countBadLegs() <= 1
+                || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode() && !convertingNow)) {
             return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
         return getWalkMP(gravity, ignoreheat);

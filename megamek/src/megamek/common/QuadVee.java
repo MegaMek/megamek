@@ -3,6 +3,8 @@
  */
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * Quad Mek that can convert into either tracked or wheeled vehicle mode.
  * 
@@ -104,6 +106,222 @@ public class QuadVee extends QuadMech {
         return MOTIVE_UNKNOWN;
     }
     
+    @Override
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int wmp = getOriginalWalkMP();
+        
+        //If converting, we will calculate both modes and take the lower of the two.
+        int baseVee = wmp;
+
+        if (isInVehicleMode() || convertingNow) {
+            //If a leg or its track/wheel is destroyed, it is treated as major motive system damage,
+            //a divides the MP in half cumulatively, rounded up.
+            //bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
+            int badLegs = 0;
+            for (int loc = 0; loc < locations(); loc++) {
+                if (locationIsLeg(loc)) {
+                    if (isLocationBad(loc) && getCritical(loc, 5).isHit()) {
+                        badLegs++;                            
+                    }
+                }
+            }
+            if (motiveType == MOTIVE_WHEEL) {
+                baseVee++;
+            }
+            if (badLegs == 4) {
+                return baseVee = 0;
+            } else if (badLegs > 1) {
+                baseVee = (int)Math.ceil((float)baseVee / (1 << badLegs));
+            }
+        }
+        if (!isInVehicleMode() || convertingNow) {
+            int hipHits = 0;
+            int actuatorHits = 0;
+            int legsDestroyed = 0;
+            for (int i = 0; i < locations(); i++) {
+                if (locationIsLeg(i)) {
+                    if (!isLocationBad(i)) {
+                        if (legHasHipCrit(i)) {
+                            hipHits++;
+                            if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                                continue;
+                            }
+                        }
+                        actuatorHits += countLegActuatorCrits(i);
+                    } else {
+                        legsDestroyed++;
+                    }
+                }
+            }
+            // leg damage effects
+            if (legsDestroyed > 0) {
+                if (legsDestroyed == 1) {
+                    wmp--;
+                } else if (legsDestroyed == 2) {
+                    wmp = 1;
+                } else {
+                    wmp = 0;
+                }
+            }        
+            if (wmp > 0) {
+                if (hipHits > 0) {
+                    if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                        wmp = wmp - (2 * hipHits);
+                    } else {
+                        for (int i = 0; i < hipHits; i++) {
+                            wmp = (int) Math.ceil(wmp / 2.0);
+                        }
+                    }
+                }
+                wmp -= actuatorHits;
+            }
+            //Mixed-tech QuadVees that mount TSM only benefit in Mech mode.
+            if (!ignoreheat && (heat >= 9) && hasTSM() && legsDestroyed < 2) {
+                wmp += 2;
+            }
+        }
+        if (convertingNow) {
+            wmp = Math.min(wmp, baseVee);
+        } else if (isInVehicleMode()) {
+            wmp = baseVee;
+        }
+
+        //Now apply modifiers
+        if (!ignoremodulararmor && hasModularArmor() ) {
+            wmp--;
+        }
+
+        if (!ignoreheat) {
+            // factor in heat
+            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
+                if (heat < 30) {
+                    wmp -= (heat / 5);
+                } else if (heat >= 49) {
+                    wmp -= 9;
+                } else if (heat >= 43) {
+                    wmp -= 8;
+                } else if (heat >= 37) {
+                    wmp -= 7;
+                } else if (heat >= 31) {
+                    wmp -= 6;
+                } else {
+                    wmp -= 5;
+                }
+            } else {
+                wmp -= (heat / 5);
+            }
+        }
+        if (null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if (weatherMod != 0) {
+                wmp = Math.max(wmp + weatherMod, 0);
+            }
+        }
+        // gravity
+        if (gravity) {
+            wmp = applyGravityEffectsOnMP(wmp);
+        }
+        // For sanity sake...
+        wmp = Math.max(0, wmp);
+        return wmp;
+    }
+    
+    /*
+     * No jumping in vehicle mode.
+     */
+    public int getJumpMP(boolean gravity, boolean ignoremodulararmor) {
+        if (isInVehicleMode() || convertingNow) {
+            return 0;
+        }
+        return super.getJumpMP(gravity, ignoremodulararmor);
+    }
+
+    /*
+     * In a QuadVee they're all torso jump jets. But they still don't work in vehicle mode.
+     */
+    public int torsoJumpJets() {
+        if (isInVehicleMode() || convertingNow) {
+            return 0;
+        }
+        return super.torsoJumpJets();
+    }
+    /**
+     * QuadVees cannot benefit from MASC in vehicle mode, so in that case we only return true if there
+     * is an armed supercharger.
+     */
+    @Override
+    public boolean hasArmedMASC() {
+        boolean superchargerOnly = isInVehicleMode() || convertingNow;
+        for (Mounted m : getEquipment()) {
+            if (!m.isDestroyed() && !m.isBreached()
+                    && (m.getType() instanceof MiscType)
+                    && m.getType().hasFlag(MiscType.F_MASC)
+                    && (!superchargerOnly || m.getType().getSubType() == MiscType.S_SUPERCHARGER)
+                    && m.curMode().equals("Armed")) {
+                return true;
+            }
+        }
+        return false;        
+    }
+    
+    /**
+     * Cannot benefit from MASC in vehicle mode.
+     */
+    @Override
+    public boolean hasArmedMASCAndSuperCharger() {
+        if (isInVehicleMode() || convertingNow) {
+            return false;
+        }
+        return super.hasArmedMASCAndSuperCharger();
+    }
+
+    /**
+     * No movement heat generated in vehicle mode
+     */
+    @Override
+    public int getStandingHeat() {
+        if (isInVehicleMode() && !convertingNow) {
+            return 0;
+        }
+        return super.getStandingHeat();
+    }
+
+    @Override
+    public int getWalkHeat() {
+        if (isInVehicleMode() && !convertingNow) {
+            return 0;
+        }
+        return super.getWalkHeat();
+    }
+
+    @Override
+    public int getRunHeat() {
+        if (isInVehicleMode() && !convertingNow) {
+            return 0;
+        }
+        return super.getRunHeat();
+    }
+
+    @Override
+    public int getSprintHeat() {
+        if (isInVehicleMode() && !convertingNow) {
+            return 0;
+        }
+        return super.getSprintHeat();
+    }
+
+    /**
+     * Overrides to return false in vehicle mode. Technically it still has a hip crit, but it has no
+     * effect.
+     */
+    @Override
+    public boolean hasHipCrit() {
+        if (isInVehicleMode() && !convertingNow) {
+            return false;
+        }
+        return super.hasHipCrit();
+    }
+
     @Override
     public EntityMovementMode nextConversionMode() {
         if (movementMode == EntityMovementMode.TRACKED

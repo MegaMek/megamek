@@ -784,7 +784,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                        && !ce.isStuck());
         setJumpEnabled(!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0)
                        && !(ce.isStuck() && !ce.canUnstickByJumping()));
-        setSwimEnabled(!isAero && !ce.isImmobile() && ce.hasUMU()
+        setSwimEnabled(!isAero && !ce.isImmobile() && ce.getActiveUMUCount() > 0
                        && ce.isUnderwater());
         setBackUpEnabled(!isAero && isEnabled(MoveCommand.MOVE_WALK));
         setChargeEnabled(ce.canCharge());

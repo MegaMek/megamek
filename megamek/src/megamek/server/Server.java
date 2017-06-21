@@ -143,6 +143,7 @@ import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.Report;
 import megamek.common.Roll;
 import megamek.common.SmallCraft;
@@ -33286,7 +33287,8 @@ public class Server implements Runnable {
                         && !(hex.containsTerrain(Terrains.BLDG_ELEV, 0))
                         && !(isHoverOrWiGE && (e.getRunMP() >= 0))
                         && (e.getMovementMode() != EntityMovementMode.INF_UMU)
-                        && !e.hasUMU()) {
+                        && !e.hasUMU()
+                        && !(e instanceof QuadVee && ((QuadVee)e).isInVehicleMode())) {
                     vPhaseReport.addAll(doEntityFallsInto(e, c,
                             new PilotingRollData(TargetRoll.AUTOMATIC_FAIL),
                             true));

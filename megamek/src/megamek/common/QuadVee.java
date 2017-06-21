@@ -245,6 +245,17 @@ public class QuadVee extends QuadMech {
         }
         return super.torsoJumpJets();
     }
+    
+    /**
+     * UMUs do not function in vehicle mode
+     */
+    public int getActiveUMUCount() {
+        if (isInVehicleMode() || convertingNow) {
+            return 0;
+        }
+        return super.getActiveUMUCount();
+    }    
+    
     /**
      * QuadVees cannot benefit from MASC in vehicle mode, so in that case we only return true if there
      * is an armed supercharger.

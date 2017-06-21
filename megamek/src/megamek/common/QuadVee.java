@@ -367,6 +367,16 @@ public class QuadVee extends QuadMech {
                 || movementMode == EntityMovementMode.WHEELED;
     }
     
+    /**
+     * In vehicle mode the QuadVee is at the same level as the terrain.
+     */
+    public int height() {
+        if (isInVehicleMode()) {
+            return 0;
+        }
+        return super.height();
+    }
+
     @Override
     public int getMaxElevationChange() {
         if (isInVehicleMode() || convertingNow) {

@@ -207,37 +207,6 @@ public class Tank extends Entity {
     }
 
     /**
-     * The attack direction modifier for rolls on the motive system hits table
-     * for the given side (as defined in {@link ToHitData}). This will return 0
-     * if Tactical Operations vehicle effectiveness rules are in effect or if
-     * the side parameter falls outside ToHitData's range of "fixed" side
-     * values; in particular, it will return 0 if handed
-     * {@link ToHitData#SIDE_RANDOM}.
-     *
-     * @param side
-     *            The attack direction as specified above.
-     * @return The appropriate directional roll modifier.
-     */
-    public int getMotiveSideMod(int side) {
-        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
-            return 0;
-        }
-        switch (side) {
-            case ToHitData.SIDE_LEFT:
-            case ToHitData.SIDE_RIGHT:
-            case ToHitData.SIDE_FRONTLEFT:
-            case ToHitData.SIDE_FRONTRIGHT:
-            case ToHitData.SIDE_REARLEFT:
-            case ToHitData.SIDE_REARRIGHT:
-                return 2;
-            case ToHitData.SIDE_REAR:
-                return 1;
-            default:
-                return 0;
-        }
-    }
-
-    /**
      * Returns this entity's walking/cruising mp, factored for heat, extreme
      * temperatures, and gravity.
      */
@@ -2718,6 +2687,7 @@ public class Tank extends Entity {
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), heavy damage (3), or immobilized (4)
      */
+    @Override
     public void addMovementDamage(int level) {
         switch (level) {
             case 1:

@@ -33,7 +33,17 @@ public class QuadVee extends QuadMech {
     
     public static final String[] MOTIVE_STRING = { "Track", "Wheel" };
     
-    protected int motiveType;
+    private int motiveType;
+    
+    //Certain events, such as damage from charges or failed advance maneuvers, can cause motive
+    //system damage apart from 
+    private boolean minorMotiveDamage;
+    private boolean moderateMotiveDamage;
+    private boolean heavyMotiveDamage;
+    private int motivePenalty = 0;
+    private int motiveDamage = 0;
+    private boolean movementHitPending = false;
+    private boolean movementHit = false;
 
     public QuadVee() {
         this(GYRO_STANDARD, MOTIVE_TRACK);
@@ -106,86 +116,43 @@ public class QuadVee extends QuadMech {
         return MOTIVE_UNKNOWN;
     }
     
+    /**
+     * Current MP is calculated differently depending on whether the QuadVee is in Mech
+     * or vehicle mode. During conversion we use the mode we started in:
+     * bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
+     */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int wmp = getOriginalWalkMP();
+        if (startedInVehicleMode()) {
+            return super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+        } else {
+            return getCruiseMP(gravity, ignoreheat, ignoremodulararmor);
+        }
+    }
+    
+    /**
+     * In vehicle mode the QuadVee ignores actuator and hip criticals, but is subject to track/wheel
+     * damage and various effects of vehicle motive damage.
+     */
+    public int getCruiseMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int wmp = getOriginalWalkMP() - motiveDamage;
+        //Bonus for wheeled movement
+        if (getMotiveType() == MOTIVE_WHEEL) {
+            wmp++;
+        }
         
-        //If converting, we will calculate both modes and take the lower of the two.
-        int baseVee = wmp;
+        //If a leg or its track/wheel is destroyed, it is treated as major motive system damage,
+        //in addition to what has been assigned on the motive system damage table.
+        //bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
 
-        if (isInVehicleMode() || convertingNow) {
-            //If a leg or its track/wheel is destroyed, it is treated as major motive system damage,
-            //a divides the MP in half cumulatively, rounded up.
-            //bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
-            int badLegs = 0;
-            for (int loc = 0; loc < locations(); loc++) {
-                if (locationIsLeg(loc)) {
-                    if (isLocationBad(loc) && getCritical(loc, 5).isHit()) {
-                        badLegs++;                            
-                    }
+        for (int loc = 0; loc < locations(); loc++) {
+            if (locationIsLeg(loc)) {
+                if (isLocationBad(loc) && getCritical(loc, 5).isHit()) {
+                    wmp = (int)Math.ceil(wmp / 2.0);
                 }
-            }
-            if (motiveType == MOTIVE_WHEEL) {
-                baseVee++;
-            }
-            if (badLegs == 4) {
-                return baseVee = 0;
-            } else if (badLegs > 1) {
-                baseVee = (int)Math.ceil((float)baseVee / (1 << badLegs));
             }
         }
-        if (!isInVehicleMode() || convertingNow) {
-            int hipHits = 0;
-            int actuatorHits = 0;
-            int legsDestroyed = 0;
-            for (int i = 0; i < locations(); i++) {
-                if (locationIsLeg(i)) {
-                    if (!isLocationBad(i)) {
-                        if (legHasHipCrit(i)) {
-                            hipHits++;
-                            if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                                continue;
-                            }
-                        }
-                        actuatorHits += countLegActuatorCrits(i);
-                    } else {
-                        legsDestroyed++;
-                    }
-                }
-            }
-            // leg damage effects
-            if (legsDestroyed > 0) {
-                if (legsDestroyed == 1) {
-                    wmp--;
-                } else if (legsDestroyed == 2) {
-                    wmp = 1;
-                } else {
-                    wmp = 0;
-                }
-            }        
-            if (wmp > 0) {
-                if (hipHits > 0) {
-                    if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
-                        wmp = wmp - (2 * hipHits);
-                    } else {
-                        for (int i = 0; i < hipHits; i++) {
-                            wmp = (int) Math.ceil(wmp / 2.0);
-                        }
-                    }
-                }
-                wmp -= actuatorHits;
-            }
-            //Mixed-tech QuadVees that mount TSM only benefit in Mech mode.
-            if (!ignoreheat && (heat >= 9) && hasTSM() && legsDestroyed < 2) {
-                wmp += 2;
-            }
-        }
-        if (convertingNow) {
-            wmp = Math.min(wmp, baseVee);
-        } else if (isInVehicleMode()) {
-            wmp = baseVee;
-        }
-
+        
         //Now apply modifiers
         if (!ignoremodulararmor && hasModularArmor() ) {
             wmp--;
@@ -223,7 +190,7 @@ public class QuadVee extends QuadMech {
         }
         // For sanity sake...
         wmp = Math.max(0, wmp);
-        return wmp;
+        return wmp;        
     }
     
     /**
@@ -385,11 +352,46 @@ public class QuadVee extends QuadMech {
         return cost;
     }
 
+    /**
+     * @return Whether the QuadVee is currently in vehicle mode. During this movement phase
+     *         this is based on the final mode if converting.
+     */
     public boolean isInVehicleMode() {
         return movementMode == EntityMovementMode.TRACKED
                 || movementMode == EntityMovementMode.WHEELED;
     }
     
+    /**
+     * @return Whether the QuadVee started the turn in vehicle mode.
+     */
+    public boolean startedInVehicleMode() {
+        return (movementMode == EntityMovementMode.TRACKED
+                || movementMode == EntityMovementMode.WHEELED) != convertingNow;
+    }
+    
+    public boolean isMovementHit() {
+        return movementHit;
+    }
+
+    public boolean isMovementHitPending() {
+        return movementHitPending;
+    }
+    
+    @Override
+    public boolean isImmobile() {
+        if (!isInVehicleMode() || (game != null
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES))) {
+            return super.isImmobile();
+        }
+        return super.isImmobile() || movementHit;
+    }
+    
+    @Override
+    public void applyDamage() {
+        movementHit |= movementHitPending;
+        super.applyDamage();
+    }
+
     /**
      * In vehicle mode the QuadVee is at the same level as the terrain.
      */
@@ -455,9 +457,65 @@ public class QuadVee extends QuadMech {
             roll.addModifier(2, "pilot incapacitated");
         }
         
+        if (startedInVehicleMode() && motivePenalty > 0) {
+            roll.addModifier(motivePenalty, "motive system damage");
+        }
+        
         return super.addEntityBonuses(roll);
     }
     
+    /**
+     * adds minor, moderate or heavy movement system damage
+     *
+     * @param level
+     *            a <code>int</code> representing minor damage (1), moderate
+     *            damage (2), heavy damage (3), or immobilized (4)
+     */
+    @Override
+    public void addMovementDamage(int level) {
+        switch (level) {
+            case 1:
+                if (!minorMotiveDamage) {
+                    minorMotiveDamage = true;
+                    motivePenalty += level;
+                }
+                break;
+            case 2:
+                if (!moderateMotiveDamage) {
+                    moderateMotiveDamage = true;
+                    motivePenalty += level;
+                }
+                motiveDamage++;
+                break;
+            case 3:
+                if (!heavyMotiveDamage) {
+                    heavyMotiveDamage = true;
+                    motivePenalty += level;
+                }
+                int nMP = getOriginalWalkMP() - motiveDamage;
+                if (nMP > 0) {
+                    motiveDamage = getOriginalWalkMP()
+                            - (int) Math.ceil(nMP / 2.0);
+                }
+                break;
+            case 4:
+                motiveDamage = getOriginalWalkMP();
+                movementHitPending = true;
+        }
+    }
+
+    public boolean hasMinorMovementDamage() {
+        return minorMotiveDamage;
+    }
+
+    public boolean hasModerateMovementDamage() {
+        return moderateMotiveDamage;
+    }
+
+    public boolean hasHeavyMovementDamage() {
+        return heavyMotiveDamage;
+    }
+
     @Override
     public String getTilesetModeString() {
         if (isInVehicleMode()) {

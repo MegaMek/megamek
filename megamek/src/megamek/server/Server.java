@@ -7726,8 +7726,9 @@ public class Server implements Runnable {
                 // Does the entity skid?
                 if (psrFailed) {
 
-                    if (entity instanceof Tank) {
-                        addReport(vehicleMotiveDamage((Tank) entity, 0));
+                    if (entity instanceof Tank
+                            || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode())) {
+                        addReport(vehicleMotiveDamage(entity, 0));
                     }
 
                     curPos = lastPos;
@@ -9084,7 +9085,7 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 vPhaseReport.add(r);
-                vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, modifier,
+                vPhaseReport.addAll(vehicleMotiveDamage(entity, modifier,
                         false, -1, true));
                 Report.addNewline(vPhaseReport);
             }
@@ -10580,13 +10581,13 @@ public class Server implements Runnable {
                     }
                     vMineReport.addAll(damageEntity(entity, hit, cur_damage));
                 }
-                if (entity instanceof Tank) {
+                if (entity instanceof Tank
+                        || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode())) {
                     // Tanks check for motive system damage from minefields as
                     // from a side hit even though the damage proper hits the
                     // front above; exact side doesn't matter, though.
-                    Tank tank = (Tank) entity;
-                    vMineReport.addAll(vehicleMotiveDamage(tank,
-                            tank.getMotiveSideMod(ToHitData.SIDE_LEFT)));
+                    vMineReport.addAll(vehicleMotiveDamage(entity,
+                            entity.getMotiveSideMod(ToHitData.SIDE_LEFT)));
                 }
                 Report.addNewline(vMineReport);
             }
@@ -10868,8 +10869,10 @@ public class Server implements Runnable {
 
 
         boolean boom = false;
-        // Only mechs can set off vibrabombs.
-        if (!(entity instanceof Mech)) {
+        // Only mechs can set off vibrabombs. QuadVees should only be able to set off a
+        // vibrabomb in Mech mode.
+        if (!(entity instanceof Mech)
+                || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode())) {
             return boom;
         }
 
@@ -11127,8 +11130,9 @@ public class Server implements Runnable {
             }
             Report.addNewline(vBoomReport);
 
-            if (entity instanceof Tank) {
-                vBoomReport.addAll(vehicleMotiveDamage((Tank) entity, 2));
+            if (entity instanceof Tank ||
+                    (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode())) {
+                vBoomReport.addAll(vehicleMotiveDamage(entity, entity.getMotiveSideMod(ToHitData.SIDE_LEFT)));
             }
             vBoomReport.addAll(resolvePilotingRolls(entity, true,
                                                     entity.getPosition(), entity.getPosition()));
@@ -17462,13 +17466,14 @@ public class Server implements Runnable {
         addReport(r);
 
         // Charging vehicles check for possible motive system hits.
-        if (ae instanceof Tank) {
+        if (ae instanceof Tank
+                || (ae instanceof QuadVee && ((QuadVee)ae).startedInVehicleMode())) {
             r = new Report(4241);
             r.indent();
             addReport(r);
             int side = Compute.targetSideTable(te, ae);
-            int mod = ((Tank) ae).getMotiveSideMod(side);
-            addReport(vehicleMotiveDamage((Tank) ae, mod));
+            int mod = ae.getMotiveSideMod(side);
+            addReport(vehicleMotiveDamage(ae, mod));
         }
 
         // work out which locations have spikes
@@ -17517,14 +17522,15 @@ public class Server implements Runnable {
         // ...though VTOLs don't use that table and should lose their rotor
         // instead,
         // which would be handled as part of the damage already.
-        if ((te instanceof Tank) && !(te instanceof VTOL)) {
+        if (((te instanceof Tank) && !(te instanceof VTOL))
+                || (te instanceof QuadVee && ((QuadVee)te).startedInVehicleMode())) {
             r = new Report(4242);
             r.indent();
             addReport(r);
 
             int side = Compute.targetSideTable(ae, te);
-            int mod = ((Tank) te).getMotiveSideMod(side);
-            addReport(vehicleMotiveDamage((Tank) te, mod));
+            int mod = te.getMotiveSideMod(side);
+            addReport(vehicleMotiveDamage(te, mod));
         }
 
         // work out which locations have spikes
@@ -32460,7 +32466,11 @@ public class Server implements Runnable {
                                                  DamageType.NONE, true));
             }
         }
-        if (entity instanceof QuadMech) {
+        if (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode()) {
+            //We don't have a front location, so what do we do the the damage point?
+            //Assign each point randomly to a leg? Awaiting ruling.
+            vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, 0));
+        } else if (entity instanceof QuadMech) {
             for (int i = 4; i <= 7; i++) {
                 hit = new HitData(i);
                 vPhaseReport.addAll(damageEntity(entity, hit, damage, false,
@@ -32470,7 +32480,7 @@ public class Server implements Runnable {
             hit = new HitData(Tank.LOC_FRONT);
             vPhaseReport.addAll(damageEntity(entity, hit, damage, false,
                                              DamageType.NONE, true));
-            vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, 0));
+            vPhaseReport.addAll(vehicleMotiveDamage(entity, 0));
         }
         return vPhaseReport;
     }
@@ -33428,11 +33438,11 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
-    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
+    private Vector<Report> vehicleMotiveDamage(Entity te, int modifier) {
         return vehicleMotiveDamage(te, modifier, false, -1, false);
     }
 
-    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier,
+    private Vector<Report> vehicleMotiveDamage(Entity te, int modifier,
                                                boolean noroll, int damagetype) {
         return vehicleMotiveDamage(te, modifier, noroll, damagetype, false);
     }
@@ -33444,14 +33454,20 @@ public class Server implements Runnable {
      * @param modifier   the modifier to the roll
      * @param noroll     don't roll, immediately deal damage
      * @param damagetype the type to deal (1 = minor, 2 = moderate, 3 = heavy
-     * @param jumpDamage is this a movement daamge roll from using vehicular JJs
+     * @param jumpDamage is this a movement damage roll from using vehicular JJs
      * @return
      */
-    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier,
+    private Vector<Report> vehicleMotiveDamage(Entity te, int modifier,
                                                boolean noroll, int damagetype, boolean jumpDamage) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
-        switch (te.getMovementMode()) {
+        EntityMovementMode mode = te.getMovementMode();
+        // If a QuadVee suffers motive damage during a round that it converted
+        // to Mech mode, we need to get the mode it started in.
+        if (te instanceof QuadVee && !((QuadVee)te).isInVehicleMode()) {
+            mode = te.nextConversionMode();
+        }
+        switch (mode) {
             case HOVER:
             case HYDROFOIL:
                 if (jumpDamage) {
@@ -33484,8 +33500,8 @@ public class Server implements Runnable {
                 // still exists (otherwise don't bother reporting).
                 if (!(te.isLocationBad(VTOL.LOC_ROTOR) || te
                         .isLocationDoomed(VTOL.LOC_ROTOR))) {
-                    te.setMotiveDamage(te.getMotiveDamage() + 1);
-                    if (te.getOriginalWalkMP() > te.getMotiveDamage()) {
+                    ((Tank)te).setMotiveDamage(((Tank)te).getMotiveDamage() + 1);
+                    if (te.getOriginalWalkMP() > ((Tank)te).getMotiveDamage()) {
                         r = new Report(6660);
                         r.indent(3);
                         r.subject = te.getId();
@@ -33494,7 +33510,7 @@ public class Server implements Runnable {
                         r = new Report(6670);
                         r.subject = te.getId();
                         vDesc.add(r);
-                        te.immobilize();
+                        ((Tank)te).immobilize();
                         // Being reduced to 0 MP by rotor damage forces a
                         // landing
                         // like an engine hit...
@@ -33502,7 +33518,7 @@ public class Server implements Runnable {
                             // ...but don't bother to resolve that if we're
                             // already otherwise destroyed.
                             && !(te.isDestroyed() || te.isDoomed())) {
-                            vDesc.addAll(forceLandVTOLorWiGE(te));
+                            vDesc.addAll(forceLandVTOLorWiGE((Tank)te));
                         }
                     }
                 }
@@ -33605,7 +33621,7 @@ public class Server implements Runnable {
                 .isAirborneVTOLorWIGE()))
             && (te.isMovementHitPending() || (te.getWalkMP() <= 0))) {
             // report problem: add tab
-            vDesc.addAll(crashVTOLorWiGE(te));
+            vDesc.addAll(crashVTOLorWiGE((Tank)te));
         }
         return vDesc;
     }
@@ -34051,7 +34067,7 @@ public class Server implements Runnable {
                 } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
 
                     // wheeled and hover tanks take movement critical
-                    if ((entity instanceof Tank)
+                    if ((entity instanceof Tank || entity instanceof QuadVee)
                             && ((entity.getMovementMode() == EntityMovementMode.WHEELED) || (entity
                                     .getMovementMode() == EntityMovementMode.HOVER))) {
                         r = new Report(6480);
@@ -34060,8 +34076,7 @@ public class Server implements Runnable {
                         r.add(toHit.getTableDesc());
                         r.add(0);
                         vPhaseReport.add(r);
-                        vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity,
-                                0));
+                        vPhaseReport.addAll(vehicleMotiveDamage(entity, 0));
                         continue;
                     }
                     // only infantry and support vees with bar < 5 are affected

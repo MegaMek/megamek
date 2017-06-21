@@ -6665,7 +6665,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!lastPos.equals(curPos)
                 && ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep)
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
-                && (this instanceof Mech)) {
+                && canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -13498,10 +13498,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     
     /**
      * Only applicable to Mechs, but here for convenience. Mechs that are already prone, or
-     * QuadVees and LAMs in non-leg mode are not subject to PSRs for falling. Note that PSRs
+     * QuadVees and LAMs in fighter mode are not subject to PSRs for falling. Note that PSRs
      * are sometimes required for other reasons.
      * 
-     * @return              Whether the <code>Entity</code> is required to make PSRs to avoid falling.
+     * @return Whether the <code>Entity</code> is required to make PSRs to avoid falling.
      */
     public boolean canFall() {
         return canFall(false);

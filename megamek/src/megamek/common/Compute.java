@@ -466,7 +466,7 @@ public class Compute {
             && (destHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (entity.getMovementMode() != EntityMovementMode.VTOL)
             && !isPavementStep
-            && (entity instanceof Mech)) {
+            && entity.canFall()) {
             return true;
         }
 

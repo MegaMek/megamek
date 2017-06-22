@@ -9091,6 +9091,28 @@ public class Server implements Runnable {
             }
 
         } // End entity-is-jumping
+
+        //If converting to another mode, report it
+        if (entity.isConvertingNow()) {
+            r = new Report(1210);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            if (entity instanceof Mech && ((Mech)entity).hasTracks()) {
+                r.messageId = 2455;
+                r.choose(entity.getMovementMode() == EntityMovementMode.TRACKED);
+            } else if (entity.getMovementMode() == EntityMovementMode.TRACKED
+                    || entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                r.messageId = 2451;
+            } else if (entity.getMovementMode() == EntityMovementMode.AIRMECH) {
+                r.messageId = 2452;
+            } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
+                r.messageId = 2453;
+            } else {
+                r.messageId = 2450;
+            }
+            addReport(r);
+        }
+
           // update entity's locations' exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity,
                 game.getBoard().getHex(curPos), false, entity.getElevation()));

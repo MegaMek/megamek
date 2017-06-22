@@ -11708,7 +11708,7 @@ public class Server implements Runnable {
         r.add(diceRoll);
         if (diceRoll < roll.getValue()) {
             // Does failing the PSR result in a fall.
-            if (isFallRoll) {
+            if (isFallRoll && entity.canFall()) {
                 r.choose(false);
                 addReport(r);
                 addReport(doEntityFallsInto(entity, entityElevation,

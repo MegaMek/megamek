@@ -457,11 +457,36 @@ public class QuadVee extends QuadMech {
             roll.addModifier(2, "pilot incapacitated");
         }
         
-        if (startedInVehicleMode() && motivePenalty > 0) {
-            roll.addModifier(motivePenalty, "motive system damage");
+        if (startedInVehicleMode()) {
+            if (motivePenalty > 0) {
+                roll.addModifier(motivePenalty, "motive system damage");                
+            }
+            // are we wheeled and in light snow?
+            IHex hex = game.getBoard().getHex(getPosition());
+            if ((null != hex) && (getMovementMode() == EntityMovementMode.WHEELED)
+                    && (hex.terrainLevel(Terrains.SNOW) == 1)) {
+                roll.addModifier(1, "thin snow");
+            }
+            // VDNI bonus?
+            if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                    && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+                roll.addModifier(-1, "VDNI");
+            }
+            if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+                roll.addModifier(1, "cramped cockpit");
+            }
+
+            if (hasHardenedArmor()) {
+                roll.addModifier(1, "Hardened Armor");
+            }
+
+            if (hasModularArmor()) {
+                roll.addModifier(1, "Modular Armor");
+            }
+            return roll;
+        } else {
+            return super.addEntityBonuses(roll);
         }
-        
-        return super.addEntityBonuses(roll);
     }
     
     /**

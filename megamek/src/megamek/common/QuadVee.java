@@ -529,6 +529,15 @@ public class QuadVee extends QuadMech {
         return heavyMotiveDamage;
     }
 
+    /**
+     * Cannot make any physical attacks in vehicle mode except charging, which is
+     * handled in the movement phase.
+     */
+    @Override
+    public boolean isEligibleForPhysical() {
+        return !isInVehicleMode() && super.isEligibleForPhysical();
+    }
+    
     @Override
     public String getTilesetModeString() {
         if (isInVehicleMode()) {

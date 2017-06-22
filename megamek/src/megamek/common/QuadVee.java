@@ -530,6 +530,22 @@ public class QuadVee extends QuadMech {
     }
 
     /**
+     * If the QuadVee is in vehicle mode (or converting to it) then it follows
+     * the rules for tanks going hull-down, which requires a fortified hex.
+     *
+     *  @return True if hull-down is enabled and the QuadVee is in a fortified hex.
+     */
+    @Override
+    public boolean canGoHullDown() {
+        if (isInVehicleMode()) {
+            IHex occupiedHex = game.getBoard().getHex(getPosition());
+            return occupiedHex.containsTerrain(Terrains.FORTIFIED)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
+        }
+        return super.canGoHullDown();
+    }
+
+    /**
      * Cannot make any physical attacks in vehicle mode except charging, which is
      * handled in the movement phase.
      */

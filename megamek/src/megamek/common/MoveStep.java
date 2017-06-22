@@ -1014,7 +1014,9 @@ public class MoveStep implements Serializable {
 
         // Tanks can just drive out of hull-down.  If we're a tank, and we moved
         //  then we are no longer hull-down.
-        if ((entity instanceof Tank) && (distance > 0)) {
+        if ((entity instanceof Tank
+                || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode()))
+                && (distance > 0)) {
             setHullDown(false);
         }
 
@@ -2440,13 +2442,14 @@ public class MoveStep implements Serializable {
                     .isStuck())) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
-            if ((entity instanceof Tank)
-                    && !(game.getBoard().getHex(curPos)
-                    .containsTerrain(Terrains.FORTIFIED))) {
-                movementType = EntityMovementType.MOVE_ILLEGAL;
-            }
-            // Mechs need to check for valid Gyros
-            if (entity.isGyroDestroyed()) {
+            if (entity instanceof Tank
+                    || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())) {
+                if (!(game.getBoard().getHex(curPos)
+                        .containsTerrain(Terrains.FORTIFIED))) {
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                }
+            } else if (entity.isGyroDestroyed()) {
+                // Mechs need to check for valid Gyros
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
         }

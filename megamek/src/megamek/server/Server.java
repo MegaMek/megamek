@@ -8746,8 +8746,9 @@ public class Server implements Runnable {
         // We need to check for the removal of hull-down for tanks.
         // Tanks can just drive out of hull-down: if the tank was hull-down
         // and doesn't end hull-down we can remove the hull-down status
-        if ((entity instanceof Tank) && entity.isHullDown()
-                && !md.getFinalHullDown()) {
+        if (entity.isHullDown() && !md.getFinalHullDown()
+                && (entity instanceof Tank
+                || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode()))) {
             entity.setHullDown(false);
         }
 
@@ -20273,7 +20274,7 @@ public class Server implements Runnable {
             }
         }
         // non mechs and prone mechs can now return
-        if (!(entity instanceof Mech) || entity.isProne()
+        if (!entity.canFall()
             || (entity.isHullDown() && entity.canGoHullDown())) {
             return vPhaseReport;
         }

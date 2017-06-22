@@ -1917,7 +1917,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 setGetUpEnabled(false);
                 setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck()
                                   && !(getBtn(MoveCommand.MOVE_GET_UP).isEnabled()));
-                if (!(ce instanceof Tank)) {
+                if (!(ce instanceof Tank) && !(ce instanceof QuadVee && ((QuadVee)ce).isInVehicleMode())) {
                     setHullDownEnabled(ce.canGoHullDown());
                 } else {
                     // So that vehicle can move and go hull-down, we have to

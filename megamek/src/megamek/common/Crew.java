@@ -1354,18 +1354,16 @@ public class Crew implements Serializable {
     }
     
     /**
-     * @deprecated by multi-crew cockpits. Replaced by {@link #setPiloting(int)}
+     * Sets the piloting skill of the crew's default pilot.
      */  
-    @Deprecated
     public void setPiloting(int piloting) {
-        setPiloting(piloting, 0);
+        setPiloting(piloting, crewType.getPilotPos());
     }
     
     /**
-     * @deprecated by multi-crew cockpits. Replaced by {@link #setGunnery(int)}
+     * Sets the gunnery skill of the crew's default gunner.
      */  
-    @Deprecated
     public void setGunnery(int gunnery) {
-        setGunnery(gunnery, 0);
+        setGunnery(gunnery, crewType.getGunnerPos());
     }
 }

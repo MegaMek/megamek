@@ -124,9 +124,9 @@ public class QuadVee extends QuadMech {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (startedInVehicleMode()) {
-            return super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
-        } else {
             return getCruiseMP(gravity, ignoreheat, ignoremodulararmor);
+        } else {
+            return super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
         }
     }
     

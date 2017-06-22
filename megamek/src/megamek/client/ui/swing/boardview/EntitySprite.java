@@ -716,25 +716,34 @@ class EntitySprite extends Sprite {
         
         // Pilot Info
         // Nickname > Name > "Pilot"
-        String pnameStr = "Pilot";
-
-        if ((entity.getCrew().getName() != null)
-                && !entity.getCrew().getName().equals("")) 
-            pnameStr = entity.getCrew().getName();
-        
-        if ((entity.getCrew().getNickname() != null)
-                && !entity.getCrew().getNickname().equals("")) 
-            pnameStr = "'" + entity.getCrew().getNickname() + "'";
-        
-        addToTT("Pilot", BR,
-                pnameStr, 
-                entity.getCrew().getGunnery(), 
-                entity.getCrew().getPiloting());
-
-        // Pilot Status
-        if (!entity.getCrew().getStatusDesc().equals(""))
-            addToTT("PilotStatus", NOBR, 
-                    entity.getCrew().getStatusDesc());
+        for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
+            String pnameStr = "Pilot";
+    
+            if (entity.getCrew().isMissing(i)) {
+                continue;
+            }
+            if ((entity.getCrew().getName(i) != null)
+                    && !entity.getCrew().getName(i).equals("")) 
+                pnameStr = entity.getCrew().getName(i);
+            
+            if ((entity.getCrew().getNickname(i) != null)
+                    && !entity.getCrew().getNickname(i).equals("")) 
+                pnameStr = "'" + entity.getCrew().getNickname(i) + "'";
+            
+            if (entity.getCrew().getSlotCount() > 1) {
+                pnameStr += " (" + entity.getCrew().getCrewType().getRoleName(i) + ")";
+            }
+    
+            addToTT("Pilot", BR,
+                    pnameStr, 
+                    entity.getCrew().getGunnery(i), 
+                    entity.getCrew().getPiloting(i));
+    
+            // Pilot Status
+            if (!entity.getCrew().getStatusDesc(i).equals(""))
+                addToTT("PilotStatus", NOBR, 
+                        entity.getCrew().getStatusDesc(i));
+        }
         
         // Pilot Advantages
         int numAdv = entity.getCrew().countOptions(

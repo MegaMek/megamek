@@ -87,6 +87,10 @@ public class Jumpship extends Aero {
         damThresh = new int[] { 0, 0, 0, 0, 0, 0 };
     }
 
+    public CrewType defaultCrewType() {
+        return CrewType.VESSEL;
+    }
+
     @Override
     public int locations() {
         return 6;

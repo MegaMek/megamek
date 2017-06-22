@@ -359,8 +359,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
                               - te.getCrew().getPiloting(), "piloting skill differential");
         }
 
-        // attacker is spotting
-        if (ae.isSpotting()) {
+        // attacker is spotting (no penalty with second pilot in command console)
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
             toHit.addModifier(+1, "attacker is spotting");
         }
 

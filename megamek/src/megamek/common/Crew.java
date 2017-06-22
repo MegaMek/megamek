@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.UUID;
 import java.util.Vector;
@@ -24,41 +25,58 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 
+/**
+ *  Health status, skills, and miscellanea for an Entity crew.
+ * 
+ *  While vehicle and vessel crews are treated as a single collective, with one set of skills,
+ *  some multi-crew cockpits (Tripod, QuadVee, dual, command console) require tracking the health
+ *  and skills of each crew member independently. These are referred to as "slots" and the slot
+ *  number corresponds to an array index for the appropriate field.
+ *
+ */
+
 public class Crew implements Serializable {
     /**
      *
      */
     private static final long serialVersionUID = -141169182388269619L;
-    private String name;
+    
+    private final CrewType crewType;
     private int size;
-    private int gunnery;
-    private int piloting;
-    private int hits; // hits taken
 
-    private String nickname;
+    private final String[] name;
+    private final int[] gunnery;
+    private final int[] piloting;
+    private final int[] hits; // hits taken
 
-    private String externalId = "-1";
+    private final String[] nickname;
 
-    private boolean unconscious;
+    private final String[] externalId;
+
+    private final boolean[] unconscious;
+    private final boolean[] dead;
+    //Allow for the possibility that the unit is fielded with less than full crew.
+    private final boolean[] missing;
+    
+    //The following only apply to the entire crew.
     private boolean doomed; // scheduled to die at end of phase
-    private boolean dead;
     private boolean ejected;
 
     // StratOps fatigue points
     private int fatigue;
     //also need to track turns for fatigue by pilot because some may have later deployment
     private int fatigueCount;
-
+    
     /**
      * Additional RPG Skills **
      */
     // MW3e uses 3 different gunnery skills
-    private int gunneryL;
-    private int gunneryM;
-    private int gunneryB;
+    private final int[] gunneryL;
+    private final int[] gunneryM;
+    private final int[] gunneryB;
 
     // Separate artillery skill
-    private int artillery;
+    private final int[] artillery;
 
     // init bonuses
     // bonus for individual initiative
@@ -67,22 +85,38 @@ public class Crew implements Serializable {
     private int commandBonus;
 
     // a toughness bonus that is applied to all KO checks
-    private int toughness;
+    private final int[] toughness;
+    
+    private int pilotPos;
+    private int gunnerPos;
+    
+    //Designate the slot index of the crew member that will fill in if the pilot or gunner is incapacitated.
+    //This is only relevant for superheavy tripods, as other types have at most a single other option.
+    private int backupPilot;
+    private int backupGunner;
+
+    //For cockpit command console, we need to track which crew members have acted as the pilot, making them
+    //ineligible to provide command bonus the next round.
+    private final boolean[] actedThisTurn;
+    //The crew slots in a command console can swap roles in the end phase of any turn.
+    private boolean swapConsoleRoles;
 
     /**
      * End RPG Skills **
      */
 
     // these are only used on the server:
-    private boolean koThisRound; // did I go KO this game round?
+    private final boolean[] koThisRound; // did I go KO this game round?
 
+    //TODO: Allow individual crew to have SPAs, which involves determining which work for individuals
+    //and which work for the entire unit.
     private PilotOptions options = new PilotOptions();
 
     // pathway to pilot portrait
     public static final String ROOT_PORTRAIT = "-- General --";
     public static final String PORTRAIT_NONE = "None";
-    private String portraitCategory = ROOT_PORTRAIT;
-    private String portraitFileName = PORTRAIT_NONE;
+    private final String[] portraitCategory;
+    private final String[] portraitFileName;
 
     //SPA RangeMaster range bands
     public static final String RANGEMASTER_NONE = "None";
@@ -128,27 +162,45 @@ public class Crew implements Serializable {
      * Defines the maximum value a Crew can have in any skill
      */
     static public final int MAX_SKILL = 8;
-
+    
     /**
      * Creates a nameless P5/G4 crew of the given size.
      *
      * @param size the crew size.
      */
-    public Crew(int size) {
-        this("Unnamed", 1, 4, 5);
+    public Crew(CrewType crewType) {
+        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5);
     }
 
     /**
+     * @deprecated by multi-crew cockpit support. Replaced by {@link #Crew(CrewType, String, int, int, int)}.
+     * 
+     * Creates a basic crew for a self-piloted unit. Using this constructor for a naval vessel will
+     * result in a secondary target modifier for additional targets past the first.
+     * 
+     * @param name
+     * @param size
+     * @param gunnery
+     * @param piloting
+     */
+    @Deprecated
+    public Crew(String name, int size, int gunnery, int piloting) {
+        this(CrewType.SINGLE, name, size, gunnery, gunnery, gunnery, piloting);
+    }
+
+    /**
+     * @param crewType the type of crew
      * @param name     the name of the crew or commander.
      * @param size     the crew size.
      * @param gunnery  the crew's Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
      */
-    public Crew(String name, int size, int gunnery, int piloting) {
-        this(name, size, gunnery, gunnery, gunnery, piloting);
+    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, piloting);
     }
 
     /**
+     * @param crewType the type of crew.
      * @param name     the name of the crew or commander.
      * @param size     the crew size.
      * @param gunneryL the crew's "laser" Gunnery skill.
@@ -156,37 +208,93 @@ public class Crew implements Serializable {
      * @param gunneryB the crew's "ballistic" Gunnery skill.
      * @param piloting the crew's Piloting or Driving skill.
      */
-    public Crew(String name, int size, int gunneryL, int gunneryM, int gunneryB, int piloting) {
-        this.name = name;
-        this.size = size;
-        nickname = "";
-        gunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
-        this.gunneryL = gunneryL;
-        this.gunneryM = gunneryM;
-        this.gunneryB = gunneryB;
-        artillery = gunnery;
-        this.piloting = piloting;
+    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
+            int piloting) {
+        this.crewType = crewType;
+        this.size = Math.max(size, crewType.getCrewSlots());
+
+        int slots = crewType.getCrewSlots();
+        this.name = new String[slots];
+        Arrays.fill(this.name, name);
+        this.nickname = new String[slots];
+        Arrays.fill(this.nickname, "");
+
+        int avGunnery = (int) Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
+        this.gunnery = new int[slots];
+        Arrays.fill(this.gunnery, avGunnery);
+        this.gunneryL = new int[slots];
+        Arrays.fill(this.gunneryL, gunneryL);
+        this.gunneryB = new int[slots];
+        Arrays.fill(this.gunneryB, gunneryB);
+        this.gunneryM = new int[slots];
+        Arrays.fill(this.gunneryM, gunneryM);
+        this.artillery = new int[slots];
+        Arrays.fill(this.artillery, avGunnery);
+        this.piloting = new int[slots];
+        Arrays.fill(this.piloting, piloting);
+        
         initBonus = 0;
         commandBonus = 0;
-        hits = 0;
-        unconscious = false;
-        dead = false;
-        koThisRound = false;
+        hits = new int[slots];
+        unconscious = new boolean[slots];
+        dead = new boolean[slots];
+        missing = new boolean[slots];
+        koThisRound = new boolean[slots];
         fatigue = 0;
+        toughness = new int[slots];
+        portraitCategory = new String[slots];
+        Arrays.fill(portraitCategory, ROOT_PORTRAIT);
+        portraitFileName = new String[slots];
+        Arrays.fill(portraitFileName, PORTRAIT_NONE);
 
         options.initialize();
+
+        pilotPos = crewType.getPilotPos();
+        gunnerPos = crewType.getGunnerPos();
+        
+        //For 2-slot crews, this will designate the other crew member as backup. For superheavy tripods,
+        //this will designate the pilot and gunner as backups for each other.
+        if (getSlotCount() > 1) {
+            backupPilot = 1 - pilotPos;
+            backupGunner = 1 - gunnerPos;
+        }
+        actedThisTurn = new boolean[slots];
+        resetActedFlag();
         
         //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
         //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
-        externalId = UUID.randomUUID().toString();
+        externalId = new String[slots];
+        for (int i = 0; i < slots; i++) {
+            externalId[i] = UUID.randomUUID().toString();
+        }
     }
 
     public String getName() {
-        return name;
+        return name[0];
     }
-
+    
+    public String getName(int pos) {
+        return name[pos];
+    }
+    
     public String getNickname() {
-        return nickname;
+        return nickname[0];
+    }
+    
+    public String getNickname(int pos) {
+        return nickname[pos];
+    }
+    
+    /**
+     * @param pos The slot index for multi-crewed cockpits
+     * @return    For multi-slot crews, the crew member's name followed by the role. For-slot crews, the
+     *            crew name only.
+     */
+    public String getNameAndRole(int pos) {
+        if (getSlotCount() < 2) {
+            return getName(pos);
+        }
+        return getName(pos) + " (" + crewType.getRoleName(pos) + ")";
     }
 
     /**
@@ -197,33 +305,79 @@ public class Crew implements Serializable {
     public int getSize() {
         return size;
     }
+    
+    public CrewType getCrewType() {
+        return crewType;
+    }
+    
+    /**
+     * @return The number of crew members that are tracked individually
+     */
+    public int getSlotCount() {
+        return crewType.getCrewSlots();
+    }
 
     public int getGunnery() {
-        return gunnery;
+        return gunnery[gunnerPos];
     }
 
+    public int getGunnery(int pos) {
+        return gunnery[pos];
+    }
+    
     public int getGunneryL() {
-        return gunneryL;
+        return gunneryL[gunnerPos];
     }
 
+    public int getGunneryL(int pos) {
+        return gunneryL[pos];
+    }
+    
     public int getGunneryM() {
-        return gunneryM;
+        return gunneryM[gunnerPos];
     }
 
+    public int getGunneryM(int pos) {
+        return gunneryM[pos];
+    }
+    
     public int getGunneryB() {
-        return gunneryB;
+        return gunneryB[gunnerPos];
     }
-
+    
+    public int getGunneryB(int pos) {
+        return gunneryB[pos];
+    }
+    
     public int getArtillery() {
-        return artillery;
+        return artillery[gunnerPos];
+    }
+    
+    public int getArtillery(int pos) {
+        return artillery[pos];
     }
 
     public int getPiloting() {
-        return piloting;
+        return piloting[pilotPos];
+    }
+    
+    public int getPiloting(int pos) {
+        return piloting[pos];
+    }
+    
+    /**
+     * Used to determine whether the death threshold has been passed. As the crew is not dead until
+     * each crew member slot is dead, we return the lowest value.
+     * 
+     * @return The damage level of the least damaged crew member.
+     */
+    //TODO: The boarding actions rules reflect casualties to overall crew size by tracking hits.
+    public int getHits() {
+        return Arrays.stream(hits).min().orElse(0);
     }
 
-    public int getHits() {
-        return hits;
+    public int getHits(int pos) {
+        return hits[pos];
     }
 
     public int getInitBonus() {
@@ -234,12 +388,12 @@ public class Crew implements Serializable {
         return commandBonus;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String name, int pos) {
+        this.name[pos] = name;
     }
 
-    public void setNickname(String nick) {
-        nickname = nick;
+    public void setNickname(String nick, int pos) {
+        nickname[pos] = nick;
     }
 
     /**
@@ -251,37 +405,40 @@ public class Crew implements Serializable {
         size = newSize;
     }
 
-    public void setGunnery(int gunnery) {
-        this.gunnery = gunnery;
+    public void setGunnery(int gunnery, int pos) {
+        this.gunnery[pos] = gunnery;
     }
 
-    public void setGunneryL(int gunnery) {
-        gunneryL = gunnery;
+    public void setGunneryL(int gunnery, int pos) {
+        gunneryL[pos] = gunnery;
     }
 
-    public void setGunneryM(int gunnery) {
-        gunneryM = gunnery;
+    public void setGunneryM(int gunnery, int pos) {
+        gunneryM[pos] = gunnery;
     }
 
-    public void setGunneryB(int gunnery) {
-        gunneryB = gunnery;
+    public void setGunneryB(int gunnery, int pos) {
+        gunneryB[pos] = gunnery;
     }
 
-    public void setArtillery(int artillery) {
-        this.artillery = artillery;
+    public void setArtillery(int artillery, int pos) {
+        this.artillery[pos] = artillery;
     }
 
-    public void setPiloting(int piloting) {
-        this.piloting = piloting;
+    public void setPiloting(int piloting, int pos) {
+        this.piloting[pos] = piloting;
     }
 
-    public void setHits(int hits) {
+    public void setHits(int hits, int pos) {
         // Ejected pilots stop taking hits.
-        if (!ejected) {
-            this.hits = hits;
+        if (!ejected && !missing[pos]) {
+            this.hits[pos] = hits;
+            if (hits >= DEATH) {
+                setDead(true, pos);
+            }
         }
     }
-
+    
     public void setInitBonus(int bonus) {
         initBonus = bonus;
     }
@@ -289,53 +446,155 @@ public class Crew implements Serializable {
     public void setCommandBonus(int bonus) {
         commandBonus = bonus;
     }
-
+    
+    /**
+     * The crew is considered unconscious as a whole if none are active and at least one is not dead.
+     * @return Whether at least one crew member is alive but none are conscious.
+     */
     public boolean isUnconscious() {
-        return unconscious;
+        return !isDead() && !isActive();
     }
 
+    public boolean isUnconscious(int pos) {
+        return unconscious[pos] && !dead[pos] && hits[pos] < DEATH;
+    }
+    
     public void setUnconscious(boolean unconscious) {
-        this.unconscious = unconscious;
+        for (int i = 0; i < getSlotCount(); i++) {
+            setUnconscious(unconscious, i);
+        }
     }
 
+    public void setUnconscious(boolean unconscious, int pos) {
+        this.unconscious[pos] = unconscious;
+        if (getSlotCount() > 1) {
+            activeStatusChanged();
+        }
+    }
+
+    /**
+     * The crew is considered dead as a whole if all members are dead.
+     * @return Whether all members of the crew are dead.
+     */
     public boolean isDead() {
-        return dead;
+        for (int i = 0; i < this.getSlotCount(); i++) {
+            if (!dead[i]) {
+                return false;
+            }
+        }
+        return true;
     }
-
+    
+    public boolean isDead(int pos) {
+        return dead[pos];
+    }
+    
     public void setDead(boolean dead) {
-        // Ejected pilots stop taking hits.
         if (!ejected) {
-            this.dead = dead;
-            if (dead) {
-                hits = 6;
+            for (int i = 0; i < getSlotCount(); i++) {
+                setDead(dead, i);
             }
         }
     }
 
+    public void setDead(boolean dead, int pos) {
+        // Ejected pilots stop taking hits.
+        if (!ejected && !missing[pos]) {
+            this.dead[pos] = dead;
+            if (dead) {
+                hits[pos] = 6;
+            }
+            if (getSlotCount() > 1) {
+                activeStatusChanged();
+            }
+        }
+    }
+    
+    /**
+     * @return Whether the unit was fielded without a crew member in the slot.
+     */
+    public boolean isMissing(int pos) {
+        return missing[pos];
+    }
+    
+    /**
+     * Allows a unit with a multi-crew cockpit to fielded with less than a full crew. Does not apply
+     * to collective crew (vehicles, infantry, large craft). 
+     */
+    public void setMissing(boolean missing, int pos) {
+        this.missing[pos] = missing;
+        activeStatusChanged();
+    }
+
+    /**
+     * Doomed status only applies to the crew as a whole.
+     * @return Whether the crew is scheduled to die at the end of the phase.
+     */
     public boolean isDoomed() {
         return doomed;
     }
 
-    public void setDoomed(boolean b) {
+    /**
+     * Doomed status only applies to the crew as a whole.
+     * @param doomed Whether the crew is scheduled to die at the end of the phase.
+     */
+    public void setDoomed(boolean doomed) {
         // Ejected pilots stop taking hits.
         if (!ejected) {
-            doomed = b;
+            this.doomed = doomed;
             if (doomed) {
-                hits = 6;
+                for (int i = 0; i < getSlotCount(); i++) {
+                    hits[i] = 6;
+                }
             }
         }
     }
 
+    /**
+     * The crew as a whole is considered active if any member is active.
+     * @return Whether the crew has at least one active member.
+     */
     public boolean isActive() {
-        return !unconscious && !dead;
+        for (int i = 0; i < getSlotCount(); i++) {
+            if (isActive(i)) {
+                return true;
+            }
+        }
+        return false;
     }
-
+    
+    public boolean isActive(int pos) {
+        return !unconscious[pos] && !dead[pos] && !missing[pos];
+    }
+    
+    /**
+     * The crew as a whole is considered ko this round if all active members are ko this round.
+     * @return
+     */
     public boolean isKoThisRound() {
-        return koThisRound;
+        for (int i = 0; i < getSlotCount(); i++) {
+            if (isActive(i) && !koThisRound[i]) {
+                return false;
+            }
+        }
+        return true;
     }
 
+    public boolean isKoThisRound(int pos) {
+        return koThisRound[pos];
+    }
+    
+    /**
+     * Set ko value for all slots.
+     * 
+     * @param koThisRound Whether the crew will go unconscious during this round.
+     */
     public void setKoThisRound(boolean koThisRound) {
-        this.koThisRound = koThisRound;
+        Arrays.fill(this.koThisRound, koThisRound);
+    }
+
+    public void setKoThisRound(boolean koThisRound, int pos) {
+        this.koThisRound[pos] = koThisRound;
     }
 
     public void setOptions(PilotOptions options) {
@@ -493,65 +752,88 @@ public class Crew implements Serializable {
         return result;
     }
 
+    /**
+     * Overall crew description, using the name of the first crew member in the case of multi-crew cockpits.
+     */
     public String getDesc() {
-        String s = new String(name);
-        if (hits > 0) {
-            s += " (" + hits + " hit(s)";
-            if (isUnconscious()) {
+        return getDesc(0);
+    }
+    
+    public String getDesc(int pos) {
+        if (isMissing(pos)) {
+            return "[missing]";
+        }
+        String s = new String(name[pos]);
+        if (hits[pos] > 0) {
+            s += " (" + hits[pos] + " hit(s)";
+            if (isUnconscious(pos)) {
                 s += " [ko]";
-            } else if (isDead()) {
+            } else if (isDead(pos)) {
                 s += " [dead]";
             }
             s += ")";
-        } else if (isUnconscious()) {
+        } else if (isUnconscious(pos)) {
             s += " [ko]";
-        } else if (isDead()) {
+        } else if (isDead(pos)) {
             s += " [dead]";
         }
         return s;
     }
 
+    /**
+     * Crew summary report used for victory phase.
+     * 
+     * @param gunneryOnly Do not show the piloting skill
+     */
     public Vector<Report> getDescVector(boolean gunneryOnly) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
-        r = new Report();
-        r.type = Report.PUBLIC;
-        r.add(name);
-        if (gunneryOnly) {
-            r.messageId = 7050;
-            r.add(getGunnery());
-        } else {
-            r.messageId = 7045;
-            r.add(getGunnery());
-            r.add(getPiloting());
-        }
-
-        if ((hits > 0) || isUnconscious() || isDead()) {
-            Report r2 = new Report();
-            r2.type = Report.PUBLIC;
-            if (hits > 0) {
-                r2.messageId = 7055;
-                r2.add(hits);
-                if (isUnconscious()) {
-                    r2.messageId = 7060;
+        for (int i = 0; i < getSlotCount(); i++) {
+            if (missing[i]) {
+                continue;
+            }
+            r = new Report();
+            r.type = Report.PUBLIC;
+            r.add(name[i]);
+            if (getSlotCount() > 1) {
+                r.add(" (" + crewType.getRoleName(i) + ")");
+            }
+            if (gunneryOnly) {
+                r.messageId = 7050;
+                r.add(getGunnery(i));
+            } else {
+                r.messageId = 7045;
+                r.add(getGunnery(i));
+                r.add(getPiloting(i));
+            }
+    
+            if ((hits[i] > 0) || isUnconscious(i) || isDead(i)) {
+                Report r2 = new Report();
+                r2.type = Report.PUBLIC;
+                if (hits[i] > 0) {
+                    r2.messageId = 7055;
+                    r2.add(hits[i]);
+                    if (isUnconscious(i)) {
+                        r2.messageId = 7060;
+                        r2.choose(true);
+                    } else if (isDead(i)) {
+                        r2.messageId = 7060;
+                        r2.choose(false);
+                    }
+                } else if (isUnconscious(i)) {
+                    r2.messageId = 7065;
                     r2.choose(true);
-                } else if (isDead()) {
-                    r2.messageId = 7060;
+                } else if (isDead(i)) {
+                    r2.messageId = 7065;
                     r2.choose(false);
                 }
-            } else if (isUnconscious()) {
-                r2.messageId = 7065;
-                r2.choose(true);
-            } else if (isDead()) {
-                r2.messageId = 7065;
-                r2.choose(false);
+                r.newlines = 0;
+                vDesc.addElement(r);
+                vDesc.addElement(r2);
+            } else {
+                vDesc.addElement(r);
             }
-            r.newlines = 0;
-            vDesc.addElement(r);
-            vDesc.addElement(r2);
-        } else {
-            vDesc.addElement(r);
         }
         return vDesc;
     }
@@ -560,7 +842,7 @@ public class Crew implements Serializable {
      * Returns whether this pilot has non-standard piloting or gunnery values
      */
     public boolean isCustom() {
-        return (gunnery != 4) || (piloting != 5);
+        return (getGunnery() != 4) || (getPiloting() != 5);
     }
 
     /**
@@ -580,11 +862,11 @@ public class Crew implements Serializable {
      * @param game
      */
     public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
-        int pilotVal = piloting;
+        int pilotVal = getPiloting();
         if (!usePiloting) {
             pilotVal = 5;
         }
-        return getBVImplantMultiplier() * getBVSkillMultiplier(gunnery, pilotVal, game);
+        return getBVImplantMultiplier() * getBVSkillMultiplier(getGunnery(), pilotVal, game);
     }
 
     public double getBVImplantMultiplier() {
@@ -674,19 +956,19 @@ public class Crew implements Serializable {
      * for sensor ops, so these might be easily expanded later for rpg
      */
     public int getSensorOps() {
-        if (piloting > -1) {
-            return piloting;
+        if (getPiloting() > -1) {
+            return getPiloting();
         }
-        return gunnery;
+        return getGunnery();
     }
 
     private int getPilotingFatigueTurn() {
         int turn = 20;
-        if (piloting > 5) {
+        if (getPiloting() > 5) {
             turn = 10;
-        } else if (piloting > 3) {
+        } else if (getPiloting() > 3) {
             turn = 14;
-        } else if (piloting > 1) {
+        } else if (getPiloting() > 1) {
             turn = 17;
         }
 
@@ -703,9 +985,9 @@ public class Crew implements Serializable {
 
     private int getGunneryFatigueTurn() {
         int turn = 20;
-        if (piloting > 5) {
+        if (getPiloting() > 5) {
             turn = 14;
-        } else if (piloting > 3) {
+        } else if (getPiloting() > 3) {
             turn = 17;
         }
 
@@ -718,16 +1000,19 @@ public class Crew implements Serializable {
     }
 
     public boolean isGunneryFatigued() {
-        if (piloting < 2) {
+        if (getPiloting() < 2) {
             return false;
         }
         return fatigueCount >= getGunneryFatigueTurn();
     }
 
+    /**
+     * @return A description of the status of crew as a whole
+     */
     public String getStatusDesc() {
         String s = new String("");
-        if (hits > 0) {
-            s += hits + " hits";
+        if (getHits() > 0) {
+            s += getHits() + " hits";
             if (isUnconscious()) {
                 s += " (KO)";
             } else if (isDead()) {
@@ -737,44 +1022,76 @@ public class Crew implements Serializable {
         return s;
     }
 
-    public void setExternalIdAsString(String i) {
-        externalId = i;
+    /**
+     * @return A description of the status of a single crew member
+     */
+    public String getStatusDesc(int pos) {
+        if (isMissing(pos)) {
+            return "Missing";
+        }
+        String s = new String("");
+        if (getHits(pos) > 0) {
+            s += hits[pos] + " hits";
+            if (isUnconscious(pos)) {
+                s += " (KO)";
+            } else if (isDead(pos)) {
+                s += " (dead)";
+            }
+        }
+        return s;
     }
 
-    public void setExternalId(int i) {
-        externalId = Integer.toString(i);
+    public void setExternalIdAsString(String i, int pos) {
+        externalId[pos] = i;
     }
 
+    public void setExternalId(int i, int pos) {
+        externalId[pos] = Integer.toString(i);
+    }
+
+    public String getExternalIdAsString(int pos) {
+        return externalId[pos];
+    }
+    
+    /**
+     * Use the first assigned slot as a general id for the crew.
+     * @return The id of the first slot that is not set to "-1" 
+     */
     public String getExternalIdAsString() {
-        return externalId;
+        for (int i = 0; i < getSlotCount(); i++) {
+            if (!externalId[i].equals("-1")) {
+                return externalId[i];
+            }
+        }
+        return "-1";
     }
 
-    public int getExternalId() {
-        return Integer.parseInt(externalId);
+    public int getExternalId(int pos) {
+        return Integer.parseInt(externalId[pos]);
     }
 
-    public void setPortraitCategory(String name) {
-        portraitCategory = name;
+    public void setPortraitCategory(String name, int pos) {
+        portraitCategory[pos] = name;
     }
 
-    public String getPortraitCategory() {
-        return portraitCategory;
+    public String getPortraitCategory(int pos) {
+        return portraitCategory[pos];
     }
 
-    public void setPortraitFileName(String name) {
-        portraitFileName = name;
+    public void setPortraitFileName(String name, int pos) {
+        portraitFileName[pos] = name;
     }
 
-    public String getPortraitFileName() {
-        return portraitFileName;
+    public String getPortraitFileName(int pos) {
+        return portraitFileName[pos];
     }
 
-    public int getToughness() {
-        return toughness;
+    public int getToughness(int pos) {
+        return toughness[pos];
     }
 
-    public void setToughness(int t) {
-        toughness = t;
+    public void setToughness(int t, int pos) {
+        toughness[pos] = t;
     }
 
     public int getFatigue() {
@@ -803,5 +1120,252 @@ public class Crew implements Serializable {
         }
 
         return Compute.d6(2);
+    }
+    
+    public int getCurrentPilotIndex() {
+        return pilotPos;
+    }
+    
+    public int getCurrentGunnerIndex() {
+        return gunnerPos;
+    }
+    
+    public int getBackupPilotPos() {
+        return backupPilot;
+    }
+    
+    public void setBackupPilotPos(int pos) {
+        backupPilot = pos;
+    }
+    
+    public int getBackupGunnerPos() {
+        return backupGunner;
+    }
+    
+    public void setBackupGunnerPos(int pos) {
+        backupGunner = pos;
+    }
+    
+    /**
+     * Set the pilot slot. If a multicrew cockpit uses the same crew member as both pilot and gunner
+     * (i.e. cockpit command console), sets the gunner as well.
+     * 
+     * @param pos The slot index to set as pilot.
+     */
+    public void setCurrentPilot(int pos) {
+        pilotPos = pos;
+        if (crewType.getPilotPos() == crewType.getGunnerPos()) {
+            gunnerPos = pos;
+        }
+        actedThisTurn[pos] = true;
+    }
+    
+    /**
+     * Set the gunner slot. If a multicrew cockpit uses the same crew member as both pilot and gunner
+     * (i.e. cockpit command console), sets the pilot as well.
+     * 
+     * @param pos The slot index to set as gunner.
+     */
+    public void setCurrentGunner(int pos) {
+        gunnerPos = pos;
+        if (crewType.getPilotPos() == crewType.getGunnerPos()) {
+            pilotPos = pos;
+        }
+        actedThisTurn[pos] = true;
+    }
+    
+    /**
+     * Called when the active status of a crew slot changes in a unit with a multi-crew cockpit.
+     * If a pilot or gunner is incapacitated, someone else must take over the duties.
+     * A pilot or gunner that wakes up will resume normal duties.
+     */
+    private void activeStatusChanged() {
+        //Cockpit command console can be swapped deliberately by the player and should not be changed
+        //automatically unless the current pilot becomes inactive.
+        if (crewType.equals(CrewType.COMMAND_CONSOLE)
+                && isActive(getCurrentPilotIndex())) {
+            return;
+        }
+        //Start by checking whether the default pilot is available. If not, check the designated backup.
+        //If still not available, select the first active slot. If none are active, it does not matter
+        //which slot is designated and the value is not changed.
+        if (isActive(crewType.getPilotPos())) {
+            pilotPos = crewType.getPilotPos();
+        } else if (isActive(backupPilot)) {
+            pilotPos = backupPilot;
+        } else {
+            for (int i = 0; i < getSlotCount(); i++) {
+                if (isActive(i)) {
+                    pilotPos = i;
+                    break;
+                }
+            }
+        }
+        if (isActive(crewType.getGunnerPos())) {
+            gunnerPos = crewType.getGunnerPos();
+        } else if (isActive(backupGunner)) {
+            gunnerPos = backupGunner;
+        } else {
+            for (int i = 0; i < getSlotCount(); i++) {
+                if (isActive(i)) {
+                    gunnerPos = i;
+                    break;
+                }
+            }
+        }
+    }
+    
+    /**
+     * When assigning skills randomly, we want to make sure the skills are assigned to the most
+     * appropriate position in crews where the pilot and gunner are separate.
+     * We're going to do it the simpler way and reassign the piloting and gunnery
+     * skills individually, resulting in a more specialized crew.
+     */
+    public void sortRandomSkills() {
+        if (crewType.getCrewSlots() < 2 || crewType.getPilotPos() == crewType.getGunnerPos()) {
+            return;
+        }
+        int lowest = MAX_SKILL;
+        int pos = -1;
+        if (!missing[crewType.getPilotPos()]) {
+            for (int i = 0; i < getSlotCount(); i++) {
+                if (piloting[i] < lowest) {
+                    lowest = piloting[i];
+                    pos = i;
+                }
+            }
+            if (pos >= 0) {
+                piloting[pos] = piloting[crewType.getPilotPos()];
+                piloting[crewType.getPilotPos()] = lowest;
+            }
+        }
+        lowest = MAX_SKILL;
+        pos = -1;
+        if (!missing[crewType.getGunnerPos()]) {
+            for (int i = 0; i < getSlotCount(); i++) {
+                if (gunnery[i] < lowest) {
+                    lowest = gunnery[i];
+                    pos = i;
+                }
+            }
+            if (pos >= 0) {
+                gunnery[pos] = gunnery[crewType.getGunnerPos()];
+                gunnery[crewType.getGunnerPos()] = lowest;
+            }
+        }
+    }
+    
+    /**
+     * Tripods and QuadVees get special benefits if the dedicated pilot is active.
+     * 
+     * @return Whether a Mek has a separate pilot who is active. 
+     */
+    public boolean hasDedicatedPilot() {
+        return isActive(crewType.getPilotPos())
+                && crewType.getGunnerPos() != crewType.getPilotPos();
+    }
+    
+    /**
+     * Tripods and QuadVees get special benefits if the dedicated gunner is active.
+     * 
+     * @return Whether a Mek has a separate gunner who is active. 
+     */
+    public boolean hasDedicatedGunner() {
+        return isActive(crewType.getGunnerPos())
+                && crewType.getGunnerPos() != crewType.getPilotPos();
+    }
+    
+    /**
+     * Superheavy tripods gain benefits from having a technical officer.
+     * 
+     * @return Whether the tech officer is alive and conscious.
+     */
+    public boolean hasActiveTechOfficer() {
+        return crewType.getTechPos() > 0 && isActive(crewType.getTechPos());
+    }
+    
+    /**
+     * Cockpit command console provides commander init bonus if both crew members are active
+     * (also requires advanced fire control and heavy/assault unit, which is not checked here).
+     * Though the positions are named "pilot" and "commander" they can switch positions in the end
+     * phase of any turn so we need to check whichever is not currently acting as pilot.
+     * 
+     * @return Whether the unit has a commander that is not also acting as pilot currently or in the previous turn.
+     */
+    public boolean hasActiveCommandConsole() {
+        int commandPos = 1 - getCurrentPilotIndex();
+        return isActive(commandPos) && !actedThisTurn[commandPos];
+    }
+    
+    /**
+     * Called after the initiative bonus for the round has been calculated.
+     */
+    public void resetActedFlag() {
+        Arrays.fill(actedThisTurn, false);
+        actedThisTurn[getCurrentPilotIndex()] = true;
+        actedThisTurn[getCurrentGunnerIndex()] = true;
+    }
+    
+    /**
+     * @return Whether the crew members in a command console-equipped unit are scheduled to swap roles at
+     *         the end of the turn. 
+     */
+    public boolean getSwapConsoleRoles() {
+        return swapConsoleRoles;
+    }
+    
+    /**
+     * Schedules or clears a scheduled swap of roles in a command console-equipped unit.
+     * @param swap
+     */
+    public void setSwapConsoleRoles(boolean swap) {
+        swapConsoleRoles = swap;
+    }
+
+    /**
+     * Checks whether a role swap is scheduled for a command-console equipped unit and (if the new pilot
+     * is active) performs the swap. The swap flag is cleared regardless of whether a swap took place.
+     * 
+     * @return True if a swap was performed, otherwise false.
+     */
+    public boolean doConsoleRoleSwap() {
+        if (swapConsoleRoles && crewType.equals(CrewType.COMMAND_CONSOLE)) {
+            int newPilotIndex = 1 - getCurrentPilotIndex();
+            if (isActive(newPilotIndex)) {
+                setCurrentPilot(newPilotIndex);
+                swapConsoleRoles = false;
+                return true;
+            }
+        }
+        swapConsoleRoles = false;
+        return false;
+    }
+    
+    /*
+     * Legacy methods used by MekWars 
+     */
+    
+    /**
+     * @deprecated by multi-crew cockpits. Replaced by {@link #setHits(int)}
+     */  
+    @Deprecated
+    public void setHits(int hits) {
+        setHits(hits, 0);
+    }
+    
+    /**
+     * @deprecated by multi-crew cockpits. Replaced by {@link #setPiloting(int)}
+     */  
+    @Deprecated
+    public void setPiloting(int piloting) {
+        setPiloting(piloting, 0);
+    }
+    
+    /**
+     * @deprecated by multi-crew cockpits. Replaced by {@link #setGunnery(int)}
+     */  
+    @Deprecated
+    public void setGunnery(int gunnery) {
+        setGunnery(gunnery, 0);
     }
 }

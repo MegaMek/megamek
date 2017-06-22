@@ -8,6 +8,7 @@ import java.awt.geom.Point2D;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Compute;
+import megamek.common.CrewType;
 import megamek.common.Facing;
 import megamek.common.MovePath;
 import megamek.common.VTOL;
@@ -44,6 +45,12 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
                 mp.isJumping(),
                 mp.getEntity() instanceof VTOL,
                 boardView1.game).getValue();
+        //Add evasion bonus for 'Mech with dual cockpit
+        if (mp.getEntity().getCrew().getCrewType().equals(CrewType.DUAL)
+                && mp.getEntity().getCrew().hasDedicatedPilot()
+                && !mp.isJumping() && mp.getHexesMoved() > 0) {
+            modi++;
+        }
         float hue = 0.7f - 0.15f * modi;
         color = new Color(Color.HSBtoRGB(hue, 1, 1));
         modifier = String.format("%+d", modi);

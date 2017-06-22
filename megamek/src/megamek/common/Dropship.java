@@ -42,6 +42,10 @@ public class Dropship extends SmallCraft {
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
 
+    public CrewType defaultCrewType() {
+        return CrewType.VESSEL;
+    }
+
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
     }

@@ -314,12 +314,18 @@ public class QuadVee extends QuadMech {
     
     @Override
     public boolean isEligibleForPavementBonus() {
+        //Since pavement bonus only applies if driving on pavement the entire turn,
+        //there is no pavement bonus unless it spends the entire turn in vehicle mode.
         return isInVehicleMode() && !convertingNow;
     }
     
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         //QuadVees cannot fall due to failed PSR in vehicle mode.
+        //When converting, the conversion completes regardless of anything else that happens
+        //in the turn; since vehicles cannot be prone, the unit cannot fall while converting
+        //to vehicle mode.
+        //http://bg.battletech.com/forums/index.php?topic=55261.msg1274233#msg1274233
         return !isInVehicleMode();
     }
     

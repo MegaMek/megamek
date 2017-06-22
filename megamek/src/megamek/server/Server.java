@@ -32466,15 +32466,14 @@ public class Server implements Runnable {
                                                  DamageType.NONE, true));
             }
         }
-        if (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode()) {
-            //We don't have a front location, so what do we do the the damage point?
-            //Assign each point randomly to a leg? Awaiting ruling.
-            vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, 0));
-        } else if (entity instanceof QuadMech) {
+        if (entity instanceof QuadMech) {
             for (int i = 4; i <= 7; i++) {
                 hit = new HitData(i);
                 vPhaseReport.addAll(damageEntity(entity, hit, damage, false,
                                                  DamageType.NONE, true));
+            }
+            if (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode()) {
+                vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, 0));
             }
         } else if (entity instanceof Tank) {
             hit = new HitData(Tank.LOC_FRONT);

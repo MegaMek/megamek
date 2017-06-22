@@ -6922,6 +6922,29 @@ public class Server implements Runnable {
             if (step.getType() == MoveStepType.CONVERT_MODE) {
                 entity.setConvertingNow(true);
                 entity.setMovementMode(entity.nextConversionMode());
+                
+                // Non-omni QuadVees converting to vehicle mode dump any riding BA in the
+                // starting hex if they fail to make an anti-mech check.
+                // http://bg.battletech.com/forums/index.php?topic=55263.msg1271423#msg1271423
+                if (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()
+                        && !entity.isOmni()) {
+                    for (Entity rider : entity.getExternalUnits()) {
+                        addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing,
+                                false, false, false));
+                    }
+                } else if ((entity.getEntityType() & Entity.ETYPE_LAND_AIR_MECH) != 0) {
+                    //External units on LAMs, including swarmers, fall automatically and take damage,
+                    //and the LAM itself may take one or more criticals.
+                    for (Entity rider : entity.getExternalUnits()) {
+                        addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing, true, true, true));
+                    }
+                    final int swarmerId = entity.getSwarmAttackerId();
+                    if (Entity.NONE != swarmerId) {
+                        addReport(checkDropBAFromConverting(entity, game.getEntity(swarmerId),
+                                curPos, curFacing, true, true, true));
+                    }
+                }
+
                 continue;
             }
 
@@ -9290,6 +9313,82 @@ public class Server implements Runnable {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
             }
         }
+    }
+
+    /**
+     * LAMs or QuadVees converting from leg mode may force any carried infantry (including swarming)
+     * to fall into the current hex. A LAM may suffer damage. 
+     * 
+     * @param carrier       The <code>Entity</code> making the conversion.
+     * @param rider         The <code>Entity</code> possibly being forced off.
+     * @param curPos        The coordinates of the hex where the conversion starts.
+     * @param curFacing     The carrier's facing when conversion starts.
+     * @param automatic     Whether the infantry falls automatically. If false, an antimech roll is made
+     *                      to see whether it stays mounted.
+     * @param infDamage     If true, the infantry takes falling damage, +1D6 for conventional.
+     * @param carrierDamage If true, the carrier takes damage from converting while carrying infantry.
+     */
+    private Vector<Report> checkDropBAFromConverting(Entity carrier, Entity rider, Coords curPos, int curFacing,
+            boolean automatic, boolean infDamage, boolean carrierDamage) {
+        Vector<Report> reports = new Vector<>();
+        Report r;
+        PilotingRollData prd = rider.getBasePilotingRoll(EntityMovementType.MOVE_NONE);
+        boolean falls = automatic;
+        if (automatic) {
+            r = new Report(2465);
+            r.subject = rider.getId();
+            r.addDesc(rider);
+            r.addDesc(carrier);
+        } else {
+            r = new Report(2460);
+            r.subject = rider.getId();
+            r.addDesc(rider);
+            r.add(prd.getValueAsString());
+            r.addDesc(carrier);
+            final int diceRoll = carrier.getCrew().rollPilotingSkill();
+            r.add(diceRoll);
+            if (diceRoll < prd.getValue()) {
+                r.choose(false);
+                falls = true;
+            } else {
+                r.choose(true);
+            }
+        }
+        reports.add(r);
+        if (falls) {
+            if (carrier.getSwarmAttackerId() == rider.getId()) {
+                rider.setDone(true);
+                carrier.setSwarmAttackerId(Entity.NONE);
+                rider.setSwarmTargetId(Entity.NONE);                
+            } else if (!unloadUnit(carrier, rider, curPos, curFacing, 0)) {
+                System.err.println("Error! Server was told to unload "
+                        + rider.getDisplayName() + " from "
+                        + carrier.getDisplayName() + " into "
+                        + curPos.getBoardNum());
+                return reports;
+            }
+            if (infDamage) {
+                reports.addAll(doEntityFall(rider, curPos, 2, prd));
+                if (rider.getEntityType() == Entity.ETYPE_INFANTRY) {
+                    int extra = Compute.d6();
+                    reports.addAll(damageEntity(rider, new HitData(Infantry.LOC_INFANTRY), extra));
+                }
+            }
+            if (carrierDamage) {
+                //Report the possibility of a critical hit.
+                r = new Report(2470);
+                r.subject = carrier.getId();
+                r.addDesc(carrier);
+                reports.addElement(r);
+                int mod = 0;
+                if (rider.getEntityType() == Entity.ETYPE_INFANTRY) {
+                    mod = -2;
+                }
+                HitData hit = carrier.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                reports.addAll(criticalEntity(carrier, hit.getLocation(), false, mod, 0));
+            }
+        }
+        return reports;
     }
 
     /**

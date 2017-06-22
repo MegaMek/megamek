@@ -193,18 +193,6 @@ public class QuadVee extends QuadMech {
         return wmp;        
     }
     
-    /**
-     * Can only sprint in Mech mode.
-     */
-    @Override
-    public int getSprintMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (isInVehicleMode() || convertingNow) {
-            return getRunMP(gravity, ignoreheat, ignoremodulararmor);
-        }
-        return super.getSprintMP();
-    }
-
-    
     /*
      * No jumping in vehicle mode.
      */

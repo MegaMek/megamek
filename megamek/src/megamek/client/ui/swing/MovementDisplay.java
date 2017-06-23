@@ -46,7 +46,6 @@ import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.CriticalSlot;
 import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Entity;
@@ -120,7 +119,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                       | CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_NON_INF = CMD_MECH | CMD_TANK | CMD_VTOL
                                           | CMD_AERO | CMD_AERO_VECTORED;
-    public static final int CMD_QUADVEE_LAM = CMD_MECH | CMD_MODE_CONV;
 
     /**
      * This enumeration lists all of the possible ActionCommands that can be
@@ -156,7 +154,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_CLIMB_MODE("moveClimbMode", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$
         MOVE_SWIM("moveSwim", CMD_MECH), //$NON-NLS-1$
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
-        MOVE_MODE_CONVERT("moveModeConvert", CMD_QUADVEE_LAM), //$NON-NLS-1$
+        MOVE_MODE_CONVERT("moveModeConvert", CMD_MECH), //$NON-NLS-1$
         MOVE_RECKLESS("moveReckless", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE), //$NON-NLS-1$
         MOVE_EVADE("MoveEvade", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
@@ -272,7 +270,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
 
                 // Check unit type flag
-                if ((cmd.flag & f) != 0) {
+                if ((cmd.flag & f) == f) {
                     flaggedCmds.add(cmd);
                 }
             }
@@ -638,10 +636,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     flag = CMD_AERO;
                 } else {
                     flag = CMD_TANK;
-                }
-            } else if (ce instanceof Mech) {
-                if (ce instanceof QuadVee || ce instanceof LandAirMech || ((Mech)ce).hasTracks()) {
-                    flag = CMD_QUADVEE_LAM;
                 }
             }
         }
@@ -1056,6 +1050,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Remove Careful stand, in case it was set
         ce.setCarefulStand(false);
         ce.setIsJumpingNow(false);
+        ce.setConvertingNow(false);
         ce.setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
 
         // switch back from swimming to normal mode.
@@ -1065,8 +1060,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             ce.setMovementMode(EntityMovementMode.QUAD);
         }
         
-        ce.resetModeConversion();
-
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
         clientgui.bv.setWeaponFieldofFire(ce, cmd);
@@ -2446,21 +2439,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         final Entity ce = ce();
         
+        if (!(ce instanceof QuadVee || ce instanceof LandAirMech
+                || (ce instanceof Mech && ((Mech)ce).hasTracks()))) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
         IHex currHex =  clientgui.getClient().getGame().getBoard().getHex(ce.getPosition());
         if (currHex.containsTerrain(Terrains.WATER)) {
             setModeConvertEnabled(false);
             return;
         }
         
-        if (ce instanceof LandAirMech) {
-            int gyroHits = ce.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
-            if (((Mech)ce).getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-                gyroHits--;
-            }
-            if (gyroHits > 1) {
-                setModeConvertEnabled(false);
-                return;
-            }
+        if (ce instanceof LandAirMech && ce.isGyroDestroyed()) {
+            setModeConvertEnabled(false);
+            return;
         }
         
         if (ce instanceof QuadVee && ((QuadVee)ce).conversionCost() > ce.getRunMP()) {
@@ -4000,23 +3993,26 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     && ((LandAirMech)ce).getPreviousMovementMode() == EntityMovementMode.AIRMECH) {
                 //We need to cycle among three options (fighter, biped, no conversion), which requires
                 //one, two, or zero conversion steps.
-                EntityMovementMode nextMode = ce.nextConversionMode();
+                EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
                 clear();
                 if (nextMode != EntityMovementMode.AIRMECH) {
                     cmd.addStep(MoveStepType.CONVERT_MODE);
                     if (nextMode != EntityMovementMode.AERODYNE) {
                         cmd.addStep(MoveStepType.CONVERT_MODE);
                     }
-                    ce.setMovementMode(nextMode);
                 }
             } else {
                 //Otherwise we're just toggling conversion on or off.
                 boolean wasConverting = ce.isConvertingNow();
                 clear();
-                if (!wasConverting) {
-                    ce.setMovementMode(ce.nextConversionMode());
-                    ce.setConvertingNow(true);
+                ce.setConvertingNow(!wasConverting);
+                if (ce.isConvertingNow()) {
                     cmd.addStep(MoveStepType.CONVERT_MODE);
+                }
+                //Mechs using tracks don't actually convert; they either engage the tracks or use their
+                //legs, so the mode is active from the beginning of the turn.
+                if (ce instanceof Mech && ((Mech)ce).hasTracks()) {
+                    ce.toggleConversionMode();
                 }
             }
             clientgui.bv.drawMovementData(ce(), cmd);
@@ -4804,7 +4800,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     
     private void setModeConvertEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_MODE_CONVERT).setEnabled(enabled);
-        clientgui.getMenuBar().setMoveModeQuadVeeEnabled(enabled);
+        clientgui.getMenuBar().setMoveModeConvertEnabled(enabled);
     }
 
     private void setSwimEnabled(boolean enabled) {

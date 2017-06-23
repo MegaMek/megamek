@@ -68,6 +68,11 @@ public class MoveStep implements Serializable {
      * change this value.
      */
     private EntityMovementType movementType;
+    /**
+     * The movement mode after this step completes. Mode conversions will modify it, though
+     * it may not take effect until the end of movement.
+     */
+    private EntityMovementMode movementMode = EntityMovementMode.NONE;
 
     private boolean isProne;
     private boolean isFlying;
@@ -1003,6 +1008,7 @@ public class MoveStep implements Serializable {
                 } else {
                     setMp(0);
                 }
+                movementMode = entity.nextConversionMode(prev.getMovementMode());
                 break;
             default:
                 setMp(0);
@@ -1011,11 +1017,15 @@ public class MoveStep implements Serializable {
         if (noCost) {
             setMp(0);
         }
+        
+        if (type != MoveStepType.CONVERT_MODE) {
+            movementMode = prev.getMovementMode();
+        }
 
         // Tanks can just drive out of hull-down.  If we're a tank, and we moved
         //  then we are no longer hull-down.
         if ((entity instanceof Tank
-                || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode()))
+                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
                 && (distance > 0)) {
             setHullDown(false);
         }
@@ -1128,6 +1138,7 @@ public class MoveStep implements Serializable {
         elevation = entity.getElevation();
         altitude = entity.getAltitude();
         movementType = entity.moved;
+        movementMode = entity.getMovementMode();
 
         isRolled = false;
         freeTurn = false;
@@ -1389,6 +1400,13 @@ public class MoveStep implements Serializable {
             moveType = EntityMovementType.MOVE_ILLEGAL;
         }
         return moveType;
+    }
+    
+    public EntityMovementMode getMovementMode() {
+        if (movementMode == EntityMovementMode.NONE) {
+            return getEntity().getMovementMode();
+        }
+        return movementMode;
     }
 
     /**
@@ -2443,7 +2461,9 @@ public class MoveStep implements Serializable {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
             if (entity instanceof Tank
-                    || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())) {
+                    || (entity instanceof QuadVee
+                            && ((QuadVee)entity).isInVehicleMode() != entity.isConvertingNow())) {
+                //Tanks and QuadVees ending movement in vehicle mode require a fortified hex.
                 if (!(game.getBoard().getHex(curPos)
                         .containsTerrain(Terrains.FORTIFIED))) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;

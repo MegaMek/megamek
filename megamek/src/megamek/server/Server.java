@@ -6921,12 +6921,11 @@ public class Server implements Runnable {
             
             if (step.getType() == MoveStepType.CONVERT_MODE) {
                 entity.setConvertingNow(true);
-                entity.setMovementMode(entity.nextConversionMode());
                 
                 // Non-omni QuadVees converting to vehicle mode dump any riding BA in the
                 // starting hex if they fail to make an anti-mech check.
                 // http://bg.battletech.com/forums/index.php?topic=55263.msg1271423#msg1271423
-                if (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()
+                if (entity instanceof QuadVee && !((QuadVee)entity).isInVehicleMode()
                         && !entity.isOmni()) {
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing,
@@ -7750,7 +7749,7 @@ public class Server implements Runnable {
                 if (psrFailed) {
 
                     if (entity instanceof Tank
-                            || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode())) {
+                            || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())) {
                         addReport(vehicleMotiveDamage(entity, 0));
                     }
 
@@ -8771,7 +8770,7 @@ public class Server implements Runnable {
         // and doesn't end hull-down we can remove the hull-down status
         if (entity.isHullDown() && !md.getFinalHullDown()
                 && (entity instanceof Tank
-                || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode()))) {
+                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))) {
             entity.setHullDown(false);
         }
 
@@ -9116,8 +9115,9 @@ public class Server implements Runnable {
 
         } // End entity-is-jumping
 
-        //If converting to another mode, report it
+        //If converting to another mode, set the final movement mode and report it
         if (entity.isConvertingNow()) {
+            entity.setMovementMode(md.getFinalConversionMode());
             r = new Report(1210);
             r.subject = entity.getId();
             r.addDesc(entity);
@@ -10704,7 +10704,7 @@ public class Server implements Runnable {
                     vMineReport.addAll(damageEntity(entity, hit, cur_damage));
                 }
                 if (entity instanceof Tank
-                        || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode())) {
+                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())) {
                     // Tanks check for motive system damage from minefields as
                     // from a side hit even though the damage proper hits the
                     // front above; exact side doesn't matter, though.
@@ -10992,9 +10992,11 @@ public class Server implements Runnable {
 
         boolean boom = false;
         // Only mechs can set off vibrabombs. QuadVees should only be able to set off a
-        // vibrabomb in Mech mode.
+        // vibrabomb in Mech mode. Those that are converting to or from Mech mode should
+        // are using leg movement and should be able to set them off.
         if (!(entity instanceof Mech)
-                || (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode())) {
+                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()
+                        && !entity.isConvertingNow())) {
             return boom;
         }
 
@@ -11253,7 +11255,7 @@ public class Server implements Runnable {
             Report.addNewline(vBoomReport);
 
             if (entity instanceof Tank ||
-                    (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode())) {
+                    (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())) {
                 vBoomReport.addAll(vehicleMotiveDamage(entity, entity.getMotiveSideMod(ToHitData.SIDE_LEFT)));
             }
             vBoomReport.addAll(resolvePilotingRolls(entity, true,
@@ -17589,7 +17591,7 @@ public class Server implements Runnable {
 
         // Charging vehicles check for possible motive system hits.
         if (ae instanceof Tank
-                || (ae instanceof QuadVee && ((QuadVee)ae).startedInVehicleMode())) {
+                || (ae instanceof QuadVee && ((QuadVee)ae).isInVehicleMode())) {
             r = new Report(4241);
             r.indent();
             addReport(r);
@@ -17645,7 +17647,7 @@ public class Server implements Runnable {
         // instead,
         // which would be handled as part of the damage already.
         if (((te instanceof Tank) && !(te instanceof VTOL))
-                || (te instanceof QuadVee && ((QuadVee)te).startedInVehicleMode())) {
+                || (te instanceof QuadVee && ((QuadVee)te).isInVehicleMode())) {
             r = new Report(4242);
             r.indent();
             addReport(r);
@@ -32594,7 +32596,7 @@ public class Server implements Runnable {
                 vPhaseReport.addAll(damageEntity(entity, hit, damage, false,
                                                  DamageType.NONE, true));
             }
-            if (entity instanceof QuadVee && ((QuadVee)entity).startedInVehicleMode()) {
+            if (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
                 vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, 0));
             }
         } else if (entity instanceof Tank) {
@@ -33582,13 +33584,7 @@ public class Server implements Runnable {
                                                boolean noroll, int damagetype, boolean jumpDamage) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
-        EntityMovementMode mode = te.getMovementMode();
-        // If a QuadVee suffers motive damage during a round that it converted
-        // to Mech mode, we need to get the mode it started in.
-        if (te instanceof QuadVee && !((QuadVee)te).isInVehicleMode()) {
-            mode = te.nextConversionMode();
-        }
-        switch (mode) {
+        switch (te.getMovementMode()) {
             case HOVER:
             case HYDROFOIL:
                 if (jumpDamage) {

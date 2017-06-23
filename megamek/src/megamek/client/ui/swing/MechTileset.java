@@ -223,16 +223,10 @@ public class MechTileset {
             if (exact.containsKey(entity.getShortNameRaw().toUpperCase()+mode+"_"+secondaryPos)) {
                 return exact.get(entity.getShortNameRaw().toUpperCase()+mode+"_"+secondaryPos);
             }
-            if (exact.containsKey(entity.getShortNameRaw().toUpperCase()+"_"+secondaryPos)) {
-                return exact.get(entity.getShortNameRaw().toUpperCase()+"_"+secondaryPos);
-            }
 
             // next, chassis matches
             if (chassis.containsKey(entity.getChassis().toUpperCase()+mode+"_"+secondaryPos)) {
                 return chassis.get(entity.getChassis().toUpperCase()+mode+"_"+secondaryPos);
-            }
-            if (chassis.containsKey(entity.getChassis().toUpperCase()+"_"+secondaryPos)) {
-                return chassis.get(entity.getChassis().toUpperCase()+"_"+secondaryPos);
             }
 
             // last, the generic model
@@ -241,16 +235,10 @@ public class MechTileset {
         if (exact.containsKey(entity.getShortNameRaw().toUpperCase() + mode)) {
             return exact.get(entity.getShortNameRaw().toUpperCase() + mode);
         }
-        if (exact.containsKey(entity.getShortNameRaw().toUpperCase())) {
-            return exact.get(entity.getShortNameRaw().toUpperCase());
-        }
 
         // next, chassis matches
         if (chassis.containsKey(entity.getChassis().toUpperCase() + mode)) {
             return chassis.get(entity.getChassis().toUpperCase() + mode);
-        }
-        if (chassis.containsKey(entity.getChassis().toUpperCase())) {
-            return chassis.get(entity.getChassis().toUpperCase());
         }
         // last, the generic model
         return genericFor(entity, secondaryPos);

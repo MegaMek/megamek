@@ -125,7 +125,7 @@ public class QuadVee extends QuadMech {
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (startedInVehicleMode()) {
+        if (isInVehicleMode()) {
             return getCruiseMP(gravity, ignoreheat, ignoremodulararmor);
         } else {
             return super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
@@ -231,7 +231,7 @@ public class QuadVee extends QuadMech {
      */
     @Override
     public boolean hasArmedMASC() {
-        boolean superchargerOnly = isInVehicleMode() || convertingNow;
+        boolean superchargerOnly = isInVehicleMode();
         for (Mounted m : getEquipment()) {
             if (!m.isDestroyed() && !m.isBreached()
                     && (m.getType() instanceof MiscType)
@@ -249,7 +249,7 @@ public class QuadVee extends QuadMech {
      */
     @Override
     public boolean hasArmedMASCAndSuperCharger() {
-        if (isInVehicleMode() || convertingNow) {
+        if (isInVehicleMode()) {
             return false;
         }
         return super.hasArmedMASCAndSuperCharger();
@@ -303,9 +303,9 @@ public class QuadVee extends QuadMech {
     }
 
     @Override
-    public EntityMovementMode nextConversionMode() {
-        if (movementMode == EntityMovementMode.TRACKED
-                || movementMode == EntityMovementMode.WHEELED) {
+    public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
+        if (afterMode == EntityMovementMode.TRACKED
+                || afterMode == EntityMovementMode.WHEELED) {
             return originalMovementMode;
         } else if (motiveType == MOTIVE_WHEEL) {
             return EntityMovementMode.WHEELED;
@@ -328,7 +328,7 @@ public class QuadVee extends QuadMech {
         //in the turn; since vehicles cannot be prone, the unit cannot fall while converting
         //to vehicle mode.
         //http://bg.battletech.com/forums/index.php?topic=55261.msg1274233#msg1274233
-        return !isInVehicleMode();
+        return !isInVehicleMode() && !convertingNow;
     }
     
     /**
@@ -355,14 +355,6 @@ public class QuadVee extends QuadMech {
     public boolean isInVehicleMode() {
         return movementMode == EntityMovementMode.TRACKED
                 || movementMode == EntityMovementMode.WHEELED;
-    }
-    
-    /**
-     * @return Whether the QuadVee started the turn in vehicle mode.
-     */
-    public boolean startedInVehicleMode() {
-        return (movementMode == EntityMovementMode.TRACKED
-                || movementMode == EntityMovementMode.WHEELED) != convertingNow;
     }
     
     public boolean isMovementHit() {
@@ -400,7 +392,7 @@ public class QuadVee extends QuadMech {
 
     @Override
     public int getMaxElevationChange() {
-        if (isInVehicleMode() || convertingNow) {
+        if (isInVehicleMode()) {
             return 1;
         }
         return 2;
@@ -453,7 +445,7 @@ public class QuadVee extends QuadMech {
             roll.addModifier(2, "pilot incapacitated");
         }
         
-        if (startedInVehicleMode()) {
+        if (isInVehicleMode()) {
             if (motivePenalty > 0) {
                 roll.addModifier(motivePenalty, "motive system damage");                
             }
@@ -545,7 +537,7 @@ public class QuadVee extends QuadMech {
      */
     @Override
     public boolean canGoHullDown() {
-        if (isInVehicleMode()) {
+        if (isInVehicleMode() != convertingNow) {
             IHex occupiedHex = game.getBoard().getHex(getPosition());
             return occupiedHex.containsTerrain(Terrains.FORTIFIED)
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);

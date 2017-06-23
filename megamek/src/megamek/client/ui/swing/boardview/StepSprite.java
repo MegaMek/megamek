@@ -414,13 +414,8 @@ class StepSprite extends Sprite {
                     modePos += 16;
                 }
                 // show new movement mode
-                String mode = Messages.getString("MovementType."
-                        + step.getEntity().getMovementModeAsString());
-                //The LAM ASF mode is called Fighter, not Aerodyne
-                if ((step.getEntity().getEntityType() & Entity.ETYPE_LAND_AIR_MECH) != 0
-                        && step.getEntity().getMovementMode() == EntityMovementMode.AERODYNE) {
-                    mode = Messages.getString("BoardView1.FighterMode");
-                }
+                String mode = Messages.getString("BoardView1.ConversionMode."
+                        + step.getMovementMode());
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int modeX = (stepPos.x + 42)
                         - (graph.getFontMetrics(graph.getFont())

@@ -1079,7 +1079,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getSprintMP() {
-        if (hasHipCrit() || (this instanceof QuadVee && ((QuadVee)this).startedInVehicleMode())) {
+        if (hasHipCrit() || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())) {
             return getRunMP();
         }
         return getSprintMP(true, false, false);
@@ -1466,9 +1466,9 @@ public abstract class Mech extends Entity {
     }
     
     @Override
-    public EntityMovementMode nextConversionMode() {
-        if (hasTracks() && movementMode != EntityMovementMode.TRACKED) {
-                return EntityMovementMode.TRACKED;
+    public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
+        if (hasTracks() && afterMode != EntityMovementMode.TRACKED) {
+            return EntityMovementMode.TRACKED;
         } else {
             return originalMovementMode;
         }

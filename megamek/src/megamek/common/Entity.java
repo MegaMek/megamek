@@ -6723,7 +6723,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (getMovementMode() != EntityMovementMode.BIPED_SWIM)
             && (getMovementMode() != EntityMovementMode.QUAD_SWIM)
             && (getMovementMode() != EntityMovementMode.WIGE)
-            && !(this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())
+            && canFall()
             && !isPavementStep) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER), moveType);
         }
@@ -13536,10 +13536,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
     
     /**
-     * Entities that can convert movement modes (LAMs, QuadVees) report the next mode when conversion is toggled
+     * Entities that can convert movement modes (LAMs, QuadVees) report the next mode to assume
+     * when a convert movement command is processed. This provides a set order for cycling through
+     * available modes.
+     *
+     * @param afterMode The movement mode to convert from.
+     * @return          The next movement mode in the sequence.
      */
-    public EntityMovementMode nextConversionMode() {
+    public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
         return movementMode;
+    }
+    
+    /**
+     * Sets the movement mode to the next in the conversion sequence for QuadVees, LAMs, and Mechs
+     * with tracks. In most cases this switches between two available modes, but LAMs that start
+     * the turn in AirMech mode have three available.
+     */
+    public void toggleConversionMode() {
+        movementMode = nextConversionMode(movementMode);
     }
     
     /**
@@ -13564,18 +13578,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean canFall() {
         return canFall(false);
-    }
-    
-    /**
-     * When a movment path is canceled, clear any planned mode conversions by toggling the movement mode
-     * and clearing the <code>convertingNow</code> flag. Units with more than two possible modes (i.e. LAMs)
-     * will need to override this.
-     */
-    public void resetModeConversion() {
-        if (convertingNow) {
-            movementMode = nextConversionMode();
-            convertingNow = false;
-        }
     }
     
     public void setTraitorId(int id) {

@@ -168,28 +168,22 @@ public class LandAirMech extends BipedMech {
      * two states. LAMs in AirMech mode have three possible states.
      */
     @Override
-    public EntityMovementMode nextConversionMode() {
+    public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
         if (previousMovementMode == EntityMovementMode.AIRMECH) {
-            if (movementMode == EntityMovementMode.BIPED) {
-                return EntityMovementMode.AIRMECH;
-            } else if (movementMode == EntityMovementMode.AIRMECH) {
+            if (afterMode == EntityMovementMode.AIRMECH) {
                 return EntityMovementMode.AERODYNE;
+            } else if (afterMode == EntityMovementMode.AERODYNE) {
+                return originalMovementMode;
             } else {
-                return EntityMovementMode.BIPED;
+                return EntityMovementMode.AIRMECH;
             }
-        } else if (movementMode == EntityMovementMode.AIRMECH) {
+        } else if (afterMode == EntityMovementMode.AIRMECH) {
             return previousMovementMode;
-        } else if (movementMode == EntityMovementMode.AERODYNE) {
-            return lamType == LAM_BIMODAL? EntityMovementMode.BIPED : EntityMovementMode.AIRMECH;
+        } else if (afterMode == EntityMovementMode.AERODYNE) {
+            return lamType == LAM_BIMODAL? originalMovementMode : EntityMovementMode.AIRMECH;
         } else {
             return lamType == LAM_BIMODAL? EntityMovementMode.AERODYNE : EntityMovementMode.AIRMECH;
         }
-    }
-    
-    @Override
-    public void resetModeConversion() {
-        movementMode = previousMovementMode;
-        convertingNow = false;
     }
     
     @Override

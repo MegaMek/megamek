@@ -453,16 +453,17 @@ public class MovePath implements Cloneable, Serializable {
                 getEntity().setIsJumpingNow(false);
             }
             
-            if (step1.getType() == MovePath.MoveStepType.CONVERT_MODE) {
-                if (getEntity() instanceof LandAirMech) {
-                    getEntity().setMovementMode(((LandAirMech)getEntity()).getPreviousMovementMode());
-                } else {
-                    getEntity().setMovementMode(getEntity().nextConversionMode());
-                }
-                getEntity().setConvertingNow(false);
-            }
-
             steps.removeElementAt(steps.size() - 1);
+            
+            if (getEntity().isConvertingNow() && !this.contains(MovePath.MoveStepType.CONVERT_MODE)) {
+                getEntity().setConvertingNow(false);
+                //Mechs using tracks have the movement mode set at the beginning of the turn, so
+                //it will need to be reset.
+                if (getEntity() instanceof Mech && ((Mech)getEntity()).hasTracks()) {
+                    getEntity().toggleConversionMode();
+                }
+            }
+            
         }
 
         // Find the new last step in the path.
@@ -651,6 +652,19 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         return 0;
+    }
+    
+    /**
+     * If the path contains mode conversions, this will determine the movement mode at the end
+     * of movement. Note that LAMs converting from AirMech to Biped mode require two convert commands.
+     * 
+     * @return The movement mode resulting from any mode conversions in the path.
+     */
+    public EntityMovementMode getFinalConversionMode() {
+        if (getLastStep() != null) {
+            return getLastStep().getMovementMode();
+        }
+        return getEntity().getMovementMode();
     }
 
     /**

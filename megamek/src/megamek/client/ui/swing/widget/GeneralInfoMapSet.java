@@ -30,11 +30,14 @@ import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
+import megamek.common.QuadVee;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
@@ -455,9 +458,21 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         if (en instanceof Tank) {
+            movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementTypeL"));
             movementTypeL.setVisible(true);
             movementTypeR.setString(Messages.getString("MovementType."
                     + en.getMovementModeAsString()));
+            movementTypeR.setVisible(true);
+        } else if (en instanceof QuadVee || en instanceof LandAirMech
+                || (en instanceof Mech && ((Mech)en).hasTracks())) {
+            movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
+            if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
+                movementTypeR.setString(Messages.getString("BoardView1.FighterMode"));
+            } else {
+                movementTypeR.setString(Messages.getString("MovementType."
+                        + en.getMovementModeAsString()));
+            }
+            movementTypeL.setVisible(true);
             movementTypeR.setVisible(true);
         } else {
             movementTypeL.setVisible(false);

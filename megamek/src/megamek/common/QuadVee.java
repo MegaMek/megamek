@@ -3,6 +3,8 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
+
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -558,6 +560,33 @@ public class QuadVee extends QuadMech {
     @Override
     public boolean isEligibleForPhysical() {
         return !isInVehicleMode() && super.isEligibleForPhysical();
+    }
+    
+    /**
+     * Adds the C-bill cost of tracks or wheels to the weapons and equipment cost.
+     */
+    @Override
+    public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
+        long cost = super.getWeaponsAndEquipmentCost(ignoreAmmo);
+        
+        int baseCost = getMotiveType() == QuadVee.MOTIVE_WHEEL?
+                750 : 500;
+        long itemCost = (long) Math.ceil(baseCost * getEngine().getRating() * getWeight() / 75.0);
+        cost += itemCost;
+        
+        if ((bvText != null) && (itemCost > 0)) {
+            NumberFormat commafy = NumberFormat.getInstance();
+            bvText.append(startRow);
+            bvText.append(startColumn);
+            bvText.append(getMotiveTypeString());
+            bvText.append(endColumn);
+
+            bvText.append(startColumn);
+            bvText.append(commafy.format(itemCost));
+            bvText.append(endColumn);
+            bvText.append(endRow);
+        }
+        return cost;
     }
     
     @Override

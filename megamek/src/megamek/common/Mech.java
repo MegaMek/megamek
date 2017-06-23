@@ -4958,7 +4958,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[15 + locations()];
+        double[] costs = new double[16 + locations()];
         int i = 0;
 
         double cockpitCost = 0;
@@ -4978,6 +4978,8 @@ public abstract class Mech extends Entity {
             cockpitCost = 175000;
         } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
             cockpitCost = 100000;
+        } else if (getCockpitType() == Mech.COCKPIT_QUADVEE) {
+            cockpitCost = 375000;
         } else {
             cockpitCost = 200000;
         }
@@ -4990,7 +4992,8 @@ public abstract class Mech extends Entity {
         costs[i++] = weight * 2000;// sensors
         int muscCost = hasSCM() ? 10000 : hasTSM() ? 16000 : hasIndustrialTSM() ? 12000 : 2000;
         costs[i++] = muscCost * weight;// musculature
-        costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
+        double structureCost = EquipmentType.getStructureCost(structureType) * weight;// IS
+        costs[i++] = structureCost;
         costs[i++] = getActuatorCost();// arm and/or leg actuators
         if(hasEngine()) {
             costs[i++] = (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
@@ -5059,8 +5062,18 @@ public abstract class Mech extends Entity {
                     * EquipmentType.getArmorCost(armorType[0]);
         }
 
-        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
-
+        double weaponCost = getWeaponsAndEquipmentCost(ignoreAmmo);
+        costs[i++] = weaponCost;
+        
+        if (this instanceof LandAirMech) {
+            costs[i++] = (structureCost + weaponCost)
+                    * ((LandAirMech)this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75;
+        } else if (this instanceof QuadVee) {
+            costs[i++] = (structureCost + weaponCost) * 0.5;
+        } else {
+            costs[i++] = 0;
+        }
+        
         double cost = 0; // calculate the total
         for (int x = 0; x < i; x++) {
             cost += costs[x];
@@ -5089,7 +5102,7 @@ public abstract class Mech extends Entity {
                 "Structure", "Actuators", "Engine", "Gyro", "Jump Jets",
                 "Heatsinks", "Full Head Ejection System",
                 "Armored System Components", "Armor", "Equipment",
-                "Omni Multiplier", "Weight Multiplier" };
+                "Conversion Equipment", "Omni Multiplier", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 

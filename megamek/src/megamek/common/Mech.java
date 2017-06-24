@@ -914,7 +914,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * does this mech have tracks?
+     * Does this mech have tracks? Used for tracks as industrial equipment; QuadVees return false.
      *
      * @return
      */

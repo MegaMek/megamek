@@ -108,18 +108,9 @@ public class TestMech extends TestEntity {
 
     @Override
     public double getWeightMisc() {
-        if (mech instanceof LandAirMech) {
+        if (mech instanceof LandAirMech || mech instanceof QuadVee) {
             // 10% of weight is conversion equipment
             return Math.ceil(mech.getWeight() / 10);
-        } else if (mech instanceof QuadVee) {
-            //Tracks are 10% of weight and wheels are 15%, rounded up to the half ton.
-            double motiveMultiplier = 0.1;
-            if (((QuadVee)mech).getMotiveType() == QuadVee.MOTIVE_WHEEL) {
-                motiveMultiplier = 0.15;
-            }
-            //Conversion equipment is 10% of weight, rounded up to the ton.
-            return ceil(mech.getWeight() * motiveMultiplier, Ceil.HALFTON)
-                    + ceil(mech.getWeight() / 10, Ceil.TON);
         }
         return 0.0f;
     }
@@ -933,19 +924,42 @@ public class TestMech extends TestEntity {
                 }
             }
 
-            if (m.getType().hasFlag(MiscType.F_TALON)) {
-                if (mech instanceof BipedMech) {
-                    if (!mech.locationIsLeg(m.getLocation())) {
+            if (misc.hasFlag(MiscType.F_TRACKS)) {
+                if (mech instanceof QuadVee) {
+                    if (misc.hasSubType(MiscType.S_QUADVEE_WHEELS)
+                            != (((QuadVee)mech).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
                         illegal = true;
-                        buff.append("Talons are only legal in the Legs\n");
+                        buff.append("Motive equipment does not match QuadVee motive type.\n");
                     }
-                    for (int loc = 0; loc < mech.locations(); loc++) {
-                        if (mech.locationIsLeg(loc)
-                                && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 2) {
-                            illegal = true;
-                            buff.append("Talons require two critical slots in each leg.\n");
-                            break;
-                        }
+                } else if (misc.hasSubType(MiscType.S_QUADVEE_WHEELS)) {
+                    illegal = true;
+                    buff.append("Wheels can only be used on QuadVees.\n");
+                }
+                if (!mech.locationIsLeg(m.getLocation())) {
+                    illegal = true;
+                    buff.append(misc.getName() + " are only legal in the Legs\n");
+                }
+                for (int loc = 0; loc < mech.locations(); loc++) {
+                    if (mech.locationIsLeg(loc)
+                            && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 1) {
+                        illegal = true;
+                        buff.append(misc.getName() + " require one critical slot in each leg.\n");
+                        break;
+                    }
+                }
+            }
+            
+            if (m.getType().hasFlag(MiscType.F_TALON)) {
+                if (!mech.locationIsLeg(m.getLocation())) {
+                    illegal = true;
+                    buff.append("Talons are only legal in the Legs\n");
+                }
+                for (int loc = 0; loc < mech.locations(); loc++) {
+                    if (mech.locationIsLeg(loc)
+                            && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 2) {
+                        illegal = true;
+                        buff.append("Talons require two critical slots in each leg.\n");
+                        break;
                     }
                 }
             }

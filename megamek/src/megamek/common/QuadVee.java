@@ -3,8 +3,6 @@
  */
 package megamek.common;
 
-import java.text.NumberFormat;
-
 import megamek.common.options.OptionsConstants;
 
 /**
@@ -22,12 +20,10 @@ public class QuadVee extends QuadMech {
 
     public static final int SYSTEM_CONVERSION_GEAR = 15;
     
-    public static final int SYSTEM_TRACK = 16;
-
     public static final String systemNames[] = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
             "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot",
-            "Conversion Gear", "Track"};
+            "Conversion Gear"};
     
     public static final int MOTIVE_UNKNOWN = -1;
     public static final int MOTIVE_TRACK = 0;
@@ -57,16 +53,9 @@ public class QuadVee extends QuadMech {
         motiveType = inMotiveType;
 
         setCritical(LOC_RARM, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
-        setCritical(LOC_RARM, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TRACK));
-
         setCritical(LOC_LARM, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
-        setCritical(LOC_LARM, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TRACK));
-
         setCritical(LOC_RLEG, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
-        setCritical(LOC_RLEG, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TRACK));
-
         setCritical(LOC_LLEG, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_CONVERSION_GEAR));
-        setCritical(LOC_LLEG, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_TRACK));
     }
 
     @Override
@@ -76,9 +65,6 @@ public class QuadVee extends QuadMech {
         }
         if (index == SYSTEM_COCKPIT) {
             return Mech.getCockpitDisplayString(cockpitType);
-        }
-        if (index == SYSTEM_TRACK) {
-            return MOTIVE_STRING[motiveType];
         }
         return systemNames[index];
     }
@@ -116,6 +102,13 @@ public class QuadVee extends QuadMech {
             }
         }
         return MOTIVE_UNKNOWN;
+    }
+    
+    /**
+     * This is used to identify Mechs that have tracks mounted as industrial equipment.
+     */
+    public boolean hasTracks() {
+        return false;
     }
     
     /**
@@ -553,34 +546,7 @@ public class QuadVee extends QuadMech {
     public boolean isEligibleForPhysical() {
         return !isInVehicleMode() && super.isEligibleForPhysical();
     }
-    
-    /**
-     * Adds the C-bill cost of tracks or wheels to the weapons and equipment cost.
-     */
-    @Override
-    public long getWeaponsAndEquipmentCost(boolean ignoreAmmo) {
-        long cost = super.getWeaponsAndEquipmentCost(ignoreAmmo);
         
-        int baseCost = getMotiveType() == QuadVee.MOTIVE_WHEEL?
-                750 : 500;
-        long itemCost = (long) Math.ceil(baseCost * getEngine().getRating() * getWeight() / 75.0);
-        cost += itemCost;
-        
-        if ((bvText != null) && (itemCost > 0)) {
-            NumberFormat commafy = NumberFormat.getInstance();
-            bvText.append(startRow);
-            bvText.append(startColumn);
-            bvText.append(getMotiveTypeString());
-            bvText.append(endColumn);
-
-            bvText.append(startColumn);
-            bvText.append(commafy.format(itemCost));
-            bvText.append(endColumn);
-            bvText.append(endRow);
-        }
-        return cost;
-    }
-    
     @Override
     public String getTilesetModeString() {
         if (isInVehicleMode()) {

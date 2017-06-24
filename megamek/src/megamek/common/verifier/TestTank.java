@@ -464,4 +464,155 @@ public class TestTank extends TestEntity {
         }
         return 0;
     }
+    
+    /**
+     * Check if the unit has combinations of equipment which are not allowed in
+     * the construction rules.
+     *
+     * @param buff
+     *            diagnostics are appended to this
+     * @return true if the entity is illegal
+     */
+    @Override
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        boolean illegal = super.hasIllegalEquipmentCombinations(buff);
+        
+        boolean hasSponsonTurret = false;
+        
+        for (Mounted m : getEntity().getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
+                hasSponsonTurret = true;
+            }
+        }
+        
+        for (Mounted m : getEntity().getMisc()) {
+            final MiscType misc = (MiscType)m.getType();
+            
+            if (misc.hasFlag(MiscType.F_JUMP_JET)) {
+                if (hasSponsonTurret) {
+                    buff.append("can't combine vehicular jump jets and sponson turret\n");
+                    illegal = true;
+                }
+                if ((getEntity().getMovementMode() != EntityMovementMode.HOVER)
+                        && (getEntity().getMovementMode() != EntityMovementMode.WHEELED)
+                        && (getEntity().getMovementMode() != EntityMovementMode.TRACKED)
+                        && (getEntity().getMovementMode() != EntityMovementMode.WIGE)) {
+                    buff.append("jump jets only possible on vehicles with hover, wheeled, tracked, or Wing-in-Ground Effect movement mode\n");
+                    illegal = true;
+                }
+            }
+
+            if (misc.hasFlag(MiscType.F_HARJEL)
+                    && ((m.getLocation() == Tank.LOC_BODY)
+                            || ((getEntity() instanceof VTOL)
+                                && (m.getLocation() == VTOL.LOC_ROTOR)))) {
+                illegal = true;
+                buff.append("Unable to load harjel in body or rotor.\n");
+            }
+
+            if (misc.hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)
+                    && m.getLocation() != Tank.LOC_BODY) {
+                illegal = true;
+                buff.append("Vehicle must not mount light fluid suction system in body\n");                
+            }
+
+            if (misc.hasFlag(MiscType.F_BULLDOZER)) {
+                for (Mounted m2 : getEntity().getMisc()) {
+                    if (m2.getLocation() == m.getLocation()) {
+                        if (m2.getType().hasFlag(MiscType.F_CLUB)) {
+                            if (m2.getType().hasSubType(MiscType.S_BACKHOE)
+                                    || m2.getType().hasSubType(
+                                            MiscType.S_CHAINSAW)
+                                    || m2.getType().hasSubType(
+                                            MiscType.S_COMBINE)
+                                    || m2.getType().hasSubType(
+                                            MiscType.S_DUAL_SAW)
+                                    || m2.getType().hasSubType(
+                                            MiscType.S_PILE_DRIVER)
+                                    || m2.getType().hasSubType(
+                                            MiscType.S_MINING_DRILL)
+                                    || m2.getType().hasSubType(
+                                            MiscType.S_ROCK_CUTTER)
+                                    || m2.getType().hasSubType(
+                                            MiscType.S_WRECKING_BALL)) {
+                                illegal = true;
+                                buff.append("bulldozer in same location as prohibited physical weapon\n");
+                            }
+                        }
+                    }
+                }
+                if ((m.getLocation() != Tank.LOC_FRONT) && (m.getLocation() != Tank.LOC_REAR)) {
+                    illegal = true;
+                    buff.append("bulldozer must be mounted in front\n");
+                }
+                if ((getEntity().getMovementMode() != EntityMovementMode.TRACKED)
+                        && (getEntity().getMovementMode() != EntityMovementMode.WHEELED)) {
+                    illegal = true;
+                    buff.append("bulldozer must be mounted in unit with tracked or wheeled movement mode\n");
+                }
+            }
+        }
+        
+        if ((tank.getMovementMode() == EntityMovementMode.VTOL)
+                || (tank.getMovementMode() == EntityMovementMode.WIGE)
+                || (tank.getMovementMode() == EntityMovementMode.HOVER)) {
+            for (int i = 0; i < tank.locations(); i++) {
+                if (tank.getArmorType(i) == EquipmentType.T_ARMOR_HARDENED) {
+                    buff.append("Hardened armor can't be mounted on WiGE/Hover/Wheeled vehicles\n");
+                    illegal = true;
+                }
+            }
+        }
+        
+        // Ensure that omni tank turrets aren't overloaded
+        if (tank.isOmni()) {
+            // Check to see if the base chassis turret weight is set
+            double turretWeight = 0;
+            double turret2Weight = 0;
+            for (Mounted m : tank.getEquipment()) {
+                if ((m.getLocation() == tank.getLocTurret2())
+                        && !(m.getType() instanceof AmmoType)) {
+                    turret2Weight += m.getType().getTonnage(tank);
+                }
+                if ((m.getLocation() == tank.getLocTurret())
+                        && !(m.getType() instanceof AmmoType)) {
+                    turretWeight += m.getType().getTonnage(tank);
+                }
+            }
+            turretWeight *= 0.1;
+            turret2Weight *= 0.1;
+            if (tank.isSupportVehicle()) {
+                if (getEntity().getWeight() < 5) {
+                    turretWeight = TestEntity.ceil(turretWeight, Ceil.KILO);
+                    turret2Weight = TestEntity.ceil(turret2Weight, Ceil.KILO);
+                } else {
+                    turretWeight = TestEntity.ceil(turretWeight, Ceil.HALFTON);
+                    turret2Weight = TestEntity.ceil(turret2Weight, Ceil.HALFTON);
+                }
+            } else {
+                turretWeight = TestEntity.ceil(turretWeight,
+                        getWeightCeilingTurret());
+                turret2Weight = TestEntity.ceil(turret2Weight,
+                        getWeightCeilingTurret());
+            }
+            if ((tank.getBaseChassisTurretWeight() >= 0)
+                    && (turretWeight > tank.getBaseChassisTurretWeight())) {
+                buff.append("Unit has more weight in the turret than allowed "
+                        + "by base chassis!  Current weight: " + turretWeight
+                        + ", base chassis turret weight: "
+                        + tank.getBaseChassisTurretWeight() + "\n");
+                illegal = true;
+            }
+            if ((tank.getBaseChassisTurret2Weight() >= 0)
+                    && (turret2Weight > tank.getBaseChassisTurret2Weight())) {
+                buff.append("Unit has more weight in the second turret than "
+                        + "allowed by base chassis!  Current weight: "
+                        + turret2Weight + ", base chassis turret weight: "
+                        + tank.getBaseChassisTurret2Weight() + "\n");
+                illegal = true;
+            }
+        }
+        
+        return illegal;
+    }
 }

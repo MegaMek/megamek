@@ -9117,22 +9117,28 @@ public class Server implements Runnable {
 
         //If converting to another mode, set the final movement mode and report it
         if (entity.isConvertingNow()) {
-            entity.setMovementMode(md.getFinalConversionMode());
             r = new Report(1210);
             r.subject = entity.getId();
             r.addDesc(entity);
-            if (entity instanceof Mech && ((Mech)entity).hasTracks()) {
-                r.messageId = 2455;
-                r.choose(entity.getMovementMode() == EntityMovementMode.TRACKED);
-            } else if (entity.getMovementMode() == EntityMovementMode.TRACKED
-                    || entity.getMovementMode() == EntityMovementMode.WHEELED) {
-                r.messageId = 2451;
-            } else if (entity.getMovementMode() == EntityMovementMode.AIRMECH) {
-                r.messageId = 2452;
-            } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
-                r.messageId = 2453;
+            if (entity instanceof QuadVee && entity.isProne() && !((QuadVee)entity).isInVehicleMode()) {
+                //Fall while converting to vehicle mode cancels conversion.
+                entity.setConvertingNow(false);
+                r.messageId = 2454;
             } else {
-                r.messageId = 2450;
+                entity.setMovementMode(md.getFinalConversionMode());
+                if (entity instanceof Mech && ((Mech)entity).hasTracks()) {
+                    r.messageId = 2455;
+                    r.choose(entity.getMovementMode() == EntityMovementMode.TRACKED);
+                } else if (entity.getMovementMode() == EntityMovementMode.TRACKED
+                        || entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                    r.messageId = 2451;
+                } else if (entity.getMovementMode() == EntityMovementMode.AIRMECH) {
+                    r.messageId = 2452;
+                } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
+                    r.messageId = 2453;
+                } else {
+                    r.messageId = 2450;
+                }
             }
             addReport(r);
         }

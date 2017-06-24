@@ -317,11 +317,7 @@ public class QuadVee extends QuadMech {
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         //QuadVees cannot fall due to failed PSR in vehicle mode.
-        //When converting, the conversion completes regardless of anything else that happens
-        //in the turn; since vehicles cannot be prone, the unit cannot fall while converting
-        //to vehicle mode.
-        //http://bg.battletech.com/forums/index.php?topic=55261.msg1274233#msg1274233
-        return !isInVehicleMode() && !convertingNow;
+        return !isInVehicleMode() || convertingNow;
     }
     
     /**

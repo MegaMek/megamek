@@ -36,6 +36,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
@@ -110,6 +111,15 @@ public class TestMech extends TestEntity {
         if (mech instanceof LandAirMech) {
             // 10% of weight is conversion equipment
             return Math.ceil(mech.getWeight() / 10);
+        } else if (mech instanceof QuadVee) {
+            //Tracks are 10% of weight and wheels are 15%, rounded up to the half ton.
+            double motiveMultiplier = 0.1;
+            if (((QuadVee)mech).getMotiveType() == QuadVee.MOTIVE_WHEEL) {
+                motiveMultiplier = 0.15;
+            }
+            //Conversion equipment is 10% of weight, rounded up to the ton.
+            return ceil(mech.getWeight() * motiveMultiplier, Ceil.HALFTON)
+                    + ceil(mech.getWeight() / 10, Ceil.TON);
         }
         return 0.0f;
     }
@@ -163,6 +173,8 @@ public class TestMech extends TestEntity {
         } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
             weight = 5.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_INTERFACE) {
+            weight = 4.0;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_QUADVEE) {
             weight = 4.0;
         }
 
@@ -999,6 +1011,10 @@ public class TestMech extends TestEntity {
             if (mech.getArmoredComponentBV() > 0) {
                 buff.append("Superheavy Mechs cannot have armored components\n");
                 illegal = true;
+            }
+            
+            if (mech instanceof QuadVee) {
+                buff.append("QuadVees cannot be constructed as superheavies.\n");
             }
         }
         

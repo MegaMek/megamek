@@ -1137,11 +1137,7 @@ public abstract class Mech extends Entity {
     }
 
     public int getOriginalSprintMPwithoutMASC() {
-        if (hasHipCrit()) {
-            return getOriginalSprintMPwithoutMASC();
-        }
-        return ((int) Math.ceil(getWalkMP(false, false) * 2.0))
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
+        return ((int) Math.ceil(getOriginalWalkMP() * 2.0)) - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
     /**

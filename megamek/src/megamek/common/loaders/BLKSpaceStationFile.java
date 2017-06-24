@@ -81,15 +81,35 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         }
         a.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
+        // Crew
         if (!dataFile.exists("crew")) {
             throw new EntityLoadingException("Could not find crew block.");
         }
         a.setNCrew(dataFile.getDataAsInt("crew")[0]);
 
+        // Marines
+        if (!dataFile.exists("marines")) {
+            //throw new EntityLoadingException("Could not find marines block.");
+        }
+        a.setNMarines(dataFile.getDataAsInt("marines")[0]);
+
+        // Battle Armor
+        if (!dataFile.exists("battlearmor")) {
+            //throw new EntityLoadingException("Could not find battlearmor block.");
+        }
+        a.setNBattleArmor(dataFile.getDataAsInt("battlearmor")[0]);
+
+        // Passengers
         if (!dataFile.exists("passengers")) {
             throw new EntityLoadingException("Could not find passenger block.");
         }
         a.setNPassenger(dataFile.getDataAsInt("passengers")[0]);
+
+        // Other Passengers
+        if (!dataFile.exists("other_crew")) {
+            //throw new EntityLoadingException("Could not find other_crew block.");
+        }
+        a.setNOtherCrew(dataFile.getDataAsInt("other_crew")[0]);
 
         if (!dataFile.exists("life_boat")) {
             throw new EntityLoadingException("Could not find life boat block.");

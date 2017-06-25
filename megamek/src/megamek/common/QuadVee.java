@@ -81,6 +81,10 @@ public class QuadVee extends QuadMech {
         return motiveType;
     }
 
+    public void setMotiveType(int motiveType) {
+        this.motiveType = motiveType;
+    }
+
     public String getMotiveTypeString(int motiveType) {
         if (motiveType < 0 || motiveType >= MOTIVE_STRING.length) {
             return MOTIVE_STRING[MOTIVE_UNKNOWN];

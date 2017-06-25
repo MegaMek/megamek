@@ -824,7 +824,12 @@ public class MiscType extends EquipmentType {
 
             return Math.floor(tonnage) + 0.5;
         } else if (hasFlag(F_TRACKS)) {
-            return entity.getWeight() * (hasSubType(S_QUADVEE_WHEELS)? 0.15 : 0.1);
+            if (hasSubType(S_QUADVEE_WHEELS)) {
+                // 15%, round up to the nearest half ton.
+                return Math.ceil(entity.getWeight() * 0.3) / 2.0;
+            } else {
+                return entity.getWeight() * 0.1;
+            }
         } else if (hasFlag(F_LIMITED_AMPHIBIOUS)) {
             return Math.ceil((entity.getWeight() / 25f) * 2) / 2.0;
         } else if (hasFlag(F_FULLY_AMPHIBIOUS)) {

@@ -6056,7 +6056,10 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+//Standard LRMs (see Mutators Above)
     
+//Standard MRMs
+  
     
 //TODO HERE
     

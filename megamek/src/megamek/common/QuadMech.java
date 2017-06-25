@@ -288,6 +288,13 @@ public class QuadMech extends Mech {
         }
         return true;
     }
+    
+    public PilotingRollData addQuadPilotingBonus(PilotingRollData roll, int destroyedLegs) {
+        if (destroyedLegs == 0) {
+            roll.addModifier(-2, "Quad bonus");
+        }
+        return roll;
+    }
 
     /**
      * Add in any piloting skill mods
@@ -305,7 +312,8 @@ public class QuadMech extends Mech {
 
         destroyedLegs = countBadLegs();
 
-        if (destroyedLegs == 0) {
+        // QuadVees lose the bonus when converting.
+        if (destroyedLegs == 0 && !convertingNow) {
             roll.addModifier(-2, "Quad bonus");
         }
 

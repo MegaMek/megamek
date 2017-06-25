@@ -191,7 +191,8 @@ public class MovePath implements Cloneable, Serializable {
     public boolean canShift() {
         return ((getEntity() instanceof QuadMech
                 // QuadVee cannot shift in vee mode
-                && getEntity().getMovementMode() == EntityMovementMode.QUAD)
+                && !(getEntity() instanceof QuadVee
+                        && (((QuadVee)getEntity()).isInVehicleMode() || getEntity().isConvertingNow())))
                 // Maneuvering Ace allows Bipeds and VTOLs moving at cruise
                 //  speed to perform a lateral shift
                 || (getEntity().isUsingManAce()

@@ -128,6 +128,9 @@ public class Tank extends Entity {
     private int stabiliserHits = 0;
     private boolean driverHit = false;
     private boolean commanderHit = false;
+    //If there is a cockpit command console, the tank does not suffer the effects of the first commander critical,
+    //but the command console benefits are lost as the backup has to take command.
+    private boolean usingConsoleCommander = false;
 
     // set up some vars for what the critical effects would be
     private int potCrit = CRIT_NONE;
@@ -150,6 +153,10 @@ public class Tank extends Entity {
      * required to have control systems.
      */
     private boolean hasNoControlSystems = false;
+
+    public CrewType defaultCrewType() {
+        return CrewType.CREW;
+    }
 
     public int getPotCrit() {
         return potCrit;
@@ -397,6 +404,14 @@ public class Tank extends Entity {
     public void setCommanderHit(boolean hit) {
         commanderHit = hit;
     }
+    
+    public boolean isUsingConsoleCommander() {
+        return usingConsoleCommander;
+    }
+    
+    public void setUsingConsoleCommander(boolean b) {
+        usingConsoleCommander = b;
+    }
 
     public boolean isDriverHitPS() {
         return driverHitPS;
@@ -451,6 +466,20 @@ public class Tank extends Entity {
         }
         return super.isImmobile() || m_bImmobile;
     }
+    
+    @Override
+    public boolean hasCommandConsoleBonus() {
+        if (!hasWorkingMisc(MiscType.F_COMMAND_CONSOLE) || isCommanderHit() || isUsingConsoleCommander()) {
+            return false;
+        }
+        if (isSupportVehicle()) {
+            return getWeightClass() >= EntityWeightClass.WEIGHT_LARGE_SUPPORT
+                    && hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL);
+        } else {
+            return getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY;
+        }
+    }
+
 
     /**
      * Tanks have all sorts of prohibited terrain.

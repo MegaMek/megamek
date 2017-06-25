@@ -235,7 +235,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * The pilot of the entity. Even infantry has a 'pilot'.
      */
-    private Crew crew = new Crew(1);
+    private Crew crew;
 
     private Quirks quirks = new Quirks();
     private PartialRepairs partReps = new PartialRepairs();
@@ -702,18 +702,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     protected String nl = "<BR>";
 
-    // Max range modifer is 6
-    protected double[] battleForceMinRangeModifier = new double[]{1, .92,
-                                                                  .83, .75, .66, .58, .50};
-    // When getting the to hit mod add 4 got it and make sure the max is 8 since
-    // the range is -4 to 8
-    protected double[] battleForceToHitModifier = new double[]{1.20, 1.15,
-                                                               1.10, 1.05, 1, .95, .9, .85, .8};
-    public static final int BATTLEFORCESHORTRANGE = 0;
-    public static final int BATTLEFORCEMEDIUMRANGE = 4;
-    public static final int BATTLEFORCELONGRANGE = 16;
-    public static final int BATTLEFORCEEXTREMERANGE = 24;
-
     // for how many rounds has blueshield been active?
     private int blueShieldRounds = 0;
 
@@ -804,6 +792,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Generates a new, blank, entity.
      */
     public Entity() {
+        crew = new Crew(defaultCrewType());
         armor = new int[locations()];
         internal = new int[locations()];
         orig_armor = new int[locations()];
@@ -834,6 +823,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
         externalId = UUID.randomUUID().toString();
         initTechAdvancement();
+    }
+    
+    public CrewType defaultCrewType() {
+        return CrewType.SINGLE;
     }
 
     protected void initMilitary() {
@@ -1311,6 +1304,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setCrew(Crew crew) {
         this.crew = crew;
+    }
+    
+    /**
+     * Units with a cockpit command console provide an initiative bonus to their side, provided
+     * that the commander is not currently functioning as pilot, the unit has advanced fire control,
+     * and the unit is heavy or assault weight class.
+     * 
+     * @return Whether the Entity qualifies for initiative bonus from cockpit command console.
+     */
+    public boolean hasCommandConsoleBonus() {
+        return false;
     }
 
     public boolean isShutDown() {

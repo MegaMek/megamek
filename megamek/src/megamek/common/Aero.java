@@ -3653,6 +3653,11 @@ public class Aero extends Entity {
 
     public void setCockpitType(int type) {
         cockpitType = type;
+        if (type == COCKPIT_COMMAND_CONSOLE) {
+            setCrew(new Crew(CrewType.COMMAND_CONSOLE));
+        } else {
+            setCrew(new Crew(CrewType.SINGLE));
+        }
     }
 
     public String getCockpitTypeString() {
@@ -3664,6 +3669,13 @@ public class Aero extends Entity {
             return "Unknown";
         }
         return COCKPIT_STRING[inCockpitType];
+    }
+
+    @Override
+    public boolean hasCommandConsoleBonus() {
+        return getCockpitType() == COCKPIT_COMMAND_CONSOLE
+                && getCrew().hasActiveCommandConsole()
+                && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY;
     }
 
     @Override

@@ -912,17 +912,20 @@ WindowListener, TreeSelectionListener {
 
     private void autoSetSkillsAndName(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        if(cs.useAverageSkills()) {
-            int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
-
-            int gunnery = skills[0];
-            int piloting = skills[1];
-
-            e.getCrew().setGunnery(gunnery);
-            e.getCrew().setPiloting(piloting);
-        }
-        if(cs.generateNames()) {
-            e.getCrew().setName(m_client.getRandomNameGenerator().generate());
+        for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
+            if(cs.useAverageSkills()) {
+                int skills[] = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+    
+                int gunnery = skills[0];
+                int piloting = skills[1];
+    
+                e.getCrew().setGunnery(gunnery, i);
+                e.getCrew().setPiloting(piloting, i);
+            }
+            e.getCrew().sortRandomSkills();
+            if(cs.generateNames()) {
+                e.getCrew().setName(m_client.getRandomNameGenerator().generate(), i);
+            }
         }
     }
 

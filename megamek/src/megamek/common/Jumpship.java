@@ -101,6 +101,10 @@ public class Jumpship extends Aero {
     protected TechAdvancement getConstructionTechAdvancement() {
         return isPrimitive()? TA_JUMPSHIP_PRIMITIVE : TA_JUMPSHIP;
     }
+
+    public CrewType defaultCrewType() {
+        return CrewType.VESSEL;
+    }
     
     @Override
     public int locations() {

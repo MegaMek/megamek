@@ -181,8 +181,8 @@ public interface IPlayer extends ITurnOrdered {
     int getTurnInitBonus();
 
     /**
-     * @return the bonus to this player's initiative rolls for
-     *         the highest value initiative (i.e. the 'commander')
+     * @return the bonus to this player's initiative rolls for the highest value initiative
+     *         (i.e. the 'commander')
      */
     int getCommandBonus();
 

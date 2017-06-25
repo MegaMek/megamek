@@ -65,6 +65,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.TripodMech;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.OptionsConstants;
@@ -679,8 +680,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             return toHit;
         }
 
-        // if we're spotting for indirect fire, add +1
-        if (ae.isSpotting()) {
+        // if we're spotting for indirect fire, add +1 (no penalty with second pilot in command console)
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
 
@@ -1157,6 +1158,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(1, "primitive industrial cockpit with advanced fire control");
         }
 
+        //Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
+        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_DUAL) {
+            if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
+                toHit.addModifier(1, "gunner incapacitated");                
+            } else if (ae.getCrew().hasDedicatedGunner()) {
+                toHit.addModifier(-1, "dual cockpit");
+            }
+        }
+
+        //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
+        if (ae instanceof TripodMech && !ae.getCrew().hasDedicatedGunner()) {
+            toHit.addModifier(2, "gunner incapacitated");
+        }
+
         if ((ae instanceof SupportTank) || (ae instanceof SupportVTOL)) {
             if (!ae.hasWorkingMisc(MiscType.F_BASIC_FIRECONTROL)
                     && !ae.hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL)) {
@@ -1513,7 +1528,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 }
             } else if (!narcSpotter && (spotter != null)) {
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
-                if (spotter.isAttackingThisTurn()) {
+                if (spotter.isAttackingThisTurn() && !spotter.getCrew().hasActiveCommandConsole()) {
                     toHit.addModifier(1, "spotter is making an attack this turn");
                 }
             }
@@ -2108,7 +2123,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(ae.getTaserInterference(), "Taser interference");
         }
         // if we're spotting for indirect fire, add +1
-        if (ae.isSpotting()) {
+        if (ae.isSpotting() && !ae.getCrew().hasActiveCommandConsole()) {
             toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
         // super heavy modifier
@@ -2267,7 +2282,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
         }
-
+        
         // Vehicles may suffer from criticals
         if (ae instanceof Tank) {
             Tank tank = (Tank) ae;
@@ -2329,6 +2344,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if ((ae instanceof Mech) && (((Mech) ae).getCockpitType() == Mech.COCKPIT_PRIMITIVE)
                 && ((Mech) ae).isIndustrial()) {
             toHit.addModifier(1, "primitive industrial cockpit with advanced fire control");
+        }
+        //Bonus to gunnery if both crew members are active; a pilot who takes the gunner's role get +1.
+        if (ae instanceof Mech && ((Mech)ae).getCockpitType() == Mech.COCKPIT_DUAL) {
+            if (!ae.getCrew().isActive(ae.getCrew().getCrewType().getGunnerPos())) {
+                toHit.addModifier(1, "gunner incapacitated");                
+            } else if (ae.getCrew().hasDedicatedGunner()) {
+                toHit.addModifier(-1, "dual cockpit");
+            }
+        }
+        //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
+        if (ae instanceof TripodMech && !ae.getCrew().hasDedicatedGunner()) {
+            toHit.addModifier(+2, "gunner incapacitated");
         }
 
         if ((ae instanceof SupportTank) || (ae instanceof SupportVTOL)) {

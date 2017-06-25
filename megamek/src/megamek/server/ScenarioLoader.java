@@ -494,7 +494,7 @@ public class ScenarioLoader {
                         break;
                     case PARAM_PILOT_HITS:
                         int hits = Integer.parseInt(p.getString(key));
-                        e.getCrew().setHits(Math.min(hits, 5));
+                        e.getCrew().setHits(Math.min(hits, 5), 0);
                         break;
                     case PARAM_EXTERNAL_ID:
                         e.setExternalIdAsString(p.getString(key));
@@ -553,7 +553,8 @@ public class ScenarioLoader {
             }
             System.out.println(String.format("Loading %s", ms.getName())); //$NON-NLS-1$
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-            e.setCrew(new Crew(parts[1], 1, Integer.parseInt(parts[2]), Integer.parseInt(parts[3])));
+            e.setCrew(new Crew(e.getCrew().getCrewType(), parts[1], 1, Integer.parseInt(parts[2]),
+                    Integer.parseInt(parts[3])));
             if(parts.length >= 7) {
                 String direction = parts[4].toUpperCase(Locale.ROOT);
                 switch(direction) {

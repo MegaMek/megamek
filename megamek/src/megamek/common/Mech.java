@@ -325,6 +325,21 @@ public abstract class Mech extends Entity {
         // ejection systems are disabled by default or not.
         autoEject = !PreferenceManager.getClientPreferences()
                 .defaultAutoejectDisabled();
+        
+        switch (inCockpitType) {
+        case COCKPIT_TRIPOD:
+            setCrew(new Crew(CrewType.TRIPOD));
+            break;
+        case COCKPIT_SUPERHEAVY_TRIPOD:
+            setCrew(new Crew(CrewType.SUPERHEAVY_TRIPOD));
+            break;
+        case COCKPIT_DUAL:
+            setCrew(new Crew(CrewType.DUAL));
+            break;
+        case COCKPIT_COMMAND_CONSOLE:
+            setCrew(new Crew(CrewType.COMMAND_CONSOLE));
+            break;
+        }
     }
 
     /**
@@ -1116,11 +1131,7 @@ public abstract class Mech extends Entity {
     }
 
     public int getOriginalSprintMPwithoutMASC() {
-        if (hasHipCrit()) {
-            return getOriginalSprintMPwithoutMASC();
-        }
-        return ((int) Math.ceil(getWalkMP(false, false) * 2.0))
-                - (hasMPReducingHardenedArmor() ? 1 : 0);
+        return ((int) Math.ceil(getOriginalWalkMP() * 2.0)) - (hasMPReducingHardenedArmor() ? 1 : 0);
     }
 
     /**
@@ -5396,6 +5407,13 @@ public abstract class Mech extends Entity {
                 roll.addModifier(4,
                         "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
+        } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
+            //Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner acting as pilot.
+            if (getCrew().getCurrentPilotIndex() != getCrew().getCrewType().getPilotPos()) {
+                roll.addModifier(1, "dual cockpit without active pilot");
+            } else if (getCrew().hasDedicatedGunner() || !isAttackingThisTurn()) {
+                roll.addModifier(-1, "dedicated pilot");
+            }
         }
 
         if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
@@ -6779,6 +6797,38 @@ public abstract class Mech extends Entity {
             setCockpitType(COCKPIT_TORSO_MOUNTED);
         }
         return success;
+    }
+    
+    /**
+     * Determines which crew slot is associated with a particular cockpit critical.
+     * 
+     * @param cs    A cockpit critical slot
+     * @return      The crew slot index associated with this critical slot, or -1 to indicate the entire crew.
+     */
+    public int getCrewForCockpitSlot(int loc, CriticalSlot cs) {
+        //For those with split cockpits, count the cockpit criticals in the location until we reach the correct
+        //one.
+        if (getCockpitType() == COCKPIT_COMMAND_CONSOLE
+                || getCockpitType() == COCKPIT_DUAL
+                || getCockpitType() == COCKPIT_QUADVEE) {
+            int crewSlot = 0;
+            for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                if (getCritical(loc, i) == cs) {
+                    return crewSlot;
+                } else if (getCritical(loc, i).getIndex() == SYSTEM_COCKPIT) {
+                    crewSlot++;
+                }
+            }
+        }
+        return -1;
+    }
+    
+    @Override
+    public boolean hasCommandConsoleBonus() {
+        return getCockpitType() == COCKPIT_COMMAND_CONSOLE
+                && getCrew().hasActiveCommandConsole()
+                && getWeightClass() >= EntityWeightClass.WEIGHT_HEAVY
+                && (!isIndustrial() || hasWorkingMisc(MiscType.F_ADVANCED_FIRECONTROL));
     }
 
     /**

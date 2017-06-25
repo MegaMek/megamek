@@ -817,7 +817,7 @@ public class Compute {
                 los.setTargetCover(LosEffects.COVER_NONE);
                 mods.append(Compute.getAttackerMovementModifier(game,
                                                                 other.getId()));
-                if (other.isAttackingThisTurn()) {
+                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole()) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
                 // is this guy a better spotter?
@@ -1743,8 +1743,8 @@ public class Compute {
         Mounted weapon = attacker.getEquipment(weaponId);
         if (attacker.entityIsQuad()) {
             int legsDead = ((Mech) attacker).countBadLegs();
-            if (legsDead == 0) {
-                // No legs destroyed: no penalty and can fire all weapons
+            if (legsDead == 0 && !((Mech)attacker).hasHipCrit()) {
+                // No legs destroyed and no hip crits: no penalty and can fire all weapons
                 return null; // no modifier
             } else if (legsDead >= 3) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
@@ -1778,7 +1778,12 @@ public class Compute {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
             }
-            mods.addModifier(2, "attacker prone");
+            if (((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+                    && attacker.getCrew().hasDedicatedGunner()) {
+                mods.addModifier(1, "attacker prone");                
+            } else {
+                mods.addModifier(2, "attacker prone");
+            }
         } else {
             int l3ProneFiringArm = Entity.LOC_NONE;
 
@@ -1826,7 +1831,12 @@ public class Compute {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Can't fire leg-mounted weapons while prone.");
             }
-            mods.addModifier(2, "attacker prone");
+            if (((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+                    && attacker.getCrew().hasDedicatedGunner()) {
+                mods.addModifier(1, "attacker prone");                
+            } else {
+                mods.addModifier(2, "attacker prone");
+            }
 
             if (l3ProneFiringArm != Entity.LOC_NONE) {
                 mods.addModifier(1, "attacker propping on single arm");
@@ -1963,7 +1973,12 @@ public class Compute {
                 mods.addModifier(2, "attacker sensors damaged");
             }
         } else if (sensorHits > 0) {
-            mods.addModifier(2, "attacker sensors damaged");
+            if (attacker instanceof Mech && ((Mech)attacker).getCockpitType() == Mech.COCKPIT_DUAL
+                    && attacker.getCrew().hasDedicatedGunner()) {
+                mods.addModifier(1, "attacker sensors damaged");
+            } else {
+                mods.addModifier(2, "attacker sensors damaged");
+            }
         }
 
         return mods;
@@ -1981,7 +1996,7 @@ public class Compute {
 
         // large craft do not get secondary target mod
         // http://www.classicbattletech.com/forums/index.php/topic,37661.0.html
-        if ((attacker instanceof Dropship) || (attacker instanceof Jumpship)) {
+        if (attacker.getCrew().getCrewType().getMaxPrimaryTargets() < 0) {
             return null;
         }
 
@@ -2041,7 +2056,12 @@ public class Compute {
 
         // # of targets, +1 for the passed target
         int countTargets = 1 + targIds.size();
-
+        
+        int maxPrimary = 1;
+        //Tripods and QuadVees with dedicated gunnery can target up to three units before incurring a penalty, and two for dual cockpit
+        if (attacker.getCrew().hasDedicatedGunner()) {
+            maxPrimary = attacker.getCrew().getCrewType().getMaxPrimaryTargets();
+        }
         if (game.getOptions().booleanOption("tacops_tank_crews")
             && (attacker instanceof Tank)) {
 
@@ -2054,10 +2074,11 @@ public class Compute {
             }
             // If we are a tank, we can have Crew Size - 1 targets before 
             //  incurring a secondary target penalty (or crew size - 2 secondary 
-            //  targets without penalty) 
-            if (countTargets <= attacker.getCrew().getSize() - 1) {
-                return null; // no modifier
-            }
+            //  targets without penalty)
+            maxPrimary =  attacker.getCrew().getSize() - 1;
+        }
+        if (countTargets <= maxPrimary) {
+            return null; // no modifier
         }
 
         if ((primaryTarget == Entity.NONE)
@@ -2118,10 +2139,7 @@ public class Compute {
         if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
             || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             toHit.addModifier(3, "attacker used UMUs");
-            return toHit;
-        }
-
-        if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)
+        } else if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)
                 || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
             toHit.addModifier(1, "attacker walked");
         } else if ((movement == EntityMovementType.MOVE_RUN) || (movement == EntityMovementType.MOVE_VTOL_RUN)) {
@@ -2140,6 +2158,14 @@ public class Compute {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "attacker sprinted");
         }
 
+        //Dual cockpit with both pilot and gunner has lower modifier for attacker movement.
+        if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL
+                && entity instanceof Mech && ((Mech)entity).getCockpitType() == Mech.COCKPIT_DUAL
+                && entity.getCrew().hasDedicatedGunner()) {
+            for (TargetRollModifier mod : toHit.getModifiers()) {
+                mod.setValue(mod.getValue() / 2);
+            }
+        }
         return toHit;
     }
 
@@ -2239,6 +2265,16 @@ public class Compute {
                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
                         || (entity.getMovementMode() == EntityMovementMode.VTOL),
                         game);
+        if (entity.moved != EntityMovementType.MOVE_JUMP
+                && entity.delta_distance > 0
+                && entity instanceof Mech && ((Mech)entity).getCockpitType() == Mech.COCKPIT_DUAL
+                && entity.getCrew().hasDedicatedPilot()) {
+            if (toHit.getModifiers().isEmpty()) {
+                toHit.addModifier(1, "target moved 1-2 hexes");
+            } else {
+                toHit.getModifiers().get(0).setValue(toHit.getModifiers().get(0).getValue() + 1);
+            }
+        }
 
         // Did the target skid this turn?
         if (entity.moved == EntityMovementType.MOVE_SKID) {
@@ -5919,6 +5955,9 @@ public class Compute {
             return (getFullCrewSize(entity) - 1);
         } else if (entity instanceof Infantry) {
             return getFullCrewSize(entity);
+        } else if (entity.getCrew().getCrewType().getGunnerPos() > 0) {
+            //Tripod, QuadVee, or dual cockpit
+            return 1;
         }
         return 0;
     }
@@ -5992,6 +6031,9 @@ public class Compute {
             if (entity instanceof SmallCraft) {
                 return 3;
             }
+            return 2;
+        }
+        if (entity.getCrew().getCrewType() == CrewType.COMMAND_CONSOLE) {
             return 2;
         }
         if (entity instanceof Mech || entity instanceof Tank || entity instanceof Aero || entity instanceof Protomech) {

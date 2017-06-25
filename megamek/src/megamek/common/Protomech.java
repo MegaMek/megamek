@@ -1942,7 +1942,7 @@ public class Protomech extends Entity {
     public void setCrew(Crew p) {
         super.setCrew(p);
         if (null != p) {
-            getCrew().setPiloting(5);
+            getCrew().setPiloting(5, 0);
         }
     }
 

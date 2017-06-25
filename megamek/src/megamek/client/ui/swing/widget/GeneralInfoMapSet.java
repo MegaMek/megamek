@@ -467,7 +467,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 || (en instanceof Mech && ((Mech)en).hasTracks())) {
             movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
             if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
-                movementTypeR.setString(Messages.getString("BoardView1.FighterMode"));
+                //Show "Fighter" instead of "Aerodyne"
+                movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.AERODYNE"));
             } else {
                 movementTypeR.setString(Messages.getString("MovementType."
                         + en.getMovementModeAsString()));

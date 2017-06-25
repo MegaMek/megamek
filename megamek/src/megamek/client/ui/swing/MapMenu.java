@@ -40,6 +40,7 @@ import megamek.common.Building.DemolitionCharge;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.EquipmentMode;
 import megamek.common.HexTarget;
@@ -47,10 +48,12 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.QuadVee;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -163,6 +166,13 @@ public class MapMenu extends JPopupMenu {
                 }
 
                 menu = createStandMenu();
+
+                if (menu.getItemCount() > 0) {
+                    this.add(menu);
+                    itemCount++;
+                }
+
+                menu = createConvertMenu();
 
                 if (menu.getItemCount() > 0) {
                     this.add(menu);
@@ -1132,6 +1142,60 @@ public class MapMenu extends JPopupMenu {
             }
         });
 
+        return item;
+    }
+
+    private JMenu createConvertMenu() {
+        JMenu menu = new JMenu(Messages.getString("MovementDisplay.moveModeConvert"));
+        
+        if (myEntity instanceof Mech && ((Mech)myEntity).hasTracks()) {
+            menu.add(createConvertMenuItem("MovementDisplay.moveModeLeg",
+                    MovementDisplay.MoveCommand.MOVE_MODE_LEG,
+                    myEntity.getMovementMode() != EntityMovementMode.TRACKED));
+            menu.add(createConvertMenuItem("MovementDisplay.moveModeTrack",
+                    MovementDisplay.MoveCommand.MOVE_MODE_VEE,
+                    myEntity.getMovementMode() == EntityMovementMode.TRACKED));
+        } else if (myEntity instanceof QuadVee) {
+            menu.add(createConvertMenuItem("MovementDisplay.moveModeMech",
+                    MovementDisplay.MoveCommand.MOVE_MODE_LEG,
+                    !((QuadVee)myEntity).isInVehicleMode()));
+            menu.add(createConvertMenuItem("MovementDisplay.moveModeVee",
+                    MovementDisplay.MoveCommand.MOVE_MODE_VEE,
+                    ((QuadVee)myEntity).isInVehicleMode()));            
+        } else if (myEntity instanceof LandAirMech) {
+            if (myEntity.getMovementMode() != EntityMovementMode.AERODYNE
+                    || ((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_BIMODAL) {
+                menu.add(createConvertMenuItem("MovementDisplay.moveModeMech",
+                        MovementDisplay.MoveCommand.MOVE_MODE_LEG,
+                        myEntity.getMovementMode() == EntityMovementMode.BIPED));
+            }
+            if (((LandAirMech)myEntity).getLAMType() != LandAirMech.LAM_BIMODAL) {
+                menu.add(createConvertMenuItem("MovementDisplay.moveModeAirmech",
+                        MovementDisplay.MoveCommand.MOVE_MODE_VEE,
+                        myEntity.getMovementMode() == EntityMovementMode.AIRMECH));
+            }
+            if (myEntity.getMovementMode() != EntityMovementMode.BIPED
+                    || ((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_BIMODAL) {
+                menu.add(createConvertMenuItem("MovementDisplay.moveModeFighter",
+                        MovementDisplay.MoveCommand.MOVE_MODE_AIR,
+                        myEntity.getMovementMode() == EntityMovementMode.AERODYNE));
+            }
+        }
+        return menu;
+    }
+    
+    private JMenuItem createConvertMenuItem(String resourceKey, MovementDisplay.MoveCommand cmd,
+            boolean isCurrent) {
+        String text = Messages.getString(resourceKey);
+        JMenuItem item = new JMenuItem(text);
+        item.setActionCommand(cmd.getCmd());
+        item.addActionListener(e -> {
+            try {
+                ((MovementDisplay) currentPanel).actionPerformed(e);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        });
         return item;
     }
 

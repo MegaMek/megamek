@@ -218,6 +218,6 @@ public class LandAirMech extends BipedMech {
     }
 
     public long getEntityType(){
-        return Entity.ETYPE_MECH | Entity.ETYPE_LAND_AIR_MECH;
+        return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
     }
 }

@@ -108,6 +108,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_INF = 1 << 3;
     public static final int CMD_AERO = 1 << 4;
     public static final int CMD_AERO_VECTORED = 1 << 5;
+    // Command used only in menus and has no associated button
+    public static final int CMD_NO_BUTTON = 1 << 8;
     // Convenience defines for common combinations
     public static final int CMD_AERO_BOTH = CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_GROUND = CMD_MECH | CMD_TANK | CMD_VTOL
@@ -153,7 +155,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_CLIMB_MODE("moveClimbMode", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$
         MOVE_SWIM("moveSwim", CMD_MECH), //$NON-NLS-1$
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
+        //Convert command for a single button, which can cycle through modes because MovePath state is available
         MOVE_MODE_CONVERT("moveModeConvert", CMD_MECH), //$NON-NLS-1$
+        //Convert commands used for menus, where the MovePath state is unknown.
+        MOVE_MODE_LEG("moveModeLeg", CMD_NO_BUTTON), //$NON-NLS-1$
+        MOVE_MODE_VEE("moveModeVee", CMD_NO_BUTTON), //$NON-NLS-1$
+        MOVE_MODE_AIR("moveModeAir", CMD_NO_BUTTON), //$NON-NLS-1$
         MOVE_RECKLESS("moveReckless", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE), //$NON-NLS-1$
         MOVE_EVADE("MoveEvade", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
@@ -3988,31 +3995,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             ce.setMovementMode((ce instanceof BipedMech) ? EntityMovementMode.BIPED_SWIM
                     : EntityMovementMode.QUAD_SWIM);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_CONVERT.getCmd())) {
-            if (ce instanceof LandAirMech
-                    && ((LandAirMech)ce).getPreviousMovementMode() == EntityMovementMode.AIRMECH) {
-                //We need to cycle among three options (fighter, biped, no conversion), which requires
-                //one, two, or zero conversion steps.
-                EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
-                clear();
-                if (nextMode != EntityMovementMode.AIRMECH) {
-                    cmd.addStep(MoveStepType.CONVERT_MODE);
-                    if (nextMode != EntityMovementMode.AERODYNE) {
-                        cmd.addStep(MoveStepType.CONVERT_MODE);
-                    }
-                }
-            } else {
-                //Otherwise we're just toggling conversion on or off.
-                boolean wasConverting = ce.isConvertingNow();
-                clear();
-                ce.setConvertingNow(!wasConverting);
-                if (ce.isConvertingNow()) {
-                    cmd.addStep(MoveStepType.CONVERT_MODE);
-                }
-                //Mechs using tracks don't actually convert; they either engage the tracks or use their
-                //legs, so the mode is active from the beginning of the turn.
-                if (ce instanceof Mech && ((Mech)ce).hasTracks()) {
-                    ce.toggleConversionMode();
-                }
+            EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
+            adjustConvertSteps(nextMode);
+            clientgui.bv.drawMovementData(ce(), cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_MODE_LEG.getCmd())) {
+            if ((ce.getEntityType() & Entity.ETYPE_QUAD_MECH) == Entity.ETYPE_QUAD_MECH) {
+                adjustConvertSteps(EntityMovementMode.QUAD);                
+            } else if ((ce.getEntityType() & Entity.ETYPE_TRIPOD_MECH) == Entity.ETYPE_TRIPOD_MECH) {
+                adjustConvertSteps(EntityMovementMode.TRIPOD);
+            } else if ((ce.getEntityType() & Entity.ETYPE_BIPED_MECH) == Entity.ETYPE_BIPED_MECH) {
+                adjustConvertSteps(EntityMovementMode.BIPED);
+            }
+            clientgui.bv.drawMovementData(ce(), cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_MODE_VEE.getCmd())) {
+            if (ce instanceof QuadVee && ((QuadVee)ce).getMotiveType() == QuadVee.MOTIVE_WHEEL) {
+                adjustConvertSteps(EntityMovementMode.TRACKED);
+            } else if ((ce instanceof Mech && ((Mech)ce).hasTracks())
+                    || ce instanceof QuadVee) {
+                adjustConvertSteps(EntityMovementMode.TRACKED);
+            } else if (ce instanceof LandAirMech
+                    && ((LandAirMech)ce).getLAMType() == LandAirMech.LAM_STANDARD) {
+                adjustConvertSteps(EntityMovementMode.AIRMECH);
+            }
+            clientgui.bv.drawMovementData(ce(), cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_MODE_AIR.getCmd())) {
+            if (ce instanceof LandAirMech) {
+                adjustConvertSteps(EntityMovementMode.AERODYNE);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_TURN.getCmd())) {
@@ -4630,6 +4638,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             butDone.setEnabled(true);
         }
 
+    }
+    
+    /**
+     * Add enough <code>MoveStepType.CONVERT_MODE</code> steps to get to the requested mode, or
+     * clear the path if the unit is in the requested mode at the beginning of the turn.
+     * 
+     * @param endMode The mode to convert to
+     */
+    private void adjustConvertSteps(EntityMovementMode endMode) {
+        //Since conversion is not allowed in water, we shouldn't have to deal with the possibility of swim modes.
+        if (ce().getMovementMode() == endMode) {
+            cmd.clear();
+            return;
+        }
+        if (cmd.getFinalConversionMode() == endMode) {
+            return;
+        }
+        clear();
+        ce().setConvertingNow(true);
+        cmd.addStep(MoveStepType.CONVERT_MODE);
+        if (cmd.getFinalConversionMode() != endMode) {
+            cmd.addStep(MoveStepType.CONVERT_MODE);
+        }
+        if (ce() instanceof Mech && ((Mech)ce()).hasTracks()) {
+            ce().setMovementMode(endMode);
+        }
     }
 
     /**

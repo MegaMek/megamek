@@ -48,6 +48,7 @@ import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.VTOL;
@@ -520,7 +521,11 @@ public class UnitEditorDialog extends JDialog {
         gridBagConstraints.gridx = 1;
         panSystem.add(cockpitCrit, gridBagConstraints);
 
-        actuatorCrits = new CheckCritPanel[4][4];
+        if (entity instanceof QuadVee) {
+            actuatorCrits = new CheckCritPanel[4][5];
+        } else {
+            actuatorCrits = new CheckCritPanel[4][4];
+        }
 
         for (int loc = Mech.LOC_RARM; loc <= Mech.LOC_LLEG; loc++) {
             int start = Mech.ACTUATOR_SHOULDER;
@@ -537,7 +542,7 @@ public class UnitEditorDialog extends JDialog {
                 gridBagConstraints.gridy++;
                 gridBagConstraints.weightx = 0.0;
                 gridBagConstraints.weighty = 0.0;
-                if ((loc == Mech.LOC_LLEG) && (i == end)) {
+                if ((loc == Mech.LOC_LLEG) && (i == end) && !(entity instanceof QuadVee)) {
                     gridBagConstraints.weighty = 1.0;
                 }
                 panSystem.add(
@@ -548,6 +553,25 @@ public class UnitEditorDialog extends JDialog {
                         entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, i,
                                 loc));
                 actuatorCrits[loc - Mech.LOC_RARM][i - start] = actuatorCrit;
+                gridBagConstraints.gridx = 1;
+                panSystem.add(actuatorCrit, gridBagConstraints);
+            }
+            if (entity instanceof QuadVee) {
+                gridBagConstraints.gridx = 0;
+                gridBagConstraints.gridy++;
+                gridBagConstraints.weightx = 0.0;
+                gridBagConstraints.weighty = 0.0;
+                if (loc == Mech.LOC_LLEG) {
+                    gridBagConstraints.weighty = 1.0;
+                }
+                panSystem.add(
+                        new JLabel("<html><b>" + entity.getLocationName(loc)
+                                + " " + ((Mech) entity).getSystemName(QuadVee.SYSTEM_CONVERSION_GEAR)
+                                + "</b><br></html>"), gridBagConstraints);
+                CheckCritPanel actuatorCrit = new CheckCritPanel(1,
+                        entity.getDamagedCriticals(CriticalSlot.TYPE_SYSTEM, QuadVee.SYSTEM_CONVERSION_GEAR,
+                                loc));
+                actuatorCrits[loc - Mech.LOC_RARM][Mech.ACTUATOR_FOOT - Mech.ACTUATOR_HIP + 1] = actuatorCrit;
                 gridBagConstraints.gridx = 1;
                 panSystem.add(actuatorCrit, gridBagConstraints);
             }
@@ -992,6 +1016,18 @@ public class UnitEditorDialog extends JDialog {
                     }
                     entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator,
                             loc, actuatorCrit.getHits());
+                }
+                if (entity instanceof QuadVee) {
+                    for (int j = 0; j < 4; j++) {
+                        CheckCritPanel actuatorCrit = actuatorCrits[i][4];
+                        if (null == actuatorCrit) {
+                            continue;
+                        }
+                        int loc = i + Mech.LOC_RARM;
+                        int actuator = QuadVee.SYSTEM_CONVERSION_GEAR;
+                        entity.damageSystem(CriticalSlot.TYPE_SYSTEM, actuator,
+                                loc, actuatorCrit.getHits());
+                    }
                 }
             }
         } else if (entity instanceof Protomech) {

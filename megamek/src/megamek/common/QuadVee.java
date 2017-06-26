@@ -332,10 +332,16 @@ public class QuadVee extends QuadMech {
         int cost = 2;
         //Base cost 2, +1 for each damaged leg actuator, conversion equipment, or track slot
         for (int loc = LOC_RARM; loc <= LOC_LLEG; loc++) {
-            for (int slot = 0; slot < 6; slot++) {
+            for (int slot = 0; slot < 5; slot++) {
                 if (getCritical(loc, slot).isHit()) {
                     cost++;
                 }
+            }
+        }
+        for (Mounted m : getMisc()) {
+            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TRACKS)) {
+                cost += m.getDamageTaken();
+                break;
             }
         }
         return cost;

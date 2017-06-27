@@ -33,16 +33,6 @@ public class QuadVee extends QuadMech {
     
     private int motiveType;
     
-    //Certain events, such as damage from charges or failed advance maneuvers, can cause motive
-    //system damage apart from 
-    private boolean minorMotiveDamage;
-    private boolean moderateMotiveDamage;
-    private boolean heavyMotiveDamage;
-    private int motivePenalty = 0;
-    private int motiveDamage = 0;
-    private boolean movementHitPending = false;
-    private boolean movementHit = false;
-
     public QuadVee() {
         this(GYRO_STANDARD, MOTIVE_TRACK);
     }
@@ -134,24 +124,30 @@ public class QuadVee extends QuadMech {
      * damage and various effects of vehicle motive damage.
      */
     public int getCruiseMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int wmp = getOriginalWalkMP() - motiveDamage;
+        int wmp = getOriginalWalkMP();
         //Bonus for wheeled movement
         if (getMotiveType() == MOTIVE_WHEEL) {
             wmp++;
         }
         
         //If a leg or its track/wheel is destroyed, it is treated as major motive system damage,
-        //in addition to what has been assigned on the motive system damage table.
+        //which we are interpreting as a cumulative 1/2 MP.
         //bg.battletech.com/forums/index.php?topic=55261.msg1271935#msg1271935
 
+        int badTracks = 0;
         for (int loc = 0; loc < locations(); loc++) {
-            if (locationIsLeg(loc)) {
-                if (isLocationBad(loc) && getCritical(loc, 5).isHit()) {
-                    wmp = (int)Math.ceil(wmp / 2.0);
-                }
+            if (locationIsLeg(loc)
+                    && (isLocationBad(loc) || getCritical(loc, 5).isHit())) {
+                badTracks++;
             }
         }
-        
+
+        if (badTracks == 4) {
+            return 0;
+        } else if (badTracks > 1) {
+            wmp = wmp / 1 << badTracks;
+        }
+
         //Now apply modifiers
         if (!ignoremodulararmor && hasModularArmor() ) {
             wmp--;
@@ -356,29 +352,6 @@ public class QuadVee extends QuadMech {
                 || movementMode == EntityMovementMode.WHEELED;
     }
     
-    public boolean isMovementHit() {
-        return movementHit;
-    }
-
-    public boolean isMovementHitPending() {
-        return movementHitPending;
-    }
-    
-    @Override
-    public boolean isImmobile() {
-        if (!isInVehicleMode() || (game != null
-                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES))) {
-            return super.isImmobile();
-        }
-        return super.isImmobile() || movementHit;
-    }
-    
-    @Override
-    public void applyDamage() {
-        movementHit |= movementHitPending;
-        super.applyDamage();
-    }
-
     /**
      * In vehicle mode the QuadVee is at the same level as the terrain.
      */
@@ -445,8 +418,12 @@ public class QuadVee extends QuadMech {
         }
         
         if (isInVehicleMode()) {
-            if (motivePenalty > 0) {
-                roll.addModifier(motivePenalty, "motive system damage");                
+            for (int loc = 0; loc < locations(); loc++) {
+                if (locationIsLeg(loc)
+                        && (isLocationBad(loc) || getCritical(loc, 5).isHit())) {
+                    roll.addModifier(+3, "motive system damage");
+                    break;
+                }
             }
             // are we wheeled and in light snow?
             IHex hex = game.getBoard().getHex(getPosition());
@@ -476,58 +453,6 @@ public class QuadVee extends QuadMech {
         }
     }
     
-    /**
-     * adds minor, moderate or heavy movement system damage
-     *
-     * @param level
-     *            a <code>int</code> representing minor damage (1), moderate
-     *            damage (2), heavy damage (3), or immobilized (4)
-     */
-    @Override
-    public void addMovementDamage(int level) {
-        switch (level) {
-            case 1:
-                if (!minorMotiveDamage) {
-                    minorMotiveDamage = true;
-                    motivePenalty += level;
-                }
-                break;
-            case 2:
-                if (!moderateMotiveDamage) {
-                    moderateMotiveDamage = true;
-                    motivePenalty += level;
-                }
-                motiveDamage++;
-                break;
-            case 3:
-                if (!heavyMotiveDamage) {
-                    heavyMotiveDamage = true;
-                    motivePenalty += level;
-                }
-                int nMP = getOriginalWalkMP() - motiveDamage;
-                if (nMP > 0) {
-                    motiveDamage = getOriginalWalkMP()
-                            - (int) Math.ceil(nMP / 2.0);
-                }
-                break;
-            case 4:
-                motiveDamage = getOriginalWalkMP();
-                movementHitPending = true;
-        }
-    }
-
-    public boolean hasMinorMovementDamage() {
-        return minorMotiveDamage;
-    }
-
-    public boolean hasModerateMovementDamage() {
-        return moderateMotiveDamage;
-    }
-
-    public boolean hasHeavyMovementDamage() {
-        return heavyMotiveDamage;
-    }
-
     /**
      * If the QuadVee is in vehicle mode (or converting to it) then it follows
      * the rules for tanks going hull-down, which requires a fortified hex.

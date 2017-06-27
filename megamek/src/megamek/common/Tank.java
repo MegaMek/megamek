@@ -2687,7 +2687,6 @@ public class Tank extends Entity {
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), heavy damage (3), or immobilized (4)
      */
-    @Override
     public void addMovementDamage(int level) {
         switch (level) {
             case 1:

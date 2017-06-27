@@ -7986,6 +7986,15 @@ public abstract class Mech extends Entity {
             toReturn += "Foot";
             first = false;
         }
+        if (hasSystem(QuadVee.SYSTEM_CONVERSION_GEAR, loc)
+                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
+                        ACTUATOR_FOOT, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+                toReturn += "Conversion Gear";
+                first = false;
+            }
+        }
         return toReturn;
     }
 

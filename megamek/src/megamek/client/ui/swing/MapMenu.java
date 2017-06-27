@@ -1150,11 +1150,9 @@ public class MapMenu extends JPopupMenu {
         
         if (myEntity instanceof Mech && ((Mech)myEntity).hasTracks()) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeLeg",
-                    MovementDisplay.MoveCommand.MOVE_MODE_LEG,
-                    myEntity.getMovementMode() != EntityMovementMode.TRACKED));
+                    MovementDisplay.MoveCommand.MOVE_MODE_LEG, false));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeTrack",
-                    MovementDisplay.MoveCommand.MOVE_MODE_VEE,
-                    myEntity.getMovementMode() == EntityMovementMode.TRACKED));
+                    MovementDisplay.MoveCommand.MOVE_MODE_VEE, false));
         } else if (myEntity instanceof QuadVee) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeMech",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
@@ -1187,6 +1185,9 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createConvertMenuItem(String resourceKey, MovementDisplay.MoveCommand cmd,
             boolean isCurrent) {
         String text = Messages.getString(resourceKey);
+        if (isCurrent) {
+            text = "No Conversion";
+        }
         JMenuItem item = new JMenuItem(text);
         item.setActionCommand(cmd.getCmd());
         item.addActionListener(e -> {

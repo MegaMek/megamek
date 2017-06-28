@@ -453,6 +453,12 @@ public class QuadVee extends QuadMech {
         }
     }
     
+    @Override
+    public boolean usesTurnMode() {
+        return isInVehicleMode() && !convertingNow
+                && game != null && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TURN_MODE);
+    }
+
     /**
      * If the QuadVee is in vehicle mode (or converting to it) then it follows
      * the rules for tanks going hull-down, which requires a fortified hex.

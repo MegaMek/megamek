@@ -142,6 +142,12 @@ public class LandAirMech extends BipedMech {
         return getFighterModeRunMP(true, false);
     }
     
+    @Override
+    public boolean usesTurnMode() {
+        // Turn mode rule is not optional for LAMs in AirMech mode.
+        return movementMode == EntityMovementMode.AIRMECH;
+    }
+
     /**
      * When cycling through possible movement modes, we need to know if we've returned to the previous
      * mode, which means that no conversion is actually going to take place.

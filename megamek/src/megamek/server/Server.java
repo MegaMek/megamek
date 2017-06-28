@@ -5961,6 +5961,94 @@ public class Server implements Runnable {
         return false;
     }
 
+    private boolean processFailedVehicleManeuver(Entity entity, Coords curPos,
+            int turnDirection, MoveStep prevStep, EntityMovementType lastStepMoveType,
+            int distance) {
+        IHex curHex = game.getBoard().getHex(curPos);
+        int roll = Compute.d6(2);
+        if (entity.getMovementMode() == EntityMovementMode.WHEELED
+                && !curHex.containsTerrain(Terrains.PAVEMENT)) {
+            roll += 2;
+        }
+        if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+            roll += 2;
+        } else if (entity.getMovementMode() == EntityMovementMode.HOVER
+                || entity.getMovementMode() == EntityMovementMode.WIGE
+                || entity.getMovementMode() == EntityMovementMode.AIRMECH
+                || entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
+            roll += 4;
+        }
+        if (entity.getWeightClass() < EntityWeightClass.WEIGHT_MEDIUM
+                || entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            roll++;
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY
+                || entity.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+            roll--;
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT
+                || entity.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+            roll -= 2;
+        }
+        boolean turnEnds = false;
+        boolean motiveDamage = false;
+        int motiveDamageMod = 0;
+        boolean skid = false;
+        Report r = new Report(1210);
+        r.subject = entity.getId();
+        r.addDesc(entity);
+        r.add(roll);
+        if (roll < 8) {
+            r.messageId = 2505;
+            // minor fishtail, fail to turn7
+            entity.setFacing((entity.getFacing() - turnDirection + 6) % 6);
+        } else if (roll < 10) {
+            r.messageId = 2506;
+            // moderate fishtail, turn an extra hexside and roll for motive damage at -1.
+            entity.setFacing((entity.getFacing() + turnDirection) % 6);
+            motiveDamage = true;
+            motiveDamageMod = -1;
+        } else if (roll < 12) {
+            r.messageId = 2507;
+            // serious fishtail, turn an extra hexside and roll for motive damage. Turn ends.
+            entity.setFacing((entity.getFacing() + turnDirection) % 6);
+            motiveDamage = true;
+            turnEnds = true;
+        } else if (roll > 13 && entity.getMovementMode() != EntityMovementMode.WHEELED) {
+            r.messageId = 2509;
+            // Major skid: turn fails and vehicle starts flipping
+            entity.setFacing((entity.getFacing() - turnDirection + 6) % 6);
+            skid = true;
+        } else if (roll > 13
+                && (entity.getMovementMode() == EntityMovementMode.NAVAL
+                || entity.getMovementMode() == EntityMovementMode.HYDROFOIL)) {
+            r.messageId = 2510;
+            // Major skid: turn fails and vehicle capsizes and sinks.
+            entity.setDoomed(true);
+            turnEnds = true;
+        } else {
+            r.messageId = 2508;
+            // Turn fails and vehicle skids
+            entity.setFacing((entity.getFacing() - turnDirection + 6) % 6);
+            skid = true;
+            turnEnds = true;
+        }
+        addReport(r);
+        entity.setSecondaryFacing(entity.getFacing());
+        if (motiveDamage && entity instanceof Tank
+                && (entity.getMovementMode() == EntityMovementMode.TRACKED
+                || entity.getMovementMode() == EntityMovementMode.WHEELED)) {
+                    addReport(vehicleMotiveDamage((Tank)entity, motiveDamageMod));
+                }
+        if (skid) {
+            if (entity instanceof Tank) {
+                addReport(vehicleMotiveDamage((Tank)entity, 0));
+            }
+            processSkid(entity, curPos, prevStep.getElevation(),
+                    entity.getFacing(), (int)Math.round((double) (distance - 1) / 2),
+                    prevStep, lastStepMoveType);         
+        }
+        return turnEnds;
+    }
+
     /**
      * processes a potential collision
      *
@@ -6755,6 +6843,7 @@ public class Server implements Runnable {
             boolean isOnGround = !i.hasMoreElements();
             isOnGround |= stepMoveType != EntityMovementType.MOVE_JUMP;
             isOnGround &= step.getElevation() < 1;
+            int turnMode = 0;
 
             // Check for hidden units point blank shots
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
@@ -7443,6 +7532,9 @@ public class Server implements Runnable {
             moveType = stepMoveType;
             distance = step.getDistance();
             mpUsed = step.getMpUsed();
+            if (distance > 0) {
+                turnMode++;
+            }
 
             if (cachedGravityLimit < 0) {
                 cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType
@@ -7629,6 +7721,30 @@ public class Server implements Runnable {
                                 + "no valid unit found in "
                                 + step.getPosition());
                     }
+                }
+            }
+            
+            // If we have turned, check whether we have fulfilled any turn mode requirements.
+            if ((step.getType() == MoveStepType.TURN_LEFT || step.getType() == MoveStepType.TURN_RIGHT)
+                    && entity.usesTurnMode()) {
+                Vector<Report> vDesc = new Vector<>();
+                boolean turnFailed = entity.checkTurnModeFailure(overallMoveType, turnMode, md.getMpUsed(),
+                        step.getPosition(), vDesc);
+                addReport(vDesc);
+                if (turnFailed) {
+                    if (processFailedVehicleManeuver(entity, curPos,
+                            step.getType() == MoveStepType.TURN_LEFT?1 : -1,
+                                    prevStep, lastStepMoveType, distance)) {
+                        if (md.hasActiveMASC()) {
+                            mpUsed = entity.getRunMP();
+                        } else {
+                            mpUsed = entity.getRunMPwithoutMASC();
+                        }
+
+                        turnOver = true;
+                        distance = entity.delta_distance;
+                    }
+                    break;
                 }
             }
 

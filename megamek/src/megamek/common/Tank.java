@@ -2006,6 +2006,11 @@ public class Tank extends Entity {
 
         return prd;
     }
+    
+    @Override
+    public boolean usesTurnMode() {
+        return game != null && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TURN_MODE);
+    }
 
     @Override
     public Vector<Report> victoryReport() {

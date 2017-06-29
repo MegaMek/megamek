@@ -464,10 +464,11 @@ public class MoveStep implements Serializable {
             setNTurns(0);
         }
 
+        // Track number of moves straight for aero free moves in atmosphere, vehicle turn modes, and bootlegger maneuver
+        setNStraight(getNStraight() + 1);
         // if in atmosphere, then I need to know if this move qualifies the unit
         // for a free turn
         if (useAeroAtmosphere(game, entity)) {
-            setNStraight(getNStraight() + 1);
             if (game.getBoard().onGround() && (getNStraight() > 7)) {
                 // if flying on ground map, then you have to fly at least 8
                 // straight hexes between turns (free or not)
@@ -721,12 +722,12 @@ public class MoveStep implements Serializable {
                 // Infantry can turn for free, except for field artillery
                 setMp((isJumping() || isHasJustStood() || (isInfantry && !isFieldArtillery)) ? 0
                         : 1);
+                setNStraight(0);
                 if (entity.isAirborne() && (entity instanceof Aero)) {
                     setMp(asfTurnCost(game, getType(), entity));
                     setNTurns(getNTurns() + 1);
 
                     if (useAeroAtmosphere(game, entity)) {
-                        setNStraight(0);
                         setFreeTurn(false);
                     }
                 }

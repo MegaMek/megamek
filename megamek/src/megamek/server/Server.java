@@ -6967,7 +6967,6 @@ public class Server implements Runnable {
             boolean isOnGround = !i.hasMoreElements();
             isOnGround |= stepMoveType != EntityMovementType.MOVE_JUMP;
             isOnGround &= step.getElevation() < 1;
-            int turnMode = 0;
 
             // Check for hidden units point blank shots
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
@@ -7656,9 +7655,6 @@ public class Server implements Runnable {
             moveType = stepMoveType;
             distance = step.getDistance();
             mpUsed = step.getMpUsed();
-            if (distance > 0) {
-                turnMode++;
-            }
 
             if (cachedGravityLimit < 0) {
                 cachedGravityLimit = EntityMovementType.MOVE_JUMP == moveType
@@ -7852,10 +7848,13 @@ public class Server implements Runnable {
             if ((step.getType() == MoveStepType.TURN_LEFT || step.getType() == MoveStepType.TURN_RIGHT)
                     && entity.usesTurnMode()) {
                 Vector<Report> vDesc = new Vector<>();
-                boolean turnFailed = entity.checkTurnModeFailure(overallMoveType, turnMode, md.getMpUsed(),
-                        step.getPosition(), vDesc);
+                int straight = 0;
+                if (prevStep != null) {
+                    straight = prevStep.getNStraight();
+                }
+                boolean turnFailed = entity.checkTurnModeFailure(overallMoveType, straight,
+                        md.getMpUsed(), step.getPosition(), vDesc);
                 addReport(vDesc);
-                turnMode = 0;
                 if (turnFailed) {
                     if (processFailedVehicleManeuver(entity, curPos,
                             step.getType() == MoveStepType.TURN_LEFT?1 : -1,

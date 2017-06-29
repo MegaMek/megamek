@@ -5112,11 +5112,32 @@ public class Server implements Runnable {
     private boolean processSkid(Entity entity, Coords start, int elevation,
             int direction, int distance, MoveStep step,
             EntityMovementType moveType) {
+        return processSkid(entity, start, elevation, direction, distance,
+                step, moveType, false);
+    }
+    
+    /**
+     * makes a unit skid or sideslip on the board
+     *
+     * @param entity    the unit which should skid
+     * @param start     the coordinates of the hex the unit was in prior to skidding
+     * @param elevation the elevation of the unit
+     * @param direction the direction of the skid
+     * @param distance  the number of hexes skidded
+     * @param step      the MoveStep which caused the skid
+     * @param flip      whether the skid resulted from a failure maneuver result of major skid
+     * @return true if the entity was removed from play
+     */
+    private boolean processSkid(Entity entity, Coords start, int elevation,
+            int direction, int distance, MoveStep step,
+            EntityMovementType moveType, boolean flip) {
         Coords nextPos = start;
         Coords curPos = nextPos;
         IHex curHex = game.getBoard().getHex(start);
         Report r;
         int skidDistance = 0; // actual distance moved
+        // Flipping vehicles take tonnage/10 points of damage for every hex they enter.
+        int flipDamage = (int)Math.ceil(entity.getWeight() / 10.0);
         while (!entity.isDoomed() && (distance > 0)) {
             nextPos = curPos.translated(direction);
             // Is the next hex off the board?
@@ -5880,6 +5901,11 @@ public class Server implements Runnable {
             r.indent();
             r.add(curPos.getBoardNum(), true);
             addReport(r);
+            
+            if (flip) {
+                doVehicleFlipDamage(entity, flipDamage, direction < 3, skidDistance - 1);
+                addNewLines();                
+            }
 
         } // Handle the next skid hex.
 
@@ -5915,7 +5941,9 @@ public class Server implements Runnable {
         }
 
         // Mechs suffer damage for every hex skidded.
-        if (entity instanceof Mech) {
+        if (entity instanceof Mech
+                // Wheeled QuadVees that are flipping have already taken their damage.
+                && !(flip && entity.getMovementMode() == EntityMovementMode.WHEELED)) {
             // Calculate one half falling damage times skid length.
             int damage = skidDistance
                          * (int) Math
@@ -5965,69 +5993,88 @@ public class Server implements Runnable {
             int turnDirection, MoveStep prevStep, EntityMovementType lastStepMoveType,
             int distance) {
         IHex curHex = game.getBoard().getHex(curPos);
-        int roll = Compute.d6(2);
+        int modifier = 0;
         if (entity.getMovementMode() == EntityMovementMode.WHEELED
                 && !curHex.containsTerrain(Terrains.PAVEMENT)) {
-            roll += 2;
+            modifier += 2;
         }
         if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-            roll += 2;
+            modifier += 2;
         } else if (entity.getMovementMode() == EntityMovementMode.HOVER
                 || entity.getMovementMode() == EntityMovementMode.WIGE
                 || entity.getMovementMode() == EntityMovementMode.AIRMECH
                 || entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
-            roll += 4;
+            modifier += 4;
         }
         if (entity.getWeightClass() < EntityWeightClass.WEIGHT_MEDIUM
                 || entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
-            roll++;
+            modifier++;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY
                 || entity.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
-            roll--;
+            modifier--;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT
                 || entity.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
-            roll -= 2;
+            modifier -= 2;
         }
         boolean turnEnds = false;
         boolean motiveDamage = false;
         int motiveDamageMod = 0;
         boolean skid = false;
-        Report r = new Report(1210);
+        boolean flip = false;
+
+        int roll = Compute.d6(2);
+
+        Report r = new Report(2505);
         r.subject = entity.getId();
-        r.addDesc(entity);
+        r.newlines = 0;
+        r.indent(2);
+        addReport(r);
+        r = new Report(6310);
+        r.subject = entity.getId();
         r.add(roll);
+        r.newlines = 0;
+        addReport(r);
+        r = new Report(3340);
+        r.add(modifier);
+        r.subject = entity.getId();
+        r.newlines = 0;
+        addReport(r);
+        
+        r = new Report(1210);
+        r.subject = entity.getId();
+        roll += modifier;
         if (roll < 8) {
-            r.messageId = 2505;
+            r.messageId = 2506;
             // minor fishtail, fail to turn7
             entity.setFacing((entity.getFacing() - turnDirection + 6) % 6);
         } else if (roll < 10) {
-            r.messageId = 2506;
+            r.messageId = 2507;
             // moderate fishtail, turn an extra hexside and roll for motive damage at -1.
             entity.setFacing((entity.getFacing() + turnDirection) % 6);
             motiveDamage = true;
             motiveDamageMod = -1;
         } else if (roll < 12) {
-            r.messageId = 2507;
+            r.messageId = 2508;
             // serious fishtail, turn an extra hexside and roll for motive damage. Turn ends.
             entity.setFacing((entity.getFacing() + turnDirection) % 6);
             motiveDamage = true;
             turnEnds = true;
-        } else if (roll > 13 && entity.getMovementMode() != EntityMovementMode.WHEELED) {
-            r.messageId = 2509;
-            // Major skid: turn fails and vehicle starts flipping
-            entity.setFacing((entity.getFacing() - turnDirection + 6) % 6);
-            skid = true;
-        } else if (roll > 13
-                && (entity.getMovementMode() == EntityMovementMode.NAVAL
-                || entity.getMovementMode() == EntityMovementMode.HYDROFOIL)) {
-            r.messageId = 2510;
-            // Major skid: turn fails and vehicle capsizes and sinks.
-            entity.setDoomed(true);
-            turnEnds = true;
         } else {
-            r.messageId = 2508;
+            r.messageId = 2509;
             // Turn fails and vehicle skids
             entity.setFacing((entity.getFacing() - turnDirection + 6) % 6);
+            // Wheeled and naval vehicles start to flip if the roll is high enough.
+            if (roll > 13) {
+                if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                    r.messageId = 2510;
+                    flip = true;
+                } else if (entity.getMovementMode() == EntityMovementMode.NAVAL
+                        || entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
+                    entity.setDoomed(true);
+                    r.messageId = 2511;
+                }
+            }
+            flip = roll > 13;
             skid = true;
             turnEnds = true;
         }
@@ -6038,15 +6085,91 @@ public class Server implements Runnable {
                 || entity.getMovementMode() == EntityMovementMode.WHEELED)) {
                     addReport(vehicleMotiveDamage((Tank)entity, motiveDamageMod));
                 }
-        if (skid) {
-            if (entity instanceof Tank) {
+        if (skid && !entity.isDoomed()) {
+            if (!flip && entity instanceof Tank) {
                 addReport(vehicleMotiveDamage((Tank)entity, 0));
             }
-            processSkid(entity, curPos, prevStep.getElevation(),
-                    entity.getFacing(), (int)Math.round((double) (distance - 1) / 2),
-                    prevStep, lastStepMoveType);         
+            int skidDistance = (int)Math.round((double) (distance - 1) / 2);
+            // Wheeled vehicles that start to flip reduce the skid distance by one hex.
+            if (flip && entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                skidDistance--;
+            }
+            if (skidDistance > 0) {
+                processSkid(entity, curPos, prevStep.getElevation(),
+                        entity.getFacing(), skidDistance,
+                        prevStep, lastStepMoveType, flip);
+            }
         }
         return turnEnds;
+    }
+
+    private void doVehicleFlipDamage(Entity entity, int damage, boolean startRight, int flipCount) {
+        HitData hit;
+        
+        if (entity instanceof Tank) {
+            int index = flipCount % 4;
+            // If there is no turret, we do side-side-bottom
+            if (((Tank)entity).hasNoTurret()) {
+                index = flipCount % 3;
+                if (index > 0) {
+                    index++;
+                }
+            }
+            switch (index) {
+            case 0:
+                hit = new HitData(startRight? Tank.LOC_RIGHT : Tank.LOC_LEFT);
+                break;
+            case 1:
+                hit = new HitData(Tank.LOC_TURRET);
+            case 2:
+                hit = new HitData(startRight? Tank.LOC_LEFT : Tank.LOC_RIGHT);
+                break;
+            default:
+                hit = null; //Motive damage instead
+            }
+            if (hit != null) {
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                addReport(damageEntity(entity, hit, damage));
+                // If the vehicle has two turrets, they both take full damage.
+                if (hit.getLocation() == Tank.LOC_TURRET
+                        && !(((Tank)entity).hasNoDualTurret())) {
+                    hit = new HitData(Tank.LOC_TURRET_2);
+                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    addReport(damageEntity(entity, hit, damage));
+                }
+            } else {
+                addReport(vehicleMotiveDamage((Tank)entity, 1));
+            }
+        } else if (entity instanceof QuadVee) {
+            // The QuadVee rules state that when in vee mode a QuadVee moves according to the
+            // vehicle movement rules, but no guidance is given for how to handle flipping damage
+            // for wheeled QVs. We're going to apply the damage to side, rear, side, front and
+            // require a PSR to avoid damage for each hex in place of the crew stunned result.
+            int index = flipCount % 4;
+            switch (index) {
+            case 0:
+                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
+                        startRight? ToHitData.SIDE_RIGHT : ToHitData.SIDE_LEFT);
+                break;
+            case 1:
+                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR);
+                break;
+            case 2:
+                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
+                        startRight? ToHitData.SIDE_LEFT : ToHitData.SIDE_RIGHT);
+                break;
+            default:
+                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                break;
+            }
+            if (hit != null) {
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                addReport(damageEntity(entity, hit, damage));
+            }
+
+            PilotingRollData prd = entity.getBasePilotingRoll();
+            addReport(checkPilotAvoidFallDamage(entity, 1, prd));
+        }
     }
 
     /**
@@ -7744,6 +7867,9 @@ public class Server implements Runnable {
                         turnOver = true;
                         distance = entity.delta_distance;
                     }
+                    curFacing = entity.getFacing();
+                    curPos = entity.getPosition();
+                    entity.setSecondaryFacing(curFacing);
                     break;
                 }
             }
@@ -27806,44 +27932,8 @@ public class Server implements Runnable {
 
         // only mechs should roll to avoid pilot damage
         // vehicles may fall due to sideslips
-        if ((entity instanceof Mech)
-            && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)
-            && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
-            // we want to be able to avoid pilot damage even when it was
-            // an automatic fall, only unconsciousness should cause auto-damage
-            roll.removeAutos();
-
-            if (fallHeight > 1) {
-                roll.addModifier(fallHeight - 1, "height of fall");
-            }
-
-            if (entity.getCrew().getSlotCount() > 1) {
-                //Extract the base from the list of modifiers so we can replace it with the piloting
-                //skill of each crew member.
-                List<TargetRollModifier> modifiers = new ArrayList<>(roll.getModifiers());
-                if (modifiers.size() > 0) {
-                    modifiers.remove(0);
-                }
-                for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
-                    if (entity.getCrew().isMissing(pos) || entity.getCrew().isDead(pos)) {
-                        continue;
-                    }
-                    PilotingRollData prd;
-                    if (entity.getCrew().isDead(pos)) {
-                        continue;
-                    } else if (entity.getCrew().isUnconscious(pos)) {
-                        prd = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
-                                "Crew member unconscious");
-                    } else {
-                        prd = new PilotingRollData(entity.getId(),
-                                entity.getCrew().getPiloting(pos), "Base piloting skill");
-                        modifiers.forEach(m -> prd.addModifier(m));
-                    }
-                    vPhaseReport.addAll(checkPilotDamageFromFall(entity, prd, pos));
-                }
-            } else {
-                vPhaseReport.addAll(checkPilotDamageFromFall(entity, roll, 0));
-            }
+        if (entity instanceof Mech) {
+            vPhaseReport.addAll(checkPilotAvoidFallDamage(entity, fallHeight, roll));
         }
 
         // Now dislodge any swarming infantry.
@@ -27908,7 +27998,52 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
-    private Vector<Report> checkPilotDamageFromFall(Entity entity, PilotingRollData roll, int crewPos) {
+    private Vector<Report> checkPilotAvoidFallDamage(Entity entity, int fallHeight, PilotingRollData roll) {
+        Vector<Report> reports = new Vector<>();
+        
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)
+                || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+            return reports;
+        }
+        // we want to be able to avoid pilot damage even when it was
+        // an automatic fall, only unconsciousness should cause auto-damage
+        roll.removeAutos();
+
+        if (fallHeight > 1) {
+            roll.addModifier(fallHeight - 1, "height of fall");
+        }
+
+        if (entity.getCrew().getSlotCount() > 1) {
+            //Extract the base from the list of modifiers so we can replace it with the piloting
+            //skill of each crew member.
+            List<TargetRollModifier> modifiers = new ArrayList<>(roll.getModifiers());
+            if (modifiers.size() > 0) {
+                modifiers.remove(0);
+            }
+            for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
+                if (entity.getCrew().isMissing(pos) || entity.getCrew().isDead(pos)) {
+                    continue;
+                }
+                PilotingRollData prd;
+                if (entity.getCrew().isDead(pos)) {
+                    continue;
+                } else if (entity.getCrew().isUnconscious(pos)) {
+                    prd = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
+                            "Crew member unconscious");
+                } else {
+                    prd = new PilotingRollData(entity.getId(),
+                            entity.getCrew().getPiloting(pos), "Base piloting skill");
+                    modifiers.forEach(m -> prd.addModifier(m));
+                }
+                reports.addAll(resolvePilotDamageFromFall(entity, prd, pos));
+            }
+        } else {
+            reports.addAll(resolvePilotDamageFromFall(entity, roll, 0));
+        }
+        return reports;
+    }
+
+    private Vector<Report> resolvePilotDamageFromFall(Entity entity, PilotingRollData roll, int crewPos) {
         Vector<Report> reports = new Vector<>();
         Report r;
         if (roll.getValue() == TargetRoll.IMPOSSIBLE) {

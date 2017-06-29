@@ -7004,7 +7004,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         vDesc.add(r);
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        roll.addModifier(turnMode - straightLineHexes, "Failed to fulfill turn mode");
+        roll.addModifier(turnMode - straightLineHexes, "did not satisfy turn mode");
 
         if (getWeightClass() < EntityWeightClass.WEIGHT_MEDIUM
                 || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {

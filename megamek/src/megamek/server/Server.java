@@ -6887,6 +6887,7 @@ public class Server implements Runnable {
         boolean recovered = false;
         Entity loader = null;
         boolean continueTurnFromPBS = false;
+        boolean continueTurnFromFishtail = false;
 
         // get a list of coordinates that the unit passed through this turn
         // so that I can later recover potential bombing targets
@@ -7854,6 +7855,7 @@ public class Server implements Runnable {
                 boolean turnFailed = entity.checkTurnModeFailure(overallMoveType, turnMode, md.getMpUsed(),
                         step.getPosition(), vDesc);
                 addReport(vDesc);
+                turnMode = 0;
                 if (turnFailed) {
                     if (processFailedVehicleManeuver(entity, curPos,
                             step.getType() == MoveStepType.TURN_LEFT?1 : -1,
@@ -7866,9 +7868,11 @@ public class Server implements Runnable {
 
                         turnOver = true;
                         distance = entity.delta_distance;
+                    } else {
+                        continueTurnFromFishtail = true;
                     }
                     curFacing = entity.getFacing();
-                    curPos = entity.getPosition();
+                    entity.setPosition(curPos);
                     entity.setSecondaryFacing(curFacing);
                     break;
                 }
@@ -9398,7 +9402,7 @@ public class Server implements Runnable {
                 && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
                 && !turnOver && (entity.mpUsed < entity.getRunMP())
                 && (overallMoveType != EntityMovementType.MOVE_JUMP);
-        if ((continueTurnFromFall || continueTurnFromPBS)
+        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail)
                 && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);

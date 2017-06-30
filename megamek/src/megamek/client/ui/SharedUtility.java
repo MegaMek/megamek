@@ -387,6 +387,12 @@ public class SharedUtility {
                     checkNag(rollTarget, nagReport, psrList);
                 }
             }
+            
+            if (step.isTurning()) {
+                rollTarget = entity.checkTurnModeFailure(overallMoveType,
+                        prevStep == null? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
+                checkNag(rollTarget, nagReport, psrList);
+            }
 
             // update lastPos, prevStep, prevFacing & prevHex
             if (!curPos.equals(lastPos)) {

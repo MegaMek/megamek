@@ -362,6 +362,23 @@ public class MovePath implements Cloneable, Serializable {
             }
 
         } // End step-is-legal
+        
+        // If we are using turn modes, go back through the path and mark danger for any turn
+        // that now exceeds turn mode requirement. We want to show danger on the previous step
+        // so the StepSprite will show danger. Hiding the previous step instead would make turning costs
+        // show in the turning hex for units tracking turn mode, unlike other units.
+        if (entity.usesTurnMode() && getMpUsed() > 5) {
+            int turnMode = getMpUsed() / 5;
+            int nStraight = 0;
+            MoveStep prevStep = steps.get(0);
+            for (MoveStep s : steps) {
+                if (s.isTurning() && nStraight < turnMode) {
+                    prevStep.setDanger(true);
+                }
+                nStraight = s.getNStraight();
+                prevStep = s;
+            }
+        }
 
         return this;
     }

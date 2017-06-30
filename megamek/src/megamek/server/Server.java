@@ -7847,14 +7847,31 @@ public class Server implements Runnable {
             // If we have turned, check whether we have fulfilled any turn mode requirements.
             if ((step.getType() == MoveStepType.TURN_LEFT || step.getType() == MoveStepType.TURN_RIGHT)
                     && entity.usesTurnMode()) {
-                Vector<Report> vDesc = new Vector<>();
                 int straight = 0;
                 if (prevStep != null) {
                     straight = prevStep.getNStraight();
                 }
-                boolean turnFailed = entity.checkTurnModeFailure(overallMoveType, straight,
-                        md.getMpUsed(), step.getPosition(), vDesc);
-                addReport(vDesc);
+                PilotingRollData prd = entity.checkTurnModeFailure(overallMoveType, straight,
+                        md.getMpUsed(), step.getPosition());
+                int nRoll = 0;
+                boolean turnFailed = false;
+                if (prd.getValue() != TargetRoll.CHECK_FALSE) {
+                    r = new Report(2500);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    addReport(r);
+                    
+                    nRoll = Compute.d6(2);
+                    r = new Report(2190);
+                    r.subject = entity.getId();
+                    r.add(prd.getValue());
+                    r.add(prd.getDesc());
+                    r.add(nRoll);
+                    
+                    turnFailed = nRoll < prd.getValue();
+                    r.choose(!turnFailed);
+                    addReport(r);
+                }
                 if (turnFailed) {
                     if (processFailedVehicleManeuver(entity, curPos,
                             step.getType() == MoveStepType.TURN_LEFT?1 : -1,

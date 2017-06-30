@@ -5989,11 +5989,10 @@ public class Server implements Runnable {
         return false;
     }
 
-    private boolean processFailedVehicleManeuver(Entity entity, Coords curPos,
-            int turnDirection, MoveStep prevStep, EntityMovementType lastStepMoveType,
-            int distance) {
+    private boolean processFailedVehicleManeuver(Entity entity, Coords curPos, int turnDirection,
+            MoveStep prevStep, EntityMovementType lastStepMoveType,
+            int distance, int modifier) {
         IHex curHex = game.getBoard().getHex(curPos);
-        int modifier = 0;
         if (entity.getMovementMode() == EntityMovementMode.WHEELED
                 && !curHex.containsTerrain(Terrains.PAVEMENT)) {
             modifier += 2;
@@ -6045,24 +6044,23 @@ public class Server implements Runnable {
         roll += modifier;
         if (roll < 8) {
             r.messageId = 2506;
-            // minor fishtail, fail to turn7
-            entity.setFacing((entity.getFacing() - turnDirection + 6) % 6);
+            // minor fishtail, fail to turn
+            turnDirection = 0;
         } else if (roll < 10) {
             r.messageId = 2507;
             // moderate fishtail, turn an extra hexside and roll for motive damage at -1.
-            entity.setFacing((entity.getFacing() + turnDirection) % 6);
+            turnDirection *= 2;
             motiveDamage = true;
             motiveDamageMod = -1;
         } else if (roll < 12) {
             r.messageId = 2508;
             // serious fishtail, turn an extra hexside and roll for motive damage. Turn ends.
-            entity.setFacing((entity.getFacing() + turnDirection) % 6);
+            turnDirection *= 2;
             motiveDamage = true;
             turnEnds = true;
         } else {
             r.messageId = 2509;
             // Turn fails and vehicle skids
-            entity.setFacing((entity.getFacing() - turnDirection + 6) % 6);
             // Wheeled and naval vehicles start to flip if the roll is high enough.
             if (roll > 13) {
                 if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
@@ -6079,6 +6077,7 @@ public class Server implements Runnable {
             turnEnds = true;
         }
         addReport(r);
+        entity.setFacing((entity.getFacing() + turnDirection + 6) % 6);
         entity.setSecondaryFacing(entity.getFacing());
         if (motiveDamage && entity instanceof Tank
                 && (entity.getMovementMode() == EntityMovementMode.TRACKED
@@ -7873,9 +7872,8 @@ public class Server implements Runnable {
                     addReport(r);
                 }
                 if (turnFailed) {
-                    if (processFailedVehicleManeuver(entity, curPos,
-                            step.getType() == MoveStepType.TURN_LEFT?1 : -1,
-                                    prevStep, lastStepMoveType, distance)) {
+                    if (processFailedVehicleManeuver(entity, curPos, step.getFacing() - curFacing,
+                            prevStep, lastStepMoveType, distance, prd.getValue() - nRoll)) {
                         if (md.hasActiveMASC()) {
                             mpUsed = entity.getRunMP();
                         } else {

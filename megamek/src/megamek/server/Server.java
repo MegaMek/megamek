@@ -7131,6 +7131,52 @@ public class Server implements Runnable {
                 }
             }
             
+            // Check for failed maneuver for overdrive on first step. The rules for overdrive do not
+            // state this explicitly, but since combinining overdrive with gunning it requires two rolls
+            // and gunning does state explicitly that the roll is made before movement, this
+            // implies the same for overdrive.
+            if (firstStep && md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT) {
+                PilotingRollData prd = entity.checkUsingOverdrive(EntityMovementType.MOVE_SPRINT);
+                if (prd.getValue() != TargetRoll.CHECK_FALSE) {
+                    r = new Report(2180);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(prd.getLastPlainDesc());
+                    addReport(r);
+                    
+                    int nRoll = Compute.d6(2);
+                    r = new Report(2190);
+                    r.subject = entity.getId();
+                    r.add(prd.getValueAsString());
+                    r.add(prd.getDesc());
+                    r.add(nRoll);
+                    boolean failed = nRoll < prd.getValue();
+                    r.choose(!failed);
+                    addReport(r);
+                    if (failed) {
+                        if (processFailedVehicleManeuver(entity, curPos, 0, prevStep,
+                                lastStepMoveType, distance, 2)) {
+                            if (md.hasActiveMASC()) {
+                                mpUsed = entity.getRunMP();
+                            } else {
+                                mpUsed = entity.getRunMPwithoutMASC();
+                            }
+
+                            turnOver = true;
+                            distance = entity.delta_distance;
+                            break;
+                        } else if (entity.getFacing() != curFacing) {
+                            // If the facing doesn't change we had a minor fishtail that doesn't require
+                            // stopping movement.
+                            continueTurnFromFishtail = true;
+                            curFacing = entity.getFacing();
+                            entity.setSecondaryFacing(curFacing);
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (step.getType() == MoveStepType.CONVERT_MODE) {
                 entity.setConvertingNow(true);
                 
@@ -8920,32 +8966,6 @@ public class Server implements Runnable {
                 && md.hasActiveMASC()) {
             doSkillCheckInPlace(entity,
                     entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
-        }
-
-        // Check for failed maneuver for overdrive on first step
-        if (md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT) {
-            PilotingRollData prd = entity.checkUsingOverdrive(EntityMovementType.MOVE_SPRINT);
-            if (prd.getValue() != TargetRoll.CHECK_FALSE) {
-                r = new Report(2180);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(prd.getLastPlainDesc());
-                addReport(r);
-                
-                int nRoll = Compute.d6(2);
-                r = new Report(2190);
-                r.subject = entity.getId();
-                r.add(prd.getValueAsString());
-                r.add(prd.getDesc());
-                r.add(nRoll);
-                boolean failed = nRoll < prd.getValue();
-                r.choose(!failed);
-                addReport(r);
-                if (failed) {
-                    processFailedVehicleManeuver(entity, curPos, 0, prevStep,
-                            lastStepMoveType, distance, 2);
-                }
-            }
         }
         
         if (entity.isAirborne() && (entity instanceof Aero)) {

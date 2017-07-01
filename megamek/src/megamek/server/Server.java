@@ -5989,6 +5989,19 @@ public class Server implements Runnable {
         return false;
     }
 
+    /**
+     * Roll on the failed vehicle manuever table.
+     * 
+     * @param entity    The vehicle that failed the maneuver.
+     * @param curPos    The coordinates of the hex in which the maneuver was attempted.
+     * @param turnDirection The difference between the intended final facing and the starting facing
+     *                      (-1 for left turn, 1 for right turn, 0 for not turning).
+     * @param prevStep  The <code>MoveStep</code> immediately preceding the one being processes.
+     * @param lastStepMoveType  The <code>EntityMovementType</code> of the last step in the path.
+     * @param distance  The distance moved so far during the phase; used to calculate any potential skid.
+     * @param modifier  The modifier to the maneuver failure roll.
+     * @return          true if the maneuver failure result ends the unit's turn.
+     */
     private boolean processFailedVehicleManeuver(Entity entity, Coords curPos, int turnDirection,
             MoveStep prevStep, EntityMovementType lastStepMoveType,
             int distance, int modifier) {
@@ -6049,13 +6062,21 @@ public class Server implements Runnable {
         } else if (roll < 10) {
             r.messageId = 2507;
             // moderate fishtail, turn an extra hexside and roll for motive damage at -1.
-            turnDirection *= 2;
+            if (turnDirection == 0) {
+                turnDirection = Compute.d6() < 4? -1 : 1;
+            } else {
+                turnDirection *= 2;
+            }
             motiveDamage = true;
             motiveDamageMod = -1;
         } else if (roll < 12) {
             r.messageId = 2508;
             // serious fishtail, turn an extra hexside and roll for motive damage. Turn ends.
-            turnDirection *= 2;
+            if (turnDirection == 0) {
+                turnDirection = Compute.d6() < 4? -1 : 1;
+            } else {
+                turnDirection *= 2;
+            }
             motiveDamage = true;
             turnEnds = true;
         } else {
@@ -8878,14 +8899,14 @@ public class Server implements Runnable {
 
         // if we ran with destroyed hip or gyro, we need a psr
         rollTarget = entity.checkRunningWithDamage(overallMoveType);
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             doSkillCheckInPlace(entity, rollTarget);
         }
 
         // if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASC(overallMoveType,
                 entity.mpUsed);
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             doSkillCheckInPlace(entity, rollTarget);
         }
 
@@ -8921,6 +8942,32 @@ public class Server implements Runnable {
                     entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }
 
+        // Check for failed maneuver for overdrive on first step
+        if (md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT) {
+            PilotingRollData prd = entity.checkUsingOverdrive(EntityMovementType.MOVE_SPRINT);
+            if (prd.getValue() != TargetRoll.CHECK_FALSE) {
+                r = new Report(2180);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(prd.getLastPlainDesc());
+                addReport(r);
+                
+                int nRoll = Compute.d6(2);
+                r = new Report(2190);
+                r.subject = entity.getId();
+                r.add(prd.getValueAsString());
+                r.add(prd.getDesc());
+                r.add(nRoll);
+                boolean failed = nRoll < prd.getValue();
+                r.choose(!failed);
+                addReport(r);
+                if (failed) {
+                    processFailedVehicleManeuver(entity, curPos, 0, prevStep,
+                            lastStepMoveType, distance, 2);
+                }
+            }
+        }
+        
         if (entity.isAirborne() && (entity instanceof Aero)) {
 
             Aero a = (Aero) entity;

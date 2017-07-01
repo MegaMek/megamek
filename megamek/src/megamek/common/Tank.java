@@ -2079,6 +2079,90 @@ public class Tank extends Entity {
         return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP()
+     */
+    @Override
+    public int getSprintMP() {
+        // Overdrive
+        if (game != null
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+            return getSprintMP(true, false, false);
+        }
+        return getSprintMP(true, false, false);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP(boolean, boolean, boolean)
+     */
+    @Override
+    public int getSprintMP(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (game != null && game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+            if (hasArmedMASC()) {
+                return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
+                        ignoremodulararmor) * 2.5);
+            } else {
+                return getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+            }
+        } else {
+            return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
+     */
+    @Override
+    public int getSprintMPwithoutMASC() {
+        return getSprintMPwithoutMASC(true, false, false);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean,
+     * boolean)
+     */
+    @Override
+    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (game != null && game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+            return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
+                    ignoremodulararmor) * 2.0);
+        } else {
+            return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+        }
+    }
+
+    public int getOriginalSprintMPwithoutMASC() {
+        if (game != null && game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
+        } else {
+            return getOriginalRunMP();
+        }
+    }
+
+    /**
+     * Returns this entity's Sprint mp as a string.
+     */
+    @Override
+    public String getSprintMPasString() {
+        if (hasArmedMASC()) {
+            return getRunMPwithoutMASC() + "(" + getSprintMP() + ")";
+        }
+        return Integer.toString(getSprintMP());
+    }
+
     @Override
     public int getHeatCapacity() {
         return 999;

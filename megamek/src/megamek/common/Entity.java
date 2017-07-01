@@ -6366,6 +6366,26 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Checks if the entity is attempting to sprint with supercharger engaged.
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkUsingOverdrive (EntityMovementType overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+
+        if (overallMoveType == EntityMovementType.MOVE_SPRINT
+                && (this instanceof Tank
+                        || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode()))) {
+            roll.append(new PilotingRollData(getId(), 0, "using overdrive"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                             "Check false: Entity is not using overdrive");
+        }
+
+        addPilotingModifierForTerrain(roll);
+        return roll;
+    }
+
+    /**
      * Checks if an entity is passing through certain terrain while not moving
      * carefully
      */

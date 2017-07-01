@@ -189,6 +189,65 @@ public class QuadVee extends QuadMech {
     }
     
     /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP()
+     */
+    @Override
+    public int getSprintMP() {
+        if (isInVehicleMode() && (game == null || !game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS))) {
+            return getRunMP();
+        }
+        return super.getSprintMP();
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP(boolean, boolean, boolean)
+     */
+    @Override
+    public int getSprintMP(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (isInVehicleMode() && (game == null || !game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS))) {
+            return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        }
+        return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean,
+     * boolean)
+     */
+    @Override
+    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (isInVehicleMode()) {
+            if (game == null || !game.getOptions()
+                    .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+                return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+            } else {
+                return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
+                        ignoremodulararmor) * 2.0);
+            }
+        } else {
+            return super.getSprintMPwithoutMASC();
+        }
+    }
+
+    public int getOriginalSprintMPwithoutMASC() {
+        if (isInVehicleMode() && (game == null || !game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS))) {
+            return getOriginalRunMP();
+        } else {
+            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
+        }
+    }
+    /*
      * No jumping in vehicle mode.
      */
     public int getJumpMP(boolean gravity, boolean ignoremodulararmor) {

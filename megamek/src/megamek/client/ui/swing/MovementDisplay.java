@@ -1210,7 +1210,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
-                && GUIPreferences.getInstance().getNagForSprint()) {
+                && GUIPreferences.getInstance().getNagForSprint()
+                // no need to nag for vehicles using overdrive if they already get a PSR nag
+                && !((cmd.getEntity() instanceof Tank
+                        || (cmd.getEntity() instanceof QuadVee && ((QuadVee)cmd.getEntity()).isInVehicleMode())
+                        && GUIPreferences.getInstance().getNagForPSR()))) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.ConfirmSprint"), true);

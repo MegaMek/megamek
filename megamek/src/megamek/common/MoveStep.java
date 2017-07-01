@@ -2244,7 +2244,9 @@ public class MoveStep implements Serializable {
                 // gravity psr
                 entity.gotPavementBonus = true;
             } else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)
-                    && (entity instanceof Mech)
+                    && ((entity instanceof Mech && !(entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())
+                            || (entity instanceof Tank || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())))
+                            && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS))
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
                     && !isRunProhibited() && !isEvading()) {

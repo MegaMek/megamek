@@ -5902,9 +5902,8 @@ public class Server implements Runnable {
             r.add(curPos.getBoardNum(), true);
             addReport(r);
             
-            if (flip) {
-                doVehicleFlipDamage(entity, flipDamage, direction < 3, skidDistance - 1);
-                addNewLines();                
+            if (flip && entity instanceof Tank) {
+                doVehicleFlipDamage((Tank)entity, flipDamage, direction < 3, skidDistance - 1);
             }
 
         } // Handle the next skid hex.
@@ -5940,10 +5939,13 @@ public class Server implements Runnable {
             target = Compute.stackingViolation(game, entity.getId(), curPos);
         }
 
-        // Mechs suffer damage for every hex skidded.
-        if (entity instanceof Mech
-                // Wheeled QuadVees that are flipping have already taken their damage.
-                && !(flip && entity.getMovementMode() == EntityMovementMode.WHEELED)) {
+        // Mechs suffer damage for every hex skidded. For QuadVees in vehicle mode, apply
+        // damage only if flipping.
+        boolean mechDamage = entity instanceof Mech;
+        if (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
+            mechDamage = flip;
+        }
+        if (mechDamage) {
             // Calculate one half falling damage times skid length.
             int damage = skidDistance
                          * (int) Math
@@ -5968,6 +5970,15 @@ public class Server implements Runnable {
                 damage -= cluster;
             }
             addNewLines();
+        }
+
+        if (flip && entity instanceof Tank) {
+            addReport(applyCriticalHit(entity, Entity.NONE, new CriticalSlot(0, Tank.CRIT_CREW_STUNNED),
+                    true, 0, false));
+        } else if (flip && entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
+            // QuadVees don't suffer stunned crew criticals; require PSR to avoid damage instead.
+            PilotingRollData prd = entity.getBasePilotingRoll();
+            addReport(checkPilotAvoidFallDamage(entity, 1, prd));            
         }
 
         // Clean up the entity if it has been destroyed.
@@ -6123,72 +6134,41 @@ public class Server implements Runnable {
         return turnEnds;
     }
 
-    private void doVehicleFlipDamage(Entity entity, int damage, boolean startRight, int flipCount) {
+    private void doVehicleFlipDamage(Tank entity, int damage, boolean startRight, int flipCount) {
         HitData hit;
         
-        if (entity instanceof Tank) {
-            int index = flipCount % 4;
-            // If there is no turret, we do side-side-bottom
-            if (((Tank)entity).hasNoTurret()) {
-                index = flipCount % 3;
-                if (index > 0) {
-                    index++;
-                }
+        int index = flipCount % 4;
+        // If there is no turret, we do side-side-bottom
+        if (((Tank)entity).hasNoTurret()) {
+            index = flipCount % 3;
+            if (index > 0) {
+                index++;
             }
-            switch (index) {
-            case 0:
-                hit = new HitData(startRight? Tank.LOC_RIGHT : Tank.LOC_LEFT);
-                break;
-            case 1:
-                hit = new HitData(Tank.LOC_TURRET);
-            case 2:
-                hit = new HitData(startRight? Tank.LOC_LEFT : Tank.LOC_RIGHT);
-                break;
-            default:
-                hit = null; //Motive damage instead
-            }
-            if (hit != null) {
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-                addReport(damageEntity(entity, hit, damage));
-                // If the vehicle has two turrets, they both take full damage.
-                if (hit.getLocation() == Tank.LOC_TURRET
-                        && !(((Tank)entity).hasNoDualTurret())) {
-                    hit = new HitData(Tank.LOC_TURRET_2);
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-                    addReport(damageEntity(entity, hit, damage));
-                }
-            } else {
-                addReport(vehicleMotiveDamage((Tank)entity, 1));
-            }
-        } else if (entity instanceof QuadVee) {
-            // The QuadVee rules state that when in vee mode a QuadVee moves according to the
-            // vehicle movement rules, but no guidance is given for how to handle flipping damage
-            // for wheeled QVs. We're going to apply the damage to side, rear, side, front and
-            // require a PSR to avoid damage for each hex in place of the crew stunned result.
-            int index = flipCount % 4;
-            switch (index) {
-            case 0:
-                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
-                        startRight? ToHitData.SIDE_RIGHT : ToHitData.SIDE_LEFT);
-                break;
-            case 1:
-                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR);
-                break;
-            case 2:
-                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
-                        startRight? ToHitData.SIDE_LEFT : ToHitData.SIDE_RIGHT);
-                break;
-            default:
-                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                break;
-            }
-            if (hit != null) {
+        }
+        switch (index) {
+        case 0:
+            hit = new HitData(startRight? Tank.LOC_RIGHT : Tank.LOC_LEFT);
+            break;
+        case 1:
+            hit = new HitData(Tank.LOC_TURRET);
+        case 2:
+            hit = new HitData(startRight? Tank.LOC_LEFT : Tank.LOC_RIGHT);
+            break;
+        default:
+            hit = null; //Motive damage instead
+        }
+        if (hit != null) {
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            addReport(damageEntity(entity, hit, damage));
+            // If the vehicle has two turrets, they both take full damage.
+            if (hit.getLocation() == Tank.LOC_TURRET
+                    && !(((Tank)entity).hasNoDualTurret())) {
+                hit = new HitData(Tank.LOC_TURRET_2);
                 hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 addReport(damageEntity(entity, hit, damage));
             }
-
-            PilotingRollData prd = entity.getBasePilotingRoll();
-            addReport(checkPilotAvoidFallDamage(entity, 1, prd));
+        } else {
+            addReport(vehicleMotiveDamage((Tank)entity, 1));
         }
     }
 

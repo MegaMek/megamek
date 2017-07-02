@@ -2250,13 +2250,21 @@ public class MoveStep implements Serializable {
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
                     && !isRunProhibited() && !isEvading()) {
-                movementType = EntityMovementType.MOVE_SPRINT;
+                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+                    movementType = EntityMovementType.MOVE_VTOL_SPRINT;
+                } else {
+                    movementType = EntityMovementType.MOVE_SPRINT;
+                }
             } else if ((getMpUsed() <= sprintMP)
                     && !isRunProhibited() && !isEvading()
                     && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
                 setUsingMASC(true);
                 setTargetNumberMASC(entity.getMASCTarget());
-                movementType = EntityMovementType.MOVE_SPRINT;
+                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+                    movementType = EntityMovementType.MOVE_VTOL_SPRINT;
+                } else {
+                    movementType = EntityMovementType.MOVE_SPRINT;
+                }
             }
         }
         // 0 MP infantry units can move 1 hex
@@ -2299,6 +2307,10 @@ public class MoveStep implements Serializable {
         } else if (((movementType == EntityMovementType.MOVE_WALK) || (movementType == EntityMovementType.MOVE_RUN))
                 && (prev.movementType == EntityMovementType.MOVE_SPRINT)) {
             movementType = EntityMovementType.MOVE_SPRINT;
+        } else if (((movementType == EntityMovementType.MOVE_VTOL_WALK)
+                || (movementType == EntityMovementType.MOVE_VTOL_RUN))
+                && (prev.movementType == EntityMovementType.MOVE_VTOL_SPRINT)) {
+            movementType = EntityMovementType.MOVE_VTOL_SPRINT;
         }
         
         //We've already invalidated conversion for LAMs with destroyed gyro and fighter mode ignores it.
@@ -2363,7 +2375,8 @@ public class MoveStep implements Serializable {
 
             // VTOLs with a damaged flight stabiliser can't flank
             if ((entity instanceof VTOL)
-                    && (movementType == EntityMovementType.MOVE_VTOL_RUN)
+                    && (movementType == EntityMovementType.MOVE_VTOL_RUN
+                        || movementType == EntityMovementType.MOVE_VTOL_SPRINT)
                     && ((VTOL) entity).isStabiliserHit(VTOL.LOC_ROTOR)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
@@ -2445,7 +2458,8 @@ public class MoveStep implements Serializable {
         if (isUnjammingRAC
                 && ((movementType == EntityMovementType.MOVE_RUN)
                 || (movementType == EntityMovementType.MOVE_SPRINT)
-                || (movementType == EntityMovementType.MOVE_VTOL_RUN) 
+                || (movementType == EntityMovementType.MOVE_VTOL_RUN
+                || (movementType == EntityMovementType.MOVE_VTOL_SPRINT)) 
                 || isJumping())) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
@@ -2610,6 +2624,7 @@ public class MoveStep implements Serializable {
             if ((movementType == EntityMovementType.MOVE_JUMP)
                     || (movementType == EntityMovementType.MOVE_VTOL_WALK)
                     || (movementType == EntityMovementType.MOVE_VTOL_RUN)
+                    || (movementType == EntityMovementType.MOVE_VTOL_SPRINT)
                     || ((entity.getMovementMode() == EntityMovementMode.WIGE)
                         && (getElevation() != 0))) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
@@ -3002,7 +3017,9 @@ public class MoveStep implements Serializable {
         if (bDumping
                 && ((movementType == EntityMovementType.MOVE_RUN)
                 || (movementType == EntityMovementType.MOVE_SPRINT)
-                || (movementType == EntityMovementType.MOVE_VTOL_RUN) || (movementType == EntityMovementType.MOVE_JUMP))) {
+                || (movementType == EntityMovementType.MOVE_VTOL_RUN)
+                || (movementType == EntityMovementType.MOVE_VTOL_SPRINT)
+                || (movementType == EntityMovementType.MOVE_JUMP))) {
             return false;
         }
 
@@ -3060,7 +3077,9 @@ public class MoveStep implements Serializable {
         // Can't run into water unless hovering, naval, first step, using a
         // bridge, or fly.
         if (((movementType == EntityMovementType.MOVE_RUN)
-                || (movementType == EntityMovementType.MOVE_SPRINT) || (movementType == EntityMovementType.MOVE_VTOL_RUN))
+                || (movementType == EntityMovementType.MOVE_SPRINT)
+                || (movementType == EntityMovementType.MOVE_VTOL_RUN)
+                || (movementType == EntityMovementType.MOVE_VTOL_SPRINT))
                 && (nMove != EntityMovementMode.HOVER)
                 && (nMove != EntityMovementMode.NAVAL)
                 && (nMove != EntityMovementMode.HYDROFOIL)
@@ -3142,7 +3161,8 @@ public class MoveStep implements Serializable {
                 && (!isPavementStep() || (nMove == EntityMovementMode.NAVAL)
                 || (nMove == EntityMovementMode.HYDROFOIL) || (nMove == EntityMovementMode.SUBMARINE))
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
-                && (movementType != EntityMovementType.MOVE_VTOL_RUN)) {
+                && (movementType != EntityMovementType.MOVE_VTOL_RUN)
+                && (movementType != EntityMovementType.MOVE_VTOL_SPRINT)) {
 
             // We're allowed to pass *over* invalid
             // terrain, but we can't end there.
@@ -3184,6 +3204,7 @@ public class MoveStep implements Serializable {
         if ((movementType != EntityMovementType.MOVE_JUMP)
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
                 && (movementType != EntityMovementType.MOVE_VTOL_RUN)
+                && (movementType != EntityMovementType.MOVE_VTOL_SPRINT)
                 // Units in prohibited terran should still be able to unload
                 && (type != MoveStepType.UNLOAD)
                 // Should allow vertical takeoffs

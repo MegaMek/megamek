@@ -111,6 +111,7 @@ class StepSprite extends Sprite {
                         "AdvancedMoveJumpColor");
                 break;
             case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
                 col = GUIPreferences.getInstance().getColor(
                         "AdvancedMoveSprintColor");
                 break;
@@ -629,6 +630,7 @@ class StepSprite extends Sprite {
         EntityMovementType moveType = step.getMovementType(isLastStep);
         if ((moveType == EntityMovementType.MOVE_VTOL_WALK)
                 || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)
                 || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK)
                 || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
             costStringBuf.append("{").append(step.getElevation())

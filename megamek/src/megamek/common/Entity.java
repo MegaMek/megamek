@@ -6217,7 +6217,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData addConditionBonuses(PilotingRollData roll,
             EntityMovementType moveType) {
 
-        if (moveType == EntityMovementType.MOVE_SPRINT) {
+        if (moveType == EntityMovementType.MOVE_SPRINT
+                || moveType == EntityMovementType.MOVE_VTOL_SPRINT) {
             roll.addModifier(2, "Sprinting");
         }
 
@@ -6226,7 +6227,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((moveType == EntityMovementType.MOVE_RUN)
             || (moveType == EntityMovementType.MOVE_SPRINT)
             || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-            || (moveType == EntityMovementType.MOVE_OVER_THRUST)) {
+            || (moveType == EntityMovementType.MOVE_OVER_THRUST)
+            || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
             int lightPenalty = conditions.getLightPilotPenalty();
             if (lightPenalty > 0) {
                 roll.addModifier(lightPenalty,
@@ -6310,7 +6312,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
         }
-        if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
+        if (((overallMoveType == EntityMovementType.MOVE_RUN)
+                || (overallMoveType == EntityMovementType.MOVE_SPRINT))
             && canFall() && ((gyroDamage > 0) || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
@@ -6331,7 +6334,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((overallMoveType == EntityMovementType.MOVE_SPRINT)
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT
+                || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
             && (used > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0,
                                              "sprinting with active MASC/Supercharger"));
@@ -6352,7 +6356,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((overallMoveType == EntityMovementType.MOVE_SPRINT)
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT
+                || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
             && (used > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0,
                                              "sprinting with active MASC/Supercharger"));
@@ -6372,7 +6377,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData checkUsingOverdrive (EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if (overallMoveType == EntityMovementType.MOVE_SPRINT
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT
+                || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
                 && (this instanceof Tank
                         || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode()))) {
             roll.append(new PilotingRollData(getId(), 0, "using overdrive"));
@@ -9011,7 +9017,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // sprinted?
-        if (moved == EntityMovementType.MOVE_SPRINT) {
+        if (moved == EntityMovementType.MOVE_SPRINT
+                || moved == EntityMovementType.MOVE_VTOL_SPRINT) {
             return false;
         }
 
@@ -10450,8 +10457,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((moveType != EntityMovementType.MOVE_JUMP)
             && (prevHex != null)
             && (distance > 1)
-            && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType
-                .MOVE_VTOL_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
+            && ((overallMoveType == EntityMovementType.MOVE_RUN)
+                    || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
+                    || (overallMoveType == EntityMovementType.MOVE_SPRINT)
+                    || (overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT))
             && (prevFacing != curFacing) && !lastPos.equals(curPos)
             && !(this instanceof Infantry)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));

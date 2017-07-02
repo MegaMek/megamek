@@ -657,6 +657,8 @@ public class Tank extends Entity {
                 return "Cruised";
             case MOVE_RUN:
                 return "Flanked";
+            case MOVE_SPRINT:
+                return "Sprinted";
             case MOVE_JUMP:
                 return "Jumped";
             default:
@@ -678,6 +680,8 @@ public class Tank extends Entity {
                 return "C";
             case MOVE_RUN:
                 return "F";
+            case MOVE_SPRINT:
+                return "O";
             case MOVE_JUMP:
                 return "J";
             default:

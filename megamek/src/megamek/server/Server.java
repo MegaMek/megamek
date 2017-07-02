@@ -7135,7 +7135,8 @@ public class Server implements Runnable {
             // state this explicitly, but since combinining overdrive with gunning it requires two rolls
             // and gunning does state explicitly that the roll is made before movement, this
             // implies the same for overdrive.
-            if (firstStep && md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT) {
+            if (firstStep && (md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
+                    || md.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT)) {
                 PilotingRollData prd = entity.checkUsingOverdrive(EntityMovementType.MOVE_SPRINT);
                 if (prd.getValue() != TargetRoll.CHECK_FALSE) {
                     r = new Report(2180);
@@ -11705,7 +11706,8 @@ public class Server implements Runnable {
                 entity.heatBuildup += entity.getRunHeat();
             } else if (entity.moved == EntityMovementType.MOVE_JUMP) {
                 entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
-            } else if (entity.moved == EntityMovementType.MOVE_SPRINT) {
+            } else if (entity.moved == EntityMovementType.MOVE_SPRINT
+                    || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
                 entity.heatBuildup += entity.getSprintHeat();
             }
         }
@@ -20641,7 +20643,8 @@ public class Server implements Runnable {
                     || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
                     || (entity.moved == EntityMovementType.MOVE_RUN)
                     || (entity.moved == EntityMovementType.MOVE_SPRINT)
-                    || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)) {
+                    || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                    || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)) {
                     if (entity instanceof Mech) {
                         int j = entity.mpUsed;
                         int damage = 0;
@@ -32848,7 +32851,8 @@ public class Server implements Runnable {
                     || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                     || (moveType == EntityMovementType.MOVE_RUN)
                     || (moveType == EntityMovementType.MOVE_SPRINT)
-                    || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
+                    || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                    || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We moved too fast, let's make PSR to see if we get
                         // damage
@@ -32888,7 +32892,9 @@ public class Server implements Runnable {
                 if ((moveType == EntityMovementType.MOVE_WALK)
                     || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                     || (moveType == EntityMovementType.MOVE_RUN)
-                    || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
+                    || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                    || (moveType == EntityMovementType.MOVE_SPRINT)
+                    || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                     // For Tanks, we need to check if the tank had
                     // more MPs because it was moving along a road.
                     if ((step.getMpUsed() > cachedMaxMPExpenditure)

@@ -550,7 +550,9 @@ public class Compute {
                 || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
             if (isTurning
                     && ((movementType == EntityMovementType.MOVE_RUN) 
-                            || (movementType == EntityMovementType.MOVE_VTOL_RUN))) {
+                            || (movementType == EntityMovementType.MOVE_SPRINT)
+                            || (movementType == EntityMovementType.MOVE_VTOL_RUN)
+                            || (movementType == EntityMovementType.MOVE_VTOL_SPRINT))) {
                 return true;
             }
             // Controlled sideslip requires check to avoid extra hex of sideslip movement.
@@ -2166,7 +2168,8 @@ public class Compute {
             } else {
                 toHit.addModifier(3, "attacker jumped");
             }
-        } else if (movement == EntityMovementType.MOVE_SPRINT) {
+        } else if (movement == EntityMovementType.MOVE_SPRINT
+                || movement == EntityMovementType.MOVE_VTOL_SPRINT) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "attacker sprinted");
         }
 
@@ -2210,7 +2213,8 @@ public class Compute {
             toHit.addModifier(2, "spotter ran");
         } else if (movement == EntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "spotter jumped");
-        } else if (movement == EntityMovementType.MOVE_SPRINT) {
+        } else if (movement == EntityMovementType.MOVE_SPRINT
+                || movement == EntityMovementType.MOVE_VTOL_SPRINT) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "spotter sprinted");
         }
 
@@ -2271,11 +2275,14 @@ public class Compute {
                 .getTargetMovementModifier(
                         entity.delta_distance,
                         ((entity.moved == EntityMovementType.MOVE_JUMP)
-                         || (entity.moved == EntityMovementType.MOVE_VTOL_RUN) || (entity.moved == EntityMovementType
-                                .MOVE_VTOL_WALK)),
+                         || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
+                         || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)),
+                        
                         (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                         || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
-                        || (entity.getMovementMode() == EntityMovementMode.VTOL),
+                        || (entity.getMovementMode() == EntityMovementMode.VTOL)
+                        || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT),
                         game);
         if (entity.moved != EntityMovementType.MOVE_JUMP
                 && entity.delta_distance > 0
@@ -2302,7 +2309,8 @@ public class Compute {
         }
 
         // did the target sprint?
-        if (entity.moved == EntityMovementType.MOVE_SPRINT) {
+        if (entity.moved == EntityMovementType.MOVE_SPRINT
+                || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
             toHit.addModifier(-1, "target sprinted");
         }
 

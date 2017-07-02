@@ -284,7 +284,8 @@ public class SharedUtility {
                             SharedUtility.checkNag(rollTarget, nagReport,
                                     psrList);
                         }
-                    } else if (moveType == EntityMovementType.MOVE_SPRINT) {
+                    } else if (moveType == EntityMovementType.MOVE_SPRINT
+                            || moveType == EntityMovementType.MOVE_VTOL_SPRINT) {
                         if (step.getMpUsed() > entity.getSprintMP(false, false, false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);

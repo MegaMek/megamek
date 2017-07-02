@@ -3858,6 +3858,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             "AdvancedMoveRunColor");
                     break;
                 case MOVE_SPRINT:
+                case MOVE_VTOL_SPRINT:
                     col = GUIPreferences.getInstance().getColor(
                             "AdvancedMoveSprintColor");
                     break;

@@ -1209,7 +1209,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
 
-        if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
+        if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
+                || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT)
                 && GUIPreferences.getInstance().getNagForSprint()
                 // no need to nag for vehicles using overdrive if they already get a PSR nag
                 && !((cmd.getEntity() instanceof Tank

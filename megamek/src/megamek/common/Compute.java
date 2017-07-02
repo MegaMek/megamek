@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Building.BasementType;
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
@@ -550,6 +551,16 @@ public class Compute {
             if (isTurning
                     && ((movementType == EntityMovementType.MOVE_RUN) 
                             || (movementType == EntityMovementType.MOVE_VTOL_RUN))) {
+                return true;
+            }
+            // Controlled sideslip requires check to avoid extra hex of sideslip movement.
+            if ((moveStep.getType() == MoveStepType.LATERAL_LEFT
+                    || moveStep.getType() == MoveStepType.LATERAL_RIGHT
+                    || moveStep.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
+                    || moveStep.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)
+                    && (!entity.isUsingManAce()
+                            || movementType != EntityMovementType.MOVE_WALK
+                            || movementType != EntityMovementType.MOVE_VTOL_WALK)) {
                 return true;
             }
         }

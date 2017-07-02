@@ -199,6 +199,10 @@ public class MovePath implements Cloneable, Serializable {
                     && ((getEntity() instanceof BipedMech)
                         || ((getEntity() instanceof VTOL)
                         && (getMpUsed() <= getEntity().getWalkMP()))))
+                || (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)
+                        && getEntity() instanceof Tank
+                        && (getEntity().getMovementMode() == EntityMovementMode.VTOL
+                        || getEntity().getMovementMode() == EntityMovementMode.HOVER))
                 || ((getEntity() instanceof TripodMech)
                     && (((Mech) getEntity()).countBadLegs() == 0)))
                 && !isJumping();

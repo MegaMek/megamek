@@ -8119,11 +8119,28 @@ public class Server implements Runnable {
                     int moF = doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, curPos, rollTarget, false);
                     if (moF > 0) {
-                        // maximum distance is hexes moved / 2
-                        int sideslipDistance = Math.min(moF, distance - 1);
+                        int elev;
+                        int sideslipDistance;
+                        int skidDirection;
+                        Coords start;
+                        if (step.getType() == MoveStepType.LATERAL_LEFT
+                                || step.getType() == MoveStepType.LATERAL_RIGHT
+                                || step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
+                                || step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS) {
+                            // A failed controlled sideslip always results in moving one additional hex
+                            // in the direction of the intentional sideslip.
+                            elev = step.getElevation();
+                            sideslipDistance = 1;
+                            skidDirection = lastPos.direction(curPos);
+                            start = curPos;
+                        } else {
+                            elev = prevStep.getElevation();
+                            // maximum distance is hexes moved / 2
+                            sideslipDistance = Math.min(moF, distance - 1);
+                            skidDirection = prevFacing;
+                            start = lastPos;
+                        }
                         if (sideslipDistance > 0) {
-                            int skidDirection = prevFacing;
-                            // report sideslip
                             sideslipped = true;
                             r = new Report(2100);
                             r.subject = entity.getId();
@@ -8131,8 +8148,7 @@ public class Server implements Runnable {
                             r.add(sideslipDistance);
                             addReport(r);
 
-                            if (processSkid(entity, lastPos,
-                                    prevStep.getElevation(), skidDirection,
+                            if (processSkid(entity, start, elev, skidDirection,
                                     sideslipDistance, prevStep,
                                     lastStepMoveType)) {
                                 return;

@@ -6594,7 +6594,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: flyinge entities don't skid");
+                    "Check false: flying entities don't skid");
             return roll;
         }
 
@@ -10451,7 +10451,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (prevHex != null)
             && (distance > 1)
             && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType
-                .MOVE_VTOL_RUN))
+                .MOVE_VTOL_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
             && (prevFacing != curFacing) && !lastPos.equals(curPos)
             && !(this instanceof Infantry)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
@@ -10462,6 +10462,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
                 roll.addModifier(3, "used VTOL Jet Booster");
             }
+        } else if (moveType != EntityMovementType.MOVE_JUMP
+                && prevFacing == curFacing && !lastPos.equals(curPos)
+                && lastPos.direction(curPos) % 3 != curFacing % 3
+                && !(isUsingManAce() && (overallMoveType == EntityMovementType.MOVE_WALK
+                || overallMoveType == EntityMovementType.MOVE_VTOL_WALK))) {
+            roll.append(new PilotingRollData(getId(), 0, "controlled sideslip"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                              "Check false: not apparently sideslipping");

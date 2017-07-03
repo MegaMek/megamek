@@ -5,6 +5,8 @@ v0.43.3-git
 + New Sprites
 + Bug: Quads not getting +2 mod for firing while prone with bad hip.
 + Feature: multiple crew roles for Tripods, command consoles, and (unofficial) dual cockpits.
++ Feature: QuadVees
++ Feature: implemented Mech tracks
 
 v0.43.2 2017-05-1 22:00 UTC)
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist

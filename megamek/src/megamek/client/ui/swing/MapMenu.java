@@ -605,6 +605,24 @@ public class MapMenu extends JPopupMenu {
                 menu.add(item);
             }
 
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+                item = new JMenuItem(
+                        Messages.getString("MovementDisplay.butEvade"));
+
+                item.setActionCommand(MovementDisplay.MoveCommand.MOVE_BOOTLEGGER
+                                              .getCmd());
+                item.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            ((MovementDisplay) currentPanel).actionPerformed(e);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                });
+                menu.add(item);
+            }
+
             if (game.getPlanetaryConditions().isRecklessConditions()
                 && !game.getBoard().inSpace()
                 && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {

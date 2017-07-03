@@ -394,6 +394,13 @@ public class SharedUtility {
                         prevStep == null? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
                 checkNag(rollTarget, nagReport, psrList);
             }
+            
+            if (step.getType() == MoveStepType.BOOTLEGGER) {
+                rollTarget = entity.getBasePilotingRoll(overallMoveType);
+                entity.addPilotingModifierForTerrain(rollTarget);
+                rollTarget.addModifier(0, "bootlegger maneuver");
+                checkNag(rollTarget, nagReport, psrList);
+            }
 
             // update lastPos, prevStep, prevFacing & prevHex
             if (!curPos.equals(lastPos)) {

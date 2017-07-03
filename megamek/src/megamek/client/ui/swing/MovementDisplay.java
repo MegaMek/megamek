@@ -164,6 +164,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_RECKLESS("moveReckless", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE), //$NON-NLS-1$
         MOVE_EVADE("MoveEvade", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
+        MOVE_BOOTLEGGER("moveBootlegger", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_SHUTDOWN("moveShutDown", CMD_NON_INF), //$NON-NLS-1$
         MOVE_STARTUP("moveStartup", CMD_NON_INF), //$NON-NLS-1$
         MOVE_SELF_DESTRUCT("moveSelfDestruct", CMD_NON_INF), //$NON-NLS-1$
@@ -254,10 +255,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
          */
         public static MoveCommand[] values(int f, GameOptions opts,
                 boolean forwardIni) {
-            boolean manualShutdown = false, selfDestruct = false;
+            boolean manualShutdown = false, selfDestruct = false, advVehicle = false;
             if (opts != null) {
                 manualShutdown = opts.booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN);
                 selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
+                advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS);
             }
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
             for (MoveCommand cmd : MoveCommand.values()) {
@@ -272,6 +274,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
 
                 if (cmd == MOVE_FORWARD_INI && !forwardIni) {
+                    continue;
+                }
+                
+                if (cmd == MOVE_BOOTLEGGER && !advVehicle) {
                     continue;
                 }
 
@@ -826,6 +832,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateRecoveryButton();
         updateDumpButton();
         updateEvadeButton();
+        updateBootleggerButton();
 
         updateStartupButton();
         updateShutdownButton();
@@ -1002,6 +1009,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setAccEnabled(false);
         setDecEnabled(false);
         setEvadeEnabled(false);
+        setBootleggerEnabled(false);
         setShutdownEnabled(false);
         setStartupEnabled(false);
         setSelfDestructEnabled(false);
@@ -1853,6 +1861,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateTakeOffButtons();
             updateLandButtons();
             updateEvadeButton();
+            updateBootleggerButton();
             updateShutdownButton();
             updateStartupButton();
             updateSelfDestructButton();
@@ -2367,6 +2376,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setEvadeEnabled((cmd.getLastStepMovementType() != EntityMovementType.MOVE_JUMP)
                         && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_SPRINT));
+    }
+
+    private void updateBootleggerButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+
+        if (!clientgui.getClient().getGame().getOptions()
+                      .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+            return;
+        }
+        
+        if (!(ce instanceof Tank || ce instanceof QuadVee)) {
+            return;
+        }
+                
+        if (ce.getMovementMode() != EntityMovementMode.WHEELED
+                && ce.getMovementMode() != EntityMovementMode.HOVER
+                && ce.getMovementMode() != EntityMovementMode.VTOL) {
+            return;
+        }
+
+        setBootleggerEnabled(cmd.getLastStep() != null && cmd.getLastStep().getNStraight() >= 3);
     }
 
     private void updateShutdownButton() {
@@ -4346,6 +4381,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_EVADE.getCmd())) {
             cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_BOOTLEGGER.getCmd())) {
+            cmd.addStep(MoveStepType.BOOTLEGGER);
+            clientgui.bv.drawMovementData(ce, cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_SHUTDOWN.getCmd())) {
             if (clientgui
                     .doYesNoDialog(
@@ -4623,6 +4661,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateManeuverButton();
         updateDumpButton();
         updateEvadeButton();
+        updateBootleggerButton();
         updateShutdownButton();
         updateStartupButton();
         updateSelfDestructButton();
@@ -4953,6 +4992,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void setEvadeEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_EVADE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEvadeEnabled(enabled);
+    }
+    
+    private void setBootleggerEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_BOOTLEGGER).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveBootleggerEnabled(enabled);
     }
 
     private void setShutdownEnabled(boolean enabled) {

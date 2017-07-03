@@ -1011,6 +1011,10 @@ public class MoveStep implements Serializable {
                 }
                 movementMode = entity.nextConversionMode(prev.getMovementMode());
                 break;
+            case BOOTLEGGER:
+                reverseFacing();
+                setMp(2);
+                break;
             default:
                 setMp(0);
         }
@@ -2120,6 +2124,13 @@ public class MoveStep implements Serializable {
 
         IHex currHex = game.getBoard().getHex(curPos);
         IHex lastHex = game.getBoard().getHex(lastPos);
+        
+        // Bootlegger ends movement
+        if (prev.type == MoveStepType.BOOTLEGGER) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+            return;
+        }
+        
         if (stepType == MoveStepType.CONVERT_MODE) {
             //QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
             if (currHex.containsTerrain(Terrains.WATER)) {
@@ -2547,6 +2558,18 @@ public class MoveStep implements Serializable {
 
         if (stepType == MoveStepType.MOUNT) {
             movementType = EntityMovementType.MOVE_WALK;
+        }
+        
+        if (stepType == MoveStepType.BOOTLEGGER) {
+            // Bootlegger requires three hexes straight and is illegal for tracked, WiGE, or naval.
+            if (prev.nStraight < 3
+                    || (entity.getMovementMode() != EntityMovementMode.WHEELED
+                    && entity.getMovementMode() != EntityMovementMode.HOVER
+                    && entity.getMovementMode() != EntityMovementMode.VTOL)) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            } else {
+                danger = true;
+            }            
         }
 
         // check if this movement is illegal for reasons other than points

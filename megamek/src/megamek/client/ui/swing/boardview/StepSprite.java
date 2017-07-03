@@ -268,6 +268,18 @@ class StepSprite extends Sprite {
                     drawMovementCost(step, isLastStep, stepPos, graph, col, false);
                 }
                 break;
+            case BOOTLEGGER:
+                // draw arrows showing them entering the next
+                graph.setColor(Color.darkGray);
+                CurrentArrow = StepOffset.createTransformedShape(moveArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
+                graph.setColor(col);
+                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+
+                drawMovementCost(step, isLastStep, stepPos, graph, col, true);
+                break;
             case LOAD:
                 // Announce load.
                 String load = Messages.getString("BoardView1.Load"); //$NON-NLS-1$

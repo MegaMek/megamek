@@ -58,6 +58,7 @@ import megamek.common.IPlayer;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -238,7 +239,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     public Image imageFor(Entity entity, int secondaryPos) {
         // mechs look like they're facing their secondary facing
-        if ((entity instanceof Mech) || (entity instanceof Protomech)) {
+        // (except QuadVees, which are using turrets instead of torso twists
+        if (((entity instanceof Mech) || (entity instanceof Protomech))
+                && !(entity instanceof QuadVee)) {
             return imageFor(entity, entity.getSecondaryFacing(), secondaryPos);
         }
         return imageFor(entity, entity.getFacing(), secondaryPos);
@@ -424,6 +427,14 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         );
 
         started = true;
+    }
+    
+    public synchronized void reloadImage(Entity en) {
+        if (en.getSecondaryPositions().isEmpty()) {
+            loadImage(en, -1);
+        } else {
+            en.getSecondaryPositions().keySet().forEach(p -> loadImage(en, p));
+        }
     }
 
     /**

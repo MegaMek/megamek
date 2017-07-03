@@ -466,7 +466,7 @@ public class Compute {
             && (destHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (entity.getMovementMode() != EntityMovementMode.VTOL)
             && !isPavementStep
-            && (entity instanceof Mech)) {
+            && entity.canFall()) {
             return true;
         }
 
@@ -491,7 +491,7 @@ public class Compute {
         }
 
         // Check for water unless we're a hovercraft or naval or using a bridge
-        // or flying.
+        // or flying or QuadVee in vehicle mode.
         if ((movementType != EntityMovementType.MOVE_JUMP)
                 && !(entity.getElevation() > destHex.surface())
                 && !((entity.getMovementMode() == EntityMovementMode.HOVER)
@@ -500,8 +500,9 @@ public class Compute {
                         || (entity.getMovementMode() == EntityMovementMode.SUBMARINE)
                         || (entity.getMovementMode() == EntityMovementMode.INF_UMU)
                         || (entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
-                        || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM) || (entity
-                        .getMovementMode() == EntityMovementMode.WIGE))
+                        || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)
+                        || (entity.getMovementMode() == EntityMovementMode.WIGE)
+                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
                 && (destHex.terrainLevel(Terrains.WATER) > 0)
                 && !isPavementStep) {
             return true;
@@ -4641,6 +4642,10 @@ public class Compute {
                 modifier = 7;
             }
             toReturn.addModifier(modifier, men + " trooper(s) active");
+        }
+        
+        if (defender instanceof Mech && ((Mech)defender).hasTracks()) {
+            toReturn.addModifier(-2, "has tracks");
         }
         
         // If the swarm is impossible, ToHitData wasn't created

@@ -32,7 +32,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 
 /**
- * A single step in the entity's movment.  Since the path planner uses shallow
+ * A single step in the entity's movement.  Since the path planner uses shallow
  * copies of MovePaths, multiple paths may share the same MoveStep, so this
  * class needs to be agnostic of what path it belongs to.
  */
@@ -68,6 +68,11 @@ public class MoveStep implements Serializable {
      * change this value.
      */
     private EntityMovementType movementType;
+    /**
+     * The movement mode after this step completes. Mode conversions will modify it, though
+     * it may not take effect until the end of movement.
+     */
+    private EntityMovementMode movementMode = EntityMovementMode.NONE;
 
     private boolean isProne;
     private boolean isFlying;
@@ -109,7 +114,7 @@ public class MoveStep implements Serializable {
      * carefully.
      */
     private boolean isCarefulPath = true;
-
+    
     /*
      * Aero related stuf
      */
@@ -364,6 +369,8 @@ public class MoveStep implements Serializable {
                 return "Flee";
             case EVADE:
                 return "Evade";
+            case CONVERT_MODE:
+                return "ConvMode";
             default:
                 return "???";
         }
@@ -994,6 +1001,15 @@ public class MoveStep implements Serializable {
             case LOOP:
                 setVelocityLeft(getVelocityLeft() - 4);
                 setMp(0);
+                break;
+            case CONVERT_MODE:
+                if (entity instanceof QuadVee) {
+                    setMp(((QuadVee)entity).conversionCost());
+                } else {
+                    setMp(0);
+                }
+                movementMode = entity.nextConversionMode(prev.getMovementMode());
+                break;
             default:
                 setMp(0);
         }
@@ -1001,10 +1017,16 @@ public class MoveStep implements Serializable {
         if (noCost) {
             setMp(0);
         }
+        
+        if (type != MoveStepType.CONVERT_MODE) {
+            movementMode = prev.getMovementMode();
+        }
 
         // Tanks can just drive out of hull-down.  If we're a tank, and we moved
         //  then we are no longer hull-down.
-        if ((entity instanceof Tank) && (distance > 0)) {
+        if ((entity instanceof Tank
+                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
+                && (distance > 0)) {
             setHullDown(false);
         }
 
@@ -1116,6 +1138,7 @@ public class MoveStep implements Serializable {
         elevation = entity.getElevation();
         altitude = entity.getAltitude();
         movementType = entity.moved;
+        movementMode = entity.getMovementMode();
 
         isRolled = false;
         freeTurn = false;
@@ -1155,6 +1178,12 @@ public class MoveStep implements Serializable {
 
         // tanks with stunned crew can't flank
         if ((entity instanceof Tank) && (((Tank) entity).getStunnedTurns() > 0)) {
+            isRunProhibited = true;
+        }
+        
+        //Cannot run while using Mek tracks
+        if (entity instanceof Mech && entity.getMovementMode() == EntityMovementMode.TRACKED
+                && !(entity instanceof QuadVee)) {
             isRunProhibited = true;
         }
 
@@ -1371,6 +1400,13 @@ public class MoveStep implements Serializable {
             moveType = EntityMovementType.MOVE_ILLEGAL;
         }
         return moveType;
+    }
+    
+    public EntityMovementMode getMovementMode() {
+        if (movementMode == EntityMovementMode.NONE) {
+            return getEntity().getMovementMode();
+        }
+        return movementMode;
     }
 
     /**
@@ -2038,6 +2074,9 @@ public class MoveStep implements Serializable {
         if (type == MoveStepType.SELF_DESTRUCT) {
             movementType = EntityMovementType.MOVE_NONE;
         }
+        if (type == MoveStepType.CONVERT_MODE) {
+            movementType = EntityMovementType.MOVE_NONE;
+        }
 
         // check for valid jump mp
         if (isJumping()
@@ -2080,6 +2119,23 @@ public class MoveStep implements Serializable {
 
         IHex currHex = game.getBoard().getHex(curPos);
         IHex lastHex = game.getBoard().getHex(lastPos);
+        if (stepType == MoveStepType.CONVERT_MODE) {
+            //QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
+            if (currHex.containsTerrain(Terrains.WATER)) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
+            //QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
+            //and can switch to track mode while prone then stand.
+            if (getEntity().isProne()
+                    && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMech)) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
+            //LAMs cannot convert with a destroyed gyro.
+            if (getEntity() instanceof LandAirMech && getEntity().isGyroDestroyed()) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
+        }
+        
         if ((getEntity().getMovementMode() == EntityMovementMode.INF_UMU)
                 && (currHex.containsTerrain(Terrains.WATER)
                 && lastHex.containsTerrain(Terrains.WATER) && (entity
@@ -2149,8 +2205,7 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
                 }
-            } else if ((entity instanceof Tank) && !(entity instanceof VTOL)
-                    && (getEntity().getMovementMode() != EntityMovementMode.WIGE)
+            } else if (entity.isEligibleForPavementBonus()
                     && isOnlyPavement() && (getMpUsed() == (tmpWalkMP + 1))) {
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr
@@ -2179,7 +2234,7 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
-            } else if ((entity instanceof Tank) && !(entity instanceof VTOL)
+            } else if (entity.isEligibleForPavementBonus()
                     && isOnlyPavement()
                     && (getMpUsed() <= (runMP + 1))
                     && !isRunProhibited()) {
@@ -2242,12 +2297,38 @@ public class MoveStep implements Serializable {
                 && (prev.movementType == EntityMovementType.MOVE_SPRINT)) {
             movementType = EntityMovementType.MOVE_SPRINT;
         }
-
-        // Mechs with busted Gyro may make only one facing change
-        if ((entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) > 1) && !isFirstStep()) {
-            movementType = EntityMovementType.MOVE_ILLEGAL;
-        }
+        
+        //We've already invalidated conversion for LAMs with destroyed gyro and fighter mode ignores it.
+        if (entity.isGyroDestroyed() && entity.getMovementMode() != EntityMovementMode.AERODYNE) {
+            //A prone 'Mech with a destroyed gyro can only change a single hex side.
+            if (entity.isProne()) {
+                if ((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
+                        || getMpUsed() > 1) {
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                }                
+            } else {
+                //Normally a 'Mech falls immediately when the gyro is destroyed and can't stand again.
+                //QuadVees using vehicle mode and 'Mechs using tracks do not fall and can continue to
+                //stand, but cannot use non-tracked/wheeled MP except for a QuadVee converting back to
+                //vehicle mode. This also covers a 'Mech that started with a destroyed gyro but was not
+                //set to deploy prone. Perhaps that should not be allowed.
+                if (getMp() > 0) {
+                    boolean isTracked = entity.getMovementMode() == EntityMovementMode.TRACKED
+                            || entity.getMovementMode() == EntityMovementMode.WHEELED;
+                    if (entity instanceof QuadVee) {
+                        //We are in 'Mech/non-tracked mode if the end mode is vee and we are converting
+                        //of the end mode is 'Mech and we are not converting.
+                        if (isTracked == entity.isConvertingNow() && stepType != MoveStepType.CONVERT_MODE) {
+                            movementType = EntityMovementType.MOVE_ILLEGAL;
+                        }
+                    } else if (!isTracked) {
+                        //Non QuadVee tracked 'Mechs don't actually convert. They just go, so we only need to
+                        //know the end mode.
+                        movementType = EntityMovementType.MOVE_ILLEGAL;
+                    }
+                }
+            }
+        }                
 
         // Mechs with no arms and a missing leg cannot attempt to stand
         if (((stepType == MoveStepType.GET_UP) ||
@@ -2296,7 +2377,7 @@ public class MoveStep implements Serializable {
         if (isFirstStep() && (movementType == EntityMovementType.MOVE_ILLEGAL)
                 && (entity.getWalkMP() > 0) && !entity.isProne()
                 && !entity.isHullDown() && !entity.isStuck()
-                && (stepType == MoveStepType.FORWARDS)) {
+                && !entity.isGyroDestroyed() && (stepType == MoveStepType.FORWARDS)) {
             movementType = EntityMovementType.MOVE_RUN;
         }
 
@@ -2379,22 +2460,17 @@ public class MoveStep implements Serializable {
                     .isStuck())) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
-            if ((entity instanceof Tank)
-                    && !(game.getBoard().getHex(curPos)
-                    .containsTerrain(Terrains.FORTIFIED))) {
-                movementType = EntityMovementType.MOVE_ILLEGAL;
-            }
-            if (entity instanceof Mech) {
-                // Mechs need to check for valid Gyros
-                int gyroHits = entity.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.SYSTEM_GYRO, Mech.LOC_CT);
-                if (entity.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
-                    gyroHits++;
-                }
-                // destrotyed Gyros means that the unit can not go HD
-                if (gyroHits > 2) {
+            if (entity instanceof Tank
+                    || (entity instanceof QuadVee
+                            && ((QuadVee)entity).isInVehicleMode() != entity.isConvertingNow())) {
+                //Tanks and QuadVees ending movement in vehicle mode require a fortified hex.
+                if (!(game.getBoard().getHex(curPos)
+                        .containsTerrain(Terrains.FORTIFIED))) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
+            } else if (entity.isGyroDestroyed()) {
+                // Mechs need to check for valid Gyros
+                movementType = EntityMovementType.MOVE_ILLEGAL;
             }
         }
 
@@ -3058,6 +3134,8 @@ public class MoveStep implements Serializable {
                 && (type != MoveStepType.UNLOAD)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
+                // QuadVees can convert to vehicle mode even if they cannot enter the terrain
+                && (type != MoveStepType.CONVERT_MODE)
                 && (!isPavementStep() || (nMove == EntityMovementMode.NAVAL)
                 || (nMove == EntityMovementMode.HYDROFOIL) || (nMove == EntityMovementMode.SUBMARINE))
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
@@ -3107,6 +3185,8 @@ public class MoveStep implements Serializable {
                 && (type != MoveStepType.UNLOAD)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
+                // QuadVees can still convert to vehicle mode in prohibited terrain, but cannot leave
+                && (type != MoveStepType.CONVERT_MODE)
                 && entity.isLocationProhibited(src, getElevation()) && !isPavementStep()) {
             // System.err.println("in restriced terrain");
             return false;
@@ -3523,5 +3603,4 @@ public class MoveStep implements Serializable {
     public boolean isCareful() {
         return isCarefulPath;
     }
-
 }

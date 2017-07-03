@@ -509,6 +509,9 @@ public class MiscType extends EquipmentType {
     public static final long S_SNEAK_ECM = 1L << 3;
     public static final long S_ENCUMBERING = 1L << 4;
     public static final long S_SPACE_SUIT = 1L << 5;
+    
+    //Secondary flag for tracks
+    public static final long S_QUADVEE_WHEELS = 1L;
 
     // New stuff for shields
     protected int baseDamageAbsorptionRate = 0;
@@ -821,7 +824,12 @@ public class MiscType extends EquipmentType {
 
             return Math.floor(tonnage) + 0.5;
         } else if (hasFlag(F_TRACKS)) {
-            return entity.getWeight() / 10;
+            if (hasSubType(S_QUADVEE_WHEELS)) {
+                // 15%, round up to the nearest half ton.
+                return Math.ceil(entity.getWeight() * 0.3) / 2.0;
+            } else {
+                return entity.getWeight() * 0.1;
+            }
         } else if (hasFlag(F_LIMITED_AMPHIBIOUS)) {
             return Math.ceil((entity.getWeight() / 25f) * 2) / 2.0;
         } else if (hasFlag(F_FULLY_AMPHIBIOUS)) {
@@ -994,7 +1002,7 @@ public class MiscType extends EquipmentType {
                 int bladeTons = (int)Math.ceil(entity.getWeight() / 20.0);
                 costValue = (1 + bladeTons) * 10000;
             } else if (hasFlag(MiscType.F_TRACKS)) {
-                costValue = (int) Math.ceil((500
+                costValue = (int) Math.ceil(((hasSubType(S_QUADVEE_WHEELS)?750:500)
                     * (entity.hasEngine() ? entity.getEngine().getRating() : 0)
                     * entity.getWeight()) / 75);
             } else if (hasFlag(MiscType.F_TALON)) {
@@ -1456,6 +1464,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createSpotWelder());
         EquipmentType.addType(MiscType.createLiftHoist());
         EquipmentType.addType(MiscType.createTracks());
+        EquipmentType.addType(MiscType.createQVWheels());
         EquipmentType.addType(MiscType.createISMASS());
         EquipmentType.addType(MiscType.createCLMASS());
         EquipmentType.addType(MiscType.createLightBridgeLayer());
@@ -7267,12 +7276,35 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.bv = 0;
         misc.cost = COST_VARIABLE;
+        misc.omniFixedOnly = true;
         misc.flags = misc.flags.or(F_TRACKS).or(F_MECH_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.introDate = 2440;
         misc.techLevel.put(2440, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_D, RATING_E, RATING_E };
         misc.techRating = RATING_C;
+        return misc;
+    }
+
+    public static MiscType createQVWheels() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Wheels";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.spreadable = true;
+        misc.bv = 0;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_TRACKS).or(F_MECH_EQUIPMENT);
+        misc.subType = S_QUADVEE_WHEELS;
+        misc.omniFixedOnly = true;
+        misc.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
+        misc.introDate = 3125;
+        misc.techLevel.put(3135, misc.techLevel.get(3071));
+        misc.techLevel.put(3125, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_F };
+        misc.techRating = RATING_F;
         return misc;
     }
 

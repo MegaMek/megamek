@@ -19,10 +19,8 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.MiscType;
-import megamek.common.MoveStep;
-import megamek.common.Tank;
-import megamek.common.VTOL;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStep;
 
 /**
  * Sprite for a step in a movement path. Only one sprite should exist for
@@ -408,6 +406,26 @@ class StepSprite extends Sprite {
                 graph.setColor(col);
                 graph.drawString(land, landX - 1, landY);
                 break;
+            case CONVERT_MODE:
+                int modePos = stepPos.y + 38;
+                if (step.getMp() > 0) {
+                    // draw movement cost
+                    drawMovementCost(step, isLastStep, stepPos, graph, col, true);
+                    modePos += 16;
+                }
+                // show new movement mode
+                String mode = Messages.getString("BoardView1.ConversionMode."
+                        + step.getMovementMode());
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int modeX = (stepPos.x + 42)
+                        - (graph.getFontMetrics(graph.getFont())
+                                .stringWidth(mode) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(mode, modeX, modePos - 1);
+                graph.setColor(col);
+                graph.drawString(mode, modeX - 1, modePos);
+
+                break;
             default:
                 break;
         }
@@ -585,9 +603,7 @@ class StepSprite extends Sprite {
         
         // If the step is using a road bonus, mark it.
         if (step.isOnlyPavement()
-                && (e instanceof Tank)
-                && !(e instanceof VTOL)
-                && (e.getMovementMode() != EntityMovementMode.WIGE)) {
+                && e.isEligibleForPavementBonus()) {
             costStringBuf.append("+"); //$NON-NLS-1$
         }
 

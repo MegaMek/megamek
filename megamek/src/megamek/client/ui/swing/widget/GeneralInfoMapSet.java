@@ -30,11 +30,14 @@ import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
+import megamek.common.QuadVee;
 import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
@@ -455,9 +458,22 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         if (en instanceof Tank) {
+            movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementTypeL"));
             movementTypeL.setVisible(true);
             movementTypeR.setString(Messages.getString("MovementType."
                     + en.getMovementModeAsString()));
+            movementTypeR.setVisible(true);
+        } else if (en instanceof QuadVee || en instanceof LandAirMech
+                || (en instanceof Mech && ((Mech)en).hasTracks())) {
+            movementTypeL.setString(Messages.getString("GeneralInfoMapSet.movementModeL"));
+            if (en.getMovementMode() == EntityMovementMode.AERODYNE) {
+                //Show "Fighter" instead of "Aerodyne"
+                movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.AERODYNE"));
+            } else {
+                movementTypeR.setString(Messages.getString("MovementType."
+                        + en.getMovementModeAsString()));
+            }
+            movementTypeL.setVisible(true);
             movementTypeR.setVisible(true);
         } else {
             movementTypeL.setVisible(false);
@@ -519,6 +535,13 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.thrust"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.safe"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.over"));
+        } else if (en instanceof Tank
+                || (en instanceof QuadVee && ((QuadVee)en).isInVehicleMode())) {
+            mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
+            mpL1.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
+            mpL2.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));
+            fuelL.setVisible(false);
+            fuelR.setVisible(false);
         } else {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.mpL1"));

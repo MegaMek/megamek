@@ -57,7 +57,13 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public enum MoveStepType {
-        NONE, FORWARDS, BACKWARDS, TURN_LEFT, TURN_RIGHT, GET_UP, GO_PRONE, START_JUMP, CHARGE, DFA, FLEE, LATERAL_LEFT, LATERAL_RIGHT, LATERAL_LEFT_BACKWARDS, LATERAL_RIGHT_BACKWARDS, UNJAM_RAC, LOAD, UNLOAD, EJECT, CLEAR_MINEFIELD, UP, DOWN, SEARCHLIGHT, LAY_MINE, HULL_DOWN, CLIMB_MODE_ON, CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE, SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER, RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER;
+        NONE, FORWARDS, BACKWARDS, TURN_LEFT, TURN_RIGHT, GET_UP, GO_PRONE, START_JUMP, CHARGE, DFA,
+        FLEE, LATERAL_LEFT, LATERAL_RIGHT, LATERAL_LEFT_BACKWARDS, LATERAL_RIGHT_BACKWARDS, UNJAM_RAC,
+        LOAD, UNLOAD, EJECT, CLEAR_MINEFIELD, UP, DOWN, SEARCHLIGHT, LAY_MINE, HULL_DOWN, CLIMB_MODE_ON,
+        CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
+        SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
+        RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
+        CONVERT_MODE;
     }
 
     public static class Key {
@@ -183,7 +189,10 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public boolean canShift() {
-        return ((getEntity() instanceof QuadMech)
+        return ((getEntity() instanceof QuadMech
+                // QuadVee cannot shift in vee mode
+                && !(getEntity() instanceof QuadVee
+                        && (((QuadVee)getEntity()).isInVehicleMode() || getEntity().isConvertingNow())))
                 // Maneuvering Ace allows Bipeds and VTOLs moving at cruise
                 //  speed to perform a lateral shift
                 || (getEntity().isUsingManAce()
@@ -444,8 +453,18 @@ public class MovePath implements Cloneable, Serializable {
             if (step1.getType() == MovePath.MoveStepType.START_JUMP) {
                 getEntity().setIsJumpingNow(false);
             }
-
+            
             steps.removeElementAt(steps.size() - 1);
+            
+            if (getEntity().isConvertingNow() && !this.contains(MovePath.MoveStepType.CONVERT_MODE)) {
+                getEntity().setConvertingNow(false);
+                //Mechs using tracks have the movement mode set at the beginning of the turn, so
+                //it will need to be reset.
+                if (getEntity() instanceof Mech && ((Mech)getEntity()).hasTracks()) {
+                    getEntity().toggleConversionMode();
+                }
+            }
+            
         }
 
         // Find the new last step in the path.
@@ -634,6 +653,19 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         return 0;
+    }
+    
+    /**
+     * If the path contains mode conversions, this will determine the movement mode at the end
+     * of movement. Note that LAMs converting from AirMech to Biped mode require two convert commands.
+     * 
+     * @return The movement mode resulting from any mode conversions in the path.
+     */
+    public EntityMovementMode getFinalConversionMode() {
+        if (getLastStep() != null) {
+            return getLastStep().getMovementMode();
+        }
+        return getEntity().getMovementMode();
     }
 
     /**
@@ -829,6 +861,20 @@ public class MovePath implements Cloneable, Serializable {
                 }
             }
             return jump;
+        }
+        return false;
+    }
+    
+    /**
+     * @return true if the entity is a QuadVee or LAM changing movement mode
+     */
+    public boolean isChangingMode() {
+        if (steps.size() > 0) {
+            for (MoveStep step : steps) {
+                if (step.getType() == MovePath.MoveStepType.CONVERT_MODE) {
+                    return true;
+                }
+            }
         }
         return false;
     }

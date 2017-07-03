@@ -143,6 +143,7 @@ import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.Report;
 import megamek.common.Roll;
 import megamek.common.SmallCraft;
@@ -6636,7 +6637,7 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
             return;
         }
-
+        
         // okay, proceed with movement calculations
         Coords lastPos = entity.getPosition();
         Coords curPos = entity.getPosition();
@@ -6916,6 +6917,34 @@ public class Server implements Runnable {
                 } else {
                     addReport(vReport);
                 }
+            }
+            
+            if (step.getType() == MoveStepType.CONVERT_MODE) {
+                entity.setConvertingNow(true);
+                
+                // Non-omni QuadVees converting to vehicle mode dump any riding BA in the
+                // starting hex if they fail to make an anti-mech check.
+                // http://bg.battletech.com/forums/index.php?topic=55263.msg1271423#msg1271423
+                if (entity instanceof QuadVee && !((QuadVee)entity).isInVehicleMode()
+                        && !entity.isOmni()) {
+                    for (Entity rider : entity.getExternalUnits()) {
+                        addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing,
+                                false, false, false));
+                    }
+                } else if ((entity.getEntityType() & Entity.ETYPE_LAND_AIR_MECH) != 0) {
+                    //External units on LAMs, including swarmers, fall automatically and take damage,
+                    //and the LAM itself may take one or more criticals.
+                    for (Entity rider : entity.getExternalUnits()) {
+                        addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing, true, true, true));
+                    }
+                    final int swarmerId = entity.getSwarmAttackerId();
+                    if (Entity.NONE != swarmerId) {
+                        addReport(checkDropBAFromConverting(entity, game.getEntity(swarmerId),
+                                curPos, curFacing, true, true, true));
+                    }
+                }
+
+                continue;
             }
 
             // did the entity move?
@@ -7720,7 +7749,7 @@ public class Server implements Runnable {
                 if (psrFailed) {
 
                     if (entity instanceof Tank) {
-                        addReport(vehicleMotiveDamage((Tank) entity, 0));
+                        addReport(vehicleMotiveDamage((Tank)entity, 0));
                     }
 
                     curPos = lastPos;
@@ -8738,8 +8767,9 @@ public class Server implements Runnable {
         // We need to check for the removal of hull-down for tanks.
         // Tanks can just drive out of hull-down: if the tank was hull-down
         // and doesn't end hull-down we can remove the hull-down status
-        if ((entity instanceof Tank) && entity.isHullDown()
-                && !md.getFinalHullDown()) {
+        if (entity.isHullDown() && !md.getFinalHullDown()
+                && (entity instanceof Tank
+                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))) {
             entity.setHullDown(false);
         }
 
@@ -9077,12 +9107,41 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 vPhaseReport.add(r);
-                vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, modifier,
+                vPhaseReport.addAll(vehicleMotiveDamage((Tank)entity, modifier,
                         false, -1, true));
                 Report.addNewline(vPhaseReport);
             }
 
         } // End entity-is-jumping
+
+        //If converting to another mode, set the final movement mode and report it
+        if (entity.isConvertingNow()) {
+            r = new Report(1210);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            if (entity instanceof QuadVee && entity.isProne() && !((QuadVee)entity).isInVehicleMode()) {
+                //Fall while converting to vehicle mode cancels conversion.
+                entity.setConvertingNow(false);
+                r.messageId = 2454;
+            } else {
+                entity.setMovementMode(md.getFinalConversionMode());
+                if (entity instanceof Mech && ((Mech)entity).hasTracks()) {
+                    r.messageId = 2455;
+                    r.choose(entity.getMovementMode() == EntityMovementMode.TRACKED);
+                } else if (entity.getMovementMode() == EntityMovementMode.TRACKED
+                        || entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                    r.messageId = 2451;
+                } else if (entity.getMovementMode() == EntityMovementMode.AIRMECH) {
+                    r.messageId = 2452;
+                } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
+                    r.messageId = 2453;
+                } else {
+                    r.messageId = 2450;
+                }
+            }
+            addReport(r);
+        }
+
           // update entity's locations' exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity,
                 game.getBoard().getHex(curPos), false, entity.getElevation()));
@@ -9259,6 +9318,82 @@ public class Server implements Runnable {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
             }
         }
+    }
+
+    /**
+     * LAMs or QuadVees converting from leg mode may force any carried infantry (including swarming)
+     * to fall into the current hex. A LAM may suffer damage. 
+     * 
+     * @param carrier       The <code>Entity</code> making the conversion.
+     * @param rider         The <code>Entity</code> possibly being forced off.
+     * @param curPos        The coordinates of the hex where the conversion starts.
+     * @param curFacing     The carrier's facing when conversion starts.
+     * @param automatic     Whether the infantry falls automatically. If false, an antimech roll is made
+     *                      to see whether it stays mounted.
+     * @param infDamage     If true, the infantry takes falling damage, +1D6 for conventional.
+     * @param carrierDamage If true, the carrier takes damage from converting while carrying infantry.
+     */
+    private Vector<Report> checkDropBAFromConverting(Entity carrier, Entity rider, Coords curPos, int curFacing,
+            boolean automatic, boolean infDamage, boolean carrierDamage) {
+        Vector<Report> reports = new Vector<>();
+        Report r;
+        PilotingRollData prd = rider.getBasePilotingRoll(EntityMovementType.MOVE_NONE);
+        boolean falls = automatic;
+        if (automatic) {
+            r = new Report(2465);
+            r.subject = rider.getId();
+            r.addDesc(rider);
+            r.addDesc(carrier);
+        } else {
+            r = new Report(2460);
+            r.subject = rider.getId();
+            r.addDesc(rider);
+            r.add(prd.getValueAsString());
+            r.addDesc(carrier);
+            final int diceRoll = carrier.getCrew().rollPilotingSkill();
+            r.add(diceRoll);
+            if (diceRoll < prd.getValue()) {
+                r.choose(false);
+                falls = true;
+            } else {
+                r.choose(true);
+            }
+        }
+        reports.add(r);
+        if (falls) {
+            if (carrier.getSwarmAttackerId() == rider.getId()) {
+                rider.setDone(true);
+                carrier.setSwarmAttackerId(Entity.NONE);
+                rider.setSwarmTargetId(Entity.NONE);                
+            } else if (!unloadUnit(carrier, rider, curPos, curFacing, 0)) {
+                System.err.println("Error! Server was told to unload "
+                        + rider.getDisplayName() + " from "
+                        + carrier.getDisplayName() + " into "
+                        + curPos.getBoardNum());
+                return reports;
+            }
+            if (infDamage) {
+                reports.addAll(doEntityFall(rider, curPos, 2, prd));
+                if (rider.getEntityType() == Entity.ETYPE_INFANTRY) {
+                    int extra = Compute.d6();
+                    reports.addAll(damageEntity(rider, new HitData(Infantry.LOC_INFANTRY), extra));
+                }
+            }
+            if (carrierDamage) {
+                //Report the possibility of a critical hit.
+                r = new Report(2470);
+                r.subject = carrier.getId();
+                r.addDesc(carrier);
+                reports.addElement(r);
+                int mod = 0;
+                if (rider.getEntityType() == Entity.ETYPE_INFANTRY) {
+                    mod = -2;
+                }
+                HitData hit = carrier.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                reports.addAll(criticalEntity(carrier, hit.getLocation(), false, mod, 0));
+            }
+        }
+        return reports;
     }
 
     /**
@@ -10577,9 +10712,8 @@ public class Server implements Runnable {
                     // Tanks check for motive system damage from minefields as
                     // from a side hit even though the damage proper hits the
                     // front above; exact side doesn't matter, though.
-                    Tank tank = (Tank) entity;
-                    vMineReport.addAll(vehicleMotiveDamage(tank,
-                            tank.getMotiveSideMod(ToHitData.SIDE_LEFT)));
+                    vMineReport.addAll(vehicleMotiveDamage((Tank)entity,
+                            entity.getMotiveSideMod(ToHitData.SIDE_LEFT)));
                 }
                 Report.addNewline(vMineReport);
             }
@@ -10861,8 +10995,12 @@ public class Server implements Runnable {
 
 
         boolean boom = false;
-        // Only mechs can set off vibrabombs.
-        if (!(entity instanceof Mech)) {
+        // Only mechs can set off vibrabombs. QuadVees should only be able to set off a
+        // vibrabomb in Mech mode. Those that are converting to or from Mech mode should
+        // are using leg movement and should be able to set them off.
+        if (!(entity instanceof Mech)
+                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()
+                        && !entity.isConvertingNow())) {
             return boom;
         }
 
@@ -11121,7 +11259,8 @@ public class Server implements Runnable {
             Report.addNewline(vBoomReport);
 
             if (entity instanceof Tank) {
-                vBoomReport.addAll(vehicleMotiveDamage((Tank) entity, 2));
+                vBoomReport.addAll(vehicleMotiveDamage((Tank)entity,
+                        entity.getMotiveSideMod(ToHitData.SIDE_LEFT)));
             }
             vBoomReport.addAll(resolvePilotingRolls(entity, true,
                                                     entity.getPosition(), entity.getPosition()));
@@ -11697,7 +11836,7 @@ public class Server implements Runnable {
         r.add(diceRoll);
         if (diceRoll < roll.getValue()) {
             // Does failing the PSR result in a fall.
-            if (isFallRoll) {
+            if (isFallRoll && entity.canFall()) {
                 r.choose(false);
                 addReport(r);
                 addReport(doEntityFallsInto(entity, entityElevation,
@@ -12154,7 +12293,7 @@ public class Server implements Runnable {
             vPhaseReport.addAll(destroyEntity(entity, "a watery grave", false));
         }
         // mechs that were stuck will automatically fall in their new hex
-        if (wasStuck && (entity instanceof Mech) && !entity.isProne()) {
+        if (wasStuck && entity.canFall()) {
             if (roll == null) {
                 roll = entity.getBasePilotingRoll();
             }
@@ -15031,8 +15170,7 @@ public class Server implements Runnable {
             }
         }
 
-        if ((te.getMovementMode() == EntityMovementMode.BIPED)
-            || (te.getMovementMode() == EntityMovementMode.QUAD)) {
+        if (te.canFall()) {
             PilotingRollData kickPRD = getKickPushPSR(te, ae, te, "was kicked");
             game.addPSR(kickPRD);
         }
@@ -16439,12 +16577,16 @@ public class Server implements Runnable {
                 r.add(targetPushResult.roll);
                 r.addDesc(ae);
                 addReport(r);
-                PilotingRollData targetPushPRD = getKickPushPSR(te, ae, te,
-                                                                "was pushed");
-                PilotingRollData pushPRD = getKickPushPSR(ae, ae, te,
-                                                          "was pushed");
-                game.addPSR(pushPRD);
-                game.addPSR(targetPushPRD);
+                if (ae.canFall()) {
+                    PilotingRollData pushPRD = getKickPushPSR(ae, ae, te,
+                            "was pushed");
+                    game.addPSR(pushPRD);
+                }
+                if (te.canFall()) {
+                    PilotingRollData targetPushPRD = getKickPushPSR(te, ae, te,
+                                                                    "was pushed");
+                    game.addPSR(targetPushPRD);
+                }
                 return;
             }
             // report the miss
@@ -16503,7 +16645,9 @@ public class Server implements Runnable {
             r = new Report(4185);
             r.subject = ae.getId();
             addReport(r);
-            game.addPSR(pushPRD);
+            if (te.canFall()) {
+                game.addPSR(pushPRD);
+            }
         }
 
         // if the target is an industrial mech, it needs to check for crits
@@ -16569,9 +16713,10 @@ public class Server implements Runnable {
         }
 
         // we hit...
-        PilotingRollData pushPRD = getKickPushPSR(te, ae, te, "was tripped");
-
-        game.addPSR(pushPRD);
+        if (te.canFall()) {
+            PilotingRollData pushPRD = getKickPushPSR(te, ae, te, "was tripped");
+            game.addPSR(pushPRD);
+        }
 
         r = new Report(4040);
         r.subject = ae.getId();
@@ -17454,8 +17599,8 @@ public class Server implements Runnable {
             r.indent();
             addReport(r);
             int side = Compute.targetSideTable(te, ae);
-            int mod = ((Tank) ae).getMotiveSideMod(side);
-            addReport(vehicleMotiveDamage((Tank) ae, mod));
+            int mod = ae.getMotiveSideMod(side);
+            addReport(vehicleMotiveDamage((Tank)ae, mod));
         }
 
         // work out which locations have spikes
@@ -17510,8 +17655,8 @@ public class Server implements Runnable {
             addReport(r);
 
             int side = Compute.targetSideTable(ae, te);
-            int mod = ((Tank) te).getMotiveSideMod(side);
-            addReport(vehicleMotiveDamage((Tank) te, mod));
+            int mod = te.getMotiveSideMod(side);
+            addReport(vehicleMotiveDamage((Tank)te, mod));
         }
 
         // work out which locations have spikes
@@ -19046,9 +19191,11 @@ public class Server implements Runnable {
                     r.addDesc(entity);
                     addReport(r);
                     // add a piloting roll and resolve immediately
-                    game.addPSR(new PilotingRollData(entity.getId(), 3,
-                                                     "reactor shutdown"));
-                    addReport(resolvePilotingRolls());
+                    if (entity.canFall()) {
+                        game.addPSR(new PilotingRollData(entity.getId(), 3,
+                                                         "reactor shutdown"));
+                        addReport(resolvePilotingRolls());
+                    }
                     // okay, now mark shut down
                     entity.setShutDown(true);
                 } else if (entity.heat >= 14) {
@@ -19098,9 +19245,11 @@ public class Server implements Runnable {
                             r.choose(false);
                             addReport(r);
                             // add a piloting roll and resolve immediately
-                            game.addPSR(new PilotingRollData(entity.getId(), 3,
-                                                             "reactor shutdown"));
-                            addReport(resolvePilotingRolls());
+                            if (entity.canFall()) {
+                                game.addPSR(new PilotingRollData(entity.getId(), 3,
+                                                                 "reactor shutdown"));
+                                addReport(resolvePilotingRolls());
+                            }
                             // okay, now mark shut down
                             entity.setShutDown(true);
                         }
@@ -19735,7 +19884,7 @@ public class Server implements Runnable {
     private void checkForPSRFromDamage() {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             final Entity entity = i.next();
-            if (entity instanceof Mech) {
+            if (entity.canFall()) {
                 if (entity.isAirborne()) {
                     // you can't fall over when you are combat dropping because
                     // you are already falling!
@@ -20228,7 +20377,7 @@ public class Server implements Runnable {
             }
         }
         // non mechs and prone mechs can now return
-        if (!(entity instanceof Mech) || entity.isProne()
+        if (!entity.canFall()
             || (entity.isHullDown() && entity.canGoHullDown())) {
             return vPhaseReport;
         }
@@ -23612,14 +23761,10 @@ public class Server implements Runnable {
         // check at +6.
         for (int i : blastedUnitsVec) {
             Entity o = game.getEntity(i);
-            if (o instanceof Mech) {
-                Mech bm = (Mech) o;
+            if (o.canFall()) {
                 // Needs a piloting check at +6 to avoid falling over.
-                // Obviously not if it's already prone, though.
-                if (!bm.isProne()) {
-                    game.addPSR(new PilotingRollData(bm.getId(), 6,
-                                                     "hit by nuclear blast"));
-                }
+                game.addPSR(new PilotingRollData(o.getId(), 6,
+                        "hit by nuclear blast"));
             } else if (o instanceof VTOL) {
                 // Needs a piloting check at +6 to avoid crashing.
                 // Wheeeeee!
@@ -24220,6 +24365,10 @@ public class Server implements Runnable {
                 }
                 break;
             case Mech.SYSTEM_GYRO:
+                //No PSR for Mechs in non-leg mode
+                if (en.canFall(true)) {
+                    break;
+                }
                 int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                                                   Mech.SYSTEM_GYRO, loc);
                 if (en.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
@@ -24252,14 +24401,18 @@ public class Server implements Runnable {
             case Mech.ACTUATOR_UPPER_LEG:
             case Mech.ACTUATOR_LOWER_LEG:
             case Mech.ACTUATOR_FOOT:
-                // leg/foot actuator piloting roll
-                game.addPSR(new PilotingRollData(en.getId(), 1,
-                                                 "leg/foot actuator hit"));
+                if (en.canFall(true)) {
+                    // leg/foot actuator piloting roll
+                    game.addPSR(new PilotingRollData(en.getId(), 1,
+                                                     "leg/foot actuator hit"));
+                }
                 break;
             case Mech.ACTUATOR_HIP:
-                // hip piloting roll
-                game.addPSR(new PilotingRollData(en.getId(), 2,
-                                                 "hip actuator hit"));
+                if (en.canFall(true)) {
+                    // hip piloting roll
+                    game.addPSR(new PilotingRollData(en.getId(), 2,
+                                                     "hip actuator hit"));
+                }
                 break;
         }
         return reports;
@@ -26504,7 +26657,7 @@ public class Server implements Runnable {
                 if (cs != null) {
                     // for every undamaged actuator destroyed by breaching,
                     // we make a PSR (see bug 1040858)
-                    if (entity.locationIsLeg(loc)) {
+                    if (entity.locationIsLeg(loc) && entity.canFall(true)) {
                         if (cs.isHittable()) {
                             switch (cs.getIndex()) {
                                 case Mech.ACTUATOR_UPPER_LEG:
@@ -32445,11 +32598,14 @@ public class Server implements Runnable {
                 vPhaseReport.addAll(damageEntity(entity, hit, damage, false,
                                                  DamageType.NONE, true));
             }
+            if (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
+                vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, 0));
+            }
         } else if (entity instanceof Tank) {
             hit = new HitData(Tank.LOC_FRONT);
             vPhaseReport.addAll(damageEntity(entity, hit, damage, false,
                                              DamageType.NONE, true));
-            vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, 0));
+            vPhaseReport.addAll(vehicleMotiveDamage((Tank)entity, 0));
         }
         return vPhaseReport;
     }
@@ -33266,7 +33422,8 @@ public class Server implements Runnable {
                         && !(hex.containsTerrain(Terrains.BLDG_ELEV, 0))
                         && !(isHoverOrWiGE && (e.getRunMP() >= 0))
                         && (e.getMovementMode() != EntityMovementMode.INF_UMU)
-                        && !e.hasUMU()) {
+                        && !e.hasUMU()
+                        && !(e instanceof QuadVee && ((QuadVee)e).isInVehicleMode())) {
                     vPhaseReport.addAll(doEntityFallsInto(e, c,
                             new PilotingRollData(TargetRoll.AUTOMATIC_FAIL),
                             true));
@@ -33422,7 +33579,7 @@ public class Server implements Runnable {
      * @param modifier   the modifier to the roll
      * @param noroll     don't roll, immediately deal damage
      * @param damagetype the type to deal (1 = minor, 2 = moderate, 3 = heavy
-     * @param jumpDamage is this a movement daamge roll from using vehicular JJs
+     * @param jumpDamage is this a movement damage roll from using vehicular JJs
      * @return
      */
     private Vector<Report> vehicleMotiveDamage(Tank te, int modifier,
@@ -34038,8 +34195,7 @@ public class Server implements Runnable {
                         r.add(toHit.getTableDesc());
                         r.add(0);
                         vPhaseReport.add(r);
-                        vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity,
-                                0));
+                        vPhaseReport.addAll(vehicleMotiveDamage((Tank)entity, 0));
                         continue;
                     }
                     // only infantry and support vees with bar < 5 are affected

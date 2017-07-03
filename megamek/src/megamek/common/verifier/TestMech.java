@@ -36,6 +36,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
@@ -107,7 +108,7 @@ public class TestMech extends TestEntity {
 
     @Override
     public double getWeightMisc() {
-        if (mech instanceof LandAirMech) {
+        if (mech instanceof LandAirMech || mech instanceof QuadVee) {
             // 10% of weight is conversion equipment
             return Math.ceil(mech.getWeight() / 10);
         }
@@ -163,6 +164,8 @@ public class TestMech extends TestEntity {
         } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
             weight = 5.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_INTERFACE) {
+            weight = 4.0;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_QUADVEE) {
             weight = 4.0;
         }
 
@@ -921,19 +924,42 @@ public class TestMech extends TestEntity {
                 }
             }
 
-            if (m.getType().hasFlag(MiscType.F_TALON)) {
-                if (mech instanceof BipedMech) {
-                    if (!mech.locationIsLeg(m.getLocation())) {
+            if (misc.hasFlag(MiscType.F_TRACKS)) {
+                if (mech instanceof QuadVee) {
+                    if (misc.hasSubType(MiscType.S_QUADVEE_WHEELS)
+                            != (((QuadVee)mech).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
                         illegal = true;
-                        buff.append("Talons are only legal in the Legs\n");
+                        buff.append("Motive equipment does not match QuadVee motive type.\n");
                     }
-                    for (int loc = 0; loc < mech.locations(); loc++) {
-                        if (mech.locationIsLeg(loc)
-                                && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 2) {
-                            illegal = true;
-                            buff.append("Talons require two critical slots in each leg.\n");
-                            break;
-                        }
+                } else if (misc.hasSubType(MiscType.S_QUADVEE_WHEELS)) {
+                    illegal = true;
+                    buff.append("Wheels can only be used on QuadVees.\n");
+                }
+                if (!mech.locationIsLeg(m.getLocation())) {
+                    illegal = true;
+                    buff.append(misc.getName() + " are only legal in the Legs\n");
+                }
+                for (int loc = 0; loc < mech.locations(); loc++) {
+                    if (mech.locationIsLeg(loc)
+                            && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 1) {
+                        illegal = true;
+                        buff.append(misc.getName() + " require one critical slot in each leg.\n");
+                        break;
+                    }
+                }
+            }
+            
+            if (m.getType().hasFlag(MiscType.F_TALON)) {
+                if (!mech.locationIsLeg(m.getLocation())) {
+                    illegal = true;
+                    buff.append("Talons are only legal in the Legs\n");
+                }
+                for (int loc = 0; loc < mech.locations(); loc++) {
+                    if (mech.locationIsLeg(loc)
+                            && countCriticalSlotsFromEquipInLocation(mech, m, loc) != 2) {
+                        illegal = true;
+                        buff.append("Talons require two critical slots in each leg.\n");
+                        break;
                     }
                 }
             }
@@ -999,6 +1025,10 @@ public class TestMech extends TestEntity {
             if (mech.getArmoredComponentBV() > 0) {
                 buff.append("Superheavy Mechs cannot have armored components\n");
                 illegal = true;
+            }
+            
+            if (mech instanceof QuadVee) {
+                buff.append("QuadVees cannot be constructed as superheavies.\n");
             }
         }
         

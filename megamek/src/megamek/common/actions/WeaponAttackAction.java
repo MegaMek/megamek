@@ -55,6 +55,7 @@ import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.RangeType;
 import megamek.common.SpaceStation;
 import megamek.common.SupportTank;
@@ -1168,8 +1169,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
-        if (ae instanceof TripodMech && !ae.getCrew().hasDedicatedGunner()) {
-            toHit.addModifier(2, "gunner incapacitated");
+        if ((ae instanceof TripodMech || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
+            toHit.addModifier(+2, "gunner incapacitated");
+        }
+        if (ae instanceof QuadVee && ae.isConvertingNow()) {
+            toHit.addModifier(+3, "converting");
         }
 
         if ((ae instanceof SupportTank) || (ae instanceof SupportVTOL)) {
@@ -1571,12 +1575,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit.append(losMods);
 
         if ((te != null) && te.isHullDown()) {
-            if ((te instanceof Mech) && (los.getTargetCover() > LosEffects.COVER_NONE)) {
+            if ((te instanceof Mech) && !(te instanceof QuadVee && ((QuadVee)te).isInVehicleMode())
+                    && (los.getTargetCover() > LosEffects.COVER_NONE)) {
                 toHit.addModifier(2, "Hull down target");
             }
             // tanks going Hull Down is different rules then 'Mechs, the
             // direction the attack comes from matters
-            else if ((te instanceof Tank) && targHex.containsTerrain(Terrains.FORTIFIED)) {
+            else if ((te instanceof Tank || (te instanceof QuadVee && ((QuadVee)te).isInVehicleMode()))
+                    && targHex.containsTerrain(Terrains.FORTIFIED)) {
                 // TODO make this a LoS mod so that attacks will come in from
                 // directions that grant Hull Down Mods
                 int moveInDirection;
@@ -2354,8 +2360,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         }
         //The pilot or technical officer can take over the gunner's duties but suffers a +2 penalty.
-        if (ae instanceof TripodMech && !ae.getCrew().hasDedicatedGunner()) {
+        if ((ae instanceof TripodMech || ae instanceof QuadVee) && !ae.getCrew().hasDedicatedGunner()) {
             toHit.addModifier(+2, "gunner incapacitated");
+        }
+        if (ae instanceof QuadVee && ae.isConvertingNow()) {
+            toHit.addModifier(+3, "converting");
         }
 
         if ((ae instanceof SupportTank) || (ae instanceof SupportVTOL)) {
@@ -2491,12 +2500,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         toHit.append(losMods);
 
         if ((te != null) && te.isHullDown()) {
-            if ((te instanceof Mech) && (los.getTargetCover() > LosEffects.COVER_NONE)) {
+            if ((te instanceof Mech && !(te instanceof QuadVee && ((QuadVee)te).isInVehicleMode()))
+                    && (los.getTargetCover() > LosEffects.COVER_NONE)) {
                 toHit.addModifier(2, "Hull down target");
             }
             // tanks going Hull Down is different rules then 'Mechs, the
             // direction the attack comes from matters
-            else if ((te instanceof Tank) && targHex.containsTerrain(Terrains.FORTIFIED)) {
+            else if ((te instanceof Tank || (te instanceof QuadVee && ((QuadVee)te).isInVehicleMode()))
+                    && targHex.containsTerrain(Terrains.FORTIFIED)) {
                 // TODO make this a LoS mod so that attacks will come in from
                 // directions that grant Hull Down Mods
                 int moveInDirection = ToHitData.SIDE_FRONT;

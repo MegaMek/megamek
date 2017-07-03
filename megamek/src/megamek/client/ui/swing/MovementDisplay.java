@@ -59,6 +59,7 @@ import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
+import megamek.common.LandAirMech;
 import megamek.common.ManeuverType;
 import megamek.common.Mech;
 import megamek.common.Minefield;
@@ -69,6 +70,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
+import megamek.common.QuadVee;
 import megamek.common.Report;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
@@ -106,6 +108,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_INF = 1 << 3;
     public static final int CMD_AERO = 1 << 4;
     public static final int CMD_AERO_VECTORED = 1 << 5;
+    // Command used only in menus and has no associated button
+    public static final int CMD_NO_BUTTON = 1 << 8;
     // Convenience defines for common combinations
     public static final int CMD_AERO_BOTH = CMD_AERO | CMD_AERO_VECTORED;
     public static final int CMD_GROUND = CMD_MECH | CMD_TANK | CMD_VTOL
@@ -151,9 +155,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_CLIMB_MODE("moveClimbMode", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$
         MOVE_SWIM("moveSwim", CMD_MECH), //$NON-NLS-1$
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
-        MOVE_MODE_MECH("moveModeMech", CMD_NONE), //$NON-NLS-1$
-        MOVE_MODE_AIRMECH("moveModeAirmech", CMD_NONE), //$NON-NLS-1$
-        MOVE_MODE_AIRCRAFT("moveModeAircraft", CMD_NONE), //$NON-NLS-1$
+        //Convert command for a single button, which can cycle through modes because MovePath state is available
+        MOVE_MODE_CONVERT("moveModeConvert", CMD_MECH), //$NON-NLS-1$
+        //Convert commands used for menus, where the MovePath state is unknown.
+        MOVE_MODE_LEG("moveModeLeg", CMD_NO_BUTTON), //$NON-NLS-1$
+        MOVE_MODE_VEE("moveModeVee", CMD_NO_BUTTON), //$NON-NLS-1$
+        MOVE_MODE_AIR("moveModeAir", CMD_NO_BUTTON), //$NON-NLS-1$
         MOVE_RECKLESS("moveReckless", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE), //$NON-NLS-1$
         MOVE_EVADE("MoveEvade", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
@@ -777,7 +784,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                        && !ce.isStuck());
         setJumpEnabled(!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0)
                        && !(ce.isStuck() && !ce.canUnstickByJumping()));
-        setSwimEnabled(!isAero && !ce.isImmobile() && ce.hasUMU()
+        setSwimEnabled(!isAero && !ce.isImmobile() && ce.getActiveUMUCount() > 0
                        && ce.isUnderwater());
         setBackUpEnabled(!isAero && isEnabled(MoveCommand.MOVE_WALK));
         setChargeEnabled(ce.canCharge());
@@ -848,6 +855,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateFlyOffButton();
         updateLaunchButton();
         updateDropButton();
+        updateConvertModeButton();
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
@@ -990,6 +998,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setClearEnabled(false);
         setHullDownEnabled(false);
         setSwimEnabled(false);
+        setModeConvertEnabled(false);
         setAccEnabled(false);
         setDecEnabled(false);
         setEvadeEnabled(false);
@@ -1047,6 +1056,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Remove Careful stand, in case it was set
         ce.setCarefulStand(false);
         ce.setIsJumpingNow(false);
+        ce.setConvertingNow(false);
         ce.setClimbMode(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_MOVE_DEFAULT_CLIMB_MODE));
 
         // switch back from swimming to normal mode.
@@ -1055,7 +1065,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM) {
             ce.setMovementMode(EntityMovementMode.QUAD);
         }
-
+        
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
         clientgui.bv.setWeaponFieldofFire(ce, cmd);
@@ -1083,6 +1093,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateFlyOffButton();
         updateLaunchButton();
         updateDropButton();
+        updateConvertModeButton();
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
@@ -1130,6 +1141,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if ((gear == MovementDisplay.GEAR_JUMP) && 
                     (!cmd.isJumping())) {
                 cmd.addStep(MoveStepType.START_JUMP);
+            } else if (ce().isConvertingNow()) {
+                cmd.addStep(MoveStepType.CONVERT_MODE);
             }
         } else {
             clientgui.bv.drawMovementData(ce(), cmd);
@@ -1420,7 +1433,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return null;
         }
     }
-
+    
     /**
      * Returns new MovePath for the currently selected movement type
      */
@@ -1842,6 +1855,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateFlyOffButton();
             updateLaunchButton();
             updateDropButton();
+            updateConvertModeButton();
             updateRecklessButton();
             updateHoverButton();
             updateManeuverButton();
@@ -1902,7 +1916,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 setGetUpEnabled(false);
                 setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck()
                                   && !(getBtn(MoveCommand.MOVE_GET_UP).isEnabled()));
-                if (!(ce instanceof Tank)) {
+                if (!(ce instanceof Tank) && !(ce instanceof QuadVee && ((QuadVee)ce).isInVehicleMode())) {
                     setHullDownEnabled(ce.canGoHullDown());
                 } else {
                     // So that vehicle can move and go hull-down, we have to
@@ -2420,6 +2434,40 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         setTraitorEnabled(true);
+    }
+    
+    private void updateConvertModeButton() {
+
+        if (cmd.length() > 0 && cmd.getLastStep().getType() != MoveStepType.CONVERT_MODE) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
+        final Entity ce = ce();
+        
+        if (!(ce instanceof QuadVee || ce instanceof LandAirMech
+                || (ce instanceof Mech && ((Mech)ce).hasTracks()))) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
+        IHex currHex =  clientgui.getClient().getGame().getBoard().getHex(ce.getPosition());
+        if (currHex.containsTerrain(Terrains.WATER)) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
+        if (ce instanceof LandAirMech && ce.isGyroDestroyed()) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
+        if (ce instanceof QuadVee && ((QuadVee)ce).conversionCost() > ce.getRunMP()) {
+            setModeConvertEnabled(false);
+            return;
+        }
+        
+        setModeConvertEnabled(true);
     }
 
     private void updateRecklessButton() {
@@ -3778,6 +3826,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             maxMP = en.getJumpMP();
         } else if (mvMode == GEAR_BACKUP) {
             maxMP = en.getWalkMP();
+        } else if (ce() instanceof Mech && !(ce() instanceof QuadVee)
+                && ce().getMovementMode() == EntityMovementMode.TRACKED) {
+            //A non-QuadVee 'Mech that is using tracked movement is limited to walking
+            maxMP = en.getWalkMP();
         } else {
             if (clientgui.getClient().getGame().getOptions()
                          .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
@@ -3813,6 +3865,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (gear == GEAR_JUMP) {
             maxMP = ce().getJumpMP();
         } else if (gear == GEAR_BACKUP) {
+            maxMP = ce().getWalkMP();
+        } else if (ce() instanceof Mech && !(ce() instanceof QuadVee)
+                && ce().getMovementMode() == EntityMovementMode.TRACKED){
+            //A non-QuadVee 'Mech that is using tracked movement (or converting to it) is limited to walking
             maxMP = ce().getWalkMP();
         } else {
             maxMP = ce().getRunMP();
@@ -3938,6 +3994,35 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             gear = MovementDisplay.GEAR_SWIM;
             ce.setMovementMode((ce instanceof BipedMech) ? EntityMovementMode.BIPED_SWIM
                     : EntityMovementMode.QUAD_SWIM);
+        } else if (actionCmd.equals(MoveCommand.MOVE_MODE_CONVERT.getCmd())) {
+            EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
+            adjustConvertSteps(nextMode);
+            clientgui.bv.drawMovementData(ce(), cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_MODE_LEG.getCmd())) {
+            if ((ce.getEntityType() & Entity.ETYPE_QUAD_MECH) == Entity.ETYPE_QUAD_MECH) {
+                adjustConvertSteps(EntityMovementMode.QUAD);                
+            } else if ((ce.getEntityType() & Entity.ETYPE_TRIPOD_MECH) == Entity.ETYPE_TRIPOD_MECH) {
+                adjustConvertSteps(EntityMovementMode.TRIPOD);
+            } else if ((ce.getEntityType() & Entity.ETYPE_BIPED_MECH) == Entity.ETYPE_BIPED_MECH) {
+                adjustConvertSteps(EntityMovementMode.BIPED);
+            }
+            clientgui.bv.drawMovementData(ce(), cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_MODE_VEE.getCmd())) {
+            if (ce instanceof QuadVee && ((QuadVee)ce).getMotiveType() == QuadVee.MOTIVE_WHEEL) {
+                adjustConvertSteps(EntityMovementMode.TRACKED);
+            } else if ((ce instanceof Mech && ((Mech)ce).hasTracks())
+                    || ce instanceof QuadVee) {
+                adjustConvertSteps(EntityMovementMode.TRACKED);
+            } else if (ce instanceof LandAirMech
+                    && ((LandAirMech)ce).getLAMType() == LandAirMech.LAM_STANDARD) {
+                adjustConvertSteps(EntityMovementMode.AIRMECH);
+            }
+            clientgui.bv.drawMovementData(ce(), cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_MODE_AIR.getCmd())) {
+            if (ce instanceof LandAirMech) {
+                adjustConvertSteps(EntityMovementMode.AERODYNE);
+            }
+            clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_TURN.getCmd())) {
             gear = MovementDisplay.GEAR_TURN;
         } else if (actionCmd.equals(MoveCommand.MOVE_BACK_UP.getCmd())) {
@@ -4527,6 +4612,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateLaunchButton();
         updateLoadButtons();
         updateDropButton();
+        updateConvertModeButton();
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
@@ -4552,6 +4638,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             butDone.setEnabled(true);
         }
 
+    }
+    
+    /**
+     * Add enough <code>MoveStepType.CONVERT_MODE</code> steps to get to the requested mode, or
+     * clear the path if the unit is in the requested mode at the beginning of the turn.
+     * 
+     * @param endMode The mode to convert to
+     */
+    private void adjustConvertSteps(EntityMovementMode endMode) {
+        //Since conversion is not allowed in water, we shouldn't have to deal with the possibility of swim modes.
+        if (ce().getMovementMode() == endMode) {
+            cmd.clear();
+            return;
+        }
+        if (cmd.getFinalConversionMode() == endMode) {
+            return;
+        }
+        clear();
+        ce().setConvertingNow(true);
+        cmd.addStep(MoveStepType.CONVERT_MODE);
+        if (cmd.getFinalConversionMode() != endMode) {
+            cmd.addStep(MoveStepType.CONVERT_MODE);
+        }
+        if (ce() instanceof Mech && ((Mech)ce()).hasTracks()) {
+            ce().setMovementMode(endMode);
+        }
     }
 
     /**
@@ -4717,6 +4829,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void setJumpEnabled(boolean enabled) {
         buttons.get(MoveCommand.MOVE_JUMP).setEnabled(enabled);
         clientgui.getMenuBar().setMoveJumpEnabled(enabled);
+    }
+    
+    private void setModeConvertEnabled(boolean enabled) {
+        buttons.get(MoveCommand.MOVE_MODE_CONVERT).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveModeConvertEnabled(enabled);
     }
 
     private void setSwimEnabled(boolean enabled) {

@@ -81,10 +81,10 @@ public abstract class Mech extends Entity {
     public static final int ACTUATOR_LOWER_LEG = 13;
 
     public static final int ACTUATOR_FOOT = 14;
-
+    
     public static final String systemNames[] = { "Life Support", "Sensors",
             "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
-            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot" };
+            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot"};
 
     // locations
     public static final int LOC_HEAD = 0;
@@ -277,6 +277,9 @@ public abstract class Mech extends Entity {
 
     // Cooling System Flaws quirk
     private boolean coolingFlawActive = false;
+    
+    // QuadVees, LAMs, and tracked 'Mechs can change movement mode.
+    protected EntityMovementMode originalMovementMode = EntityMovementMode.BIPED;
 
     /**
      * Construct a new, blank, mech.
@@ -338,6 +341,9 @@ public abstract class Mech extends Entity {
             break;
         case COCKPIT_COMMAND_CONSOLE:
             setCrew(new Crew(CrewType.COMMAND_CONSOLE));
+            break;
+        case COCKPIT_QUADVEE:
+            setCrew(new Crew(CrewType.QUADVEE));
             break;
         }
     }
@@ -908,7 +914,7 @@ public abstract class Mech extends Entity {
     }
 
     /**
-     * does this mech have tracks?
+     * Does this mech have tracks? Used for tracks as industrial equipment; QuadVees return false.
      *
      * @return
      */
@@ -1073,7 +1079,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getSprintMP() {
-        if (hasHipCrit()) {
+        if (hasHipCrit() || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())) {
             return getRunMP();
         }
         return getSprintMP(true, false, false);
@@ -1448,7 +1454,35 @@ public abstract class Mech extends Entity {
 
         return jump;
     }
-
+    
+    @Override
+    public boolean isEligibleForPavementBonus() {
+        //eligible if using Mech tracks
+        return movementMode == EntityMovementMode.TRACKED;
+    }
+    
+    @Override
+    public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
+        if (hasTracks() && afterMode != EntityMovementMode.TRACKED) {
+            return EntityMovementMode.TRACKED;
+        } else {
+            return originalMovementMode;
+        }
+    }
+        
+    /**
+     * QuadVees and LAMs may not have to make PSRs to avoid falling depending on their mode,
+     * and Mechs using tracks for movement do not have to make PSRs for damage to gyro or leg
+     * actuators.
+     * 
+     * @param gyroLegDamage Whether the PSR is due to damage to gyro or leg actuators
+     * @return              true if the Mech can fall due to failed PSR.
+     */
+    @Override
+    public boolean canFall(boolean gyroLegDamage) {
+        return !isProne() && !(gyroLegDamage && movementMode == EntityMovementMode.TRACKED);
+    }
+    
     /**
      * Return the height of this mech above the terrain.
      */
@@ -5106,7 +5140,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[15 + locations()];
+        double[] costs = new double[16 + locations()];
         int i = 0;
 
         double cockpitCost = 0;
@@ -5126,6 +5160,8 @@ public abstract class Mech extends Entity {
             cockpitCost = 175000;
         } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
             cockpitCost = 100000;
+        } else if (getCockpitType() == Mech.COCKPIT_QUADVEE) {
+            cockpitCost = 375000;
         } else {
             cockpitCost = 200000;
         }
@@ -5138,7 +5174,8 @@ public abstract class Mech extends Entity {
         costs[i++] = weight * 2000;// sensors
         int muscCost = hasSCM() ? 10000 : hasTSM() ? 16000 : hasIndustrialTSM() ? 12000 : 2000;
         costs[i++] = muscCost * weight;// musculature
-        costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
+        double structureCost = EquipmentType.getStructureCost(structureType) * weight;// IS
+        costs[i++] = structureCost;
         costs[i++] = getActuatorCost();// arm and/or leg actuators
         if(hasEngine()) {
             costs[i++] = (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
@@ -5207,8 +5244,18 @@ public abstract class Mech extends Entity {
                     * EquipmentType.getArmorCost(armorType[0]);
         }
 
-        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
-
+        double weaponCost = getWeaponsAndEquipmentCost(ignoreAmmo);
+        costs[i++] = weaponCost;
+        
+        if (this instanceof LandAirMech) {
+            costs[i++] = (structureCost + weaponCost)
+                    * ((LandAirMech)this).getLAMType() == LandAirMech.LAM_BIMODAL? 0.65 : 0.75;
+        } else if (this instanceof QuadVee) {
+            costs[i++] = (structureCost + weaponCost) * 0.5;
+        } else {
+            costs[i++] = 0;
+        }
+        
         double cost = 0; // calculate the total
         for (int x = 0; x < i; x++) {
             cost += costs[x];
@@ -5237,7 +5284,7 @@ public abstract class Mech extends Entity {
                 "Structure", "Actuators", "Engine", "Gyro", "Jump Jets",
                 "Heatsinks", "Full Head Ejection System",
                 "Armored System Components", "Armor", "Equipment",
-                "Omni Multiplier", "Weight Multiplier" };
+                "Conversion Equipment", "Omni Multiplier", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 
@@ -5436,6 +5483,9 @@ public abstract class Mech extends Entity {
 
     @Override
     public int getMaxElevationChange() {
+        if (movementMode == EntityMovementMode.TRACKED) {
+            return 1;
+        }
         return 2;
     }
 
@@ -6241,6 +6291,35 @@ public abstract class Mech extends Entity {
                 return true;
             }
         }
+        // Mechs using tracks and QuadVees in vehicle mode (or converting to or from) have the same
+        // restrictions and combat vehicles with the exception that QuadVees can enter water hexes
+        // except during conversion.
+        if (movementMode == EntityMovementMode.TRACKED
+                || (this instanceof QuadVee && convertingNow
+                        && ((QuadVee)this).getMotiveType() == QuadVee.MOTIVE_TRACK)) {
+                return (hex.terrainLevel(Terrains.WOODS) > 1)
+                        || ((hex.terrainLevel(Terrains.WATER) > 0)
+                                && !hex.containsTerrain(Terrains.ICE)
+                                && (!(this instanceof QuadVee) || convertingNow))
+                        || hex.containsTerrain(Terrains.JUNGLE)
+                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                        || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                        || (hex.terrainLevel(Terrains.RUBBLE) > 5);
+        }
+        if (movementMode == EntityMovementMode.WHEELED
+                || (this instanceof QuadVee && convertingNow
+                        && ((QuadVee)this).getMotiveType() == QuadVee.MOTIVE_WHEEL)) {
+            return hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.ROUGH)
+                    || hex.containsTerrain(Terrains.RUBBLE)
+                    || hex.containsTerrain(Terrains.MAGMA)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.SNOW) > 1)
+                    || (hex.terrainLevel(Terrains.GEYSER) == 2)
+                    || ((hex.terrainLevel(Terrains.WATER) > 0)
+                            && !hex.containsTerrain(Terrains.ICE)
+                            && convertingNow);
+        }
 
         return (hex.terrainLevel(Terrains.WOODS) > 2)
                 || (hex.terrainLevel(Terrains.JUNGLE) > 2);
@@ -6274,6 +6353,8 @@ public abstract class Mech extends Entity {
             sb.append("LAM");
         } else if (this instanceof BipedMech) {
             sb.append("Biped");
+        } else if (this instanceof QuadVee) {
+            sb.append("QuadVee");
         } else if (this instanceof QuadMech) {
             sb.append("Quad");
         } else if (this instanceof TripodMech) {
@@ -6333,6 +6414,17 @@ public abstract class Mech extends Entity {
             sb.append("Standard");
         }
         sb.append(newLine);
+        
+        if (this instanceof LandAirMech) {
+            sb.append("LAM:");
+            sb.append(((LandAirMech)this).getLAMTypeString());
+            sb.append(newLine);
+        } else if (this instanceof QuadVee) {
+            sb.append("Motive:");
+            sb.append(((QuadVee)this).getMotiveTypeString());
+            sb.append(newLine);
+        }
+
 
         if (!standard) {
             sb.append("Cockpit:");
@@ -6716,9 +6808,6 @@ public abstract class Mech extends Entity {
         return true;
     }
 
-    /**
-     * Dual Cockpits need to be implemented everywhere except here. FIXME
-     */
     public boolean addCommandConsole() {
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
@@ -6736,9 +6825,23 @@ public abstract class Mech extends Entity {
         return true;
     }
 
-    /**
-     * Dual Cockpits need to be implemented everywhere except here. FIXME
-     */
+    public boolean addQuadVeeCockpit() {
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_QUADVEE);
+        return true;
+    }
+
     public boolean addDualCockpit() {
         addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
@@ -7196,7 +7299,7 @@ public abstract class Mech extends Entity {
         }
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
-        if (locationIsLeg(loc)) {
+        if (locationIsLeg(loc) && canFall()) {
             game.addPSR(new PilotingRollData(getId(),
                     TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
@@ -7316,8 +7419,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getHQIniBonus() {
         int bonus = super.getHQIniBonus();
-        if (((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) > 0) || hasHipCrit()) && (mpUsedLastRound > 0)) {
+        if (((getGyroHits() > 0) || hasHipCrit()) && (mpUsedLastRound > 0)) {
             return 0;
         }
         return bonus;
@@ -7948,6 +8050,15 @@ public abstract class Mech extends Entity {
         return getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
                 Mech.LOC_CT);
     }
+    
+    @Override
+    public boolean isGyroDestroyed() {
+        if (getGyroType() == GYRO_HEAVY_DUTY) {
+            return getGyroHits() > 2;
+        } else {
+            return getGyroHits() > 1;
+        }
+    }
 
     @Override
     public String getLocationDamage(int loc) {
@@ -8065,6 +8176,15 @@ public abstract class Mech extends Entity {
             }
             toReturn += "Foot";
             first = false;
+        }
+        if (hasSystem(QuadVee.SYSTEM_CONVERSION_GEAR, loc)
+                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
+                        ACTUATOR_FOOT, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+                toReturn += "Conversion Gear";
+                first = false;
+            }
         }
         return toReturn;
     }

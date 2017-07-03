@@ -40,6 +40,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
+import megamek.common.QuadVee;
 import megamek.common.TechConstants;
 import megamek.common.TripodMech;
 import megamek.common.WeaponType;
@@ -66,8 +67,9 @@ public class MtfFile implements IMechLoader {
     String myomerType;
     String gyroType;
     String cockpitType;
-    String ejectionType;
     String lamType;
+    String motiveType;
+    String ejectionType;
 
     String heatSinks;
     String walkMP;
@@ -222,7 +224,18 @@ public class MtfFile implements IMechLoader {
                 fullHead = ejectionType.substring(9).equals(Mech.FULL_HEAD_EJECT_STRING);
             } catch (Exception e) {
             }
-            if (chassisConfig.indexOf("Quad") != -1) {
+            if (chassisConfig.indexOf("QuadVee") != -1) {
+                int iMotiveType = QuadVee.MOTIVE_TRACK;
+                try {
+                    iMotiveType = QuadVee.getMotiveTypeForString(motiveType.substring(7));
+                    if (iMotiveType == QuadVee.MOTIVE_UNKNOWN) {
+                        iMotiveType = QuadVee.MOTIVE_TRACK;
+                    }
+                } catch (Exception e) {
+                    iMotiveType = QuadVee.MOTIVE_TRACK;
+                }
+                mech = new QuadVee(iGyroType, iMotiveType);
+            } else if (chassisConfig.indexOf("Quad") != -1) {
                 mech = new QuadMech(iGyroType, iCockpitType);
             } else if (chassisConfig.indexOf("LAM") != -1) {
                 int iLAMType = LandAirMech.LAM_STANDARD;
@@ -905,6 +918,16 @@ public class MtfFile implements IMechLoader {
 
         if (line.trim().toLowerCase().startsWith("gyro:")) {
             gyroType = line;
+            return true;
+        }
+        
+        if (line.trim().toLowerCase().startsWith("lam:")) {
+            lamType = line;
+            return true;
+        }
+        
+        if (line.trim().toLowerCase().startsWith("motive:")) {
+            motiveType = line;
             return true;
         }
 

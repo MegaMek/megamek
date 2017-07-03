@@ -140,6 +140,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public static final long ETYPE_SUPPORT_VTOL = 1L << 25;
 
     public static final long ETYPE_TRIPOD_MECH = 1L << 26;
+    public static final long ETYPE_QUADVEE = 1L << 27;
 
     public static final int NONE = -1;
 
@@ -295,6 +296,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected int[] armorType;
     protected int[] armorTechLevel;
     protected boolean isJumpingNow = false;
+    protected boolean convertingNow = false;
+    protected EntityMovementMode previousMovementMode;
 
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -2515,6 +2518,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getJumpMPWithTerrain() {
         return getJumpMP();
     }
+    
+    /**
+     * Tanks and certain other units can get a +1 bonus to MP if their move is entirely on pavement.
+     * 
+     * @return true if the <code>Entity</code> gets a movement bonus on pavement
+     */
+    public boolean isEligibleForPavementBonus() {
+        return false;
+    }
 
     /**
      * Returns the absolute elevation above ground level 0 that this entity
@@ -4060,6 +4072,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getGyroType() {
         return -1;
+    }
+    
+    /**
+     * Only Mechs have gyros, but this helps keep the code a bit cleaner.
+     *  
+     * @return true if the <code>Entity</code> is a Mech and has taken enough gyro hits to destroy it
+     */
+    public boolean isGyroDestroyed() {
+        return false;
     }
 
     /**
@@ -5638,6 +5659,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         mpUsedLastRound = mpUsed;
         mpUsed = 0;
         isJumpingNow = false;
+        convertingNow = false;
         damageThisRound = 0;
         if (assaultDropInProgress == 2) {
             assaultDropInProgress = 0;
@@ -6177,6 +6199,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return "Rail";
             case MAGLEV:
                 return "MagLev";
+            case AIRMECH:
+                return "AirMech";
             default:
                 return "ERROR";
         }
@@ -6240,15 +6264,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                         "Pilot unconscious");
         }
         // gyro operational?
-        if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                             Mech.LOC_CT) > 1) && (getGyroType() != Mech.GYRO_HEAVY_DUTY)) {
-            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
-                                        getCrew().getPiloting() + 6, "Gyro destroyed");
-        }
-
-        // Takes 3+ hits to kill an HD Gyro.
-        if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                             Mech.LOC_CT) > 2) && (getGyroType() == Mech.GYRO_HEAVY_DUTY)) {
+        if (isGyroDestroyed()) {
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
                                         getCrew().getPiloting() + 6, "Gyro destroyed");
         }
@@ -6399,9 +6415,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return roll;
         }
 
-        if (!needsRollToStand()
-                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                        Mech.LOC_CT) < 2)) {
+        if (!needsRollToStand() && !isGyroDestroyed()) {
             roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "\n"
                     + getDisplayName()
                     + " does not need to make a piloting skill check "
@@ -6429,7 +6443,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             gyroDamage--; // HD gyro ignores 1st damage
         }
         if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
-            && !isProne() && ((gyroDamage > 0) || hasHipCrit())) {
+            && canFall() && ((gyroDamage > 0) || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
                                              "running with damaged hip actuator or gyro"));
@@ -6541,12 +6555,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData checkLandingWithDamage(
             EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
-        if (((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                              Mech.LOC_CT) > 0) && (getGyroType() != Mech.GYRO_HEAVY_DUTY))
-            || ((getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                 Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1) && (getGyroType() == Mech.GYRO_HEAVY_DUTY))
-            || hasLegActuatorCrit()) {
+        
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
+        //Heavy duty gyro does not force PSR until second hit
+        if (getGyroType() == Mech.GYRO_HEAVY_DUTY || getGyroType() == Mech.GYRO_SUPERHEAVY) {
+            gyroHits--;
+        }
+        if (gyroHits > 0 || hasLegActuatorCrit()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
                                              "landing with damaged leg actuator or gyro"));
@@ -6624,7 +6639,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * return a <code>PilotingRollData</code> checking for wether this Entity
+     * return a <code>PilotingRollData</code> checking for whether this Entity
      * moved too fast due to low gravity
      *
      * @param step
@@ -6640,7 +6655,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case MOVE_VTOL_WALK:
             case MOVE_VTOL_RUN:
                 int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5);
-                if ((this instanceof Tank) && gotPavementBonus) {
+                if (isEligibleForPavementBonus() && gotPavementBonus) {
                     maxSafeMP++;
                 }
                 if (step.getMpUsed() > maxSafeMP) {
@@ -6782,7 +6797,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (!lastPos.equals(curPos)
                 && ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep)
                 && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
-                && (this instanceof Mech)) {
+                && canFall()) {
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -6840,6 +6855,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (getMovementMode() != EntityMovementMode.BIPED_SWIM)
             && (getMovementMode() != EntityMovementMode.QUAD_SWIM)
             && (getMovementMode() != EntityMovementMode.WIGE)
+            && canFall()
             && !isPavementStep) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER), moveType);
         }
@@ -10253,6 +10269,37 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setEMI(boolean inVal) {
         _isEMId = inVal;
     }
+    
+    /**
+     * The attack direction modifier for rolls on the motive system hits table
+     * for the given side (as defined in {@link ToHitData}). This will return 0
+     * if Tactical Operations vehicle effectiveness rules are in effect or if
+     * the side parameter falls outside ToHitData's range of "fixed" side
+     * values; in particular, it will return 0 if handed
+     * {@link ToHitData#SIDE_RANDOM}.
+     *
+     * @param side
+     *            The attack direction as specified above.
+     * @return The appropriate directional roll modifier.
+     */
+    public int getMotiveSideMod(int side) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
+            return 0;
+        }
+        switch (side) {
+            case ToHitData.SIDE_LEFT:
+            case ToHitData.SIDE_RIGHT:
+            case ToHitData.SIDE_FRONTLEFT:
+            case ToHitData.SIDE_FRONTRIGHT:
+            case ToHitData.SIDE_REARLEFT:
+            case ToHitData.SIDE_REARRIGHT:
+                return 2;
+            case ToHitData.SIDE_REAR:
+                return 1;
+            default:
+                return 0;
+        }
+    }
 
     /**
      * Checks if the unit is hardened agaist nuclear strikes.
@@ -13590,7 +13637,60 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean getIsJumpingNow() {
         return isJumpingNow;
     }
-
+    
+    public void setConvertingNow(boolean converting) {
+        convertingNow = converting;
+    }
+    
+    public boolean isConvertingNow() {
+        return convertingNow;
+    }
+    
+    /**
+     * Entities that can convert movement modes (LAMs, QuadVees) report the next mode to assume
+     * when a convert movement command is processed. This provides a set order for cycling through
+     * available modes.
+     *
+     * @param afterMode The movement mode to convert from.
+     * @return          The next movement mode in the sequence.
+     */
+    public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
+        return movementMode;
+    }
+    
+    /**
+     * Sets the movement mode to the next in the conversion sequence for QuadVees, LAMs, and Mechs
+     * with tracks. In most cases this switches between two available modes, but LAMs that start
+     * the turn in AirMech mode have three available.
+     */
+    public void toggleConversionMode() {
+        movementMode = nextConversionMode(movementMode);
+    }
+    
+    /**
+     * Only applicable to Mechs, but here for convenience. Mechs that are already prone, or
+     * QuadVees and LAMs in non-leg mode are not subject to PSRs for falling. Note that PSRs
+     * are sometimes required for other reasons.
+     * 
+     * @param gyroLegDamage Whether the potential fall is due to damage to gyro or leg actuators,
+     *                      in which case Mechs using tracks are not subject to falls.
+     * @return              Whether the <code>Entity</code> is required to make PSRs to avoid falling.
+     */
+    public boolean canFall(boolean gyroLegDamage) {
+        return false;
+    }
+    
+    /**
+     * Only applicable to Mechs, but here for convenience. Mechs that are already prone, or
+     * QuadVees and LAMs in fighter mode are not subject to PSRs for falling. Note that PSRs
+     * are sometimes required for other reasons.
+     * 
+     * @return Whether the <code>Entity</code> is required to make PSRs to avoid falling.
+     */
+    public boolean canFall() {
+        return canFall(false);
+    }
+    
     public void setTraitorId(int id) {
         traitorId = id;
     }
@@ -14234,5 +14334,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public int getSpriteDrawPriority() {
         return 0;
+    }
+
+    /**
+     * Entities that use different sprites for different modes should override this
+     * @return a code identifying the mode, or an empty string for the default sprite
+     */
+    public String getTilesetModeString() {
+        return "";
     }
 }

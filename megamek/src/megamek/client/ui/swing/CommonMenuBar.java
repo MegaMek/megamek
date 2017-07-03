@@ -125,6 +125,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem moveUnload;
     private JMenuItem moveJump;
     private JMenuItem moveSwim;
+    private JMenuItem moveModeConvert;
     private JMenuItem moveBackUp;
     private JMenuItem moveCharge;
     private JMenuItem moveDFA;
@@ -533,6 +534,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         moveSwim = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveSwim"), MovementDisplay.MoveCommand.MOVE_SWIM.getCmd(), KeyEvent.VK_S); //$NON-NLS-1$
+        moveModeConvert = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveModeConvert"), MovementDisplay.MoveCommand.MOVE_MODE_CONVERT.getCmd(), KeyEvent.VK_C); //$NON-NLS-1$
         moveBackUp = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveBackUp"), MovementDisplay.MoveCommand.MOVE_BACK_UP.getCmd()); //$NON-NLS-1$
@@ -1126,6 +1130,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
 
     public synchronized void setMoveSwimEnabled(boolean enabled) {
         moveSwim.setEnabled(enabled);
+    }
+    
+    public synchronized void setMoveModeConvertEnabled(boolean enabled) {
+        moveModeConvert.setEnabled(enabled);
     }
 
     public synchronized void setMoveLayMineEnabled(boolean enabled) {

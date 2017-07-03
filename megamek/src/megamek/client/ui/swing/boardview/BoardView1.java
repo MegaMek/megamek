@@ -3902,6 +3902,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if ((previousStep != null) && game.useVectorMove()) {
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
+            
+            // A LAM converting from AirMech to Biped uses two convert steps and we
+            // only want to show the last.
+            if (previousStep != null && step.getType() == MoveStepType.CONVERT_MODE
+                    && previousStep.getType() == MoveStepType.CONVERT_MODE) {
+                pathSprites.get(pathSprites.size() - 1).setHidden(true);
+            }
             pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));           
             previousStep = step;
         }
@@ -5041,6 +5048,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             GUIPreferences guip = GUIPreferences.getInstance();
 
             updateEcmList();
+            //For Entities that have converted to another mode, check for a different sprite
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
+                    && en.isConvertingNow()) {
+                tileManager.reloadImage(en);
+            }
             redrawAllEntities();
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();

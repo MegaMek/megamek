@@ -8977,7 +8977,7 @@ public class Server implements Runnable {
             doSkillCheckInPlace(entity, rollTarget);
         }
         if ((md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
-                && md.hasActiveMASC()) {
+                && md.hasActiveMASC() && entity.canFall()) {
             doSkillCheckInPlace(entity,
                     entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }

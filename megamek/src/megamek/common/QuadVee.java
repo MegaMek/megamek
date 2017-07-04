@@ -199,7 +199,7 @@ public class QuadVee extends QuadMech {
                 .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS))) {
             return getRunMP();
         }
-        return super.getSprintMP();
+        return getSprintMP(true, false, false);
     }
 
     /*

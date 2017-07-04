@@ -7148,24 +7148,11 @@ public class Server implements Runnable {
                     || md.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT)) {
                 rollTarget = entity.checkUsingOverdrive(EntityMovementType.MOVE_SPRINT);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    r = new Report(2180);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(rollTarget.getLastPlainDesc());
-                    addReport(r);
-                    
-                    int nRoll = Compute.d6(2);
-                    r = new Report(2190);
-                    r.subject = entity.getId();
-                    r.add(rollTarget.getValueAsString());
-                    r.add(rollTarget.getDesc());
-                    r.add(nRoll);
-                    boolean failed = nRoll < rollTarget.getValue();
-                    r.choose(!failed);
-                    addReport(r);
-                    if (failed) {
+                    int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
+                            curPos, rollTarget, false);
+                    if (mof > 0) {
                         if (processFailedVehicleManeuver(entity, curPos, 0, prevStep, step.isThisStepBackwards(),
-                                lastStepMoveType, distance, 2, rollTarget.getValue() - nRoll)) {
+                                lastStepMoveType, distance, 2, mof)) {
                             if (md.hasActiveMASC()) {
                                 mpUsed = entity.getRunMP();
                             } else {
@@ -7909,43 +7896,28 @@ public class Server implements Runnable {
                 }
                 rollTarget = entity.checkTurnModeFailure(overallMoveType, straight,
                         md.getMpUsed(), step.getPosition());
-                int nRoll = 0;
-                int mof = 0;
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    r = new Report(2500);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    addReport(r);
-                    
-                    nRoll = Compute.d6(2);
-                    r = new Report(2190);
-                    r.subject = entity.getId();
-                    r.add(rollTarget.getValue());
-                    r.add(rollTarget.getDesc());
-                    r.add(nRoll);
-                    
-                    mof = rollTarget.getValue() - nRoll;
-                    r.choose(mof > 0);
-                    addReport(r);
-                }
-                if (mof > 0) {
-                    if (processFailedVehicleManeuver(entity, curPos, step.getFacing() - curFacing,
-                            prevStep, step.isThisStepBackwards(), lastStepMoveType, distance, mof, mof)) {
-                        if (md.hasActiveMASC()) {
-                            mpUsed = entity.getRunMP();
+                    int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
+                            curPos, rollTarget, false);
+                    if (mof > 0) {
+                        if (processFailedVehicleManeuver(entity, curPos, step.getFacing() - curFacing,
+                                prevStep, step.isThisStepBackwards(), lastStepMoveType, distance, mof, mof)) {
+                            if (md.hasActiveMASC()) {
+                                mpUsed = entity.getRunMP();
+                            } else {
+                                mpUsed = entity.getRunMPwithoutMASC();
+                            }
+    
+                            turnOver = true;
+                            distance = entity.delta_distance;
                         } else {
-                            mpUsed = entity.getRunMPwithoutMASC();
+                            continueTurnFromFishtail = true;
                         }
-
-                        turnOver = true;
-                        distance = entity.delta_distance;
-                    } else {
-                        continueTurnFromFishtail = true;
+                        curFacing = entity.getFacing();
+                        entity.setPosition(curPos);
+                        entity.setSecondaryFacing(curFacing);
+                        break;
                     }
-                    curFacing = entity.getFacing();
-                    entity.setPosition(curPos);
-                    entity.setSecondaryFacing(curFacing);
-                    break;
                 }
             }
             
@@ -8127,7 +8099,7 @@ public class Server implements Runnable {
                     break;
 
                 } else { // End failed-skid-psr
-                    // If the checke succeeded, restore the facing we had before
+                    // If the check succeeded, restore the facing we had before
                     // if it failed, the fall will have changed facing
                     entity.setFacing(startingfacing);
                 }

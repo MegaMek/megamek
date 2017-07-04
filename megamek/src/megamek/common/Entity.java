@@ -6387,7 +6387,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                              "Check false: Entity is not using overdrive");
         }
 
-        addPilotingModifierForTerrain(roll);
         return roll;
     }
 
@@ -7029,8 +7028,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return roll;
         }
 
-        roll.addModifier(turnMode - straightLineHexes, "did not satisfy turn mode");
-
         if (getWeightClass() < EntityWeightClass.WEIGHT_MEDIUM
                 || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
             roll.addModifier(-1, "light vehicle");
@@ -7063,6 +7060,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         
+        roll.addModifier(turnMode - straightLineHexes, "did not satisfy turn mode");
+
         return roll;
     }
 

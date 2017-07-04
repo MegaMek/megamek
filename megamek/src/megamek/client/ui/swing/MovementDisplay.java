@@ -108,6 +108,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_INF = 1 << 3;
     public static final int CMD_AERO = 1 << 4;
     public static final int CMD_AERO_VECTORED = 1 << 5;
+    public static final int CMD_CONVERTER = 1 << 6;
     // Command used only in menus and has no associated button
     public static final int CMD_NO_BUTTON = 1 << 8;
     // Convenience defines for common combinations
@@ -156,7 +157,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_SWIM("moveSwim", CMD_MECH), //$NON-NLS-1$
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         //Convert command for a single button, which can cycle through modes because MovePath state is available
-        MOVE_MODE_CONVERT("moveModeConvert", CMD_MECH), //$NON-NLS-1$
+        MOVE_MODE_CONVERT("moveModeConvert", CMD_CONVERTER), //$NON-NLS-1$
         //Convert commands used for menus, where the MovePath state is unknown.
         MOVE_MODE_LEG("moveModeLeg", CMD_NO_BUTTON), //$NON-NLS-1$
         MOVE_MODE_VEE("moveModeVee", CMD_NO_BUTTON), //$NON-NLS-1$
@@ -282,7 +283,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
 
                 // Check unit type flag
-                if ((cmd.flag & f) == f) {
+                if ((cmd.flag & f) != 0) {
                     flaggedCmds.add(cmd);
                 }
             }
@@ -639,7 +640,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 flag = CMD_VTOL;
             } else if (ce instanceof Tank) {
                 flag = CMD_TANK;
-            } else if (ce instanceof Aero) {
+            } else if (ce instanceof Aero
+                    || (ce instanceof LandAirMech && ce.getMovementMode() == EntityMovementMode.AERODYNE)) {
                 if (ce.isAirborne()
                     && clientgui.getClient().getGame().useVectorMove()) {
                     flag = CMD_AERO_VECTORED;
@@ -649,6 +651,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 } else {
                     flag = CMD_TANK;
                 }
+            } else if (ce instanceof QuadVee) {
+                if (((QuadVee)ce).isInVehicleMode()) {
+                    flag = CMD_TANK | CMD_CONVERTER;
+                } else {
+                    flag = CMD_MECH | CMD_CONVERTER;
+                }
+            } else if (ce instanceof LandAirMech) {
+                if (ce.getMovementMode() == EntityMovementMode.AERODYNE) {
+                    flag |= CMD_CONVERTER;
+                } else if (ce.getMovementMode() == EntityMovementMode.WIGE) {
+                    flag = CMD_TANK | CMD_CONVERTER;
+                } else {
+                    flag = CMD_MECH | CMD_CONVERTER;
+                }
+            } else if (ce instanceof Mech && ((Mech)ce).hasTracks()) {
+                flag = CMD_MECH | CMD_CONVERTER;
             }
         }
         return getButtonList(flag);

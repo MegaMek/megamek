@@ -235,7 +235,7 @@ public class QuadVee extends QuadMech {
                         ignoremodulararmor) * 2.0);
             }
         } else {
-            return super.getSprintMPwithoutMASC();
+            return super.getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
     }
 

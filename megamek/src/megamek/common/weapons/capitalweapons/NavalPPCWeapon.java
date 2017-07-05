@@ -15,23 +15,22 @@
  * Created on Sep 2, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.capitalweapons;
 
-import megamek.common.weapons.gaussrifles.GaussWeapon;
+import megamek.common.weapons.lasers.EnergyWeapon;
 
 /**
  * @author Jay Lawson
  */
-public abstract class NavalGaussWeapon extends GaussWeapon {
-
+public abstract class NavalPPCWeapon extends EnergyWeapon {
     /**
      * 
      */
-    private static final long serialVersionUID = -2800123131421584210L;
+    private static final long serialVersionUID = 414010600231978506L;
 
-    public NavalGaussWeapon() {
+    public NavalPPCWeapon() {
         super();
-        this.atClass = CLASS_CAPITAL_GAUSS;
+        this.atClass = CLASS_CAPITAL_PPC;
         this.capital = true;
     }
     

@@ -60,6 +60,7 @@ ISLRM5 Ammo
 </Body Equipment>
 
 <Front Equipment>
+Machine Gun
 Vehicle Flamer
 </Front Equipment>
 
@@ -88,6 +89,6 @@ XTRO Primitives V - Age of War
 </source>
 
 <tonnage>
-30.0
+45.0
 </tonnage>
 

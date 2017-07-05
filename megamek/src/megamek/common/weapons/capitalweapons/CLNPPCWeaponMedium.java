@@ -18,7 +18,6 @@
 package megamek.common.weapons.capitalweapons;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.NavalPPCWeapon;
 
 /**
  * @author Jay Lawson

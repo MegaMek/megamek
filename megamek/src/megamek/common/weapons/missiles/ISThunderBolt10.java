@@ -14,7 +14,6 @@
 package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
-import megamek.common.weapons.ThunderBoltWeapon;
 
 /**
  * @author Sebastian Brocks

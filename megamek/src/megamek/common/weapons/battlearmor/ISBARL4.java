@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.weapons.RLWeapon;
+import megamek.common.weapons.missiles.RLWeapon;
 
 
 /**

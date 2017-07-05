@@ -16,8 +16,6 @@
  */
 package megamek.common.weapons.capitalweapons;
 
-import megamek.common.weapons.NavalACWeapon;
-
 /**
  * @author Jay Lawson
  */

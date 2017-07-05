@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons.autocannons;
 
-import megamek.common.weapons.NailRivetGunWeapon;
-
 /**
  * @author Sebastian Brocks
  */

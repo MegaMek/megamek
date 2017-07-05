@@ -57,6 +57,8 @@ public class ISMassDriverLight extends MassDriverWeapon {
             .setAvailability(RATING_F, RATING_X, RATING_F, RATING_F)
             .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)
             .setISApproximate(true, false, false,true, false)
+            .setClanAdvancement(2715, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_TH)
             .setReintroductionFactions(F_WB);	
     }

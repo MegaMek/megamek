@@ -66,7 +66,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
+            .setISApproximate(true, false, false,false, false)
             .setPrototypeFactions(F_CC)
             .setProductionFactions(F_CC);
 

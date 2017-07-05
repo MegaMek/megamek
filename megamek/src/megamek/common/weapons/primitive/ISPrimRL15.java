@@ -14,7 +14,7 @@
 package megamek.common.weapons.primitive;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.RLWeapon;
+import megamek.common.weapons.missiles.RLWeapon;
 
 /**
  * @author Dave Nawton

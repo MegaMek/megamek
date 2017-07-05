@@ -14,14 +14,15 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.capitalweapons;
 
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.AmmoBayWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class SCLBayWeapon extends BayWeapon {
+public class SCCBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -30,10 +31,10 @@ public class SCLBayWeapon extends BayWeapon {
     /**
      * 
      */
-    public SCLBayWeapon() {
+    public SCCBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "Sub-Capital Laser Bay";
+        this.name = "Sub-Capital Cannon Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
@@ -44,7 +45,7 @@ public class SCLBayWeapon extends BayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.atClass = CLASS_CAPITAL_LASER;
+        this.atClass = CLASS_CAPITAL_AC;
         this.capital = true;
         this.subCapital = true;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);

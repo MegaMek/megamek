@@ -15,12 +15,15 @@
  * Created on Oct 20, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.autocannons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AmmoWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.NailRivetGunHandler;
 import megamek.server.Server;
 
 /**

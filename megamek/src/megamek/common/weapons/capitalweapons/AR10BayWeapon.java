@@ -21,13 +21,13 @@ import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AmmoBayWeapon;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.ScreenLauncherBayHandler;
+import megamek.common.weapons.CapitalMissileBayHandler;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
+public class AR10BayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -36,32 +36,38 @@ public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
-    public ScreenLauncherBayWeapon() {
+    public AR10BayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "Screen Launcher Bay";
+        this.name = "AR10 Bay";
         this.setInternalName(this.name);
+        addLookupName("ISAR10Bay");
+        addLookupName("CLAR10Bay");
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
-        this.shortRange = 6;
-        this.mediumRange = 12;
-        this.longRange = 20;
-        this.extremeRange = 25;
+        this.shortRange = 12;
+        this.mediumRange = 24;
+        this.longRange = 40;
+        this.extremeRange = 50;
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.atClass = CLASS_SCREEN;
-        this.capital = false;
-        rulesRefs = "237,TM";
-        techAdvancement.setTechBase(TECH_BASE_IS)
-            .setIntroLevel(false)
-            .setUnofficial(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setISAdvancement(3053, 3055, 3057, DATE_NONE, DATE_NONE)
-            .setISApproximate(false, false, false,false, false)
-            .setPrototypeFactions(F_DC)
-            .setProductionFactions(F_DC);
+        this.maxRange = RANGE_SHORT;
+        this.atClass = CLASS_AR10;
+        this.capital = true;
+        rulesRefs = "210,TM";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+        	.setIntroLevel(false)
+        	.setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
+            .setISAdvancement(2540, 2550, 3055, 2950, 3051)
+            .setISApproximate(true, false, false, true, false)
+            .setClanAdvancement(2540, 2550, 3055, DATE_NONE, DATE_NONE)
+            .setClanApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH)
+            .setReintroductionFactions(F_FS,F_LC);
     }
 
     /*
@@ -69,12 +75,16 @@ public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
      * 
      * @see
      * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     * megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     * megamek.server.Server)
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new ScreenLauncherBayHandler(toHit, waa, game, server);
+        return new CapitalMissileBayHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL_MISSILE;
     }
 }

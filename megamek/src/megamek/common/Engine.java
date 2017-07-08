@@ -867,6 +867,10 @@ public class Engine implements Serializable, ITechnology {
     private static final TechAdvancement SUPPORT_MAGLEV_TA = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_ES, DATE_ES, DATE_ES).setTechRating(RATING_C)
             .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D);
+    
+    private static final TechAdvancement SUPPORT_NONE_TA = new TechAdvancement(TECH_BASE_ALL)
+            .setAdvancement(DATE_PS, DATE_PS, DATE_PS).setTechRating(RATING_A)
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
 
     public TechAdvancement getTechAdvancement() {
         switch(engineType) {
@@ -947,6 +951,7 @@ public class Engine implements Serializable, ITechnology {
         case SOLAR:
             return SUPPORT_SOLAR_TA;
         case NONE:
+            return SUPPORT_NONE_TA;
         default:
             return new TechAdvancement();
         }

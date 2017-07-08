@@ -52,3 +52,5 @@ public class ISRL5 extends RLWeapon {
             .setProductionFactions(F_MH);
     }
 }
+
+//No Ammo listed in Ammotype for this guy.

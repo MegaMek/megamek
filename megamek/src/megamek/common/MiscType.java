@@ -5746,7 +5746,7 @@ public class MiscType extends EquipmentType {
 		misc.criticals = 0;
 		misc.cost = 250000;
 		misc.hittable = false;
-		misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_BATTLEMECH_NIU);
+		misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_BATTLEMECH_NIU).or(F_BA_EQUIPMENT);
 
 		misc.rulesRefs = "68,IO";
 		misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
@@ -10281,6 +10281,7 @@ public class MiscType extends EquipmentType {
 		misc.name = "Triple Strength Myomer";
 		misc.setInternalName(misc.name);
 		misc.addLookupName("IS TSM");
+		misc.addLookupName("TSM");
 		misc.addLookupName("Triple Strength Myomer");
 		misc.tonnage = 0;
 		misc.criticals = 6;

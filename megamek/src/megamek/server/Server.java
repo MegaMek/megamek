@@ -9408,7 +9408,9 @@ public class Server implements Runnable {
         while (true) {
             synchronized (cfrPacketQueue) {
                 try {
-                    cfrPacketQueue.wait();
+                    while (cfrPacketQueue.isEmpty()) {
+                        cfrPacketQueue.wait();
+                    }
                 } catch (InterruptedException e) {
                     return false;
                 }

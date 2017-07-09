@@ -368,7 +368,27 @@ public class MovePath implements Cloneable, Serializable {
             }
 
         } // End step-is-legal
-        
+
+        // If using TacOps reverse gear option, cannot mix forward and backward movement
+        // in the same round except VTOLs.
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_REVERSE_GEAR)
+                && ((entity instanceof Tank && !(entity instanceof VTOL))
+                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))) {
+            boolean fwd = false;
+            boolean rev = false;
+            for (MoveStep s : steps) {
+                fwd |=  s.getType() == MoveStepType.FORWARDS
+                        || s.getType() == MoveStepType.LATERAL_LEFT
+                        || s.getType() == MoveStepType.LATERAL_RIGHT;
+                rev |=  s.getType() == MoveStepType.BACKWARDS
+                        || s.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
+                        || s.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS;
+            }
+            if (fwd && rev) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            }
+        }
+                
         // If we are using turn modes, go back through the path and mark danger for any turn
         // that now exceeds turn mode requirement. We want to show danger on the previous step
         // so the StepSprite will show danger. Hiding the previous step instead would make turning costs

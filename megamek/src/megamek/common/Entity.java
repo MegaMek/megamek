@@ -6409,16 +6409,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     && (movedLastRound == EntityMovementType.MOVE_WALK
                     || movedLastRound == EntityMovementType.MOVE_VTOL_WALK))
                     || ((overallMoveType == EntityMovementType.MOVE_RUN
-                            || overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
+                    || overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
                             && (movedLastRound == EntityMovementType.MOVE_NONE
                             || movedLastRound == EntityMovementType.MOVE_JUMP
                             || movedLastRound == EntityMovementType.MOVE_SKID))) {
                 roll.append(new PilotingRollData(getId(), 0, "gunning it"));
+                return roll;
             }
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not gunning it");            
         }
+        roll.addModifier(TargetRoll.CHECK_FALSE,
+                "Check false: Entity is not gunning it");            
         return roll;
     }
     

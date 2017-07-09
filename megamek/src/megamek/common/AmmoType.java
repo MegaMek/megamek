@@ -13856,7 +13856,7 @@ public class AmmoType extends EquipmentType {
         String[] theModes = {"safe", "efficient", "off", "dump"};
         ammo.setModes(theModes);
         ammo.setInstantModeSwitch(true);
-
+        ammo.rulesRefs = "303,TO";
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
         .setISAdvancement(3049, 3079, 3098, DATE_NONE, DATE_NONE)
         .setISApproximate(false, true, false, false, false)

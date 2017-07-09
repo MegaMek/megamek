@@ -6762,6 +6762,7 @@ public class MiscType extends EquipmentType {
 		misc.setInternalName(misc.name);
 		misc.tonnage = TONNAGE_VARIABLE;
 		misc.criticals = 0;
+		misc.tankslots = 1;
 		misc.flags = misc.flags.or(MiscType.F_BASIC_FIRECONTROL).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
 		        .or(MiscType.F_TANK_EQUIPMENT);
 		misc.omniFixedOnly = true;
@@ -7127,7 +7128,7 @@ public class MiscType extends EquipmentType {
 		String[] saModes = { "Off", "On" };
 		misc.setModes(saModes);
 		misc.setInstantModeSwitch(true);
-
+        misc.rulesRefs = "90,IO";
 		misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3115, 3112, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_FS)
 		        .setProductionFactions(F_FS).setTechRating(RATING_E)
@@ -8240,8 +8241,6 @@ public class MiscType extends EquipmentType {
 		return misc;
 	}
 
-	// Cargo not defined in IO, but its pretty obvious what the progression
-	// would be.
 	public static MiscType createCargo1() {
 		MiscType misc = new MiscType();
 
@@ -8253,7 +8252,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8272,7 +8271,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8291,7 +8290,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8310,7 +8309,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8329,7 +8328,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8348,7 +8347,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8367,7 +8366,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8386,7 +8385,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8405,7 +8404,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8424,7 +8423,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8443,7 +8442,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8462,7 +8461,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8481,7 +8480,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8500,7 +8499,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8519,7 +8518,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8538,7 +8537,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8557,7 +8556,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8576,7 +8575,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8595,7 +8594,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8614,7 +8613,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8633,7 +8632,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8652,7 +8651,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+		misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8671,7 +8670,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_LIQUID_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8690,7 +8689,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_LIQUID_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);
@@ -8709,7 +8708,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
 		misc.industrial = true;
 		misc.tankslots = 1;
-
+        misc.rulesRefs = "239,TM";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL);
 		misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
 		misc.techAdvancement.setTechRating(RATING_A);

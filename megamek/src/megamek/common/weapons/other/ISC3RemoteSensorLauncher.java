@@ -55,10 +55,11 @@ public class ISC3RemoteSensorLauncher extends MissileWeapon {
         extremeRange = 12;
         flags = flags.or(F_MECH_WEAPON).or(F_TANK_WEAPON);
         // suppveeslots = 3;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(3072, 3093, DATE_NONE);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_F, RATING_X });
+        rulesRefs = "297, TO";
+        techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3072, 3093, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_DC)
+                .setProductionFactions(F_DC).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E);
     }
 
     /*

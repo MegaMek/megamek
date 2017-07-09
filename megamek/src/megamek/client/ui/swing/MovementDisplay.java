@@ -260,7 +260,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (opts != null) {
                 manualShutdown = opts.booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN);
                 selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
-                advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS);
+                advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
             }
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
             for (MoveCommand cmd : MoveCommand.values()) {
@@ -830,7 +830,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             || (ce.getMovementMode() == EntityMovementMode.SUBMARINE)
             || (ce.getMovementMode() == EntityMovementMode.INF_UMU)
             || (ce.getMovementMode() == EntityMovementMode.VTOL)
-            || (ce.getMovementMode() == EntityMovementMode.WIGE)
             || (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM)
             || (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
@@ -2405,7 +2404,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+                      .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             return;
         }
         

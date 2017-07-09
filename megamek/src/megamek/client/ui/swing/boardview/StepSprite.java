@@ -619,6 +619,11 @@ class StepSprite extends Sprite {
                 && e.isEligibleForPavementBonus()) {
             costStringBuf.append("+"); //$NON-NLS-1$
         }
+        
+        // Show WiGE descent bonus
+        for (int i = 0; i < step.getWiGEBonus(); i++) {
+            costStringBuf.append("+");
+        }
 
         // If the step is dangerous, mark it.
         if (step.isDanger()) {

@@ -98,6 +98,8 @@ public class MoveStep implements Serializable {
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
     private boolean isTakingCover = false;
+    private int wigeBonus = 0;
+    private int nWigeDescent = 0;
     
     /**
      * The Entity that is taking this MoveStep.
@@ -667,6 +669,23 @@ public class MoveStep implements Serializable {
                 }
             }
         }
+        
+        // WiGEs get bonus MP for each string of three consecutive hexes they descend.
+        if (entity.getMovementMode() == EntityMovementMode.WIGE
+                && elevation > 0
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+
+            if (game.getBoard().getHex(getPosition()).ceiling()
+                    < game.getBoard().getHex(prev.getPosition()).ceiling()) {
+                nWigeDescent = prev.getNWigeDescent() + 1;
+                if (nWigeDescent >= 3) {
+                    wigeBonus++;
+                    nWigeDescent = 0;
+                }
+            } else {
+                nWigeDescent = 0;
+            }
+        }
 
     }
 
@@ -1092,6 +1111,8 @@ public class MoveStep implements Serializable {
         totalHeat = prev.totalHeat;
         isPavementStep = prev.isPavementStep;
         onlyPavement = prev.onlyPavement;
+        wigeBonus = prev.wigeBonus;
+        nWigeDescent = prev.nWigeDescent;
         thisStepBackwards = prev.thisStepBackwards;
         isProne = prev.isProne;
         isFlying = prev.isFlying;
@@ -1201,7 +1222,7 @@ public class MoveStep implements Serializable {
                 // if we previously moved, and didn't get a pavement bonus, we
                 // shouldn't now get one, either (this can happen when skidding
                 // onto a pavement hex
-                if ((entity.gotPavementBonus == false)
+                if (!entity.gotPavementBonus
                         && (entity.delta_distance > 0)) {
                     onlyPavement = false;
                 }
@@ -1535,6 +1556,14 @@ public class MoveStep implements Serializable {
     public boolean isOnlyPavement() {
         return onlyPavement;
     }
+    
+    public int getWiGEBonus() {
+        return wigeBonus;
+    }
+    
+    public int getNWigeDescent() {
+        return nWigeDescent;
+    }
 
     /**
      * @return
@@ -1708,6 +1737,10 @@ public class MoveStep implements Serializable {
      */
     protected void setOnlyPavement(boolean b) {
         onlyPavement = b;
+    }
+    
+    protected void setWiGEBonus(int i) {
+        wigeBonus = i;
     }
 
     protected void setTargetNumberMASC(int i) {
@@ -2113,11 +2146,18 @@ public class MoveStep implements Serializable {
             }
         }
 
-        int tmpWalkMP = entity.getWalkMP();
-        final int runMP = entity.getRunMP();
-        final int runMPnoMASC = entity.getRunMPwithoutMASC();
-        final int sprintMP = entity.getSprintMP();
-        final int sprintMPnoMASC = entity.getSprintMPwithoutMASC();
+        int bonus = wigeBonus;
+        entity.wigeBonus = wigeBonus;
+        if (entity.isEligibleForPavementBonus()
+                && isOnlyPavement()) {
+            bonus++;
+            entity.gotPavementBonus = true;
+        }
+        int tmpWalkMP = entity.getWalkMP() + bonus;
+        final int runMP = entity.getRunMP() + bonus;
+        final int runMPnoMASC = entity.getRunMPwithoutMASC() + bonus;
+        final int sprintMP = entity.getSprintMP() + bonus;
+        final int sprintMPnoMASC = entity.getSprintMPwithoutMASC() + bonus;
         final boolean isMASCUsed = entity.isMASCUsed();
         final boolean hasPoorPerformance = entity
                 .hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE);
@@ -2217,12 +2257,6 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
                 }
-            } else if (entity.isEligibleForPavementBonus()
-                    && isOnlyPavement() && (getMpUsed() == (tmpWalkMP + 1))) {
-                // store if we got the pavement Bonus for end of phase
-                // gravity psr
-                movementType = EntityMovementType.MOVE_WALK;
-                entity.gotPavementBonus = true;
             } else if ((((getMpUsed() <= runMP) && isMASCUsed)
                     || (getMpUsed() <= runMPnoMASC)) && !isRunProhibited()) {
                 // Poor performance requires spending all walk MP in the
@@ -2246,18 +2280,10 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
-            } else if (entity.isEligibleForPavementBonus()
-                    && isOnlyPavement()
-                    && (getMpUsed() <= (runMP + 1))
-                    && !isRunProhibited()) {
-                movementType = EntityMovementType.MOVE_RUN;
-                // store if we got the pavement Bonus for end of phase
-                // gravity psr
-                entity.gotPavementBonus = true;
             } else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)
                     && ((entity instanceof Mech && !(entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())
                             || (entity instanceof Tank || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())))
-                            && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS))
+                            && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
                     && !isRunProhibited() && !isEvading()) {

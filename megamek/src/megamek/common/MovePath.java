@@ -199,7 +199,7 @@ public class MovePath implements Cloneable, Serializable {
                     && ((getEntity() instanceof BipedMech)
                         || ((getEntity() instanceof VTOL)
                         && (getMpUsed() <= getEntity().getWalkMP()))))
-                || (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)
+                || (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)
                         && getEntity() instanceof Tank
                         && (getEntity().getMovementMode() == EntityMovementMode.VTOL
                         || getEntity().getMovementMode() == EntityMovementMode.HOVER))
@@ -343,9 +343,11 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // VTOLs using maneuvering ace to make lateral shifts can't flank
+        // unless using controlled sideslip
         if (containsLateralShift() && getEntity().isUsingManAce()
                 && (getEntity() instanceof VTOL)
-                && getMpUsed() > getEntity().getWalkMP()) {
+                && getMpUsed() > getEntity().getWalkMP()
+                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
         

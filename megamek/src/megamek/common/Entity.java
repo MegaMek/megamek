@@ -313,6 +313,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean isPowerReverse = false;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
+    public int wigeBonus = 0;
     public boolean hitThisRoundByAntiTSM = false;
     public boolean inReverse = false;
     protected boolean struck = false;
@@ -5536,6 +5537,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         movedBackwards = false;
         isPowerReverse = false;
         gotPavementBonus = false;
+        wigeBonus = 0;
         hitThisRoundByAntiTSM = false;
         inReverse = false;
         hitBySwarmsEntity.clear();
@@ -6547,7 +6549,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case MOVE_RUN:
             case MOVE_VTOL_WALK:
             case MOVE_VTOL_RUN:
-                int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5);
+                int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5) + wigeBonus;
                 if (isEligibleForPavementBonus() && gotPavementBonus) {
                     maxSafeMP++;
                 }

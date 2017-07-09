@@ -2092,7 +2092,7 @@ public class Tank extends Entity {
     public int getSprintMP() {
         // Overdrive
         if (game != null
-                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             return getSprintMP(true, false, false);
         }
         return getSprintMP(true, false, false);
@@ -2107,7 +2107,7 @@ public class Tank extends Entity {
     public int getSprintMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         if (game != null && game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             if (hasArmedMASC()) {
                 return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
                         ignoremodulararmor) * 2.5);
@@ -2139,7 +2139,7 @@ public class Tank extends Entity {
     public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         if (game != null && game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
                     ignoremodulararmor) * 2.0);
         } else {
@@ -2149,7 +2149,7 @@ public class Tank extends Entity {
 
     public int getOriginalSprintMPwithoutMASC() {
         if (game != null && game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             return (int) Math.ceil(getOriginalWalkMP() * 2.0);
         } else {
             return getOriginalRunMP();

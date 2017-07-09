@@ -196,7 +196,7 @@ public class QuadVee extends QuadMech {
     @Override
     public int getSprintMP() {
         if (isInVehicleMode() && (game == null || !game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS))) {
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
             return getRunMP();
         }
         return getSprintMP(true, false, false);
@@ -211,7 +211,7 @@ public class QuadVee extends QuadMech {
     public int getSprintMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
         if (isInVehicleMode() && (game == null || !game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS))) {
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
             return getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
         return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
@@ -228,7 +228,7 @@ public class QuadVee extends QuadMech {
             boolean ignoremodulararmor) {
         if (isInVehicleMode()) {
             if (game == null || !game.getOptions()
-                    .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS)) {
+                    .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
                 return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
             } else {
                 return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
@@ -241,7 +241,7 @@ public class QuadVee extends QuadMech {
 
     public int getOriginalSprintMPwithoutMASC() {
         if (isInVehicleMode() && (game == null || !game.getOptions()
-                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCEMENT_MANEUVERS))) {
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
             return getOriginalRunMP();
         } else {
             return (int) Math.ceil(getOriginalWalkMP() * 2.0);

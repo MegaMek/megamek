@@ -428,6 +428,9 @@ public class SharedUtility {
         rollTarget = entity.checkUsingOverdrive(overallMoveType);
         checkNag(rollTarget, nagReport, psrList);
             
+        rollTarget = entity.checkGunningIt(overallMoveType);
+        checkNag(rollTarget, nagReport, psrList);
+
         // but the danger isn't over yet! landing from a jump can be risky!
         if ((overallMoveType == EntityMovementType.MOVE_JUMP) && !entity.isMakingDfa()) {
             // check for damaged criticals

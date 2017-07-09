@@ -304,6 +304,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int delta_distance = 0;
     public int mpUsed = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
+    public EntityMovementType movedLastRound = EntityMovementType.MOVE_NONE;
     private boolean movedBackwards = false;
     /**
      * Used to keep track of usage of the power reverse quirk, which allows a
@@ -5533,6 +5534,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (assaultDropInProgress == 2) {
             assaultDropInProgress = 0;
         }
+        movedLastRound = moved;
         moved = EntityMovementType.MOVE_NONE;
         movedBackwards = false;
         isPowerReverse = false;
@@ -6392,6 +6394,34 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return roll;
     }
 
+    /**
+     * Checks if the entity is attempting to increase two speed categories.
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkGunningIt (EntityMovementType overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        
+        if (this instanceof Tank
+                || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())
+                || movementMode == EntityMovementMode.AIRMECH) {
+            if (((overallMoveType == EntityMovementType.MOVE_SPRINT
+                    || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
+                    && (movedLastRound == EntityMovementType.MOVE_WALK
+                    || movedLastRound == EntityMovementType.MOVE_VTOL_WALK))
+                    || ((overallMoveType == EntityMovementType.MOVE_RUN
+                            || overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
+                            && (movedLastRound == EntityMovementType.MOVE_NONE
+                            || movedLastRound == EntityMovementType.MOVE_JUMP
+                            || movedLastRound == EntityMovementType.MOVE_SKID))) {
+                roll.append(new PilotingRollData(getId(), 0, "gunning it"));
+            }
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: Entity is not gunning it");            
+        }
+        return roll;
+    }
+    
     /**
      * Checks if an entity is passing through certain terrain while not moving
      * carefully

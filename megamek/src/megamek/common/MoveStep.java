@@ -2304,6 +2304,19 @@ public class MoveStep implements Serializable {
                 }
             }
         }
+        
+        // If using vehicle acceleration restrictions, it is impossible to go from a stop to overdrive.
+        // Stop to flank or cruise to overdrive is permitted with a driving check ("gunning it").
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION)
+                && movementType == EntityMovementType.MOVE_SPRINT
+                && (entity instanceof Tank
+                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())
+                        || (entity.getMovementMode() == EntityMovementMode.AIRMECH))
+                && (entity.movedLastRound == EntityMovementType.MOVE_NONE
+                    || entity.movedLastRound == EntityMovementType.MOVE_SKID
+                    || entity.movedLastRound == EntityMovementType.MOVE_JUMP)) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+        }
         // 0 MP infantry units can move 1 hex
         if (isInfantry
                 && (getEntity().getWalkMP() == 0)

@@ -7140,12 +7140,43 @@ public class Server implements Runnable {
                 }
             }
             
+            if (firstStep) {
+                rollTarget = entity.checkGunningIt(overallMoveType);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
+                            curPos, rollTarget, false);
+                    if (mof > 0) {
+                        if (processFailedVehicleManeuver(entity, curPos, 0, prevStep, step.isThisStepBackwards(),
+                                lastStepMoveType, distance, 2, mof)) {
+                            if (md.hasActiveMASC()) {
+                                mpUsed = entity.getRunMP();
+                            } else {
+                                mpUsed = entity.getRunMPwithoutMASC();
+                            }
+
+                            turnOver = true;
+                            distance = entity.delta_distance;
+                            curFacing = entity.getFacing();
+                            entity.setSecondaryFacing(curFacing);
+                            break;
+                        } else if (entity.getFacing() != curFacing) {
+                            // If the facing doesn't change we had a minor fishtail that doesn't require
+                            // stopping movement.
+                            continueTurnFromFishtail = true;
+                            curFacing = entity.getFacing();
+                            entity.setSecondaryFacing(curFacing);
+                            break;
+                        }
+                    }
+                }
+            }
+            
             // Check for failed maneuver for overdrive on first step. The rules for overdrive do not
             // state this explicitly, but since combinining overdrive with gunning it requires two rolls
             // and gunning does state explicitly that the roll is made before movement, this
             // implies the same for overdrive.
-            if (firstStep && (md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
-                    || md.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT)) {
+            if (firstStep && (overallMoveType == EntityMovementType.MOVE_SPRINT
+                    || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                 rollTarget = entity.checkUsingOverdrive(EntityMovementType.MOVE_SPRINT);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
@@ -7161,6 +7192,8 @@ public class Server implements Runnable {
 
                             turnOver = true;
                             distance = entity.delta_distance;
+                            curFacing = entity.getFacing();
+                            entity.setSecondaryFacing(curFacing);
                             break;
                         } else if (entity.getFacing() != curFacing) {
                             // If the facing doesn't change we had a minor fishtail that doesn't require

@@ -6139,7 +6139,7 @@ public class Server implements Runnable {
         if (entity instanceof Dropship) {
             for (int i = 0; i < 6; i++) {
                 Coords adjCoords = c.translated(i);
-                if (!game.getBoard().contains(c)) {
+                if (!game.getBoard().contains(adjCoords)) {
                     continue;
                 }
                 IHex adjHex = game.getBoard().getHex(adjCoords);

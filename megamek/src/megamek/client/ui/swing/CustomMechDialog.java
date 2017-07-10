@@ -63,6 +63,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
+import megamek.common.LAMPilot;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.MiscType;
@@ -991,6 +992,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 int gunneryB;
                 int artillery;
                 int piloting;
+                int gunneryAero;
+                int gunneryAeroL;
+                int gunneryAeroM;
+                int gunneryAeroB;
+                int pilotingAero;
                 int tough = 0;
                 int backup = panCrewMember[i].getBackup();
                 try {
@@ -999,6 +1005,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     gunneryM = panCrewMember[i].getGunneryM();
                     gunneryB = panCrewMember[i].getGunneryB();
                     piloting = panCrewMember[i].getPiloting();
+                    gunneryAero = panCrewMember[i].getGunneryAero();
+                    gunneryAeroL = panCrewMember[i].getGunneryAeroL();
+                    gunneryAeroM = panCrewMember[i].getGunneryAeroM();
+                    gunneryAeroB = panCrewMember[i].getGunneryAeroB();
+                    pilotingAero = panCrewMember[i].getPilotingAero();
                     artillery = panCrewMember[i].getArtillery();
                     tough = panCrewMember[i].getToughness();
                 } catch (NumberFormatException e) {
@@ -1013,6 +1024,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 if ((gunnery < 0) || (gunnery > 8) || (piloting < 0) || (piloting > 8)
                         || (gunneryL < 0) || (gunneryL > 8) || (gunneryM < 0)
                         || (gunneryM > 8) || (gunneryB < 0) || (gunneryB > 8)
+                        || (gunneryAero < 0) || (gunneryAero > 8) || (pilotingAero < 0) || (pilotingAero > 8)
+                        || (gunneryAeroL < 0) || (gunneryAeroL > 8) || (gunneryAeroM < 0)
+                        || (gunneryAeroM > 8) || (gunneryAeroB < 0) || (gunneryAeroB > 8)                        
                         || (artillery < 0) || (artillery > 8)) {
                     msg = Messages.getString("CustomMechDialog.EnterSkillsBetween0_8"); //$NON-NLS-1$
                     title = Messages.getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
@@ -1021,18 +1035,43 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     return;
                 }
 
-                if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
-                    entity.getCrew().setGunneryL(gunneryL, i);
-                    entity.getCrew().setGunneryB(gunneryB, i);
-                    entity.getCrew().setGunneryM(gunneryM, i);
-                    entity.getCrew().setGunnery((int)Math.round((gunneryL + gunneryB + gunneryM) / 3.0), i);
+                if (entity.getCrew() instanceof LAMPilot) {
+                    LAMPilot pilot = (LAMPilot)entity.getCrew();
+                    if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+                        pilot.setGunneryMechL(gunneryL);
+                        pilot.setGunneryMechB(gunneryB);
+                        pilot.setGunneryMechM(gunneryM);
+                        pilot.setGunneryMech((int)Math.round((gunneryL + gunneryB + gunneryM) / 3.0));
+                        pilot.setGunneryAeroL(gunneryAeroL);
+                        pilot.setGunneryAeroB(gunneryAeroB);
+                        pilot.setGunneryAeroM(gunneryAeroM);
+                        pilot.setGunneryAero((int)Math.round((gunneryAeroL + gunneryAeroB + gunneryAeroM) / 3.0));
+                    } else {
+                        pilot.setGunneryMechL(gunnery);
+                        pilot.setGunneryMechB(gunnery);
+                        pilot.setGunneryMechM(gunnery);
+                        pilot.setGunneryMech(gunnery);
+                        pilot.setGunneryAeroL(gunneryAero);
+                        pilot.setGunneryAeroB(gunneryAero);
+                        pilot.setGunneryAeroM(gunneryAero);
+                        pilot.setGunneryAero(gunneryAero);
+                    }
+                    pilot.setPilotingMech(piloting);
+                    pilot.setPilotingAero(pilotingAero);
                 } else {
-                    entity.getCrew().setGunnery(gunnery, i);
-                    entity.getCrew().setGunneryL(gunnery, i);
-                    entity.getCrew().setGunneryB(gunnery, i);
-                    entity.getCrew().setGunneryM(gunnery, i);
+                    if (client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
+                        entity.getCrew().setGunneryL(gunneryL, i);
+                        entity.getCrew().setGunneryB(gunneryB, i);
+                        entity.getCrew().setGunneryM(gunneryM, i);
+                        entity.getCrew().setGunnery((int)Math.round((gunneryL + gunneryB + gunneryM) / 3.0), i);
+                    } else {
+                        entity.getCrew().setGunnery(gunnery, i);
+                        entity.getCrew().setGunneryL(gunnery, i);
+                        entity.getCrew().setGunneryB(gunnery, i);
+                        entity.getCrew().setGunneryM(gunnery, i);
+                    }
+                    entity.getCrew().setPiloting(piloting, i);
                 }
-                entity.getCrew().setPiloting(piloting, i);
                 if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
                     entity.getCrew().setArtillery(artillery, i);
                 } else {

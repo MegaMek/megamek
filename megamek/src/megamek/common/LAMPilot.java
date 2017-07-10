@@ -91,15 +91,39 @@ public class LAMPilot extends Crew {
         return super.getGunnery(0);
     }
     
-    public void setGunneryMech(int gunnery, int pos) {
+    public void setGunneryMech(int gunnery) {
         super.setGunnery(gunnery, 0);
+    }
+
+    public int getGunneryMechB() {
+        return super.getGunneryB(0);
+    }
+    
+    public void setGunneryMechB(int gunnery) {
+        super.setGunneryB(gunnery, 0);
+    }
+
+    public int getGunneryMechM() {
+        return super.getGunneryM(0);
+    }
+    
+    public void setGunneryMechM(int gunnery) {
+        super.setGunneryM(gunnery, 0);
+    }
+
+    public int getGunneryMechL() {
+        return super.getGunneryL(0);
+    }
+    
+    public void setGunneryMechL(int gunnery) {
+        super.setGunneryL(gunnery, 0);
     }
 
     public int getPilotingMech() {
         return super.getPiloting(0);
     }
     
-    public void setPiloting(int piloting, int pos) {
+    public void setPilotingMech(int piloting) {
         super.setPiloting(piloting, 0);
     }
 
@@ -163,6 +187,18 @@ public class LAMPilot extends Crew {
         }
     }
 
+    /**
+     * @return a String showing the overall skills in the format
+     *         gunnery (Mech)/piloting (Mech)/gunnery (Aero)/piloting (Aero)
+     */
+    @Override
+    public String getSkillsAsString(boolean showPiloting) {
+        return getGunneryMech() + "/"
+            + getPilotingMech() + "/"
+            + getGunneryAero() + "/"
+            + getPilotingAero();
+    }
+    
     /**
      * Crew summary report used for victory phase.
      * 

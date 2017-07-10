@@ -1359,7 +1359,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         } else {
             value += pilot.getDesc();
         }
-        value += " (" + pilot.getGunnery() + "/" + pilot.getPiloting() + ")";
+        value += " (" + pilot.getSkillsAsString() + ")";
         if (pilot.countOptions() > 0) {
             value += " (" + pilot.countOptions() + Messages.getString("ChatLounge.abilities") + ")";
         }
@@ -1380,7 +1380,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     value += "<b>No " + pilot.getCrewType().getRoleName(i) + "</b>";
                 } else {
                     value += "<b>" + pilot.getDesc(i) + "</b> (" + pilot.getCrewType().getRoleName(i) + "): ";
-                    value += pilot.getGunnery(i) + "/" + pilot.getPiloting(i);
+                    value += pilot.getSkillsAsString();
                 }
                 value += "<br/>";
             }
@@ -1390,7 +1390,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             } else {
                 value += "<b>" + pilot.getDesc() + "</b><br/>";
             }
-            value += "" + pilot.getGunnery() + "/" + pilot.getPiloting();
+            value += "" + pilot.getSkillsAsString();
         }
         if (crewAdvCount > 0) {
             value += ", " + crewAdvCount + Messages.getString("ChatLounge.advs");
@@ -1415,7 +1415,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (pilot.getHits() > 0) {
             value += "<font color='red'>" + Messages.getString("ChatLounge.Hits") + pilot.getHits() + "</font><br>";
         }
-        value += "" + pilot.getGunnery() + "/" + pilot.getPiloting() + "<br>";
+        value += "" + pilot.getSkillsAsString() + "<br>";
         if (tough) {
             value += Messages.getString("ChatLounge.Tough") + pilot.getToughness(0) + "<br>";
         }

@@ -6071,8 +6071,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return "Rail";
             case MAGLEV:
                 return "MagLev";
-            case AIRMECH:
-                return "AirMech";
             default:
                 return "ERROR";
         }
@@ -6402,8 +6400,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         
         if (this instanceof Tank
-                || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())
-                || movementMode == EntityMovementMode.AIRMECH) {
+                || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())) {
             if (((overallMoveType == EntityMovementType.MOVE_SPRINT
                     || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
                     && (movedLastRound == EntityMovementType.MOVE_WALK
@@ -7071,8 +7068,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         IHex currHex = game.getBoard().getHex(currPos);
         if (movementMode != EntityMovementMode.HOVER
                 && movementMode != EntityMovementMode.VTOL
-                && movementMode != EntityMovementMode.WIGE
-                && movementMode != EntityMovementMode.AIRMECH) {
+                && movementMode != EntityMovementMode.WIGE) {
             if (currHex.containsTerrain(Terrains.MUD)) {
                 roll.addModifier(+1, "mud");
             }

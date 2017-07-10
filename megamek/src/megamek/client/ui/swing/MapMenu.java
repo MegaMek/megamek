@@ -1188,7 +1188,7 @@ public class MapMenu extends JPopupMenu {
             if (((LandAirMech)myEntity).getLAMType() != LandAirMech.LAM_BIMODAL) {
                 menu.add(createConvertMenuItem("MovementDisplay.moveModeAirmech",
                         MovementDisplay.MoveCommand.MOVE_MODE_VEE,
-                        myEntity.getMovementMode() == EntityMovementMode.AIRMECH));
+                        myEntity.getMovementMode() == EntityMovementMode.WIGE));
             }
             if (myEntity.getMovementMode() != EntityMovementMode.BIPED
                     || ((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_BIMODAL) {

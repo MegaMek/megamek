@@ -2310,8 +2310,7 @@ public class MoveStep implements Serializable {
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION)
                 && movementType == EntityMovementType.MOVE_SPRINT
                 && (entity instanceof Tank
-                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())
-                        || (entity.getMovementMode() == EntityMovementMode.AIRMECH))
+                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
                 && (entity.movedLastRound == EntityMovementType.MOVE_NONE
                     || entity.movedLastRound == EntityMovementType.MOVE_SKID
                     || entity.movedLastRound == EntityMovementType.MOVE_JUMP)) {

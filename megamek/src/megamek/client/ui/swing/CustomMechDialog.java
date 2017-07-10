@@ -778,7 +778,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeAirMech"));
             }
             choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeFighter"));
-            if (entity.getMovementMode() == EntityMovementMode.AIRMECH) {
+            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 choStartingMode.setSelectedIndex(1);
             } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
                 choStartingMode.setSelectedIndex(choStartingMode.getItemCount() - 1);
@@ -1197,7 +1197,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     entity.setMovementMode(EntityMovementMode.AERODYNE);
                 } else if (choStartingMode.getSelectedIndex() == 1) {
                     entity.setMovementMode(((LandAirMech)entity).getLAMType() == LandAirMech.LAM_BIMODAL?
-                            EntityMovementMode.AERODYNE : EntityMovementMode.AIRMECH);
+                            EntityMovementMode.AERODYNE : EntityMovementMode.WIGE);
                 } else {
                     entity.setMovementMode(EntityMovementMode.BIPED);
                 }

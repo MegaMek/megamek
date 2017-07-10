@@ -179,7 +179,7 @@ public class LAMPilot extends Crew {
     @Override
     public int getPiloting() {
         if (lam.getMovementMode() == EntityMovementMode.AERODYNE
-                || (lam.getMovementMode() == EntityMovementMode.AIRMECH
+                || (lam.getMovementMode() == EntityMovementMode.WIGE
                         && lam.isAirborneVTOLorWIGE())) {
             return pilotingAero;
         } else {

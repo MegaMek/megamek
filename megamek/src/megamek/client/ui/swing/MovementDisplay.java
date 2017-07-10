@@ -4072,7 +4072,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 adjustConvertSteps(EntityMovementMode.TRACKED);
             } else if (ce instanceof LandAirMech
                     && ((LandAirMech)ce).getLAMType() == LandAirMech.LAM_STANDARD) {
-                adjustConvertSteps(EntityMovementMode.AIRMECH);
+                adjustConvertSteps(EntityMovementMode.WIGE);
             }
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_AIR.getCmd())) {

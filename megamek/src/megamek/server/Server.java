@@ -6025,7 +6025,6 @@ public class Server implements Runnable {
             modifier += 2;
         } else if (entity.getMovementMode() == EntityMovementMode.HOVER
                 || entity.getMovementMode() == EntityMovementMode.WIGE
-                || entity.getMovementMode() == EntityMovementMode.AIRMECH
                 || entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
             modifier += 4;
         }
@@ -9485,7 +9484,7 @@ public class Server implements Runnable {
                 } else if (entity.getMovementMode() == EntityMovementMode.TRACKED
                         || entity.getMovementMode() == EntityMovementMode.WHEELED) {
                     r.messageId = 2451;
-                } else if (entity.getMovementMode() == EntityMovementMode.AIRMECH) {
+                } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                     r.messageId = 2452;
                 } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
                     r.messageId = 2453;

@@ -155,7 +155,7 @@ public class LandAirMech extends BipedMech {
     @Override
     public boolean usesTurnMode() {
         // Turn mode rule is not optional for LAMs in AirMech mode.
-        return movementMode == EntityMovementMode.AIRMECH;
+        return movementMode == EntityMovementMode.WIGE;
     }
 
     /**
@@ -185,20 +185,20 @@ public class LandAirMech extends BipedMech {
      */
     @Override
     public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
-        if (previousMovementMode == EntityMovementMode.AIRMECH) {
-            if (afterMode == EntityMovementMode.AIRMECH) {
+        if (previousMovementMode == EntityMovementMode.WIGE) {
+            if (afterMode == EntityMovementMode.WIGE) {
                 return EntityMovementMode.AERODYNE;
             } else if (afterMode == EntityMovementMode.AERODYNE) {
                 return originalMovementMode;
             } else {
-                return EntityMovementMode.AIRMECH;
+                return EntityMovementMode.WIGE;
             }
-        } else if (afterMode == EntityMovementMode.AIRMECH) {
+        } else if (afterMode == EntityMovementMode.WIGE) {
             return previousMovementMode;
         } else if (afterMode == EntityMovementMode.AERODYNE) {
-            return lamType == LAM_BIMODAL? originalMovementMode : EntityMovementMode.AIRMECH;
+            return lamType == LAM_BIMODAL? originalMovementMode : EntityMovementMode.WIGE;
         } else {
-            return lamType == LAM_BIMODAL? EntityMovementMode.AERODYNE : EntityMovementMode.AIRMECH;
+            return lamType == LAM_BIMODAL? EntityMovementMode.AERODYNE : EntityMovementMode.WIGE;
         }
     }
     
@@ -237,7 +237,7 @@ public class LandAirMech extends BipedMech {
     public String getTilesetModeString() {
         if (movementMode == EntityMovementMode.AERODYNE) {
             return "_FIGHTER";
-        } else if (movementMode == EntityMovementMode.AIRMECH) {
+        } else if (movementMode == EntityMovementMode.WIGE) {
             return "_AIRMECH";
         } else {
             return "";

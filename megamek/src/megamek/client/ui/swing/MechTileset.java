@@ -272,7 +272,7 @@ public class MechTileset {
         if (entity instanceof LandAirMech) {
             if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
                 return default_lam_fighter;
-            } else if (entity.getMovementMode() == EntityMovementMode.AIRMECH) {
+            } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 return default_lam_airmech;
             } else {
                 return default_lam_mech;

@@ -19,18 +19,27 @@
 
 package megamek.common.verifier;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleArmorBay;
+import megamek.common.Bay;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
+import megamek.common.InfantryBay;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
+import megamek.common.TechConstants;
+import megamek.common.Transporter;
+import megamek.common.TroopSpace;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
@@ -305,7 +314,8 @@ public class TestTank extends TestEntity {
         if (tank.getFreeSlots() < 0) {
             buff.append("Not enough item slots available! Using ");
             buff.append(Math.abs(tank.getFreeSlots()));
-            buff.append(" slot(s) too many.\n\n");
+            buff.append(" slot(s) too many.\n");
+            buff.append(printSlotCalculation()).append("\n");
             correct = false;
         }
         int armorLimit = (int) (((tank.getWeight() * 7) / 2) + 40);
@@ -433,6 +443,139 @@ public class TestTank extends TestEntity {
 
         buff.append(printWeightCalculation()).append("\n");
         printFailedEquipment(buff);
+        return buff;
+    }
+    
+    public StringBuffer printSlotCalculation() {
+        StringBuffer buff = new StringBuffer();
+        buff.append("Available slots: ").append(tank.getTotalSlots()).append("\n");
+        // different engines take different amounts of slots
+        int engineSlots = 0;
+        if (tank.hasEngine() && tank.getEngine().isFusion()) {
+            if (tank.getEngine().getEngineType() == Engine.LIGHT_ENGINE) {
+                engineSlots = 1;
+            } else if (tank.getEngine().getEngineType() == Engine.XL_ENGINE) {
+                engineSlots = tank.getEngine().hasFlag(Engine.CLAN_ENGINE)? 1 : 2;
+            } else if (tank.getEngine().getEngineType() == Engine.XXL_ENGINE) {
+                engineSlots = tank.getEngine().hasFlag(Engine.CLAN_ENGINE)? 2 : 4;
+            } else if (tank.getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
+                engineSlots--;
+            }
+            
+            if (tank.getEngine().getEngineType() == Engine.LARGE_ENGINE) {
+                engineSlots++;
+            }
+        }
+        if (engineSlots != 0) {
+            buff.append(StringUtil.makeLength(tank.getEngine().getEngineName(), 30));
+            buff.append(engineSlots).append("\n");
+        }
+
+        // JJs take just 1 slot
+        if (tank.getJumpMP(false) > 0) {
+            buff.append(StringUtil.makeLength("Jump Jets", 30)).append("1\n");
+        }
+
+        boolean addedCargo = false;
+        for (Mounted mount : tank.getEquipment()) {
+            if ((mount.getType() instanceof MiscType)
+                    && mount.getType().hasFlag(MiscType.F_CARGO)) {
+                if (!addedCargo) {
+                    buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
+                    buff.append(mount.getType().getTankslots(tank)).append("\n");
+                    addedCargo = true;
+                    continue;
+                } else {
+                    continue;
+                }
+            }
+            if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
+                    EquipmentType.armorNames).contains(
+                    mount.getType().getName()))) {
+                buff.append(StringUtil.makeLength(mount.getType().getName(), 30));
+                buff.append(mount.getType().getTankslots(tank)).append("\n");
+            }
+        }
+        // different armor types take different amount of slots
+        int armorSlots = 0;
+        if (!tank.hasPatchworkArmor()) {
+            int type = tank.getArmorType(1);
+            switch (type) {
+                case EquipmentType.T_ARMOR_FERRO_FIBROUS:
+                    if (TechConstants.isClan(tank.getArmorTechLevel(1))) {
+                        armorSlots++;
+                    } else {
+                        armorSlots += 2;
+                    }
+                    break;
+                case EquipmentType.T_ARMOR_HEAVY_FERRO:
+                    armorSlots += 3;
+                    break;
+                case EquipmentType.T_ARMOR_LIGHT_FERRO:
+                case EquipmentType.T_ARMOR_FERRO_LAMELLOR:
+                case EquipmentType.T_ARMOR_REFLECTIVE:
+                case EquipmentType.T_ARMOR_HARDENED:
+                    armorSlots++;
+                    break;
+                case EquipmentType.T_ARMOR_STEALTH:
+                    armorSlots += 2;
+                    break;
+                case EquipmentType.T_ARMOR_REACTIVE:
+                    if (TechConstants.isClan(tank.getArmorTechLevel(1))) {
+                        armorSlots++;
+                    } else {
+                        armorSlots += 2;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (armorSlots != 0) {
+                buff.append(StringUtil.makeLength(EquipmentType.getArmorTypeName(type,
+                        TechConstants.isClan(tank.getArmorTechLevel(1))), 30));
+                buff.append(armorSlots).append("\n");
+            }
+        }
+
+        // for ammo, each type of ammo takes one slots, regardless of
+        // submunition type
+        Map<String, Boolean> foundAmmo = new HashMap<String, Boolean>();
+        for (Mounted ammo : tank.getAmmo()) {
+            // don't count oneshot ammo
+            if ((ammo.getLocation() == Entity.LOC_NONE)
+                    && (ammo.getBaseShotsLeft() == 1)) {
+                continue;
+            }
+            AmmoType at = (AmmoType) ammo.getType();
+            if (foundAmmo.get(at.getAmmoType() + ":" + at.getRackSize()) == null) {
+                buff.append(StringUtil.makeLength(at.getName(), 30));
+                buff.append("1\n");
+                foundAmmo.put(at.getAmmoType() + ":" + at.getRackSize(), true);
+            }
+        }
+        // if a tank has an infantry bay, add 1 slots (multiple bays take 1 slot
+        // total)
+        boolean infantryBayCounted = false;
+        for (Transporter transport : tank.getTransports()) {
+            if (transport instanceof TroopSpace) {
+                buff.append(StringUtil.makeLength("Troop Space", 30));
+                buff.append("1\n");
+                infantryBayCounted = true;
+                break;
+            }
+        }
+        // unit transport bays take 1 slot each
+        for (Bay bay : tank.getTransportBays()) {
+            if (((bay instanceof BattleArmorBay) || (bay instanceof InfantryBay))
+                    && !infantryBayCounted) {
+                buff.append(StringUtil.makeLength("Infantry Bay", 30));
+                buff.append("1").append("\n");
+                infantryBayCounted = true;
+            } else {
+                buff.append(StringUtil.makeLength("Transport Bay", 30));
+                buff.append("1").append("\n");
+            }
+        }        
         return buff;
     }
 

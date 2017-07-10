@@ -53,6 +53,16 @@ public class LandAirMech extends BipedMech {
 
         previousMovementMode = movementMode;
         setFuel(80);
+        
+        setCrew(new LAMPilot(this));
+    }
+    
+    public void setCrew(Crew newCrew) {
+        if (newCrew instanceof LAMPilot) {
+            super.setCrew(newCrew);
+        } else {
+            super.setCrew(LAMPilot.convertToLAMPilot(this, newCrew));
+        }
     }
 
     public void setFuel(int fuel) {

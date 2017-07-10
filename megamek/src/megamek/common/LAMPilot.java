@@ -1,0 +1,241 @@
+/**
+ * MegaMek - Copyright (C) 2017 - The MegaMek Team
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
+package megamek.common;
+
+import java.util.Vector;
+
+/**
+ * Crew class for LAMs which tracks separate skills for 'Mech and Fighter modes, and chooses the
+ * correct one based on the LAM's current movement mode.
+ * 
+ * @author Neoancient
+ *
+ */
+public class LAMPilot extends Crew {
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5081079779376940577L;
+    
+    final private LandAirMech lam;
+    private int gunneryAero;
+    private int gunneryAeroB;
+    private int gunneryAeroL;
+    private int gunneryAeroM;
+    private int pilotingAero;
+    
+    public LAMPilot(LandAirMech lam) {
+        this(lam, "Unnamed", 4, 5, 4, 5);
+    }
+    
+    public LAMPilot(LandAirMech lam, String name,
+            int gunneryMech, int pilotingMech, int gunneryAero, int pilotingAero) {
+        super(CrewType.SINGLE, name, 1, gunneryMech, pilotingMech);
+        this.lam = lam;
+        this.gunneryAero = gunneryAero;
+        this.pilotingAero = pilotingAero;
+        this.gunneryAeroB = gunneryAero;
+        this.gunneryAeroL = gunneryAero;
+        this.gunneryAeroM = gunneryAero;
+    }
+    
+    /**
+     * Used by LandAirMech.setCrew to convert a <code>Crew</code> instance into a <code>LAMPilot</code> instance.
+     * 
+     * @param lam   The LAM that is piloted by this crew.
+     * @param crew  The crew to convert to LAMPilot.
+     * @return      An instance of <code>LAMPilot</code> that has the same values as the crew argument.
+     */
+    public static LAMPilot convertToLAMPilot(LandAirMech lam, Crew crew) {
+        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(),
+                crew.getGunnery(), crew.getPiloting());
+        pilot.setNickname(crew.getNickname(), 0);
+        pilot.setGunneryL(crew.getGunneryL(), 0);
+        pilot.setGunneryB(crew.getGunneryB(), 0);
+        pilot.setGunneryM(crew.getGunneryM(), 0);
+        pilot.setGunneryAeroL(crew.getGunneryL());
+        pilot.setGunneryAeroB(crew.getGunneryB());
+        pilot.setGunneryAeroM(crew.getGunneryM());
+        pilot.setHits(crew.getHits(0), 0);
+        pilot.setUnconscious(crew.isUnconscious(0), 0);
+        pilot.setDead(crew.isDead(0), 0);
+        pilot.setDoomed(crew.isDoomed());
+        pilot.setEjected(crew.isEjected());
+        pilot.setFatigue(crew.getFatigue());
+        pilot.setArtillery(crew.getArtillery(), 0);
+        pilot.setInitBonus(crew.getInitBonus());
+        pilot.setCommandBonus(crew.getCommandBonus());
+        pilot.setToughness(crew.getToughness(0), 0);
+        pilot.setPortraitCategory(crew.getPortraitCategory(0), 0);
+        pilot.setPortraitFileName(crew.getPortraitFileName(0), 0);
+        pilot.setOptions(crew.getOptions());
+
+        pilot.setExternalIdAsString(crew.getExternalIdAsString(0), 0);
+
+        return pilot;
+    }
+
+    public int getGunneryMech() {
+        return super.getGunnery(0);
+    }
+    
+    public void setGunneryMech(int gunnery, int pos) {
+        super.setGunnery(gunnery, 0);
+    }
+
+    public int getPilotingMech() {
+        return super.getPiloting(0);
+    }
+    
+    public void setPiloting(int piloting, int pos) {
+        super.setPiloting(piloting, 0);
+    }
+
+    public int getGunneryAero() {
+        return gunneryAero;
+    }
+    
+    public void setGunneryAero(int gunnery) {
+        gunneryAero = gunnery;
+    }
+    
+    public int getGunneryAeroB() {
+        return gunneryAeroB;
+    }
+    
+    public void setGunneryAeroB(int gunnery) {
+        gunneryAeroB = gunnery;
+    }
+    
+    public int getGunneryAeroL() {
+        return gunneryAeroL;
+    }
+    
+    public void setGunneryAeroL(int gunnery) {
+        gunneryAeroL = gunnery;
+    }
+    
+    public int getGunneryAeroM() {
+        return gunneryAeroM;
+    }
+    
+    public void setGunneryAeroM(int gunnery) {
+        gunneryAeroM = gunnery;
+    }
+    
+    public int getPilotingAero() {
+        return pilotingAero;
+    }
+    
+    public void setPilotingAero(int piloting) {
+        pilotingAero = piloting;
+    }
+    
+    @Override
+    public int getGunnery() {
+        if (lam.getMovementMode() == EntityMovementMode.AERODYNE) {
+            return gunneryAero;
+        } else {
+            return super.getGunnery();
+        }
+    }
+    
+    @Override
+    public int getPiloting() {
+        if (lam.getMovementMode() == EntityMovementMode.AERODYNE
+                || (lam.getMovementMode() == EntityMovementMode.AIRMECH
+                        && lam.isAirborneVTOLorWIGE())) {
+            return pilotingAero;
+        } else {
+            return super.getPiloting();
+        }
+    }
+
+    /**
+     * Crew summary report used for victory phase.
+     * 
+     * @param gunneryOnly Do not show the piloting skill
+     */
+    public Vector<Report> getDescVector(boolean gunneryOnly) {
+        Vector<Report> vDesc = new Vector<Report>();
+        Report r;
+
+        r = new Report();
+        r.type = Report.PUBLIC;
+        r.add(getName(0));
+        if (getSlotCount() > 1) {
+            r.add(" (" + getCrewType().getRoleName(0) + ")");
+        }
+        r.messageId = 7045;
+        r.add(getGunneryMech() + "/" + getGunneryAero());
+        r.add(getPilotingMech() + "/" + getPilotingAero());
+
+        if (getHits(0) > 0 || isUnconscious(0) || isDead(0)) {
+            Report r2 = new Report();
+            r2.type = Report.PUBLIC;
+            if (getHits(0) > 0) {
+                r2.messageId = 7055;
+                r2.add(getHits(0));
+                if (isUnconscious(0)) {
+                    r2.messageId = 7060;
+                    r2.choose(true);
+                } else if (isDead(0)) {
+                    r2.messageId = 7060;
+                    r2.choose(false);
+                }
+            } else if (isUnconscious(0)) {
+                r2.messageId = 7065;
+                r2.choose(true);
+            } else if (isDead(0)) {
+                r2.messageId = 7065;
+                r2.choose(false);
+            }
+            r.newlines = 0;
+            vDesc.addElement(r);
+            vDesc.addElement(r2);
+        } else {
+            vDesc.addElement(r);
+        }
+
+        return vDesc;
+    }
+
+    /**
+     * Returns whether this pilot has non-standard piloting or gunnery values
+     */
+    public boolean isCustom() {
+        return getGunneryMech() != 4
+                || getGunneryAero() != 4
+                || getPilotingMech() != 5
+                || getPilotingAero() != 5;
+    }
+
+    /**
+     * Returns the BV multiplier for this pilot's gunnery/piloting
+     *
+     * @param usePiloting whether or not to use the default value non-anti-mech
+     *                    infantry/BA should not use the anti-mech skill
+     * @param game
+     */
+    public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
+        int pilotVal = (getPilotingMech() + getPilotingAero()) / 2;
+        if (!usePiloting) {
+            pilotVal = 5;
+        }
+        return getBVImplantMultiplier() * getBVSkillMultiplier((getGunneryMech() + getGunneryAero()) / 2,
+                pilotVal, game);
+    }
+
+}

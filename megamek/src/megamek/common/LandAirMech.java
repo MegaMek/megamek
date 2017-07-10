@@ -233,6 +233,17 @@ public class LandAirMech extends BipedMech {
         specialAbilities.put(BattleForceSPA.LAM, null);
     }
 
+    @Override
+    public String getTilesetModeString() {
+        if (movementMode == EntityMovementMode.AERODYNE) {
+            return "_FIGHTER";
+        } else if (movementMode == EntityMovementMode.AIRMECH) {
+            return "_AIRMECH";
+        } else {
+            return "";
+        }
+    }
+    
     public long getEntityType(){
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
     }

@@ -41,6 +41,7 @@ import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.QuadVee;
@@ -70,6 +71,9 @@ public class MechTileset {
     private String QUAD_STRING = "default_quad"; //$NON-NLS-1$
     private String QUADVEE_STRING = "default_quadvee"; //$NON-NLS-1$
     private String QUADVEE_VEHICLE_STRING = "default_quadvee_vehicle"; //$NON-NLS-1$
+    private String LAM_MECH_STRING = "default_lam_mech"; //$NON-NLS-1$
+    private String LAM_AIRMECH_STRING = "default_lam_airmech"; //$NON-NLS-1$
+    private String LAM_FIGHTER_STRING = "default_lam_fighter"; //$NON-NLS-1$
     private String TRIPOD_STRING = "default_tripod"; //$NON-NLS-1$
     private String TRACKED_STRING = "default_tracked"; //$NON-NLS-1$
     private String TRACKED_HEAVY_STRING = "default_tracked_heavy"; //$NON-NLS-1$
@@ -120,6 +124,9 @@ public class MechTileset {
     private MechEntry default_quad;
     private MechEntry default_quadvee;
     private MechEntry default_quadvee_vehicle;
+    private MechEntry default_lam_mech;
+    private MechEntry default_lam_airmech;
+    private MechEntry default_lam_fighter;
     private MechEntry default_tripod;
     private MechEntry default_tracked;
     private MechEntry default_tracked_heavy;
@@ -261,6 +268,15 @@ public class MechTileset {
         if (entity instanceof QuadVee) {
             return ((QuadVee)entity).isInVehicleMode()?
                     default_quadvee_vehicle : default_quadvee;
+        }
+        if (entity instanceof LandAirMech) {
+            if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
+                return default_lam_fighter;
+            } else if (entity.getMovementMode() == EntityMovementMode.AIRMECH) {
+                return default_lam_airmech;
+            } else {
+                return default_lam_mech;
+            }
         }
         if (entity instanceof Mech) {
             if (entity.getMovementMode() == EntityMovementMode.QUAD) {
@@ -456,6 +472,9 @@ public class MechTileset {
         default_quad = exact.get(QUAD_STRING.toUpperCase());
         default_quadvee = exact.get(QUADVEE_STRING.toUpperCase());
         default_quadvee_vehicle = exact.get(QUADVEE_VEHICLE_STRING.toUpperCase());
+        default_lam_mech = exact.get(LAM_MECH_STRING.toUpperCase());
+        default_lam_airmech = exact.get(LAM_AIRMECH_STRING.toUpperCase());
+        default_lam_fighter = exact.get(LAM_FIGHTER_STRING.toUpperCase());
         default_tripod = exact.get(TRIPOD_STRING.toUpperCase());
         default_tracked = exact.get(TRACKED_STRING.toUpperCase());
         default_tracked_heavy = exact.get(TRACKED_HEAVY_STRING.toUpperCase());

@@ -21428,6 +21428,20 @@ public class Server implements Runnable {
             critBonus = Math.min((damage_orig - 1) / 5, 4);
         }
 
+        // Find out if Human TRO plays a part it crit bonus
+        Entity ae = game.getEntity(hit.getAttackerId());
+        if ((ae != null) && !ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).isEmpty() && !areaSatArty) {
+            if ((te instanceof Mech) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_MECH)) {
+                critBonus += 1;
+            } else if ((te instanceof Aero) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_AERO)) {
+                critBonus += 1;
+            } else if ((te instanceof Tank) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_VEE)) {
+                critBonus += 1;
+            } else if ((te instanceof BattleArmor) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_BA)) {
+                critBonus += 1;
+            }
+        }
+
         HitData nextHit = null;
 
         // Some "hits" on a Protomech are actually misses.

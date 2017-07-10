@@ -113,6 +113,7 @@ import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LAMPilot;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
@@ -3563,6 +3564,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                         int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
                         e.getCrew().setGunnery(skills[0], i);
                         e.getCrew().setPiloting(skills[1], i);
+                        if (e.getCrew() instanceof LAMPilot) {
+                            skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                            ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
+                            ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                        }
                     }
                     e.getCrew().sortRandomSkills();
                     c.sendUpdateEntity(e);

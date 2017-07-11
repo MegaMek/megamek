@@ -1568,7 +1568,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // (unless the next hex is a higher elevation
             || ((getMovementMode() == EntityMovementMode.WIGE)
                 && (climb || wigeEndClimbPrevious) && (assumedElevation > 0)
-                && (next.surface() < current.surface()))
+                && (next.surface() < assumedElevation + current.surface()))
             || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
             || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
             retVal += current.surface();

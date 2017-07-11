@@ -256,8 +256,7 @@ public class LandAirMech extends BipedMech {
     
     @Override
     public int getWalkHeat() {
-        // TODO: make sure LAM used AirMech MP instead of walk/run.
-        if (movementMode == EntityMovementMode.WIGE) {
+        if (moved == EntityMovementType.MOVE_VTOL_WALK) {
             return getAirMechHeat();
         }
         return super.getWalkHeat();
@@ -265,8 +264,7 @@ public class LandAirMech extends BipedMech {
     
     @Override
     public int getRunHeat() {
-        // TODO: make sure LAM used AirMech MP instead of walk/run.
-        if (movementMode == EntityMovementMode.WIGE) {
+        if (moved == EntityMovementType.MOVE_VTOL_RUN) {
             return getAirMechHeat();
         }
         return super.getRunHeat();

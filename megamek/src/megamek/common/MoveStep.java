@@ -2290,7 +2290,8 @@ public class MoveStep implements Serializable {
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
                     && !isRunProhibited() && !isEvading()) {
-                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+                if (entity.getMovementMode() == EntityMovementMode.VTOL
+                        || entity.getMovementMode() == EntityMovementMode.WIGE) {
                     movementType = EntityMovementType.MOVE_VTOL_SPRINT;
                 } else {
                     movementType = EntityMovementType.MOVE_SPRINT;

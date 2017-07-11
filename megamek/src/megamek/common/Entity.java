@@ -1565,8 +1565,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             || (getMovementMode() == EntityMovementMode.VTOL)
             // a WIGE in climb mode or that ended climb mode in the previous
             // hex stays at the same flight level, like a VTOL
+            // (unless the next hex is a higher elevation
             || ((getMovementMode() == EntityMovementMode.WIGE)
-                && (climb || wigeEndClimbPrevious) && (assumedElevation > 0))
+                && (climb || wigeEndClimbPrevious) && (assumedElevation > 0)
+                && (next.surface() < current.surface()))
             || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
             || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
             retVal += current.surface();

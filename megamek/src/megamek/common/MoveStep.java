@@ -3307,8 +3307,10 @@ public class MoveStep implements Serializable {
                 }
             }
         }
-        if ((entity instanceof VTOL)
-                && ((type == MoveStepType.BACKWARDS) || (type == MoveStepType.FORWARDS))) {
+        if ((entity instanceof VTOL || entity.getMovementMode() == EntityMovementMode.WIGE)
+                && ((type == MoveStepType.BACKWARDS) || (type == MoveStepType.FORWARDS)
+                        || (type == MoveStepType.LATERAL_LEFT) || (type == MoveStepType.LATERAL_LEFT_BACKWARDS)
+                        || type == MoveStepType.LATERAL_RIGHT) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS)) {
             if (elevation <= (destHex.ceiling() - destHex.surface())) {
                 // System.err.println("can't fly into woods or a cliff face");
                 return false; // can't fly into woods or a cliff face

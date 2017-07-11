@@ -1605,12 +1605,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
             
             // Airborne WiGEs remain 1 elevation above underlying terrain
+            // WiGEs cannot climb woods. They may climb one elevation of buildings, but
+            // must spend an additional 2 MP to do so.
+            // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
             if ((getMovementMode() == EntityMovementMode.WIGE) 
                     && (assumedElevation > 0)) {
-                if ((next.ceiling() - assumedElevation) 
+                int terrainElevation = 0;
+                if (next.containsTerrain(Terrains.BUILDING)) {
+                    terrainElevation = Math.max(-next.depth(true),
+                            next.terrainLevel(Terrains.BLDG_ELEV));
+                }
+                if ((next.ceiling() + terrainElevation - assumedElevation) 
                         <= getMaxElevationChange()) {
-                    retVal = 1 + next.maxTerrainFeatureElevation(game
-                            .getBoard().inAtmosphere());
+                    retVal = 1;
                 }
             }
 

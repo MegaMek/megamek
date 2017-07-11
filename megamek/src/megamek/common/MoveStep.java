@@ -2234,7 +2234,8 @@ public class MoveStep implements Serializable {
             }
 
             if (getMpUsed() <= tmpWalkMP) {
-                if ((getEntity().getMovementMode() == EntityMovementMode.VTOL)
+                if ((getEntity().getMovementMode() == EntityMovementMode.VTOL
+                        || getEntity().getMovementMode() == EntityMovementMode.WIGE)
                         && (getElevation() > 0)) {
                     movementType = EntityMovementType.MOVE_VTOL_WALK;
                 } else {
@@ -2266,7 +2267,9 @@ public class MoveStep implements Serializable {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                     return;
                 }
-                if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+                if ((entity.getMovementMode() == EntityMovementMode.VTOL
+                        || entity.getMovementMode() == EntityMovementMode.WIGE)
+                        && elevation > 0) {
                     movementType = EntityMovementType.MOVE_VTOL_RUN;
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
@@ -2842,8 +2845,8 @@ public class MoveStep implements Serializable {
         }
 
         // WiGEs in climb mode pay 2 extra MP to stay at the same flight level
-        if ((moveMode == EntityMovementMode.WIGE) && climbMode
-                && (elevation > 0)) {
+        // if more than one elevation above the underlying terrain.
+        if ((moveMode == EntityMovementMode.WIGE) && (elevation > 1)) {
             mp += 2;
         }
 

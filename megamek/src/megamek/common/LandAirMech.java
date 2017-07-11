@@ -120,12 +120,102 @@ public class LandAirMech extends BipedMech {
         return LAM_UNKNOWN;
     }
 
-    public int getAirMechWalkMP(boolean gravity, boolean ignoremodulararmor) {
+    /**
+     * Current MP is calculated differently depending on the LAM's mode. AirMech mode returns
+     * cruise/flank; walk/run is treated as a special case of WiGE ground movement.
+     */
+    @Override
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int mp;
+        if (movementMode == EntityMovementMode.AERODYNE) {
+            mp = getFighterModeWalkMP(gravity, ignoremodulararmor);
+        } else if (movementMode == EntityMovementMode.WIGE) {
+            mp = getAirMechCruiseMP(gravity, ignoremodulararmor);
+        } else {
+            mp = super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+        }
+        if (convertingNow) {
+            mp /= 2;
+        }
+        return mp;
+    }
+    
+    @Override
+    public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int mp;
+        if (movementMode == EntityMovementMode.AERODYNE) {
+            mp = getFighterModeRunMP(gravity, ignoremodulararmor);
+        } else if (movementMode == EntityMovementMode.WIGE) {
+            mp = getAirMechFlankMP(gravity, ignoremodulararmor);
+        } else {
+            mp = super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        }
+        if (convertingNow) {
+            mp /= 2;
+        }
+        return mp;
+    }
+    
+    @Override
+    public int getSprintMP() {
+        if (movementMode == EntityMovementMode.AERODYNE
+                || movementMode == EntityMovementMode.WIGE) {
+            return getRunMP();
+        }
+        return getSprintMP(true, false, false);
+    }
+
+    @Override
+    public int getSprintMP(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (movementMode == EntityMovementMode.AERODYNE
+                || movementMode == EntityMovementMode.WIGE) {
+            return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        }
+        return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
+    }
+
+    @Override
+    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (movementMode == EntityMovementMode.AERODYNE
+                || movementMode == EntityMovementMode.WIGE) {
+            return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+        }
+        return super.getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+    }
+
+    public int getOriginalSprintMPwithoutMASC() {
+        if (movementMode == EntityMovementMode.AERODYNE
+                || movementMode == EntityMovementMode.WIGE) {
+            return getOriginalRunMP();
+        } else {
+            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
+        }
+    }
+
+    public int getAirMechCruiseMP(boolean gravity, boolean ignoremodulararmor) {
         return getJumpMP(gravity, ignoremodulararmor) * 3;
     }
 
-    public int getAirMechRunMP(boolean gravity, boolean ignoremodulararmor) {
-        return (int)Math.ceil(getAirMechWalkMP(gravity, ignoremodulararmor) * 1.5);
+    public int getAirMechFlankMP(boolean gravity, boolean ignoremodulararmor) {
+        return (int)Math.ceil(getAirMechCruiseMP(gravity, ignoremodulararmor) * 1.5);
+    }
+    
+    public int getAirMechWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int mp = super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+        if (convertingNow) {
+            mp /= 2;
+        }
+        return mp;
+    }
+
+    public int getAirMechRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int mp = (int)Math.ceil(super.getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 1.5);
+        if (convertingNow) {
+            mp /= 2;
+        }
+        return mp;
     }
 
     public int getFighterModeWalkMP(boolean gravity, boolean ignoremodulararmor) {
@@ -136,12 +226,12 @@ public class LandAirMech extends BipedMech {
         return (int)Math.ceil(getFighterModeWalkMP(gravity, ignoremodulararmor) * 1.5);
     }
 
-    public int getAirMechWalkMP() {
-        return getAirMechWalkMP(true,false);
+    public int getAirMechCruiseMP() {
+        return getAirMechCruiseMP(true, false);
     }
 
-    public int getAirMechRunMP() {
-        return getAirMechRunMP(true, false);
+    public int getAirMechFlankMP() {
+        return getAirMechFlankMP(true, false);
     }
 
     public int getFighterModeWalkMP() {
@@ -152,6 +242,68 @@ public class LandAirMech extends BipedMech {
         return getFighterModeRunMP(true, false);
     }
     
+    /**
+     * LAMs cannot benefit from MASC in AirMech or fighter mode and cannot mount a supercharger.
+     */
+    @Override
+    public boolean hasArmedMASC() {
+        if (movementMode == EntityMovementMode.AERODYNE
+                || movementMode == EntityMovementMode.WIGE) {
+            return false;
+        }
+        return super.hasArmedMASC();
+    }
+    
+    @Override
+    public int getWalkHeat() {
+        // TODO: make sure LAM used AirMech MP instead of walk/run.
+        if (movementMode == EntityMovementMode.WIGE) {
+            return getAirMechHeat();
+        }
+        return super.getWalkHeat();
+    }
+    
+    @Override
+    public int getRunHeat() {
+        // TODO: make sure LAM used AirMech MP instead of walk/run.
+        if (movementMode == EntityMovementMode.WIGE) {
+            return getAirMechHeat();
+        }
+        return super.getRunHeat();
+    }
+    
+    public int getAirMechHeat() {
+        int bonus = bDamagedCoolantSystem?1:0;
+        // Partial Wing bonus
+        switch (game.getPlanetaryConditions().getAtmosphere()) {
+        case PlanetaryConditions.ATMO_VACUUM:
+            break;
+        case PlanetaryConditions.ATMO_TRACE:
+            bonus--;
+            break;
+        case PlanetaryConditions.ATMO_THIN:
+            bonus -= 2;
+            break;
+        case PlanetaryConditions.ATMO_STANDARD:
+        case PlanetaryConditions.ATMO_HIGH:
+        case PlanetaryConditions.ATMO_VHIGH:
+        default:
+            bonus -= 3;
+            break;
+        }
+        return bonus + (int)Math.round(getJumpHeat(mpUsed) / 3.0);
+    }
+
+    @Override
+    public int getEngineCritHeat() {
+        // Engine crit heat follows ASF rules in fighter mode. 
+        if (movementMode == EntityMovementMode.AERODYNE) {
+            return 2 * getEngineHits();
+        } else {
+            return super.getEngineCritHeat();
+        }
+    }
+
     @Override
     public boolean usesTurnMode() {
         // Turn mode rule is not optional for LAMs in AirMech mode.
@@ -211,14 +363,14 @@ public class LandAirMech extends BipedMech {
     @Override
     public void setBattleForceMovement(Map<String,Integer> movement) {
     	super.setBattleForceMovement(movement);
-    	movement.put("g", getAirMechWalkMP(true, false));
+    	movement.put("g", getAirMechCruiseMP(true, false));
     	movement.put("a", getFighterModeWalkMP(true, false));
     }
     
     @Override
     public void setAlphaStrikeMovement(Map<String,Integer> movement) {
     	super.setBattleForceMovement(movement);
-    	movement.put("g", getAirMechWalkMP(true, false) * 2);
+    	movement.put("g", getAirMechCruiseMP(true, false) * 2);
     	movement.put("a", getFighterModeWalkMP(true, false));
     }
     

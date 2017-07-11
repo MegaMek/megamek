@@ -318,6 +318,61 @@ public class LandAirMech extends BipedMech {
         return previousMovementMode;
     }
     
+    @Override
+    public boolean isLocationProhibited(Coords c, int currElevation) {
+        // Fighter mode has the same terrain restrictions as ASFs.
+        if (movementMode == EntityMovementMode.AERODYNE) {
+            IHex hex = game.getBoard().getHex(c);
+            if (isAirborne()) {
+                if (hex.containsTerrain(Terrains.IMPASSABLE)) {
+                    return true;
+                }
+                return false;
+            }
+
+            // Additional restrictions for hidden units
+            if (isHidden()) {
+                // Can't deploy in paved hexes
+                if (hex.containsTerrain(Terrains.PAVEMENT)
+                        || hex.containsTerrain(Terrains.ROAD)) {
+                    return true;
+                }
+                // Can't deploy on a bridge
+                if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+                        && hex.containsTerrain(Terrains.BRIDGE)) {
+                    return true;
+                }
+                // Can't deploy on the surface of water
+                if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+                    return true;
+                }
+            }
+
+            // grounded aeros have the same prohibitions as wheeled tanks
+            return hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.ROUGH)
+                    || ((hex.terrainLevel(Terrains.WATER) > 0) 
+                            && !hex.containsTerrain(Terrains.ICE))
+                    || hex.containsTerrain(Terrains.RUBBLE)
+                    || hex.containsTerrain(Terrains.MAGMA)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.SNOW) > 1)
+                    || (hex.terrainLevel(Terrains.GEYSER) == 2);
+        } else if (movementMode == EntityMovementMode.WIGE && currElevation > 0) {
+            // Cannot enter woods or a building hex in AirMech mode unless using ground movement
+            // or flying over the terrain.
+            IHex hex = game.getBoard().getHex(c);
+            return (hex.containsTerrain(Terrains.WOODS) || (hex
+                    .containsTerrain(Terrains.BUILDING)))
+                    && !(currElevation > hex
+                            .maxTerrainFeatureElevation(game.getBoard()
+                                    .inAtmosphere()));
+        } else {
+            // Mech mode or AirMech mode using ground MP have the same restrictions as Biped Mech.
+            return super.isLocationProhibited(c, currElevation);
+        }
+    }
+    
     /**
      * Start a new round
      *

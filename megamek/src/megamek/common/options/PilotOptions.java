@@ -85,7 +85,7 @@ public class PilotOptions extends AbstractOptions {
          addOption(adv, OptionsConstants.MISC_EAGLE_EYES, false); //$NON-NLS-1$
          // addOption(adv, OptionsConstants.MISC_ENV_SPECIALIST, false); //$NON-NLS-1$
          addOption(adv, OptionsConstants.MISC_FORWARD_OBSERVER, false); //$NON-NLS-1$
-         // addOption(adv, OptionsConstants.MISC_HUMAN_TRO, false); //$NON-NLS-1$
+         addOption(adv, OptionsConstants.MISC_HUMAN_TRO, new Vector<String>()); //$NON-NLS-1$
          addOption(adv, OptionsConstants.MISC_IRON_MAN, false); //$NON-NLS-1$
          addOption(adv, OptionsConstants.MISC_PAIN_RESISTANCE, false); //$NON-NLS-1$
          addOption(adv, OptionsConstants.MISC_TACTICAL_GENIUS, false); //$NON-NLS-1$

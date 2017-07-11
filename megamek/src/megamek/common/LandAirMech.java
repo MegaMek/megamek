@@ -396,6 +396,11 @@ public class LandAirMech extends BipedMech {
         }
     }
     
+    @Override
+    public boolean isAero() {
+        return movementMode == EntityMovementMode.AERODYNE;
+    }
+    
     public long getEntityType(){
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
     }

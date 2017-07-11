@@ -6096,7 +6096,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean entityIsQuad() {
         return (getMovementMode() == EntityMovementMode.QUAD);
     }
-
+    
     /**
      * Returns true is the entity needs a roll to stand up
      */
@@ -10570,9 +10570,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return reckless;
     }
 
+    /**
+     * Helper function to test whether an entity should be treated as an Aero unit (includes
+     * LAMs in fighter mode)
+     */
+    public boolean isAero() {
+        return false;
+    }
+    
+    /**
+     * Helper function to determine whether an entity is an aero unit but not Small Craft/
+     * DropShip/JumpShip/WarShip.
+     */
     public boolean isFighter() {
-        return (this instanceof Aero)
-               && !((this instanceof SmallCraft) || (this instanceof Jumpship) || (this instanceof FighterSquadron));
+        return isAero();
     }
 
     public boolean isCapitalFighter() {

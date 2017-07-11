@@ -1371,6 +1371,11 @@ public class Jumpship extends Aero {
     }
     
     @Override
+    public boolean isFighter() {
+        return false;
+    }
+
+    @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;
     }

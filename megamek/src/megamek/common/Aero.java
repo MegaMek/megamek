@@ -4493,6 +4493,11 @@ public class Aero extends Entity {
         return game.getEntity(getTransportId()) instanceof FighterSquadron;
     }
 
+    @Override
+    public boolean isAero() {
+        return true;
+    }
+    
     /**
      * Used to determine the draw priority of different Entity subclasses.
      * This allows different unit types to always be draw above/below other

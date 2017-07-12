@@ -654,10 +654,13 @@ public class Tank extends Entity {
             case MOVE_NONE:
                 return "None";
             case MOVE_WALK:
+            case MOVE_VTOL_WALK:
                 return "Cruised";
             case MOVE_RUN:
+            case MOVE_VTOL_RUN:
                 return "Flanked";
             case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
                 return "Sprinted";
             case MOVE_JUMP:
                 return "Jumped";
@@ -677,10 +680,13 @@ public class Tank extends Entity {
             case MOVE_NONE:
                 return "N";
             case MOVE_WALK:
+            case MOVE_VTOL_WALK:
                 return "C";
             case MOVE_RUN:
+            case MOVE_VTOL_RUN:
                 return "F";
             case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
                 return "O";
             case MOVE_JUMP:
                 return "J";

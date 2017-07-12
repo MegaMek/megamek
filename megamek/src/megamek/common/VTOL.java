@@ -95,44 +95,6 @@ public class VTOL extends Tank {
         return false;
     }
 
-    /**
-     * Returns the name of the type of movement used. This is VTOL-specific.
-     */
-    @Override
-    public String getMovementString(EntityMovementType mtype) {
-        switch (mtype) {
-            case MOVE_VTOL_WALK:
-                return "Cruised";
-            case MOVE_VTOL_RUN:
-                return "Flanked";
-            case MOVE_VTOL_SPRINT:
-                return "Sprinted";
-            case MOVE_NONE:
-                return "None";
-            default:
-                return "Unknown!";
-        }
-    }
-
-    /**
-     * Returns the name of the type of movement used. This is tank-specific.
-     */
-    @Override
-    public String getMovementAbbr(EntityMovementType mtype) {
-        switch (mtype) {
-            case MOVE_VTOL_WALK:
-                return "C";
-            case MOVE_VTOL_RUN:
-                return "F";
-            case MOVE_VTOL_SPRINT:
-                return "O";
-            case MOVE_NONE:
-                return "N";
-            default:
-                return "?";
-        }
-    }
-
     @Override
     public int getMaxElevationChange() {
         return 999;

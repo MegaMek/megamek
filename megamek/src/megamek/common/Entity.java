@@ -6400,10 +6400,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public PilotingRollData checkGunningIt (EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        
-        if (this instanceof Tank
-                || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())
-                || movementMode == EntityMovementMode.AIRMECH) {
+
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION)
+                && (this instanceof Tank
+                        || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())
+                        || movementMode == EntityMovementMode.AIRMECH)) {
             if (((overallMoveType == EntityMovementType.MOVE_SPRINT
                     || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
                     && (movedLastRound == EntityMovementType.MOVE_WALK
@@ -6413,15 +6414,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             && (movedLastRound == EntityMovementType.MOVE_NONE
                             || movedLastRound == EntityMovementType.MOVE_JUMP
                             || movedLastRound == EntityMovementType.MOVE_SKID))) {
-                roll.append(new PilotingRollData(getId(), 0, "gunning it"));
-                return roll;
-            }
+            roll.append(new PilotingRollData(getId(), 0, "gunning it"));
+            return roll;
+        }
         }
         roll.addModifier(TargetRoll.CHECK_FALSE,
                 "Check false: Entity is not gunning it");            
         return roll;
     }
-    
+
     /**
      * Checks if an entity is passing through certain terrain while not moving
      * carefully

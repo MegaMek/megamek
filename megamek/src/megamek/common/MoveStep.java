@@ -2847,7 +2847,13 @@ public class MoveStep implements Serializable {
 
         // WiGEs in climb mode pay 2 extra MP to stay at the same flight level
         // if more than one elevation above the underlying terrain.
-        if ((moveMode == EntityMovementMode.WIGE) && (elevation > 1)) {
+        // If the destination contains a building, the WiGE must pay the extra MP if flying
+        // more than one elevation above its top or if climbing a level to get above it.
+        // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
+        if ((moveMode == EntityMovementMode.WIGE) && (elevation > 1)
+                && (!destHex.containsTerrain(Terrains.BLDG_ELEV)
+                        || (elevation - destHex.terrainLevel(Terrains.BLDG_ELEV) > 1)
+                        || (srcHex.getLevel() + destHex.terrainLevel(Terrains.BLDG_ELEV) >= nSrcEl))) {
             mp += 2;
         }
 

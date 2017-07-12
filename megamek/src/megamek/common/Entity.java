@@ -1558,7 +1558,30 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (this instanceof Aero) {
             return retVal;
         }
-        if ((getMovementMode() == EntityMovementMode.SUBMARINE)
+        if (getMovementMode() == EntityMovementMode.WIGE && assumedElevation > 0) {
+            // Airborne WiGEs remain 1 elevation above underlying terrain, unless climb mode is
+            // on, then they maintain current absolute elevation  as long as it is at least
+            // one level above the ground.
+            // WiGEs treat the tops of buildings as the underlying terrain, but must pay an additional
+            // 2 MP to climb.
+            // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
+            int nextElev = next.surface();
+            if (next.containsTerrain(Terrains.BUILDING)) {
+                nextElev = next.ceiling();
+            }
+            int currentElev = current.surface();
+            if (current.containsTerrain(Terrains.BUILDING)) {
+                currentElev = current.ceiling();
+            }
+            if ((climb || wigeEndClimbPrevious)
+                    && (nextElev < assumedElevation + currentElev)) {
+                // maintain current elevation in climb mode
+                retVal += current.surface();
+                retVal -= next.surface();
+            } else if ((nextElev - assumedElevation) <= 1) {
+                retVal = 1 + nextElev - next.surface();
+            }
+        } else if ((getMovementMode() == EntityMovementMode.SUBMARINE)
             || ((getMovementMode() == EntityMovementMode.INF_UMU)
                 && next.containsTerrain(Terrains.WATER) && current
                 .containsTerrain(Terrains.WATER))
@@ -1566,9 +1589,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // a WIGE in climb mode or that ended climb mode in the previous
             // hex stays at the same flight level, like a VTOL
             // (unless the next hex is a higher elevation
-            || ((getMovementMode() == EntityMovementMode.WIGE)
-                && (climb || wigeEndClimbPrevious) && (assumedElevation > 0)
-                && (next.surface() < assumedElevation + current.surface()))
             || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
             || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
             retVal += current.surface();
@@ -1604,23 +1624,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             
-            // Airborne WiGEs remain 1 elevation above underlying terrain
-            // WiGEs cannot climb woods. They may climb one elevation of buildings, but
-            // must spend an additional 2 MP to do so.
-            // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
-            if ((getMovementMode() == EntityMovementMode.WIGE) 
-                    && (assumedElevation > 0)) {
-                int terrainElevation = 0;
-                if (next.containsTerrain(Terrains.BUILDING)) {
-                    terrainElevation = Math.max(-next.depth(true),
-                            next.terrainLevel(Terrains.BLDG_ELEV));
-                }
-                if ((next.ceiling() + terrainElevation - assumedElevation) 
-                        <= getMaxElevationChange()) {
-                    retVal = 1;
-                }
-            }
-
             if ((next.containsTerrain(Terrains.BUILDING)
                 || current.containsTerrain(Terrains.BUILDING))
                 && (getMovementMode() != EntityMovementMode.WIGE)) {

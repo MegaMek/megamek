@@ -223,58 +223,60 @@ public class Dropship extends SmallCraft {
 
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[18];
+        double[] costs = new double[19];
         int costIdx = 0;
         double cost = 0;
 
-        // add in controls
-        // bridge
+        // Control Systems
+        // Bridge
         costs[costIdx++] += 200000 + (10 * weight);
-        // computer
+        // Computer
         costs[costIdx++] += 200000;
-        // life support
+        // Life Support
         costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
-        // sensors
+        // Sensors
         costs[costIdx++] += 80000;
-        // fcs
+        // Fire Control Computer
         costs[costIdx++] += 100000;
-        // gunnery/control systems
+        // Gunnery Control Systems
         costs[costIdx++] += 10000 * getArcswGuns();
 
-        // structural integrity
+        // Structural Integrity
         costs[costIdx++] += 100000 * getSI();
 
-        // additional flight systems (attitude thruster and landing gear)
-        costs[costIdx++] += 25000 + (10 * getWeight());
-
-        // docking collar
+        // Additional Flight Systems
+        // Attitude Thruster
+        costs[costIdx++] += 25000;
+        // Landing Gear
+        costs[costIdx++] += 10 * getWeight();
+        // Docking Collar
         costs[costIdx++] += 10000;
 
-        // engine
+        // Engine
         double engineMultiplier = 0.065;
         if (isClan()) {
             engineMultiplier = 0.061;
         }
         double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
         costs[costIdx++] += engineWeight * 1000;
-        // drive unit
+        // Drive Unit
         costs[costIdx++] += (500 * getOriginalWalkMP() * weight) / 100.0;
 
-        // fuel tanks
-        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon();
+        // Fuel Tanks
+        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
-        // armor
+        // Armor
         costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
-        // heat sinks
+        // Heat Sinks
         int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
         // 2000;
         costs[costIdx++] += sinkCost * getHeatSinks();
 
-        // weapons
+        // Weapons and Equipment
         costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
-        // get bays
+        // Transport Bays
         int baydoors = 0;
         int bayCost = 0;
         for (Bay next : getTransportBays()) {
@@ -289,7 +291,7 @@ public class Dropship extends SmallCraft {
 
         costs[costIdx++] += bayCost + (baydoors * 1000);
 
-        // life boats and escape pods
+        // Life Boats and Escape Pods
         costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
 
         double weightMultiplier = 36.0;
@@ -310,10 +312,10 @@ public class Dropship extends SmallCraft {
 
     private void addCostDetails(double cost, double[] costs) {
         bvText = new StringBuffer();
-        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunner/Control Systems",
-                "Structural Integrity", "Additional Flight Systems", "Docking Collar", "Engine", "Drive Unit",
-                "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment", "Bays", "Life Boats/Escape Pods",
-                "Weight Multiplier" };
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
+                "Structural Integrity", "Attitude Thruster", "Landing Gear", "Docking Collar",
+                "Engine", "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks", "Weapons/Equipment", "Bays",
+                "Life Boats/Escape Pods", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 

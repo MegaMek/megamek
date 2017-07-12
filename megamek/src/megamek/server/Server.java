@@ -6897,6 +6897,7 @@ public class Server implements Runnable {
         Entity loader = null;
         boolean continueTurnFromPBS = false;
         boolean continueTurnFromFishtail = false;
+        boolean continueTurnFromLevelDrop = false;
 
         // get a list of coordinates that the unit passed through this turn
         // so that I can later recover potential bombing targets
@@ -8847,19 +8848,36 @@ public class Server implements Runnable {
 
                 // TODO: what if a building collapses into rubble?
             }
-
-            if ((isOnGround || ((((stepMoveType != EntityMovementType.MOVE_JUMP)
-                    && (curElevation <= curHex
-                            .terrainLevel(Terrains.BLDG_ELEV)))
-                    || (curElevation == curHex
-                            .terrainLevel(Terrains.BRIDGE_ELEV)))
-                    && curHex.containsTerrain(Terrains.BLDG_ELEV)))) {
+            
+            if (isOnGround
+                    || (curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))
+                    || (curHex.containsTerrain(Terrains.BLDG_ELEV)
+                            && (curElevation <= curHex.terrainLevel(Terrains.BLDG_ELEV)
+                                    || (entity.getMovementMode() == EntityMovementMode.WIGE
+                                            && curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV) + 1)))) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
                 if ((bldg != null) && (entity.getElevation() >= 0)) {
-                    addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg,
-                            entity, curPos));
+                    boolean wigeFlyingOver = entity.getMovementMode() == EntityMovementMode.WIGE
+                            && curHex.containsTerrain(Terrains.BLDG_ELEV)
+                            && curElevation > curHex.terrainLevel(Terrains.BLDG_ELEV);
+                    boolean collapse = checkBuildingCollapseWhileMoving(bldg,
+                            entity, curPos);
+                    addAffectedBldg(bldg, collapse);
+                    // If the building is collapsed by a WiGE flying over it, the WiGE drops one level of elevation.
+                    // This could invalidate the remainder of the movement path, so we will send it back to the client.
+                    if (collapse && wigeFlyingOver) {
+                        curElevation--;
+                        r = new Report(2378);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        addReport(r);
+                        continueTurnFromLevelDrop = true;
+                        entity.setPosition(curPos);
+                        entity.setFacing(curFacing);
+                        entity.setSecondaryFacing(curFacing);
+                        break;
+                    }
                 }
-
             }
 
             // did the entity just fall?
@@ -9510,7 +9528,7 @@ public class Server implements Runnable {
                 && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
                 && !turnOver && (entity.mpUsed < entity.getRunMP())
                 && (overallMoveType != EntityMovementType.MOVE_JUMP);
-        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail)
+        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail || continueTurnFromLevelDrop)
                 && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
@@ -31587,7 +31605,9 @@ public class Server implements Runnable {
                 Enumeration<Entity> entities = vector.elements();
                 while (!collapse && entities.hasMoreElements()) {
                     final Entity entity = entities.nextElement();
-                    final int entityElev = entity.getElevation();
+                    // WiGEs can collapse the top floor of a building by flying over it.
+                    final int entityElev = entity.getMovementMode() == EntityMovementMode.WIGE?
+                            entity.getElevation() - 1 : entity.getElevation();
 
                     if (entityElev != bridgeEl) {
                         // Ignore entities not *inside* the building

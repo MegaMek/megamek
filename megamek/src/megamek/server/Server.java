@@ -38,6 +38,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -6131,11 +6132,12 @@ public class Server implements Runnable {
                 skidDistance = Math.min(marginOfFailure, distance);
             }
             if (skidDistance > 0) {
-                int skidDirection = prevStep.getFacing();
+                int skidDirection = prevStep == null?entity.getFacing() : prevStep.getFacing();
                 if (isBackwards) {
                     skidDirection = (skidDirection + 3) % 6;
                 }
-                processSkid(entity, curPos, prevStep.getElevation(),
+                processSkid(entity, curPos,
+                        prevStep == null? entity.getElevation() : prevStep.getElevation(),
                         skidDirection, skidDistance,
                         prevStep, lastStepMoveType, flip);
             }
@@ -8875,6 +8877,7 @@ public class Server implements Runnable {
                         entity.setPosition(curPos);
                         entity.setFacing(curFacing);
                         entity.setSecondaryFacing(curFacing);
+                        entity.setElevation(curElevation);
                         break;
                     }
                 }
@@ -31557,6 +31560,8 @@ public class Server implements Runnable {
         boolean collapse = false;
 
         boolean basementCollapse = false;
+        
+        boolean topFloorCollapse = false;
 
         if (checkBecauseOfDamage && (currentCF <= 0)) {
             collapse = true;
@@ -31590,6 +31595,8 @@ public class Server implements Runnable {
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
             double[] loads = new double[numLoads + 1];
+            // WiGEs flying over the building are also tracked, but can only collapse the top floor.
+            double wigeLoad = 0;
             // track all units that might fall into the basement
             Vector<Entity> basement = new Vector<Entity>();
 
@@ -31597,19 +31604,18 @@ public class Server implements Runnable {
             for (int i = 0; (i < 2) && recheckLoop; i++) {
 
                 recheckLoop = false;
-                for (int loop = 0; loop < numLoads; loop++) {
-                    loads[loop] = 0;
-                }
+                Arrays.fill(loads, 0);
 
                 // Walk through the entities in this position.
                 Enumeration<Entity> entities = vector.elements();
                 while (!collapse && entities.hasMoreElements()) {
                     final Entity entity = entities.nextElement();
                     // WiGEs can collapse the top floor of a building by flying over it.
-                    final int entityElev = entity.getMovementMode() == EntityMovementMode.WIGE?
-                            entity.getElevation() - 1 : entity.getElevation();
+                    final int entityElev = entity.getElevation();
+                    final boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE
+                            && entityElev == numFloors + 1;
 
-                    if (entityElev != bridgeEl) {
+                    if (entityElev != bridgeEl && !wigeFlyover) {
                         // Ignore entities not *inside* the building
                         if (entityElev > numFloors) {
                             continue;
@@ -31640,15 +31646,28 @@ public class Server implements Runnable {
                     if (floor == bridgeEl) {
                         floor = numLoads;
                     }
+                    // Entities on the roof fall to the previous top floor/new roof
+                    if (topFloorCollapse && floor == numFloors) {
+                        floor--;
+                    }
 
-                    loads[floor] += load;
-                    if (loads[floor] > currentCF) {
-                        // If the load on any floor but the ground floor
-                        // exceeds the building's current CF it collapses.
-                        if (floor != 0) {
-                            collapse = true;
-                        } else if (!bldg.getBasementCollapsed(coords)) {
-                            basementCollapse = true;
+                    if (wigeFlyover) {
+                        wigeLoad += load;
+                        if (wigeLoad > currentCF) {
+                            topFloorCollapse = true;
+                            loads[numFloors - 1] += loads[numFloors];
+                            loads[numFloors] = 0;
+                        }
+                    } else {
+                        loads[floor] += load;
+                        if (loads[floor] > currentCF) {
+                            // If the load on any floor but the ground floor
+                            // exceeds the building's current CF it collapses.
+                            if (floor != 0) {
+                                collapse = true;
+                            } else if (!bldg.getBasementCollapsed(coords)) {
+                                basementCollapse = true;
+                            }
                         }
                     }
                     // End increase-load
@@ -31679,7 +31698,7 @@ public class Server implements Runnable {
                 recheckLoop = false; // don't check again, we didn't change the
                 // CF
             }
-            if (collapse == true) {
+            if (collapse) {
                 recheckLoop = false;
                 // recheck if the basement collapsed since the basement falls
                 // might trigger a greater collapse.
@@ -31691,18 +31710,30 @@ public class Server implements Runnable {
             r.add(bldg.getName());
             vPhaseReport.add(r);
 
-            collapseBuilding(bldg, positionMap, coords, vPhaseReport);
+            collapseBuilding(bldg, positionMap, coords, false, vPhaseReport);
+        } else if (topFloorCollapse) {
+                Report r = new Report(2376, Report.PUBLIC);
+                r.add(bldg.getName());
+                vPhaseReport.add(r);
+
+                collapseBuilding(bldg, positionMap, coords, false, true, vPhaseReport);
         }
 
         // Return true if the building collapsed.
-        return collapse;
+        return collapse || topFloorCollapse;
 
     } // End private boolean checkForCollapse( Building, Hashtable )
 
     public void collapseBuilding(Building bldg,
             Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
             Vector<Report> vPhaseReport) {
-        collapseBuilding(bldg, positionMap, coords, true, vPhaseReport);
+        collapseBuilding(bldg, positionMap, coords, true, false, vPhaseReport);
+    }
+
+    public void collapseBuilding(Building bldg,
+            Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
+            boolean collapseAll, Vector<Report> vPhaseReport) {
+        collapseBuilding(bldg, positionMap, coords, collapseAll, false, vPhaseReport);
     }
 
     /**
@@ -31829,10 +31860,14 @@ public class Server implements Runnable {
      *            - A <code>boolean</code> indicating wether or not this
      *            collapse of a hex should be able to collapse the whole
      *            building
+     * @param topFloor
+     *            - A <code>boolean</code> indicating that only the top floor collapses
+     *              (from a WiGE flying over the top).            
+     *            
      */
     public void collapseBuilding(Building bldg,
             Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-            boolean collapseAll, Vector<Report> vPhaseReport) {
+            boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
         if (!bldg.hasCFIn(coords)) {
             return;
         }
@@ -31854,10 +31889,16 @@ public class Server implements Runnable {
 
             // Now collapse the building in this hex, so entities fall to
             // the ground
-            bldg.setCurrentCF(0, coords);
-            bldg.setPhaseCF(0, coords);
-            send(createCollapseBuildingPacket(coords));
-            game.getBoard().collapseBuilding(coords);
+            if (topFloor && numFloors > 1) {
+                curHex.removeTerrain(Terrains.BLDG_ELEV);
+                curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.BLDG_ELEV, numFloors - 1));
+                sendChangedHex(coords);
+            } else {
+                bldg.setCurrentCF(0, coords);
+                bldg.setPhaseCF(0, coords);
+                send(createCollapseBuildingPacket(coords));
+                game.getBoard().collapseBuilding(coords);
+            }
 
             // Sort in elevation order
             Collections.sort(vector, new Comparator<Entity>() {
@@ -31883,6 +31924,11 @@ public class Server implements Runnable {
                 }
 
                 int floor = entity.getElevation();
+                // If only the top floor collapses, we only care about units on the top level
+                // or on the roof.
+                if (topFloor && floor < numFloors - 1) {
+                    continue;
+                }
                 // units trapped in a basement under a collapsing building are
                 // destroyed
                 if (floor < 0) {

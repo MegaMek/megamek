@@ -6883,7 +6883,6 @@ public class Server implements Runnable {
         boolean crashedDuringMovement = false;
         boolean dropshipStillUnloading = false;
         boolean turnOver;
-        boolean wigeStartedLanded = false;
         int prevFacing = curFacing;
         IHex prevHex = game.getBoard().getHex(curPos);
         final boolean isInfantry = entity instanceof Infantry;
@@ -7061,10 +7060,9 @@ public class Server implements Runnable {
                 break;
             }
 
-            if (firstStep
-                    && (entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && (step.getClearance() == 0)) {
-                wigeStartedLanded = true;
+            if (entity.getMovementMode() == EntityMovementMode.WIGE
+                    && step.getType() == MoveStepType.UP) {
+                entity.setWigeLiftedOff(true);
             }
 
             // check for MASC failure on first step
@@ -9553,7 +9551,7 @@ public class Server implements Runnable {
                 if (hex.containsTerrain(Terrains.BLDG_ELEV)
                         && entity.getElevation() == hex.terrainLevel(Terrains.BLDG_ELEV)) {
                     // On the roof of a building, treated as if on the ground.
-                } else if (!wigeStartedLanded && (entity.delta_distance < 5)) {
+                } else if (!entity.wigeLiftedOff() && (entity.delta_distance < 5)) {
                     // try to land safely
                     r = new Report(2123);
                     r.addDesc(entity);

@@ -312,6 +312,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * a PSR is required, it adds a +1 modifier to the PSR.
      */
     private boolean isPowerReverse = false;
+    private boolean wigeLiftedOff = false;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
     public int wigeBonus = 0;
@@ -1571,7 +1572,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
             int nextElev = assumedElevation;
             if (next.containsTerrain(Terrains.BLDG_ELEV)) {
-                nextElev += next.terrainLevel(Terrains.BLDG_ELEV);
+                nextElev = Math.max(assumedElevation, next.terrainLevel(Terrains.BLDG_ELEV));
             }
             if (assumedElevation == 0) {
                 // If not airborne, the next elevation is that of the next hex.
@@ -1581,6 +1582,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // maintain current elevation in climb mode
                 retVal += current.surface();
                 retVal -= next.surface();
+                retVal = Math.max(retVal, nextElev + 1);
             } else {
                 // otherwise rise or drop as necessary to one elevation over the surface
                 retVal = nextElev - assumedElevation + 1;
@@ -5555,6 +5557,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         moved = EntityMovementType.MOVE_NONE;
         movedBackwards = false;
         isPowerReverse = false;
+        wigeLiftedOff = false;
         gotPavementBonus = false;
         wigeBonus = 0;
         hitThisRoundByAntiTSM = false;
@@ -13009,6 +13012,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setPowerReverse(boolean isPowerReverse) {
         this.isPowerReverse = isPowerReverse;
+    }
+    
+    /**
+     * Tracks whether a WiGE lifted off this turn (or a LAM hovered). Needed to track state
+     * in case movement is continued from an interruption, so that the unit does not have a minimum
+     * movement for the turn.
+     * 
+     * @return whether a WiGE lifted off during this turn's movement
+     */
+    public boolean wigeLiftedOff() {
+        return wigeLiftedOff;
+    }
+    
+    public void setWigeLiftedOff(boolean lifted) {
+        wigeLiftedOff = lifted;
     }
 
     public void setHardenedArmorDamaged(HitData hit, boolean damaged) {

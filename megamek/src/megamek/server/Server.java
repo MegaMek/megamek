@@ -13117,6 +13117,10 @@ public class Server implements Runnable {
         // more systematically with
         // up/down buttons in the deployment display
         entity.setElevation(entity.getElevation() + elevation);
+        boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE
+                && hex.containsTerrain(Terrains.BLDG_ELEV)
+                && entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
+
 
         // when first entering a building, we need to roll what type
         // of basement it has
@@ -13133,6 +13137,10 @@ public class Server implements Runnable {
                                                                 entity.getPosition());
             if (collapse) {
                 addAffectedBldg(bldg, collapse);
+                if (wigeFlyover) {
+                // If the building is collapsed by a WiGE flying over it, the WiGE drops one level of elevation.
+                    entity.setElevation(entity.getElevation() - 1);
+                }
             }
         }
 

@@ -543,11 +543,11 @@ public class Tank extends Entity {
             case SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
-                return (hex.containsTerrain(Terrains.WOODS) || (hex
-                        .containsTerrain(Terrains.BUILDING)))
-                        && !(currElevation > hex
-                                .maxTerrainFeatureElevation(game.getBoard()
-                                        .inAtmosphere()));
+                return hex.containsTerrain(Terrains.WOODS);
+//                        || (hex.containsTerrain(Terrains.BUILDING)))
+//                        && !(currElevation > hex
+//                                .maxTerrainFeatureElevation(game.getBoard()
+//                                        .inAtmosphere()));
             default:
                 return false;
         }

@@ -1849,7 +1849,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 maxAlt = hex.surface() - (getHeight() + 1);
                 break;
             case WIGE:
-                maxAlt = hex.surface() + 1;
+                if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    maxAlt = Math.max(hex.surface(), hex.terrainLevel(Terrains.BLDG_ELEV)) + 1;
+                } else {
+                    maxAlt = hex.surface() + 1;
+                }
                 break;
             case BIPED:
             case QUAD:

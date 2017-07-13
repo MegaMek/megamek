@@ -504,7 +504,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final Building bldg = board.getBuildingAt(moveto);
         boolean isAero = ce() instanceof Aero;
         boolean isVTOL = ce() instanceof VTOL;
-        boolean isWIGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
+        boolean isWiGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
         boolean isTankOnPavement = (ce() instanceof Tank)
                 && (deployhex.containsTerrain(Terrains.PAVEMENT)
                         || deployhex.containsTerrain(Terrains.ROAD)
@@ -551,7 +551,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } else {
             // check for buildings and if found ask what level they want to
             // deploy at
-            if ((null != bldg) && !isAero && !isVTOL && !isWIGE) {
+            if ((null != bldg) && !isAero && !isVTOL && !isWiGE) {
                 if (deployhex.containsTerrain(Terrains.BLDG_ELEV)) {
                     boolean success = processBuildingDeploy(moveto);
                     if (!success) {
@@ -563,7 +563,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         return;
                     }
                 }
-            } else if (!isAero) {
+            } else if (!isAero && !isWiGE) {
                 // hovers and naval units go on the surface
                 if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
                         || (ce().getMovementMode() == EntityMovementMode.SUBMARINE)

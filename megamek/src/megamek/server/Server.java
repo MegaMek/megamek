@@ -7063,7 +7063,7 @@ public class Server implements Runnable {
 
             if (firstStep
                     && (entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && (entity.getElevation() == 0)) {
+                    && (step.getClearance() == 0)) {
                 wigeStartedLanded = true;
             }
 
@@ -9549,14 +9549,17 @@ public class Server implements Runnable {
         } else {
             if ((entity.getMovementMode() == EntityMovementMode.WIGE)
                     && (entity.getElevation() > 0)) {
-                if (!wigeStartedLanded && (entity.delta_distance < 5)) {
+                IHex hex = game.getBoard().getHex(curPos);
+                if (hex.containsTerrain(Terrains.BLDG_ELEV)
+                        && entity.getElevation() == hex.terrainLevel(Terrains.BLDG_ELEV)) {
+                    // On the roof of a building, treated as if on the ground.
+                } else if (!wigeStartedLanded && (entity.delta_distance < 5)) {
                     // try to land safely
                     r = new Report(2123);
                     r.addDesc(entity);
                     r.subject = entity.getId();
                     vPhaseReport.add(r);
                     // when no clear or pavement, crash
-                    IHex hex = game.getBoard().getHex(curPos);
                     if (!hex.hasPavement() && (hex.terrainsPresent() > 0)) {
                         // crash
                         r = new Report(2124);
@@ -9573,7 +9576,6 @@ public class Server implements Runnable {
                     // it might have been higher than one due to the extra MPs
                     // it can spend to stay higher during movement, but should
                     // end up at one
-                    IHex hex = game.getBoard().getHex(curPos);
                     entity.setElevation(1 + hex.maxTerrainFeatureElevation(
                             game.getBoard().inAtmosphere()));
                 }
@@ -26050,11 +26052,7 @@ public class Server implements Runnable {
 
         if (!sideSlipCrash) {
             // report lost movement and crashing
-            if (en.getCrew().isDoomed()) {
-                r = new Report(6260);
-            } else {
-                r = new Report(6260);
-            }
+            r = new Report(6260);
             r.subject = en.getId();
             r.newlines = 0;
             r.addDesc(en);

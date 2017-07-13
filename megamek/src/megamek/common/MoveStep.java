@@ -3110,14 +3110,19 @@ public class MoveStep implements Serializable {
         
         if ((movementType != EntityMovementType.MOVE_JUMP)
                 && (nMove != EntityMovementMode.VTOL)) {
-            if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > entity
-                    .getMaxElevationDown(srcAlt)))
+            int maxDown = entity.getMaxElevationDown(srcAlt);
+            if (movementMode == EntityMovementMode.WIGE
+                    && srcEl == 0) {
+                maxDown = entity.getMaxElevationChange();
+            }
+            if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > maxDown))
                     || (((destAlt - srcAlt) > 0) && ((destAlt - srcAlt) > entity
                     .getMaxElevationChange()))) {
                 // System.err.println("jump VTOL check failed");
                 return false;
             }
         }
+        
 
         if ((entity instanceof Mech) && ((srcAlt - destAlt) > 2)) {
             setLeapDistance(srcAlt - destAlt);
@@ -3315,6 +3320,7 @@ public class MoveStep implements Serializable {
             }
         }
         if ((entity instanceof VTOL || entity.getMovementMode() == EntityMovementMode.WIGE)
+                && (elevation > 0)
                 && ((type == MoveStepType.BACKWARDS) || (type == MoveStepType.FORWARDS)
                         || (type == MoveStepType.LATERAL_LEFT) || (type == MoveStepType.LATERAL_LEFT_BACKWARDS)
                         || type == MoveStepType.LATERAL_RIGHT) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS)) {

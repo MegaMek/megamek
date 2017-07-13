@@ -1567,26 +1567,33 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // 2 MP to climb.
             // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
             
+            // Find level equivalent of current elevation
+            int level = current.surface() + assumedElevation;
+            // For WiGE purposes, the surface of a hex with a building is the roof; otherwise it's the surface of the hex.
+            int curSurface = current.surface();
             if (current.containsTerrain(Terrains.BLDG_ELEV)) {
-                assumedElevation -= current.terrainLevel(Terrains.BLDG_ELEV);
+                curSurface += current.terrainLevel(Terrains.BLDG_ELEV);
             }
-            int nextElev = assumedElevation;
+            int nextSurface = next.surface();
             if (next.containsTerrain(Terrains.BLDG_ELEV)) {
-                nextElev = Math.max(assumedElevation, next.terrainLevel(Terrains.BLDG_ELEV));
+                nextSurface += next.terrainLevel(Terrains.BLDG_ELEV);
             }
-            if (assumedElevation == 0) {
-                // If not airborne, the next elevation is that of the next hex.
-                retVal = nextElev;
-            } else if ((climb || wigeEndClimbPrevious)
-                    && (next.surface() < assumedElevation + current.surface())) {
-                // maintain current elevation in climb mode
-                retVal += current.surface();
-                retVal -= next.surface();
-                retVal = Math.max(retVal, nextElev + 1);
+            
+            int nextLevel;
+            if (level - curSurface <= 0) {
+                // If we are not above the effective surface, we are not airborne and the next level
+                // is the effective surface of the next hex.
+                nextLevel = nextSurface;
+            } else if (climb || wigeEndClimbPrevious) {
+                // If climb mode is on, we maintain the same level unless the next surface requires climbing.
+                // is the effective surface of the next hex.
+                nextLevel = Math.max(level, nextSurface + 1);
             } else {
-                // otherwise rise or drop as necessary to one elevation over the surface
-                retVal = nextElev - assumedElevation + 1;
+                // Otherwise we move to one elevation level above the effective surface.
+                nextLevel = nextSurface + 1;
             }
+            // Elevation is this height of the level above the actual surface elevation of the hex.
+            retVal = nextLevel - next.surface();
         } else if ((getMovementMode() == EntityMovementMode.SUBMARINE)
             || ((getMovementMode() == EntityMovementMode.INF_UMU)
                 && next.containsTerrain(Terrains.WATER) && current

@@ -1558,37 +1558,38 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (this instanceof Aero) {
             return retVal;
         }
-        if (getMovementMode() == EntityMovementMode.WIGE && assumedElevation > 0) {
+        if (getMovementMode() == EntityMovementMode.WIGE) {
             // Airborne WiGEs remain 1 elevation above underlying terrain, unless climb mode is
             // on, then they maintain current absolute elevation  as long as it is at least
             // one level above the ground.
             // WiGEs treat the tops of buildings as the underlying terrain, but must pay an additional
             // 2 MP to climb.
             // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
-            int nextElev = next.surface();
-            if (next.containsTerrain(Terrains.BUILDING)) {
-                nextElev = next.ceiling();
+            
+            if (current.containsTerrain(Terrains.BLDG_ELEV)) {
+                assumedElevation -= current.terrainLevel(Terrains.BLDG_ELEV);
             }
-            int currentElev = current.surface();
-            if (current.containsTerrain(Terrains.BUILDING)) {
-                currentElev = current.ceiling();
+            int nextElev = assumedElevation;
+            if (next.containsTerrain(Terrains.BLDG_ELEV)) {
+                nextElev += next.terrainLevel(Terrains.BLDG_ELEV);
             }
-            if ((climb || wigeEndClimbPrevious)
-                    && (nextElev < assumedElevation + currentElev)) {
+            if (assumedElevation == 0) {
+                // If not airborne, the next elevation is that of the next hex.
+                retVal = nextElev;
+            } else if ((climb || wigeEndClimbPrevious)
+                    && (next.surface() < assumedElevation + current.surface())) {
                 // maintain current elevation in climb mode
                 retVal += current.surface();
                 retVal -= next.surface();
-            } else if ((nextElev - assumedElevation) <= 1) {
-                retVal = 1 + nextElev - next.surface();
+            } else {
+                // otherwise rise or drop as necessary to one elevation over the surface
+                retVal = nextElev - assumedElevation + 1;
             }
         } else if ((getMovementMode() == EntityMovementMode.SUBMARINE)
             || ((getMovementMode() == EntityMovementMode.INF_UMU)
                 && next.containsTerrain(Terrains.WATER) && current
                 .containsTerrain(Terrains.WATER))
             || (getMovementMode() == EntityMovementMode.VTOL)
-            // a WIGE in climb mode or that ended climb mode in the previous
-            // hex stays at the same flight level, like a VTOL
-            // (unless the next hex is a higher elevation
             || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
             || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
             retVal += current.surface();

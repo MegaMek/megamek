@@ -672,7 +672,7 @@ public class MoveStep implements Serializable {
         
         // WiGEs get bonus MP for each string of three consecutive hexes they descend.
         if (entity.getMovementMode() == EntityMovementMode.WIGE
-                && elevation > 0
+                && getClearance() > 0
                 && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
 
             if (game.getBoard().getHex(getPosition()).ceiling()
@@ -2065,8 +2065,8 @@ public class MoveStep implements Serializable {
         // WIGEs need to be able to land too..
         if (entity.getMovementMode() == EntityMovementMode.WIGE
                 && type == MoveStepType.DOWN
-                && getElevation() == 0
-                && prev.getElevation() > 0) { // landing
+                && getClearance() == 0
+                && prev.getClearance() > 0) { // landing
             movementType = EntityMovementType.MOVE_LEGAL;
         }
 
@@ -2203,7 +2203,7 @@ public class MoveStep implements Serializable {
         }
 
         if ((getEntity().getMovementMode() == EntityMovementMode.VTOL)
-                && (getElevation() != 0)
+                && getClearance() > 0
                 && !(getEntity() instanceof VTOL)) {
             tmpWalkMP = entity.getJumpMP();
         }
@@ -2227,8 +2227,8 @@ public class MoveStep implements Serializable {
             // WiGEs on the ground can use only 1 MP / do just one step
             if (!isFirstStep()
                     && (entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && (getElevation() == 0)
-                    && (prev.getElevation() == 0)) {
+                    && getClearance() == 0
+                    && prev.getClearance() == 0) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }
@@ -2236,7 +2236,7 @@ public class MoveStep implements Serializable {
             if (getMpUsed() <= tmpWalkMP) {
                 if ((getEntity().getMovementMode() == EntityMovementMode.VTOL
                         || getEntity().getMovementMode() == EntityMovementMode.WIGE)
-                        && (getElevation() > 0)) {
+                        && getClearance() > 0) {
                     movementType = EntityMovementType.MOVE_VTOL_WALK;
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
@@ -2253,7 +2253,7 @@ public class MoveStep implements Serializable {
                 // next should always be a walk, since it's covered under the
                 // infantry's 1 free movement
                 if ((getEntity().getMovementMode() == EntityMovementMode.VTOL)
-                        && (getElevation() > 0)) {
+                        && getClearance() > 0) {
                     movementType = EntityMovementType.MOVE_VTOL_WALK;
                 } else {
                     movementType = EntityMovementType.MOVE_WALK;
@@ -2269,7 +2269,7 @@ public class MoveStep implements Serializable {
                 }
                 if ((entity.getMovementMode() == EntityMovementMode.VTOL
                         || entity.getMovementMode() == EntityMovementMode.WIGE)
-                        && elevation > 0) {
+                        && getClearance() > 0) {
                     movementType = EntityMovementType.MOVE_VTOL_RUN;
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
@@ -2684,7 +2684,7 @@ public class MoveStep implements Serializable {
             }
         }
         
-        // Vehicles carrying mechanized BA can't jump, VTOL, or WiGe
+        // Vehicles carrying mechanized BA can't jump, VTOL, or WiGE
         if (entity instanceof Tank
                 && entity.getExternalUnits().size() > 0) {
             if ((movementType == EntityMovementType.MOVE_JUMP)
@@ -2692,7 +2692,7 @@ public class MoveStep implements Serializable {
                     || (movementType == EntityMovementType.MOVE_VTOL_RUN)
                     || (movementType == EntityMovementType.MOVE_VTOL_SPRINT)
                     || ((entity.getMovementMode() == EntityMovementMode.WIGE)
-                        && (getElevation() != 0))) {
+                        && getClearance() > 0)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }            
@@ -2789,7 +2789,7 @@ public class MoveStep implements Serializable {
 
             if ((moveMode != EntityMovementMode.BIPED_SWIM)
                     && (moveMode != EntityMovementMode.QUAD_SWIM)
-                    && (!((moveMode == EntityMovementMode.WIGE) && (getElevation() > 0)))) {
+                    && getClearance() == 0) {
                 mp += destHex.movementCost(getEntity());
             }
 
@@ -2850,10 +2850,9 @@ public class MoveStep implements Serializable {
         // If the destination contains a building, the WiGE must pay the extra MP if flying
         // more than one elevation above its top or if climbing a level to get above it.
         // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
-        if ((moveMode == EntityMovementMode.WIGE) && (elevation > 1)
-                && (!destHex.containsTerrain(Terrains.BLDG_ELEV)
-                        || (elevation - destHex.terrainLevel(Terrains.BLDG_ELEV) > 1)
-                        || (srcHex.getLevel() + destHex.terrainLevel(Terrains.BLDG_ELEV) >= nSrcEl))) {
+        if (getClearance() > 1
+                || (destHex.containsTerrain(Terrains.BLDG_ELEV)
+                        && destHex.ceiling() > srcHex.ceiling())) {
             mp += 2;
         }
 
@@ -3112,7 +3111,8 @@ public class MoveStep implements Serializable {
                 && (nMove != EntityMovementMode.VTOL)) {
             int maxDown = entity.getMaxElevationDown(srcAlt);
             if (movementMode == EntityMovementMode.WIGE
-                    && srcEl == 0) {
+                    && (srcEl == 0 || (srcHex.containsTerrain(Terrains.BLDG_ELEV)
+                            && (srcHex.terrainLevel(Terrains.BLDG_ELEV) >= srcEl)))) {
                 maxDown = entity.getMaxElevationChange();
             }
             if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > maxDown))
@@ -3314,16 +3314,16 @@ public class MoveStep implements Serializable {
                     || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS)
                     || (type == MoveStepType.TURN_LEFT)
                     || (type == MoveStepType.TURN_RIGHT)) {
-                if (elevation == 0) {// can't move on the ground.
+                if (getClearance() == 0) {// can't move on the ground.
                     return false;
                 }
             }
         }
         if ((entity instanceof VTOL || entity.getMovementMode() == EntityMovementMode.WIGE)
-                && (elevation > 0)
+                && getClearance() > 0
                 && ((type == MoveStepType.BACKWARDS) || (type == MoveStepType.FORWARDS)
                         || (type == MoveStepType.LATERAL_LEFT) || (type == MoveStepType.LATERAL_LEFT_BACKWARDS)
-                        || type == MoveStepType.LATERAL_RIGHT) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS)) {
+                        || (type == MoveStepType.LATERAL_RIGHT) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))) {
             if (elevation <= (destHex.ceiling() - destHex.surface())) {
                 // System.err.println("can't fly into woods or a cliff face");
                 return false; // can't fly into woods or a cliff face
@@ -3348,7 +3348,19 @@ public class MoveStep implements Serializable {
     public int getElevation() {
         return elevation;
     }
-
+    
+    /**
+     * In hexes with buildings, returns the elevation relative to the roof. Otherwise returns the elevation
+     * relative to the surface.
+     */
+    public int getClearance() {
+        IHex hex = entity.getGame().getBoard().getHex(getPosition());
+        if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            return elevation - hex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+        return elevation;
+    }
+    
     public int getAltitude() {
         return altitude;
     }

@@ -8231,7 +8231,7 @@ public class Server implements Runnable {
                             lastPos, curPos, rollTarget, false)) {
                         // assume VTOLs in flight are always in clear terrain
                         if ((0 == curHex.terrainsPresent())
-                                || (step.getElevation() > 0)) {
+                                || (step.getClearance() > 0)) {
                             if (entity instanceof VTOL) {
                                 r = new Report(2208);
                             } else {

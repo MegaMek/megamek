@@ -2062,11 +2062,10 @@ public class MoveStep implements Serializable {
                 && (entity.getRunMP() >= 5)) {
             movementType = EntityMovementType.MOVE_WALK;
         }
-        // WIGEs need to be able to land too..
+        // WIGEs need to be able to land too, or even descent elevation
         if (entity.getMovementMode() == EntityMovementMode.WIGE
                 && type == MoveStepType.DOWN
-                && getClearance() == 0
-                && prev.getClearance() > 0) { // landing
+                && getClearance() < prev.getClearance()) { // landing
             movementType = EntityMovementType.MOVE_LEGAL;
         }
 

@@ -1765,10 +1765,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                     .getDepth());
                 break;
-            case VTOL:
             case WIGE:
+                // Per errata, WiGEs have flotation hull, which makes no sense unless it changes the rule
+                // in TW that they cannot land on water.
+                // See 
+                if (hex.containsTerrain(Terrains.WATER)) {
+                    minAlt = hex.surface();
+                    break;
+                }
+                // else fall through
+            case VTOL:
                 minAlt = hex.ceiling();
-                if (inWaterOrWoods) {
+                if (inWaterOrWoods && !hex.containsTerrain(Terrains.WATER)) {
                     minAlt++; // can't land here
                 }
                 break;

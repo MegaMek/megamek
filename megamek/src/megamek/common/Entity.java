@@ -1584,7 +1584,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // If we are not above the effective surface, we are not airborne and the next level
                 // is the effective surface of the next hex.
                 nextLevel = nextSurface;
-            } else if (climb || wigeEndClimbPrevious) {
+            } else if (climb) {
                 // If climb mode is on, we maintain the same level unless the next surface requires climbing.
                 // is the effective surface of the next hex.
                 nextLevel = Math.max(level, nextSurface + 1);
@@ -1634,9 +1634,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             
-            if ((next.containsTerrain(Terrains.BUILDING)
-                || current.containsTerrain(Terrains.BUILDING))
-                && (getMovementMode() != EntityMovementMode.WIGE)) {
+            if (next.containsTerrain(Terrains.BUILDING)
+                || current.containsTerrain(Terrains.BUILDING)) {
                 int bldcur = Math.max(-current.depth(true),
                                       current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(-next.depth(true),

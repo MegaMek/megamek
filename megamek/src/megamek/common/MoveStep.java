@@ -2556,6 +2556,9 @@ public class MoveStep implements Serializable {
         if (!isFirstStep()
                 && !curPos.equals(lastPos)
                 && climbMode
+                && entity.getMovementMode() != EntityMovementMode.VTOL
+                && (entity.getMovementMode() != EntityMovementMode.WIGE
+                    || getClearance() == 0)
                 && (movementType != EntityMovementType.MOVE_JUMP)
                 && game.getBoard().getHex(curPos)
                 .containsTerrain(Terrains.BRIDGE)
@@ -3324,7 +3327,12 @@ public class MoveStep implements Serializable {
                 && ((type == MoveStepType.BACKWARDS) || (type == MoveStepType.FORWARDS)
                         || (type == MoveStepType.LATERAL_LEFT) || (type == MoveStepType.LATERAL_LEFT_BACKWARDS)
                         || (type == MoveStepType.LATERAL_RIGHT) || (type == MoveStepType.LATERAL_RIGHT_BACKWARDS))) {
-            if (elevation <= (destHex.ceiling() - destHex.surface())) {
+            // It's possible to fly under a bridge.
+            if (destHex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+                if (elevation == destHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+                    return false;
+                }
+            } else if (elevation <= (destHex.ceiling() - destHex.surface())) {
                 // System.err.println("can't fly into woods or a cliff face");
                 return false; // can't fly into woods or a cliff face
             }

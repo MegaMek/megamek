@@ -12,6 +12,7 @@ v0.43.3-git
 + Issue #563: SRM and LRM Carriers' Weights
 + Issue #567: Princess instance hanging following point-blank attack.
 + Issue #568: Server stops responding when DropShip crashes at a map edge.
++ Issue #481: VTOL unable to fly over bridge
 
 v0.43.2 2017-05-1 22:00 UTC)
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist

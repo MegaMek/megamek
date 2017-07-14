@@ -5197,6 +5197,10 @@ public class Server implements Runnable {
             // but VTOL keep altitude
             if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                 nextAltitude = Math.max(nextAltitude, curAltitude);
+            } else if (entity.getMovementMode() == EntityMovementMode.WIGE
+                    && elevation > 0 && nextAltitude < curAltitude) {
+                // Airborne WiGEs drop to one level above the surface
+                nextAltitude++;
             } else {
                 // Is there a building to "catch" the unit?
                 if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -5237,12 +5241,9 @@ public class Server implements Runnable {
                     // Hovercraft can "skid" over water.
                     // all units can skid over ice.
                     if ((entity instanceof Tank)
-                        && ((entity.getMovementMode() == EntityMovementMode.HOVER) || (entity
-                                                                                               .getMovementMode() ==
-                                                                                       EntityMovementMode.WIGE))) {
-                        if (nextHex.containsTerrain(Terrains.WATER)) {
-                            nextAltitude = nextHex.surface();
-                        }
+                            && (entity.getMovementMode() == EntityMovementMode.HOVER)
+                            && nextHex.containsTerrain(Terrains.WATER)) {
+                        nextAltitude = nextHex.surface();
                     } else {
                         if (nextHex.containsTerrain(Terrains.ICE)) {
                             nextAltitude = nextHex.surface();
@@ -5277,18 +5278,10 @@ public class Server implements Runnable {
             }
 
             // however WIGE can gain 1 level to avoid crashing into the terrain
-            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                if ((nextElevation == 0)
-                    && !(nextHex.containsTerrain(Terrains.WOODS) || nextHex
-                        .containsTerrain(Terrains.JUNGLE))) {
-                    nextElevation = 1;
-                    crashedIntoTerrain = false;
-                } else if ((nextElevation == 1)
-                           && (nextHex.containsTerrain(Terrains.WOODS) || nextHex
-                        .containsTerrain(Terrains.JUNGLE))) {
-                    nextElevation = 2;
-                    crashedIntoTerrain = false;
-                }
+            if (entity.getMovementMode() == EntityMovementMode.WIGE
+                    && nextElevation == 0 && elevation > 0) {
+                nextElevation = 1;
+                crashedIntoTerrain = false;
             }
 
             Entity crashDropship = null;
@@ -5457,21 +5450,16 @@ public class Server implements Runnable {
 
             // Have skidding units suffer falls (off a cliff).
             else if (curAltitude > (nextAltitude + entity
-                    .getMaxElevationChange())) {
-                // WIGE can avoid this too, if they have 2MP to spend
-                if ((entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && ((entity.getRunMP() - 2) >= entity.mpUsed)) {
-                    entity.mpUsed += 2;
-                    nextAltitude = curAltitude;
-                } else {
-                    addReport(doEntityFallsInto(entity, entity.getElevation(),
-                            curPos, nextPos,
-                            entity.getBasePilotingRoll(moveType), true));
-                    addReport(doEntityDisplacementMinefieldCheck(entity,
-                            curPos, nextPos, nextElevation));
-                    // Stay in the current hex and stop skidding.
-                    break;
-                }
+                    .getMaxElevationChange())
+                    && !(entity.getMovementMode() == EntityMovementMode.WIGE
+                            && elevation > curHex.ceiling())) {
+                addReport(doEntityFallsInto(entity, entity.getElevation(),
+                        curPos, nextPos,
+                        entity.getBasePilotingRoll(moveType), true));
+                addReport(doEntityDisplacementMinefieldCheck(entity,
+                        curPos, nextPos, nextElevation));
+                // Stay in the current hex and stop skidding.
+                break;
             }
 
             // Get any building in the hex.

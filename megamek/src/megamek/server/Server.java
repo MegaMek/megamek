@@ -38,6 +38,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -5196,6 +5197,10 @@ public class Server implements Runnable {
             // but VTOL keep altitude
             if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                 nextAltitude = Math.max(nextAltitude, curAltitude);
+            } else if (entity.getMovementMode() == EntityMovementMode.WIGE
+                    && elevation > 0 && nextAltitude < curAltitude) {
+                // Airborne WiGEs drop to one level above the surface
+                nextAltitude++;
             } else {
                 // Is there a building to "catch" the unit?
                 if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -5236,12 +5241,9 @@ public class Server implements Runnable {
                     // Hovercraft can "skid" over water.
                     // all units can skid over ice.
                     if ((entity instanceof Tank)
-                        && ((entity.getMovementMode() == EntityMovementMode.HOVER) || (entity
-                                                                                               .getMovementMode() ==
-                                                                                       EntityMovementMode.WIGE))) {
-                        if (nextHex.containsTerrain(Terrains.WATER)) {
-                            nextAltitude = nextHex.surface();
-                        }
+                            && (entity.getMovementMode() == EntityMovementMode.HOVER)
+                            && nextHex.containsTerrain(Terrains.WATER)) {
+                        nextAltitude = nextHex.surface();
                     } else {
                         if (nextHex.containsTerrain(Terrains.ICE)) {
                             nextAltitude = nextHex.surface();
@@ -5276,18 +5278,10 @@ public class Server implements Runnable {
             }
 
             // however WIGE can gain 1 level to avoid crashing into the terrain
-            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                if ((nextElevation == 0)
-                    && !(nextHex.containsTerrain(Terrains.WOODS) || nextHex
-                        .containsTerrain(Terrains.JUNGLE))) {
-                    nextElevation = 1;
-                    crashedIntoTerrain = false;
-                } else if ((nextElevation == 1)
-                           && (nextHex.containsTerrain(Terrains.WOODS) || nextHex
-                        .containsTerrain(Terrains.JUNGLE))) {
-                    nextElevation = 2;
-                    crashedIntoTerrain = false;
-                }
+            if (entity.getMovementMode() == EntityMovementMode.WIGE
+                    && nextElevation == 0 && elevation > 0) {
+                nextElevation = 1;
+                crashedIntoTerrain = false;
             }
 
             Entity crashDropship = null;
@@ -5456,21 +5450,16 @@ public class Server implements Runnable {
 
             // Have skidding units suffer falls (off a cliff).
             else if (curAltitude > (nextAltitude + entity
-                    .getMaxElevationChange())) {
-                // WIGE can avoid this too, if they have 2MP to spend
-                if ((entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && ((entity.getRunMP() - 2) >= entity.mpUsed)) {
-                    entity.mpUsed += 2;
-                    nextAltitude = curAltitude;
-                } else {
-                    addReport(doEntityFallsInto(entity, entity.getElevation(),
-                            curPos, nextPos,
-                            entity.getBasePilotingRoll(moveType), true));
-                    addReport(doEntityDisplacementMinefieldCheck(entity,
-                            curPos, nextPos, nextElevation));
-                    // Stay in the current hex and stop skidding.
-                    break;
-                }
+                    .getMaxElevationChange())
+                    && !(entity.getMovementMode() == EntityMovementMode.WIGE
+                            && elevation > curHex.ceiling())) {
+                addReport(doEntityFallsInto(entity, entity.getElevation(),
+                        curPos, nextPos,
+                        entity.getBasePilotingRoll(moveType), true));
+                addReport(doEntityDisplacementMinefieldCheck(entity,
+                        curPos, nextPos, nextElevation));
+                // Stay in the current hex and stop skidding.
+                break;
             }
 
             // Get any building in the hex.
@@ -6130,11 +6119,12 @@ public class Server implements Runnable {
                 skidDistance = Math.min(marginOfFailure, distance);
             }
             if (skidDistance > 0) {
-                int skidDirection = prevStep.getFacing();
+                int skidDirection = prevStep == null?entity.getFacing() : prevStep.getFacing();
                 if (isBackwards) {
                     skidDirection = (skidDirection + 3) % 6;
                 }
-                processSkid(entity, curPos, prevStep.getElevation(),
+                processSkid(entity, curPos,
+                        prevStep == null? entity.getElevation() : prevStep.getElevation(),
                         skidDirection, skidDistance,
                         prevStep, lastStepMoveType, flip);
             }
@@ -6880,7 +6870,6 @@ public class Server implements Runnable {
         boolean crashedDuringMovement = false;
         boolean dropshipStillUnloading = false;
         boolean turnOver;
-        boolean wigeStartedLanded = false;
         int prevFacing = curFacing;
         IHex prevHex = game.getBoard().getHex(curPos);
         final boolean isInfantry = entity instanceof Infantry;
@@ -6896,6 +6885,7 @@ public class Server implements Runnable {
         Entity loader = null;
         boolean continueTurnFromPBS = false;
         boolean continueTurnFromFishtail = false;
+        boolean continueTurnFromLevelDrop = false;
 
         // get a list of coordinates that the unit passed through this turn
         // so that I can later recover potential bombing targets
@@ -7057,10 +7047,9 @@ public class Server implements Runnable {
                 break;
             }
 
-            if (firstStep
-                    && (entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && (entity.getElevation() == 0)) {
-                wigeStartedLanded = true;
+            if (entity.getMovementMode() == EntityMovementMode.WIGE
+                    && step.getType() == MoveStepType.UP) {
+                entity.setWigeLiftedOff(true);
             }
 
             // check for MASC failure on first step
@@ -8227,7 +8216,7 @@ public class Server implements Runnable {
                             lastPos, curPos, rollTarget, false)) {
                         // assume VTOLs in flight are always in clear terrain
                         if ((0 == curHex.terrainsPresent())
-                                || (step.getElevation() > 0)) {
+                                || (step.getClearance() > 0)) {
                             if (entity instanceof VTOL) {
                                 r = new Report(2208);
                             } else {
@@ -8846,19 +8835,37 @@ public class Server implements Runnable {
 
                 // TODO: what if a building collapses into rubble?
             }
-
-            if ((isOnGround || ((((stepMoveType != EntityMovementType.MOVE_JUMP)
-                    && (curElevation <= curHex
-                            .terrainLevel(Terrains.BLDG_ELEV)))
-                    || (curElevation == curHex
-                            .terrainLevel(Terrains.BRIDGE_ELEV)))
-                    && curHex.containsTerrain(Terrains.BLDG_ELEV)))) {
+            
+            if (isOnGround
+                    || (curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))
+                    || (curHex.containsTerrain(Terrains.BLDG_ELEV)
+                            && (curElevation <= curHex.terrainLevel(Terrains.BLDG_ELEV)
+                                    || (entity.getMovementMode() == EntityMovementMode.WIGE
+                                            && curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV) + 1)))) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
                 if ((bldg != null) && (entity.getElevation() >= 0)) {
-                    addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg,
-                            entity, curPos));
+                    boolean wigeFlyingOver = entity.getMovementMode() == EntityMovementMode.WIGE
+                            && curHex.containsTerrain(Terrains.BLDG_ELEV)
+                            && curElevation > curHex.terrainLevel(Terrains.BLDG_ELEV);
+                    boolean collapse = checkBuildingCollapseWhileMoving(bldg,
+                            entity, curPos);
+                    addAffectedBldg(bldg, collapse);
+                    // If the building is collapsed by a WiGE flying over it, the WiGE drops one level of elevation.
+                    // This could invalidate the remainder of the movement path, so we will send it back to the client.
+                    if (collapse && wigeFlyingOver) {
+                        curElevation--;
+                        r = new Report(2378);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        addReport(r);
+                        continueTurnFromLevelDrop = true;
+                        entity.setPosition(curPos);
+                        entity.setFacing(curFacing);
+                        entity.setSecondaryFacing(curFacing);
+                        entity.setElevation(curElevation);
+                        break;
+                    }
                 }
-
             }
 
             // did the entity just fall?
@@ -9509,7 +9516,7 @@ public class Server implements Runnable {
                 && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
                 && !turnOver && (entity.mpUsed < entity.getRunMP())
                 && (overallMoveType != EntityMovementType.MOVE_JUMP);
-        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail)
+        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail || continueTurnFromLevelDrop)
                 && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
@@ -9527,23 +9534,36 @@ public class Server implements Runnable {
         } else {
             if ((entity.getMovementMode() == EntityMovementMode.WIGE)
                     && (entity.getElevation() > 0)) {
-                if (!wigeStartedLanded && (entity.delta_distance < 5)) {
+                IHex hex = game.getBoard().getHex(curPos);
+                if (hex.containsTerrain(Terrains.BLDG_ELEV)
+                        && entity.getElevation() == hex.terrainLevel(Terrains.BLDG_ELEV)) {
+                    // On the roof of a building, treated as if on the ground.
+                } else if (!entity.wigeLiftedOff() && (entity.delta_distance < 5)) {
                     // try to land safely
                     r = new Report(2123);
                     r.addDesc(entity);
                     r.subject = entity.getId();
                     vPhaseReport.add(r);
                     // when no clear or pavement, crash
-                    IHex hex = game.getBoard().getHex(curPos);
-                    if (!hex.hasPavement() && (hex.terrainsPresent() > 0)) {
+                    if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                        Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
+                        entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
+                        addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg,
+                                entity, entity.getPosition()));
+                    } else if (hex.hasPavement()
+                            // All WiGE vehicles are considered to have a flotation hull. This errata
+                            // changes the TW rule that WiGEs cannot land on water.
+                            // http://bg.battletech.com/forums/index.php?topic=46241.msg1065439#msg1065439
+                            || (entity instanceof Tank && hex.containsTerrain(Terrains.WATER))
+                            || hex.isClearHex()) {
+                        entity.setElevation(0);                                
+                    } else {
                         // crash
                         r = new Report(2124);
                         r.addDesc(entity);
                         r.subject = entity.getId();
                         vPhaseReport.add(r);
                         vPhaseReport.addAll(crashVTOLorWiGE((Tank) entity));
-                    } else {
-                        entity.setElevation(0);
                     }
                 } else {
                     // we didn't land, so we go to elevation 1 above the terrain
@@ -9551,7 +9571,6 @@ public class Server implements Runnable {
                     // it might have been higher than one due to the extra MPs
                     // it can spend to stay higher during movement, but should
                     // end up at one
-                    IHex hex = game.getBoard().getHex(curPos);
                     entity.setElevation(1 + hex.maxTerrainFeatureElevation(
                             game.getBoard().inAtmosphere()));
                 }
@@ -13095,6 +13114,10 @@ public class Server implements Runnable {
         // more systematically with
         // up/down buttons in the deployment display
         entity.setElevation(entity.getElevation() + elevation);
+        boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE
+                && hex.containsTerrain(Terrains.BLDG_ELEV)
+                && entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
+
 
         // when first entering a building, we need to roll what type
         // of basement it has
@@ -13111,6 +13134,10 @@ public class Server implements Runnable {
                                                                 entity.getPosition());
             if (collapse) {
                 addAffectedBldg(bldg, collapse);
+                if (wigeFlyover) {
+                // If the building is collapsed by a WiGE flying over it, the WiGE drops one level of elevation.
+                    entity.setElevation(entity.getElevation() - 1);
+                }
             }
         }
 
@@ -26028,11 +26055,7 @@ public class Server implements Runnable {
 
         if (!sideSlipCrash) {
             // report lost movement and crashing
-            if (en.getCrew().isDoomed()) {
-                r = new Report(6260);
-            } else {
-                r = new Report(6260);
-            }
+            r = new Report(6260);
             r.subject = en.getId();
             r.newlines = 0;
             r.addDesc(en);
@@ -31538,6 +31561,8 @@ public class Server implements Runnable {
         boolean collapse = false;
 
         boolean basementCollapse = false;
+        
+        boolean topFloorCollapse = false;
 
         if (checkBecauseOfDamage && (currentCF <= 0)) {
             collapse = true;
@@ -31571,6 +31596,9 @@ public class Server implements Runnable {
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
             double[] loads = new double[numLoads + 1];
+            // WiGEs flying over the building are also tracked, but can only collapse the top floor
+            // and only count 25% of their tonnage.
+            double wigeLoad = 0;
             // track all units that might fall into the basement
             Vector<Entity> basement = new Vector<Entity>();
 
@@ -31578,17 +31606,18 @@ public class Server implements Runnable {
             for (int i = 0; (i < 2) && recheckLoop; i++) {
 
                 recheckLoop = false;
-                for (int loop = 0; loop < numLoads; loop++) {
-                    loads[loop] = 0;
-                }
+                Arrays.fill(loads, 0);
 
                 // Walk through the entities in this position.
                 Enumeration<Entity> entities = vector.elements();
                 while (!collapse && entities.hasMoreElements()) {
                     final Entity entity = entities.nextElement();
+                    // WiGEs can collapse the top floor of a building by flying over it.
                     final int entityElev = entity.getElevation();
+                    final boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE
+                            && entityElev == numFloors + 1;
 
-                    if (entityElev != bridgeEl) {
+                    if (entityElev != bridgeEl && !wigeFlyover) {
                         // Ignore entities not *inside* the building
                         if (entityElev > numFloors) {
                             continue;
@@ -31619,15 +31648,28 @@ public class Server implements Runnable {
                     if (floor == bridgeEl) {
                         floor = numLoads;
                     }
+                    // Entities on the roof fall to the previous top floor/new roof
+                    if (topFloorCollapse && floor == numFloors) {
+                        floor--;
+                    }
 
-                    loads[floor] += load;
-                    if (loads[floor] > currentCF) {
-                        // If the load on any floor but the ground floor
-                        // exceeds the building's current CF it collapses.
-                        if (floor != 0) {
-                            collapse = true;
-                        } else if (!bldg.getBasementCollapsed(coords)) {
-                            basementCollapse = true;
+                    if (wigeFlyover) {
+                        wigeLoad += load;
+                        if (wigeLoad > currentCF * 4) {
+                            topFloorCollapse = true;
+                            loads[numFloors - 1] += loads[numFloors];
+                            loads[numFloors] = 0;
+                        }
+                    } else {
+                        loads[floor] += load;
+                        if (loads[floor] > currentCF) {
+                            // If the load on any floor but the ground floor
+                            // exceeds the building's current CF it collapses.
+                            if (floor != 0) {
+                                collapse = true;
+                            } else if (!bldg.getBasementCollapsed(coords)) {
+                                basementCollapse = true;
+                            }
                         }
                     }
                     // End increase-load
@@ -31658,7 +31700,7 @@ public class Server implements Runnable {
                 recheckLoop = false; // don't check again, we didn't change the
                 // CF
             }
-            if (collapse == true) {
+            if (collapse) {
                 recheckLoop = false;
                 // recheck if the basement collapsed since the basement falls
                 // might trigger a greater collapse.
@@ -31670,18 +31712,30 @@ public class Server implements Runnable {
             r.add(bldg.getName());
             vPhaseReport.add(r);
 
-            collapseBuilding(bldg, positionMap, coords, vPhaseReport);
+            collapseBuilding(bldg, positionMap, coords, false, vPhaseReport);
+        } else if (topFloorCollapse) {
+                Report r = new Report(2376, Report.PUBLIC);
+                r.add(bldg.getName());
+                vPhaseReport.add(r);
+
+                collapseBuilding(bldg, positionMap, coords, false, true, vPhaseReport);
         }
 
         // Return true if the building collapsed.
-        return collapse;
+        return collapse || topFloorCollapse;
 
     } // End private boolean checkForCollapse( Building, Hashtable )
 
     public void collapseBuilding(Building bldg,
             Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
             Vector<Report> vPhaseReport) {
-        collapseBuilding(bldg, positionMap, coords, true, vPhaseReport);
+        collapseBuilding(bldg, positionMap, coords, true, false, vPhaseReport);
+    }
+
+    public void collapseBuilding(Building bldg,
+            Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
+            boolean collapseAll, Vector<Report> vPhaseReport) {
+        collapseBuilding(bldg, positionMap, coords, collapseAll, false, vPhaseReport);
     }
 
     /**
@@ -31808,10 +31862,14 @@ public class Server implements Runnable {
      *            - A <code>boolean</code> indicating wether or not this
      *            collapse of a hex should be able to collapse the whole
      *            building
+     * @param topFloor
+     *            - A <code>boolean</code> indicating that only the top floor collapses
+     *              (from a WiGE flying over the top).            
+     *            
      */
     public void collapseBuilding(Building bldg,
             Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-            boolean collapseAll, Vector<Report> vPhaseReport) {
+            boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
         if (!bldg.hasCFIn(coords)) {
             return;
         }
@@ -31833,10 +31891,16 @@ public class Server implements Runnable {
 
             // Now collapse the building in this hex, so entities fall to
             // the ground
-            bldg.setCurrentCF(0, coords);
-            bldg.setPhaseCF(0, coords);
-            send(createCollapseBuildingPacket(coords));
-            game.getBoard().collapseBuilding(coords);
+            if (topFloor && numFloors > 1) {
+                curHex.removeTerrain(Terrains.BLDG_ELEV);
+                curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.BLDG_ELEV, numFloors - 1));
+                sendChangedHex(coords);
+            } else {
+                bldg.setCurrentCF(0, coords);
+                bldg.setPhaseCF(0, coords);
+                send(createCollapseBuildingPacket(coords));
+                game.getBoard().collapseBuilding(coords);
+            }
 
             // Sort in elevation order
             Collections.sort(vector, new Comparator<Entity>() {
@@ -31862,6 +31926,11 @@ public class Server implements Runnable {
                 }
 
                 int floor = entity.getElevation();
+                // If only the top floor collapses, we only care about units on the top level
+                // or on the roof.
+                if (topFloor && floor < numFloors - 1) {
+                    continue;
+                }
                 // units trapped in a basement under a collapsing building are
                 // destroyed
                 if (floor < 0) {

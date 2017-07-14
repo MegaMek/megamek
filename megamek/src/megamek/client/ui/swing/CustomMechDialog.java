@@ -193,6 +193,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             Messages.getString("CustomMechDialog.labStartHeight"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JTextField fldStartHeight = new JTextField(3);
+    
+    private JCheckBox chDeployAirborne = new JCheckBox();
 
     private JPanel panButtons = new JPanel();
 
@@ -264,6 +266,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isAero = true;
         boolean isMech = true;
         boolean isVTOL = true;
+        boolean isWiGE = true;
         boolean isQuadVee = true;
         boolean isLAM = true;
         boolean eligibleForOffBoard = true;
@@ -272,6 +275,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             isAero &= e instanceof Aero;
             isMech &= e instanceof Mech;
             isVTOL &= e instanceof VTOL;
+            isWiGE &= e instanceof Tank && e.getMovementMode() == EntityMovementMode.WIGE;
             isQuadVee &= e instanceof QuadVee;
             isLAM &= e instanceof LandAirMech;
             boolean entityEligibleForOffBoard = false;
@@ -403,6 +407,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panDeploy.add(labStartHeight, GBC.std());
             panDeploy.add(fldStartHeight, GBC.eol());
         }
+        if (isWiGE) {
+            panDeploy.add(new JLabel(Messages.getString(
+                    "CustomMechDialog.labDeployAirborne"), SwingConstants.RIGHT), GBC.std()); //$NON-NLS-1$
+            panDeploy.add(chDeployAirborne, GBC.eol());
+        }
 
         choDeploymentRound.addItemListener(this);
 
@@ -486,6 +495,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldStartHeight.setText(new Integer(v.getElevation()).toString());
             fldStartHeight.addActionListener(this);
         }
+        if (isWiGE) {
+            chDeployAirborne.setSelected(entity.getElevation() > 0);
+        }
 
         if (!editable) {
             fldFatigue.setEnabled(false);
@@ -504,6 +516,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldStartVelocity.setEnabled(false);
             fldStartAltitude.setEnabled(false);
             fldStartHeight.setEnabled(false);
+            chDeployAirborne.setEnabled(false);
             m_equip.initialize();
         }
 
@@ -913,11 +926,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         String msg, title;
         boolean isAero = true;
         boolean isVTOL = true;
+        boolean isWiGE = true;
         boolean isQuadVee = true;
         boolean isLAM = true;
         for (Entity e : entities) {
             isAero &= e instanceof Aero;
             isVTOL &= e instanceof VTOL;
+            isWiGE &= e instanceof Tank && e.getMovementMode() == EntityMovementMode.WIGE;
             isQuadVee &= e instanceof QuadVee;
             isLAM &= e instanceof LandAirMech;
         }
@@ -940,7 +955,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
             if (isVTOL) {
                 height = Integer.parseInt(fldStartHeight.getText());
-            }            
+            }
+            if (isWiGE) {
+                height = chDeployAirborne.isSelected()? 1 : 0;
+            }
         } catch (NumberFormatException e) {
             msg = Messages.getString("CustomMechDialog.EnterValidSkills"); //$NON-NLS-1$
             title = Messages.getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
@@ -1180,10 +1198,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 }
             }
 
-            if (isVTOL) {
-                VTOL v = (VTOL) entity;
-                v.setElevation(height);
+            if (isVTOL || isWiGE) {
+                entity.setElevation(height);
             }
+            
             //Set the entity's starting mode
             if (isQuadVee) {
                 if (choStartingMode.getSelectedIndex() == 1) {

@@ -312,6 +312,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * a PSR is required, it adds a +1 modifier to the PSR.
      */
     private boolean isPowerReverse = false;
+    private boolean wigeLiftedOff = false;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
     public int wigeBonus = 0;
@@ -1558,17 +1559,46 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (this instanceof Aero) {
             return retVal;
         }
-        if ((getMovementMode() == EntityMovementMode.SUBMARINE)
+        if (getMovementMode() == EntityMovementMode.WIGE) {
+            // Airborne WiGEs remain 1 elevation above underlying terrain, unless climb mode is
+            // on, then they maintain current absolute elevation  as long as it is at least
+            // one level above the ground.
+            // WiGEs treat the tops of buildings as the underlying terrain, but must pay an additional
+            // 2 MP to climb.
+            // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
+            
+            // Find level equivalent of current elevation
+            int level = current.surface() + assumedElevation;
+            // For WiGE purposes, the surface of a hex with a building is the roof; otherwise it's the surface of the hex.
+            int curSurface = current.surface();
+            if (current.containsTerrain(Terrains.BLDG_ELEV)) {
+                curSurface += current.terrainLevel(Terrains.BLDG_ELEV);
+            }
+            int nextSurface = next.surface();
+            if (next.containsTerrain(Terrains.BLDG_ELEV)) {
+                nextSurface += next.terrainLevel(Terrains.BLDG_ELEV);
+            }
+            
+            int nextLevel;
+            if (level - curSurface <= 0) {
+                // If we are not above the effective surface, we are not airborne and the next level
+                // is the effective surface of the next hex.
+                nextLevel = nextSurface;
+            } else if (climb) {
+                // If climb mode is on, we maintain the same level unless the next surface requires climbing.
+                // is the effective surface of the next hex.
+                nextLevel = Math.max(level, nextSurface + 1);
+            } else {
+                // Otherwise we move to one elevation level above the effective surface.
+                nextLevel = nextSurface + 1;
+            }
+            // Elevation is this height of the level above the actual surface elevation of the hex.
+            retVal = nextLevel - next.surface();
+        } else if ((getMovementMode() == EntityMovementMode.SUBMARINE)
             || ((getMovementMode() == EntityMovementMode.INF_UMU)
                 && next.containsTerrain(Terrains.WATER) && current
                 .containsTerrain(Terrains.WATER))
             || (getMovementMode() == EntityMovementMode.VTOL)
-            // a WIGE in climb mode or that ended climb mode in the previous
-            // hex stays at the same flight level, like a VTOL
-            // (unless the next hex is a higher elevation
-            || ((getMovementMode() == EntityMovementMode.WIGE)
-                && (climb || wigeEndClimbPrevious) && (assumedElevation > 0)
-                && (next.surface() < current.surface()))
             || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
             || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
             retVal += current.surface();
@@ -1604,19 +1634,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             
-            // Airborne WiGEs remain 1 elevation above underlying terrain
-            if ((getMovementMode() == EntityMovementMode.WIGE) 
-                    && (assumedElevation > 0)) {
-                if ((next.ceiling() - assumedElevation) 
-                        <= getMaxElevationChange()) {
-                    retVal = 1 + next.maxTerrainFeatureElevation(game
-                            .getBoard().inAtmosphere());
-                }
-            }
-
-            if ((next.containsTerrain(Terrains.BUILDING)
-                || current.containsTerrain(Terrains.BUILDING))
-                && (getMovementMode() != EntityMovementMode.WIGE)) {
+            if (next.containsTerrain(Terrains.BUILDING)
+                || current.containsTerrain(Terrains.BUILDING)) {
                 int bldcur = Math.max(-current.depth(true),
                                       current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(-next.depth(true),
@@ -1746,8 +1765,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                     .getDepth());
                 break;
-            case VTOL:
             case WIGE:
+                // Per errata, WiGEs have flotation hull, which makes no sense unless it changes the rule
+                // in TW that they cannot land on water.
+                // See 
+                if (hex.containsTerrain(Terrains.WATER)) {
+                    minAlt = hex.surface();
+                    break;
+                }
+                // else fall through
+            case VTOL:
                 minAlt = hex.ceiling();
                 if (inWaterOrWoods) {
                     minAlt++; // can't land here
@@ -1839,7 +1866,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 maxAlt = hex.surface() - (getHeight() + 1);
                 break;
             case WIGE:
-                maxAlt = hex.surface() + 1;
+                if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    maxAlt = Math.max(hex.surface(), hex.terrainLevel(Terrains.BLDG_ELEV)) + 1;
+                } else {
+                    maxAlt = hex.surface() + 1;
+                }
                 break;
             case BIPED:
             case QUAD:
@@ -5540,6 +5571,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         moved = EntityMovementType.MOVE_NONE;
         movedBackwards = false;
         isPowerReverse = false;
+        wigeLiftedOff = false;
         gotPavementBonus = false;
         wigeBonus = 0;
         hitThisRoundByAntiTSM = false;
@@ -6098,7 +6130,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean entityIsQuad() {
         return (getMovementMode() == EntityMovementMode.QUAD);
     }
-    
+
     /**
      * Returns true is the entity needs a roll to stand up
      */
@@ -6400,9 +6432,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public PilotingRollData checkGunningIt (EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-        
-        if (this instanceof Tank
-                || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())) {
+
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION)
+                && (this instanceof Tank
+                        || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode()))) {
             if (((overallMoveType == EntityMovementType.MOVE_SPRINT
                     || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
                     && (movedLastRound == EntityMovementType.MOVE_WALK
@@ -6420,7 +6453,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 "Check false: Entity is not gunning it");            
         return roll;
     }
-    
+
     /**
      * Checks if an entity is passing through certain terrain while not moving
      * carefully
@@ -13000,6 +13033,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setPowerReverse(boolean isPowerReverse) {
         this.isPowerReverse = isPowerReverse;
+    }
+    
+    /**
+     * Tracks whether a WiGE lifted off this turn (or a LAM hovered). Needed to track state
+     * in case movement is continued from an interruption, so that the unit does not have a minimum
+     * movement for the turn.
+     * 
+     * @return whether a WiGE lifted off during this turn's movement
+     */
+    public boolean wigeLiftedOff() {
+        return wigeLiftedOff;
+    }
+    
+    public void setWigeLiftedOff(boolean lifted) {
+        wigeLiftedOff = lifted;
     }
 
     public void setHardenedArmorDamaged(HitData hit, boolean damaged) {

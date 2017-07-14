@@ -366,9 +366,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         int elevation = en.getElevation();
         // If elevation was set in lounge, try to preserve it
         // Server.processDeployment will adjust elevation, so we want to account for this
+        IHex hex = clientgui.getClient().getGame().getBoard().getHex(en.getPosition());
         if ((en instanceof VTOL) && (elevation >= 1)) {
-            IHex hex = clientgui.getClient().getGame().getBoard().getHex(en.getPosition());
             elevation = Math.max(0, elevation - (hex.ceiling() - hex.surface() + 1));
+        }
+        // Deploy grounded WiGEs on the roof of a building, and airborne at least one elevation above the roof.
+        if (en.getMovementMode() == EntityMovementMode.WIGE
+                && hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            int minElev = hex.terrainLevel(Terrains.BLDG_ELEV);
+            if (elevation > 0) {
+                minElev++;
+            }
+            elevation = Math.max(elevation, minElev);
         }
         clientgui.getClient().deploy(cen, en.getPosition(), en.getFacing(),
                 elevation, en.getLoadedUnits(), assaultDropPreference);
@@ -495,6 +504,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final Building bldg = board.getBuildingAt(moveto);
         boolean isAero = ce() instanceof Aero;
         boolean isVTOL = ce() instanceof VTOL;
+        boolean isWiGE = ce().getMovementMode().equals(EntityMovementMode.WIGE);
         boolean isTankOnPavement = (ce() instanceof Tank)
                 && (deployhex.containsTerrain(Terrains.PAVEMENT)
                         || deployhex.containsTerrain(Terrains.ROAD)
@@ -541,7 +551,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } else {
             // check for buildings and if found ask what level they want to
             // deploy at
-            if ((null != bldg) && !isAero && !isVTOL) {
+            if ((null != bldg) && !isAero && !isVTOL && !isWiGE) {
                 if (deployhex.containsTerrain(Terrains.BLDG_ELEV)) {
                     boolean success = processBuildingDeploy(moveto);
                     if (!success) {
@@ -553,7 +563,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         return;
                     }
                 }
-            } else if (!isAero) {
+            } else if (!isAero && !isWiGE) {
                 // hovers and naval units go on the surface
                 if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
                         || (ce().getMovementMode() == EntityMovementMode.SUBMARINE)
@@ -594,6 +604,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final IGame game = clientgui.getClient().getGame();
 
         int height = board.getHex(moveto).terrainLevel(Terrains.BLDG_ELEV);
+        if (ce().getMovementMode() == EntityMovementMode.WIGE) {
+            
+        }
         ArrayList<String> floorNames = new ArrayList<>(height + 1);
         ArrayList<Integer> floorValues = new ArrayList<>(height + 1);
 

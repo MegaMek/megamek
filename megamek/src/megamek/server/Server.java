@@ -5928,9 +5928,12 @@ public class Server implements Runnable {
             target = Compute.stackingViolation(game, entity.getId(), curPos);
         }
 
-        // Mechs suffer damage for every hex skidded. For QuadVees in vehicle mode, apply
+        // Mechs suffer damage for every hex skidded.
+        // For QuadVees in vehicle mode, apply
         // damage only if flipping.
-        boolean mechDamage = entity instanceof Mech;
+        boolean mechDamage = entity instanceof Mech
+                && !(entity.getMovementMode() == EntityMovementMode.WIGE
+                    && step.getClearance() > 0);
         if (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
             mechDamage = flip;
         }

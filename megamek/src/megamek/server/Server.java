@@ -9558,7 +9558,12 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     vPhaseReport.add(r);
                     // when no clear or pavement, crash
-                    if (!hex.hasPavement() && (hex.terrainsPresent() > 0)) {
+                    Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
+                    if (bldg != null) {
+                        entity.setElevation(hex.ceiling());
+                        addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg,
+                                entity, entity.getPosition()));
+                    } else if (!hex.hasPavement() && (hex.terrainsPresent() > 0)) {
                         // crash
                         r = new Report(2124);
                         r.addDesc(entity);

@@ -3331,7 +3331,8 @@ public class MoveStep implements Serializable {
                 if (elevation == destHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
                     return false;
                 }
-            } else if (elevation <= (destHex.ceiling() - destHex.surface())) {
+            } else if (elevation <= (destHex.ceiling() - destHex.surface())
+                    && !(entity.getMovementMode() == EntityMovementMode.WIGE && isPavementStep())) {
                 // System.err.println("can't fly into woods or a cliff face");
                 return false; // can't fly into woods or a cliff face
             }

@@ -362,11 +362,10 @@ public class LandAirMech extends BipedMech {
             // Cannot enter woods or a building hex in AirMech mode unless using ground movement
             // or flying over the terrain.
             IHex hex = game.getBoard().getHex(c);
-            return (hex.containsTerrain(Terrains.WOODS) || (hex
-                    .containsTerrain(Terrains.BUILDING)))
-                    && !(currElevation > hex
-                            .maxTerrainFeatureElevation(game.getBoard()
-                                    .inAtmosphere()));
+            return (hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || hex.containsTerrain(Terrains.BLDG_ELEV))
+                    && hex.ceiling() > currElevation;
         } else {
             // Mech mode or AirMech mode using ground MP have the same restrictions as Biped Mech.
             return super.isLocationProhibited(c, currElevation);

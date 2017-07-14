@@ -9563,15 +9563,19 @@ public class Server implements Runnable {
                         entity.setElevation(hex.ceiling());
                         addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg,
                                 entity, entity.getPosition()));
-                    } else if (!hex.hasPavement() && (hex.terrainsPresent() > 0)) {
+                    } else if (hex.hasPavement()
+                            // All WiGE vehicles are considered to have a flotation hull.
+                            // http://bg.battletech.com/forums/index.php?topic=46241.msg1065439#msg1065439
+                            || (entity instanceof Tank && hex.containsTerrain(Terrains.WATER))
+                            || hex.terrainsPresent() <= 0) {
+                        entity.setElevation(0);                                
+                    } else {
                         // crash
                         r = new Report(2124);
                         r.addDesc(entity);
                         r.subject = entity.getId();
                         vPhaseReport.add(r);
                         vPhaseReport.addAll(crashVTOLorWiGE((Tank) entity));
-                    } else {
-                        entity.setElevation(0);
                     }
                 } else {
                     // we didn't land, so we go to elevation 1 above the terrain

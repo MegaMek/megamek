@@ -9564,10 +9564,11 @@ public class Server implements Runnable {
                         addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg,
                                 entity, entity.getPosition()));
                     } else if (hex.hasPavement()
-                            // All WiGE vehicles are considered to have a flotation hull.
+                            // All WiGE vehicles are considered to have a flotation hull. This errata
+                            // changes the TW rule that WiGEs cannot land on water.
                             // http://bg.battletech.com/forums/index.php?topic=46241.msg1065439#msg1065439
                             || (entity instanceof Tank && hex.containsTerrain(Terrains.WATER))
-                            || hex.terrainsPresent() <= 0) {
+                            || hex.isClearHex()) {
                         entity.setElevation(0);                                
                     } else {
                         // crash

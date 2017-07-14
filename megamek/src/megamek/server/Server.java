@@ -31604,7 +31604,8 @@ public class Server implements Runnable {
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
             double[] loads = new double[numLoads + 1];
-            // WiGEs flying over the building are also tracked, but can only collapse the top floor.
+            // WiGEs flying over the building are also tracked, but can only collapse the top floor
+            // and only count 25% of their tonnage.
             double wigeLoad = 0;
             // track all units that might fall into the basement
             Vector<Entity> basement = new Vector<Entity>();
@@ -31662,7 +31663,7 @@ public class Server implements Runnable {
 
                     if (wigeFlyover) {
                         wigeLoad += load;
-                        if (wigeLoad > currentCF) {
+                        if (wigeLoad > currentCF * 4) {
                             topFloorCollapse = true;
                             loads[numFloors - 1] += loads[numFloors];
                             loads[numFloors] = 0;

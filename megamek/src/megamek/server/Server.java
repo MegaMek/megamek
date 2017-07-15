@@ -5112,11 +5112,32 @@ public class Server implements Runnable {
     private boolean processSkid(Entity entity, Coords start, int elevation,
             int direction, int distance, MoveStep step,
             EntityMovementType moveType) {
+        return processSkid(entity, start, elevation, direction, distance,
+                step, moveType, false);
+    }
+    
+    /**
+     * makes a unit skid or sideslip on the board
+     *
+     * @param entity    the unit which should skid
+     * @param start     the coordinates of the hex the unit was in prior to skidding
+     * @param elevation the elevation of the unit
+     * @param direction the direction of the skid
+     * @param distance  the number of hexes skidded
+     * @param step      the MoveStep which caused the skid
+     * @param flip      whether the skid resulted from a failure maneuver result of major skid
+     * @return true if the entity was removed from play
+     */
+    private boolean processSkid(Entity entity, Coords start, int elevation,
+            int direction, int distance, MoveStep step,
+            EntityMovementType moveType, boolean flip) {
         Coords nextPos = start;
         Coords curPos = nextPos;
         IHex curHex = game.getBoard().getHex(start);
         Report r;
         int skidDistance = 0; // actual distance moved
+        // Flipping vehicles take tonnage/10 points of damage for every hex they enter.
+        int flipDamage = (int)Math.ceil(entity.getWeight() / 10.0);
         while (!entity.isDoomed() && (distance > 0)) {
             nextPos = curPos.translated(direction);
             // Is the next hex off the board?
@@ -5880,6 +5901,10 @@ public class Server implements Runnable {
             r.indent();
             r.add(curPos.getBoardNum(), true);
             addReport(r);
+            
+            if (flip && entity instanceof Tank) {
+                doVehicleFlipDamage((Tank)entity, flipDamage, direction < 3, skidDistance - 1);
+            }
 
         } // Handle the next skid hex.
 
@@ -5914,8 +5939,13 @@ public class Server implements Runnable {
             target = Compute.stackingViolation(game, entity.getId(), curPos);
         }
 
-        // Mechs suffer damage for every hex skidded.
-        if (entity instanceof Mech) {
+        // Mechs suffer damage for every hex skidded. For QuadVees in vehicle mode, apply
+        // damage only if flipping.
+        boolean mechDamage = entity instanceof Mech;
+        if (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
+            mechDamage = flip;
+        }
+        if (mechDamage) {
             // Calculate one half falling damage times skid length.
             int damage = skidDistance
                          * (int) Math
@@ -5942,6 +5972,15 @@ public class Server implements Runnable {
             addNewLines();
         }
 
+        if (flip && entity instanceof Tank) {
+            addReport(applyCriticalHit(entity, Entity.NONE, new CriticalSlot(0, Tank.CRIT_CREW_STUNNED),
+                    true, 0, false));
+        } else if (flip && entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
+            // QuadVees don't suffer stunned crew criticals; require PSR to avoid damage instead.
+            PilotingRollData prd = entity.getBasePilotingRoll();
+            addReport(checkPilotAvoidFallDamage(entity, 1, prd));            
+        }
+
         // Clean up the entity if it has been destroyed.
         if (entity.isDoomed()) {
             entity.setDestroyed(true);
@@ -5959,6 +5998,187 @@ public class Server implements Runnable {
         addReport(r);
 
         return false;
+    }
+
+    /**
+     * Roll on the failed vehicle manuever table.
+     * 
+     * @param entity    The vehicle that failed the maneuver.
+     * @param curPos    The coordinates of the hex in which the maneuver was attempted.
+     * @param turnDirection The difference between the intended final facing and the starting facing
+     *                      (-1 for left turn, 1 for right turn, 0 for not turning).
+     * @param prevStep  The <code>MoveStep</code> immediately preceding the one being processes.
+     * @param lastStepMoveType  The <code>EntityMovementType</code> of the last step in the path.
+     * @param distance  The distance moved so far during the phase; used to calculate any potential skid.
+     * @param modifier  The modifier to the maneuver failure roll.
+     * @return          true if the maneuver failure result ends the unit's turn.
+     */
+    private boolean processFailedVehicleManeuver(Entity entity, Coords curPos, int turnDirection,
+            MoveStep prevStep, boolean isBackwards, EntityMovementType lastStepMoveType, int distance,
+            int modifier, int marginOfFailure) {
+        IHex curHex = game.getBoard().getHex(curPos);
+        if (entity.getMovementMode() == EntityMovementMode.WHEELED
+                && !curHex.containsTerrain(Terrains.PAVEMENT)) {
+            modifier += 2;
+        }
+        if (entity.getMovementMode() == EntityMovementMode.VTOL) {
+            modifier += 2;
+        } else if (entity.getMovementMode() == EntityMovementMode.HOVER
+                || entity.getMovementMode() == EntityMovementMode.WIGE
+                || entity.getMovementMode() == EntityMovementMode.AIRMECH
+                || entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
+            modifier += 4;
+        }
+        if (entity.getWeightClass() < EntityWeightClass.WEIGHT_MEDIUM
+                || entity.getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            modifier++;
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY
+                || entity.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {
+            modifier--;
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT
+                || entity.getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+            modifier -= 2;
+        }
+        boolean turnEnds = false;
+        boolean motiveDamage = false;
+        int motiveDamageMod = 0;
+        boolean skid = false;
+        boolean flip = false;
+        boolean isGroundVehicle = entity instanceof Tank
+                && (entity.getMovementMode() == EntityMovementMode.TRACKED
+                || entity.getMovementMode() == EntityMovementMode.WHEELED);
+
+        int roll = Compute.d6(2);
+
+        Report r = new Report(2505);
+        r.subject = entity.getId();
+        r.newlines = 0;
+        r.indent(2);
+        addReport(r);
+        r = new Report(6310);
+        r.subject = entity.getId();
+        r.add(roll);
+        r.newlines = 0;
+        addReport(r);
+        r = new Report(3340);
+        r.add(modifier);
+        r.subject = entity.getId();
+        r.newlines = 0;
+        addReport(r);
+        
+        r = new Report(1210);
+        r.subject = entity.getId();
+        roll += modifier;
+        if (roll < 8) {
+            r.messageId = 2506;
+            // minor fishtail, fail to turn
+            turnDirection = 0;
+        } else if (roll < 10) {
+            r.messageId = 2507;
+            // moderate fishtail, turn an extra hexside and roll for motive damage at -1.
+            if (turnDirection == 0) {
+                turnDirection = Compute.d6() < 4? -1 : 1;
+            } else {
+                turnDirection *= 2;
+            }
+            motiveDamage = true;
+            motiveDamageMod = -1;
+        } else if (roll < 12) {
+            r.messageId = 2508;
+            // serious fishtail, turn an extra hexside and roll for motive damage. Turn ends.
+            if (turnDirection == 0) {
+                turnDirection = Compute.d6() < 4? -1 : 1;
+            } else {
+                turnDirection *= 2;
+            }
+            motiveDamage = true;
+            turnEnds = true;
+        } else {
+            r.messageId = 2509;
+            // Turn fails and vehicle skids
+            // Wheeled and naval vehicles start to flip if the roll is high enough.
+            if (roll > 13) {
+                if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                    r.messageId = 2510;
+                    flip = true;
+                } else if (entity.getMovementMode() == EntityMovementMode.NAVAL
+                        || entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
+                    entity.setDoomed(true);
+                    r.messageId = 2511;
+                }
+            }
+            skid = true;
+            turnEnds = true;
+        }
+        addReport(r);
+        entity.setFacing((entity.getFacing() + turnDirection + 6) % 6);
+        entity.setSecondaryFacing(entity.getFacing());
+        if (motiveDamage && isGroundVehicle) {
+            addReport(vehicleMotiveDamage((Tank)entity, motiveDamageMod));
+        }
+        if (skid && !entity.isDoomed()) {
+            if (!flip && isGroundVehicle) {
+                addReport(vehicleMotiveDamage((Tank)entity, 0));
+            }
+
+            int skidDistance = (int)Math.round((double) (distance - 1) / 2);
+            if (flip && entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                // Wheeled vehicles that start to flip reduce the skid distance by one hex.
+                skidDistance--;
+            } else if (entity.getMovementMode() == EntityMovementMode.HOVER
+                    || entity.getMovementMode() == EntityMovementMode.VTOL
+                    || entity.getMovementMode() == EntityMovementMode.WIGE) {
+                skidDistance = Math.min(marginOfFailure, distance);
+            }
+            if (skidDistance > 0) {
+                int skidDirection = prevStep.getFacing();
+                if (isBackwards) {
+                    skidDirection = (skidDirection + 3) % 6;
+                }
+                processSkid(entity, curPos, prevStep.getElevation(),
+                        skidDirection, skidDistance,
+                        prevStep, lastStepMoveType, flip);
+            }
+        }
+        return turnEnds;
+    }
+
+    private void doVehicleFlipDamage(Tank entity, int damage, boolean startRight, int flipCount) {
+        HitData hit;
+        
+        int index = flipCount % 4;
+        // If there is no turret, we do side-side-bottom
+        if (((Tank)entity).hasNoTurret()) {
+            index = flipCount % 3;
+            if (index > 0) {
+                index++;
+            }
+        }
+        switch (index) {
+        case 0:
+            hit = new HitData(startRight? Tank.LOC_RIGHT : Tank.LOC_LEFT);
+            break;
+        case 1:
+            hit = new HitData(Tank.LOC_TURRET);
+        case 2:
+            hit = new HitData(startRight? Tank.LOC_LEFT : Tank.LOC_RIGHT);
+            break;
+        default:
+            hit = null; //Motive damage instead
+        }
+        if (hit != null) {
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            addReport(damageEntity(entity, hit, damage));
+            // If the vehicle has two turrets, they both take full damage.
+            if (hit.getLocation() == Tank.LOC_TURRET
+                    && !(((Tank)entity).hasNoDualTurret())) {
+                hit = new HitData(Tank.LOC_TURRET_2);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                addReport(damageEntity(entity, hit, damage));
+            }
+        } else {
+            addReport(vehicleMotiveDamage((Tank)entity, 1));
+        }
     }
 
     /**
@@ -6676,6 +6896,7 @@ public class Server implements Runnable {
         boolean recovered = false;
         Entity loader = null;
         boolean continueTurnFromPBS = false;
+        boolean continueTurnFromFishtail = false;
 
         // get a list of coordinates that the unit passed through this turn
         // so that I can later recover potential bombing targets
@@ -6919,6 +7140,73 @@ public class Server implements Runnable {
                 }
             }
             
+            if (firstStep) {
+                rollTarget = entity.checkGunningIt(overallMoveType);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
+                            curPos, rollTarget, false);
+                    if (mof > 0) {
+                        if (processFailedVehicleManeuver(entity, curPos, 0, prevStep, step.isThisStepBackwards(),
+                                lastStepMoveType, distance, 2, mof)) {
+                            if (md.hasActiveMASC()) {
+                                mpUsed = entity.getRunMP();
+                            } else {
+                                mpUsed = entity.getRunMPwithoutMASC();
+                            }
+
+                            turnOver = true;
+                            distance = entity.delta_distance;
+                            curFacing = entity.getFacing();
+                            entity.setSecondaryFacing(curFacing);
+                            break;
+                        } else if (entity.getFacing() != curFacing) {
+                            // If the facing doesn't change we had a minor fishtail that doesn't require
+                            // stopping movement.
+                            continueTurnFromFishtail = true;
+                            curFacing = entity.getFacing();
+                            entity.setSecondaryFacing(curFacing);
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Check for failed maneuver for overdrive on first step. The rules for overdrive do not
+            // state this explicitly, but since combinining overdrive with gunning it requires two rolls
+            // and gunning does state explicitly that the roll is made before movement, this
+            // implies the same for overdrive.
+            if (firstStep && (overallMoveType == EntityMovementType.MOVE_SPRINT
+                    || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
+                rollTarget = entity.checkUsingOverdrive(EntityMovementType.MOVE_SPRINT);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
+                            curPos, rollTarget, false);
+                    if (mof > 0) {
+                        if (processFailedVehicleManeuver(entity, curPos, 0, prevStep, step.isThisStepBackwards(),
+                                lastStepMoveType, distance, 2, mof)) {
+                            if (md.hasActiveMASC()) {
+                                mpUsed = entity.getRunMP();
+                            } else {
+                                mpUsed = entity.getRunMPwithoutMASC();
+                            }
+
+                            turnOver = true;
+                            distance = entity.delta_distance;
+                            curFacing = entity.getFacing();
+                            entity.setSecondaryFacing(curFacing);
+                            break;
+                        } else if (entity.getFacing() != curFacing) {
+                            // If the facing doesn't change we had a minor fishtail that doesn't require
+                            // stopping movement.
+                            continueTurnFromFishtail = true;
+                            curFacing = entity.getFacing();
+                            entity.setSecondaryFacing(curFacing);
+                            break;
+                        }
+                    }
+                }
+            }
+
             if (step.getType() == MoveStepType.CONVERT_MODE) {
                 entity.setConvertingNow(true);
                 
@@ -7631,6 +7919,56 @@ public class Server implements Runnable {
                     }
                 }
             }
+            
+            // If we have turned, check whether we have fulfilled any turn mode requirements.
+            if ((step.getType() == MoveStepType.TURN_LEFT || step.getType() == MoveStepType.TURN_RIGHT)
+                    && entity.usesTurnMode()) {
+                int straight = 0;
+                if (prevStep != null) {
+                    straight = prevStep.getNStraight();
+                }
+                rollTarget = entity.checkTurnModeFailure(overallMoveType, straight,
+                        md.getMpUsed(), step.getPosition());
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    int mof = doSkillCheckWhileMoving(entity, lastElevation, lastPos,
+                            curPos, rollTarget, false);
+                    if (mof > 0) {
+                        if (processFailedVehicleManeuver(entity, curPos, step.getFacing() - curFacing,
+                                prevStep, step.isThisStepBackwards(), lastStepMoveType, distance, mof, mof)) {
+                            if (md.hasActiveMASC()) {
+                                mpUsed = entity.getRunMP();
+                            } else {
+                                mpUsed = entity.getRunMPwithoutMASC();
+                            }
+    
+                            turnOver = true;
+                            distance = entity.delta_distance;
+                        } else {
+                            continueTurnFromFishtail = true;
+                        }
+                        curFacing = entity.getFacing();
+                        entity.setPosition(curPos);
+                        entity.setSecondaryFacing(curFacing);
+                        break;
+                    }
+                }
+            }
+            
+            if (step.getType() == MoveStepType.BOOTLEGGER) {
+                rollTarget = entity.getBasePilotingRoll();
+                entity.addPilotingModifierForTerrain(rollTarget);
+                rollTarget.addModifier(0, "bootlegger maneuver");
+                int mof = doSkillCheckWhileMoving(entity, lastElevation,
+                        curPos, curPos, rollTarget, false);
+                if (mof > 0) {
+                    // If the bootlegger maneuver fails, we treat it as a turn in a random direction.
+                    processFailedVehicleManeuver(entity, curPos, Compute.d6() < 4? -1 : 1, prevStep,
+                            step.isThisStepBackwards(), lastStepMoveType, distance, 2, mof);
+                    curFacing = entity.getFacing();
+                    curPos = entity.getPosition();
+                    break;
+                }
+            }
 
             // set last step parameters
             curPos = step.getPosition();
@@ -7679,13 +8017,13 @@ public class Server implements Runnable {
                         - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
                     // skill check for leg damage
-                    PilotingRollData roll = entity
+                    rollTarget = entity
                             .getBasePilotingRoll(stepMoveType);
-                    entity.addPilotingModifierForTerrain(roll, curPos);
-                    roll.append(new PilotingRollData(entity.getId(),
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos);
+                    rollTarget.append(new PilotingRollData(entity.getId(),
                             2 * leapDistance, "leaping (leg damage)"));
                     if (0 < doSkillCheckWhileMoving(entity, lastElevation,
-                            lastPos, curPos, roll, false)) {
+                            lastPos, curPos, rollTarget, false)) {
                         // do leg damage
                         addReport(damageEntity(entity,
                                 new HitData(Mech.LOC_LLEG), leapDistance));
@@ -7711,12 +8049,12 @@ public class Server implements Runnable {
                         }
                     }
                     // skill check for fall
-                    roll = entity.getBasePilotingRoll(stepMoveType);
-                    entity.addPilotingModifierForTerrain(roll, curPos);
-                    roll.append(new PilotingRollData(entity.getId(),
+                    rollTarget = entity.getBasePilotingRoll(stepMoveType);
+                    entity.addPilotingModifierForTerrain(rollTarget, curPos);
+                    rollTarget.append(new PilotingRollData(entity.getId(),
                             leapDistance, "leaping (fall)"));
                     if (0 < doSkillCheckWhileMoving(entity, lastElevation,
-                            lastPos, curPos, roll, false)) {
+                            lastPos, curPos, rollTarget, false)) {
                         entity.setElevation(lastElevation);
                         addReport(doEntityFallsInto(entity, lastElevation,
                                 lastPos, curPos,
@@ -7794,7 +8132,7 @@ public class Server implements Runnable {
                     break;
 
                 } else { // End failed-skid-psr
-                    // If the checke succeeded, restore the facing we had before
+                    // If the check succeeded, restore the facing we had before
                     // if it failed, the fall will have changed facing
                     entity.setFacing(startingfacing);
                 }
@@ -7812,11 +8150,28 @@ public class Server implements Runnable {
                     int moF = doSkillCheckWhileMoving(entity, lastElevation,
                             lastPos, curPos, rollTarget, false);
                     if (moF > 0) {
-                        // maximum distance is hexes moved / 2
-                        int sideslipDistance = Math.min(moF, distance - 1);
+                        int elev;
+                        int sideslipDistance;
+                        int skidDirection;
+                        Coords start;
+                        if (step.getType() == MoveStepType.LATERAL_LEFT
+                                || step.getType() == MoveStepType.LATERAL_RIGHT
+                                || step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
+                                || step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS) {
+                            // A failed controlled sideslip always results in moving one additional hex
+                            // in the direction of the intentional sideslip.
+                            elev = step.getElevation();
+                            sideslipDistance = 1;
+                            skidDirection = lastPos.direction(curPos);
+                            start = curPos;
+                        } else {
+                            elev = prevStep.getElevation();
+                            // maximum distance is hexes moved / 2
+                            sideslipDistance = Math.min(moF, distance - 1);
+                            skidDirection = prevFacing;
+                            start = lastPos;
+                        }
                         if (sideslipDistance > 0) {
-                            int skidDirection = prevFacing;
-                            // report sideslip
                             sideslipped = true;
                             r = new Report(2100);
                             r.subject = entity.getId();
@@ -7824,8 +8179,7 @@ public class Server implements Runnable {
                             r.add(sideslipDistance);
                             addReport(r);
 
-                            if (processSkid(entity, lastPos,
-                                    prevStep.getElevation(), skidDirection,
+                            if (processSkid(entity, start, elev, skidDirection,
                                     sideslipDistance, prevStep,
                                     lastStepMoveType)) {
                                 return;
@@ -8273,10 +8627,10 @@ public class Server implements Runnable {
                 loader = game.getEntity(step.getRecoveryUnit());
                 boolean isDS = (entity instanceof Dropship);
 
-                PilotingRollData psr = entity
+                rollTarget = entity
                         .getBasePilotingRoll(overallMoveType);
                 if (loader.mpUsed > 0) {
-                    psr.addModifier(5, "carrier used thrust");
+                    rollTarget.addModifier(5, "carrier used thrust");
                 }
                 int ctrlroll = Compute.d6(2);
                 if (isDS) {
@@ -8287,11 +8641,11 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.add(entity.getDisplayName());
                 r.add(loader.getDisplayName());
-                r.add(psr.getValue());
+                r.add(rollTarget.getValue());
                 r.add(ctrlroll);
                 r.newlines = 0;
                 r.indent(1);
-                if (ctrlroll < psr.getValue()) {
+                if (ctrlroll < rollTarget.getValue()) {
                     r.choose(false);
                     addReport(r);
                     // damage unit
@@ -8299,7 +8653,7 @@ public class Server implements Runnable {
                     HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL,
                             ToHitData.SIDE_FRONT);
                     addReport(damageEntity(entity, hit,
-                            2 * (psr.getValue() - ctrlroll)));
+                            2 * (rollTarget.getValue() - ctrlroll)));
                 } else {
                     r.choose(true);
                     addReport(r);
@@ -8403,26 +8757,26 @@ public class Server implements Runnable {
 
                 if ((entity instanceof Mech) && (curHex.getLevel() < game
                         .getBoard().getHex(lastPos).getLevel())) {
-                    PilotingRollData psr = entity
+                    rollTarget = entity
                             .getBasePilotingRoll(overallMoveType);
-                    psr.addModifier(0,
+                    rollTarget.addModifier(0,
                             "moving backwards over an elevation change");
                     doSkillCheckWhileMoving(entity, entity.getElevation(),
-                            curPos, curPos, psr, true);
+                            curPos, curPos, rollTarget, true);
                 } else if (entity instanceof Mech) {
-                    PilotingRollData psr = entity
+                    rollTarget = entity
                             .getBasePilotingRoll(overallMoveType);
-                    psr.addModifier(0,
+                    rollTarget.addModifier(0,
                             "moving backwards over an elevation change");
                     doSkillCheckWhileMoving(entity, lastElevation, lastPos,
-                            lastPos, psr, true);
+                            lastPos, rollTarget, true);
                 } else if (entity instanceof Tank) {
-                    PilotingRollData psr = entity
+                    rollTarget = entity
                             .getBasePilotingRoll(overallMoveType);
-                    psr.addModifier(0,
+                    rollTarget.addModifier(0,
                             "moving backwards over an elevation change");
                     if (doSkillCheckWhileMoving(entity, entity.getElevation(),
-                            curPos, lastPos, psr, false) < 0) {
+                            curPos, lastPos, rollTarget, false) < 0) {
                         curPos = lastPos;
                     }
                 }
@@ -8618,14 +8972,14 @@ public class Server implements Runnable {
 
         // if we ran with destroyed hip or gyro, we need a psr
         rollTarget = entity.checkRunningWithDamage(overallMoveType);
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             doSkillCheckInPlace(entity, rollTarget);
         }
 
         // if we sprinted with MASC or a supercharger, then we need a PSR
         rollTarget = entity.checkSprintingWithMASC(overallMoveType,
                 entity.mpUsed);
-        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && entity.canFall()) {
             doSkillCheckInPlace(entity, rollTarget);
         }
 
@@ -8656,11 +9010,11 @@ public class Server implements Runnable {
             doSkillCheckInPlace(entity, rollTarget);
         }
         if ((md.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
-                && md.hasActiveMASC()) {
+                && md.hasActiveMASC() && entity.canFall()) {
             doSkillCheckInPlace(entity,
                     entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }
-
+        
         if (entity.isAirborne() && (entity instanceof Aero)) {
 
             Aero a = (Aero) entity;
@@ -8779,17 +9133,17 @@ public class Server implements Runnable {
         if ((Entity.NONE != swarmerId)
                 && md.contains(MoveStepType.SHAKE_OFF_SWARMERS)) {
             final Entity swarmer = game.getEntity(swarmerId);
-            final PilotingRollData roll = entity
+            rollTarget = entity
                     .getBasePilotingRoll(overallMoveType);
 
-            entity.addPilotingModifierForTerrain(roll);
+            entity.addPilotingModifierForTerrain(rollTarget);
 
             // Add a +4 modifier.
             if (md.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN) {
-                roll.addModifier(2,
+                rollTarget.addModifier(2,
                         "dislodge swarming infantry with VTOL movement");
             } else {
-                roll.addModifier(4, "dislodge swarming infantry");
+                rollTarget.addModifier(4, "dislodge swarming infantry");
             }
 
             // If the swarmer has Assault claws, give a 1 modifier.
@@ -8797,7 +9151,7 @@ public class Server implements Runnable {
             for (Mounted mount : swarmer.getMisc()) {
                 EquipmentType equip = mount.getType();
                 if (equip.hasFlag(MiscType.F_MAGNET_CLAW)) {
-                    roll.addModifier(1, "swarmer has magnetic claws");
+                    rollTarget.addModifier(1, "swarmer has magnetic claws");
                     break;
                 }
             }
@@ -8812,10 +9166,10 @@ public class Server implements Runnable {
             final int diceRoll = Compute.d6(2);
             r = new Report(2130);
             r.subject = entity.getId();
-            r.add(roll.getValueAsString());
-            r.add(roll.getDesc());
+            r.add(rollTarget.getValueAsString());
+            r.add(rollTarget.getDesc());
             r.add(diceRoll);
-            if (diceRoll < roll.getValue()) {
+            if (diceRoll < rollTarget.getValue()) {
                 r.choose(false);
                 addReport(r);
             } else {
@@ -8996,14 +9350,14 @@ public class Server implements Runnable {
                     // check for quicksand
                     addReport(checkQuickSand(curPos));
                 } else {
-                    PilotingRollData roll = new PilotingRollData(entity.getId(),
+                    rollTarget = new PilotingRollData(entity.getId(),
                             5, "entering boggy terrain");
-                    roll.append(new PilotingRollData(entity.getId(),
+                    rollTarget.append(new PilotingRollData(entity.getId(),
                             curHex.getBogDownModifier(entity.getMovementMode(),
                                     entity instanceof LargeSupportTank),
                             "avoid bogging down"));
                     if (0 < doSkillCheckWhileMoving(entity,
-                            entity.getElevation(), curPos, curPos, roll,
+                            entity.getElevation(), curPos, curPos, rollTarget,
                             false)) {
                         entity.setStuck(true);
                         r = new Report(2081);
@@ -9019,18 +9373,18 @@ public class Server implements Runnable {
             // If the entity is being swarmed, jumping may dislodge the fleas.
             if (Entity.NONE != swarmerId) {
                 final Entity swarmer = game.getEntity(swarmerId);
-                final PilotingRollData roll = entity
+                rollTarget = entity
                         .getBasePilotingRoll(overallMoveType);
 
-                entity.addPilotingModifierForTerrain(roll);
+                entity.addPilotingModifierForTerrain(rollTarget);
 
                 // Add a +4 modifier.
-                roll.addModifier(4, "dislodge swarming infantry");
+                rollTarget.addModifier(4, "dislodge swarming infantry");
 
                 // If the swarmer has Assault claws, give a 1 modifier.
                 // We can stop looking when we find our first match.
                 if (swarmer.hasWorkingMisc(MiscType.F_MAGNET_CLAW, -1)) {
-                    roll.addModifier(1, "swarmer has magnetic claws");
+                    rollTarget.addModifier(1, "swarmer has magnetic claws");
                 }
 
                 // okay, print the info
@@ -9043,10 +9397,10 @@ public class Server implements Runnable {
                 final int diceRoll = Compute.d6(2);
                 r = new Report(2130);
                 r.subject = entity.getId();
-                r.add(roll.getValueAsString());
-                r.add(roll.getDesc());
+                r.add(rollTarget.getValueAsString());
+                r.add(rollTarget.getDesc());
                 r.add(diceRoll);
-                if (diceRoll < roll.getValue()) {
+                if (diceRoll < rollTarget.getValue()) {
                     r.choose(false);
                     addReport(r);
                 } else {
@@ -9156,7 +9510,7 @@ public class Server implements Runnable {
                 && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
                 && !turnOver && (entity.mpUsed < entity.getRunMP())
                 && (overallMoveType != EntityMovementType.MOVE_JUMP);
-        if ((continueTurnFromFall || continueTurnFromPBS)
+        if ((continueTurnFromFall || continueTurnFromPBS || continueTurnFromFishtail)
                 && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
@@ -11384,7 +11738,8 @@ public class Server implements Runnable {
                 entity.heatBuildup += entity.getRunHeat();
             } else if (entity.moved == EntityMovementType.MOVE_JUMP) {
                 entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
-            } else if (entity.moved == EntityMovementType.MOVE_SPRINT) {
+            } else if (entity.moved == EntityMovementType.MOVE_SPRINT
+                    || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) {
                 entity.heatBuildup += entity.getSprintHeat();
             }
         }
@@ -20320,7 +20675,8 @@ public class Server implements Runnable {
                     || (entity.moved == EntityMovementType.MOVE_VTOL_WALK)
                     || (entity.moved == EntityMovementType.MOVE_RUN)
                     || (entity.moved == EntityMovementType.MOVE_SPRINT)
-                    || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)) {
+                    || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                    || (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)) {
                     if (entity instanceof Mech) {
                         int j = entity.mpUsed;
                         int damage = 0;
@@ -27706,44 +28062,8 @@ public class Server implements Runnable {
 
         // only mechs should roll to avoid pilot damage
         // vehicles may fall due to sideslips
-        if ((entity instanceof Mech)
-            && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)
-            && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
-            // we want to be able to avoid pilot damage even when it was
-            // an automatic fall, only unconsciousness should cause auto-damage
-            roll.removeAutos();
-
-            if (fallHeight > 1) {
-                roll.addModifier(fallHeight - 1, "height of fall");
-            }
-
-            if (entity.getCrew().getSlotCount() > 1) {
-                //Extract the base from the list of modifiers so we can replace it with the piloting
-                //skill of each crew member.
-                List<TargetRollModifier> modifiers = new ArrayList<>(roll.getModifiers());
-                if (modifiers.size() > 0) {
-                    modifiers.remove(0);
-                }
-                for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
-                    if (entity.getCrew().isMissing(pos) || entity.getCrew().isDead(pos)) {
-                        continue;
-                    }
-                    PilotingRollData prd;
-                    if (entity.getCrew().isDead(pos)) {
-                        continue;
-                    } else if (entity.getCrew().isUnconscious(pos)) {
-                        prd = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
-                                "Crew member unconscious");
-                    } else {
-                        prd = new PilotingRollData(entity.getId(),
-                                entity.getCrew().getPiloting(pos), "Base piloting skill");
-                        modifiers.forEach(m -> prd.addModifier(m));
-                    }
-                    vPhaseReport.addAll(checkPilotDamageFromFall(entity, prd, pos));
-                }
-            } else {
-                vPhaseReport.addAll(checkPilotDamageFromFall(entity, roll, 0));
-            }
+        if (entity instanceof Mech) {
+            vPhaseReport.addAll(checkPilotAvoidFallDamage(entity, fallHeight, roll));
         }
 
         // Now dislodge any swarming infantry.
@@ -27808,7 +28128,52 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
-    private Vector<Report> checkPilotDamageFromFall(Entity entity, PilotingRollData roll, int crewPos) {
+    private Vector<Report> checkPilotAvoidFallDamage(Entity entity, int fallHeight, PilotingRollData roll) {
+        Vector<Report> reports = new Vector<>();
+        
+        if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)
+                || entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
+            return reports;
+        }
+        // we want to be able to avoid pilot damage even when it was
+        // an automatic fall, only unconsciousness should cause auto-damage
+        roll.removeAutos();
+
+        if (fallHeight > 1) {
+            roll.addModifier(fallHeight - 1, "height of fall");
+        }
+
+        if (entity.getCrew().getSlotCount() > 1) {
+            //Extract the base from the list of modifiers so we can replace it with the piloting
+            //skill of each crew member.
+            List<TargetRollModifier> modifiers = new ArrayList<>(roll.getModifiers());
+            if (modifiers.size() > 0) {
+                modifiers.remove(0);
+            }
+            for (int pos = 0; pos < entity.getCrew().getSlotCount(); pos++) {
+                if (entity.getCrew().isMissing(pos) || entity.getCrew().isDead(pos)) {
+                    continue;
+                }
+                PilotingRollData prd;
+                if (entity.getCrew().isDead(pos)) {
+                    continue;
+                } else if (entity.getCrew().isUnconscious(pos)) {
+                    prd = new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
+                            "Crew member unconscious");
+                } else {
+                    prd = new PilotingRollData(entity.getId(),
+                            entity.getCrew().getPiloting(pos), "Base piloting skill");
+                    modifiers.forEach(m -> prd.addModifier(m));
+                }
+                reports.addAll(resolvePilotDamageFromFall(entity, prd, pos));
+            }
+        } else {
+            reports.addAll(resolvePilotDamageFromFall(entity, roll, 0));
+        }
+        return reports;
+    }
+
+    private Vector<Report> resolvePilotDamageFromFall(Entity entity, PilotingRollData roll, int crewPos) {
         Vector<Report> reports = new Vector<>();
         Report r;
         if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
@@ -32532,7 +32897,8 @@ public class Server implements Runnable {
                     || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                     || (moveType == EntityMovementType.MOVE_RUN)
                     || (moveType == EntityMovementType.MOVE_SPRINT)
-                    || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
+                    || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                    || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We moved too fast, let's make PSR to see if we get
                         // damage
@@ -32572,7 +32938,9 @@ public class Server implements Runnable {
                 if ((moveType == EntityMovementType.MOVE_WALK)
                     || (moveType == EntityMovementType.MOVE_VTOL_WALK)
                     || (moveType == EntityMovementType.MOVE_RUN)
-                    || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
+                    || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                    || (moveType == EntityMovementType.MOVE_SPRINT)
+                    || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
                     // For Tanks, we need to check if the tank had
                     // more MPs because it was moving along a road.
                     if ((step.getMpUsed() > cachedMaxMPExpenditure)

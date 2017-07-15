@@ -3858,6 +3858,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             "AdvancedMoveRunColor");
                     break;
                 case MOVE_SPRINT:
+                case MOVE_VTOL_SPRINT:
                     col = GUIPreferences.getInstance().getColor(
                             "AdvancedMoveSprintColor");
                     break;
@@ -3895,20 +3896,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // having overlap.
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
-
-            // for advanced movement, we always need to hide prior
-            // because costs will overlap and we only want the current
-            // facing
-            if ((previousStep != null) && game.useVectorMove()) {
-                pathSprites.get(pathSprites.size() - 1).setHidden(true);
-            }
             
-            // A LAM converting from AirMech to Biped uses two convert steps and we
-            // only want to show the last.
-            if (previousStep != null && step.getType() == MoveStepType.CONVERT_MODE
-                    && previousStep.getType() == MoveStepType.CONVERT_MODE) {
+            if (previousStep != null
+                    // for advanced movement, we always need to hide prior
+                    // because costs will overlap and we only want the current
+                    // facing
+                    && (game.useVectorMove()
+                            // A LAM converting from AirMech to Biped uses two convert steps and we
+                            // only want to show the last.
+                            || (step.getType() == MoveStepType.CONVERT_MODE
+                            && previousStep.getType() == MoveStepType.CONVERT_MODE)
+                            || step.getType() == MoveStepType.BOOTLEGGER)) {
                 pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
+
             pathSprites.add(new StepSprite(this, step, md.isEndStep(step)));           
             previousStep = step;
         }

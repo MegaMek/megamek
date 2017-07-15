@@ -108,6 +108,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_INF = 1 << 3;
     public static final int CMD_AERO = 1 << 4;
     public static final int CMD_AERO_VECTORED = 1 << 5;
+    public static final int CMD_CONVERTER = 1 << 6;
     // Command used only in menus and has no associated button
     public static final int CMD_NO_BUTTON = 1 << 8;
     // Convenience defines for common combinations
@@ -156,7 +157,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_SWIM("moveSwim", CMD_MECH), //$NON-NLS-1$
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         //Convert command for a single button, which can cycle through modes because MovePath state is available
-        MOVE_MODE_CONVERT("moveModeConvert", CMD_MECH), //$NON-NLS-1$
+        MOVE_MODE_CONVERT("moveModeConvert", CMD_CONVERTER), //$NON-NLS-1$
         //Convert commands used for menus, where the MovePath state is unknown.
         MOVE_MODE_LEG("moveModeLeg", CMD_NO_BUTTON), //$NON-NLS-1$
         MOVE_MODE_VEE("moveModeVee", CMD_NO_BUTTON), //$NON-NLS-1$
@@ -164,6 +165,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_RECKLESS("moveReckless", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_CAREFUL_STAND("moveCarefulStand", CMD_NONE), //$NON-NLS-1$
         MOVE_EVADE("MoveEvade", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
+        MOVE_BOOTLEGGER("moveBootlegger", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_SHUTDOWN("moveShutDown", CMD_NON_INF), //$NON-NLS-1$
         MOVE_STARTUP("moveStartup", CMD_NON_INF), //$NON-NLS-1$
         MOVE_SELF_DESTRUCT("moveSelfDestruct", CMD_NON_INF), //$NON-NLS-1$
@@ -254,10 +256,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
          */
         public static MoveCommand[] values(int f, GameOptions opts,
                 boolean forwardIni) {
-            boolean manualShutdown = false, selfDestruct = false;
+            boolean manualShutdown = false, selfDestruct = false, advVehicle = false;
             if (opts != null) {
                 manualShutdown = opts.booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN);
                 selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
+                advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
             }
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
             for (MoveCommand cmd : MoveCommand.values()) {
@@ -274,9 +277,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if (cmd == MOVE_FORWARD_INI && !forwardIni) {
                     continue;
                 }
+                
+                if (cmd == MOVE_BOOTLEGGER && !advVehicle) {
+                    continue;
+                }
 
                 // Check unit type flag
-                if ((cmd.flag & f) == f) {
+                if ((cmd.flag & f) != 0) {
                     flaggedCmds.add(cmd);
                 }
             }
@@ -633,7 +640,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 flag = CMD_VTOL;
             } else if (ce instanceof Tank) {
                 flag = CMD_TANK;
-            } else if (ce instanceof Aero) {
+            } else if (ce instanceof Aero
+                    || (ce instanceof LandAirMech && ce.getMovementMode() == EntityMovementMode.AERODYNE)) {
                 if (ce.isAirborne()
                     && clientgui.getClient().getGame().useVectorMove()) {
                     flag = CMD_AERO_VECTORED;
@@ -643,6 +651,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 } else {
                     flag = CMD_TANK;
                 }
+            } else if (ce instanceof QuadVee) {
+                if (((QuadVee)ce).isInVehicleMode()) {
+                    flag = CMD_TANK | CMD_CONVERTER;
+                } else {
+                    flag = CMD_MECH | CMD_CONVERTER;
+                }
+            } else if (ce instanceof LandAirMech) {
+                if (ce.getMovementMode() == EntityMovementMode.AERODYNE) {
+                    flag |= CMD_CONVERTER;
+                } else if (ce.getMovementMode() == EntityMovementMode.WIGE) {
+                    flag = CMD_TANK | CMD_CONVERTER;
+                } else {
+                    flag = CMD_MECH | CMD_CONVERTER;
+                }
+            } else if (ce instanceof Mech && ((Mech)ce).hasTracks()) {
+                flag = CMD_MECH | CMD_CONVERTER;
             }
         }
         return getButtonList(flag);
@@ -806,7 +830,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             || (ce.getMovementMode() == EntityMovementMode.SUBMARINE)
             || (ce.getMovementMode() == EntityMovementMode.INF_UMU)
             || (ce.getMovementMode() == EntityMovementMode.VTOL)
-            || (ce.getMovementMode() == EntityMovementMode.WIGE)
             || (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM)
             || (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
@@ -826,6 +849,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateRecoveryButton();
         updateDumpButton();
         updateEvadeButton();
+        updateBootleggerButton();
 
         updateStartupButton();
         updateShutdownButton();
@@ -1002,6 +1026,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setAccEnabled(false);
         setDecEnabled(false);
         setEvadeEnabled(false);
+        setBootleggerEnabled(false);
         setShutdownEnabled(false);
         setStartupEnabled(false);
         setSelfDestructEnabled(false);
@@ -1209,8 +1234,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
 
-        if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
-                && GUIPreferences.getInstance().getNagForSprint()) {
+        if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT
+                || cmd.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT)
+                && GUIPreferences.getInstance().getNagForSprint()
+                // no need to nag for vehicles using overdrive if they already get a PSR nag
+                && !((cmd.getEntity() instanceof Tank
+                        || (cmd.getEntity() instanceof QuadVee && ((QuadVee)cmd.getEntity()).isInVehicleMode())
+                        && GUIPreferences.getInstance().getNagForPSR()))) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
                     Messages.getString("MovementDisplay.ConfirmSprint"), true);
@@ -1848,6 +1878,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateTakeOffButtons();
             updateLandButtons();
             updateEvadeButton();
+            updateBootleggerButton();
             updateShutdownButton();
             updateStartupButton();
             updateSelfDestructButton();
@@ -2362,6 +2393,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setEvadeEnabled((cmd.getLastStepMovementType() != EntityMovementType.MOVE_JUMP)
                         && (cmd.getLastStepMovementType() != EntityMovementType.MOVE_SPRINT));
+    }
+
+    private void updateBootleggerButton() {
+
+        final Entity ce = ce();
+
+        if (null == ce) {
+            return;
+        }
+
+        if (!clientgui.getClient().getGame().getOptions()
+                      .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            return;
+        }
+        
+        if (!(ce instanceof Tank || ce instanceof QuadVee)) {
+            return;
+        }
+                
+        if (ce.getMovementMode() != EntityMovementMode.WHEELED
+                && ce.getMovementMode() != EntityMovementMode.HOVER
+                && ce.getMovementMode() != EntityMovementMode.VTOL) {
+            return;
+        }
+
+        setBootleggerEnabled(cmd.getLastStep() != null && cmd.getLastStep().getNStraight() >= 3);
     }
 
     private void updateShutdownButton() {
@@ -4341,6 +4398,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_EVADE.getCmd())) {
             cmd.addStep(MoveStepType.EVADE);
             clientgui.bv.drawMovementData(ce, cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_BOOTLEGGER.getCmd())) {
+            cmd.addStep(MoveStepType.BOOTLEGGER);
+            clientgui.bv.drawMovementData(ce, cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_SHUTDOWN.getCmd())) {
             if (clientgui
                     .doYesNoDialog(
@@ -4618,6 +4678,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateManeuverButton();
         updateDumpButton();
         updateEvadeButton();
+        updateBootleggerButton();
         updateShutdownButton();
         updateStartupButton();
         updateSelfDestructButton();
@@ -4948,6 +5009,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void setEvadeEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_EVADE).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEvadeEnabled(enabled);
+    }
+    
+    private void setBootleggerEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_BOOTLEGGER).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveBootleggerEnabled(enabled);
     }
 
     private void setShutdownEnabled(boolean enabled) {

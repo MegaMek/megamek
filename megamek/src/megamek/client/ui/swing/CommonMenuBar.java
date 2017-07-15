@@ -142,6 +142,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem moveLower;
     private JMenuItem moveReckless;
     private JMenuItem moveEvade;
+    private JMenuItem moveBootlegger;
     private JMenuItem moveShutdown;
     private JMenuItem moveStartup;
     private JMenuItem moveSelfDestruct;
@@ -566,6 +567,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         moveEvade = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveEvade"), MovementDisplay.MoveCommand.MOVE_EVADE.getCmd()); //$NON-NLS-1$
+        moveBootlegger = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveBootlegger"), MovementDisplay.MoveCommand.MOVE_BOOTLEGGER.getCmd()); //$NON-NLS-1$
         moveShutdown = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveShutdown"), MovementDisplay.MoveCommand.MOVE_SHUTDOWN.getCmd()); //$NON-NLS-1$
@@ -1212,6 +1216,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     }
     public synchronized void setMoveEvadeEnabled(boolean enabled) {
         moveEvade.setEnabled(enabled);
+    }
+    public synchronized void setMoveBootleggerEnabled(boolean enabled) {
+        moveBootlegger.setEnabled(enabled);
     }
     public synchronized void setMoveShutdownEnabled(boolean enabled) {
         moveShutdown.setEnabled(enabled);

@@ -304,6 +304,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int delta_distance = 0;
     public int mpUsed = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
+    public EntityMovementType movedLastRound = EntityMovementType.MOVE_NONE;
     private boolean movedBackwards = false;
     /**
      * Used to keep track of usage of the power reverse quirk, which allows a
@@ -313,6 +314,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     private boolean isPowerReverse = false;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
+    public int wigeBonus = 0;
     public boolean hitThisRoundByAntiTSM = false;
     public boolean inReverse = false;
     protected boolean struck = false;
@@ -5532,10 +5534,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (assaultDropInProgress == 2) {
             assaultDropInProgress = 0;
         }
+        movedLastRound = moved;
         moved = EntityMovementType.MOVE_NONE;
         movedBackwards = false;
         isPowerReverse = false;
         gotPavementBonus = false;
+        wigeBonus = 0;
         hitThisRoundByAntiTSM = false;
         inReverse = false;
         hitBySwarmsEntity.clear();
@@ -6217,7 +6221,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData addConditionBonuses(PilotingRollData roll,
             EntityMovementType moveType) {
 
-        if (moveType == EntityMovementType.MOVE_SPRINT) {
+        if (moveType == EntityMovementType.MOVE_SPRINT
+                || moveType == EntityMovementType.MOVE_VTOL_SPRINT) {
             roll.addModifier(2, "Sprinting");
         }
 
@@ -6226,7 +6231,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((moveType == EntityMovementType.MOVE_RUN)
             || (moveType == EntityMovementType.MOVE_SPRINT)
             || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-            || (moveType == EntityMovementType.MOVE_OVER_THRUST)) {
+            || (moveType == EntityMovementType.MOVE_OVER_THRUST)
+            || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
             int lightPenalty = conditions.getLightPilotPenalty();
             if (lightPenalty > 0) {
                 roll.addModifier(lightPenalty,
@@ -6310,7 +6316,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
         }
-        if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
+        if (((overallMoveType == EntityMovementType.MOVE_RUN)
+                || (overallMoveType == EntityMovementType.MOVE_SPRINT))
             && canFall() && ((gyroDamage > 0) || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
@@ -6331,7 +6338,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((overallMoveType == EntityMovementType.MOVE_SPRINT)
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT
+                || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
             && (used > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0,
                                              "sprinting with active MASC/Supercharger"));
@@ -6352,7 +6360,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((overallMoveType == EntityMovementType.MOVE_SPRINT)
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT
+                || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
             && (used > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0,
                                              "sprinting with active MASC/Supercharger"));
@@ -6362,6 +6371,55 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         addPilotingModifierForTerrain(roll);
+        return roll;
+    }
+
+    /**
+     * Checks if the entity is attempting to sprint with supercharger engaged.
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkUsingOverdrive (EntityMovementType overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT
+                || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
+                && (this instanceof Tank
+                        || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode()))) {
+            roll.append(new PilotingRollData(getId(), 0, "using overdrive"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                             "Check false: Entity is not using overdrive");
+        }
+
+        return roll;
+    }
+
+    /**
+     * Checks if the entity is attempting to increase two speed categories.
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkGunningIt (EntityMovementType overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION)
+                && (this instanceof Tank
+                        || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())
+                        || movementMode == EntityMovementMode.AIRMECH)) {
+            if (((overallMoveType == EntityMovementType.MOVE_SPRINT
+                    || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
+                    && (movedLastRound == EntityMovementType.MOVE_WALK
+                    || movedLastRound == EntityMovementType.MOVE_VTOL_WALK))
+                    || ((overallMoveType == EntityMovementType.MOVE_RUN
+                    || overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
+                            && (movedLastRound == EntityMovementType.MOVE_NONE
+                            || movedLastRound == EntityMovementType.MOVE_JUMP
+                            || movedLastRound == EntityMovementType.MOVE_SKID))) {
+            roll.append(new PilotingRollData(getId(), 0, "gunning it"));
+            return roll;
+        }
+        }
+        roll.addModifier(TargetRoll.CHECK_FALSE,
+                "Check false: Entity is not gunning it");            
         return roll;
     }
 
@@ -6522,7 +6580,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case MOVE_RUN:
             case MOVE_VTOL_WALK:
             case MOVE_VTOL_RUN:
-                int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5);
+                int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5) + wigeBonus;
                 if (isEligibleForPavementBonus() && gotPavementBonus) {
                     maxSafeMP++;
                 }
@@ -6574,7 +6632,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: flyinge entities don't skid");
+                    "Check false: flying entities don't skid");
             return roll;
         }
 
@@ -6959,6 +7017,83 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (distance >= 3) {
             roll.addModifier(1, "moved 3-4 hexes");
         }
+
+        return roll;
+    }
+    
+    /**
+     * Only check for satisfied turn mode for Tanks or QuadVees in vehicle mode, or LAMs in
+     * AirMech mode. Except for LAMs, check whether advanced vehicle ground movement is enabled.
+     * 
+     * @return True if this <code>Entity</code> must make a driving check for turning too sharply.
+     */
+    public boolean usesTurnMode() {
+        return false;
+    }
+    
+    /**
+     * If using advanced vehicle ground movement, checks whether the unit is required to make
+     * a driving roll for turning, and if so whether it succeeds.
+     * 
+     * @param overallMoveType   The type move movement used this turn.
+     * @param straightLineHexes The number of hexes that were moved in a straight line before turning.
+     * @param mpUsed            The total number of movement points used by the entity during the current turn.
+     * @param currPos           The position of the hex where the turn is taking place, which may
+     *                          modify a roll for terrain.
+     * @param vDesc             Collects any reports generated by the check.
+     * @return                  True if the entity failed a driving check due to turning too sharply.
+     */
+    public PilotingRollData checkTurnModeFailure(EntityMovementType overallMoveType,
+            int straightLineHexes, int mpUsed, Coords currPos) {
+
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        //Turn mode 
+        if (!usesTurnMode()) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: unit does not use turn modes.");
+            return roll;
+        }
+        
+        int turnMode = mpUsed / 5;
+        if (straightLineHexes >= turnMode) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: unit did not exceed turn mode.");
+            return roll;
+        }
+
+        if (getWeightClass() < EntityWeightClass.WEIGHT_MEDIUM
+                || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            roll.addModifier(-1, "light vehicle");
+        } else if (getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT
+                || getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+            roll.addModifier(+1, "assault vehicle");
+        }
+
+        IHex currHex = game.getBoard().getHex(currPos);
+        if (movementMode != EntityMovementMode.HOVER
+                && movementMode != EntityMovementMode.VTOL
+                && movementMode != EntityMovementMode.WIGE
+                && movementMode != EntityMovementMode.AIRMECH) {
+            if (currHex.containsTerrain(Terrains.MUD)) {
+                roll.addModifier(+1, "mud");
+            }
+            if (currHex.containsTerrain(Terrains.ICE)) {
+                roll.addModifier(movementMode == EntityMovementMode.TRACKED? 1 : 2, "ice");
+            }
+            if (game.getPlanetaryConditions().isSleeting()
+                    || game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_RAIN
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR) {
+                roll.addModifier(+1, "fog/rain");
+            }
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_BLIZZARD) {
+                roll.addModifier(movementMode == EntityMovementMode.TRACKED? 1 : 2, "snow");
+            }
+        }
+        
+        roll.addModifier(turnMode - straightLineHexes, "did not satisfy turn mode");
 
         return roll;
     }
@@ -8914,7 +9049,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // sprinted?
-        if (moved == EntityMovementType.MOVE_SPRINT) {
+        if (moved == EntityMovementType.MOVE_SPRINT
+                || moved == EntityMovementType.MOVE_VTOL_SPRINT) {
             return false;
         }
 
@@ -10353,8 +10489,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((moveType != EntityMovementType.MOVE_JUMP)
             && (prevHex != null)
             && (distance > 1)
-            && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType
-                .MOVE_VTOL_RUN))
+            && ((overallMoveType == EntityMovementType.MOVE_RUN)
+                    || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
+                    || (overallMoveType == EntityMovementType.MOVE_SPRINT)
+                    || (overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT))
             && (prevFacing != curFacing) && !lastPos.equals(curPos)
             && !(this instanceof Infantry)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
@@ -10365,6 +10503,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
                 roll.addModifier(3, "used VTOL Jet Booster");
             }
+        } else if (moveType != EntityMovementType.MOVE_JUMP
+                && prevFacing == curFacing && !lastPos.equals(curPos)
+                && lastPos.direction(curPos) % 3 != curFacing % 3
+                && !(isUsingManAce() && (overallMoveType == EntityMovementType.MOVE_WALK
+                || overallMoveType == EntityMovementType.MOVE_VTOL_WALK))) {
+            roll.append(new PilotingRollData(getId(), 0, "controlled sideslip"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                              "Check false: not apparently sideslipping");

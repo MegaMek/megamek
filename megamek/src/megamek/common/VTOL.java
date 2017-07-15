@@ -105,6 +105,8 @@ public class VTOL extends Tank {
                 return "Cruised";
             case MOVE_VTOL_RUN:
                 return "Flanked";
+            case MOVE_VTOL_SPRINT:
+                return "Sprinted";
             case MOVE_NONE:
                 return "None";
             default:
@@ -122,6 +124,8 @@ public class VTOL extends Tank {
                 return "C";
             case MOVE_VTOL_RUN:
                 return "F";
+            case MOVE_VTOL_SPRINT:
+                return "O";
             case MOVE_NONE:
                 return "N";
             default:

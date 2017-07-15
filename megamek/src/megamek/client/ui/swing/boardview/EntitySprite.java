@@ -814,7 +814,8 @@ class EntitySprite extends Sprite {
                             || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
                             || (entity.moved == EntityMovementType.MOVE_OVER_THRUST)) 
                         guipName = "AdvancedMoveRunColor";
-                    else if (entity.moved == EntityMovementType.MOVE_SPRINT) 
+                    else if (entity.moved == EntityMovementType.MOVE_SPRINT
+                            || entity.moved == EntityMovementType.MOVE_VTOL_SPRINT) 
                         guipName = "AdvancedMoveSprintColor";
                     else if (entity.moved == EntityMovementType.MOVE_JUMP) 
                         guipName = "AdvancedMoveJumpColor";

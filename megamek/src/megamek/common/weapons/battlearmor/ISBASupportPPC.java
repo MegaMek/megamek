@@ -49,7 +49,7 @@ public class ISBASupportPPC extends PPCWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
         bv = 12;
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
-        rulesRefs = "267, TM";
+        rulesRefs = "267,TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3046, 3053, 3056);
         techAdvancement.setTechRating(RATING_D);

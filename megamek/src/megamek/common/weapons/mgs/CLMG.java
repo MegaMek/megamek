@@ -52,7 +52,7 @@ public class CLMG extends MGWeapon {
         this.cost = 5000;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        rulesRefs = "228, TM";
+        rulesRefs = "228,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

@@ -42,7 +42,7 @@ public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.21;
 		infantryRange = 2;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3056, 3063, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_MC)

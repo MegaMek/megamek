@@ -54,7 +54,7 @@ public class ISSniper extends ArtilleryWeapon {
         criticals = 20;
         bv = 85;
         cost = 300000;
-        rulesRefs = "284, TO";
+        rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         .setTechRating(RATING_B)
         .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)

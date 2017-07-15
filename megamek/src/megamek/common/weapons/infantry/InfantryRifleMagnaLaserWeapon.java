@@ -41,7 +41,7 @@ public class InfantryRifleMagnaLaserWeapon extends InfantryWeapon {
 		bv = 1.33;
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
 		infantryDamage = 0.26;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2460, 2465, 2500, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2460, 2465, 2500, DATE_NONE, DATE_NONE)

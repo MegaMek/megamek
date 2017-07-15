@@ -53,7 +53,7 @@ public class CLSniperCannon extends ArtilleryCannonWeapon {
         medAV = 10;
         longAV = 10;
         maxRange = RANGE_MED;
-        rulesRefs = "285, TO";
+        rulesRefs = "285,TO";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3032, 3079, DATE_NONE);
         techAdvancement.setTechRating(RATING_B);

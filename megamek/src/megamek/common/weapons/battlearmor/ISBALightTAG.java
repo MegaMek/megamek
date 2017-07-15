@@ -50,7 +50,7 @@ public class ISBALightTAG extends TAGWeapon {
         this.bv = 0;
         this.cost = 40000;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "270, TM";
+        rulesRefs = "270,TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3046, 3053, 3057);
         techAdvancement.setTechRating(RATING_E);

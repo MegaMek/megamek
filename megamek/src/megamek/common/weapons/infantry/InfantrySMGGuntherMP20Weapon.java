@@ -42,7 +42,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.33;
 		infantryRange = 0;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3005, 3007, 3025, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_LC)

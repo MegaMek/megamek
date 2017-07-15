@@ -48,7 +48,7 @@ public class ISBAMG extends BAMGWeapon {
         criticals = 1;
         bv = 5;
         cost = 5000;
-		rulesRefs = "258, TM";
+		rulesRefs = "258,TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(DATE_NONE, 1950, 3050);
         techAdvancement.setTechRating(RATING_C);

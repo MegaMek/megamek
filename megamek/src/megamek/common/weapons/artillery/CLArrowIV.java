@@ -51,7 +51,7 @@ public class CLArrowIV extends ArtilleryWeapon {
         criticals = 12;
         bv = 240;
         cost = 450000;
-        rulesRefs = "284, TO";
+        rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
             .setTechRating(RATING_F)
             .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)

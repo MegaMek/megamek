@@ -42,7 +42,7 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
 		flags = flags.or(F_INFERNO).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.82;
 		infantryRange = 1;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FS)

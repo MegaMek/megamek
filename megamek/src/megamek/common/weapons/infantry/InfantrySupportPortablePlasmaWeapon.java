@@ -44,7 +44,7 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
 		infantryDamage = 1.58;
 		infantryRange = 2;
 		crew = 1;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		tonnage = .030;
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

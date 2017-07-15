@@ -49,7 +49,7 @@ public class InfantrySupportTAGWeapon extends InfantryWeapon {
 		extremeRange = 12;
 		cost = 40000;
 		tonnage = .020;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2598, 2610, DATE_NONE, 2770, 3051)
 		        .setISApproximate(true, true, false, false, false)
 		        .setClanAdvancement(2598, 2610, DATE_NONE, DATE_NONE, 3051)

@@ -61,7 +61,7 @@ public class ISImpHGaussRifle extends GaussWeapon {
         longAV = 22;
         maxRange = RANGE_LONG;
         explosionDamage = 30;
-        rulesRefs = "313, TO";
+        rulesRefs = "313,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

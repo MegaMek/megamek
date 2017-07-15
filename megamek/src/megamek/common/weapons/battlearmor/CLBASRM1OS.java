@@ -42,7 +42,7 @@ public class CLBASRM1OS extends SRMWeapon {
         tonnage = .020;
         criticals = 2;
         cost = 2500;
-		rulesRefs = "261, TM";
+		rulesRefs = "261,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN)
 		.setIntroLevel(false)
 		.setUnofficial(false)

@@ -59,7 +59,7 @@ public class ISBAPopUpMineLauncher extends Weapon {
         String[] modeStrings = { "Single", "2-shot", "3-shot", "4-shot" };
         setModes(modeStrings);
         flags = flags.or(F_DIRECT_FIRE).or(F_SOLO_ATTACK).or(F_BA_WEAPON);
-        rulesRefs = "267, TM";
+        rulesRefs = "267,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

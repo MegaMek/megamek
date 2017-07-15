@@ -50,7 +50,7 @@ public class CLBASupportPPC extends PPCWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         cost = 14000;
-        rulesRefs = "267, TM";
+        rulesRefs = "267,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
     	.setIntroLevel(false)
     	.setUnofficial(false)

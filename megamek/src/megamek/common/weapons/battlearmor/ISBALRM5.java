@@ -43,7 +43,7 @@ public class ISBALRM5 extends LRMWeapon {
         tonnage = .300;
         criticals = 4;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "261, TM";
+        rulesRefs = "261,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

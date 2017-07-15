@@ -45,7 +45,7 @@ public class InfantrySupportERLaserWeapon extends InfantryWeapon {
 		infantryRange = 4;
 		crew = 2;
 		tonnage = .110;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3054, 3059, 3075, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FW)

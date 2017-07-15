@@ -53,7 +53,7 @@ public class CLUAC5 extends UACWeapon {
         this.longAV = 7;
         this.maxRange = RANGE_LONG;
         this.explosionDamage = damage;
-        rulesRefs = "208, TM";
+        rulesRefs = "208,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

@@ -42,7 +42,7 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.37;
 		infantryRange = 0;
-		rulesRefs = "272, TM";
+		rulesRefs = "272,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2815, 2820, DATE_NONE, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CJF)
 				.setProductionFactions(F_CJF).setTechRating(RATING_F)

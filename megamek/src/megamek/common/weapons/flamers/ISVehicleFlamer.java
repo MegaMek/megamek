@@ -54,7 +54,7 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        rulesRefs = "218, TM";
+        rulesRefs = "218,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
     	.setIntroLevel(true)
     	.setUnofficial(false)

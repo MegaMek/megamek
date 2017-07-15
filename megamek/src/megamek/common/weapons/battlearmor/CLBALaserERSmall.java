@@ -54,7 +54,7 @@ public class CLBALaserERSmall extends LaserWeapon {
         cost = 11250;
         shortAV = 5;
         maxRange = RANGE_SHORT;
-        rulesRefs = "258, TM";
+        rulesRefs = "258,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

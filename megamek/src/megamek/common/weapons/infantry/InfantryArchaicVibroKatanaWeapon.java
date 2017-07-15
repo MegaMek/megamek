@@ -42,7 +42,7 @@ public class InfantryArchaicVibroKatanaWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.32;
 		infantryRange = 0;
-		rulesRefs = "272, TM";
+		rulesRefs = "272,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2440, 2450, DATE_NONE, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setClanAdvancement(2440, 2450, DATE_NONE, 2850, DATE_NONE)

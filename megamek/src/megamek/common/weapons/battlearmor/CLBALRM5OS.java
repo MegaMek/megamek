@@ -41,7 +41,7 @@ public class CLBALRM5OS extends LRMWeapon {
         bv = 11;
         cost = 15000;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-		rulesRefs = "261, TM";
+		rulesRefs = "261,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN)
 		.setIntroLevel(false)
 		.setUnofficial(false)

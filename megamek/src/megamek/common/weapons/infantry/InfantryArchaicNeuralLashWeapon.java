@@ -42,7 +42,7 @@ public class InfantryArchaicNeuralLashWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.09;
 		infantryRange = 0;
-		rulesRefs = "272, TM";
+		rulesRefs = "272,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2300, 2320, 2500, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, true, false, false, false)
 				.setClanAdvancement(2300, 2320, 2500, DATE_NONE, DATE_NONE)

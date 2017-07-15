@@ -42,7 +42,7 @@ public class InfantryArchaicVibroMaceWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.26;
 		infantryRange = 0;
-		rulesRefs = "272, TM";
+		rulesRefs = "272,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3000, 3050, 3100, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, true, false, false, false)
 				.setClanAdvancement(3000, 3050, 3100, DATE_NONE, DATE_NONE)

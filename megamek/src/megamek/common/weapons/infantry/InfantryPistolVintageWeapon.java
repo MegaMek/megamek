@@ -43,7 +43,7 @@ public class InfantryPistolVintageWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.11;
         infantryRange = 1;
-        rulesRefs =" 273, TM";
+        rulesRefs =" 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false).setTechRating(RATING_C)
 		        .setAvailability(RATING_C, RATING_D, RATING_D, RATING_E);

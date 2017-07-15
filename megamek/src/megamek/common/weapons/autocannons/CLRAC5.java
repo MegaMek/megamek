@@ -52,7 +52,7 @@ public class CLRAC5 extends RACWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        rulesRefs = "286, TO";
+        rulesRefs = "286,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)
             .setTechRating(RATING_F)

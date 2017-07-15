@@ -54,7 +54,7 @@ public class CLBALaserERMedium extends LaserWeapon {
         medAV = 7;
         maxRange = RANGE_MED;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "258, TM";
+        rulesRefs = "258,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

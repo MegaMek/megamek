@@ -41,7 +41,7 @@ public class InfantryPistolLaserPistolWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_ENERGY);
 		infantryDamage = 0.21;
 		infantryRange = 1;
-		rulesRefs = " 273, TM";
+		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)

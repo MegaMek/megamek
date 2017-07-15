@@ -55,7 +55,7 @@ public class ISThumperCannon extends ArtilleryCannonWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_MED;
-        rulesRefs = "285, TO";
+        rulesRefs = "285,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         .setTechRating(RATING_B)
         .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)

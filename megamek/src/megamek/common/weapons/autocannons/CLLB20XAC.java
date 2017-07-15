@@ -50,7 +50,7 @@ public class CLLB20XAC extends LBXACWeapon {
         shortAV = 20;
         medAV = 20;
         maxRange = RANGE_MED;
-        rulesRefs = "207, TM";
+        rulesRefs = "207,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
         .setTechRating(RATING_F)

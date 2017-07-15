@@ -56,7 +56,7 @@ public class CLBAMicroBomb extends Weapon {
         tonnage = .1;
         criticals = 2;
         cost = 30000;
-        rulesRefs = "253, TM";
+        rulesRefs = "253,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

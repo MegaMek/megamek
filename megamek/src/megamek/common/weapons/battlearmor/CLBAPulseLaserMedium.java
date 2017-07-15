@@ -57,7 +57,7 @@ public class CLBAPulseLaserMedium extends PulseLaserWeapon {
         this.medAV = 7;
         this.maxRange = RANGE_MED;
         this.flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        rulesRefs = "258, TM";
+        rulesRefs = "258,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

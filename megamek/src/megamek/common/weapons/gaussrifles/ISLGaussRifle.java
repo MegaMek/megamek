@@ -61,7 +61,7 @@ public class ISLGaussRifle extends GaussWeapon {
         this.extAV = 8;
         this.maxRange = RANGE_EXT;
         this.explosionDamage = 16;
-        rulesRefs = "219, TM";
+        rulesRefs = "219,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

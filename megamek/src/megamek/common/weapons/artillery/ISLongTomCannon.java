@@ -55,7 +55,7 @@ public class ISLongTomCannon extends ArtilleryCannonWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        rulesRefs = "285, TO";
+        rulesRefs = "285,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
             .setTechRating(RATING_B)
             .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)

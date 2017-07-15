@@ -42,7 +42,7 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
 		infantryDamage = 0.02;
 		infantryRange = 0;
-		rulesRefs = " 272, TM";
+		rulesRefs = " 272,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2980, 2990, DATE_NONE, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false).setPrototypeFactions(F_CC)
 				.setProductionFactions(F_CC).setTechRating(RATING_D)

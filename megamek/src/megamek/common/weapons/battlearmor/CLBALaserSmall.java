@@ -51,7 +51,7 @@ public class CLBALaserSmall extends LaserWeapon {
         bv = 9;
         cost = 11250;
         atClass = CLASS_POINT_DEFENSE;
-        rulesRefs = "258, TM";
+        rulesRefs = "258,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

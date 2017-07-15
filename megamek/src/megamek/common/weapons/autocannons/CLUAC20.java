@@ -51,7 +51,7 @@ public class CLUAC20 extends UACWeapon {
         medAV = 30;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        rulesRefs = "208, TM";
+        rulesRefs = "208,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

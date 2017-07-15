@@ -52,7 +52,7 @@ public class ISASMissileWeapon extends CapitalMissileWeapon {
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;
-        rulesRefs = "358, TO";
+        rulesRefs = "358,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

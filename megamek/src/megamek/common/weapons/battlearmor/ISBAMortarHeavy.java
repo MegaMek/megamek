@@ -53,7 +53,7 @@ public class ISBAMortarHeavy extends Weapon {
         criticals = 2;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
                 .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
-        rulesRefs = "263, TM";
+        rulesRefs = "263,TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3049, 3057, 3063);

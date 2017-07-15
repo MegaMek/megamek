@@ -44,7 +44,7 @@ public class InfantrySupportMagPulseHarpoonWeapon extends InfantryWeapon {
 		infantryRange = 3;
 		crew = 2;
 		tonnage = .095;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3070, 3079, 3100, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setPrototypeFactions(F_FW)

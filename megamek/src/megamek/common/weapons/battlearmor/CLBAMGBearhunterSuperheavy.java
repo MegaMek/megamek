@@ -53,7 +53,7 @@ public class CLBAMGBearhunterSuperheavy extends Weapon {
         bv = 4;
         flags = flags.or(F_DIRECT_FIRE).or(F_NO_FIRES).or(F_BALLISTIC)
                 .or(F_BA_WEAPON).or(F_BURST_FIRE);
-        rulesRefs = "258, TM";
+        rulesRefs = "258,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

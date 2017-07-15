@@ -44,7 +44,7 @@ public class InfantrySupportSRMHeavyInfernoWeapon extends InfantryWeapon {
 		infantryRange = 2;
 		String[] modeStrings = { "Damage", "Heat" };
 		setModes(modeStrings);
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		tonnage = .020;
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2366, 2370, 2400, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)

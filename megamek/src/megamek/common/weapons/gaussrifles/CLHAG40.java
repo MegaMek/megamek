@@ -49,7 +49,7 @@ public class CLHAG40 extends HAGWeapon {
         longAV = 24;
         maxRange = RANGE_LONG;
         explosionDamage = rackSize / 2;
-        rulesRefs = "219, TM";
+        rulesRefs = "219,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

@@ -48,7 +48,7 @@ public class CLStreakSRM4IOS extends StreakSRMWeapon {
         shortAV = 8;
         medAV = 8;
         maxRange = RANGE_MED;
-        rulesRefs = "327, TO";
+        rulesRefs = "327,TO";
         rulesRefs = "327,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)

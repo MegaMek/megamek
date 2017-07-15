@@ -44,7 +44,7 @@ public class InfantrySupportClanSemiPortablePulseLaserWeapon extends InfantryWea
 		infantryDamage = 0.55;
 		infantryRange = 2;
 		crew = 2;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		tonnage = .040;
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3056, 3059, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSJ)

@@ -42,7 +42,7 @@ public class InfantrySMGClanGaussWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
 		infantryDamage = 0.45;
 		infantryRange = 1;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3051, 3055, 3060, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSF)
 		        .setProductionFactions(F_CSF).setTechRating(RATING_E)

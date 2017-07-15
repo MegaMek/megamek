@@ -45,7 +45,7 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
 		infantryRange = 3;
 		crew = 5;
 		tonnage = 1800;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2465, 2470, 2500, DATE_NONE, DATE_NONE)

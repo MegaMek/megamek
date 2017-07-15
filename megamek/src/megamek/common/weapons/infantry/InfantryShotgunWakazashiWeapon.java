@@ -41,7 +41,7 @@ public class InfantryShotgunWakazashiWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.23;
         infantryRange = 0;
-        rulesRefs =" 273, TM";
+        rulesRefs =" 273,TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
         techAdvancement.setTechRating(RATING_D);

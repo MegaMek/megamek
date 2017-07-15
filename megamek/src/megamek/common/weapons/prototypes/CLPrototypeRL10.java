@@ -47,7 +47,7 @@ public class CLPrototypeRL10 extends PrototypeRLWeapon {
         shortAV = 6;
         medAV = 6;
         maxRange = RANGE_MED;
-        rulesRefs = "229, TM";
+        rulesRefs = "229,TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(2807, DATE_NONE, DATE_NONE, 2823);

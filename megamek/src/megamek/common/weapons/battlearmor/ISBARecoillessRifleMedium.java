@@ -55,7 +55,7 @@ public class ISBARecoillessRifleMedium extends Weapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
                 .or(F_BA_WEAPON).or(F_BURST_FIRE);
         cost = 3000;
-        rulesRefs = "268, TM";
+        rulesRefs = "268,TM";
 
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
         techAdvancement.setISAdvancement(3047, 3054, 3056);

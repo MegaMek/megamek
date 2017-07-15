@@ -45,7 +45,7 @@ public class InfantrySupportHeavyPulseLaserWeapon extends InfantryWeapon {
 		infantryRange = 4;
 		crew = 4;
 		tonnage = .300;
-		rulesRefs = "273, TM";
+		rulesRefs = "273,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2610, 2615, 2675, DATE_NONE, DATE_NONE)
 		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2610, 2615, 2675, DATE_NONE, DATE_NONE)

@@ -43,7 +43,7 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT);
 		infantryDamage = 0.30;
 		infantryRange = 1;
-		rulesRefs = " 273, TM";
+		rulesRefs = " 273,TM";
 		techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3062, 3065, 3085, DATE_NONE, DATE_NONE)
 				.setISApproximate(true, false, false, false, false)
 				.setClanAdvancement(3062, 3065, 3085, DATE_NONE, DATE_NONE)

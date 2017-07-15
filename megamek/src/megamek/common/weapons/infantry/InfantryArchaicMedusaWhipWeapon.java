@@ -42,7 +42,7 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
 		flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_NONPENETRATING).or(F_INF_ARCHAIC);
 		infantryDamage = 0.16;
 		infantryRange = 0;
-		rulesRefs = "272, TM";
+		rulesRefs = "272,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(2820, 2825, DATE_NONE, DATE_NONE, DATE_NONE)
 				.setClanApproximate(true, true, false, false, false).setPrototypeFactions(F_CWM)
 				.setProductionFactions(F_CWM).setTechRating(RATING_E)

@@ -52,7 +52,7 @@ public class ISLongTom extends ArtilleryWeapon {
         criticals = 30;
         bv = 368;
         cost = 450000;
-        rulesRefs = "284, TO";
+        rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         .setTechRating(RATING_B)
         .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)

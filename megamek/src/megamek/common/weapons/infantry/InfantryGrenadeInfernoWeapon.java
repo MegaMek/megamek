@@ -49,7 +49,7 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
 		infantryDamage = 0.19;
 		infantryRange = 0;
 		// very hackish - using some data from Inferno Fuel.
-		rulesRefs = " 272, TM";
+		rulesRefs = " 272,TM";
 		techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
 				.setISApproximate(false, false, false, false, false)
 				.setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

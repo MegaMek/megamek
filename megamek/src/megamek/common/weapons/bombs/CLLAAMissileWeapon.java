@@ -50,7 +50,7 @@ public class CLLAAMissileWeapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_MED;
         this.ammoType = AmmoType.T_LAA_MISSILE;
         this.capital = false;
-        rulesRefs = "359, TO";
+        rulesRefs = "359,TO";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
     	.setUnofficial(false)

@@ -46,7 +46,7 @@ public class ISNarcOS extends NarcWeapon {
         flags = flags.or(F_ONESHOT);
         bv = 6;
         cost = 100000;
-        rulesRefs = "232, TM";
+        rulesRefs = "232,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
     	.setIntroLevel(false)
     	.setUnofficial(false)

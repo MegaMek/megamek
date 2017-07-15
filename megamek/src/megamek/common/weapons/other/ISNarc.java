@@ -45,7 +45,7 @@ public class ISNarc extends NarcWeapon {
         this.criticals = 2;
         this.bv = 30;
         this.cost = 100000;
-        rulesRefs = "232, TM";
+        rulesRefs = "232,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         	.setIntroLevel(false)
         	.setUnofficial(false)

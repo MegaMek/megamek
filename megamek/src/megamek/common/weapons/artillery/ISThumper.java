@@ -53,7 +53,7 @@ public class ISThumper extends ArtilleryWeapon {
         criticals = 15;
         bv = 43;
         cost = 187500;
-        rulesRefs = "284, TO";
+        rulesRefs = "284,TO";
         techAdvancement.setTechBase(TECH_BASE_ALL)
         .setTechRating(RATING_B)
         .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)

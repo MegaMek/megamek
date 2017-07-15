@@ -42,7 +42,7 @@ public class ISFluidGun extends FluidGunWeapon {
         criticals = 2;
         tonnage = 2;
         cost = 35000;
-        rulesRefs = "313, TO";
+        rulesRefs = "313,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
     	.setIntroLevel(false)
     	.setUnofficial(false)

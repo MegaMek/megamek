@@ -53,7 +53,7 @@ public class CLLongTomCannon extends ArtilleryCannonWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        rulesRefs = "285, TO";
+        rulesRefs = "285,TO";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
         techAdvancement.setClanAdvancement(3032, 3079, DATE_NONE);
         techAdvancement.setTechRating(RATING_B);

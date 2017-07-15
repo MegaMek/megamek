@@ -2282,10 +2282,7 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
-            } else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)
-                    && ((entity instanceof Mech && !(entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())
-                            || (entity instanceof Tank || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())))
-                            && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))
+            } else if (canUseSprint(game)
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
                     && !isRunProhibited() && !isEvading()) {
@@ -3726,5 +3723,24 @@ public class MoveStep implements Serializable {
 
     public boolean isCareful() {
         return isCarefulPath;
+    }
+    
+    /**
+     * Helper function to determine whether sprint is available as a game option to the entity
+     */
+    public boolean canUseSprint(IGame game) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
+            return false;
+        }
+        if (entity instanceof Tank
+                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())) {
+            return  game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
+        }
+        if (entity instanceof LandAirMech) {
+            return entity.getMovementMode() != EntityMovementMode.AERODYNE
+                    && (entity.getMovementMode() != EntityMovementMode.WIGE
+                        || elevation > 0);
+        }
+        return entity instanceof Mech;
     }
 }

@@ -1899,6 +1899,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     .containsTerrain(Terrains.JUNGLE))) {
                 // VTOL BA (sylph) can move as ground unit as well
                 return ((assumedElevation <= 50) && (assumedAlt >= hex.floor()));
+            } else if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+                // fly under a bridge as long as there is enough clearance below and above the unit
+                return (assumedElevation <= 50)
+                        && assumedElevation > hex.floor()
+                        && (assumedElevation > hex.terrainLevel(Terrains.BRIDGE_ELEV)
+                                || assumedElevation + height() < hex.terrainLevel(Terrains.BRIDGE_ELEV) - 1);
             } else if (hex.containsTerrain(Terrains.WOODS)
                        || hex.containsTerrain(Terrains.WATER)
                        || hex.containsTerrain(Terrains.JUNGLE)) {

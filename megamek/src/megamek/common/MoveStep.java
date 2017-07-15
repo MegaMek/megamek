@@ -3328,8 +3328,12 @@ public class MoveStep implements Serializable {
                 if (elevation == destHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
                     return false;
                 }
-            } else if (elevation <= (destHex.ceiling() - destHex.surface())
-                    && !(entity.getMovementMode() == EntityMovementMode.WIGE && isPavementStep())) {
+            } else if (elevation <= (destHex.ceiling() - destHex.surface())) {
+                // VTOLs and WiGEs can fly through woods and jungle below the level of the treetops on a road.
+                if (destHex.containsTerrain(Terrains.WOODS) || destHex.containsTerrain(Terrains.JUNGLE)) {
+                    int direction = src.direction(dest);
+                    return destHex.containsTerrainExit(Terrains.ROAD, dest.direction(src));
+                }
                 // System.err.println("can't fly into woods or a cliff face");
                 return false; // can't fly into woods or a cliff face
             }

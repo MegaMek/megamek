@@ -547,7 +547,8 @@ public class Compute {
         // check sideslips
         if ((entity instanceof VTOL)
                 || (entity.getMovementMode() == EntityMovementMode.HOVER)
-                || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
+                || (entity.getMovementMode() == EntityMovementMode.WIGE
+                        && destElevation > 0)) {
             if (isTurning
                     && ((movementType == EntityMovementType.MOVE_RUN) 
                             || (movementType == EntityMovementType.MOVE_SPRINT)

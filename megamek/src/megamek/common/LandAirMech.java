@@ -156,31 +156,32 @@ public class LandAirMech extends BipedMech {
         return mp;
     }
     
+    /**
+     * This value should only be used for biped and airmech ground movement.
+     */
     @Override
-    public int getSprintMP() {
-        if (movementMode == EntityMovementMode.AERODYNE
-                || movementMode == EntityMovementMode.WIGE) {
-            return getRunMP();
-        }
-        return getSprintMP(true, false, false);
-    }
-
-    @Override
-    public int getSprintMP(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
-        if (movementMode == EntityMovementMode.AERODYNE
-                || movementMode == EntityMovementMode.WIGE) {
-            return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+    public int getSprintMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        if (movementMode == EntityMovementMode.WIGE) {
+            if (hasHipCrit()) {
+                return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
+            }
+            return (int)Math.ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor)
+                    * (hasArmedMASC()? 2.5 : 2.0));
         }
         return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
+    /**
+     * This value should only be used for biped and airmech ground movement.
+     */
     @Override
     public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
-        if (movementMode == EntityMovementMode.AERODYNE
-                || movementMode == EntityMovementMode.WIGE) {
-            return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+        if (movementMode == EntityMovementMode.WIGE) {
+            if (hasHipCrit()) {
+                return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
+            }
+            return getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor)  * 2;
         }
         return super.getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
     }
@@ -202,22 +203,30 @@ public class LandAirMech extends BipedMech {
         return (int)Math.ceil(getAirMechCruiseMP(gravity, ignoremodulararmor) * 1.5);
     }
     
+    public int getAirMechWalkMP() {
+        return getAirMechWalkMP(true, false, false);
+    }
+
     public int getAirMechWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int mp = super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
+        int mp = (int)Math.ceil(super.getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 0.33);
         if (convertingNow) {
             mp /= 2;
         }
         return mp;
+    }
+    
+    public int getAirMechRunMP() {
+        return getAirMechRunMP(true, false, false);
     }
 
     public int getAirMechRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int mp = (int)Math.ceil(super.getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 1.5);
+        int mp = (int)Math.ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * 1.5);
         if (convertingNow) {
             mp /= 2;
         }
         return mp;
     }
-
+    
     public int getFighterModeWalkMP(boolean gravity, boolean ignoremodulararmor) {
         return getJumpMP(gravity, ignoremodulararmor);
     }

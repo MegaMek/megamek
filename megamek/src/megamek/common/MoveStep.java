@@ -2153,13 +2153,34 @@ public class MoveStep implements Serializable {
             entity.gotPavementBonus = true;
         }
         int tmpWalkMP = entity.getWalkMP() + bonus;
-        final int runMP = entity.getRunMP() + bonus;
-        final int runMPnoMASC = entity.getRunMPwithoutMASC() + bonus;
-        final int sprintMP = entity.getSprintMP() + bonus;
-        final int sprintMPnoMASC = entity.getSprintMPwithoutMASC() + bonus;
+        int runMP = entity.getRunMP() + bonus;
+        int runMPnoMASC = entity.getRunMPwithoutMASC() + bonus;
+        int sprintMP = entity.getSprintMP() + bonus;
+        int sprintMPnoMASC = entity.getSprintMPwithoutMASC() + bonus;
         final boolean isMASCUsed = entity.isMASCUsed();
         final boolean hasPoorPerformance = entity
                 .hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE);
+
+        // WiGEs, AirMechs, and glider ProtoMechs have different MP for ground and airborne movement
+        if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+            if (getClearance() <= 0) {
+                if (entity instanceof LandAirMech) {
+                    // On the ground or underwater use AirMech walk/run.
+                    // Sprint can only be used on the ground, so that is already set.
+                    tmpWalkMP = ((LandAirMech)entity).getAirMechWalkMP();
+                    runMPnoMASC = ((LandAirMech)entity).getAirMechRunMP();
+                    // LAMs cannot use hardened armor, which makes runMP a simpler calculation.
+                    runMP = ((LandAirMech)entity).hasArmedMASC()? tmpWalkMP * 2 : runMPnoMASC;
+                } else {
+                    // Only 1 ground MP for ground effect vehicles
+                    tmpWalkMP = runMP = runMPnoMASC = sprintMP = sprintMPnoMASC = 1;
+                }
+            } else if (entity instanceof LandAirMech) {
+                // LAMs cannot use overdrive and MASC does not effect airborne MP.
+                tmpWalkMP = ((LandAirMech)entity).getAirMechWalkMP();
+                runMP = runMPnoMASC = sprintMP = sprintMPnoMASC = ((LandAirMech)entity).getAirMechFlankMP();
+            }
+        }
 
         IHex currHex = game.getBoard().getHex(curPos);
         IHex lastHex = game.getBoard().getHex(lastPos);
@@ -2224,13 +2245,13 @@ public class MoveStep implements Serializable {
                 return;
             }
             // WiGEs on the ground can use only 1 MP / do just one step
-            if (!isFirstStep()
-                    && (entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && getClearance() == 0
-                    && prev.getClearance() == 0) {
-                movementType = EntityMovementType.MOVE_ILLEGAL;
-                return;
-            }
+//            if (!isFirstStep()
+//                    && (entity.getMovementMode() == EntityMovementMode.WIGE)
+//                    && getClearance() == 0
+//                    && prev.getClearance() == 0) {
+//                movementType = EntityMovementType.MOVE_ILLEGAL;
+//                return;
+//            }
 
             if (getMpUsed() <= tmpWalkMP) {
                 if ((getEntity().getMovementMode() == EntityMovementMode.VTOL
@@ -2283,14 +2304,15 @@ public class MoveStep implements Serializable {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
             } else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)
-                    && ((entity instanceof Mech && !(entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())
-                            || (entity instanceof Tank || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode())))
-                            && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))
+                    && ((entity instanceof Mech && !(entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
+                            || ((entity instanceof Tank || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
+                            && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)))
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
                     && !isRunProhibited() && !isEvading()) {
                 if (entity.getMovementMode() == EntityMovementMode.VTOL
-                        || entity.getMovementMode() == EntityMovementMode.WIGE) {
+                        || (entity.getMovementMode() == EntityMovementMode.WIGE
+                                && getClearance() > 0)) {
                     movementType = EntityMovementType.MOVE_VTOL_SPRINT;
                 } else {
                     movementType = EntityMovementType.MOVE_SPRINT;

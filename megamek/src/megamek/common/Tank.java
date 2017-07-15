@@ -552,11 +552,9 @@ public class Tank extends Entity {
             case SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
-                return (hex.containsTerrain(Terrains.WOODS) || (hex
-                        .containsTerrain(Terrains.BUILDING)))
-                        && !(currElevation > hex
-                                .maxTerrainFeatureElevation(game.getBoard()
-                                        .inAtmosphere()));
+                return (hex.containsTerrain(Terrains.WOODS)
+                        || hex.containsTerrain(Terrains.JUNGLE))
+                        && hex.ceiling() > currElevation;
             default:
                 return false;
         }
@@ -663,9 +661,14 @@ public class Tank extends Entity {
             case MOVE_NONE:
                 return "None";
             case MOVE_WALK:
+            case MOVE_VTOL_WALK:
                 return "Cruised";
             case MOVE_RUN:
+            case MOVE_VTOL_RUN:
                 return "Flanked";
+            case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
+                return "Sprinted";
             case MOVE_JUMP:
                 return "Jumped";
             default:
@@ -684,9 +687,14 @@ public class Tank extends Entity {
             case MOVE_NONE:
                 return "N";
             case MOVE_WALK:
+            case MOVE_VTOL_WALK:
                 return "C";
             case MOVE_RUN:
+            case MOVE_VTOL_RUN:
                 return "F";
+            case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
+                return "O";
             case MOVE_JUMP:
                 return "J";
             default:
@@ -2015,6 +2023,11 @@ public class Tank extends Entity {
 
         return prd;
     }
+    
+    @Override
+    public boolean usesTurnMode() {
+        return game != null && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TURN_MODE);
+    }
 
     @Override
     public Vector<Report> victoryReport() {
@@ -2081,6 +2094,90 @@ public class Tank extends Entity {
             return (getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2);
         }
         return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP()
+     */
+    @Override
+    public int getSprintMP() {
+        // Overdrive
+        if (game != null
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            return getSprintMP(true, false, false);
+        }
+        return getSprintMP(true, false, false);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP(boolean, boolean, boolean)
+     */
+    @Override
+    public int getSprintMP(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (game != null && game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            if (hasArmedMASC()) {
+                return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
+                        ignoremodulararmor) * 2.5);
+            } else {
+                return getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+            }
+        } else {
+            return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean)
+     */
+    @Override
+    public int getSprintMPwithoutMASC() {
+        return getSprintMPwithoutMASC(true, false, false);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean,
+     * boolean)
+     */
+    @Override
+    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (game != null && game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
+                    ignoremodulararmor) * 2.0);
+        } else {
+            return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+        }
+    }
+
+    public int getOriginalSprintMPwithoutMASC() {
+        if (game != null && game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
+        } else {
+            return getOriginalRunMP();
+        }
+    }
+
+    /**
+     * Returns this entity's Sprint mp as a string.
+     */
+    @Override
+    public String getSprintMPasString() {
+        if (hasArmedMASC()) {
+            return getRunMPwithoutMASC() + "(" + getSprintMP() + ")";
+        }
+        return Integer.toString(getSprintMP());
     }
 
     @Override

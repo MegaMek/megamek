@@ -284,7 +284,8 @@ public class SharedUtility {
                             SharedUtility.checkNag(rollTarget, nagReport,
                                     psrList);
                         }
-                    } else if (moveType == EntityMovementType.MOVE_SPRINT) {
+                    } else if (moveType == EntityMovementType.MOVE_SPRINT
+                            || moveType == EntityMovementType.MOVE_VTOL_SPRINT) {
                         if (step.getMpUsed() > entity.getSprintMP(false, false, false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
@@ -387,6 +388,19 @@ public class SharedUtility {
                     checkNag(rollTarget, nagReport, psrList);
                 }
             }
+            
+            if (step.isTurning()) {
+                rollTarget = entity.checkTurnModeFailure(overallMoveType,
+                        prevStep == null? 0 : prevStep.getNStraight(), md.getMpUsed(), curPos);
+                checkNag(rollTarget, nagReport, psrList);
+            }
+            
+            if (step.getType() == MoveStepType.BOOTLEGGER) {
+                rollTarget = entity.getBasePilotingRoll(overallMoveType);
+                entity.addPilotingModifierForTerrain(rollTarget);
+                rollTarget.addModifier(0, "bootlegger maneuver");
+                checkNag(rollTarget, nagReport, psrList);
+            }
 
             // update lastPos, prevStep, prevFacing & prevHex
             if (!curPos.equals(lastPos)) {
@@ -409,6 +423,12 @@ public class SharedUtility {
         checkNag(rollTarget, nagReport, psrList);
 
         rollTarget = entity.checkSprintingWithSupercharger(overallMoveType, md.getMpUsed());
+        checkNag(rollTarget, nagReport, psrList);
+
+        rollTarget = entity.checkUsingOverdrive(overallMoveType);
+        checkNag(rollTarget, nagReport, psrList);
+            
+        rollTarget = entity.checkGunningIt(overallMoveType);
         checkNag(rollTarget, nagReport, psrList);
 
         // but the danger isn't over yet! landing from a jump can be risky!

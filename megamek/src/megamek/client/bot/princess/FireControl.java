@@ -358,7 +358,8 @@ public class FireControl {
         }
 
         // did the target sprint?
-        if (targetState.getMovementType() == EntityMovementType.MOVE_SPRINT) {
+        if (targetState.getMovementType() == EntityMovementType.MOVE_SPRINT
+                || targetState.getMovementType() == EntityMovementType.MOVE_VTOL_SPRINT) {
             toHitData.addModifier(TH_TAR_SPRINT);
         }
 

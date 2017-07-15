@@ -308,6 +308,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int delta_distance = 0;
     public int mpUsed = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
+    public EntityMovementType movedLastRound = EntityMovementType.MOVE_NONE;
     private boolean movedBackwards = false;
     /**
      * Used to keep track of usage of the power reverse quirk, which allows a
@@ -315,8 +316,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * a PSR is required, it adds a +1 modifier to the PSR.
      */
     private boolean isPowerReverse = false;
+    private boolean wigeLiftedOff = false;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
+    public int wigeBonus = 0;
     public boolean hitThisRoundByAntiTSM = false;
     public boolean inReverse = false;
     protected boolean struck = false;
@@ -1681,15 +1684,46 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (this instanceof Aero) {
             return retVal;
         }
-        if ((getMovementMode() == EntityMovementMode.SUBMARINE)
+        if (getMovementMode() == EntityMovementMode.WIGE) {
+            // Airborne WiGEs remain 1 elevation above underlying terrain, unless climb mode is
+            // on, then they maintain current absolute elevation  as long as it is at least
+            // one level above the ground.
+            // WiGEs treat the tops of buildings as the underlying terrain, but must pay an additional
+            // 2 MP to climb.
+            // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
+            
+            // Find level equivalent of current elevation
+            int level = current.surface() + assumedElevation;
+            // For WiGE purposes, the surface of a hex with a building is the roof; otherwise it's the surface of the hex.
+            int curSurface = current.surface();
+            if (current.containsTerrain(Terrains.BLDG_ELEV)) {
+                curSurface += current.terrainLevel(Terrains.BLDG_ELEV);
+            }
+            int nextSurface = next.surface();
+            if (next.containsTerrain(Terrains.BLDG_ELEV)) {
+                nextSurface += next.terrainLevel(Terrains.BLDG_ELEV);
+            }
+            
+            int nextLevel;
+            if (level - curSurface <= 0) {
+                // If we are not above the effective surface, we are not airborne and the next level
+                // is the effective surface of the next hex.
+                nextLevel = nextSurface;
+            } else if (climb) {
+                // If climb mode is on, we maintain the same level unless the next surface requires climbing.
+                // is the effective surface of the next hex.
+                nextLevel = Math.max(level, nextSurface + 1);
+            } else {
+                // Otherwise we move to one elevation level above the effective surface.
+                nextLevel = nextSurface + 1;
+            }
+            // Elevation is this height of the level above the actual surface elevation of the hex.
+            retVal = nextLevel - next.surface();
+        } else if ((getMovementMode() == EntityMovementMode.SUBMARINE)
             || ((getMovementMode() == EntityMovementMode.INF_UMU)
                 && next.containsTerrain(Terrains.WATER) && current
                 .containsTerrain(Terrains.WATER))
             || (getMovementMode() == EntityMovementMode.VTOL)
-            // a WIGE in climb mode or that ended climb mode in the previous
-            // hex stays at the same flight level, like a VTOL
-            || ((getMovementMode() == EntityMovementMode.WIGE)
-                && (climb || wigeEndClimbPrevious) && (assumedElevation > 0))
             || ((getMovementMode() == EntityMovementMode.QUAD_SWIM) && hasUMU())
             || ((getMovementMode() == EntityMovementMode.BIPED_SWIM) && hasUMU())) {
             retVal += current.surface();
@@ -1725,19 +1759,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             
-            // Airborne WiGEs remain 1 elevation above underlying terrain
-            if ((getMovementMode() == EntityMovementMode.WIGE) 
-                    && (assumedElevation > 0)) {
-                if ((next.ceiling() - assumedElevation) 
-                        <= getMaxElevationChange()) {
-                    retVal = 1 + next.maxTerrainFeatureElevation(game
-                            .getBoard().inAtmosphere());
-                }
-            }
-
-            if ((next.containsTerrain(Terrains.BUILDING)
-                || current.containsTerrain(Terrains.BUILDING))
-                && (getMovementMode() != EntityMovementMode.WIGE)) {
+            if (next.containsTerrain(Terrains.BUILDING)
+                || current.containsTerrain(Terrains.BUILDING)) {
                 int bldcur = Math.max(-current.depth(true),
                                       current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(-next.depth(true),
@@ -1867,10 +1890,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                 hex.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                     .getDepth());
                 break;
-            case VTOL:
             case WIGE:
+                // Per errata, WiGEs have flotation hull, which makes no sense unless it changes the rule
+                // in TW that they cannot land on water.
+                // See 
+                if (hex.containsTerrain(Terrains.WATER)) {
+                    minAlt = hex.surface();
+                    break;
+                }
+                // else fall through
+            case VTOL:
                 minAlt = hex.ceiling();
-                if (inWaterOrWoods) {
+                if (inWaterOrWoods && !hex.containsTerrain(Terrains.WATER)) {
                     minAlt++; // can't land here
                 }
                 break;
@@ -1960,7 +1991,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 maxAlt = hex.surface() - (getHeight() + 1);
                 break;
             case WIGE:
-                maxAlt = hex.surface() + 1;
+                if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    maxAlt = Math.max(hex.surface(), hex.terrainLevel(Terrains.BLDG_ELEV)) + 1;
+                } else {
+                    maxAlt = hex.surface() + 1;
+                }
                 break;
             case BIPED:
             case QUAD:
@@ -1989,6 +2024,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     .containsTerrain(Terrains.JUNGLE))) {
                 // VTOL BA (sylph) can move as ground unit as well
                 return ((assumedElevation <= 50) && (assumedAlt >= hex.floor()));
+            } else if (hex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+                // fly under a bridge as long as there is enough clearance below and above the unit
+                return (assumedElevation <= 50)
+                        && assumedElevation > hex.floor()
+                        && (assumedElevation > hex.terrainLevel(Terrains.BRIDGE_ELEV)
+                                || assumedElevation + height() < hex.terrainLevel(Terrains.BRIDGE_ELEV) - 1);
             } else if (hex.containsTerrain(Terrains.WOODS)
                        || hex.containsTerrain(Terrains.WATER)
                        || hex.containsTerrain(Terrains.JUNGLE)) {
@@ -5664,10 +5705,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (assaultDropInProgress == 2) {
             assaultDropInProgress = 0;
         }
+        movedLastRound = moved;
         moved = EntityMovementType.MOVE_NONE;
         movedBackwards = false;
         isPowerReverse = false;
+        wigeLiftedOff = false;
         gotPavementBonus = false;
+        wigeBonus = 0;
         hitThisRoundByAntiTSM = false;
         inReverse = false;
         hitBySwarmsEntity.clear();
@@ -6349,7 +6393,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public PilotingRollData addConditionBonuses(PilotingRollData roll,
             EntityMovementType moveType) {
 
-        if (moveType == EntityMovementType.MOVE_SPRINT) {
+        if (moveType == EntityMovementType.MOVE_SPRINT
+                || moveType == EntityMovementType.MOVE_VTOL_SPRINT) {
             roll.addModifier(2, "Sprinting");
         }
 
@@ -6358,7 +6403,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((moveType == EntityMovementType.MOVE_RUN)
             || (moveType == EntityMovementType.MOVE_SPRINT)
             || (moveType == EntityMovementType.MOVE_VTOL_RUN)
-            || (moveType == EntityMovementType.MOVE_OVER_THRUST)) {
+            || (moveType == EntityMovementType.MOVE_OVER_THRUST)
+            || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)) {
             int lightPenalty = conditions.getLightPilotPenalty();
             if (lightPenalty > 0) {
                 roll.addModifier(lightPenalty,
@@ -6442,7 +6488,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
         }
-        if (((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType.MOVE_SPRINT))
+        if (((overallMoveType == EntityMovementType.MOVE_RUN)
+                || (overallMoveType == EntityMovementType.MOVE_SPRINT))
             && canFall() && ((gyroDamage > 0) || hasHipCrit())) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
@@ -6463,7 +6510,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((overallMoveType == EntityMovementType.MOVE_SPRINT)
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT
+                || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
             && (used > ((int) Math.ceil(2.0 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0,
                                              "sprinting with active MASC/Supercharger"));
@@ -6484,7 +6532,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType overallMoveType, int used) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
-        if ((overallMoveType == EntityMovementType.MOVE_SPRINT)
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT
+                || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
             && (used > ((int) Math.ceil(2.5 * this.getWalkMP())))) {
             roll.append(new PilotingRollData(getId(), 0,
                                              "sprinting with active MASC/Supercharger"));
@@ -6494,6 +6543,55 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         addPilotingModifierForTerrain(roll);
+        return roll;
+    }
+
+    /**
+     * Checks if the entity is attempting to sprint with supercharger engaged.
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkUsingOverdrive (EntityMovementType overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+
+        if ((overallMoveType == EntityMovementType.MOVE_SPRINT
+                || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
+                && (this instanceof Tank
+                        || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode()))) {
+            roll.append(new PilotingRollData(getId(), 0, "using overdrive"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                             "Check false: Entity is not using overdrive");
+        }
+
+        return roll;
+    }
+
+    /**
+     * Checks if the entity is attempting to increase two speed categories.
+     * If so, returns the target roll for the piloting skill check.
+     */
+    public PilotingRollData checkGunningIt (EntityMovementType overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION)
+                && (this instanceof Tank
+                        || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())
+                        || movementMode == EntityMovementMode.AIRMECH)) {
+            if (((overallMoveType == EntityMovementType.MOVE_SPRINT
+                    || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
+                    && (movedLastRound == EntityMovementType.MOVE_WALK
+                    || movedLastRound == EntityMovementType.MOVE_VTOL_WALK))
+                    || ((overallMoveType == EntityMovementType.MOVE_RUN
+                    || overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
+                            && (movedLastRound == EntityMovementType.MOVE_NONE
+                            || movedLastRound == EntityMovementType.MOVE_JUMP
+                            || movedLastRound == EntityMovementType.MOVE_SKID))) {
+            roll.append(new PilotingRollData(getId(), 0, "gunning it"));
+            return roll;
+        }
+        }
+        roll.addModifier(TargetRoll.CHECK_FALSE,
+                "Check false: Entity is not gunning it");            
         return roll;
     }
 
@@ -6654,7 +6752,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case MOVE_RUN:
             case MOVE_VTOL_WALK:
             case MOVE_VTOL_RUN:
-                int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5);
+                int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5) + wigeBonus;
                 if (isEligibleForPavementBonus() && gotPavementBonus) {
                     maxSafeMP++;
                 }
@@ -6706,7 +6804,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: flyinge entities don't skid");
+                    "Check false: flying entities don't skid");
             return roll;
         }
 
@@ -7091,6 +7189,83 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (distance >= 3) {
             roll.addModifier(1, "moved 3-4 hexes");
         }
+
+        return roll;
+    }
+    
+    /**
+     * Only check for satisfied turn mode for Tanks or QuadVees in vehicle mode, or LAMs in
+     * AirMech mode. Except for LAMs, check whether advanced vehicle ground movement is enabled.
+     * 
+     * @return True if this <code>Entity</code> must make a driving check for turning too sharply.
+     */
+    public boolean usesTurnMode() {
+        return false;
+    }
+    
+    /**
+     * If using advanced vehicle ground movement, checks whether the unit is required to make
+     * a driving roll for turning, and if so whether it succeeds.
+     * 
+     * @param overallMoveType   The type move movement used this turn.
+     * @param straightLineHexes The number of hexes that were moved in a straight line before turning.
+     * @param mpUsed            The total number of movement points used by the entity during the current turn.
+     * @param currPos           The position of the hex where the turn is taking place, which may
+     *                          modify a roll for terrain.
+     * @param vDesc             Collects any reports generated by the check.
+     * @return                  True if the entity failed a driving check due to turning too sharply.
+     */
+    public PilotingRollData checkTurnModeFailure(EntityMovementType overallMoveType,
+            int straightLineHexes, int mpUsed, Coords currPos) {
+
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        //Turn mode 
+        if (!usesTurnMode()) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: unit does not use turn modes.");
+            return roll;
+        }
+        
+        int turnMode = mpUsed / 5;
+        if (straightLineHexes >= turnMode) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: unit did not exceed turn mode.");
+            return roll;
+        }
+
+        if (getWeightClass() < EntityWeightClass.WEIGHT_MEDIUM
+                || getWeightClass() == EntityWeightClass.WEIGHT_SMALL_SUPPORT) {
+            roll.addModifier(-1, "light vehicle");
+        } else if (getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT
+                || getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+            roll.addModifier(+1, "assault vehicle");
+        }
+
+        IHex currHex = game.getBoard().getHex(currPos);
+        if (movementMode != EntityMovementMode.HOVER
+                && movementMode != EntityMovementMode.VTOL
+                && movementMode != EntityMovementMode.WIGE
+                && movementMode != EntityMovementMode.AIRMECH) {
+            if (currHex.containsTerrain(Terrains.MUD)) {
+                roll.addModifier(+1, "mud");
+            }
+            if (currHex.containsTerrain(Terrains.ICE)) {
+                roll.addModifier(movementMode == EntityMovementMode.TRACKED? 1 : 2, "ice");
+            }
+            if (game.getPlanetaryConditions().isSleeting()
+                    || game.getPlanetaryConditions().getFog() == PlanetaryConditions.FOG_HEAVY
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_RAIN
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_GUSTING_RAIN
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR) {
+                roll.addModifier(+1, "fog/rain");
+            }
+            if (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW
+                    || game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_BLIZZARD) {
+                roll.addModifier(movementMode == EntityMovementMode.TRACKED? 1 : 2, "snow");
+            }
+        }
+        
+        roll.addModifier(turnMode - straightLineHexes, "did not satisfy turn mode");
 
         return roll;
     }
@@ -9046,7 +9221,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // sprinted?
-        if (moved == EntityMovementType.MOVE_SPRINT) {
+        if (moved == EntityMovementType.MOVE_SPRINT
+                || moved == EntityMovementType.MOVE_VTOL_SPRINT) {
             return false;
         }
 
@@ -10492,8 +10668,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((moveType != EntityMovementType.MOVE_JUMP)
             && (prevHex != null)
             && (distance > 1)
-            && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType
-                .MOVE_VTOL_RUN))
+            && ((overallMoveType == EntityMovementType.MOVE_RUN)
+                    || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
+                    || (overallMoveType == EntityMovementType.MOVE_SPRINT)
+                    || (overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT))
             && (prevFacing != curFacing) && !lastPos.equals(curPos)
             && !(this instanceof Infantry)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
@@ -10504,6 +10682,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
                 roll.addModifier(3, "used VTOL Jet Booster");
             }
+        } else if (moveType != EntityMovementType.MOVE_JUMP
+                && prevFacing == curFacing && !lastPos.equals(curPos)
+                && lastPos.direction(curPos) % 3 != curFacing % 3
+                && !(isUsingManAce() && (overallMoveType == EntityMovementType.MOVE_WALK
+                || overallMoveType == EntityMovementType.MOVE_VTOL_WALK))) {
+            roll.append(new PilotingRollData(getId(), 0, "controlled sideslip"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                              "Check false: not apparently sideslipping");
@@ -12987,6 +13171,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setPowerReverse(boolean isPowerReverse) {
         this.isPowerReverse = isPowerReverse;
+    }
+    
+    /**
+     * Tracks whether a WiGE lifted off this turn (or a LAM hovered). Needed to track state
+     * in case movement is continued from an interruption, so that the unit does not have a minimum
+     * movement for the turn.
+     * 
+     * @return whether a WiGE lifted off during this turn's movement
+     */
+    public boolean wigeLiftedOff() {
+        return wigeLiftedOff;
+    }
+    
+    public void setWigeLiftedOff(boolean lifted) {
+        wigeLiftedOff = lifted;
     }
 
     public void setHardenedArmorDamaged(HitData hit, boolean damaged) {

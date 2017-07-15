@@ -753,6 +753,7 @@ public class BasicPathRanker extends PathRanker {
                 EntityMovementType.MOVE_SAFE_THRUST.equals(path.getLastStepMovementType()) ||
                 EntityMovementType.MOVE_VTOL_WALK.equals(path.getLastStepMovementType()) ||
                 EntityMovementType.MOVE_VTOL_RUN.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_VTOL_SPRINT.equals(path.getLastStepMovementType()) ||
                 EntityMovementType.MOVE_SUBMARINE_WALK.equals(path.getLastStepMovementType()) ||
                 EntityMovementType.MOVE_SUBMARINE_RUN.equals(path.getLastStepMovementType())) {
 

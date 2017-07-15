@@ -63,7 +63,7 @@ public class MovePath implements Cloneable, Serializable {
         CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
         SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
         RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
-        CONVERT_MODE;
+        CONVERT_MODE, BOOTLEGGER;
     }
 
     public static class Key {
@@ -199,6 +199,10 @@ public class MovePath implements Cloneable, Serializable {
                     && ((getEntity() instanceof BipedMech)
                         || ((getEntity() instanceof VTOL)
                         && (getMpUsed() <= getEntity().getWalkMP()))))
+                || (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)
+                        && getEntity() instanceof Tank
+                        && (getEntity().getMovementMode() == EntityMovementMode.VTOL
+                        || getEntity().getMovementMode() == EntityMovementMode.HOVER))
                 || ((getEntity() instanceof TripodMech)
                     && (((Mech) getEntity()).countBadLegs() == 0)))
                 && !isJumping();
@@ -339,9 +343,11 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // VTOLs using maneuvering ace to make lateral shifts can't flank
+        // unless using controlled sideslip
         if (containsLateralShift() && getEntity().isUsingManAce()
                 && (getEntity() instanceof VTOL)
-                && getMpUsed() > getEntity().getWalkMP()) {
+                && getMpUsed() > getEntity().getWalkMP()
+                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
         
@@ -362,6 +368,43 @@ public class MovePath implements Cloneable, Serializable {
             }
 
         } // End step-is-legal
+
+        // If using TacOps reverse gear option, cannot mix forward and backward movement
+        // in the same round except VTOLs.
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_REVERSE_GEAR)
+                && ((entity instanceof Tank && !(entity instanceof VTOL))
+                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))) {
+            boolean fwd = false;
+            boolean rev = false;
+            for (MoveStep s : steps) {
+                fwd |=  s.getType() == MoveStepType.FORWARDS
+                        || s.getType() == MoveStepType.LATERAL_LEFT
+                        || s.getType() == MoveStepType.LATERAL_RIGHT;
+                rev |=  s.getType() == MoveStepType.BACKWARDS
+                        || s.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS
+                        || s.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS;
+            }
+            if (fwd && rev) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            }
+        }
+                
+        // If we are using turn modes, go back through the path and mark danger for any turn
+        // that now exceeds turn mode requirement. We want to show danger on the previous step
+        // so the StepSprite will show danger. Hiding the previous step instead would make turning costs
+        // show in the turning hex for units tracking turn mode, unlike other units.
+        if (entity.usesTurnMode() && getMpUsed() > 5) {
+            int turnMode = getMpUsed() / 5;
+            int nStraight = 0;
+            MoveStep prevStep = steps.get(0);
+            for (MoveStep s : steps) {
+                if (s.isTurning() && nStraight < turnMode) {
+                    prevStep.setDanger(true);
+                }
+                nStraight = s.getNStraight();
+                prevStep = s;
+            }
+        }
 
         return this;
     }
@@ -1341,6 +1384,34 @@ public class MovePath implements Cloneable, Serializable {
         return false;
     }
 
+    /**
+     * Airborne WiGEs that move less than five hexes (four for glider protomech) in a movement phase must
+     * land unless it has taken off in the same phase or it is a LAM or glider ProtoMech that is using hover
+     * movement.
+     * 
+     * @return whether the unit is an airborne WiGE that must land at the end of movement.
+     */
+    public boolean automaticWiGELanding() {
+        if (getEntity().getMovementMode() != EntityMovementMode.WIGE) {
+            return false;
+        }
+        if ((getHexesMoved() + getEntity().delta_distance >= 5)
+                || (getEntity() instanceof Protomech
+                        && getHexesMoved() + getEntity().delta_distance == 4)) {
+            return false;
+        }
+        if (getEntity().wigeLiftedOff() || steps.stream().map(s -> s.getType())
+                .anyMatch(st -> st == MoveStepType.UP
+                        || st == MoveStepType.HOVER)) {
+            return false;
+        }
+        if (getLastStep() != null) {
+            return getLastStep().getClearance() > 0;
+        } else {
+            return getEntity().isAirborneVTOLorWIGE();
+        }
+    }
+    
     protected static class MovePathComparator implements Comparator<MovePath> {
         private final Coords destination;
         boolean backward;

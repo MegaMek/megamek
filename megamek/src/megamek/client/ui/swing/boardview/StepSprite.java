@@ -111,6 +111,7 @@ class StepSprite extends Sprite {
                         "AdvancedMoveJumpColor");
                 break;
             case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
                 col = GUIPreferences.getInstance().getColor(
                         "AdvancedMoveSprintColor");
                 break;
@@ -266,6 +267,18 @@ class StepSprite extends Sprite {
                 if (bv.game.useVectorMove()) {
                     drawMovementCost(step, isLastStep, stepPos, graph, col, false);
                 }
+                break;
+            case BOOTLEGGER:
+                // draw arrows showing them entering the next
+                graph.setColor(Color.darkGray);
+                CurrentArrow = StepOffset.createTransformedShape(moveArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
+                graph.setColor(col);
+                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+
+                drawMovementCost(step, isLastStep, stepPos, graph, col, true);
                 break;
             case LOAD:
                 // Announce load.
@@ -606,6 +619,11 @@ class StepSprite extends Sprite {
                 && e.isEligibleForPavementBonus()) {
             costStringBuf.append("+"); //$NON-NLS-1$
         }
+        
+        // Show WiGE descent bonus
+        for (int i = 0; i < step.getWiGEBonus(); i++) {
+            costStringBuf.append("+");
+        }
 
         // If the step is dangerous, mark it.
         if (step.isDanger()) {
@@ -629,6 +647,7 @@ class StepSprite extends Sprite {
         EntityMovementType moveType = step.getMovementType(isLastStep);
         if ((moveType == EntityMovementType.MOVE_VTOL_WALK)
                 || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                || (moveType == EntityMovementType.MOVE_VTOL_SPRINT)
                 || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK)
                 || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
             costStringBuf.append("{").append(step.getElevation())

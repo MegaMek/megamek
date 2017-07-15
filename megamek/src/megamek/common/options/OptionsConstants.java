@@ -414,6 +414,10 @@ public class OptionsConstants {
     public static final String ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE= "tacops_fast_infantry_move";  //$NON-NLS$
     public static final String ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT= "vehicle_lance_movement";  //$NON-NLS$
     public static final String ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER= "vehicle_lance_movement_number";  //$NON-NLS$
+    public static final String ADVGRNDMOV_TURN_MODE = "vehicle_turn_mode";  //$NON-NLS$
+    public static final String ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS = "vehicle_advanced_maneuvers";  //$NON-NLS$
+    public static final String ADVGRNDMOV_VEHICLE_ACCELERATION = "vehicle_acceleration";  //$NON-NLS$
+    public static final String ADVGRNDMOV_REVERSE_GEAR = "reverse_gear";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_HULL_DOWN= "tacops_hull_down";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_FALLING_EXPANDED= "tacops_falling_expanded";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_ATTEMPTING_STAND= "tacops_attempting_stand";  //$NON-NLS$

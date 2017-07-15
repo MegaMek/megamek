@@ -197,6 +197,65 @@ public class QuadVee extends QuadMech {
     }
     
     /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP()
+     */
+    @Override
+    public int getSprintMP() {
+        if (isInVehicleMode() && (game == null || !game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
+            return getRunMP();
+        }
+        return getSprintMP(true, false, false);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMP(boolean, boolean, boolean)
+     */
+    @Override
+    public int getSprintMP(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (isInVehicleMode() && (game == null || !game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
+            return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        }
+        return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see megamek.common.Entity#getSprintMPwithoutMASC(boolean, boolean,
+     * boolean)
+     */
+    @Override
+    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
+            boolean ignoremodulararmor) {
+        if (isInVehicleMode()) {
+            if (game == null || !game.getOptions()
+                    .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)) {
+                return getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+            } else {
+                return (int) Math.ceil(getWalkMP(gravity, ignoreheat,
+                        ignoremodulararmor) * 2.0);
+            }
+        } else {
+            return super.getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+        }
+    }
+
+    public int getOriginalSprintMPwithoutMASC() {
+        if (isInVehicleMode() && (game == null || !game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS))) {
+            return getOriginalRunMP();
+        } else {
+            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
+        }
+    }
+    /*
      * No jumping in vehicle mode.
      */
     public int getJumpMP(boolean gravity, boolean ignoremodulararmor) {
@@ -461,6 +520,12 @@ public class QuadVee extends QuadMech {
         }
     }
     
+    @Override
+    public boolean usesTurnMode() {
+        return isInVehicleMode() && !convertingNow
+                && game != null && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TURN_MODE);
+    }
+
     /**
      * If the QuadVee is in vehicle mode (or converting to it) then it follows
      * the rules for tanks going hull-down, which requires a fortified hex.

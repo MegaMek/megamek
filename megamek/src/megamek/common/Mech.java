@@ -1079,7 +1079,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getSprintMP() {
-        if (hasHipCrit() || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode())) {
+        if (hasHipCrit()) {
             return getRunMP();
         }
         return getSprintMP(true, false, false);

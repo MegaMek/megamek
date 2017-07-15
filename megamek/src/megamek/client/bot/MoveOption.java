@@ -237,6 +237,7 @@ public class MoveOption extends MovePath {
             move = 2;
             break;
         case MOVE_SPRINT:
+        case MOVE_VTOL_SPRINT:
             move = 3;
             break;
         case MOVE_JUMP:

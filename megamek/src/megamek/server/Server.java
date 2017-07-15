@@ -9557,6 +9557,35 @@ public class Server implements Runnable {
                     } else {
                         entity.setElevation(0);                                
                     }
+                    
+                    // Check for stacking violations in the target hex
+                    Entity violation = Compute.stackingViolation(game,
+                            entity.getId(), entity.getPosition());
+                    if (violation != null) {
+                        PilotingRollData prd = new PilotingRollData(
+                                violation.getId(), 2, "fallen on");
+                        if (violation instanceof Dropship) {
+                            violation = entity;
+                            prd = null;
+                        }
+                        Coords targetDest = Compute.getValidDisplacement(game,
+                                violation.getId(), entity.getPosition(), 0);
+                        if (targetDest != null) {
+                            vPhaseReport.addAll(doEntityDisplacement(violation,
+                                    entity.getPosition(), targetDest, prd));
+                            // Update the violating entity's postion on the
+                            // client.
+                            entityUpdate(violation.getId());
+                        } else {
+                            // ack! automatic death! Tanks
+                            // suffer an ammo/power plant hit.
+                            // TODO : a Mech suffers a Head Blown Off crit.
+                            vPhaseReport.addAll(destroyEntity(violation,
+                                    "impossible displacement",
+                                    violation instanceof Mech,
+                                    violation instanceof Mech));
+                        }
+                    }
                 } else {
                     // we didn't land, so we go to elevation 1 above the terrain
                     // features

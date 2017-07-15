@@ -9533,19 +9533,15 @@ public class Server implements Runnable {
                 send(entity.getOwner().getId(), createSpecialReportPacket());
             }
         } else {
-            if ((entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && (entity.getElevation() > 0)) {
+            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 IHex hex = game.getBoard().getHex(curPos);
-                if (hex.containsTerrain(Terrains.BLDG_ELEV)
-                        && entity.getElevation() == hex.terrainLevel(Terrains.BLDG_ELEV)) {
-                    // On the roof of a building, treated as if on the ground.
-                } else if (!entity.wigeLiftedOff() && (entity.delta_distance < 5)) {
+                if (md.automaticWiGELanding()) {
                     // try to land safely
                     r = new Report(2123);
                     r.addDesc(entity);
                     r.subject = entity.getId();
                     vPhaseReport.add(r);
-
+    
                     if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));

@@ -1439,6 +1439,24 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.doAlertDialog(title, body);
             return;            	
         }
+        
+        if (cmd.automaticWiGELanding()
+                && GUIPreferences.getInstance().getNagForWiGELanding()  ) {
+            ConfirmDialog nag = new ConfirmDialog(
+                    clientgui.frame,
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.ConfirmWiGELanding"),
+                    true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForWiGELanding(false);
+                }
+            } else {
+                return;
+            }
+        }
 
         disableButtons();
         clientgui.bv.clearMovementData();

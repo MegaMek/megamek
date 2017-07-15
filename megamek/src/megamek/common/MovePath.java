@@ -1384,6 +1384,34 @@ public class MovePath implements Cloneable, Serializable {
         return false;
     }
 
+    /**
+     * Airborne WiGEs that move less than five hexes (four for glider protomech) in a movement phase must
+     * land unless it has taken off in the same phase or it is a LAM or glider ProtoMech that is using hover
+     * movement.
+     * 
+     * @return whether the unit is an airborne WiGE that must land at the end of movement.
+     */
+    public boolean automaticWiGELanding() {
+        if (getEntity().getMovementMode() != EntityMovementMode.WIGE) {
+            return false;
+        }
+        if ((getHexesMoved() + getEntity().delta_distance >= 5)
+                || (getEntity() instanceof Protomech
+                        && getHexesMoved() + getEntity().delta_distance == 4)) {
+            return false;
+        }
+        if (getEntity().wigeLiftedOff() || steps.stream().map(s -> s.getType())
+                .anyMatch(st -> st == MoveStepType.UP
+                        || st == MoveStepType.HOVER)) {
+            return false;
+        }
+        if (getLastStep() != null) {
+            return getLastStep().getClearance() > 0;
+        } else {
+            return getEntity().isAirborneVTOLorWIGE();
+        }
+    }
+    
     protected static class MovePathComparator implements Comparator<MovePath> {
         private final Coords destination;
         boolean backward;

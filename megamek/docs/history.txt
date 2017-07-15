@@ -15,6 +15,7 @@ v0.43.3-git
 + Bug:Fixing some map board issues.
 + Bug:Fixing some unit issues.
 + PR#524- Human TRO (Thanks Phoenixstorm)
++ Feature: TacOps advanced vehicle movement rules.
 
 v0.43.2 2017-05-1 22:00 UTC)
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist

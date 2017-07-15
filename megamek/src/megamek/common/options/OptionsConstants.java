@@ -183,7 +183,7 @@ public class OptionsConstants {
     // public static final String MISC_ENV_SPECIALIST= "env_specialist";
     // //$NON-NLS$
     public static final String MISC_FORWARD_OBSERVER = "forward_observer"; // $NON-NLS$
-    // public static final String MISC_HUMAN_TRO= "human_tro"; //$NON-NLS$
+    public static final String MISC_HUMAN_TRO= "human_tro"; //$NON-NLS$
     public static final String MISC_IRON_MAN = "iron_man"; // $NON-NLS$
     public static final String MISC_PAIN_RESISTANCE = "pain_resistance"; // $NON-NLS$
     public static final String MISC_TACTICAL_GENIUS = "tactical_genius"; // $NON-NLS$

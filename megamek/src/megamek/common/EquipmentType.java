@@ -124,14 +124,14 @@ public class EquipmentType {
             "Endo-Composite" };
 
     // Assume for now that prototype is not more expensive
-    public static final double[] structureCosts = { 400, 300, 1600, 1600, 6400,
+    public static final double[] structureCosts = { 400, 300, 1600, 4800, 6400,
             1600, 3200 };
 
     // Assume for now that prototype is not more expensive
     public static final double[] armorCosts = { 10000, 20000, 30000, 30000,
-            15000, 15000, 25000, /* patchwork */0, 50000, 20000, 3000, 75000,
-            100000, 50000, 5000, 10000, 35000, 5000, 10000, 10000, 20000,
-            25000, 15000, 50000, 15000, 25000, 20000, 25000, 10000, 10000,
+            15000, 15000, 25000, /* patchwork */0, 50000, 60000, 3000, 75000,
+            100000, 50000, 5000, 10000, 35000, 5000, 10000, 20000, 25000,
+            15000, 50000, 15000, 25000, 20000, 25000, 60000, 10000, 10000,
             12500, 12000, 15000, 20000, 50000, 10000, 15000, 37000, 37000 };
 
     public static final double[] armorPointMultipliers = { 1, 1.12, 1, 1, 0.5,

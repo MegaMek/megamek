@@ -928,13 +928,9 @@ public class Jumpship extends Aero {
 
     @Override
     public double getArmorWeight(int loc) {
-        // first I need to subtract SI bonus from total armor
         double armorPoints = getTotalOArmor();
-        armorPoints -= Math.round((get0SI() * loc) / 10.0);
-        // this roundabout method is actually necessary to avoid rounding
-        // weirdness. Yeah, it's dumb.
-        // now I need to determine base armor points by type and weight
 
+        // now I need to determine base armor points by type and weight
         double baseArmor = 0.8;
         if (isClan()) {
             baseArmor = 1.0;
@@ -970,86 +966,88 @@ public class Jumpship extends Aero {
 
     @Override
     public double getCost(boolean ignoreAmmo) {
-
+        double[] costs = new double[22];
+        int costIdx = 0;
         double cost = 0;
 
-        // add in controls
-        // bridge
-        cost += 200000;
-        // computer
-        cost += 200000;
-        // life support
-        cost += 5000 * (getNCrew() + getNPassenger());
-        // sensors
-        cost += 80000;
-        // fcs
-        cost += 100000;
-        // gunnery/control systems
-        cost += 10000 * getArcswGuns();
+        // Control Systems
+        // Bridge
+        costs[costIdx++] += 200000 + 10 * weight;
+        // Computer
+        costs[costIdx++] += 200000;
+        // Life Support
+        costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
+        // Sensors
+        costs[costIdx++] += 80000;
+        // Fire Control Computer
+        costs[costIdx++] += 100000;
+        // Gunnery Control Systems
+        costs[costIdx++] += 10000 * getArcswGuns();
+        // Structural Integrity
+        costs[costIdx++] += 100000 * getSI();
 
-        // structural integrity
-        cost += 100000 * getSI();
-
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + (10 * getWeight());
-
-        // docking hard point
-        cost += 100000 * getDocks();
-
-        double engineWeight = weight * 0.012;
-        cost += engineWeight * 1000;
-        // drive unit
-        cost += (500 * getOriginalWalkMP() * weight) / 100.0;
-        // control
-        cost += 1000;
-
-        // HPG
-        if (hasHPG()) {
-            cost += 1000000000;
-        }
-
-        // fuel tanks
-        cost += (200 * getFuel()) / getFuelPerTon();
-
-        // armor
-        cost += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
-
-        // heat sinks
-        int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
-                                                     // 2000;
-        cost += sinkCost * getHeatSinks();
+        // Station-Keeping Drive
+        // Engine
+        costs[costIdx++] += 1000 * weight * 0.012;
+        // Engine Control Unit
+        costs[costIdx++] += 1000;
 
         // KF Drive
-        double driveCost = 0;
-        // coil
-        driveCost += 60000000 + (75000000 * getDocks());
-        // initiator
-        driveCost += 25000000 + (5000000 * getDocks());
-        // controller
-        driveCost += 50000000;
-        // tankage
-        driveCost += 50000 * getKFIntegrity();
-        // sail
-        driveCost += 50000 * (30 + (weight / 7500));
-        // charging system
-        driveCost += 500000 + (200000 * getDocks());
-        // is the core compact? (not for jumpships)
-        // lithium fusion?
-        if (hasLF()) {
-            driveCost *= 3;
+        double[] driveCost = new double[6];
+        int driveIdx = 0;
+        double driveCosts = 0;
+        // Drive Coil
+        driveCost[driveIdx++] += 60000000 + (75000000 * getDocks());
+        // Initiator
+        driveCost[driveIdx++] += 25000000 + (5000000 * getDocks());
+        // Controller
+        driveCost[driveIdx++] += 50000000;
+        // Tankage
+        driveCost[driveIdx++] += 50000 * getKFIntegrity();
+        // Sail
+        driveCost[driveIdx++] += 50000 * (30 + (weight / 7500));
+        // Charging System
+        driveCost[driveIdx++] += 500000 + (200000 * getDocks()); 
+        
+        for (int i = 0; i < driveIdx; i++) {
+            driveCosts += driveCost[i];
         }
 
-        cost += driveCost;
+        if (hasLF()) {
+            driveCosts *= 3;
+        }
+        
+        costs[costIdx++] += driveCosts;
 
-        // grav deck
-        cost += 5000000 * getGravDeck();
-        cost += 10000000 * getGravDeckLarge();
-        cost += 40000000 * getGravDeckHuge();
+        // K-F Drive Support Systems
+        costs[costIdx++] += 10000000 * (weight / 10000);
 
-        // weapons
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
+        // Additional Ships Systems
+        // Attitude Thrusters
+        costs[costIdx++] += 25000;
+        // Docking Collars
+        costs[costIdx++] += 100000 * getDocks();
+        // Fuel Tanks
+        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
-        // get bays
+        // Armor
+        costs[costIdx++] += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
+
+        // Heat Sinks
+        int sinkCost = 2000 + (4000 * getHeatType());
+        costs[costIdx++] += sinkCost * getHeatSinks();
+
+        // Escape Craft
+        costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
+
+        // Grav Decks
+        double deckCost = 0;
+        deckCost += 5000000 * getGravDeck();
+        deckCost += 10000000 * getGravDeckLarge();
+        deckCost += 40000000 * getGravDeckHuge();
+        costs[costIdx++] += deckCost;
+
+        // Transport Bays
         int baydoors = 0;
         int bayCost = 0;
         for (Bay next : getTransportBays()) {
@@ -1062,14 +1060,29 @@ public class Jumpship extends Aero {
             }
         }
 
-        cost += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000);
 
-        // life boats and escape pods
-        cost += 5000 * (getLifeBoats() + getEscapePods());
+        // Weapons and Equipment
+        // HPG
+        if (hasHPG()) {
+            costs[costIdx++] += 1000000000;
+        } else {
+            costs[costIdx++] += 0;
+        }
+        // Weapons and Equipment
+        costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         double weightMultiplier = 1.25f;
 
-        return Math.round(cost * weightMultiplier);
+        // Sum Costs
+        for (int i = 0; i < costIdx; i++) {
+            cost += costs[i];
+        }
+
+        costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
+        cost = Math.round(cost * weightMultiplier);
+
+        return cost;
 
     }
 

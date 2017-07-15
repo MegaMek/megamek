@@ -9545,26 +9545,21 @@ public class Server implements Runnable {
                     r.addDesc(entity);
                     r.subject = entity.getId();
                     vPhaseReport.add(r);
-                    // when no clear or pavement, crash
+
                     if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg,
                                 entity, entity.getPosition()));
-                    } else if (hex.hasPavement()
-                            // All WiGE vehicles are considered to have a flotation hull. This errata
-                            // changes the TW rule that WiGEs cannot land on water.
-                            // http://bg.battletech.com/forums/index.php?topic=46241.msg1065439#msg1065439
-                            || (entity instanceof Tank && hex.containsTerrain(Terrains.WATER))
-                            || hex.isClearHex()) {
-                        entity.setElevation(0);                                
-                    } else {
+                    } else if (entity.isLocationProhibited(entity.getPosition(), 0) && !hex.hasPavement()){
                         // crash
                         r = new Report(2124);
                         r.addDesc(entity);
                         r.subject = entity.getId();
                         vPhaseReport.add(r);
                         vPhaseReport.addAll(crashVTOLorWiGE((Tank) entity));
+                    } else {
+                        entity.setElevation(0);                                
                     }
                 } else {
                     // we didn't land, so we go to elevation 1 above the terrain

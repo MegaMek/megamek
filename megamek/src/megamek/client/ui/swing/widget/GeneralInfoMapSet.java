@@ -478,7 +478,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                 //Show "Fighter/AirMech" instead of "Aerodyne/WiGE"
                 movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.AERODYNE"));
             } else if (en.getMovementMode() == EntityMovementMode.WIGE) {
-                movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.AIRMECH"));
+                movementTypeR.setString(Messages.getString("BoardView1.ConversionMode.WIGE"));
             } else {
                 movementTypeR.setString(Messages.getString("MovementType."
                         + en.getMovementModeAsString()));

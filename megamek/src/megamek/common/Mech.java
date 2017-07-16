@@ -1800,6 +1800,11 @@ public abstract class Mech extends Entity {
                 return "Jumped";
             case MOVE_SPRINT:
                 return "Sprinted";
+            //LAM AirMech modes
+            case MOVE_VTOL_WALK:
+                return "Cruised";
+            case MOVE_VTOL_RUN:
+                return "Flanked";
             default:
                 return "Unknown!";
         }
@@ -1823,6 +1828,11 @@ public abstract class Mech extends Entity {
                 return "J";
             case MOVE_SPRINT:
                 return "Sp";
+            //LAM AirMech modes
+            case MOVE_VTOL_WALK:
+                return "C";
+            case MOVE_VTOL_RUN:
+                return "F";
             default:
                 return "?";
         }

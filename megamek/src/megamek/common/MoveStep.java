@@ -2104,10 +2104,13 @@ public class MoveStep implements Serializable {
         }
         // check for evasion
         if (type == MoveStepType.EVADE) {
-            if (entity.hasHipCrit()) {
+            if (entity.hasHipCrit()
+                    || (entity.getMovementMode() == EntityMovementMode.WIGE
+                            && (entity instanceof LandAirMech || entity instanceof Protomech)
+                            && getClearance() > 0)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
-            }
+            }                
             // evading means running
             movementType = EntityMovementType.MOVE_RUN;
         }

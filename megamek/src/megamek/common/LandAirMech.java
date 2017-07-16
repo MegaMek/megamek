@@ -196,10 +196,18 @@ public class LandAirMech extends BipedMech {
     }
 
     public int getAirMechCruiseMP(boolean gravity, boolean ignoremodulararmor) {
+        if (game != null && game.getBoard().inAtmosphere()
+                && (isLocationBad(Mech.LOC_LT) || isLocationBad(Mech.LOC_RT))) {
+            return 0;
+        }
         return getJumpMP(gravity, ignoremodulararmor) * 3;
     }
 
     public int getAirMechFlankMP(boolean gravity, boolean ignoremodulararmor) {
+        if (game != null && game.getBoard().inAtmosphere()
+                && (isLocationBad(Mech.LOC_LT) || isLocationBad(Mech.LOC_RT))) {
+            return 0;
+        }
         return (int)Math.ceil(getAirMechCruiseMP(gravity, ignoremodulararmor) * 1.5);
     }
     

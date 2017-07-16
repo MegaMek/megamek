@@ -849,20 +849,20 @@ public class MoveStep implements Serializable {
                 if (entity.isAirborne()) {
                     setAltitude(altitude + 1);
                     setMp(2);
-                } else {
-                    setElevation(elevation + 1);
-                    if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                        if (entity instanceof Protomech) {
-                            setMp(4);
-                        } else {
-                            setMp(5);
-                        }
+                } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                    // If on the ground, pay liftoff cost. If airborne, pay 1 MP to increase elevation
+                    // (LAMs and glider protomechs only)
+                    if (getClearance() == 0) {
+                        setMp((entity instanceof Protomech)? 4 : 5);
                     } else {
-                        if (entity instanceof Protomech) {
-                            setMp(isJumping() ? 0 : 2);
-                        } else {
-                            setMp(isJumping() ? 0 : 1);
-                        }
+                        setMp(1);
+                    }
+                    setElevation(elevation + 1);
+                } else {
+                    if (entity instanceof Protomech) {
+                        setMp(isJumping() ? 0 : 2);
+                    } else {
+                        setMp(isJumping() ? 0 : 1);
                     }
                 }
                 break;
@@ -2056,12 +2056,13 @@ public class MoveStep implements Serializable {
         }
 
         // WIGEs can take off on their first step...
-        if (isFirstStep() && (type == MoveStepType.UP)
-                && (entity.getMovementMode() == EntityMovementMode.WIGE)
-                // ...provided they can pay the MP cost.
-                && (entity.getRunMP() >= 5)) {
-            movementType = EntityMovementType.MOVE_VTOL_WALK;
+        if (type == MoveStepType.UP && entity.getMovementMode() == EntityMovementMode.WIGE
+                && ((firstStep && prev.getClearance() == 0 && entity.getRunMP() > mp)
+                        || (prev.getClearance() > 0 && entity.canGoUp(getElevation(), getPosition())
+                                && (entity instanceof LandAirMech || entity instanceof Protomech)))) {
+            movementType = EntityMovementType.MOVE_VTOL_WALK;                    
         }
+
         // WIGEs need to be able to land too, or even descend
         if (entity.getMovementMode() == EntityMovementMode.WIGE
                 && type == MoveStepType.DOWN
@@ -2878,9 +2879,9 @@ public class MoveStep implements Serializable {
         // If the destination contains a building, the WiGE must pay the extra MP if flying
         // more than one elevation above its top or if climbing a level to get above it.
         // See http://bg.battletech.com/forums/index.php?topic=51081.msg1297747#msg1297747
-        if (getClearance() > 1
+        if (entity.getMovementMode() == EntityMovementMode.WIGE && distance > 0 && (getClearance() > 1
                 || (destHex.containsTerrain(Terrains.BLDG_ELEV)
-                        && destHex.ceiling() > srcHex.ceiling())) {
+                        && destHex.ceiling() > srcHex.ceiling()))) {
             mp += 2;
         }
 

@@ -2954,7 +2954,7 @@ M,3079-Inner Sphere3067-Inner Sphere,3079-IS_Advanced3067-IS_Experimental,ISMedi
 M,3079-Inner Sphere3067-Inner Sphere,3079-IS_Advanced3067-IS_Experimental,ISSmallShield,Small Shield,
 M,3079-Inner Sphere3067-Inner Sphere,3079-IS_Advanced3067-IS_Experimental,ISLargeShield,Large Shield,
 M,3090-Inner Sphere3060-Inner Sphere3045-Inner Sphere3145-Inner Sphere,3090-IS_Advanced3060-IS_Advanced3045-IS_Experimental3145-IS_TW_Non_Box,ISClaw,ClClaw,
-M,3059-Inner Sphere3110-Inner Sphere3067-Inner Sphere1950-Inner Sphere,3059-IS_Unofficial3110-IS_Experimental3067-IS_Experimental1950-IS_Unofficial,IS HarJel,IS HarJel,Clan HarJel,Clan HarJel,
+M,3059-Inner Sphere3110-Inner Sphere3067-Inner Sphere1950-Inner Sphere,3059-IS_Unofficial3110-IS_Experimental3067-IS_Experimental1950-IS_Unofficial,IS HarJel,IS HarJel,Clan HarJel,
 M,3056-Inner Sphere3072-Inner Sphere3066-Inner Sphere3084-Inner Sphere,3056-IS_Experimental3072-IS_Advanced3066-IS_Advanced3084-IS_TW_Non_Box,ISUMU,CLUMU,IS Underwater Maneuvering Unit,
 M,3064-Inner Sphere3083-Inner Sphere,3064-IS_Experimental3083-IS_Advanced,IS Lance,ISLance,Lance,
 M,1950-Inner Sphere,1950-IS_TW_Non_Box,IS Wrecking Ball,WreckingBall,Clan Wrecking Ball,CLWrecking Ball,

@@ -1768,8 +1768,8 @@ public class MiscType extends EquipmentType {
 		        .setISApproximate(true, false, false, true, false)
 		        .setClanAdvancement(2464, DATE_NONE, DATE_NONE, 2471, DATE_NONE)
 		        .setClanApproximate(true, false, false, true, false).setPrototypeFactions(F_FS)
-		        .setProductionFactions(F_FS).setTechRating(RATING_D)
-		        .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+		        .setProductionFactions(F_FS).setTechRating(RATING_C)
+		        .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X);
 		return misc;
 	}
 
@@ -10794,7 +10794,19 @@ public class MiscType extends EquipmentType {
 		misc.techAdvancement.setAvailability(new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
 		return misc;
 	}
+	
+/*	//TODO
+		The following Primitive or Prototype equipment needs to be added at some point
+		Primitive Prototype K-F Boom
+		DropShip Docking Collar (pre-Boom)
+		DropShip Docking Collar (post-Boom)
+		DropShuttle Bays
+		Space Station K-F Adapter*/
 
+		
+
+	
+	
 	@Override
 	public String toString() {
 		return "MiscType: " + name;

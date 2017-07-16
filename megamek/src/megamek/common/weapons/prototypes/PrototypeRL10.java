@@ -13,13 +13,12 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.PrototypeRLWeapon;
 
 /**
  * @author Sebastian Brocks
  */
-public class CLPrototypeRL10 extends PrototypeRLWeapon {
+public class PrototypeRL10 extends PrototypeRLWeapon {
 
     /**
      *
@@ -29,10 +28,10 @@ public class CLPrototypeRL10 extends PrototypeRLWeapon {
     /**
      *
      */
-    public CLPrototypeRL10() {
+    public PrototypeRL10() {
         super();
 
-        name = "Rocket Launcher 10 (PP)";
+        name = "Prototype Rocket Launcher 10";
         setInternalName("CLRocketLauncher10Prototype");
         heat = 3;
         rackSize = 10;
@@ -47,13 +46,16 @@ public class CLPrototypeRL10 extends PrototypeRLWeapon {
         shortAV = 6;
         medAV = 6;
         maxRange = RANGE_MED;
-        rulesRefs = "229,TM";
-
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2807, DATE_NONE, DATE_NONE, 2823);
-        techAdvancement.setTechRating(RATING_B);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_B, RATING_X, RATING_X });
+        rulesRefs = "217,IO";
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_B)
+            .setAvailability(RATING_D, RATING_F, RATING_X, RATING_X)
+            .setISAdvancement(2320, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setClanAdvancement(2320, DATE_NONE, DATE_NONE, 2823, DATE_NONE)
+            .setClanApproximate(true, false, false, true, false);
     }
 }
 
-//These have been merged with the IS RL's per IO

@@ -14,20 +14,19 @@
  */
 package megamek.common.weapons.primitive;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
-public class ISLargeLaserPrimitive extends LaserWeapon {
+public class ISLaserPrimitiveLarge extends LaserWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = 6640106383069896198L;
 
-    public ISLargeLaserPrimitive() {
+    public ISLaserPrimitiveLarge() {
         super();
 
         this.name = "Primitive Prototype Large Laser";
@@ -51,11 +50,17 @@ public class ISLargeLaserPrimitive extends LaserWeapon {
         this.shortAV = 8;
         this.medAV = 8;
         this.maxRange = RANGE_MED;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        rulesRefs = "217, IO";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2306, DATE_NONE, DATE_NONE, 2320);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        rulesRefs = "118, IO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2306, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
     }
 }

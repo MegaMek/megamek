@@ -16,37 +16,36 @@ package megamek.common.weapons.missiles;
 /**
  * @author Sebastian Brocks
  */
-public class ISRL10 extends RLWeapon {
+public class RocketLauncher20 extends RLWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 3437644808445570760L;
+    private static final long serialVersionUID = -1220608344459915265L;
 
     /**
      *
      */
-    public ISRL10() {
+    public RocketLauncher20() {
         super();
 
-        name = "Rocket Launcher 10";
-        setInternalName("RL10");
-        addLookupName("RL 10");
-        addLookupName("ISRocketLauncher10");
-        addLookupName("IS RLauncher-10");
-        addLookupName("CLRocketLauncher10Prototype");
-        heat = 3;
-        rackSize = 10;
-        shortRange = 5;
-        mediumRange = 11;
-        longRange = 18;
-        extremeRange = 22;
-        tonnage = .5f;
-        criticals = 1;
-        bv = 18;
-        cost = 15000;
-        shortAV = 6;
-        medAV = 6;
+        name = "Rocket Launcher 20";
+        setInternalName("RL20");
+        addLookupName("ISRocketLauncher20");
+        addLookupName("RL 20");
+        addLookupName("IS RLauncher-20");
+        heat = 5;
+        rackSize = 20;
+        shortRange = 3;
+        mediumRange = 7;
+        longRange = 12;
+        extremeRange = 14;
+        tonnage = 1.5f;
+        criticals = 3;
+        bv = 24;
+        cost = 45000;
+        shortAV = 12;
+        medAV = 12;
         maxRange = RANGE_MED;
         rulesRefs = "229,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)

@@ -14,24 +14,23 @@
  */
 package megamek.common.weapons.primitive;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  */
-public class ISSmallLaserPrimitive extends LaserWeapon {
+public class ISLaserSmallPrimitive extends LaserWeapon {
     /**
      *
      */
     private static final long serialVersionUID = -7637928016342153078L;
 
-    public ISSmallLaserPrimitive() {
+    public ISLaserSmallPrimitive() {
         super();
-        name = "Small Laser Prototype";
+        name = "Primitive Prototype Small Laser";
         setInternalName(name);
-        addLookupName("ISSmall Laser Prototype");
-        addLookupName("ISSmallLaserPrototype");
+        addLookupName("ISSmall Laser Primitive");
+        addLookupName("ISSmallLaserPrimitive");
         heat = 2;
         damage = 3;
         shortRange = 1;
@@ -50,10 +49,17 @@ public class ISSmallLaserPrimitive extends LaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        //Per Blake Documents using normal weapon information and an introdate 10 years before the normal.
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2290, DATE_NONE, DATE_NONE, 2310, 3067);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_C, RATING_F, RATING_C, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        rulesRefs = "118, IO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2290, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
     }
 }

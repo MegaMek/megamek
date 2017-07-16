@@ -12088,13 +12088,18 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 34;
         ammo.bv = 5;
         ammo.cost = 1000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2290, DATE_NONE, DATE_NONE, 2310);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2290, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
     
@@ -12112,13 +12117,18 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 9;
         ammo.cost = 4500;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2240, DATE_NONE, DATE_NONE, 2260);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2240, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
     
@@ -12136,13 +12146,18 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 21;
         ammo.cost = 12000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2443, DATE_NONE, DATE_NONE, 2470);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2450, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
     
@@ -12160,13 +12175,18 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 22;
         ammo.cost = 10000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2510, DATE_NONE, DATE_NONE, 2500);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2488, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
     private static AmmoType createISLRM5pAmmo() {
@@ -12185,13 +12205,18 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.cost = 30000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2295, DATE_NONE, DATE_NONE, 2320);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
 
@@ -12211,13 +12236,18 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.cost = 30000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2295, DATE_NONE, DATE_NONE, 2320);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
     private static AmmoType createISLRM15pAmmo() {
@@ -12236,13 +12266,18 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.cost = 30000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2295, DATE_NONE, DATE_NONE, 2320);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
 
@@ -12262,13 +12297,18 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.cost = 30000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2295, DATE_NONE, DATE_NONE, 2320);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2295, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
 
@@ -12287,13 +12327,18 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 38;
         ammo.bv = 3;
         ammo.cost = 27000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2439, DATE_NONE, DATE_NONE, 2470);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
 
@@ -12311,13 +12356,18 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 19;
         ammo.bv = 5;
         ammo.cost = 27000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2439, DATE_NONE, DATE_NONE, 2470);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
 
@@ -12335,13 +12385,18 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 11;
         ammo.bv = 7;
         ammo.cost = 27000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
-        ammo.rulesRefs = "217, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2439, DATE_NONE, DATE_NONE, 2470);
-        ammo.techAdvancement.setTechRating(RATING_C);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
+        ammo.rulesRefs = "118, IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
     
@@ -12358,13 +12413,18 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 35;
         ammo.cost = 10000;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
         ammo.rulesRefs = "118, IO";
-
-        ammo.techAdvancement.setTechBase(TECH_BASE_IS);
-        ammo.techAdvancement.setISAdvancement(2445, DATE_NONE, DATE_NONE, 2510);
-        ammo.techAdvancement.setTechRating(RATING_B);
-        ammo.techAdvancement.setAvailability( new int[] { RATING_F, RATING_X, RATING_X, RATING_X });
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2365, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
         return ammo;
     }
     

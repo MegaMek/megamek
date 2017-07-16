@@ -16,7 +16,7 @@ package megamek.common.weapons.missiles;
 /**
  * @author Sebastian Brocks
  */
-public class ISRL15 extends RLWeapon {
+public class RocketLauncher15 extends RLWeapon {
 
     /**
      *
@@ -26,7 +26,7 @@ public class ISRL15 extends RLWeapon {
     /**
      *
      */
-    public ISRL15() {
+    public RocketLauncher15() {
         super();
 
         name = "Rocket Launcher 15";
@@ -34,7 +34,6 @@ public class ISRL15 extends RLWeapon {
         addLookupName("ISRocketLauncher15");
         addLookupName("RL 15");
         addLookupName("IS RLauncher-15");
-        addLookupName("CLRocketLauncher15Prototype");
         heat = 4;
         rackSize = 15;
         shortRange = 4;

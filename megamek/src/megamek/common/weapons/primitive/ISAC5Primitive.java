@@ -60,15 +60,18 @@ public class ISAC5Primitive extends ACWeapon {
         medAV = 5;
         maxRange = RANGE_MED;
         explosionDamage = damage;
-        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
+        //IO Doesn't strictly define when these weapons stop production. Checked with Herb and they would always be around
+        //This to cover some of the back worlds in the Periphery.
         rulesRefs = "118, IO";
         techAdvancement.setTechBase(TECH_BASE_IS)
-        .setTechRating(RATING_C)
-        .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
-        .setISAdvancement(2240, DATE_NONE, DATE_NONE, 2250, DATE_NONE)
-        .setISApproximate(true, false, false,true, false)
-        .setPrototypeFactions(F_TA)
-        .setProductionFactions(F_TA);
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_C)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2240, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISApproximate(true, false, false,false, false)
+            .setPrototypeFactions(F_TA)
+            .setProductionFactions(F_TA);
     }
 
     @Override

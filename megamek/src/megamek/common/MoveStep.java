@@ -2060,13 +2060,18 @@ public class MoveStep implements Serializable {
                 && (entity.getMovementMode() == EntityMovementMode.WIGE)
                 // ...provided they can pay the MP cost.
                 && (entity.getRunMP() >= 5)) {
-            movementType = EntityMovementType.MOVE_WALK;
+            movementType = EntityMovementType.MOVE_VTOL_WALK;
         }
         // WIGEs need to be able to land too, or even descend
         if (entity.getMovementMode() == EntityMovementMode.WIGE
                 && type == MoveStepType.DOWN
                 && getClearance() < prev.getClearance()) { // landing
-            movementType = EntityMovementType.MOVE_LEGAL;
+            if (prev.getMovementType(false) == EntityMovementType.MOVE_VTOL_RUN
+                    || prev.getMovementType(false) == EntityMovementType.MOVE_VTOL_SPRINT) {
+                movementType = prev.getMovementType(false);
+            } else {
+                movementType = EntityMovementType.MOVE_VTOL_WALK;
+            }
         }
 
         // check to see if it's trying to flee and can legally do so.

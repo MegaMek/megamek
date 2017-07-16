@@ -7052,8 +7052,9 @@ public class Server implements Runnable {
             }
 
             if (entity.getMovementMode() == EntityMovementMode.WIGE
-                    && step.getType() == MoveStepType.UP) {
-                entity.setWigeLiftedOff(true);
+                    && ((step.getType() == MoveStepType.UP || step.getClearance() == 0)
+                            || step.getType() == MoveStepType.HOVER)) {
+                entity.setWigeLiftoffHover(true);
             }
 
             // check for MASC failure on first step
@@ -9546,7 +9547,7 @@ public class Server implements Runnable {
                 if (hex.containsTerrain(Terrains.BLDG_ELEV)
                         && entity.getElevation() == hex.terrainLevel(Terrains.BLDG_ELEV)) {
                     // On the roof of a building, treated as if on the ground.
-                } else if (!entity.wigeLiftedOff() && (entity.delta_distance < 5)) {
+                } else if (!entity.wigeLiftoffHover() && (entity.delta_distance < 5)) {
                     // try to land safely
                     r = new Report(2123);
                     r.addDesc(entity);

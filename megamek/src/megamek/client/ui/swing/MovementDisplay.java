@@ -109,6 +109,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int CMD_AERO = 1 << 4;
     public static final int CMD_AERO_VECTORED = 1 << 5;
     public static final int CMD_CONVERTER = 1 << 6;
+    public static final int CMD_AIRMECH = 1 << 7;
     // Command used only in menus and has no associated button
     public static final int CMD_NO_BUTTON = 1 << 8;
     // Convenience defines for common combinations
@@ -187,7 +188,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_DROP("MoveDrop", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_DUMP("MoveDump", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_RAM("MoveRam", CMD_AERO_BOTH), //$NON-NLS-1$
-        MOVE_HOVER("MoveHover", CMD_AERO), //$NON-NLS-1$
+        MOVE_HOVER("MoveHover", CMD_AERO | CMD_AIRMECH), //$NON-NLS-1$
         MOVE_MANEUVER("MoveManeuver", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_JOIN("MoveJoin", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_FLY_OFF("MoveOff", CMD_AERO_BOTH), //$NON-NLS-1$
@@ -661,12 +662,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if (ce.getMovementMode() == EntityMovementMode.AERODYNE) {
                     flag |= CMD_CONVERTER;
                 } else if (ce.getMovementMode() == EntityMovementMode.WIGE) {
-                    flag = CMD_TANK | CMD_CONVERTER;
+                    flag = CMD_TANK | CMD_CONVERTER | CMD_AIRMECH;
                 } else {
                     flag = CMD_MECH | CMD_CONVERTER;
                 }
             } else if (ce instanceof Mech && ((Mech)ce).hasTracks()) {
                 flag = CMD_MECH | CMD_CONVERTER;
+            } else if (ce instanceof Protomech && ce.getMovementMode() == EntityMovementMode.WIGE) {
+                flag = CMD_MECH | CMD_AIRMECH;
             }
         }
         return getButtonList(flag);

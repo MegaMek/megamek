@@ -312,7 +312,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * a PSR is required, it adds a +1 modifier to the PSR.
      */
     private boolean isPowerReverse = false;
-    private boolean wigeLiftedOff = false;
+    private boolean wigeLiftoffHover = false;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
     public int wigeBonus = 0;
@@ -5575,7 +5575,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         moved = EntityMovementType.MOVE_NONE;
         movedBackwards = false;
         isPowerReverse = false;
-        wigeLiftedOff = false;
+        wigeLiftoffHover = false;
         gotPavementBonus = false;
         wigeBonus = 0;
         hitThisRoundByAntiTSM = false;
@@ -13046,12 +13046,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * @return whether a WiGE lifted off during this turn's movement
      */
-    public boolean wigeLiftedOff() {
-        return wigeLiftedOff;
+    public boolean wigeLiftoffHover() {
+        return wigeLiftoffHover;
     }
     
-    public void setWigeLiftedOff(boolean lifted) {
-        wigeLiftedOff = lifted;
+    public void setWigeLiftoffHover(boolean lifted) {
+        wigeLiftoffHover = lifted;
     }
 
     public void setHardenedArmorDamaged(HitData hit, boolean damaged) {

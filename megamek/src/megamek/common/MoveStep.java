@@ -1008,7 +1008,11 @@ public class MoveStep implements Serializable {
                 setMp(2);
                 break;
             case HOVER:
-                setMp(2);
+                if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                    setMp(entity instanceof Protomech? 4 : 5);
+                } else {
+                    setMp(2);
+                }
                 break;
             case MANEUVER:
                 int cost = ManeuverType.getCost(getManeuverType(),

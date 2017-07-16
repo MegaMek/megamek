@@ -1720,6 +1720,10 @@ public abstract class Mech extends Entity {
                                             // once.
             }
         }
+        // AirMech mode for LAMs confers the same heat benefits as a partial wing. 
+        if (includePartialWing && movementMode == EntityMovementMode.WIGE) {
+            capacity += getPartialWingHeatBonus();
+        }
         if (includeRadicalHeatSink
                 && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
             capacity += Math.ceil(getActiveSinks() * 0.4);

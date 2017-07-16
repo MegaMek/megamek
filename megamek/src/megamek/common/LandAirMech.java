@@ -280,25 +280,8 @@ public class LandAirMech extends BipedMech {
     }
     
     public int getAirMechHeat() {
-        int bonus = bDamagedCoolantSystem?1:0;
-        // Partial Wing bonus
-        switch (game.getPlanetaryConditions().getAtmosphere()) {
-        case PlanetaryConditions.ATMO_VACUUM:
-            break;
-        case PlanetaryConditions.ATMO_TRACE:
-            bonus--;
-            break;
-        case PlanetaryConditions.ATMO_THIN:
-            bonus -= 2;
-            break;
-        case PlanetaryConditions.ATMO_STANDARD:
-        case PlanetaryConditions.ATMO_HIGH:
-        case PlanetaryConditions.ATMO_VHIGH:
-        default:
-            bonus -= 3;
-            break;
-        }
-        return bonus + (int)Math.round(getJumpHeat(mpUsed) / 3.0);
+        int mod = bDamagedCoolantSystem?1:0;
+        return mod + (int)Math.round(getJumpHeat(mpUsed) / 3.0);
     }
 
     @Override

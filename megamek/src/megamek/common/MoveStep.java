@@ -1682,7 +1682,6 @@ public class MoveStep implements Serializable {
 
     protected void setClimbMode(boolean b) {
         climbMode = b;
-        getEntity().setClimbMode(b);
     }
 
     /**

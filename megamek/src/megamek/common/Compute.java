@@ -570,7 +570,9 @@ public class Compute {
 
         // check leaps
         if ((entity instanceof Mech) && (delta_alt < -2)
-            && (movementType != EntityMovementType.MOVE_JUMP)) {
+            && (movementType != EntityMovementType.MOVE_JUMP
+            && (movementType != EntityMovementType.MOVE_VTOL_WALK
+            && (movementType != EntityMovementType.MOVE_VTOL_RUN)))) {
             return true;
         }
 

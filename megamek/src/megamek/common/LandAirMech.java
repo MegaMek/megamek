@@ -364,6 +364,16 @@ public class LandAirMech extends BipedMech {
         }
     }
     
+    @Override
+    public int getMaxElevationDown(int currElevation) {
+        // Cannot spend AirMech MP above altitude 3 (level 30) so we use that as max descent.
+        if ((currElevation > 0)
+                && (getMovementMode() == EntityMovementMode.WIGE)) {
+            return 30;
+        }
+        return super.getMaxElevationDown(currElevation);
+    }
+    
     /**
      * Start a new round
      *

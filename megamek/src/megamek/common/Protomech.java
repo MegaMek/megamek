@@ -1847,6 +1847,16 @@ public class Protomech extends Entity {
     }
 
     @Override
+    public int getMaxElevationDown(int currElevation) {
+        // Gliders have a maximum elevation of 12 over the surface terrain.
+        if ((currElevation > 0)
+                && (getMovementMode() == EntityMovementMode.WIGE)) {
+            return 12;
+        }
+        return super.getMaxElevationDown(currElevation);
+    }
+
+    @Override
     public int getArmor(int loc, boolean rear) {
         if (loc == LOC_NMISS) {
             return IArmorState.ARMOR_NA;

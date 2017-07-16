@@ -6858,6 +6858,7 @@ public class Server implements Runnable {
         int curElevation = entity.getElevation();
         int lastElevation = entity.getElevation();
         int curAltitude = entity.getAltitude();
+        boolean curClimbMode = entity.climbMode();
         // if the entity already used some MPs,
         // it previously tried to get up and fell,
         // and then got another turn. set moveType
@@ -7974,8 +7975,11 @@ public class Server implements Runnable {
             curVTOLElevation = step.getElevation();
             curAltitude = step.getAltitude();
             curElevation = step.getElevation();
+            curClimbMode = step.climbMode();
             // set elevation in case of collapses
             entity.setElevation(step.getElevation());
+            // set climb mode in case of skid
+            entity.setClimbMode(curClimbMode);
 
             IHex curHex = game.getBoard().getHex(curPos);
 
@@ -8732,11 +8736,11 @@ public class Server implements Runnable {
                             && (entity.getJumpType() == Mech.JUMP_BOOSTER))
                     && ((lastHex.getLevel()
                             + entity.calcElevation(curHex, lastHex,
-                                    step.getElevation(), md.getFinalClimbMode(),
+                                    step.getElevation(), curClimbMode,
                                     false)) != (curHex.getLevel()
                                             + entity.getElevation()))
                     && !(entity instanceof VTOL)
-                    && !(md.getFinalClimbMode()
+                    && !(curClimbMode
                             && curHex.containsTerrain(Terrains.BRIDGE)
                             && ((curHex.terrainLevel(Terrains.BRIDGE_ELEV)
                                     + curHex.getLevel()) == (prevHex.getLevel()
@@ -8974,7 +8978,7 @@ public class Server implements Runnable {
             entity.setElevation(curVTOLElevation);
         }
         entity.setAltitude(curAltitude);
-        entity.setClimbMode(md.getFinalClimbMode());
+        entity.setClimbMode(curClimbMode);
 
         // add a list of places passed through
         entity.setPassedThrough(passedThrough);

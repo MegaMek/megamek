@@ -2062,7 +2062,7 @@ public class MoveStep implements Serializable {
                 && (entity.getRunMP() >= 5)) {
             movementType = EntityMovementType.MOVE_WALK;
         }
-        // WIGEs need to be able to land too, or even descent elevation
+        // WIGEs need to be able to land too, or even descend
         if (entity.getMovementMode() == EntityMovementMode.WIGE
                 && type == MoveStepType.DOWN
                 && getClearance() < prev.getClearance()) { // landing
@@ -2163,7 +2163,7 @@ public class MoveStep implements Serializable {
 
         // WiGEs, AirMechs, and glider ProtoMechs have different MP for ground and airborne movement
         if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-            if (getClearance() <= 0) {
+            if (getClearance() <= 0 && type != MoveStepType.UP) {
                 if (entity instanceof LandAirMech) {
                     // On the ground or underwater use AirMech walk/run.
                     // Sprint can only be used on the ground, so that is already set.
@@ -2172,12 +2172,12 @@ public class MoveStep implements Serializable {
                     // LAMs cannot use hardened armor, which makes runMP a simpler calculation.
                     runMP = ((LandAirMech)entity).hasArmedMASC()? tmpWalkMP * 2 : runMPnoMASC;
                 } else {
-                    // Only 1 ground MP for ground effect vehicles
+                    // Only 1 ground MP for ground effect vehicles and glider protomechs
                     tmpWalkMP = runMP = runMPnoMASC = sprintMP = sprintMPnoMASC = 1;
                 }
             } else if (entity instanceof LandAirMech) {
                 // LAMs cannot use overdrive and MASC does not effect airborne MP.
-                tmpWalkMP = ((LandAirMech)entity).getAirMechWalkMP();
+                tmpWalkMP = ((LandAirMech)entity).getAirMechCruiseMP();
                 runMP = runMPnoMASC = sprintMP = sprintMPnoMASC = ((LandAirMech)entity).getAirMechFlankMP();
             }
         }
@@ -2244,14 +2244,14 @@ public class MoveStep implements Serializable {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }
-            // WiGEs on the ground can use only 1 MP / do just one step
-//            if (!isFirstStep()
-//                    && (entity.getMovementMode() == EntityMovementMode.WIGE)
-//                    && getClearance() == 0
-//                    && prev.getClearance() == 0) {
-//                movementType = EntityMovementType.MOVE_ILLEGAL;
-//                return;
-//            }
+            
+            // WiGEs that land are finished with movement
+            if (entity.getMovementMode() == EntityMovementMode.WIGE
+                    && prev.getType() == MoveStepType.DOWN
+                    && getClearance() == 0) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
 
             if (getMpUsed() <= tmpWalkMP) {
                 if ((getEntity().getMovementMode() == EntityMovementMode.VTOL

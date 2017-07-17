@@ -6017,7 +6017,8 @@ public class Server implements Runnable {
         if (entity.getMovementMode() == EntityMovementMode.VTOL) {
             modifier += 2;
         } else if (entity.getMovementMode() == EntityMovementMode.HOVER
-                || entity.getMovementMode() == EntityMovementMode.WIGE
+                || (entity.getMovementMode() == EntityMovementMode.WIGE
+                        && entity instanceof Tank)
                 || entity.getMovementMode() == EntityMovementMode.HYDROFOIL) {
             modifier += 4;
         }

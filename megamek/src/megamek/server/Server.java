@@ -125,6 +125,7 @@ import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.InfernoTracker;
 import megamek.common.Jumpship;
+import megamek.common.LandAirMech;
 import megamek.common.LargeSupportTank;
 import megamek.common.LocationFullException;
 import megamek.common.LosEffects;
@@ -7051,10 +7052,20 @@ public class Server implements Runnable {
                 break;
             }
 
-            if (entity.getMovementMode() == EntityMovementMode.WIGE
-                    && ((step.getType() == MoveStepType.UP || step.getClearance() == 0)
-                            || step.getType() == MoveStepType.HOVER)) {
-                entity.setWigeLiftoffHover(true);
+            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                if ((step.getType() == MoveStepType.UP && !entity.isAirborneVTOLorWIGE())
+                            || step.getType() == MoveStepType.HOVER) {
+                    entity.setWigeLiftoffHover(true);
+                } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
+                    if (entity instanceof LandAirMech) {
+                        landAirMech((LandAirMech)entity, step.getPosition(), prevStep.getElevation(),
+                                distance, prevStep);
+                    } else if (entity instanceof Protomech) {
+                        landGliderPM((Protomech)entity, step.getPosition(), prevStep.getElevation(),
+                                distance);
+                    }
+                    // landing always ends movement whether successful or not
+                }
             }
 
             // check for MASC failure on first step
@@ -9553,18 +9564,18 @@ public class Server implements Runnable {
                     r.addDesc(entity);
                     r.subject = entity.getId();
                     vPhaseReport.add(r);
-                    // when no clear or pavement, crash
-                    if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    if (entity instanceof LandAirMech) {
+                        landAirMech((LandAirMech)entity, entity.getPosition(), entity.getElevation(),
+                                entity.delta_distance, md.getLastStep());
+                    } else if (entity instanceof Protomech) {
+                        landGliderPM((Protomech)entity, entity.getPosition(), entity.getElevation(),
+                                entity.delta_distance);
+                    } else if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg,
                                 entity, entity.getPosition()));
-                    } else if (hex.hasPavement()
-                            // All WiGE vehicles are considered to have a flotation hull. This errata
-                            // changes the TW rule that WiGEs cannot land on water.
-                            // http://bg.battletech.com/forums/index.php?topic=46241.msg1065439#msg1065439
-                            || (entity instanceof Tank && hex.containsTerrain(Terrains.WATER))
-                            || hex.isClearHex()) {
+                    } else if (!entity.isLocationProhibited(entity.getPosition(), 0) || hex.hasPavement()) {
                         entity.setElevation(0);                                
                     } else {
                         // crash
@@ -9572,7 +9583,9 @@ public class Server implements Runnable {
                         r.addDesc(entity);
                         r.subject = entity.getId();
                         vPhaseReport.add(r);
-                        vPhaseReport.addAll(crashVTOLorWiGE((Tank) entity));
+                        if (entity instanceof Tank) {
+                            vPhaseReport.addAll(crashVTOLorWiGE((Tank) entity));
+                        }
                     }
                 } else {
                     // we didn't land, so we go to elevation 1 above the terrain
@@ -25951,6 +25964,80 @@ public class Server implements Runnable {
         return criticalEntity(en, loc, isRear, 0, false, false, damage, damagedByFire);
     }
 
+    /**
+     * Makes any roll required when an AirMech lands and resolve any damage or
+     * skidding resulting from a failed roll. Updates final position and elevation.
+     * 
+     * @param en    the landing LAM
+     * @param pos   the <code>Coords</code> of the landing hex
+     * @param elevation    the elevation from which the landing is attempted (usually 1, but may be higher
+     *                          if the unit is forced to land due to insufficient movement
+     * @param lastStep  the <code>MoveStep</code> just before the attempted landing                         
+     * @param distance  the distance the unit moved in the turn prior to landing
+     */
+    private void landAirMech(LandAirMech lam, Coords pos, int elevation,
+            int distance, MoveStep lastStep) {
+        lam.setPosition(pos);
+        IHex hex = game.getBoard().getHex(pos);
+        if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            lam.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
+        } else {
+            lam.setElevation(0);
+        }
+        PilotingRollData psr = lam.checkAirMechLanding();
+        if (psr.getValue() != TargetRoll.CHECK_FALSE
+                && (0 < doSkillCheckWhileMoving(lam, elevation, pos, pos, psr, false))) {
+            crashAirMech(lam, pos, elevation, distance, psr);
+        }
+    }
+    
+    private boolean crashAirMech(Entity en, Coords pos, int elevation, int distance,
+            PilotingRollData psr) {
+        MoveStep step = new MoveStep(null, MoveStepType.DOWN);
+        step.setFromEntity(en, game);
+        return crashAirMech(en, pos, elevation, distance, psr, step);
+    }
+    
+    private boolean crashAirMech(Entity en, Coords pos, int elevation, int distance,
+            PilotingRollData psr, MoveStep lastStep) {
+        addReport(doEntityFallsInto(en, elevation, pos, pos, psr, true, 0));
+        return en.isDoomed()
+                || processSkid(en, pos, 0, 0, distance,
+                        lastStep, en.moved, false);
+    }
+    
+    /**
+     * Makes the landing roll required for a glider protomech and resolves any damage
+     * resulting from a failed roll. Updates final position and elevation.
+     * 
+     * @param en    the landing glider protomech
+     * @param pos   the <code>Coords</code> of the landing hex
+     * @param elevation    the elevation from which the landing is attempted (usually 1, but may be higher
+     *                          if the unit is forced to land due to insufficient movement
+     * @param distance  the distance the unit moved in the turn prior to landing
+     */
+    private boolean landGliderPM(Protomech en, Coords pos, int startElevation,
+            int distance) {
+        en.setPosition(pos);
+        IHex hex = game.getBoard().getHex(pos);
+        if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            en.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
+        } else {
+            en.setElevation(0);
+        }
+        PilotingRollData psr = new PilotingRollData(en.getId(), 4, "attempting to land");
+        if (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false)) {
+            return false;
+        } else {
+            for (int i = 0; i < en.getNumberOfCriticals(Protomech.LOC_LEG); i++) {
+                en.getCritical(Protomech.LOC_LEG, i).setHit(true);
+                HitData hit = new HitData(Protomech.LOC_LEG);
+                addReport(damageEntity(en, hit, 2 * startElevation));
+            }
+            return en.isDoomed();
+        }
+    }
+    
     /**
      * Resolves the forced landing of one airborne {@code VTOL} or {@code WiGE}
      * in its current hex. As this method is only for internal use and not part

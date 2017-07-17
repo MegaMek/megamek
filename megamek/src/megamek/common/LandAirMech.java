@@ -15,6 +15,8 @@ package megamek.common;
 
 import java.util.Map;
 
+import megamek.common.options.OptionsConstants;
+
 public class LandAirMech extends BipedMech {
 
     /**
@@ -372,6 +374,130 @@ public class LandAirMech extends BipedMech {
         }
     }
     
+    /**
+     * Add in any piloting skill mods
+     */
+    @Override
+    public PilotingRollData addEntityBonuses(PilotingRollData roll) {
+        if (movementMode != EntityMovementMode.AERODYNE
+                && !isAirborneVTOLorWIGE()) {
+            return super.addEntityBonuses(roll);
+        }
+        
+        // In fighter mode a destroyed gyro gives +6 to the control roll.
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                Mech.LOC_CT);
+        if (gyroHits > 0) {
+            if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+                if (gyroHits == 1) {
+                    roll.addModifier(1, "HD Gyro damaged once");
+                } else if (gyroHits == 2){
+                    roll.addModifier(3, "HD Gyro damaged twice");
+                } else {
+                    roll.addModifier(6, "Gyro destroyed");
+                }
+            } else {
+                if (gyroHits == 1) {
+                    roll.addModifier(3, "Gyro damaged");
+                } else {
+                    roll.addModifier(6, "Gyro destroyed");
+                }
+            }
+        }
+
+        // EI bonus?
+        if (hasActiveEiCockpit()) {
+            roll.addModifier(-1, "Enhanced Imaging");
+        }
+
+        // VDNI bonus?
+        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+            roll.addModifier(-1, "VDNI");
+        }
+
+        // Small/torso-mounted cockpit penalty?
+        if ((getCockpitType() == Mech.COCKPIT_SMALL)
+                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
+            roll.addModifier(1, "Small Cockpit");
+        }
+
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+            roll.addModifier(1, "cramped cockpit");
+        }
+        
+        int avionicsHits = getAvionicsHits();
+        if (avionicsHits > 2) {
+            roll.addModifier(5, "avionics destroyed");
+        } else if (avionicsHits > 0) {
+            roll.addModifier(avionicsHits, "avionics damage");
+        }
+
+        return roll;
+    }
+
+    /**
+     * Landing in AirMech mode requires a control roll only if the gyro or any of the hip or leg actuators
+     * are damaged.
+     * 
+     * @return The control roll that must be passed to land safely.
+     */
+    public PilotingRollData checkAirMechLanding() {
+        // Base piloting skill
+        PilotingRollData roll = new PilotingRollData(getId(), getCrew()
+                .getPiloting(), "Base piloting skill");
+        
+        addEntityBonuses(roll);
+        
+        // Landing in AirMech mode only requires a roll if gyro or hip/leg actuators are damaged.
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                Mech.LOC_CT);
+        if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+            gyroHits--;
+        }
+
+        boolean required = gyroHits > 0;
+
+        for (int loc = 0; loc < locations(); loc++) {
+            if (locationIsLeg(loc)) {
+                if (isLocationBad(loc)) {
+                    roll.addModifier(5, getLocationName(loc) + " destroyed");
+                    required = true;
+                } else {
+                    // check for damaged hip actuators
+                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
+                        roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
+                        if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
+                            continue;
+                        }
+                        required = true;
+                    }
+                    // upper leg actuators?
+                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) > 0) {
+                        roll.addModifier(1, getLocationName(loc) + " Upper Leg Actuator destroyed");
+                        required = true;
+                    }
+                    // lower leg actuators?
+                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) > 0) {
+                        roll.addModifier(1, getLocationName(loc) + " Lower Leg Actuator destroyed");
+                        required = true;
+                    }
+                    // foot actuators?
+                    if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) > 0) {
+                        roll.addModifier(1, getLocationName(loc) + " Foot Actuator destroyed");
+                        required = true;
+                    }
+                }
+            }
+        }
+        if (required) {
+            roll.addModifier(0, "landing with gyro or leg damage");
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check not required for landing");
+        }
+        return roll;
+    }
+    
     @Override
     public int getMaxElevationDown(int currElevation) {
         // Cannot spend AirMech MP above altitude 3 (level 30) so we use that as max descent.
@@ -420,6 +546,14 @@ public class LandAirMech extends BipedMech {
     public boolean canFall(boolean gyroLegDamage) {
         //TODO: in AirMech mode it is possible to fall if using walk/run (or standing) but not cruise/flank
         return movementMode != EntityMovementMode.AERODYNE;
+    }
+    
+    public int getAvionicsHits() {
+        int hits = 0;
+        for (int loc = 0; loc < locations(); loc++) {
+            hits += getBadCriticals(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS, loc);
+        }
+        return hits;
     }
     
     @Override

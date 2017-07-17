@@ -134,7 +134,8 @@ public class AmmoType extends EquipmentType {
 	public static final int T_SRM_IMP = 106;
 	public static final int T_LRM_IMP = 107;
 	public static final int T_LONG_TOM_PRIM = 108;
-    public static final int NUM_TYPES = 109;  //Should always be at the end with the highest number
+	public static final int T_ARROWIV_PROTO = 109;
+    public static final int NUM_TYPES = 110;  //Should always be at the end with the highest number
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -490,6 +491,7 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> enhancedlrmAmmos = new ArrayList<AmmoType>(26);
         ArrayList<AmmoType> acAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> arrowAmmos = new ArrayList<AmmoType>(4);
+        ArrayList<AmmoType> protoarrowAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> clanArrowAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> thumperAmmos = new ArrayList<AmmoType>(3);
         ArrayList<AmmoType> thumperCannonAmmos = new ArrayList<AmmoType>(3);
@@ -788,20 +790,29 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createISLongTomCannonAmmo();
         longTomCannonAmmos.add(base);
         EquipmentType.addType(base);
+        
         base = AmmoType.createISSniperAmmo();
         sniperAmmos.add(base);
         EquipmentType.addType(base);
+        
         base = AmmoType.createISSniperCannonAmmo();
         sniperCannonAmmos.add(base);
         EquipmentType.addType(base);
+        
         base = AmmoType.createISThumperAmmo();
         thumperAmmos.add(base);
         EquipmentType.addType(base);
+        
         base = AmmoType.createISThumperCannonAmmo();
         thumperCannonAmmos.add(base);
         EquipmentType.addType(base);
+        
         base = AmmoType.createISArrowIVAmmo();
         arrowAmmos.add(base);
+        EquipmentType.addType(base);
+        
+        base = AmmoType.createPrototypeArrowIVAmmo();
+        protoarrowAmmos.add(base);
         EquipmentType.addType(base);
 
         EquipmentType.addType(AmmoType.createCLLB2XAmmo());
@@ -2464,6 +2475,7 @@ public class AmmoType extends EquipmentType {
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(arrowAmmos, munitions);
+        AmmoType.createMunitions(protoarrowAmmos, munitions);
 
         // Create the munition types for Clan Arrow IV launchers.
         munitions.clear();
@@ -12426,6 +12438,27 @@ public class AmmoType extends EquipmentType {
             .setPrototypeFactions(F_TA)
             .setProductionFactions(F_TA);
         return ammo;
+    }    
+
+    private static AmmoType createPrototypeArrowIVAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Prototype Arrow IV Ammo";
+        ammo.shortName = "ProtoType Arrow IV";
+        ammo.setInternalName("ProtoTypeArrowIVAmmo");
+        ammo.addLookupName("ProtoArrowIV Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_ARROWIV_PROTO;
+        ammo.shots = 4;
+        ammo.bv = 30;
+        ammo.cost = 40000;
+        ammo.rulesRefs = "217,IO";
+        ammo.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+                .setAvailability(RATING_E, RATING_F, RATING_E, RATING_D)
+                .setISAdvancement(2593, 2600, DATE_NONE, 2830, 3044).setISApproximate(false, false, false, false, false)
+                .setPrototypeFactions(F_TH).setProductionFactions(F_TH);
+        return ammo;
     }
     
     //Clan Improved Stuff.
@@ -15255,6 +15288,7 @@ public class AmmoType extends EquipmentType {
                     munition.addBeforeString(base, "Ammo", name + " ");
                     nameBuf = null;
                     break;
+                case AmmoType.T_ARROWIV_PROTO:
                 case AmmoType.T_ARROW_IV:
                     // The munition name appears in the middle of all names.
                     nameBuf = new StringBuffer(base.name);

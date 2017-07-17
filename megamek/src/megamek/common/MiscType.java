@@ -254,6 +254,9 @@ public class MiscType extends EquipmentType {
 	// Flags for Large Craft Systems
 	public static final BigInteger F_STORAGE_BATTERY = BigInteger.valueOf(1).shiftLeft(199);
 	public static final BigInteger F_LIGHT_SAIL = BigInteger.valueOf(1).shiftLeft(200);
+	
+	//Prototype Stuff
+	public static final BigInteger F_ARTEMIS_PROTO = BigInteger.valueOf(1).shiftLeft(201);
 
 	// Secondary Flags for Physical Weapons
 	public static final long S_CLUB = 1L << 0; // BMR
@@ -1541,7 +1544,7 @@ public class MiscType extends EquipmentType {
 		 * EquipmentType.addType(MiscType.createBAJumpJet());
 		 */
 
-		// support vee Chassis stuff
+		// Support Vee Chassis stuff
 		EquipmentType.addType(MiscType.createAmphibiousChassis());
 		EquipmentType.addType(MiscType.createArmoredChassis());
 		EquipmentType.addType(MiscType.createBicycleModification());
@@ -1560,7 +1563,7 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createUltraLightChassisModification());
 		EquipmentType.addType(MiscType.createVSTOLChassisMod());
 
-		// support vee Equipment stuff
+		// Support Vee Equipment stuff
 		EquipmentType.addType(MiscType.createBasicFireControl());
 		EquipmentType.addType(MiscType.createAdvancedFireControl());
 		EquipmentType.addType(MiscType.createISMineSweeper());
@@ -1599,6 +1602,9 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createRISCViralJammerHoming());
 		EquipmentType.addType(MiscType.createRISCLaserPulseModule());
 		EquipmentType.addType(MiscType.createRISCEmergencyCoolantSystem());
+		
+		//Prototype Stuff
+		EquipmentType.addType(MiscType.createISProtoArtemis());
 
 		// Drone and Robotic Systems
 		EquipmentType.addType(MiscType.createISRemoteDroneCommandConsole());
@@ -5718,6 +5724,31 @@ public class MiscType extends EquipmentType {
 	}
 
 	// TODO Per IO pg 71 we should have a ProtoType Artemis IV.
+	
+	   public static MiscType createISProtoArtemis() {
+	        MiscType misc = new MiscType();
+
+	        misc.name = "Prototype Artemis IV FCS";
+	        misc.setInternalName("ISArtemisIVProto");
+	        misc.addLookupName("IS Proto type Artemis IV FCS");
+	        misc.tonnage = 1.0f;
+	        misc.criticals = 1;
+	        misc.cost = 100000;
+	        misc.flags = misc.flags.or(F_ARTEMIS_PROTO).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+	        misc.rulesRefs = "217,IO";
+	        misc.techAdvancement
+	            .setTechBase(TECH_BASE_IS)
+	            .setIntroLevel(false)
+	            .setUnofficial(false)
+	            .setTechRating(RATING_E)
+	            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+	            .setISAdvancement(2592, DATE_NONE, DATE_NONE, 2612, 3035)
+	            .setISApproximate(true, false, false, true, true)
+	            .setPrototypeFactions(F_TH)
+	            .setProductionFactions(F_TH)
+	            .setReintroductionFactions(F_FW);
+	        return misc;
+	    }
 
 	public static MiscType createCLArtemis() {
 		MiscType misc = new MiscType();

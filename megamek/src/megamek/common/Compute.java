@@ -2877,6 +2877,11 @@ public class Compute {
                             && (at.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
                             fHits *= 1.2f;
                         }
+                        if (((weapon.curMode() == null) || !weapon.curMode()
+                                                            .equals("Indirect"))
+                            && (at.getMunitionType() == AmmoType.M_ARTEMIS_V_CAPABLE)) {
+                            fHits *= 1.3f;
+                            }                      
                     }
                 }
 

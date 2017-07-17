@@ -508,6 +508,15 @@ public class LandAirMech extends BipedMech {
         return super.getMaxElevationDown(currElevation);
     }
     
+    @Override
+    public boolean canChangeSecondaryFacing() {
+        if (movementMode == EntityMovementMode.AERODYNE
+                || movementMode == EntityMovementMode.WIGE) {
+            return false;
+        }
+        return super.canChangeSecondaryFacing();
+    }
+    
     /**
      * Start a new round
      *

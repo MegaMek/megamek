@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
 Type,Tech Base,Rules,Name,Aliases
 W,2300-Inner Sphere3071-Inner Sphere,2300-IS_Box_Set3071-IS_Box_Set,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,2290-Inner Sphere3071-Inner Sphere,2290-IS_Experimental3071-IS_Experimental,Medium Laser Prototype,IS Medium Laser Prototype,ISMediumLaserPrototype,
@@ -2914,6 +2914,7 @@ M,2000-IS/Clan3071-IS/Clan,2000-(allowed to all)3071-(allowed to all),Salvage Ar
 M,2320-IS/Clan3071-IS/Clan,2320-(allowed to all)3071-(allowed to all),Spot Welder,
 M,1950-IS/Clan3071-IS/Clan,1950-(allowed to all)3071-(allowed to all),Lift Hoist,
 M,2440-IS/Clan3071-IS/Clan,2440-(allowed to all)3071-(allowed to all),Tracks,
+M,3125-Clan3071-Clan3135-Clan,3125-Clan_Experimental3071-Clan_Advanced3135-Clan_Advanced,Wheels,
 M,3048-Inner Sphere3083-Inner Sphere3071-Inner Sphere,3048-IS_Experimental3083-IS_Advanced3071-IS_Experimental,ISMASS,IS Mass,
 M,3062-Clan3083-Clan3071-Clan,3062-Clan_Experimental3083-Clan_Advanced3071-Clan_Experimental,CLMASS,Clan Mass,
 M,1950-IS/Clan3071-IS/Clan,1950-(allowed to all)3071-(allowed to all),LightBridgeLayer,

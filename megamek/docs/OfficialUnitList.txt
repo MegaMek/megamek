@@ -5101,6 +5101,19 @@ Trebuchet TBT-K7R|
 Ursus 3|
 Wolf Trap (Tora) WFT-2B|
 Wolfhound WLF-2H|
+Arion (Standard)|
+Boreas A|
+Boreas B|
+Boreas C|
+Boreas D|
+Boreas Prime|
+Cyllaros (Standard)|
+Harpagos (Standard)|
+Notos A|
+Notos B|
+Notos C|
+Notos D|
+Notos Prime|
 Atlas AS7-D(C)|
 Assassin ASN-30 (Alice)|
 Bandersnatch BNDR-01A (Horus)|
@@ -5395,7 +5408,7 @@ Archer ARC-1A|
 Orion ON1-C|
 Orion ON1-H|
 Phoenix PX-1R|
-Trooper TR-1R|
+Trooper TP-1R|
 Wolverine WVR-1R|
 Wolverine WVR-3R|
 Ymir BWP-X1 'Bipedal Weapons Platform'|

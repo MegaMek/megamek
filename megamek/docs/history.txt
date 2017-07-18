@@ -19,6 +19,7 @@ v0.43.3-git
 + Fixes for WiGE movement, including interactions with terrain (buildings, bridges, woods, water) per errata.
 + Issue #481: VTOL unable to fly over bridge
 + Issue #523: VTOL Cannot Pass Under Bridge
++ New Sprites/Cleaning up old splash screens/New Screen added.
 
 v0.43.2 2017-05-1 22:00 UTC)
 + PR #518: Implemented quirks: Stabilized weapon, barrel fist

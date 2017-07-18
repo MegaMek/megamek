@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.EnergyWeapon;
@@ -36,7 +35,7 @@ import megamek.common.weapons.PPCWeapon;
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
-public class Aero extends Entity {
+public class Aero extends Entity implements IAero {
     /**
      *
      */
@@ -158,11 +157,6 @@ public class Aero extends Entity {
     // Track how many heat sinks are pod-mounted for omnifighters; these are included in the total
     // This is provided for campaign use; MM does not distribute damage between fixed and pod-mounted. 
     private int podHeatSinks;
-
-    // bombs
-    public static final String SPACE_BOMB_ATTACK = "SpaceBombAttack";
-    public static final String DIVE_BOMB_ATTACK = "DiveBombAttack";
-    public static final String ALT_BOMB_ATTACK = "AltBombAttack";
 
     protected int maxBombPoints = 0;
     protected int[] bombChoices = new int[BombType.B_NUM];
@@ -399,6 +393,7 @@ public class Aero extends Entity {
         return whoFirst;
     }
 
+    @Override
     public int getCurrentVelocity() {
         // if using advanced movement then I just want to sum up
         // the different vectors
@@ -408,24 +403,28 @@ public class Aero extends Entity {
         return currentVelocity;
     }
 
+    @Override
     public void setCurrentVelocity(int velocity) {
         currentVelocity = velocity;
     }
 
+    @Override
     public int getNextVelocity() {
         return nextVelocity;
     }
 
+    @Override
     public void setNextVelocity(int velocity) {
         nextVelocity = velocity;
     }
 
     // need some way of retrieving true current velocity
     // even when using advanced movement
+    @Override
     public int getCurrentVelocityActual() {
         return currentVelocity;
     }
-
+    
     public int getPotCrit() {
         return potCrit;
     }
@@ -440,6 +439,14 @@ public class Aero extends Entity {
 
     public int get0SI() {
         return orig_structIntegrity;
+    }
+    
+    /**
+     * Used to determine modifier for landing; different for Aero and LAM.
+     */
+    @Override
+    public int getNoseArmor() {
+        return getArmor(LOC_NOSE);
     }
 
     public int getCapArmor() {
@@ -565,6 +572,21 @@ public class Aero extends Entity {
     public void setGearHit(boolean hit) {
         gearHit = hit;
     }
+    
+    /**
+     * Modifier to landing or vertical takeoff roll for landing gear damage.
+     * 
+     * @param vTakeoff true if this is for a vertical takeoff, false if for a landing
+     * @return the control roll modifier
+     */
+    @Override
+    public int getLandingGearMod(boolean vTakeoff) {
+        if (gearHit) {
+            return vTakeoff? 1 : 5;
+        } else {
+            return 0;
+        }
+    }
 
     public void setOHeatSinks(int hs) {
         heatSinksOriginal = hs;
@@ -687,10 +709,12 @@ public class Aero extends Entity {
         return heatType;
     }
 
+    @Override
     public boolean wasCritThresh() {
         return critThresh;
     }
 
+    @Override
     public void setCritThresh(boolean b) {
         critThresh = b;
     }
@@ -879,36 +903,6 @@ public class Aero extends Entity {
         }
 
         return rollArcs(arc);
-    }
-
-    /**
-     * switches certain arcs due to rolling
-     */
-    public int rollArcs(int arc) {
-        if (isRolled()) {
-            if (arc == Compute.ARC_LWING) {
-                return Compute.ARC_RWING;
-            } else if (arc == Compute.ARC_RWING) {
-                return Compute.ARC_LWING;
-            } else if (arc == Compute.ARC_LWINGA) {
-                return Compute.ARC_RWINGA;
-            } else if (arc == Compute.ARC_RWINGA) {
-                return Compute.ARC_LWINGA;
-            } else if (arc == Compute.ARC_LEFTSIDE_SPHERE) {
-                return Compute.ARC_RIGHTSIDE_SPHERE;
-            } else if (arc == Compute.ARC_RIGHTSIDE_SPHERE) {
-                return Compute.ARC_LEFTSIDE_SPHERE;
-            } else if (arc == Compute.ARC_LEFTSIDEA_SPHERE) {
-                return Compute.ARC_RIGHTSIDEA_SPHERE;
-            } else if (arc == Compute.ARC_RIGHTSIDEA_SPHERE) {
-                return Compute.ARC_LEFTSIDEA_SPHERE;
-            } else if (arc == Compute.ARC_LEFT_BROADSIDE) {
-                return Compute.ARC_RIGHT_BROADSIDE;
-            } else if (arc == Compute.ARC_RIGHT_BROADSIDE) {
-                return Compute.ARC_LEFT_BROADSIDE;
-            }
-        }
-        return arc;
     }
 
     /**
@@ -2844,303 +2838,6 @@ public class Aero extends Entity {
 
         int critical = getPotCrit();
         return critical;
-    }
-
-    public PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
-        if (thrust > getSI()) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), thrust - getSI(), "Thrust exceeds current SI in a single hex"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
-        }
-        return roll;
-    }
-
-    public PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
-        if (thrust > getSI()) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "Thrust spent this turn exceeds current SI"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
-        }
-        return roll;
-    }
-
-    public PilotingRollData checkVelocityDouble(int velocity, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
-        if ((velocity > (2 * getWalkMP())) && !game.getBoard().inSpace()) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "Velocity greater than 2x safe thrust"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding 2x safe thrust");
-        }
-        return roll;
-    }
-
-    public PilotingRollData checkDown(int drop, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
-        if (drop > 2) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), drop, "lost more than two altitudes"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity did not drop more than two altitudes");
-        }
-        return roll;
-    }
-
-    public PilotingRollData checkHover(MovePath md) {
-        PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
-
-        if (md.contains(MoveStepType.HOVER) && (md.getLastStepMovementType() == EntityMovementType.MOVE_OVER_THRUST)) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "hovering above safe thrust"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity did not hover");
-        }
-        return roll;
-    }
-
-    public PilotingRollData checkStall(MovePath md) {
-        PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
-
-        if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER)
-                && isAirborne() && !isSpheroid() && !game.getBoard().inSpace()
-                && !md.contains(MoveStepType.LAND)
-                && !md.contains(MoveStepType.VLAND)
-                && !md.contains(MoveStepType.RETURN)
-                && !md.contains(MoveStepType.OFF)
-                && !md.contains(MoveStepType.FLEE)) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "stalled out"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity not stalled out");
-        }
-        return roll;
-    }
-
-    public PilotingRollData checkRolls(MoveStep step, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
-        if (((step.getType() == MoveStepType.ROLL) || (step.getType() == MoveStepType.YAW)) && (step.getNRolls() > 1)) {
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "More than one roll in the same turn"));
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not rolling more than once");
-        }
-        return roll;
-    }
-
-    public PilotingRollData checkVerticalTakeOff() {
-        PilotingRollData roll = getBasePilotingRoll(EntityMovementType.MOVE_SAFE_THRUST);
-
-        if (isGearHit()) {
-            roll.addModifier(+1, "landing gear damaged");
-        }
-
-        if ((getLeftThrustHits() + getRightThrustHits()) > 0) {
-            roll.addModifier(+3, "Maneuvering thrusters damaged");
-        }
-
-        // Supposed to be -1 for lifting off from an "airfield or landing pad."
-        // We will just treat this as having paved terrain
-        Coords pos = getPosition();
-        IHex hex = game.getBoard().getHex(pos);
-        if ((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
-            roll.addModifier(-1, "on landing pad");
-        }
-
-        if (!(this instanceof SmallCraft)) {
-            roll.addModifier(+2, "Fighter making vertical liftoff");
-        }
-
-        // Taking off from a crater
-        // TW doesn't define what a crater is, assume it means that the hex
-        // level of all surrounding hexes is greater than what we are sitting on
-        boolean allAdjacentHigher = true;
-        Set<Coords> positions = new HashSet<Coords>(getSecondaryPositions()
-                .values());
-        IHex adjHex;
-        for (Coords currPos : positions) {
-            hex = game.getBoard().getHex(currPos);
-            for (int dir = 0; dir < 6; dir++) {
-                Coords adj = currPos.translated(dir);
-                adjHex = game.getBoard().getHex(adj);
-                if (!positions.contains(adj) && (adjHex != null)
-                        && adjHex.getLevel() <= hex.getLevel()) {
-                    allAdjacentHigher = false;
-                    break;
-                }
-            }
-            if (!allAdjacentHigher) {
-                break;
-            }
-        }
-        if (allAdjacentHigher) {
-            roll.addModifier(+3, "Taking off from crater");
-        }
-
-        return roll;
-    }
-    
-    /**
-     * Compute the PilotingRollData for a landing control roll (see TW pg 86).
-     * 
-     * @param moveType
-     * @param velocity      Velocity when the check is to be made, this needs to
-     *                      be passed as the check could happen as part of a 
-     *                      Move Path
-     * @param landingPos    The final position the Aero will land on.
-     * @param isVertical    If this a vertical or horizontal landing
-     * @return              A PilotingRollData tha represents the landing
-     *                      control roll that must be passed
-     */
-    public PilotingRollData checkLanding(EntityMovementType moveType,
-            int velocity, Coords landingPos, int face, boolean isVertical) {
-        // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(getId(), getCrew()
-                .getPiloting(), "Base piloting skill");
-        
-        
-        // Apply critical hit effects, TW pg 239
-        int avihits = getAvionicsHits();
-        if ((avihits > 0) && (avihits < 3)) {
-            roll.addModifier(avihits, "Avionics Damage");
-        }
-
-        // this should probably be replaced with some kind of AVI_DESTROYED
-        // boolean
-        if (avihits >= 3) {
-            roll.addModifier(5, "Avionics Destroyed");
-        }
-        
-        if (!hasLifeSupport()) {
-            roll.addModifier(+2, "No life support");
-        }
-        
-        // Landing Modifiers table, TW pg 86
-        int velmod;
-        if (isVertical) {
-            velmod = Math.max(0, velocity - 1);        
-        } else {
-            velmod = Math.max(0, velocity - 2);
-        }
-        if (velmod > 0) {
-            roll.addModifier(velmod, "excess velocity");
-        }
-        if ((getLeftThrustHits() + getRightThrustHits()) > 0) {
-            roll.addModifier(+4, "Maneuvering thrusters damaged");
-        }
-        if (isGearHit()) {
-            roll.addModifier(+5, "landing gear damaged");
-        }
-        if (getArmor(LOC_NOSE) <= 0) {
-            roll.addModifier(+2, "nose armor destroyed");
-        }
-        // Unit reduced to 50% or less of starting thrust
-        double thrustPercent = ((double)getWalkMP())/getOriginalWalkMP();
-        if (thrustPercent <= .5) {
-            roll.addModifier(+2, "thrust reduced to 50% or less of original");
-        }
-        if (getCurrentThrust() <= 0) {
-            if (isSpheroid()) {
-                roll.addModifier(+8, "no thrust");
-            } else {
-                roll.addModifier(+4, "no thrust");
-            }
-        }
-        // terrain mods
-        boolean lightWoods = false;
-        boolean rough = false;
-        boolean heavyWoods = false;
-        boolean clear = false;
-        boolean paved = true;
-        
-        Set<Coords> landingPositions = new HashSet<Coords>();
-        boolean isDropship = (this instanceof Dropship);
-        // Vertical landing just checks the landing hex
-        if (isVertical) {
-            landingPositions.add(landingPos);
-            // Dropships must also check the adjacent 6 hexes
-            if (isDropship) {
-                for (int i = 0; i < 6; i++) {
-                    landingPositions.add(landingPos.translated(i));
-                }
-            }
-        // Horizontal landing requires checking whole landing strip
-        } else {
-            for (int i = 0; i < getLandingLength(); i++) {
-                Coords pos = landingPos.translated(face, i);
-                landingPositions.add(pos);
-                // Dropships have to check the front adjacent hexes
-                if (isDropship) {
-                    landingPositions.add(pos.translated((face + 4) % 6));
-                    landingPositions.add(pos.translated((face + 2) % 6));
-                }
-            }                
-        }
-        
-        for (Coords pos : landingPositions) {
-            IHex hex = game.getBoard().getHex(pos);
-            if (hex.containsTerrain(Terrains.ROUGH)
-                    || hex.containsTerrain(Terrains.RUBBLE)) {
-                rough = true;
-            } else if (hex.containsTerrain(Terrains.WOODS, 2)) {
-                heavyWoods = true;
-            } else if (hex.containsTerrain(Terrains.WOODS, 1)) {
-                lightWoods = true;
-            } else if (!hex.containsTerrain(Terrains.PAVEMENT)
-                    && !hex.containsTerrain(Terrains.ROAD)) {
-                paved = false;
-                // Landing in other terrains isn't allowed, so if we reach here
-                // it must be a clear hex
-                clear = true;
-            } 
-        }
-
-        if (heavyWoods) {
-            roll.addModifier(+5, "heavy woods in landing path");
-        }
-        if (lightWoods) {
-            roll.addModifier(+4, "light woods in landing path");
-        }
-        if (rough) {
-            roll.addModifier(+3, "rough/rubble in landing path");
-        }
-        if (paved) {
-            roll.addModifier(+0, "paved/road landing strip");
-        }
-        if (clear) {
-            roll.addModifier(+2, "clear hex in landing path");
-        }
-
-        return roll;
-    }
-
-    /**
-     * Checks if a maneuver requires a control roll
-     */
-    public PilotingRollData checkManeuver(MoveStep step,
-            EntityMovementType overallMoveType) {
-        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
-
-        if ((step == null) || (step.getType() != MoveStepType.MANEUVER)) {
-            roll.addModifier(TargetRoll.CHECK_FALSE,
-                    "Check false: Entity is not attempting to get up.");
-            return roll;
-        }
-        boolean sideSlipMod = (this instanceof ConvFighter) && isVSTOL();
-        roll.append(new PilotingRollData(getId(), ManeuverType.getMod(
-                step.getManeuverType(), sideSlipMod), ManeuverType
-                .getTypeName(step.getManeuverType()) + " maneuver"));
-
-        return roll;
-
     }
 
     /**

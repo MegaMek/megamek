@@ -13,11 +13,12 @@
  */
 package megamek.common;
 
+import java.util.HashSet;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
 
-public class LandAirMech extends BipedMech {
+public class LandAirMech extends BipedMech implements IAero {
 
     /**
      *
@@ -37,9 +38,30 @@ public class LandAirMech extends BipedMech {
     
     public static final String[] LAM_STRING = { "Standard", "Bimodal" };
 
-    private int fuel;
     private int lamType;
     private EntityMovementMode previousMovementMode;
+    
+    /** Fighter mode **/
+    // out of control
+    private boolean outControl = false;
+    private boolean outCtrlHeat = false;
+    private boolean randomMove = false;
+
+    // set up movement
+    private int currentVelocity = 0;
+    private int nextVelocity = currentVelocity;
+    private boolean accLast = false;
+    private boolean rolled = false;
+    private boolean failedManeuver = false;
+    private boolean accDecNow = false;
+    private int straightMoves = 0;
+    private int altLoss = 0;
+    private int altLossThisRound = 0;
+
+    private boolean critThresh = false;    
+
+    private int fuel;
+    private int whoFirst;
 
     public LandAirMech(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
@@ -65,14 +87,6 @@ public class LandAirMech extends BipedMech {
         } else {
             super.setCrew(LAMPilot.convertToLAMPilot(this, newCrew));
         }
-    }
-
-    public void setFuel(int fuel) {
-        this.fuel = fuel;
-    }
-
-    public int getFuel() {
-        return fuel;
     }
 
     @Override
@@ -238,11 +252,32 @@ public class LandAirMech extends BipedMech {
     }
     
     public int getFighterModeWalkMP(boolean gravity, boolean ignoremodulararmor) {
-        return getJumpMP(gravity, ignoremodulararmor);
+        int thrust = getCurrentThrust();
+        if (!isAirborne()) {
+            thrust /= 2;
+        }
+        return thrust;
     }
 
     public int getFighterModeRunMP(boolean gravity, boolean ignoremodulararmor) {
-        return (int)Math.ceil(getFighterModeWalkMP(gravity, ignoremodulararmor) * 1.5);
+        int walk = getFighterModeWalkMP(gravity, ignoremodulararmor);
+        if (isAirborne()) {
+            return (int)Math.ceil(walk * 1.5);
+        } else {
+            return walk; // Grounded asfs cannot use flanking movement
+        }
+    }
+
+    @Override
+    public int getCurrentThrust() {
+        int j = getJumpMP();
+        if (null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if (weatherMod != 0) {
+                j = Math.max(j + weatherMod, 0);
+            }
+        }
+        return j;
     }
 
     public int getAirMechCruiseMP() {
@@ -271,6 +306,15 @@ public class LandAirMech extends BipedMech {
             return false;
         }
         return super.hasArmedMASC();
+    }
+    
+    @Override
+    public boolean isImmobile() {
+        if (movementMode == EntityMovementMode.AERODYNE
+                && (isAirborne() || isSpaceborne())) {
+            return false;
+        }
+        return super.isImmobile();
     }
     
     @Override
@@ -374,6 +418,63 @@ public class LandAirMech extends BipedMech {
         }
     }
     
+    @Override
+    public String getMovementString(EntityMovementType mtype) {
+        switch (mtype) {
+            case MOVE_WALK:
+                if (movementMode == EntityMovementMode.AERODYNE) {
+                    return "Cruised";
+                } else {
+                    return "Walked";
+                }
+            case MOVE_RUN:
+                if (movementMode == EntityMovementMode.AERODYNE) {
+                    return "Flanked";
+                } else {
+                    return "Ran";
+                }
+            case MOVE_VTOL_WALK:
+                return "Cruised";
+            case MOVE_VTOL_RUN:
+                return "Flanked";
+            case MOVE_SAFE_THRUST:
+                return "Safe Thrust";
+            case MOVE_OVER_THRUST:
+                return "Over Thrust";
+            default:
+                return super.getMovementString(mtype);
+        }
+    }
+
+    @Override
+    public String getMovementAbbr(EntityMovementType mtype) {
+        switch (mtype) {
+        case MOVE_WALK:
+            if (movementMode == EntityMovementMode.AERODYNE) {
+                return "C";
+            } else {
+                return "W";
+            }
+        case MOVE_RUN:
+            if (movementMode == EntityMovementMode.AERODYNE) {
+                return "F";
+            } else {
+                return "R";
+            }
+        case MOVE_VTOL_WALK:
+            return "C";
+        case MOVE_VTOL_RUN:
+            return "F";
+            case MOVE_NONE:
+                return "N";
+            case MOVE_SAFE_THRUST:
+                return "S";
+            case MOVE_OVER_THRUST:
+                return "O";
+            default:
+                return super.getMovementAbbr(mtype);
+        }
+    }
     /**
      * Add in any piloting skill mods
      */
@@ -431,6 +532,35 @@ public class LandAirMech extends BipedMech {
             roll.addModifier(5, "avionics destroyed");
         } else if (avionicsHits > 0) {
             roll.addModifier(avionicsHits, "avionics damage");
+        }
+        
+        if (movementMode == EntityMovementMode.AERODYNE) {
+            if (getCrew().getHits(0) > 0) {
+                roll.addModifier(getCrew().getHits(0), "pilot hits");
+            }
+            if (moved == EntityMovementType.MOVE_OVER_THRUST) {
+                roll.addModifier(+1, "Used more than safe thrust");
+            }
+            int vel = getCurrentVelocity();
+            int vmod = vel - (2 * getWalkMP());
+            if (vmod > 0) {
+                roll.addModifier(vmod, "Velocity greater than 2x safe thrust");
+            }
+
+            int atmoCond = game.getPlanetaryConditions().getAtmosphere();
+            // add in atmospheric effects later
+            if (!(game.getBoard().inSpace()
+                    || (atmoCond == PlanetaryConditions.ATMO_VACUUM))
+                    && isAirborne()) {
+                roll.addModifier(+1, "Atmospheric operations");
+            }
+
+            if (hasQuirk(OptionsConstants.QUIRK_POS_ATMO_FLYER) && !game.getBoard().inSpace()) {
+                roll.addModifier(-1, "atmospheric flyer");
+            }
+            if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !game.getBoard().inSpace()) {
+                roll.addModifier(+1, "atmospheric flight instability");
+            }
         }
 
         return roll;
@@ -526,6 +656,84 @@ public class LandAirMech extends BipedMech {
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
         previousMovementMode = movementMode;
+
+        // reset threshold critted
+        setCritThresh(false);
+
+        // reset maneuver status
+        setFailedManeuver(false);
+        // reset acc/dec this turn
+        setAccDecNow(false);
+
+        updateBays();
+
+        // update recovery turn if in recovery
+        if (getRecoveryTurn() > 0) {
+            setRecoveryTurn(getRecoveryTurn() - 1);
+        }
+
+        if (movementMode == EntityMovementMode.AERODYNE) {
+            // if in atmosphere, then halve next turn's velocity
+            if (!game.getBoard().inSpace() && isDeployed() && (roundNumber > 0)) {
+                setNextVelocity((int) Math.floor(getNextVelocity() / 2.0));
+            }
+
+            // update velocity
+            setCurrentVelocity(getNextVelocity());
+
+            // if they are out of control due to heat, then apply this and reset
+            if (isOutCtrlHeat()) {
+                setOutControl(true);
+                setOutCtrlHeat(false);
+            }
+
+            // get new random whofirst
+            setWhoFirst();
+
+            /* TODO: implement bomb bays
+        // Remove all bomb attacks
+        List<Mounted> bombAttacksToRemove = new ArrayList<>();
+        EquipmentType spaceBomb = EquipmentType.get(SPACE_BOMB_ATTACK);
+        EquipmentType altBomb = EquipmentType.get(ALT_BOMB_ATTACK);
+        EquipmentType diveBomb = EquipmentType.get(DIVE_BOMB_ATTACK);
+        for (Mounted eq : equipmentList) {
+            if ((eq.getType() == spaceBomb) || (eq.getType() == altBomb)
+                    || (eq.getType() == diveBomb)) {
+                bombAttacksToRemove.add(eq);
+            }
+        }
+        equipmentList.removeAll(bombAttacksToRemove);
+        weaponList.removeAll(bombAttacksToRemove);
+        totalWeaponList.removeAll(bombAttacksToRemove);
+        weaponGroupList.removeAll(bombAttacksToRemove);
+        weaponBayList.removeAll(bombAttacksToRemove);
+
+        // Add the space bomb attack
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
+                && game.getBoard().inSpace()
+                && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
+            try {
+                addEquipment(spaceBomb, LOC_NOSE, false);
+            } catch (LocationFullException ex) {
+            }
+        }
+        // Add ground bomb attacks
+        int numGroundBombs = getBombs(AmmoType.F_GROUND_BOMB).size();
+        if (!game.getBoard().inSpace() && (numGroundBombs > 0)) {
+            try {
+                addEquipment(diveBomb, LOC_NOSE, false);
+            } catch (LocationFullException ex) {
+            }
+            for (int i = 0; i < Math.min(10, numGroundBombs); i++) {
+                try {
+                    addEquipment(altBomb, LOC_NOSE, false);
+                } catch (LocationFullException ex) {
+                }
+            }
+        }
+             */
+            resetAltLossThisRound();
+        }
     }
     
     /*
@@ -557,6 +765,120 @@ public class LandAirMech extends BipedMech {
         return movementMode != EntityMovementMode.AERODYNE;
     }
     
+    /** Fighter Mode **/
+    public void setWhoFirst() {
+        whoFirst = Compute.randomInt(500);
+    }
+
+    public int getWhoFirst() {
+        return whoFirst;
+    }
+
+    @Override
+    public int getCurrentVelocity() {
+        // if using advanced movement then I just want to sum up
+        // the different vectors
+        if ((game != null) && game.useVectorMove()) {
+            return getVelocity();
+        }
+        return currentVelocity;
+    }
+
+    @Override
+    public void setCurrentVelocity(int velocity) {
+        currentVelocity = velocity;
+    }
+
+    @Override
+    public int getNextVelocity() {
+        return nextVelocity;
+    }
+
+    @Override
+    public void setNextVelocity(int velocity) {
+        nextVelocity = velocity;
+    }
+
+    @Override
+    public int getCurrentVelocityActual() {
+        return currentVelocity;
+    }
+
+    @Override
+    public boolean isRolled() {
+        return rolled;
+    }
+    
+    @Override
+    public boolean isOutControl() {
+        return outControl;
+    }
+
+    @Override
+    public void setOutControl(boolean ocontrol) {
+        outControl = ocontrol;
+    }
+    
+    @Override
+    public boolean isOutCtrlHeat() {
+        return outCtrlHeat;
+    }
+
+    @Override
+    public void setOutCtrlHeat(boolean octrlheat) {
+        outCtrlHeat = octrlheat;
+    }
+    
+    @Override
+    public boolean isRandomMove() {
+        return randomMove;
+    }
+
+    @Override
+    public void setRandomMove(boolean randmove) {
+        randomMove = randmove;
+    }
+
+    @Override
+    public void setRolled(boolean roll) {
+        rolled = roll;
+    }
+    
+    @Override
+    public boolean didAccLast() {
+        return accLast;
+    }
+
+    @Override
+    public void setAccLast(boolean b) {
+        accLast = b;
+    }
+
+    @Override
+    public int getSI() {
+        return getInternal(LOC_CT);
+    }
+
+    @Override
+    public int get0SI() {
+        return getOInternal(LOC_CT);
+    }
+    
+    @Override
+    public boolean hasLifeSupport() {
+        return getGoodCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT,
+                LOC_HEAD) > 0;
+    }
+    
+    /**
+     * Used to determine modifier for landing.
+     */
+    @Override
+    public int getNoseArmor() {
+        return getArmor(LOC_CT);
+    }
+
+    @Override
     public int getAvionicsHits() {
         int hits = 0;
         for (int loc = 0; loc < locations(); loc++) {
@@ -565,6 +887,392 @@ public class LandAirMech extends BipedMech {
         return hits;
     }
     
+    @Override
+    public int getLeftThrustHits() {
+        return 0;
+    }
+    
+    @Override
+    public int getRightThrustHits() {
+        return 0;
+    }
+    
+    /**
+     * Modifier to landing or vertical takeoff roll for landing gear damage.
+     * 
+     * @param vTakeoff true if this is for a vertical takeoff, false if for a landing
+     * @return the control roll modifier
+     */
+    public int getLandingGearMod(boolean vTakeoff) {
+        int hits = 0;
+        for (int loc = 0; loc < locations(); loc++) {
+            hits += getBadCriticals(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR, loc);
+        }
+        if (vTakeoff) {
+            return hits > 0? 1 : 0;
+        } else {
+            return hits > 3? 5 : hits;
+        }
+    }
+
+    /**
+     * In fighter mode the weapon arcs need to be translated to Aero arcs.
+     */
+    @Override
+    public int getWeaponArc(int wn) {
+        if (movementMode != EntityMovementMode.AERODYNE) {
+            return super.getWeaponArc(wn);
+        }
+        final Mounted mounted = getEquipment(wn);
+        if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+            return Compute.ARC_360;
+        }
+        int arc = Compute.ARC_NOSE;
+        switch (mounted.getLocation()) {
+            case LOC_HEAD:
+                arc = Compute.ARC_NOSE;
+                break;
+            case LOC_CT:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_AFT;
+                } else {
+                    arc = Compute.ARC_NOSE;
+                }
+                break;
+            case LOC_RT:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_RWINGA;
+                } else {
+                    arc = Compute.ARC_RWING;
+                }
+                break;
+            case LOC_LT:
+                if (mounted.isRearMounted()) {
+                    arc = Compute.ARC_LWINGA;
+                } else {
+                    arc = Compute.ARC_LWING;
+                }
+                break;
+            case LOC_RARM:
+                arc = Compute.ARC_RWING;
+                break;
+            case LOC_LARM:
+                arc = Compute.ARC_LWING;
+                break;
+            case LOC_RLEG:
+            case LOC_LLEG:
+                arc = Compute.ARC_AFT;
+                break;
+            default:
+                arc = Compute.ARC_360;
+        }
+
+        return rollArcs(arc);
+    }
+
+    /**
+     * Hit location table for fighter mode
+     */
+    @Override
+    public HitData rollHitLocation(int table, int side) {
+        if (movementMode != EntityMovementMode.AERODYNE) {
+            return super.rollHitLocation(table, side);
+        }
+
+        int roll = Compute.d6(2);
+
+        // first check for above/below
+        if ((table == ToHitData.HIT_ABOVE) || (table == ToHitData.HIT_BELOW)) {
+
+            // have to decide which arm/leg
+            int armloc = LOC_RARM;
+            int legloc = LOC_RLEG;
+            int wingroll = Compute.d6(1);
+            if (wingroll > 3) {
+                armloc = LOC_LARM;
+                legloc = LOC_LLEG;
+            }
+            switch (roll) {
+                case 2: case 6:
+                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+                case 3: case 4:
+                case 10: case 11:
+                    return new HitData(armloc, false, HitData.EFFECT_NONE);
+                case 5: case 9:
+                    return new HitData(legloc, false, HitData.EFFECT_NONE);
+                case 7:
+                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                case 8: case 12:
+                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+            }
+        }
+
+        if (side == ToHitData.SIDE_FRONT) {
+            // normal front hits
+            switch (roll) {
+                case 2: case 12:
+                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                case 3: case 6:
+                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+                case 4: case 5:
+                    return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
+                case 7:
+                    //TODO: control roll if exceeds threshold
+                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                case 8: case 11:
+                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+                case 9: case 10:
+                    return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
+            }
+        } else if (side == ToHitData.SIDE_LEFT) {
+            // normal left-side hits
+            switch (roll) {
+                case 2:
+                    return new HitData(LOC_HEAD, false, HitData.EFFECT_NONE);
+                case 3: case 7: case 11:
+                    return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
+                case 4: case 5:
+                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+                case 6: case 8:
+                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+                case 9:
+                    //TODO: control roll if exceeds threshold
+                    return new HitData(LOC_LLEG, false, HitData.EFFECT_NONE);
+                case 10: case 12:
+                    return new HitData(LOC_LLEG, false, HitData.EFFECT_NONE);
+            }
+        } else if (side == ToHitData.SIDE_RIGHT) {
+            // normal right-side hits
+            switch (roll) {
+            case 2:
+                return new HitData(LOC_HEAD, false, HitData.EFFECT_NONE);
+            case 3: case 7: case 11:
+                return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
+            case 4: case 5:
+                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+            case 6: case 8:
+                return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+            case 9:
+                //TODO: control roll if exceeds threshold
+                return new HitData(LOC_RLEG, false, HitData.EFFECT_NONE);
+            case 10: case 12:
+                return new HitData(LOC_RLEG, false, HitData.EFFECT_NONE);
+        }
+        } else if (side == ToHitData.SIDE_REAR) {
+            // rear torso locations are only hit on a roll of 5-6 on d6
+            boolean rear = Compute.d6() > 4;
+            switch (roll) {
+                case 2: case 12:
+                    return new HitData(LOC_CT, rear, HitData.EFFECT_NONE);
+                case 3: case 4:
+                    return new HitData(LOC_RT, rear, HitData.EFFECT_NONE);
+                case 5:
+                    return new HitData(LOC_RARM, rear, HitData.EFFECT_NONE);
+                case 6:
+                    return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
+                case 7:
+                    if (Compute.d6() > 3) {
+                        return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
+                    } else {
+                        return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
+                    }
+                case 8:
+                    return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
+                case 9:
+                    return new HitData(LOC_LARM, rear, HitData.EFFECT_NONE);
+                case 10: case 11:
+                    return new HitData(LOC_LT, rear, HitData.EFFECT_NONE);
+            }
+        }
+        return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+    }
+
+    @Override
+    public int getFuel() {
+        return fuel;
+    }
+
+    /**
+     * Sets the number of fuel points.
+     * @param gas  Number of fuel points.
+     */
+    @Override
+    public void setFuel(int gas) {
+        fuel = gas;
+    }
+
+    @Override
+    public double getFuelPointsPerTon(){
+        return 80;
+    }
+
+    /**
+     * Set number of fuel points based on fuel tonnage.
+     *
+     * @param fuelTons  The number of tons of fuel
+     */
+    @Override
+    public void setFuelTonnage(double fuelTons){
+        double pointsPerTon = getFuelPointsPerTon();
+        fuel = (int)Math.ceil(pointsPerTon * fuelTons);
+    }
+
+    /**
+     * Gets the fuel for this Aero in terms of tonnage.
+     *
+     * @return The number of tons of fuel on this Aero.
+     */
+    @Override
+    public double getFuelTonnage(){
+        return fuel / getFuelPointsPerTon();
+    }
+
+    @Override
+    public boolean wasCritThresh() {
+        return critThresh;
+    }
+
+    @Override
+    public void setCritThresh(boolean b) {
+        critThresh = b;
+    }
+    
+    @Override
+    public boolean isSpheroid() {
+        return false;
+    }
+
+    @Override
+    public int getStraightMoves() {
+        return straightMoves;
+    }
+
+    @Override
+    public void setStraightMoves(int i) {
+        straightMoves = i;
+    }
+
+    public int getAltLoss() {
+        return altLoss;
+    }
+
+    public void setAltLoss(int i) {
+        altLoss = i;
+    }
+
+    public void resetAltLoss() {
+        altLoss = 0;
+    }
+
+    public int getAltLossThisRound() {
+        return altLossThisRound;
+    }
+
+    public void setAltLossThisRound(int i) {
+        altLossThisRound = i;
+    }
+
+    public void resetAltLossThisRound() {
+        altLossThisRound = 0;
+    }
+
+    @Override
+    public boolean isVSTOL() {
+        return true;
+    }
+
+    @Override
+    public boolean isSTOL() {
+        return false;
+    }
+
+    @Override
+    public int getElevation() {
+        if ((game != null) && game.getBoard().inSpace()) {
+            return 0;
+        }
+        // Altitude is not the same as elevation. If an aero is at 0 altitude,
+        // then it is
+        // grounded and uses elevation normally. Otherwise, just set elevation
+        // to a very
+        // large number so that a flying aero won't interact with the ground
+        // maps in any way
+        if (isAirborne()) {
+            return 999;
+        }
+        return super.getElevation();
+    }
+
+    public void liftOff(int altitude) {
+        if (isSpheroid()) {
+            setMovementMode(EntityMovementMode.SPHEROID);
+        } else {
+            setMovementMode(EntityMovementMode.AERODYNE);
+        }
+        setAltitude(altitude);
+
+        HashSet<Coords> positions = getOccupiedCoords();
+        secondaryPositions.clear();
+        if (game != null) {
+            game.updateEntityPositionLookup(this, positions);
+        }
+    }
+
+    public void land() {
+        setMovementMode(EntityMovementMode.WHEELED);
+        setAltitude(0);
+        setElevation(0);
+        setCurrentVelocity(0);
+        setNextVelocity(0);
+        setOutControl(false);
+        setOutCtrlHeat(false);
+        setRandomMove(false);
+        delta_distance = 0;
+    }
+
+    @Override
+    public int getTakeOffLength() {
+        return 10;
+    }
+
+    @Override
+    public int getLandingLength() {
+        return 5;
+    }
+
+    @Override
+    public boolean canTakeOffHorizontally() {
+        return getCurrentThrust() > 0;
+    }
+
+    @Override
+    public boolean canLandHorizontally() {
+        return true;
+    }
+
+    public int getFuelUsed(int thrust) {
+        int overThrust = Math.max(thrust - getWalkMP(), 0);
+        int safeThrust = thrust - overThrust;
+        int used = safeThrust + (2 * overThrust);
+        return used;
+    }
+
+    public boolean didFailManeuver() {
+        return failedManeuver;
+    }
+
+    public void setFailedManeuver(boolean b) {
+        failedManeuver = b;
+    }
+
+    public void setAccDecNow(boolean b) {
+        accDecNow = b;
+    }
+
+    public boolean didAccDecNow() {
+        return accDecNow;
+    }
+
     @Override
     public void setBattleForceMovement(Map<String,Integer> movement) {
     	super.setBattleForceMovement(movement);

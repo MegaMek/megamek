@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -3640,33 +3639,6 @@ public class Aero extends Entity implements IAero {
     @Override
     public boolean canGoDown() {
         return canGoDown(altitude, getPosition());
-    }
-
-    public void liftOff(int altitude) {
-        if (isSpheroid()) {
-            setMovementMode(EntityMovementMode.SPHEROID);
-        } else {
-            setMovementMode(EntityMovementMode.AERODYNE);
-        }
-        setAltitude(altitude);
-
-        HashSet<Coords> positions = getOccupiedCoords();
-        secondaryPositions.clear();
-        if (game != null) {
-            game.updateEntityPositionLookup(this, positions);
-        }
-    }
-
-    public void land() {
-        setMovementMode(EntityMovementMode.WHEELED);
-        setAltitude(0);
-        setElevation(0);
-        setCurrentVelocity(0);
-        setNextVelocity(0);
-        setOutControl(false);
-        setOutCtrlHeat(false);
-        setRandomMove(false);
-        delta_distance = 0;
     }
 
     public int getTakeOffLength() {

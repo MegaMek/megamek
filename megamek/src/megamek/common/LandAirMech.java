@@ -60,6 +60,9 @@ public class LandAirMech extends BipedMech implements IAero {
 
     private boolean critThresh = false;    
 
+    private int maxBombPoints = 0;
+    private int[] bombChoices = new int[BombType.B_NUM];
+
     private int fuel;
     private int whoFirst;
 
@@ -774,6 +777,20 @@ public class LandAirMech extends BipedMech implements IAero {
         return whoFirst;
     }
 
+    public int getMaxBombPoints() {
+        return maxBombPoints;
+    }
+
+    public int[] getBombChoices() {
+        return bombChoices.clone();
+    }
+
+    public void setBombChoices(int[] bc) {
+        if (bc.length == bombChoices.length) {
+            bombChoices = bc;
+        }
+    }
+
     @Override
     public int getCurrentVelocity() {
         // if using advanced movement then I just want to sum up
@@ -807,6 +824,11 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public boolean isRolled() {
         return rolled;
+    }
+    
+    @Override
+    public boolean isOutControlTotal() {
+        return outControl || shutDown || getCrew().isUnconscious();
     }
     
     @Override
@@ -885,6 +907,11 @@ public class LandAirMech extends BipedMech implements IAero {
             hits += getBadCriticals(CriticalSlot.TYPE_SYSTEM, LAM_AVIONICS, loc);
         }
         return hits;
+    }
+    
+    @Override
+    public int getSensorHits() {
+        return getBadCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD);
     }
     
     @Override

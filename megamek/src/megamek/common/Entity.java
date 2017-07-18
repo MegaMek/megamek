@@ -1556,7 +1556,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int calcElevation(IHex current, IHex next, int assumedElevation,
             boolean climb, boolean wigeEndClimbPrevious) {
         int retVal = assumedElevation;
-        if (this instanceof Aero) {
+        if (isAero()) {
             return retVal;
         }
         if (getMovementMode() == EntityMovementMode.WIGE) {
@@ -1789,8 +1789,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     minAlt = 1;
                 }
                 // if sensors are damaged then, one higher
-                if ((this instanceof Aero)
-                    && (((Aero) this).getSensorHits() > 0)) {
+                if (isAero()
+                        && (((IAero)this).getSensorHits() > 0)) {
                     minAlt++;
                 }
                 break;
@@ -5610,7 +5610,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // for dropping troops, check to see if they are going to land
         // this turn, if so, then set their assault drop status to true
         if (isAirborne()
-            && !(this instanceof Aero)
+            && !isAero()
             && (getAltitude() <= game.getPlanetaryConditions()
                                      .getDropRate())) {
             setAssaultDropInProgress(true);
@@ -10072,8 +10072,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return ToHitData.SIDE_FRONT;
             }
         }
-        if (this instanceof Aero) {
-            Aero a = (Aero) this;
+        if (isAero()) {
+            IAero a = (IAero) this;
             // Handle spheroids in atmosphere or on the ground differently
             if (a.isSpheroid() && (game != null) && !game.getBoard().inSpace()) {
                 if ((fa >= 0) && (fa < 180)) {
@@ -11221,7 +11221,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return 2;
         } else if (this instanceof Jumpship) {
             return 1;
-        } else if (this instanceof Aero) {
+        } else if (isAero()) {
             return 3;
         } else {
             if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION)) {
@@ -12872,7 +12872,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isDropping() {
-        return isAirborne() && !(this instanceof Aero);
+        return isAirborne() && !(isAero());
     }
 
     /**
@@ -13021,6 +13021,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         return false;
+    }
+    
+    public void setDeltaDistance(int distance) {
+        delta_distance = distance;
     }
 
     public boolean getMovedBackwards() {
@@ -14095,7 +14099,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getMaxWeaponRange() {
         // Aeros on the ground map must shoot along their flight path, giving
         // them effectively 0 range
-        if (((ETYPE_AERO & getEntityType()) == ETYPE_AERO) && isAirborne() 
+        if (isAero() && isAirborne() 
                 && game.getBoard().onGround()) {
             return 0;
         }

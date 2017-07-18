@@ -615,11 +615,11 @@ public class MULParser {
             entity.setNeverDeployed(true);
         }
         
-        if (entity instanceof Aero){
+        if (entity.isAero()) {
             String velString = entityTag.getAttribute(VELOCITY);
             String altString = entityTag.getAttribute(ALTITUDE);
             
-            Aero a = (Aero) entity;
+            IAero a = (IAero) entity;
             if (velString.length() > 0){
                 int velocity = Integer.parseInt(velString);
                 a.setCurrentVelocity(velocity);
@@ -1716,7 +1716,7 @@ public class MULParser {
         String value = fuelTag.getAttribute(LEFT);
         try {
             int newFuel = Integer.parseInt(value);
-            ((Aero) entity).setFuel(newFuel);
+            ((IAero) entity).setFuel(newFuel);
         } catch (Exception e) {
             warning.append("Invalid fuel value in fuel tag.\n");
         }
@@ -1853,7 +1853,7 @@ public class MULParser {
      * @param entity
      */
     private void parseBombs(Element bombsTag, Entity entity){
-        if (!(entity instanceof Aero)) {
+        if (!(entity instanceof IAero)) {
             warning.append("Found a bomb but Entity is not a Fighter.\n");
             return;
         }
@@ -1871,13 +1871,13 @@ public class MULParser {
                 Element currEle = (Element)currNode;
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(BOMB)){
-                    int[] bombChoices = ((Aero) entity).getBombChoices();
+                    int[] bombChoices = ((IAero) entity).getBombChoices();
                     String type = currEle.getAttribute(TYPE);
                     String load = currEle.getAttribute(LOAD);
                     if (type.length() > 0 && load.length() > 0){
                         bombChoices[BombType.getBombTypeFromInternalName(type)] 
                                 += Integer.parseInt(load);
-                        ((Aero) entity).setBombChoices(bombChoices);
+                        ((IAero) entity).setBombChoices(bombChoices);
                     }
                 }
             } else {

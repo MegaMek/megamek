@@ -2255,7 +2255,7 @@ public class Compute {
     public static ToHitData getTargetMovementModifier(IGame game, int entityId) {
         Entity entity = game.getEntity(entityId);
 
-        if (entity instanceof Aero) {
+        if (entity.isAero()) {
             return new ToHitData();
         }
 
@@ -3462,11 +3462,12 @@ public class Compute {
         // their positions to see who was further back
         if (game.getBoard().inSpace()
             && ae.getPosition().equals(t.getPosition())
-            && (ae instanceof Aero) && (t instanceof Aero)) {
-            if (((Aero) ae).shouldMoveBackHex((Aero) t)) {
+            && (ae.isAero()) && (t instanceof Entity && ((Entity)t).isAero())) {
+            int moveSort = shouldMoveBackHex(ae, (Entity)t);
+            if (moveSort < 0) {
                 aPos = ae.getPriorPosition();
             }
-            if (((Aero) t).shouldMoveBackHex((Aero) ae)) {
+            if (moveSort > 0) {
                 tPos = ((Entity) t).getPriorPosition();
             }
         }
@@ -3805,7 +3806,7 @@ public class Compute {
                 visualRange = visualRange / 2;
             }
             // Ground targets pick the closest path to Aeros (TW pg 107)
-            if ((te instanceof Aero) && isGroundToAir(ae, target)) {
+            if ((te.isAero()) && isGroundToAir(ae, target)) {
                 targetPos = Compute.getClosestFlightPath(ae.getId(),
                         ae.getPosition(), te);
             }
@@ -4050,11 +4051,12 @@ public class Compute {
         // table
         if (isAirToAir(attacker, target)
             && attackPos.equals(target.getPosition())
-            && (attacker instanceof Aero) && (target instanceof Aero)) {
-            if (((Aero) attacker).shouldMoveBackHex((Aero) target)) {
+            && (attacker.isAero()) && (target instanceof Entity && ((Entity)target).isAero())) {
+            int moveSort = shouldMoveBackHex(attacker, (Entity)target);
+            if (moveSort < 0) {
                 attackPos = attacker.getPriorPosition();
             }
-            usePrior = ((Aero) target).shouldMoveBackHex((Aero) attacker);
+            usePrior = moveSort > 0;
         }
 
         // if this is a air to ground attack, then attacker position is given by
@@ -4079,6 +4081,37 @@ public class Compute {
 
         return target.sideTable(attackPos, usePrior);
     }
+    
+    
+        /**
+         * Compares the initiative of two aerospace units in the same hex to determine attack angle.
+         * The attack angle is computed as if the unit with the higher initiative were in its previous hex.
+         *
+         * @param e1 The first <code>Entity</code> to compare
+         * @param e2 The second <code>Entity</code> to compare
+         * @return < 0 if the first unit has a higher initiative, > 0 if the second is higher,
+         *         or 0 if one of the units is not an aerospace unit, does not have a valid position,
+         *         or the two units are not in the same hex.
+         */
+    public static int shouldMoveBackHex(Entity e1, Entity e2) {
+        if (null == e1.getPosition() || null == e2.getPosition()
+                || !e1.getPosition().equals(e2.getPosition())
+                || !e1.isAero() || !e2.isAero()) {
+            return 0;
+        }
+
+        int retVal = UnitType.determineUnitTypeCode(e1) -
+                UnitType.determineUnitTypeCode(e2);
+        if (retVal == 0) {
+            retVal = ((IAero)e2).getCurrentVelocity() -
+                    ((IAero)e1).getCurrentVelocity();
+        }
+        // if all criteria are the same, select randomly
+        if (retVal == 0) {
+            retVal = d6() < 4? -1 : 1;
+        }
+        return retVal;
+    }        
 
     /**
      * Maintain backwards compatability.
@@ -4415,11 +4448,11 @@ public class Compute {
         int base = TargetRoll.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
 
-        if (!(attacker instanceof Aero)) {
+        if (!attacker.isAero()) {
             return new ToHitData(base, "attacker is not an Aero");
         }
 
-        Aero a = (Aero) attacker;
+        IAero a = (IAero) attacker;
 
         // the fighters nose must be aligned with its direction of travel
         boolean rightFacing = false;

@@ -727,11 +727,11 @@ public class EntityListFile {
             output.write(String.valueOf(entity.getStartingPos(false)));
             output.write("\" neverDeployed=\"");
             output.write(String.valueOf(entity.wasNeverDeployed()));
-            if (entity instanceof Aero){
+            if (entity.isAero()) {
                 output.write("\" velocity=\"");
-                output.write(((Aero)entity).getCurrentVelocity() + "");
+                output.write(((IAero)entity).getCurrentVelocity() + "");
                 output.write("\" altitude=\"");
-                output.write(((Aero)entity).getAltitude() + "");
+                output.write(entity.getAltitude() + "");
             }
             if (!entity.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");

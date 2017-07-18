@@ -13,9 +13,12 @@
  */
 package megamek.common;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 
@@ -45,6 +48,7 @@ public interface IAero {
     boolean isSpaceborne();
     boolean isRolled();
     void setRolled(boolean roll);
+    boolean isOutControlTotal();
     boolean isOutControl();
     void setOutControl(boolean ocontrol);
     boolean isOutCtrlHeat();
@@ -71,12 +75,17 @@ public interface IAero {
     int getSI();
     int get0SI();
     int getAvionicsHits();
+    int getSensorHits();
     int getLandingGearMod(boolean vTakeoff);
     int getLeftThrustHits();
     int getRightThrustHits();
     boolean wasCritThresh();
     void setCritThresh(boolean b);
 
+    int getMaxBombPoints();
+    int[] getBombChoices();
+    void setBombChoices(int[] bc);
+            
     int getFuel();
     void setFuel(int gas);
     double getFuelPointsPerTon();
@@ -106,9 +115,16 @@ public interface IAero {
     int getRunMP();
     int getOriginalWalkMP();
     Coords getPosition();
+    HashSet<Coords> getOccupiedCoords();
+    void setAltitude(int altitude);
+    void setElevation(int elevation);
+    void setDeltaDistance(int distance);
+    void setMovementMode(EntityMovementMode mode);
     Map<Integer, Coords> getSecondaryPositions();
     PilotingRollData getBasePilotingRoll(EntityMovementType overallMoveType);
     boolean hasLifeSupport();
+    Vector<Mounted> getBombs(BigInteger flag);
+    ArrayList<Mounted> getBombs();
     
     default PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
@@ -436,4 +452,32 @@ public interface IAero {
         }
         return arc;
     }
+
+    default void liftOff(int altitude) {
+        if (isSpheroid()) {
+            setMovementMode(EntityMovementMode.SPHEROID);
+        } else {
+            setMovementMode(EntityMovementMode.AERODYNE);
+        }
+        setAltitude(altitude);
+
+        HashSet<Coords> positions = getOccupiedCoords();
+        getSecondaryPositions().clear();
+        if (getGame() != null) {
+            getGame().updateEntityPositionLookup((Entity)this, positions);
+        }
+    }
+
+    default void land() {
+        setMovementMode(EntityMovementMode.WHEELED);
+        setAltitude(0);
+        setElevation(0);
+        setCurrentVelocity(0);
+        setNextVelocity(0);
+        setOutControl(false);
+        setOutCtrlHeat(false);
+        setRandomMove(false);
+        setDeltaDistance(0);
+    }
+
 }

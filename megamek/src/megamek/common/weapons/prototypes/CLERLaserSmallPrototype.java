@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.TechAdvancement;
 import megamek.common.weapons.lasers.LaserWeapon;
 
 /**
@@ -35,7 +34,7 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
      */
     public CLERLaserSmallPrototype() {
         super();
-        name = "ER Small Laser (CP)";
+        name = "Prototype ER Small Laser";
         setInternalName("CLERSmallLaserPrototype");
         heat = 2;
         damage = 3;
@@ -54,9 +53,15 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
         cost = 11250;
         shortAV = 3;
         maxRange = RANGE_SHORT;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2825);
-        techAdvancement.setTechRating(RATING_F);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_E, RATING_X, RATING_X });
+        rulesRefs = "97,IO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+            .setISAdvancement(2819, DATE_NONE, DATE_NONE, 2825, DATE_NONE)
+            .setISApproximate(true, false, false, true, false)
+            .setPrototypeFactions(F_CSJ);
+
     }
 }

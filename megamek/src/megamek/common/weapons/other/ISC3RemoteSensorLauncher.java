@@ -18,7 +18,7 @@ import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.MissileWeapon;
+import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.Server;
 
 /**

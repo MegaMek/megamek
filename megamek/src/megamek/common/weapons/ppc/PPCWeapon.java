@@ -39,6 +39,7 @@ public abstract class PPCWeapon extends EnergyWeapon {
 
     public PPCWeapon() {
         super();
+        setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
         flags = flags.or(F_DIRECT_FIRE).or(F_PPC);
         atClass = CLASS_PPC;
     }

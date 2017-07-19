@@ -18,7 +18,6 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -41,14 +40,14 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
      */
     public ISPulseLaserSmallPrototype() {
         super();
-        this.name = "Small Pulse Laser Prototype";
+        this.name = "Prototype Small Pulse Laser";
         this.setInternalName("ISSmallPulseLaserPrototype");
         this.addLookupName("IS Prototype Small Pulse Laser");
         this.addLookupName("ISSmall Pulse Laser Prototype");
         this.heat = 2;
         this.damage = 3;
         this.infDamageClass = WeaponType.WEAPON_BURST_2D6;
-        this.toHitModifier = -2;
+        this.toHitModifier = -1;
         this.shortRange = 1;
         this.mediumRange = 2;
         this.longRange = 3;
@@ -60,15 +59,21 @@ public class ISPulseLaserSmallPrototype extends PulseLaserWeapon {
         this.tonnage = 1.0f;
         this.criticals = 1;
         this.bv = 12;
-        this.cost = 16000;
+        this.cost = 80000;
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
         this.flags = flags.or(F_BURST_FIRE).or(F_PROTOTYPE);;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, 3037);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
+        rulesRefs = "71,IO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
+            .setISApproximate(true, false, false, true, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH);
     }
 
     /*

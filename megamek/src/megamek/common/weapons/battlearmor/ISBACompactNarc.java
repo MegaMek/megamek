@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons.battlearmor;
 
-import megamek.common.weapons.NarcWeapon;
+import megamek.common.weapons.other.NarcWeapon;
 
 /**
  * @author Sebastian Brocks

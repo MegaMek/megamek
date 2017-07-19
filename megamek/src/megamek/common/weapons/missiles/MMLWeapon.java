@@ -31,7 +31,6 @@ import megamek.common.weapons.LRMScatterableHandler;
 import megamek.common.weapons.LRMSmokeWarheadHandler;
 import megamek.common.weapons.LRMSwarmHandler;
 import megamek.common.weapons.LRMSwarmIHandler;
-import megamek.common.weapons.MissileWeapon;
 import megamek.common.weapons.SRMAXHandler;
 import megamek.common.weapons.SRMAntiTSMHandler;
 import megamek.common.weapons.SRMDeadFireHandler;

@@ -52,7 +52,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         tonnage = 5.0f;
         criticals = 2;
         bv = 190;
-        cost = 0;
+        cost = 1000000;
         shortAV = 0;
         medAV = 0;
         waterShortRange = 4;
@@ -69,7 +69,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         .setTechRating(RATING_E)
         .setAvailability(RATING_F, RATING_F, RATING_F, RATING_X)
         .setISAdvancement(2762, DATE_NONE, DATE_NONE, 2770, DATE_NONE)
-        .setISApproximate(true, false, false,false, false)
+        .setISApproximate(true, false, false, true, false)
         .setPrototypeFactions(F_TH);
     }
     

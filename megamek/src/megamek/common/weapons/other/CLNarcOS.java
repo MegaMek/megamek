@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons.other;
 
-import megamek.common.weapons.NarcWeapon;
-
 /**
  * @author Sebastian Brocks
  */

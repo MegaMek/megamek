@@ -1461,6 +1461,7 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createISLookDownRadar());
 		EquipmentType.addType(MiscType.createISVTOLJetBooster());
 		EquipmentType.addType(MiscType.createRemoteSensorDispenser());
+        EquipmentType.addType(MiscType.createPrototypeRemoteSensorDispenser());
 		EquipmentType.addType(MiscType.createISVehicularMineDispenser());
 		EquipmentType.addType(MiscType.createMiningDrill());
 		EquipmentType.addType(MiscType.createISReconCamera());
@@ -2209,11 +2210,12 @@ public class MiscType extends EquipmentType {
 		        .or(F_VTOL_EQUIPMENT);
 		misc.omniFixedOnly = true;
 		misc.bv = 0;
-		misc.rulesRefs = "72,IO";
-		misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-		        .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
-		        .setISAdvancement(2557, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH);
+        misc.rulesRefs = "72,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
+                .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+                .setISAdvancement(2557, DATE_NONE, DATE_NONE, 2571, 3034)
+                .setISApproximate(true, false, false, true, true)
+                .setPrototypeFactions(F_TH).setReintroductionFactions(F_LC,F_DC);
 		return misc;
 	}
 
@@ -2253,9 +2255,10 @@ public class MiscType extends EquipmentType {
 		misc.bv = 0;
 		misc.rulesRefs = "72,IO";
 		misc.techAdvancement.setTechBase(TECH_BASE_IS).setTechRating(RATING_E)
-		        .setAvailability(RATING_D, RATING_F, RATING_D, RATING_C)
-		        .setISAdvancement(2557, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_TH);
+		        .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+		        .setISAdvancement(2557, DATE_NONE, DATE_NONE, 2571, 3034)
+		        .setISApproximate(true, false, false, true, true)
+		        .setPrototypeFactions(F_TH).setReintroductionFactions(F_LC,F_DC);
 		return misc;
 	}
 
@@ -4806,13 +4809,13 @@ public class MiscType extends EquipmentType {
 		misc.setInternalName("BABattleMechNIU");
 		misc.tonnage = 0.0;
 		misc.criticals = 0;
-		misc.cost = 250000;
+		misc.cost = 500000;
 		misc.hittable = false;
 		misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_BATTLEMECH_NIU).or(F_BA_EQUIPMENT);
 
 		misc.rulesRefs = "68,IO";
 		misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_F)
+		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_F)
 		        .setISAdvancement(3052, 3055, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_FS)
 		        .setProductionFactions(F_WB);
@@ -4823,6 +4826,7 @@ public class MiscType extends EquipmentType {
 	// Maybe the helmets should be quirks?
 	// TODO - SLDF Advanced Neurohelmet (MechWarrior) - IO pg 40
 	// TODO - SLDF Advanced Neurohelmet (Fighter Pilot) - IO pg 40
+	// TODO - Virtual Reality Piloting Pod - IO pg 70
 
 	// Drone and Robotic Systems
 
@@ -5405,7 +5409,7 @@ public class MiscType extends EquipmentType {
 		misc.setInstantModeSwitch(false);
 		misc.rulesRefs = "71,IO";
 		misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
-		        .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
+		        .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
 		        .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2597, DATE_NONE)
 		        .setISApproximate(true, false, false, true, false).setPrototypeFactions(F_TH);
 		return misc;
@@ -5604,6 +5608,30 @@ public class MiscType extends EquipmentType {
 		        .setProductionFactions(F_TH);
 		return misc;
 	}
+	
+	   public static MiscType createPrototypeRemoteSensorDispenser() {
+	        MiscType misc = new MiscType();
+	        //TODO GAME Rules see IO pg 73
+	        misc.name = "Prototype Remote Sensors/Dispenser";
+	        misc.setInternalName("ProtoTypeRemoteSensorDispenser");
+	        misc.addLookupName("Prototype Remote Sensor Dispenser");
+	        misc.tonnage = 0.5;
+	        misc.criticals = 1;
+	        misc.hittable = true;
+	        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_TANK_EQUIPMENT)
+	                .or(F_SUPPORT_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_SENSOR_DISPENSER);
+	        misc.bv = 0;
+	        misc.cost = 60000;
+	        misc.industrial = true;
+	        misc.rulesRefs = "73,IO";
+	        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false)
+	                .setTechRating(RATING_E).setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+	                .setISAdvancement(2586, DATE_NONE, DATE_NONE, 2590, DATE_NONE)
+	                .setISApproximate(true, false, false, true, false)
+	                .setPrototypeFactions(F_TH)
+	                .setProductionFactions(F_TH);
+	        return misc;
+	    }
 
 	public static MiscType createISLookDownRadar() {
 		MiscType misc = new MiscType();
@@ -9025,7 +9053,9 @@ public class MiscType extends EquipmentType {
 
 		return misc;
 	}
-
+	
+	//TODO Prototype TSM, see IO pg 104, Coding Proto TSM means Anti TSM missiles need to coded to counter them
+	
 	public static MiscType createIndustrialTSM() {
 		MiscType misc = new MiscType();
 

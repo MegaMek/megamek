@@ -5163,6 +5163,8 @@ public abstract class Mech extends Entity {
             cockpitCost = 700000;
         } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
             cockpitCost = 175000;
+        } else if (getCockpitType() == Mech.COCKPIT_VRRP) {
+            cockpitCost = 1250000;
         } else if (getCockpitType() == Mech.COCKPIT_INDUSTRIAL) {
             cockpitCost = 100000;
         } else if (getCockpitType() == Mech.COCKPIT_QUADVEE) {

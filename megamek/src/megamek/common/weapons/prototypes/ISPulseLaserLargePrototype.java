@@ -18,7 +18,6 @@
 package megamek.common.weapons.prototypes;
 
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -40,7 +39,7 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
      */
     public ISPulseLaserLargePrototype() {
         super();
-        name = "Large Pulse Laser Prototype";
+        name = "Prototype Large Pulse Laser";
         setInternalName("ISLargePulseLaserPrototype");
         addLookupName("IS Pulse Large Laser Prototype");
         addLookupName("IS Prototype Large Pulse Laser");
@@ -59,14 +58,20 @@ public class ISPulseLaserLargePrototype extends PulseLaserWeapon {
         tonnage = 7.0f;
         criticals = 2;
         bv = 119;
-        cost = 175000;
+        cost = 875000;
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, 3037);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_E, RATING_X });
+        rulesRefs = "71,IO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X)
+            .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)
+            .setISApproximate(true, false, false, true, false)
+            .setPrototypeFactions(F_TH)
+            .setProductionFactions(F_TH);
     }
 
     /*

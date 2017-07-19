@@ -28,7 +28,7 @@ import megamek.common.weapons.LRMSmokeWarheadHandler;
 import megamek.common.weapons.LRMSwarmHandler;
 import megamek.common.weapons.LRMSwarmIHandler;
 import megamek.common.weapons.MissileMineClearanceHandler;
-import megamek.common.weapons.MissileWeapon;
+import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.Server;
 
 /**

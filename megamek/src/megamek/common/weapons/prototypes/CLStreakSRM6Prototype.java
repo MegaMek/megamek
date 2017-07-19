@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.TechAdvancement;
-
 /**
  * @author Sebastian Brocks
  */
@@ -30,7 +28,7 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
      */
     public CLStreakSRM6Prototype() {
         super();
-        name = "Streak SRM 6 (CP)";
+        name = "Prototype Streak SRM 6";
         setInternalName("CLStreakSRM6Prototype");
         heat = 4;
         rackSize = 6;
@@ -41,12 +39,17 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
         tonnage = 4.5f;
         criticals = 2;
         bv = 59;
-        cost = 80000;
+        cost = 120000;
         shortAV = 8;
         maxRange = RANGE_SHORT;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2825);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_F, RATING_X, RATING_X });
+        rulesRefs = "97,IO";
+        techAdvancement.setTechBase(TECH_BASE_CLAN)
+            .setIntroLevel(false)
+            .setUnofficial(false)
+            .setTechRating(RATING_E)
+            .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+            .setISAdvancement(2819, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
+            .setISApproximate(true, false, false, true, false)
+            .setPrototypeFactions(F_CSA);
     }
 }

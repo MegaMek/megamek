@@ -9288,28 +9288,6 @@ public class AmmoType extends EquipmentType {
 	                .setReintroductionFactions(F_FS,F_LC);
 	            return ammo;
 	        }
-	        
-/*	        private static AmmoType createCLNarcAmmo() {
-	            AmmoType ammo = new AmmoType();
-	            ammo.name = "Narc Pods";
-	            ammo.shortName = "Narc";
-	            ammo.setInternalName("CLNarc Pods");
-	            ammo.addLookupName("Clan Ammo Narc");
-	            ammo.addLookupName("Clan Narc Missile Beacon Ammo");
-	            ammo.damagePerShot = 2; // only used for ammo crits
-	            ammo.rackSize = 1;
-	            ammo.ammoType = AmmoType.T_NARC;
-	            ammo.shots = 6;
-	            ammo.bv = 0;
-	            ammo.cost = 6000;
-	            ammo.kgPerShot = 150;
-
-	            ammo.techAdvancement.setTechBase(TECH_BASE_CLAN);
-	            ammo.techAdvancement.setClanAdvancement(DATE_NONE, DATE_NONE, 2828);
-	            ammo.techAdvancement.setTechRating(RATING_E);
-	            ammo.techAdvancement.setAvailability( new int[] { RATING_X, RATING_D, RATING_C, RATING_X });
-	            return ammo;
-	        }*/
 
 	        private static AmmoType createISNarcExplosiveAmmo() {
 	            AmmoType ammo = new AmmoType();

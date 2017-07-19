@@ -19,7 +19,6 @@ package megamek.common.weapons.prototypes;
 
 import megamek.common.IGame;
 import megamek.common.Mounted;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -41,7 +40,7 @@ public class ISUAC5Prototype extends UACWeapon {
      */
     public ISUAC5Prototype() {
         super();
-        name = "Ultra AC/5 Prototype";
+        name = "Prototype Ultra Autocannon/5";
         setInternalName("ISUltraAC5Prototype");
         addLookupName("IS Ultra AC/5 Prototype");
         flags = flags.or(F_PROTOTYPE);
@@ -53,19 +52,24 @@ public class ISUAC5Prototype extends UACWeapon {
         mediumRange = 13;
         longRange = 20;
         extremeRange = 26;
-        tonnage = 9.0f;
-        criticals = 6;
+        tonnage = 7.0f;
+        criticals = 2;
         bv = 112;
-        cost = 200000;
+        cost = 1000000;
         explosionDamage = damage;
         shortAV = 7;
         medAV = 7;
         longAV = 7;
         maxRange = RANGE_LONG;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2635, DATE_NONE, DATE_NONE, 2640, 3035);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
+        rulesRefs = "104,IO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+        .setISAdvancement(3029, DATE_NONE, DATE_NONE, 3035, DATE_NONE)
+        .setISApproximate(true, false, false, true, false)
+        .setPrototypeFactions(F_FS);
     }
 
     /*

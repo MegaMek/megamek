@@ -19,7 +19,6 @@ package megamek.common.weapons.prototypes;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.AttackHandler;
@@ -42,7 +41,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
      */
     public ISLB10XACPrototype() {
         super();
-        name = "LB 10-X AC Prototype";
+        name = "Prototype LB 10-X Autocannon";
         setInternalName("ISLBXAC10Prototype");
         addLookupName("IS LB 10-X AC Prototype");
         flags = flags.or(F_PROTOTYPE);
@@ -56,11 +55,18 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         extremeRange = 24;
         tonnage = 11.0f;
         bv = 148;
-        cost = 400000;
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2590, DATE_NONE, DATE_NONE, 2595, 3035);
-        techAdvancement.setTechRating(RATING_E);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_F, RATING_D, RATING_X });
+        cost = 2000000; // Cost in the AoW is 160000 but not making another version for one field.
+        rulesRefs = "71,IO";
+        techAdvancement.setTechBase(TECH_BASE_IS)
+        .setIntroLevel(false)
+        .setUnofficial(false)
+        .setTechRating(RATING_E)
+        .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+        .setISAdvancement(2590, DATE_NONE, DATE_NONE, 2595, 3035)
+        .setISApproximate(true, false, false, true, true)
+        .setPrototypeFactions(F_TH)
+        .setProductionFactions(F_TH)
+        .setReintroductionFactions(F_FS,F_LC);
     }
 
     @Override

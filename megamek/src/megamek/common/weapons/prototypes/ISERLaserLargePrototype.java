@@ -39,7 +39,7 @@ public class ISERLaserLargePrototype extends LaserWeapon {
 
     public ISERLaserLargePrototype() {
         super();
-        name = "ER Large Laser Prototype";
+        name = "Prototype ER Large Laser";
         setInternalName("ISERLargeLaserPrototype");
         addLookupName("IS ER Large Laser Prototype");
         toHitModifier = 1;
@@ -57,18 +57,17 @@ public class ISERLaserLargePrototype extends LaserWeapon {
         tonnage = 5.0f;
         criticals = 2;
         bv = 163;
-        cost = 200000;
-        rulesRefs = "226,TM";
+        cost = 600000;
+        rulesRefs = "103,IO";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)
         	.setUnofficial(false)
             .setTechRating(RATING_E)
-            .setAvailability(RATING_E, RATING_F, RATING_D, RATING_C)
-            .setISAdvancement(2610, DATE_NONE, DATE_NONE, 2610, DATE_NONE)
+            .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X)
+            .setISAdvancement(3030, DATE_NONE, DATE_NONE, 3037, DATE_NONE)
             .setISApproximate(true, false, false,true, false)
-            .setPrototypeFactions(F_TH)
-            .setProductionFactions(F_DC);
-    }
+            .setPrototypeFactions(F_FS);
+     }
 
     /*
      * (non-Javadoc)

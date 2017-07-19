@@ -169,7 +169,6 @@ import megamek.common.weapons.gaussrifles.CLHAG30;
 import megamek.common.weapons.gaussrifles.CLHAG40;
 import megamek.common.weapons.gaussrifles.CLImprovedGaussRifle;
 import megamek.common.weapons.gaussrifles.ISGaussRifle;
-import megamek.common.weapons.gaussrifles.ISGaussRiflePrototype;
 import megamek.common.weapons.gaussrifles.ISHGaussRifle;
 import megamek.common.weapons.gaussrifles.ISImpHGaussRifle;
 import megamek.common.weapons.gaussrifles.ISLGaussRifle;
@@ -316,7 +315,7 @@ import megamek.common.weapons.ppc.CLImprovedPPC;
 import megamek.common.weapons.ppc.CLPlasmaCannon;
 import megamek.common.weapons.ppc.CLPlasmaRifle;
 import megamek.common.weapons.ppc.ISERPPC;
-import megamek.common.weapons.ppc.ISHERPPC;
+import megamek.common.weapons.ppc.ISKinsSlaughterPPC;
 import megamek.common.weapons.ppc.ISHeavyPPC;
 import megamek.common.weapons.ppc.ISLightPPC;
 import megamek.common.weapons.ppc.ISPPC;
@@ -349,9 +348,13 @@ import megamek.common.weapons.prototypes.CLUAC10Prototype;
 import megamek.common.weapons.prototypes.CLUAC20Prototype;
 import megamek.common.weapons.prototypes.CLUAC2Prototype;
 import megamek.common.weapons.prototypes.ISERLaserLargePrototype;
+import megamek.common.weapons.prototypes.ISGaussRiflePrototype;
 import megamek.common.weapons.prototypes.ISLB10XACPrototype;
 import megamek.common.weapons.prototypes.ISPulseLaserLargePrototype;
-import megamek.common.weapons.prototypes.ISMediumPulseLaserPrototype;
+import megamek.common.weapons.prototypes.ISPulseLaserMediumPrototype;
+import megamek.common.weapons.prototypes.ISPulseLaserMediumRecovered;
+import megamek.common.weapons.prototypes.ISNarcPrototype;
+import megamek.common.weapons.prototypes.ISPrototypeTAG;
 import megamek.common.weapons.prototypes.ISPulseLaserSmallPrototype;
 import megamek.common.weapons.prototypes.ISUAC5Prototype;
 import megamek.common.weapons.prototypes.PrototypeArrowIV;
@@ -1101,7 +1104,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISERLaserLargePrototype());
         EquipmentType.addType(new ISERLaserMedium());
         EquipmentType.addType(new ISPulseLaserMedium());
-        EquipmentType.addType(new ISMediumPulseLaserPrototype());
+        EquipmentType.addType(new ISPulseLaserMediumPrototype());
+        EquipmentType.addType(new ISPulseLaserMediumRecovered());
         EquipmentType.addType(new ISXPulseLaserMedium());
         EquipmentType.addType(new ISPulseLaserSmall());
         EquipmentType.addType(new ISXPulseLaserSmall());
@@ -1143,7 +1147,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISSnubNosePPC());
         EquipmentType.addType(new ISLightPPC());
         EquipmentType.addType(new ISHeavyPPC());
-        EquipmentType.addType(new ISHERPPC());
+        EquipmentType.addType(new ISKinsSlaughterPPC());
 //        EquipmentType.addType(new ISBASupportPPC());
         EquipmentType.addType(new CLBASupportPPC());
         // Flamers
@@ -1450,6 +1454,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLIATM6());
         EquipmentType.addType(new CLIATM9());
         EquipmentType.addType(new CLIATM12());
+//        EquipmentType.addType(new CLFussilade());
         // MRMs
         EquipmentType.addType(new ISMRM1());
         EquipmentType.addType(new ISMRM2());
@@ -1471,6 +1476,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISMRM40OS());
         // NARCs
         EquipmentType.addType(new ISNarc());
+        EquipmentType.addType(new ISNarcPrototype());
         EquipmentType.addType(new ISNarcOS());
         EquipmentType.addType(new ISNarcIOS());
         EquipmentType.addType(new CLNarc());
@@ -1493,6 +1499,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLTAG());
 //        EquipmentType.addType(new ISBALightTAG());
         EquipmentType.addType(new CLBALightTAG());
+        EquipmentType.addType(new ISPrototypeTAG());
         // MMLs
         EquipmentType.addType(new ISMML3());
         EquipmentType.addType(new ISMML5());

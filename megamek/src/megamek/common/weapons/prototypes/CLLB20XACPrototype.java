@@ -32,7 +32,7 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
      */
     public CLLB20XACPrototype() {
         super();
-        name = "LB 20-X AC-CP";
+        name = "Prototype LB 20-X Autocannon";
         setInternalName("CLLBXAC20Prototype");
         heat = 6;
         damage = 20;
@@ -52,8 +52,8 @@ public class CLLB20XACPrototype extends CLLBXACPrototypeWeapon {
         techAdvancement.setTechBase(TECH_BASE_CLAN)
     	.setIntroLevel(false)
         .setTechRating(RATING_F)
-        .setAvailability(RATING_X, RATING_D, RATING_C, RATING_B)
-        .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2825, DATE_NONE)
+        .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
+        .setClanAdvancement(2820, DATE_NONE, DATE_NONE, 2826, DATE_NONE)
         .setClanApproximate(true, false, false,true, false)
         .setPrototypeFactions(F_CHH);
     }

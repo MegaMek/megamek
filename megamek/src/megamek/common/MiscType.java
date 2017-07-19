@@ -257,6 +257,7 @@ public class MiscType extends EquipmentType {
 	
 	//Prototype Stuff
 	public static final BigInteger F_ARTEMIS_PROTO = BigInteger.valueOf(1).shiftLeft(201);
+	public static final BigInteger F_CASEP = BigInteger.valueOf(1).shiftLeft(202);
 
 	// Secondary Flags for Physical Weapons
 	public static final long S_CLUB = 1L << 0; // BMR
@@ -1251,6 +1252,7 @@ public class MiscType extends EquipmentType {
 		// Start of Level2 stuff
 		EquipmentType.addType(MiscType.createISDoubleHeatSink());
 		EquipmentType.addType(MiscType.createISDoubleHeatSinkPrototype());
+	    EquipmentType.addType(MiscType.createISFreezerPrototype());
 		EquipmentType.addType(MiscType.createCLDoubleHeatSink());
 		EquipmentType.addType(MiscType.createISCASE());
 		EquipmentType.addType(MiscType.createCLCASE());
@@ -1605,7 +1607,8 @@ public class MiscType extends EquipmentType {
 		
 		//Prototype Stuff
 		EquipmentType.addType(MiscType.createISProtoArtemis());
-
+        EquipmentType.addType(MiscType.createCASEPrototype());
+		
 		// Drone and Robotic Systems
 		EquipmentType.addType(MiscType.createISRemoteDroneCommandConsole());
 		EquipmentType.addType(MiscType.createSmartRoboticControlSystem());
@@ -4634,6 +4637,27 @@ public class MiscType extends EquipmentType {
 		        .setProductionFactions(F_TH).setReintroductionFactions(F_DC);
 		return misc;
 	}
+	
+	   public static MiscType createCASEPrototype() {
+	        MiscType misc = new MiscType();
+	        //TODO Game rules - See IO pg 71 (specifically the explosion part)
+	        
+	        misc.name = "CASE-P (Prototype)";
+	        misc.setInternalName("ISCASEPrototype");
+	        misc.addLookupName("Prototype CASE");
+	        misc.tonnage = 0.5f;
+	        misc.criticals = 1;
+	        misc.hittable = false;
+	        misc.flags = misc.flags.or(F_CASEP).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+	        misc.cost = 150000;
+	        misc.bv = 0;
+	        misc.rulesRefs = "71,IO";
+	        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
+	                .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X).setISAdvancement(2452, DATE_NONE, DATE_NONE, 2476, DATE_NONE)
+	                .setISApproximate(true, false, false, true, false).setPrototypeFactions(F_TH)
+	                .setProductionFactions(F_TH);
+	        return misc;
+	    }
 
 	public static MiscType createCLCASE() {
 		MiscType misc = new MiscType();
@@ -5982,14 +6006,33 @@ public class MiscType extends EquipmentType {
 		misc.addLookupName("ISDouble Heat Sink Prototype");
 		misc.tonnage = 1.0f;
 		misc.criticals = 3;
+		misc.cost = 18000;  //Using Cost
 		misc.flags = misc.flags.or(F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
 		misc.bv = 0;
 		misc.rulesRefs = "71, IO";
-		misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2559, DATE_NONE, DATE_NONE, 2865, 3040)
-		        .setISApproximate(false, false, false, false, true).setPrototypeFactions(F_TH).setTechRating(RATING_E)
-		        .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C);
+		misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(2559, DATE_NONE, DATE_NONE, 2567, DATE_NONE)
+		        .setISApproximate(true, false, false, true, false).setPrototypeFactions(F_TH).setTechRating(RATING_E)
+		        .setAvailability(RATING_F, RATING_X, RATING_X, RATING_X);
 		return misc;
 	}
+	
+	   public static MiscType createISFreezerPrototype() {
+	        MiscType misc = new MiscType();
+
+	        misc.name = "Double Heat Sink (Freezers)";
+	        misc.setInternalName("ISDoubleHeatSinkFreezer");
+	        misc.addLookupName("Freezers");
+	        misc.tonnage = 1.0f;
+	        misc.criticals = 3;
+	        misc.cost = 30000;  //Using Cost
+	        misc.flags = misc.flags.or(F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
+	        misc.bv = 0;
+	        misc.rulesRefs = "71, IO";
+	        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3022, DATE_NONE, DATE_NONE, 3040, DATE_NONE)
+	                .setISApproximate(true, false, false, true, false).setPrototypeFactions(F_FS).setTechRating(RATING_E)
+	                .setAvailability(RATING_X, RATING_F, RATING_X, RATING_X);
+	        return misc;
+	    }
 
 	public static MiscType createISDoubleHeatSink() {
 		MiscType misc = new MiscType();
@@ -8737,11 +8780,11 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_ENDO_STEEL_PROTO);
 		misc.omniFixedOnly = true;
 		misc.bv = 0;
-		misc.rulesRefs = "224,TM";
+		misc.rulesRefs = "71,IO";
 		misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
-		        .setAvailability(RATING_D, RATING_F, RATING_E, RATING_D)
-		        .setISAdvancement(2480, DATE_NONE, DATE_NONE, 2480, DATE_NONE)
-		        .setISApproximate(true, false, false, true, false).setPrototypeFactions(F_TH);
+		        .setAvailability(RATING_F, RATING_F, RATING_X, RATING_X)
+		        .setISAdvancement(2471, DATE_NONE, DATE_NONE, 2487, 3035)
+		        .setISApproximate(true, false, false, true, true).setPrototypeFactions(F_TH).setReintroductionFactions(F_DC);
 		return misc;
 	}
 

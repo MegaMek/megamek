@@ -513,9 +513,10 @@ public class MechFileParser {
                 }
             }
 
-            if ((ent instanceof Mech)
-                    && (m.getType().hasFlag(MiscType.F_CASE) || m.getType()
-                            .hasFlag(MiscType.F_CASEII))) {
+            if ((ent instanceof Mech) && (m.getType().hasFlag(MiscType.F_CASE) || m.getType().hasFlag(MiscType.F_CASEII)
+                    || m.getType().hasFlag(MiscType.F_CASEP)
+
+            )) {
                 ((Mech) ent).setAutoEject(false);
             }
 

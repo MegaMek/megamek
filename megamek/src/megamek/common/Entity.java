@@ -13023,6 +13023,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
     
+    public int getDeltaDistance() {
+        return delta_distance;
+    }
+    
     public void setDeltaDistance(int distance) {
         delta_distance = distance;
     }

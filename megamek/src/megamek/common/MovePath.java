@@ -674,8 +674,8 @@ public class MovePath implements Cloneable, Serializable {
         if (getLastStep() != null) {
             return getLastStep().getVelocity();
         }
-        if (getEntity() instanceof Aero) {
-            return ((Aero) getEntity()).getCurrentVelocity();
+        if (getEntity().isAero()) {
+            return ((IAero) getEntity()).getCurrentVelocity();
         }
         return 0;
     }
@@ -684,8 +684,8 @@ public class MovePath implements Cloneable, Serializable {
         if (getLastStep() != null) {
             return getLastStep().getVelocityLeft();
         }
-        if (getEntity() instanceof Aero) {
-            return ((Aero) getEntity()).getCurrentVelocity();
+        if (getEntity().isAero()) {
+            return ((IAero) getEntity()).getCurrentVelocity();
         }
         return 0;
     }
@@ -1026,8 +1026,8 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         // for aero units move must use up all their velocity
-        if (getEntity() instanceof Aero) {
-            Aero a = (Aero) getEntity();
+        if (getEntity().isAero()) {
+            IAero a = (IAero) getEntity();
             if (getLastStep() == null) {
                 if ((a.getCurrentVelocity() > 0) && !getGame().useVectorMove()) {
                     return false;
@@ -1237,7 +1237,7 @@ public class MovePath implements Cloneable, Serializable {
         // need to do a separate section here for Aeros.
         // just like jumping for now, but I could add some other stuff
         // here later
-        if (getEntity() instanceof Aero) {
+        if (getEntity().isAero()) {
             MovePath left = clone();
             MovePath right = clone();
 

@@ -118,6 +118,7 @@ public interface IAero {
     HashSet<Coords> getOccupiedCoords();
     void setAltitude(int altitude);
     void setElevation(int elevation);
+    int getDeltaDistance();
     void setDeltaDistance(int distance);
     void setMovementMode(EntityMovementMode mode);
     Map<Integer, Coords> getSecondaryPositions();

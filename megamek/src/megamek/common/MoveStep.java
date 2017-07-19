@@ -742,7 +742,7 @@ public class MoveStep implements Serializable {
                 setMp((isJumping() || isHasJustStood() || (isInfantry && !isFieldArtillery)) ? 0
                         : 1);
                 setNStraight(0);
-                if (entity.isAirborne() && (entity instanceof Aero)) {
+                if (entity.isAirborne() && (entity.isAero())) {
                     setMp(asfTurnCost(game, getType(), entity));
                     setNTurns(getNTurns() + 1);
 
@@ -1189,13 +1189,13 @@ public class MoveStep implements Serializable {
         }
 
         // if ASF get velocity
-        if (entity instanceof Aero) {
-            Aero a = (Aero) entity;
+        if (entity.isAero()) {
+            IAero a = (IAero) entity;
             velocity = a.getCurrentVelocity();
             velocityN = a.getNextVelocity();
-            velocityLeft = a.getCurrentVelocity() - a.delta_distance;
+            velocityLeft = a.getCurrentVelocity() - a.getDeltaDistance();
             if (game.getBoard().onGround()) {
-                velocityLeft = a.getCurrentVelocity() - (a.delta_distance / 16);
+                velocityLeft = a.getCurrentVelocity() - (a.getDeltaDistance() / 16);
             }
             isRolled = false;// a.isRolled();
             nStraight = a.getStraightMoves();
@@ -1836,7 +1836,7 @@ public class MoveStep implements Serializable {
 
             // If airborne and not an Aero then everything is illegal, except
             // turns
-            if (!(entity instanceof Aero)) {
+            if (!entity.isAero()) {
                 switch (type) {
                     case TURN_LEFT:
                     case TURN_RIGHT:
@@ -1848,11 +1848,11 @@ public class MoveStep implements Serializable {
             }
 
             int tmpSafeTh = entity.getWalkMP();
-            Aero a = (Aero) entity;
+            IAero a = (IAero) entity;
 
             // if the vessel is "immobile" due to shutdown or pilot black out
             // then all moves are illegal
-            if (a.isImmobile()) {
+            if (entity.isImmobile()) {
                 return;
             }
 
@@ -3459,7 +3459,7 @@ public class MoveStep implements Serializable {
 
         // first check for thruster damage
         // put illegal for more than three thruster hits in CompileIllegal
-        Aero a = (Aero) entity;
+        IAero a = (IAero) entity;
         int thrustCost = 0;
         if (direction == MoveStepType.TURN_LEFT) {
             thrustCost = a.getLeftThrustHits();
@@ -3555,7 +3555,7 @@ public class MoveStep implements Serializable {
      */
     public boolean canAeroTurn(IGame game) {
         Entity en = getEntity();
-        if (!(en instanceof Aero)) {
+        if (!en.isAero()) {
             return false;
         }
 
@@ -3691,10 +3691,10 @@ public class MoveStep implements Serializable {
      * flying in atmosphere?
      */
     private boolean useAeroAtmosphere(IGame game, Entity en) {
-        if (!(en instanceof Aero)) {
+        if (!en.isAero()) {
             return false;
         }
-        if (((Aero) en).isSpheroid()) {
+        if (((IAero) en).isSpheroid()) {
             return false;
         }
         // are we in space?
@@ -3714,7 +3714,7 @@ public class MoveStep implements Serializable {
      * @return
      */
     private boolean useSpheroidAtmosphere(IGame game, Entity en) {
-        if (!(en instanceof Aero)) {
+        if (en.isAero()) {
             return false;
         }
         // are we in space?
@@ -3722,7 +3722,7 @@ public class MoveStep implements Serializable {
             return false;
         }
         // aerodyne's will operate like spheroids in vacuum
-        if (!((Aero) en).isSpheroid()
+        if (!((IAero) en).isSpheroid()
                 && !game.getPlanetaryConditions().isVacuum()) {
             return false;
         }

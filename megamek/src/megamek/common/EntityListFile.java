@@ -836,23 +836,10 @@ public class EntityListFile {
                 // crits
                 output.write(EntityListFile.getTankCritString(tentity));
             }
-
-            // add a bunch of stuff for aeros
-            if (entity instanceof Aero) {
-                Aero a = (Aero) entity;
-
-                // SI
-                output.write(indentStr(indentLvl+1) + "<structural integrity=\"");
-                output.write(String.valueOf(a.getSI()));
-                output.write("\"/>");
-                output.write(CommonConstants.NL);
-
-                // heat sinks
-                output.write(indentStr(indentLvl+1) + "<heat sinks=\"");
-                output.write(String.valueOf(a.getHeatSinks()));
-                output.write("\"/>");
-                output.write(CommonConstants.NL);
-
+            
+            // Aero stuff that also applies to LAMs in fighter mode
+            if (entity.isAero()) {
+                IAero a = (IAero)entity;
                 // fuel
                 output.write(indentStr(indentLvl+1) + "<fuel left=\"");
                 output.write(String.valueOf(a.getFuel()));
@@ -890,6 +877,23 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl+1) + "</bombs>");
                     output.write(CommonConstants.NL);
                 }
+            }
+
+            // aero stuff that does not apply to LAMs
+            if (entity instanceof Aero) {
+                Aero a = (Aero) entity;
+
+                // SI
+                output.write(indentStr(indentLvl+1) + "<structural integrity=\"");
+                output.write(String.valueOf(a.getSI()));
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
+
+                // heat sinks
+                output.write(indentStr(indentLvl+1) + "<heat sinks=\"");
+                output.write(String.valueOf(a.getHeatSinks()));
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
 
                 // TODO: dropship docking collars, bays
 

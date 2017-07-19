@@ -60,6 +60,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
@@ -933,13 +934,21 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isWiGE = true;
         boolean isQuadVee = true;
         boolean isLAM = true;
+        boolean isAirMech = true;
         boolean isGlider = true;
         for (Entity e : entities) {
-            isAero &= e instanceof Aero;
+            isAero &= e instanceof Aero
+                    || e instanceof LandAirMech
+                        && (choStartingMode.getSelectedIndex() == 2
+                            || ((LandAirMech)e).getLAMType() == LandAirMech.LAM_BIMODAL
+                                && choStartingMode.getSelectedIndex() == 2);
             isVTOL &= e instanceof VTOL;
             isWiGE &= e instanceof Tank && e.getMovementMode() == EntityMovementMode.WIGE;
             isQuadVee &= e instanceof QuadVee;
             isLAM &= e instanceof LandAirMech;
+            isAirMech &= e instanceof LandAirMech
+                    && ((LandAirMech)e).getLAMType() == LandAirMech.LAM_STANDARD
+                    && choStartingMode.getSelectedIndex() == 1;
             isGlider &= e instanceof Protomech && e.getMovementMode() == EntityMovementMode.WIGE;
         }
 
@@ -955,11 +964,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             init = Integer.parseInt(fldInit.getText());
             fatigue = Integer.parseInt(fldFatigue.getText());
             command = Integer.parseInt(fldCommandInit.getText());
-            if (isAero || (isLAM && choStartingMode.getSelectedIndex() == 2)) {
+            if (isAero) {
                 velocity = Integer.parseInt(fldStartVelocity.getText());
                 altitude = Integer.parseInt(fldStartAltitude.getText());
             }
-            if (isVTOL || (isLAM && choStartingMode.getSelectedIndex() == 1)) {
+            if (isVTOL || isAirMech) {
                 height = Integer.parseInt(fldStartHeight.getText());
             }
             if (isWiGE) {
@@ -973,7 +982,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             return;
         }
         
-        if (isAero || (isLAM && choStartingMode.getSelectedIndex() == 2)) {
+        if (isAero) {
             if ((velocity > (2 * entities.get(0).getWalkMP()))
                     || (velocity < 0)) {
                 msg = Messages
@@ -996,8 +1005,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         if (isVTOL && (height > 50)
-                || (isLAM && choStartingMode.getSelectedIndex() == 1
-                        && height > 25)
+                || (isAirMech && height > 25)
                 || (isGlider && height > 12)) {
             msg = Messages.getString("CustomMechDialog.EnterCorrectHeight"); //$NON-NLS-1$
             title = Messages.getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
@@ -1191,7 +1199,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
 
             if (isAero) {
-                Aero a = (Aero) entity;
+                IAero a = (IAero) entity;
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
                 // we need to determine whether this aero is airborne or not in
@@ -1207,8 +1215,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 }
             }
 
-            if (isVTOL || isWiGE || (isLAM && choStartingMode.getSelectedIndex() == 1)
-                    || isGlider) {
+            if (isVTOL || isWiGE || isAirMech || isGlider) {
                 entity.setElevation(height);
             }
             
@@ -1242,9 +1249,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
 
             // LAMs in fighter mode or airborne AirMechs ignore the prone and hull down selections.
-            if (!(isLAM
-                    && (entity.getMovementMode() != EntityMovementMode.AERODYNE)
-                    || entity.getElevation() > 0)) {
+            if (!isLAM || (!isAero && entity.getElevation() == 0)) {
                 // Should the entity begin the game prone?
                 entity.setProne(chDeployProne.isSelected());
     
@@ -1335,16 +1340,21 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             labDeployProne.setEnabled(index == 0);
             chDeployProne.setEnabled(index == 0);
         } else if (entities.get(0) instanceof LandAirMech) {
-            labDeployProne.setEnabled(index < 2);
-            chDeployProne.setEnabled(index < 2);
-            labDeployHullDown.setEnabled(index == 0);
-            chDeployHullDown.setEnabled(index == 0);
-            labStartHeight.setEnabled(index == 1);
-            fldStartHeight.setEnabled(index == 1);
-            labStartVelocity.setEnabled(index == 2);
-            fldStartVelocity.setEnabled(index == 2);
-            labStartAltitude.setEnabled(index == 2);
-            fldStartAltitude.setEnabled(index == 2);
+            int mode = index;
+            if (((LandAirMech)entities.get(0)).getLAMType() == LandAirMech.LAM_BIMODAL
+                    && mode == LandAirMech.CONV_MODE_AIRMECH) {
+                mode = LandAirMech.CONV_MODE_FIGHTER;
+            }
+            labDeployProne.setEnabled(mode < LandAirMech.CONV_MODE_FIGHTER);
+            chDeployProne.setEnabled(mode < LandAirMech.CONV_MODE_FIGHTER);
+            labDeployHullDown.setEnabled(mode == LandAirMech.CONV_MODE_MECH);
+            chDeployHullDown.setEnabled(mode == LandAirMech.CONV_MODE_MECH);
+            labStartHeight.setEnabled(mode == LandAirMech.CONV_MODE_AIRMECH);
+            fldStartHeight.setEnabled(mode == LandAirMech.CONV_MODE_AIRMECH);
+            labStartVelocity.setEnabled(mode == LandAirMech.CONV_MODE_FIGHTER);
+            fldStartVelocity.setEnabled(mode == LandAirMech.CONV_MODE_FIGHTER);
+            labStartAltitude.setEnabled(mode == LandAirMech.CONV_MODE_FIGHTER);
+            fldStartAltitude.setEnabled(mode == LandAirMech.CONV_MODE_FIGHTER);
         }
     }
 

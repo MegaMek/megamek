@@ -163,6 +163,18 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 bonus = 2;
             }
         }
+        // check for Artemis IV Proto Type
+        if ((mLinker != null && mLinker.getType() instanceof MiscType
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS_PROTO))
+                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+            bonus = (int) Math.ceil(atype.getRackSize() / 5.0);
+            if (atype.getAmmoType() == AmmoType.T_SRM) {
+                bonus = 2;
+            }
+            current_av = current_av + bonus;
+        }
 
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
             current_av = Math.floor(0.6 * current_av);

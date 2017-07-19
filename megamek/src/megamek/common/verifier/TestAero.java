@@ -612,9 +612,9 @@ public class TestAero extends TestEntity {
                     && !canHaveSpecialMunitions) {
                 EquipmentType linkedType = m.getLinked().getType();
                 boolean hasArtemisFCS = m.getLinkedBy() != null
-                        && (m.getLinkedBy().getType()
-                                .hasFlag(MiscType.F_ARTEMIS) || m.getLinkedBy()
-                                .getType().hasFlag(MiscType.F_ARTEMIS_V));
+                        && (m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS)
+                        || m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS_PROTO)
+                        || m.getLinkedBy().getType().hasFlag(MiscType.F_ARTEMIS_V));
                 if (linkedType instanceof AmmoType) {
                     AmmoType linkedAT = (AmmoType)linkedType;
                     // Check LBX's

@@ -1533,7 +1533,12 @@ public class Tank extends Entity {
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
-                    bvText.append(" x 1.2 Artemis");
+                    bvText.append(" x 1.2 Artemis IV");
+                }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                    dBV *= 1.1;
+                    bvText.append(" x 1.1 Artemis IV Prototype");
                 }
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {

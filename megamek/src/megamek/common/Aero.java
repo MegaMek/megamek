@@ -1897,6 +1897,11 @@ public class Aero extends Entity {
                     name = name.concat(" with Artemis V");
                 }
                 if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                    dBV *= 1.1;
+                    name = name.concat(" with Artemis IV Prototype");
+                }
+                if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                     name = name.concat(" with Apollo");

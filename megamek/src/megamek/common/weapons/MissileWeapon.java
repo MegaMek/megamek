@@ -67,6 +67,8 @@ public abstract class MissileWeapon extends AmmoWeapon {
         if (fcs != null && fcs.getType() instanceof MiscType) {
             if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS)) {
                 clusterRoll = 9;
+            } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                clusterRoll = 8;
             } else if (((MiscType)fcs.getType()).hasFlag(MiscType.F_ARTEMIS_V)) {
                 clusterRoll = 10;
             }

@@ -990,6 +990,7 @@ public class TestMech extends TestEntity {
                         || mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL)
                     && (misc.hasFlag(MiscType.F_TARGCOMP)
                         || misc.hasFlag(MiscType.F_ARTEMIS)
+                        || misc.hasFlag(MiscType.F_ARTEMIS_PROTO)
                         || misc.hasFlag(MiscType.F_ARTEMIS_V)
                         || misc.hasFlag(MiscType.F_BAP))) {
                     buff.append("Industrial mech without advanced fire control can't mount " + misc.getName() + "\n");

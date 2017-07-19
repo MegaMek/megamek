@@ -320,8 +320,10 @@ public class MechFileParser {
             }
 
             // Link Artemis IV fire-control systems to their missle racks.
-            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) || (m.getType()
-                    .hasFlag(MiscType.F_ARTEMIS_V))) && (m.getLinked() == null)) {
+            if ((m.getType().hasFlag(MiscType.F_ARTEMIS) 
+                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_V))
+                    || (m.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)))
+                    && (m.getLinked() == null)) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {

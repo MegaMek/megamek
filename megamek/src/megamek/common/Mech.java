@@ -4084,6 +4084,11 @@ public abstract class Mech extends Entity {
                     name = name.concat(" with Artemis IV");
                 }
                 if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_PROTO)) {
+                    dBV *= 1.2;
+                    name = name.concat(" with Artemis IV Prototype");
+                }
+                if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
                     name = name.concat(" with Artemis V");

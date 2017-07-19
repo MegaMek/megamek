@@ -653,10 +653,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     flag = CMD_TANK;
                 }
             } else if (ce instanceof QuadVee) {
-                if (((QuadVee)ce).isInVehicleMode()) {
-                    flag = CMD_TANK | CMD_CONVERTER;
-                } else {
+                if (ce.getConversionMode() == QuadVee.CONV_MODE_MECH) {
                     flag = CMD_MECH | CMD_CONVERTER;
+                } else {
+                    flag = CMD_TANK | CMD_CONVERTER;
                 }
             } else if (ce instanceof LandAirMech) {
                 if (ce.getMovementMode() == EntityMovementMode.AERODYNE) {
@@ -1242,7 +1242,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && GUIPreferences.getInstance().getNagForSprint()
                 // no need to nag for vehicles using overdrive if they already get a PSR nag
                 && !((cmd.getEntity() instanceof Tank
-                        || (cmd.getEntity() instanceof QuadVee && ((QuadVee)cmd.getEntity()).isInVehicleMode())
+                        || (cmd.getEntity() instanceof QuadVee
+                                && cmd.getEntity().getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
                         && GUIPreferences.getInstance().getNagForPSR()))) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
                     Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
@@ -1950,7 +1951,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 setGetUpEnabled(false);
                 setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck()
                                   && !(getBtn(MoveCommand.MOVE_GET_UP).isEnabled()));
-                if (!(ce instanceof Tank) && !(ce instanceof QuadVee && ((QuadVee)ce).isInVehicleMode())) {
+                if (!(ce instanceof Tank) && !(ce instanceof QuadVee
+                        && ce.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
                     setHullDownEnabled(ce.canGoHullDown());
                 } else {
                     // So that vehicle can move and go hull-down, we have to

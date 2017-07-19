@@ -546,7 +546,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL1.setString(Messages.getString("GeneralInfoMapSet.safe"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.over"));
         } else if (en instanceof Tank
-                || (en instanceof QuadVee && ((QuadVee)en).isInVehicleMode())) {
+                || (en instanceof QuadVee && en.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL2"));

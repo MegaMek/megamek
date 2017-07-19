@@ -13,7 +13,6 @@
  */
 package megamek.common;
 
-import java.util.HashSet;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
@@ -24,6 +23,10 @@ public class LandAirMech extends BipedMech implements IAero {
      *
      */
     private static final long serialVersionUID = -8118673802295814548L;
+    
+    public static final int CONV_MODE_MECH    = 0;
+    public static final int CONV_MODE_AIRMECH = 1;
+    public static final int CONV_MODE_FIGHTER = 2;
 
     public static final int LAM_AVIONICS = 15;
 
@@ -39,7 +42,6 @@ public class LandAirMech extends BipedMech implements IAero {
     public static final String[] LAM_STRING = { "Standard", "Bimodal" };
 
     private int lamType;
-    private EntityMovementMode previousMovementMode;
     
     /** Fighter mode **/
     // out of control
@@ -146,9 +148,9 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int mp;
-        if (movementMode == EntityMovementMode.AERODYNE) {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
             mp = getFighterModeWalkMP(gravity, ignoremodulararmor);
-        } else if (movementMode == EntityMovementMode.WIGE) {
+        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             mp = getAirMechCruiseMP(gravity, ignoremodulararmor);
         } else {
             mp = super.getWalkMP(gravity, ignoreheat, ignoremodulararmor);
@@ -162,9 +164,9 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int mp;
-        if (movementMode == EntityMovementMode.AERODYNE) {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
             mp = getFighterModeRunMP(gravity, ignoremodulararmor);
-        } else if (movementMode == EntityMovementMode.WIGE) {
+        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             mp = getAirMechFlankMP(gravity, ignoremodulararmor);
         } else {
             mp = super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
@@ -180,7 +182,7 @@ public class LandAirMech extends BipedMech implements IAero {
      */
     @Override
     public int getSprintMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (movementMode == EntityMovementMode.WIGE) {
+        if (getConversionMode() == CONV_MODE_AIRMECH) {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
@@ -196,7 +198,7 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
-        if (movementMode == EntityMovementMode.WIGE) {
+        if (getConversionMode() == CONV_MODE_AIRMECH) {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
@@ -206,11 +208,10 @@ public class LandAirMech extends BipedMech implements IAero {
     }
 
     public int getOriginalSprintMPwithoutMASC() {
-        if (movementMode == EntityMovementMode.AERODYNE
-                || movementMode == EntityMovementMode.WIGE) {
-            return getOriginalRunMP();
+        if (getConversionMode() == CONV_MODE_MECH) {
+            return (int) Math.ceil(getOriginalWalkMP() * 2.0);            
         } else {
-            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
+            return getOriginalRunMP();
         }
     }
 
@@ -304,16 +305,16 @@ public class LandAirMech extends BipedMech implements IAero {
      */
     @Override
     public boolean hasArmedMASC() {
-        if (movementMode == EntityMovementMode.AERODYNE
-                || movementMode == EntityMovementMode.WIGE) {
+        if (getConversionMode() == CONV_MODE_MECH) {
+            return super.hasArmedMASC();
+        } else {
             return false;
         }
-        return super.hasArmedMASC();
     }
     
     @Override
     public boolean isImmobile() {
-        if (movementMode == EntityMovementMode.AERODYNE
+        if (getConversionMode() == CONV_MODE_FIGHTER
                 && (isAirborne() || isSpaceborne())) {
             return false;
         }
@@ -344,7 +345,7 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public int getEngineCritHeat() {
         // Engine crit heat follows ASF rules in fighter mode. 
-        if (movementMode == EntityMovementMode.AERODYNE) {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
             return 2 * getEngineHits();
         } else {
             return super.getEngineCritHeat();
@@ -354,7 +355,7 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public boolean usesTurnMode() {
         // Turn mode rule is not optional for LAMs in AirMech mode.
-        return movementMode == EntityMovementMode.WIGE;
+        return getConversionMode() == CONV_MODE_AIRMECH;
     }
 
     /**
@@ -368,9 +369,39 @@ public class LandAirMech extends BipedMech implements IAero {
     }
     
     @Override
+    public void setMovementMode(EntityMovementMode mode) {
+        if (mode == EntityMovementMode.AERODYNE
+                || mode == EntityMovementMode.WHEELED) {
+            setConversionMode(CONV_MODE_FIGHTER);
+        } else if (mode == EntityMovementMode.WIGE) {
+            setConversionMode(CONV_MODE_AIRMECH);
+        } else {
+            setConversionMode(CONV_MODE_MECH);
+        }
+        super.setMovementMode(mode);
+    }
+    
+    @Override
+    public void setConversionMode(int mode) {
+        if (mode == getConversionMode()) {
+            return;
+        }
+        if (mode == CONV_MODE_MECH) {
+            super.setMovementMode(EntityMovementMode.BIPED);
+        } else if (mode == CONV_MODE_AIRMECH) {
+            super.setMovementMode(EntityMovementMode.WIGE);
+        } else if (mode == CONV_MODE_FIGHTER) {
+            super.setMovementMode(EntityMovementMode.AERODYNE);
+        } else {
+            return;
+        }
+        super.setConversionMode(mode);
+    }
+    
+    @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         // Fighter mode has the same terrain restrictions as ASFs.
-        if (movementMode == EntityMovementMode.AERODYNE) {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
             IHex hex = game.getBoard().getHex(c);
             if (isAirborne()) {
                 if (hex.containsTerrain(Terrains.IMPASSABLE)) {
@@ -407,7 +438,7 @@ public class LandAirMech extends BipedMech implements IAero {
                     || hex.containsTerrain(Terrains.JUNGLE)
                     || (hex.terrainLevel(Terrains.SNOW) > 1)
                     || (hex.terrainLevel(Terrains.GEYSER) == 2);
-        } else if (movementMode == EntityMovementMode.WIGE && currElevation > 0) {
+        } else if (getConversionMode() == CONV_MODE_AIRMECH && currElevation > 0) {
             // Cannot enter woods or a building hex in AirMech mode unless using ground movement
             // or flying over the terrain.
             IHex hex = game.getBoard().getHex(c);
@@ -425,13 +456,13 @@ public class LandAirMech extends BipedMech implements IAero {
     public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
             case MOVE_WALK:
-                if (movementMode == EntityMovementMode.AERODYNE) {
+                if (getConversionMode() == CONV_MODE_FIGHTER) {
                     return "Cruised";
                 } else {
                     return "Walked";
                 }
             case MOVE_RUN:
-                if (movementMode == EntityMovementMode.AERODYNE) {
+                if (getConversionMode() == CONV_MODE_FIGHTER) {
                     return "Flanked";
                 } else {
                     return "Ran";
@@ -453,13 +484,13 @@ public class LandAirMech extends BipedMech implements IAero {
     public String getMovementAbbr(EntityMovementType mtype) {
         switch (mtype) {
         case MOVE_WALK:
-            if (movementMode == EntityMovementMode.AERODYNE) {
+            if (getConversionMode() == CONV_MODE_FIGHTER) {
                 return "C";
             } else {
                 return "W";
             }
         case MOVE_RUN:
-            if (movementMode == EntityMovementMode.AERODYNE) {
+            if (getConversionMode() == CONV_MODE_FIGHTER) {
                 return "F";
             } else {
                 return "R";
@@ -483,7 +514,7 @@ public class LandAirMech extends BipedMech implements IAero {
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
-        if (movementMode != EntityMovementMode.AERODYNE
+        if (getConversionMode() != CONV_MODE_FIGHTER
                 && !isAirborneVTOLorWIGE()) {
             return super.addEntityBonuses(roll);
         }
@@ -537,7 +568,7 @@ public class LandAirMech extends BipedMech implements IAero {
             roll.addModifier(avionicsHits, "avionics damage");
         }
         
-        if (movementMode == EntityMovementMode.AERODYNE) {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
             if (getCrew().getHits(0) > 0) {
                 roll.addModifier(getCrew().getHits(0), "pilot hits");
             }
@@ -635,7 +666,7 @@ public class LandAirMech extends BipedMech implements IAero {
     public int getMaxElevationDown(int currElevation) {
         // Cannot spend AirMech MP above altitude 3 (level 30) so we use that as max descent.
         if ((currElevation > 0)
-                && (getMovementMode() == EntityMovementMode.WIGE)) {
+                && (getConversionMode() == CONV_MODE_AIRMECH)) {
             return 30;
         }
         return super.getMaxElevationDown(currElevation);
@@ -643,11 +674,11 @@ public class LandAirMech extends BipedMech implements IAero {
     
     @Override
     public boolean canChangeSecondaryFacing() {
-        if (movementMode == EntityMovementMode.AERODYNE
-                || movementMode == EntityMovementMode.WIGE) {
+        if (getConversionMode() == CONV_MODE_MECH) {
+            return super.canChangeSecondaryFacing();
+        } else {
             return false;
         }
-        return super.canChangeSecondaryFacing();
     }
     
     /**
@@ -675,7 +706,7 @@ public class LandAirMech extends BipedMech implements IAero {
             setRecoveryTurn(getRecoveryTurn() - 1);
         }
 
-        if (movementMode == EntityMovementMode.AERODYNE) {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
             // if in atmosphere, then halve next turn's velocity
             if (!game.getBoard().inSpace() && isDeployed() && (roundNumber > 0)) {
                 setNextVelocity((int) Math.floor(getNextVelocity() / 2.0));
@@ -748,7 +779,8 @@ public class LandAirMech extends BipedMech implements IAero {
         if (previousMovementMode == EntityMovementMode.WIGE) {
             if (afterMode == EntityMovementMode.WIGE) {
                 return EntityMovementMode.AERODYNE;
-            } else if (afterMode == EntityMovementMode.AERODYNE) {
+            } else if (afterMode == EntityMovementMode.AERODYNE
+                    || afterMode == EntityMovementMode.WHEELED) {
                 return originalMovementMode;
             } else {
                 return EntityMovementMode.WIGE;
@@ -765,7 +797,7 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         //TODO: in AirMech mode it is possible to fall if using walk/run (or standing) but not cruise/flank
-        return movementMode != EntityMovementMode.AERODYNE;
+        return getConversionMode() != CONV_MODE_FIGHTER;
     }
     
     /** Fighter Mode **/
@@ -947,7 +979,7 @@ public class LandAirMech extends BipedMech implements IAero {
      */
     @Override
     public int getWeaponArc(int wn) {
-        if (movementMode != EntityMovementMode.AERODYNE) {
+        if (getConversionMode() != CONV_MODE_FIGHTER) {
             return super.getWeaponArc(wn);
         }
         final Mounted mounted = getEquipment(wn);
@@ -1002,7 +1034,7 @@ public class LandAirMech extends BipedMech implements IAero {
      */
     @Override
     public HitData rollHitLocation(int table, int side) {
-        if (movementMode != EntityMovementMode.AERODYNE) {
+        if (getConversionMode() != CONV_MODE_FIGHTER) {
             return super.rollHitLocation(table, side);
         }
 
@@ -1230,33 +1262,6 @@ public class LandAirMech extends BipedMech implements IAero {
         return super.getElevation();
     }
 
-    public void liftOff(int altitude) {
-        if (isSpheroid()) {
-            setMovementMode(EntityMovementMode.SPHEROID);
-        } else {
-            setMovementMode(EntityMovementMode.AERODYNE);
-        }
-        setAltitude(altitude);
-
-        HashSet<Coords> positions = getOccupiedCoords();
-        secondaryPositions.clear();
-        if (game != null) {
-            game.updateEntityPositionLookup(this, positions);
-        }
-    }
-
-    public void land() {
-        setMovementMode(EntityMovementMode.WHEELED);
-        setAltitude(0);
-        setElevation(0);
-        setCurrentVelocity(0);
-        setNextVelocity(0);
-        setOutControl(false);
-        setOutCtrlHeat(false);
-        setRandomMove(false);
-        delta_distance = 0;
-    }
-
     @Override
     public int getTakeOffLength() {
         return 10;
@@ -1327,9 +1332,9 @@ public class LandAirMech extends BipedMech implements IAero {
 
     @Override
     public String getTilesetModeString() {
-        if (movementMode == EntityMovementMode.AERODYNE) {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
             return "_FIGHTER";
-        } else if (movementMode == EntityMovementMode.WIGE) {
+        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             return "_AIRMECH";
         } else {
             return "";
@@ -1338,7 +1343,7 @@ public class LandAirMech extends BipedMech implements IAero {
     
     @Override
     public boolean isAero() {
-        return movementMode == EntityMovementMode.AERODYNE;
+        return getConversionMode() == CONV_MODE_FIGHTER;
     }
     
     public long getEntityType(){

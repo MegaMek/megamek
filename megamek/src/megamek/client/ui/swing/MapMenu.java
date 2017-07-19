@@ -1174,10 +1174,10 @@ public class MapMenu extends JPopupMenu {
         } else if (myEntity instanceof QuadVee) {
             menu.add(createConvertMenuItem("MovementDisplay.moveModeMech",
                     MovementDisplay.MoveCommand.MOVE_MODE_LEG,
-                    !((QuadVee)myEntity).isInVehicleMode()));
+                    myEntity.getConversionMode() == QuadVee.CONV_MODE_MECH));
             menu.add(createConvertMenuItem("MovementDisplay.moveModeVee",
                     MovementDisplay.MoveCommand.MOVE_MODE_VEE,
-                    ((QuadVee)myEntity).isInVehicleMode()));            
+                    myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));            
         } else if (myEntity instanceof LandAirMech) {
             if (myEntity.getMovementMode() != EntityMovementMode.AERODYNE
                     || ((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_BIMODAL) {

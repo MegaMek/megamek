@@ -781,7 +781,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             choStartingMode.removeAllItems();
             choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeQuad"));
             choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeVehicle"));
-            if (((QuadVee)entity).isInVehicleMode()) {
+            if (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE) {
                 choStartingMode.setSelectedIndex(1);
             }
             updateStartingModeOptions();
@@ -1214,20 +1214,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             
             //Set the entity's starting mode
             if (isQuadVee) {
-                if (choStartingMode.getSelectedIndex() == 1) {
-                    entity.setMovementMode(((QuadVee)entity).getMotiveType() == QuadVee.MOTIVE_WHEEL?
-                            EntityMovementMode.WHEELED : EntityMovementMode.TRACKED);
-                } else {
-                    entity.setMovementMode(EntityMovementMode.QUAD);
-                }
+                entity.setConversionMode(choStartingMode.getSelectedIndex());
             } else if (isLAM) {
                 if (choStartingMode.getSelectedIndex() == 2) {
-                    entity.setMovementMode(EntityMovementMode.AERODYNE);
+                    entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
                 } else if (choStartingMode.getSelectedIndex() == 1) {
-                    entity.setMovementMode(((LandAirMech)entity).getLAMType() == LandAirMech.LAM_BIMODAL?
-                            EntityMovementMode.AERODYNE : EntityMovementMode.WIGE);
+                    entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
+                    entity.setConversionMode(((LandAirMech)entity).getLAMType() == LandAirMech.LAM_BIMODAL?
+                            LandAirMech.CONV_MODE_FIGHTER : LandAirMech.CONV_MODE_AIRMECH);
                 } else {
-                    entity.setMovementMode(EntityMovementMode.BIPED);
+                    entity.setConversionMode(LandAirMech.CONV_MODE_MECH);
                 }
             }
 

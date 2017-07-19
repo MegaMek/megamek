@@ -293,6 +293,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected int[] armorTechLevel;
     protected boolean isJumpingNow = false;
     protected boolean convertingNow = false;
+    private int conversionMode = 0;
     protected EntityMovementMode previousMovementMode;
 
     protected DisplacementAttackAction displacementAttack = null;
@@ -6420,7 +6421,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((overallMoveType == EntityMovementType.MOVE_SPRINT
                 || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
                 && (this instanceof Tank
-                        || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode()))) {
+                        || (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
             roll.append(new PilotingRollData(getId(), 0, "using overdrive"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -6439,7 +6440,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION)
                 && (this instanceof Tank
-                        || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode()))) {
+                        || (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
             if (((overallMoveType == EntityMovementType.MOVE_SPRINT
                     || overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT)
                     && (movedLastRound == EntityMovementType.MOVE_WALK
@@ -13719,6 +13720,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return convertingNow;
     }
     
+    public int getConversionMode() {
+        return conversionMode;
+    }
+    
+    /**
+     * Units capable of converting mode should override this to perform any other necessary changes.
+     * @param mode
+     */
+    public void setConversionMode(int mode) {
+        conversionMode = mode;
+    }
+    
     /**
      * Entities that can convert movement modes (LAMs, QuadVees) report the next mode to assume
      * when a convert movement command is processed. This provides a set order for cycling through
@@ -13737,7 +13750,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * the turn in AirMech mode have three available.
      */
     public void toggleConversionMode() {
-        movementMode = nextConversionMode(movementMode);
+        setMovementMode(nextConversionMode(movementMode));
     }
     
     /**

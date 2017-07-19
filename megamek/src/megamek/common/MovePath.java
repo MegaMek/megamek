@@ -192,7 +192,8 @@ public class MovePath implements Cloneable, Serializable {
         return ((getEntity() instanceof QuadMech
                 // QuadVee cannot shift in vee mode
                 && !(getEntity() instanceof QuadVee
-                        && (((QuadVee)getEntity()).isInVehicleMode() || getEntity().isConvertingNow())))
+                        && (entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE
+                            || getEntity().isConvertingNow())))
                 // Maneuvering Ace allows Bipeds and VTOLs moving at cruise
                 //  speed to perform a lateral shift
                 || (getEntity().isUsingManAce()
@@ -373,7 +374,8 @@ public class MovePath implements Cloneable, Serializable {
         // in the same round except VTOLs.
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_REVERSE_GEAR)
                 && ((entity instanceof Tank && !(entity instanceof VTOL))
-                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))) {
+                        || (entity instanceof QuadVee
+                                && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
             boolean fwd = false;
             boolean rev = false;
             for (MoveStep s : steps) {

@@ -266,7 +266,7 @@ public class MechTileset {
             return default_tripod;
         }
         if (entity instanceof QuadVee) {
-            return ((QuadVee)entity).isInVehicleMode()?
+            return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE?
                     default_quadvee_vehicle : default_quadvee;
         }
         if (entity instanceof LandAirMech) {

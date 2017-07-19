@@ -503,7 +503,7 @@ public class Compute {
                         || (entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
                         || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)
                         || (entity.getMovementMode() == EntityMovementMode.WIGE)
-                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
+                        || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
                 && (destHex.terrainLevel(Terrains.WATER) > 0)
                 && !isPavementStep) {
             return true;

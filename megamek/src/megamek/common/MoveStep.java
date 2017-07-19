@@ -1053,7 +1053,8 @@ public class MoveStep implements Serializable {
         // Tanks can just drive out of hull-down.  If we're a tank, and we moved
         //  then we are no longer hull-down.
         if ((entity instanceof Tank
-                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
+                || (entity instanceof QuadVee
+                        && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
                 && (distance > 0)) {
             setHullDown(false);
         }
@@ -2316,8 +2317,8 @@ public class MoveStep implements Serializable {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
             } else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)
-                    && ((entity instanceof Mech && !(entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
-                            || ((entity instanceof Tank || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
+                    && ((entity instanceof Mech && !(entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
+                            || ((entity instanceof Tank || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
                             && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)))
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
@@ -2347,7 +2348,7 @@ public class MoveStep implements Serializable {
         if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ACCELERATION)
                 && movementType == EntityMovementType.MOVE_SPRINT
                 && (entity instanceof Tank
-                        || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))
+                        || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
                 && (entity.movedLastRound == EntityMovementType.MOVE_NONE
                     || entity.movedLastRound == EntityMovementType.MOVE_SKID
                     || entity.movedLastRound == EntityMovementType.MOVE_JUMP)) {
@@ -2565,7 +2566,8 @@ public class MoveStep implements Serializable {
             }
             if (entity instanceof Tank
                     || (entity instanceof QuadVee
-                            && ((QuadVee)entity).isInVehicleMode() != entity.isConvertingNow())) {
+                            && ((entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)
+                                    != entity.isConvertingNow()))) {
                 //Tanks and QuadVees ending movement in vehicle mode require a fortified hex.
                 if (!(game.getBoard().getHex(curPos)
                         .containsTerrain(Terrains.FORTIFIED))) {

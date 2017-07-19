@@ -164,9 +164,9 @@ public class MechView {
         }
 
         //We may have altered the starting mode during configuration, so we save the current one here to restore it
-        EntityMovementMode originalMode = entity.getMovementMode();
+        int originalMode = entity.getConversionMode();
         if (entity instanceof QuadVee) {
-            entity.setMovementMode(EntityMovementMode.QUAD);
+            entity.setConversionMode(QuadVee.CONV_MODE_MECH);
         }
         if (!isGunEmplacement) {
             sBasic.append("<br>"); //$NON-NLS-1$
@@ -203,13 +203,12 @@ public class MechView {
             sBasic.append("<br><i>(").append(Messages.getString("MechView.DWPBurdened")).append(")</i>"); //$NON-NLS-1$
         }
         if (entity instanceof QuadVee) {
-            entity.setMovementMode(((QuadVee)entity).getMotiveType() == QuadVee.MOTIVE_WHEEL?
-                    EntityMovementMode.WHEELED : EntityMovementMode.TRACKED);
+            entity.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
             sBasic.append("<br>").append(Messages.getString("MovementType."
                     + entity.getMovementModeAsString())).append(": ") //$NON-NLS-1$
                 .append(entity.getWalkMP()).append("/") //$NON-NLS-1$
                 .append(entity.getRunMPasString());
-            entity.setMovementMode(originalMode);
+            entity.setConversionMode(originalMode);
         }
         if (isVehicle) {
             sBasic.append(" (") //$NON-NLS-1$

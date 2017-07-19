@@ -5935,7 +5935,7 @@ public class Server implements Runnable {
         boolean mechDamage = entity instanceof Mech
                 && !(entity.getMovementMode() == EntityMovementMode.WIGE
                     && step.getClearance() > 0);
-        if (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
+        if (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE) {
             mechDamage = flip;
         }
         if (mechDamage) {
@@ -5968,7 +5968,7 @@ public class Server implements Runnable {
         if (flip && entity instanceof Tank) {
             addReport(applyCriticalHit(entity, Entity.NONE, new CriticalSlot(0, Tank.CRIT_CREW_STUNNED),
                     true, 0, false));
-        } else if (flip && entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
+        } else if (flip && entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE) {
             // QuadVees don't suffer stunned crew criticals; require PSR to avoid damage instead.
             PilotingRollData prd = entity.getBasePilotingRoll();
             addReport(checkPilotAvoidFallDamage(entity, 1, prd));            
@@ -7218,7 +7218,7 @@ public class Server implements Runnable {
                 // Non-omni QuadVees converting to vehicle mode dump any riding BA in the
                 // starting hex if they fail to make an anti-mech check.
                 // http://bg.battletech.com/forums/index.php?topic=55263.msg1271423#msg1271423
-                if (entity instanceof QuadVee && !((QuadVee)entity).isInVehicleMode()
+                if (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_MECH
                         && !entity.isOmni()) {
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing,
@@ -9150,7 +9150,7 @@ public class Server implements Runnable {
         // and doesn't end hull-down we can remove the hull-down status
         if (entity.isHullDown() && !md.getFinalHullDown()
                 && (entity instanceof Tank
-                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()))) {
+                || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))) {
             entity.setHullDown(false);
         }
 
@@ -9500,7 +9500,7 @@ public class Server implements Runnable {
             r = new Report(1210);
             r.subject = entity.getId();
             r.addDesc(entity);
-            if (entity instanceof QuadVee && entity.isProne() && !((QuadVee)entity).isInVehicleMode()) {
+            if (entity instanceof QuadVee && entity.isProne() && entity.getConversionMode() == QuadVee.CONV_MODE_MECH) {
                 //Fall while converting to vehicle mode cancels conversion.
                 entity.setConvertingNow(false);
                 r.messageId = 2454;
@@ -11396,7 +11396,7 @@ public class Server implements Runnable {
         // vibrabomb in Mech mode. Those that are converting to or from Mech mode should
         // are using leg movement and should be able to set them off.
         if (!(entity instanceof Mech)
-                || (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()
+                || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE
                         && !entity.isConvertingNow())) {
             return boom;
         }
@@ -33133,9 +33133,6 @@ public class Server implements Runnable {
                 vPhaseReport.addAll(damageEntity(entity, hit, damage, false,
                                                  DamageType.NONE, true));
             }
-            if (entity instanceof QuadVee && ((QuadVee)entity).isInVehicleMode()) {
-                vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, 0));
-            }
         } else if (entity instanceof Tank) {
             hit = new HitData(Tank.LOC_FRONT);
             vPhaseReport.addAll(damageEntity(entity, hit, damage, false,
@@ -33958,7 +33955,7 @@ public class Server implements Runnable {
                         && !(isHoverOrWiGE && (e.getRunMP() >= 0))
                         && (e.getMovementMode() != EntityMovementMode.INF_UMU)
                         && !e.hasUMU()
-                        && !(e instanceof QuadVee && ((QuadVee)e).isInVehicleMode())) {
+                        && !(e instanceof QuadVee && e.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
                     vPhaseReport.addAll(doEntityFallsInto(e, c,
                             new PilotingRollData(TargetRoll.AUTOMATIC_FAIL),
                             true));

@@ -18795,13 +18795,12 @@ public class Server implements Runnable {
             }
 
             // put in ASF heat build-up first because there are few differences
-            if (entity.isAero() && !(entity instanceof ConvFighter)) {
+            if (entity instanceof Aero && !(entity instanceof ConvFighter)) {
                 // If this aero is part of a squadron, we will deal with its
                 // heat with the fighter squadron
                 if ((game.getEntity(entity.getTransportId()) instanceof FighterSquadron)) {
                     continue;
                 }
-                IAero a = (IAero) entity;
 
                 // should we even bother?
                 if (entity.isDestroyed() || entity.isDoomed()
@@ -19067,51 +19066,7 @@ public class Server implements Runnable {
                     }
                 }
 
-                // heat effects: control effects (must make it unless already
-                // random moving)
-                if ((entity.heat >= 5) && !a.isRandomMove()) {
-                    int controlavoid = (5 + (entity.heat >= 10 ? 1 : 0)
-                                        + (entity.heat >= 15 ? 1 : 0)
-                                        + (entity.heat >= 20 ? 1 : 0) + (entity.heat >= 25 ? 2
-                                                                                           : 0))
-                                       - hotDogMod;
-                    int controlroll = Compute.d6(2);
-                    r = new Report(9210);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(controlavoid);
-                    r.add(controlroll);
-                    if (controlroll >= controlavoid) {
-                        // in control
-                        r.choose(true);
-                        addReport(r);
-                    } else {
-                        // out of control
-                        r.choose(false);
-                        addReport(r);
-                        // if not already out of control, this may lead to
-                        // elevation decline
-                        if (!a.isOutControl() && !game.getBoard().inSpace()
-                            && a.isAirborne()) {
-                            int loss = Compute.d6(1);
-                            r = new Report(9366);
-                            r.newlines = 0;
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            r.add(loss);
-                            addReport(r);
-                            entity.setAltitude(entity.getAltitude() - loss);
-                            // check for crash
-                            if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
-                                addReport(processCrash(entity,
-                                                       a.getCurrentVelocity(), entity.getPosition()));
-                            }
-                        }
-                        // force unit out of control through heat
-                        a.setOutCtrlHeat(true);
-                        a.setRandomMove(true);
-                    }
-                } // End of Entity Instance of Aero
+                checkRandomAeroMovement(entity, hotDogMod);
 
                 // heat effects: ammo explosion!
                 if (entity.heat >= 19) {
@@ -19676,6 +19631,9 @@ public class Server implements Runnable {
                 }
             }
 
+            // LAMs in fighter mode need to check for random movement due to heat
+            checkRandomAeroMovement(entity, hotDogMod);
+
             // heat effects: ammo explosion!
             if (entity.heat >= 19) {
                 int boom = (4 + (entity.heat >= 23 ? 2 : 0) + (entity.heat >= 28 ? 2
@@ -19891,6 +19849,58 @@ public class Server implements Runnable {
         if (vPhaseReport.size() == 1) {
             // I guess nothing happened...
             addReport(new Report(1205, Report.PUBLIC));
+        }
+    }
+
+    private void checkRandomAeroMovement(Entity entity, int hotDogMod) {
+        if (!entity.isAero()) {
+            return;
+        }
+        IAero a = (IAero)entity;
+        // heat effects: control effects (must make it unless already
+        // random moving)
+        if ((entity.heat >= 5) && !a.isRandomMove()) {
+            int controlavoid = (5 + (entity.heat >= 10 ? 1 : 0)
+                                + (entity.heat >= 15 ? 1 : 0)
+                                + (entity.heat >= 20 ? 1 : 0) + (entity.heat >= 25 ? 2
+                                                                                   : 0))
+                               - hotDogMod;
+            int controlroll = Compute.d6(2);
+            Report r = new Report(9210);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(controlavoid);
+            r.add(controlroll);
+            if (controlroll >= controlavoid) {
+                // in control
+                r.choose(true);
+                addReport(r);
+            } else {
+                // out of control
+                r.choose(false);
+                addReport(r);
+                // if not already out of control, this may lead to
+                // elevation decline
+                if (!a.isOutControl() && !game.getBoard().inSpace()
+                    && a.isAirborne()) {
+                    int loss = Compute.d6(1);
+                    r = new Report(9366);
+                    r.newlines = 0;
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(loss);
+                    addReport(r);
+                    entity.setAltitude(entity.getAltitude() - loss);
+                    // check for crash
+                    if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
+                        addReport(processCrash(entity,
+                                               a.getCurrentVelocity(), entity.getPosition()));
+                    }
+                }
+                // force unit out of control through heat
+                a.setOutCtrlHeat(true);
+                a.setRandomMove(true);
+            }
         }
     }
 

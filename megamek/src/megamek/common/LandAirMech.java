@@ -971,7 +971,7 @@ public class LandAirMech extends BipedMech implements IAero {
             for (int loc = 0; loc < locations(); loc++) {
                 for (int i = 0; i < crits[loc].length; i++) {
                     final CriticalSlot slot = crits[loc][i];
-                    if (slot.getType() == CriticalSlot.TYPE_SYSTEM
+                    if (slot != null && slot.getType() == CriticalSlot.TYPE_SYSTEM
                             && slot.getIndex() == LAM_LANDING_GEAR
                             && !slot.isDestroyed()) {
                         gearSlots.add(slot);

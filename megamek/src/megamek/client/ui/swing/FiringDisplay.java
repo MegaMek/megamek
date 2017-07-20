@@ -46,7 +46,6 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.Building;
@@ -56,6 +55,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.HexTarget;
+import megamek.common.IAero;
 import megamek.common.IAimingModes;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -1433,7 +1433,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     private int[] getBombPayload(boolean isSpace, int limit) {
         int[] payload = new int[BombType.B_NUM];
-        if (!(ce() instanceof Aero)) {
+        if (!ce().isAero()) {
             return payload;
         }
         int[] loadout = ce().getBombLoadout();
@@ -2285,9 +2285,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void updateStrafe() {
-        if (ce() instanceof Aero) {
-            Aero a = (Aero) ce();
-            setStrafeEnabled(a.getAltitude() <= 3 && !a.isSpheroid());
+        if (ce().isAero()) {
+            setStrafeEnabled(ce().getAltitude() <= 3 && !((IAero)ce()).isSpheroid());
         } else {
             setStrafeEnabled(false);
         }
@@ -2572,10 +2571,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     
     private boolean validStrafingCoord(Coords newCoord) {
         // Only Aeros can strafe...
-        if (ce() == null || !(ce() instanceof Aero)) {
+        if (ce() == null || !ce().isAero()) {
             return false;
         }
-        Aero a = (Aero)ce();
         
         // Can't update strafe hexes after weapons are fired, otherwise we'd
         // have to have a way to update the attacks vector
@@ -2584,7 +2582,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
         
         // Can only strafe hexes that were flown over
-        if (!a.passedThrough(newCoord)) {
+        if (!ce().passedThrough(newCoord)) {
             return false;
         }
         

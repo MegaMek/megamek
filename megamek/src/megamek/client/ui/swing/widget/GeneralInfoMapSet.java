@@ -26,13 +26,13 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
+import megamek.common.IAero;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
@@ -423,12 +423,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpR4.setVisible(false);
         }
 
-        if (en instanceof Aero) {
-            Aero a = (Aero) en;
+        if (en.isAero()) {
+            IAero a = (IAero) en;
             curMoveR.setString(Integer.toString(a.getCurrentVelocity())
                     + Messages.getString("GeneralInfoMapSet.velocity"));
             int currentFuel = a.getFuel();
-            int safeThrust = a.getWalkMP();
+            int safeThrust = en.getWalkMP();
             fuelR.setString(Integer.toString(a.getFuel()));
             if (currentFuel < (5 * safeThrust)) {
                 fuelR.setColor(Color.red);

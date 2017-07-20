@@ -14,10 +14,10 @@ import java.awt.image.BufferedImage;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.common.Aero;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.IAero;
 import megamek.common.MiscType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
@@ -547,11 +547,11 @@ class StepSprite extends Sprite {
         }
 
         if (!step.getEntity().isAirborne()
-                || !(step.getEntity() instanceof Aero)) {
+                || !step.getEntity().isAero()) {
             return;
         }
 
-        if (((Aero) step.getEntity()).isSpheroid()) {
+        if (((IAero) step.getEntity()).isSpheroid()) {
             return;
         }
 

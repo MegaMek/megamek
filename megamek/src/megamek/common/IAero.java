@@ -15,6 +15,7 @@ package megamek.common;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 
@@ -67,11 +68,6 @@ public interface IAero {
     void setAltLossThisRound(int i);
     public void resetAltLossThisRound();
     
-    int getTakeOffLength();
-    int getLandingLength();
-    boolean canTakeOffHorizontally();
-    boolean canLandHorizontally();
-    
     int getNoseArmor();
     void setSI(int si);
     int getSI();
@@ -112,8 +108,9 @@ public interface IAero {
      * Default methods that are implemented the same for Aero and LandAirMech
      */
 
-    /* Entity methods needed by default methods */
-    Entity getEntity();
+    default Entity getEntity() {
+        return (Entity)this;
+    }
     
     default PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
         PilotingRollData roll = getEntity().getBasePilotingRoll(overallMoveType);
@@ -440,6 +437,154 @@ public interface IAero {
             }
         }
         return arc;
+    }
+
+    default int getTakeOffLength() {
+        if (isVSTOL() || isSTOL()) {
+            return 10;
+        }
+        return 20;
+    }
+
+    default int getLandingLength() {
+        if (isVSTOL() || isSTOL()) {
+            return 5;
+        }
+        return 8;
+    }
+
+    default boolean canTakeOffHorizontally() {
+        return !isSpheroid() && (getCurrentThrust() > 0);
+    }
+
+    default boolean canLandHorizontally() {
+        return !isSpheroid();
+    }
+
+    default boolean canTakeOffVertically() {
+        return (isVSTOL() || isSpheroid()) && (getCurrentThrust() > 2);
+    }
+
+    default boolean canLandVertically() {
+        return (isVSTOL() || isSpheroid());
+    }
+
+    default String hasRoomForHorizontalTakeOff() {
+        // walk along the hexes in the facing of the unit
+        IHex hex = getEntity().getGame().getBoard().getHex(getEntity().getPosition());
+        int elev = hex.getLevel();
+        int facing = getEntity().getFacing();
+        String lenString = " (" + getTakeOffLength() + " hexes required)";
+        // dropships need a strip three hexes wide
+        Vector<Coords> startingPos = new Vector<Coords>();
+        startingPos.add(getEntity().getPosition());
+        if (getEntity() instanceof Dropship) {
+            startingPos.add(getEntity().getPosition().translated((facing + 4) % 6));
+            startingPos.add(getEntity().getPosition().translated((facing + 2) % 6));
+        }
+        for (Coords pos : startingPos) {
+            for (int i = 0; i < getTakeOffLength(); i++) {
+                pos = pos.translated(facing);
+                // check for buildings
+                if (getEntity().getGame().getBoard().getBuildingAt(pos) != null) {
+                    return "Buildings in the way" + lenString;
+                }
+                // no units in the way
+                for (Entity en : getEntity().getGame().getEntitiesVector(pos)) {
+                    if (en.equals(this)) {
+                        continue;
+                    }
+                    if (!en.isAirborne()) {
+                        return "Ground units in the way" + lenString;
+                    }
+                }
+                hex = getEntity().getGame().getBoard().getHex(pos);
+                // if the hex is null, then we are offboard. Don't let units
+                // take off offboard.
+                if (null == hex) {
+                    return "Not enough room on map" + lenString;
+                }
+                if (!hex.isClearForTakeoff()) {
+                    return "Unacceptable terrain for landing" + lenString;
+                }
+                if (hex.getLevel() != elev) {
+                    return "Runway must contain no elevation change" + lenString;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    default String hasRoomForHorizontalLanding() {
+        // walk along the hexes in the facing of the unit
+        IHex hex = getEntity().getGame().getBoard().getHex(getEntity().getPosition());
+        int elev = hex.getLevel();
+        int facing = getEntity().getFacing();
+        String lenString = " (" + getLandingLength() + " hexes required)";
+        // dropships need a a landing strip three hexes wide
+        Vector<Coords> startingPos = new Vector<Coords>();
+        startingPos.add(getEntity().getPosition());
+        if (this instanceof Dropship) {
+            startingPos.add(getEntity().getPosition().translated((facing + 5) % 6));
+            startingPos.add(getEntity().getPosition().translated((facing + 1) % 6));
+        }
+        for (Coords pos : startingPos) {
+            for (int i = 0; i < getLandingLength(); i++) {
+                pos = pos.translated(facing);
+                // check for buildings
+                if (getEntity().getGame().getBoard().getBuildingAt(pos) != null) {
+                    return "Buildings in the way" + lenString;
+                }
+                // no units in the way
+                for (Entity en : getEntity().getGame().getEntitiesVector(pos)) {
+                    if (!en.isAirborne()) {
+                        return "Ground units in the way" + lenString;
+                    }
+                }
+                hex = getEntity().getGame().getBoard().getHex(pos);
+                // if the hex is null, then we are offboard. Don't let units
+                // land offboard.
+                if (null == hex) {
+                    return "Not enough room on map" + lenString;
+                }
+                // landing must contain only acceptable terrain
+                if (!hex.isClearForLanding()) {
+                    return "Unacceptable terrain for landing" + lenString;
+                }
+
+                if (hex.getLevel() != elev) {
+                    return "Landing strip must contain no elevation change" + lenString;
+                }
+            }
+        }
+        return null;
+    }
+
+    default String hasRoomForVerticalLanding() {
+        Coords pos = getEntity().getPosition();
+        IHex hex = getEntity().getGame().getBoard().getHex(getEntity().getPosition());
+        if (getEntity().getGame().getBoard().getBuildingAt(pos) != null) {
+            return "Buildings in the way";
+        }
+        // no units in the way
+        for (Entity en : getEntity().getGame().getEntitiesVector(pos)) {
+            if (!en.isAirborne()) {
+                return "Ground units in the way";
+            }
+        }
+        hex = getEntity().getGame().getBoard().getHex(pos);
+        // if the hex is null, then we are offboard. Don't let units
+        // land offboard.
+        if (null == hex) {
+            return "landing area not on the map";
+        }
+        // landing must contain only acceptable terrain
+        if (!hex.isClearForLanding()) {
+            return "Unacceptable terrain for landing";
+        }
+
+        return null;
     }
 
     default void liftOff(int altitude) {

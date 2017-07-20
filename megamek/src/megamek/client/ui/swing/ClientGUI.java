@@ -42,7 +42,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -73,21 +82,19 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
+import megamek.common.IAero;
 import megamek.common.IGame;
-import megamek.common.Jumpship;
-import megamek.common.SmallCraft;
 import megamek.common.IGame.Phase;
 import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
-import megamek.common.WeaponOrderHandler;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.WeaponOrderHandler;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameCFREvent;
@@ -1515,10 +1522,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         // the movement turn are considered selectable
                         entity.setDone(true);
                         entity.setUnloaded(true);
-                        if ((entity instanceof Aero)
-                                && !((entity instanceof SmallCraft) 
-                                        || (entity instanceof Jumpship))) {
-                            ((Aero)entity).applyBombs();
+                        if (entity.isFighter()) {
+                            ((IAero)entity).applyBombs();
                         }
                     }
                 }

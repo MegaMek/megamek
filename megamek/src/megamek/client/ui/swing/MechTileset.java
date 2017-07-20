@@ -270,9 +270,9 @@ public class MechTileset {
                     default_quadvee_vehicle : default_quadvee;
         }
         if (entity instanceof LandAirMech) {
-            if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
+            if (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
                 return default_lam_fighter;
-            } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+            } else if (entity.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH) {
                 return default_lam_airmech;
             } else {
                 return default_lam_mech;

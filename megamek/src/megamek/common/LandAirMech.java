@@ -804,12 +804,6 @@ public class LandAirMech extends BipedMech implements IAero {
     
     /** Fighter Mode **/
     
-    /** Needed by IAero for default methods **/
-    @Override
-    public Entity getEntity() {
-        return this;
-    }
-    
     public void setWhoFirst() {
         whoFirst = Compute.randomInt(500);
     }
@@ -1300,26 +1294,6 @@ public class LandAirMech extends BipedMech implements IAero {
             return 999;
         }
         return super.getElevation();
-    }
-
-    @Override
-    public int getTakeOffLength() {
-        return 10;
-    }
-
-    @Override
-    public int getLandingLength() {
-        return 5;
-    }
-
-    @Override
-    public boolean canTakeOffHorizontally() {
-        return getCurrentThrust() > 0;
-    }
-
-    @Override
-    public boolean canLandHorizontally() {
-        return true;
     }
 
     public int getFuelUsed(int thrust) {

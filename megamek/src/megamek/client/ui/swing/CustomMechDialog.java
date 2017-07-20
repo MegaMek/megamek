@@ -485,13 +485,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         setupButtons();
 
-        if (isAero) {
-            Aero a = (Aero) entity;
+        if (isAero || isLAM) {
+            IAero a = (IAero) entity;
             fldStartVelocity.setText(new Integer(a.getCurrentVelocity())
                     .toString());
             fldStartVelocity.addActionListener(this);
 
-            fldStartAltitude.setText(new Integer(a.getAltitude()).toString());
+            fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
         }
         if (isVTOL || isLAM || isGlider) {

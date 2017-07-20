@@ -1561,7 +1561,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 // Append ranges
                 WeaponType wtype = (WeaponType) curWp.getType();
                 int ranges[];
-                if (entity instanceof Aero) {
+                if (entity.isAero()) {
                     ranges = wtype.getATRanges();
                 } else {
                     ranges = wtype.getRanges(curWp);

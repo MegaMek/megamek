@@ -19,13 +19,13 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.Client;
-import megamek.common.Aero;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -102,9 +102,9 @@ public class SharedUtility {
                 break;
             }
 
-            if (entity.isAirborne() && (entity instanceof Aero)) {
+            if (entity.isAirborne() && entity.isAero()) {
                 // check for more than one roll
-                Aero a = (Aero) entity;
+                IAero a = (IAero) entity;
                 rollTarget = a.checkRolls(step, overallMoveType);
                 checkNag(rollTarget, nagReport, psrList);
 
@@ -129,21 +129,21 @@ public class SharedUtility {
 
             //check for vertical takeoff
             if ((step.getType() == MoveStepType.VTAKEOFF)
-                    && (entity instanceof Aero)) {
-                rollTarget = ((Aero)entity).checkVerticalTakeOff();
+                    && entity.isAero()) {
+                rollTarget = ((IAero)entity).checkVerticalTakeOff();
                 checkNag(rollTarget, nagReport, psrList);
             }
 
             //check for landing
             if ((step.getType() == MoveStepType.LAND)
-                    && (entity instanceof Aero)) {
-                rollTarget = ((Aero) entity).checkLanding(moveType,
+                    && entity.isAero()) {
+                rollTarget = ((IAero) entity).checkLanding(moveType,
                         step.getVelocity(), curPos, curFacing, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
             if ((step.getType() == MoveStepType.VLAND)
-                    && (entity instanceof Aero)) {
-                rollTarget = ((Aero) entity).checkLanding(moveType,
+                    && entity.isAero()) {
+                rollTarget = ((IAero) entity).checkLanding(moveType,
                         step.getVelocity(), curPos, curFacing, true);
                 checkNag(rollTarget, nagReport, psrList);
             }
@@ -463,9 +463,9 @@ public class SharedUtility {
 
         }
 
-        if (entity.isAirborne() && (entity instanceof Aero)) {
+        if (entity.isAirborne() && entity.isAero()) {
             // check to see if thrust exceeded SI
-            Aero a = (Aero) entity;
+            IAero a = (IAero) entity;
             int thrust = md.getMpUsed();
             rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
             checkNag(rollTarget, nagReport, psrList);
@@ -529,12 +529,12 @@ public class SharedUtility {
         }
 
         final Entity entity = md.getEntity();
-        if(!(entity instanceof Aero)) {
+        if(!entity.isAero()) {
             return nagReport.toString();
         }
         EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
 
-        Aero a = (Aero) entity;
+        IAero a = (IAero) entity;
 
         PilotingRollData rollTarget;
 
@@ -587,10 +587,10 @@ public class SharedUtility {
     public static MovePath moveAero(MovePath md, Client client) {
         final Entity entity = md.getEntity();
         final IGame game = entity.getGame();
-        if (!(entity instanceof Aero)) {
+        if (!entity.isAero()) {
             return md;
         }
-        Aero a = (Aero) entity;
+        IAero a = (IAero) entity;
 
         // need to check and see
         // if the units current velocity is zero

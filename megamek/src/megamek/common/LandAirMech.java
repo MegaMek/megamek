@@ -13,6 +13,8 @@
  */
 package megamek.common;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
@@ -914,6 +916,11 @@ public class LandAirMech extends BipedMech implements IAero {
     public void setAccLast(boolean b) {
         accLast = b;
     }
+    
+    @Override
+    public void setSI(int si) {
+        setInternal(si, LOC_CT);
+    }
 
     @Override
     public int getSI() {
@@ -961,6 +968,27 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public int getRightThrustHits() {
         return 0;
+    }
+    
+    @Override
+    public void setGearHit(boolean hit) {
+        if (hit) {
+            List<CriticalSlot> gearSlots = new ArrayList<>();
+            for (int loc = 0; loc < locations(); loc++) {
+                for (int i = 0; i < crits[loc].length; i++) {
+                    final CriticalSlot slot = crits[loc][i];
+                    if (slot.getType() == CriticalSlot.TYPE_SYSTEM
+                            && slot.getIndex() == LAM_LANDING_GEAR
+                            && !slot.isDestroyed()) {
+                        gearSlots.add(slot);
+                    }
+                }
+            }
+            if (gearSlots.size() > 0) {
+                int index = Compute.randomInt(gearSlots.size());
+                gearSlots.get(index).setDestroyed(true);
+            }
+        }
     }
     
     /**

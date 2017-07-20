@@ -112,6 +112,7 @@ import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.HitData;
+import megamek.common.IAero;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IEntityRemovalConditions;
@@ -2758,8 +2759,8 @@ public class Server implements Runnable {
     public void checkEntityExchange() {
         for (Iterator<Entity> entities = game.getEntities(); entities.hasNext();) {
             Entity entity = entities.next();
-            if (entity instanceof Aero) {
-                Aero a = (Aero) entity;
+            if (entity.isAero()) {
+                IAero a = (IAero) entity;
                 if (game.getBoard().inSpace()) {
                     // altitude and elevation don't matter in space
                     a.liftOff(0);
@@ -2767,7 +2768,7 @@ public class Server implements Runnable {
                     // check for grounding
                     if (game.getBoard().inAtmosphere() && !entity.isAirborne()) {
                         // you have to be airborne on the atmospheric map
-                        a.liftOff(a.getAltitude());
+                        a.liftOff(entity.getAltitude());
                     }
                 }
                 // apply bombs and santa annas
@@ -2776,7 +2777,7 @@ public class Server implements Runnable {
                     entity.applySantaAnna();
                 }
                 if (!((entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
-                    ((Aero) entity).applyBombs();
+                    a.applyBombs();
                 }
             }
 
@@ -4654,19 +4655,17 @@ public class Server implements Runnable {
                                int bonus) {
 
         Entity unit = null;
-        if (unloaded instanceof Entity) {
+        if (unloaded instanceof Entity && unloader instanceof Aero) {
             unit = (Entity) unloaded;
         } else {
             return false;
         }
 
         // must be an ASF, Small Craft, or Dropship
-        Aero a = new Aero();
-        if ((unit instanceof Aero) && !(unit instanceof Jumpship)) {
-            a = (Aero) unit;
-        } else {
+        if (!unit.isAero() || unit instanceof Jumpship) {
             return false;
         }
+        IAero a = (IAero)unit;
 
         Report r;
 
@@ -4699,7 +4698,7 @@ public class Server implements Runnable {
         a.setNextVelocity(velocity);
 
         // if using advanced movement then set vectors
-        a.setVectors(moveVec);
+        unit.setVectors(moveVec);
 
         unit.setAltitude(altitude);
 
@@ -4725,7 +4724,7 @@ public class Server implements Runnable {
                 addReport(r);
                 // damage the unit
                 int damage = 10 * (psr.getValue() - ctrlroll);
-                HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL,
+                HitData hit = unit.rollHitLocation(ToHitData.HIT_NORMAL,
                                                 ToHitData.SIDE_FRONT);
                 Vector<Report> rep = damageEntity(unit, hit, damage);
                 Report.indentAll(rep, 1);
@@ -4755,8 +4754,8 @@ public class Server implements Runnable {
 
         // launching from an OOC vessel causes damage
         // same thing if faster than 2 velocity in atmosphere
-        if ((((Aero) unloader).isOutControlTotal() && !unit.isDoomed())
-            || ((((Aero) unloader).getCurrentVelocity() > 2) && !game
+        if ((((Aero)unloader).isOutControlTotal() && !unit.isDoomed())
+            || ((((Aero)unloader).getCurrentVelocity() > 2) && !game
                 .getBoard().inSpace())) {
             int damroll = Compute.d6(2);
             int damage = damroll * 10;
@@ -4765,7 +4764,7 @@ public class Server implements Runnable {
             r.add(unit.getDisplayName());
             r.add(damage);
             addReport(r);
-            HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL,
+            HitData hit = unit.rollHitLocation(ToHitData.HIT_NORMAL,
                                             ToHitData.SIDE_FRONT);
             addReport(damageEntity(unit, hit, damage));
             // did we destroy the unit?
@@ -4858,7 +4857,7 @@ public class Server implements Runnable {
                                          || (null != bldg);
                         for (Entity unit : game.getEntitiesVector(newPos)) {
                             if ((unit.getAltitude() == altitude)
-                                && !(unit instanceof Aero)) {
+                                && !unit.isAero()) {
                                 count++;
                             }
                         }
@@ -4881,7 +4880,7 @@ public class Server implements Runnable {
                                          || (null != bldg);
                         for (Entity unit : game.getEntitiesVector(newPos)) {
                             if ((unit.getAltitude() == altitude)
-                                && !(unit instanceof Aero)) {
+                                && !unit.isAero()) {
                                 count++;
                             }
                         }
@@ -6194,12 +6193,12 @@ public class Server implements Runnable {
         int partialroll = Compute.d6(1);
         boolean partial = (partialroll == 6);
         // if aero chance to avoid
-        if ((target instanceof Aero)
+        if ((target.isAero())
             && (target.mpUsed < target.getRunMPwithoutMASC())
-            && !((Aero) target).isOutControlTotal() && !target.isImmobile()) {
+            && !((IAero) target).isOutControlTotal() && !target.isImmobile()) {
             // give them a control roll to avoid the collision
             // TODO: I should make this voluntary really
-            Aero ta = (Aero) target;
+            IAero ta = (IAero) target;
             PilotingRollData psr = target.getBasePilotingRoll();
             psr.addModifier(0, "avoiding collision");
             int ctrlroll = Compute.d6(2);
@@ -6240,10 +6239,10 @@ public class Server implements Runnable {
                     // exceeded it before
                     if (target.mpUsed <= ta.getSI()) {
                         PilotingRollData rollTarget = ta.checkThrustSITotal(
-                                target.getRunMPwithoutMASC(), ta.moved);
+                                target.getRunMPwithoutMASC(), target.moved);
                         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                             game.addControlRoll(new PilotingRollData(
-                                    ta.getId(), 0,
+                                    target.getId(), 0,
                                     "Thrust spent during turn exceeds SI"));
                         }
                     }
@@ -6264,7 +6263,7 @@ public class Server implements Runnable {
         ToHitData toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                                         "Its a collision");
         toHit.setSideTable(target.sideTable(src));
-        resolveRamDamage((Aero) entity, target, toHit, partial, false);
+        resolveRamDamage((IAero)entity, target, toHit, partial, false);
 
         // Has the target been destroyed?
         if (target.isDoomed()) {
@@ -6292,7 +6291,7 @@ public class Server implements Runnable {
     private boolean checkCrash(Entity entity, Coords pos, int altitude) {
 
         // only Aeros can crash
-        if (!(entity instanceof Aero)) {
+        if (!entity.isAero()) {
             return false;
         }
         // no crashing in space
@@ -6334,7 +6333,7 @@ public class Server implements Runnable {
             vReport.add(r);
             entity.setDoomed(true);
         } else {
-            ((Aero) entity).land();
+            ((IAero)entity).land();
         }
 
         // we might hit multiple hexes, if we're a dropship, so we do some
@@ -6638,13 +6637,13 @@ public class Server implements Runnable {
             entity.setDeployRound(1 + game.getRoundCount() + returnable);
             entity.setPosition(null);
             entity.setDone(true);
-            if (entity instanceof Aero) {
+            if (entity.isAero()) {
                 // If we're flying off because we're OOC, when we come back we
                 // should no longer be OOC
                 // If we don't, this causes a major problem as aeros tend to
                 // return, re-deploy then
                 // fly off again instantly.
-                ((Aero) entity).setOutControl(false);
+                ((IAero) entity).setOutControl(false);
             }
             switch (fleeDirection) {
                 case WEST:
@@ -6790,8 +6789,8 @@ public class Server implements Runnable {
             }
         }
 
-        if (md.contains(MoveStepType.TAKEOFF) && (entity instanceof Aero)) {
-            Aero a = (Aero) entity;
+        if (md.contains(MoveStepType.TAKEOFF) && entity.isAero()) {
+            IAero a = (IAero) entity;
             a.setCurrentVelocity(1);
             a.liftOff(1);
             if (entity instanceof Dropship) {
@@ -6799,21 +6798,21 @@ public class Server implements Runnable {
                         md.getFinalFacing(), entity);
             }
             checkForTakeoffDamage(a);
-            a.setPosition(a.getPosition().translated(a.getFacing(),
+            entity.setPosition(entity.getPosition().translated(entity.getFacing(),
                     a.getTakeOffLength()));
             entity.setDone(true);
             entityUpdate(entity.getId());
             return;
         }
 
-        if (md.contains(MoveStepType.VTAKEOFF) && (entity instanceof Aero)) {
-            Aero a = (Aero) entity;
+        if (md.contains(MoveStepType.VTAKEOFF) && entity.isAero()) {
+            IAero a = (IAero) entity;
             rollTarget = a.checkVerticalTakeOff();
             if (doVerticalTakeOffCheck(entity, rollTarget)) {
                 a.setCurrentVelocity(0);
                 a.liftOff(1);
                 if (entity instanceof Dropship) {
-                    applyDropshipProximityDamage(md.getFinalCoords(), a);
+                    applyDropshipProximityDamage(md.getFinalCoords(), (Dropship)a);
                 }
                 checkForTakeoffDamage(a);
             }
@@ -6822,8 +6821,8 @@ public class Server implements Runnable {
             return;
         }
 
-        if (md.contains(MoveStepType.LAND) && (entity instanceof Aero)) {
-            Aero a = (Aero) entity;
+        if (md.contains(MoveStepType.LAND) && entity.isAero()) {
+            IAero a = (IAero) entity;
             rollTarget = a.checkLanding(md.getLastStepMovementType(),
                     md.getFinalVelocity(), md.getFinalCoords(),
                     md.getFinalFacing(), false);
@@ -6836,14 +6835,14 @@ public class Server implements Runnable {
             return;
         }
 
-        if (md.contains(MoveStepType.VLAND) && (entity instanceof Aero)) {
-            Aero a = (Aero) entity;
+        if (md.contains(MoveStepType.VLAND) && entity.isAero()) {
+            IAero a = (IAero) entity;
             rollTarget = a.checkLanding(md.getLastStepMovementType(),
                     md.getFinalVelocity(), md.getFinalCoords(),
                     md.getFinalFacing(), true);
             doAttemptLanding(entity, rollTarget);
             if (entity instanceof Dropship) {
-                applyDropshipLandingDamage(md.getFinalCoords(), a);
+                applyDropshipLandingDamage(md.getFinalCoords(), (Dropship)a);
             }
             a.land();
             entity.setPosition(md.getFinalCoords());
@@ -6919,9 +6918,8 @@ public class Server implements Runnable {
         }
 
         // set acceleration used to default
-        if (entity instanceof Aero) {
-            Aero a = (Aero) entity;
-            a.setAccLast(false);
+        if (entity.isAero()) {
+            ((IAero)entity).setAccLast(false);
         }
 
         // check for dropping troops and drop them
@@ -7244,8 +7242,8 @@ public class Server implements Runnable {
             didMove = step.getDistance() > distance;
 
             // check for aero stuff
-            if (entity.isAirborne() && (entity instanceof Aero)) {
-                Aero a = (Aero) entity;
+            if (entity.isAirborne() && entity.isAero()) {
+                IAero a = (IAero) entity;
                 j++;
 
                 // increment straight moves (can't do it at end, because not all
@@ -7270,6 +7268,9 @@ public class Server implements Runnable {
                             && !game.useVectorMove()) {
                         if (!doSkillCheckInSpace(entity, rollTarget)) {
                             a.setSI(a.getSI() - 1);
+                            if (entity instanceof LandAirMech) {
+                                addReport(criticalEntity(entity, Mech.LOC_CT, false, 0, 1));
+                            }
                             // check for destruction
                             if (a.getSI() == 0) {
                                 addReport(destroyEntity(entity,
@@ -7295,7 +7296,7 @@ public class Server implements Runnable {
 
                 if (step.getType() == MoveStepType.RETURN) {
                     a.setCurrentVelocity(md.getFinalVelocity());
-                    a.setAltitude(curAltitude);
+                    entity.setAltitude(curAltitude);
                     processLeaveMap(entity, curFacing, true,
                             Compute.roundsUntilReturn(game, entity));
                     return;
@@ -7303,7 +7304,7 @@ public class Server implements Runnable {
 
                 if (step.getType() == MoveStepType.OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
-                    a.setAltitude(curAltitude);
+                    entity.setAltitude(curAltitude);
                     processLeaveMap(entity, curFacing, true, -1);
                     return;
                 }
@@ -7311,7 +7312,7 @@ public class Server implements Runnable {
                 rollTarget = a.checkRolls(step, overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(
-                            new PilotingRollData(a.getId(), 0, "excess roll"));
+                            new PilotingRollData(entity.getId(), 0, "excess roll"));
                 }
 
                 rollTarget = a.checkManeuver(step, overallMoveType);
@@ -7508,7 +7509,7 @@ public class Server implements Runnable {
                         // distribution
                         // of fighters to doors beyond the launch rate. The most
                         // sensible thing
-                        // is probably to distribut them evenly.
+                        // is probably to distribute them evenly.
                         int doors = currentBay.getDoors();
                         int[] distribution = new int[doors];
                         for (int l = 0; l < nLaunched; l++) {
@@ -7834,8 +7835,8 @@ public class Server implements Runnable {
 
             if ((step.getType() == MoveStepType.ACC)
                     || (step.getType() == MoveStepType.ACCN)) {
-                if (entity instanceof Aero) {
-                    Aero a = (Aero) entity;
+                if (entity.isAero()) {
+                    IAero a = (IAero) entity;
                     if (step.getType() == MoveStepType.ACCN) {
                         a.setAccLast(true);
                         a.setNextVelocity(a.getNextVelocity() + 1);
@@ -7849,8 +7850,8 @@ public class Server implements Runnable {
 
             if ((step.getType() == MoveStepType.DEC)
                     || (step.getType() == MoveStepType.DECN)) {
-                if (entity instanceof Aero) {
-                    Aero a = (Aero) entity;
+                if (entity.isAero()) {
+                    IAero a = (IAero) entity;
                     if (step.getType() == MoveStepType.DECN) {
                         a.setAccLast(true);
                         a.setNextVelocity(a.getNextVelocity() - 1);
@@ -7881,14 +7882,9 @@ public class Server implements Runnable {
             }
 
             if (step.getType() == MoveStepType.ROLL) {
-                if (entity instanceof Aero) {
-                    Aero a = (Aero) entity;
-                    if (a.isRolled()) {
-                        a.setRolled(false);
-                    } else {
-                        a.setRolled(true);
-                    }
-
+                if (entity.isAero()) {
+                    IAero a = (IAero) entity;
+                    a.setRolled(!a.isRolled());
                 }
             }
 
@@ -8658,8 +8654,7 @@ public class Server implements Runnable {
                     r.choose(false);
                     addReport(r);
                     // damage unit
-                    Aero a = (Aero) entity;
-                    HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL,
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                             ToHitData.SIDE_FRONT);
                     addReport(damageEntity(entity, hit,
                             2 * (rollTarget.getValue() - ctrlroll)));
@@ -9042,16 +9037,16 @@ public class Server implements Runnable {
                     entity.getBasePilotingRoll(EntityMovementType.MOVE_SPRINT));
         }
         
-        if (entity.isAirborne() && (entity instanceof Aero)) {
+        if (entity.isAirborne() && entity.isAero()) {
 
-            Aero a = (Aero) entity;
+            IAero a = (IAero) entity;
             int thrust = md.getMpUsed();
 
             // consume fuel
-            if (((entity instanceof Aero)
+            if (((entity.isAero())
                     && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
                     || (entity instanceof TeleMissile)) {
-                int fuelUsed = ((Aero) entity).getFuelUsed(thrust);
+                int fuelUsed = ((IAero) entity).getFuelUsed(thrust);
                 a.useFuel(fuelUsed);
             }
 
@@ -9082,7 +9077,7 @@ public class Server implements Runnable {
 
             rollTarget = a.checkThrustSITotal(thrust, overallMoveType);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                game.addControlRoll(new PilotingRollData(a.getId(), 0,
+                game.addControlRoll(new PilotingRollData(entity.getId(), 0,
                         "Thrust spent during turn exceeds SI"));
             }
 
@@ -9090,14 +9085,14 @@ public class Server implements Runnable {
                 rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
                         overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    game.addControlRoll(new PilotingRollData(a.getId(), 0,
+                    game.addControlRoll(new PilotingRollData(entity.getId(), 0,
                             "Velocity greater than 2x safe thrust"));
                 }
 
                 rollTarget = a.checkDown(md.getFinalNDown(), overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(
-                            new PilotingRollData(a.getId(), md.getFinalNDown(),
+                            new PilotingRollData(entity.getId(), md.getFinalNDown(),
                                     "descended more than two altitudes"));
                 }
 
@@ -9105,7 +9100,7 @@ public class Server implements Runnable {
                 rollTarget = a.checkHover(md);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(
-                            new PilotingRollData(a.getId(), 0, "hovering"));
+                            new PilotingRollData(entity.getId(), 0, "hovering"));
                 }
 
                 // check for aero stall
@@ -9117,7 +9112,7 @@ public class Server implements Runnable {
                     addReport(r);
                     game.addControlRoll(new PilotingRollData(entity.getId(), 0,
                             "stalled out"));
-                    a.setAltitude(a.getAltitude() - 1);
+                    entity.setAltitude(entity.getAltitude() - 1);
                     // check for crash
                     if (checkCrash(entity, entity.getPosition(),
                             entity.getAltitude())) {
@@ -9134,7 +9129,7 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     addReport(r);
-                    a.setAltitude(a.getAltitude() - 1);
+                    entity.setAltitude(entity.getAltitude() - 1);
                     // check for crash
                     if (checkCrash(entity, entity.getPosition(),
                             entity.getAltitude())) {
@@ -9637,7 +9632,7 @@ public class Server implements Runnable {
         }
 
         // recovered units should now be recovered and dealt with
-        if ((entity instanceof Aero) && recovered && (loader != null)) {
+        if (entity.isAero() && recovered && (loader != null)) {
 
             if (loader.isCapitalFighter()) {
                 if (!(loader instanceof FighterSquadron)) {
@@ -9920,10 +9915,10 @@ public class Server implements Runnable {
      *
      * @param a - The <code>Aero</code> taking off
      */
-    private void checkForTakeoffDamage(Aero a) {
+    private void checkForTakeoffDamage(IAero a) {
 
         boolean unsecured = false;
-        for (Entity loaded : a.getLoadedUnits()) {
+        for (Entity loaded : a.getEntity().getLoadedUnits()) {
             if (loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
                 unsecured = true;
                 // uh-oh, you forgot your seatbelt
@@ -9944,10 +9939,10 @@ public class Server implements Runnable {
         }
         if (unsecured) {
             // roll hit location to get a new critical
-            HitData hit = a.rollHitLocation(ToHitData.HIT_ABOVE,
+            HitData hit = ((Entity)a).rollHitLocation(ToHitData.HIT_ABOVE,
                                             ToHitData.SIDE_FRONT);
-            addReport(applyCriticalHit(a, hit.getLocation(), new CriticalSlot(
-                    0, a.getPotCrit()), true, 1, false));
+            addReport(applyCriticalHit((Entity)a, hit.getLocation(), new CriticalSlot(
+                    0, ((Aero)a).getPotCrit()), true, 1, false));
         }
 
     }
@@ -11765,7 +11760,7 @@ public class Server implements Runnable {
             }
 
             // build up heat from movement
-            if (entity.isEvading() && !(entity instanceof Aero)) {
+            if (entity.isEvading() && !entity.isAero()) {
                 entity.heatBuildup += entity.getRunHeat() + 2;
             } else if (entity.moved == EntityMovementType.MOVE_NONE) {
                 entity.heatBuildup += entity.getStandingHeat();
@@ -11932,11 +11927,11 @@ public class Server implements Runnable {
      */
     private boolean doVerticalTakeOffCheck(Entity entity, PilotingRollData roll) {
 
-        if (!(entity instanceof Aero)) {
+        if (!entity.isAero()) {
             return false;
         }
 
-        Aero a = (Aero) entity;
+        IAero a = (IAero) entity;
 
         if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             return true;
@@ -13053,8 +13048,8 @@ public class Server implements Runnable {
          * deal with starting velocity for advanced movement. Probably not the
          * best place to do it, but what are you going to do
          */
-        if ((entity instanceof Aero) && game.useVectorMove()) {
-            Aero a = (Aero) entity;
+        if (entity.isAero() && game.useVectorMove()) {
+            IAero a = (IAero) entity;
             if (a.getCurrentVelocityActual() > 0) {
                 int[] v = {0, 0, 0, 0, 0, 0};
                 v[nFacing] = a.getCurrentVelocityActual();
@@ -13088,7 +13083,7 @@ public class Server implements Runnable {
                         + entity.getId()
                         + " appears to be in an infinite loop trying to get a legal elevation.");
             }
-        } else if (entity instanceof Aero) {
+        } else if (entity.isAero()) {
             // if the entity is airborne, then we don't want to set its
             // elevation below, because that will
             // default to 999
@@ -13099,7 +13094,7 @@ public class Server implements Runnable {
             if (!game.getBoard().inSpace()) {
                 // all spheroid craft should have velocity of zero in atmosphere
                 // regardless of what was entered
-                Aero a = (Aero) entity;
+                IAero a = (IAero) entity;
                 if (a.isSpheroid() || game.getPlanetaryConditions().isVacuum()) {
                     a.setCurrentVelocity(0);
                     a.setNextVelocity(0);
@@ -13107,9 +13102,9 @@ public class Server implements Runnable {
                 // make sure that entity is above the level of the hex if in
                 // atmosphere
                 if (game.getBoard().inAtmosphere()
-                    && (a.getAltitude() <= hex.ceiling(true))) {
+                    && (entity.getAltitude() <= hex.ceiling(true))) {
                     // you can't be grounded on low atmosphere map
-                    a.setAltitude(hex.ceiling(true) + 1);
+                    entity.setAltitude(hex.ceiling(true) + 1);
                 }
             }
         } else if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {
@@ -13422,8 +13417,8 @@ public class Server implements Runnable {
                 } // End check-for-available-ap-pod
 
                 // Keep track of altitude loss for weapon attacks
-                if (entity instanceof Aero) {
-                    Aero aero = (Aero) entity;
+                if (entity.isAero()) {
+                    IAero aero = (IAero) entity;
                     if (waa.getAltitudeLoss(game) > aero.getAltLoss()) {
                         aero.setAltLoss(waa.getAltitudeLoss(game));
                     }
@@ -13527,15 +13522,15 @@ public class Server implements Runnable {
         }
 
         // Apply altitude loss
-        if (entity instanceof Aero) {
-            Aero aero = (Aero) entity;
+        if (entity.isAero()) {
+            IAero aero = (IAero) entity;
             if (aero.getAltLoss() > 0) {
                 Report r = new Report(9095);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(aero.getAltLoss());
                 addReport(r);
-                aero.setAltitude(aero.getAltitude() - aero.getAltLoss());
+                entity.setAltitude(entity.getAltitude() - aero.getAltLoss());
                 aero.setAltLossThisRound(aero.getAltLoss());
                 aero.resetAltLoss();
                 entityUpdate(entity.getId());
@@ -17855,7 +17850,7 @@ public class Server implements Runnable {
             addReport(r);
         } else {
             // Resolve the damage.
-            resolveRamDamage((Aero) ae, (Aero) te, toHit, glancing,
+            resolveRamDamage((IAero) ae, te, toHit, glancing,
                              throughFront);
         }
 
@@ -17864,11 +17859,13 @@ public class Server implements Runnable {
     /**
      * Handle a ramming attack's damage
      */
-    private void resolveRamDamage(Aero ae, Entity te, ToHitData toHit,
+    private void resolveRamDamage(IAero aero, Entity te, ToHitData toHit,
                                   boolean glancing, boolean throughFront) {
 
-        int damage = RamAttackAction.getDamageFor(ae, te);
-        int damageTaken = RamAttackAction.getDamageTakenBy(ae, te);
+        Entity ae = aero.getEntity();
+        
+        int damage = RamAttackAction.getDamageFor(aero, te);
+        int damageTaken = RamAttackAction.getDamageTakenBy(aero, te);
         if (glancing) {
             // Round up glancing blows against conventional infantry
             if ((te instanceof Infantry) && !(te instanceof BattleArmor)) {
@@ -18683,7 +18680,7 @@ public class Server implements Runnable {
         addReport(new Report(5000, Report.PUBLIC));
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             Entity entity = i.next();
-            if ((null == entity.getPosition()) && !(entity instanceof Aero)) {
+            if ((null == entity.getPosition()) && !entity.isAero()) {
                 continue;
             }
             IHex entityHex = game.getBoard().getHex(entity.getPosition());
@@ -18782,13 +18779,13 @@ public class Server implements Runnable {
             }
 
             // put in ASF heat build-up first because there are few differences
-            if ((entity instanceof Aero) && !(entity instanceof ConvFighter)) {
+            if (entity.isAero() && !(entity instanceof ConvFighter)) {
                 // If this aero is part of a squadron, we will deal with its
                 // heat with the fighter squadron
                 if ((game.getEntity(entity.getTransportId()) instanceof FighterSquadron)) {
                     continue;
                 }
-                Aero a = (Aero) entity;
+                IAero a = (IAero) entity;
 
                 // should we even bother?
                 if (entity.isDestroyed() || entity.isDoomed()
@@ -19087,11 +19084,11 @@ public class Server implements Runnable {
                             r.addDesc(entity);
                             r.add(loss);
                             addReport(r);
-                            a.setAltitude(a.getAltitude() - loss);
+                            entity.setAltitude(entity.getAltitude() - loss);
                             // check for crash
-                            if (checkCrash(a, a.getPosition(), a.getAltitude())) {
+                            if (checkCrash(entity, entity.getPosition(), entity.getAltitude())) {
                                 addReport(processCrash(entity,
-                                                       a.getCurrentVelocity(), a.getPosition()));
+                                                       a.getCurrentVelocity(), entity.getPosition()));
                             }
                         }
                         // force unit out of control through heat
@@ -20350,7 +20347,7 @@ public class Server implements Runnable {
                     }
                 }
             }
-            if ((entity instanceof Aero) && entity.isAirborne() && !game.getBoard().inSpace()) {
+            if (entity.isAero() && entity.isAirborne() && !game.getBoard().inSpace()) {
                 // if this aero has any damage, add another roll to the list.
                 if (entity.damageThisPhase > 0) {
                     if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
@@ -20365,7 +20362,7 @@ public class Server implements Runnable {
                         game.addControlRoll(damPRD);
                     } else {
                         // was the damage threshold exceeded this round?
-                        if (((Aero) entity).wasCritThresh()) {
+                        if (((IAero) entity).wasCritThresh()) {
                             PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
                                     "damage threshold exceeded");
                             if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
@@ -21040,8 +21037,8 @@ public class Server implements Runnable {
          * http://forums.classicbattletech.com/index.php/topic,20424.0.html
          */
 
-        if ((e instanceof Aero) && (e.isAirborne() || e.isSpaceborne())) {
-            Aero a = (Aero) e;
+        if (e.isAero() && (e.isAirborne() || e.isSpaceborne())) {
+            IAero a = (IAero) e;
 
             // they should get a shot at a recovery roll at the end of all this
             // if they are already out of control
@@ -21063,7 +21060,7 @@ public class Server implements Runnable {
                 // uses of control rolls (thus it doesn't go in
                 // Entity#addEntityBonuses) and
                 // furthermore it doesn't apply to recovery rolls
-                if (a.isUsingManAce()) {
+                if (e.isUsingManAce()) {
                     base.addModifier(-1, "maneuvering ace");
                 }
                 for (Enumeration<PilotingRollData> j = game.getControlRolls(); j
@@ -21149,13 +21146,13 @@ public class Server implements Runnable {
                                     r.addDesc(e);
                                     r.add(loss);
                                     vReport.add(r);
-                                    a.setAltitude(a.getAltitude() - loss);
+                                    e.setAltitude(e.getAltitude() - loss);
                                     // check for crash
-                                    if (checkCrash(a, a.getPosition(),
-                                                   a.getAltitude())) {
+                                    if (checkCrash(e, e.getPosition(),
+                                                   e.getAltitude())) {
                                         vReport.addAll(processCrash(e,
                                                                     a.getCurrentVelocity(),
-                                                                    a.getPosition()));
+                                                                    e.getPosition()));
                                         break;
                                     }
                                 }
@@ -27280,7 +27277,7 @@ public class Server implements Runnable {
         // ground are destroyed
         if (entity.isAirborne()) {
             survivable = false;
-        } else if (entity instanceof Aero) {
+        } else if (entity.isAero()) {
             survivable = true;
         }
 
@@ -32908,8 +32905,8 @@ public class Server implements Runnable {
         } else if (aaa instanceof RamAttackAction) {
             RamAttackAction raa = (RamAttackAction) aaa;
             toHit = raa.toHit(game);
-            damage = RamAttackAction.getDamageFor((Aero) ae,
-                                                  (Aero) aaa.getTarget(game));
+            damage = RamAttackAction.getDamageFor((IAero) ae,
+                                                  (Entity)aaa.getTarget(game));
         } else if (aaa instanceof TeleMissileAttackAction) {
             TeleMissileAttackAction taa = (TeleMissileAttackAction) aaa;
             toHit = taa.toHit(game);
@@ -34653,8 +34650,8 @@ public class Server implements Runnable {
             }
 
             // flak against ASF should only hit Aeros, because their elevation
-            // is actualyl altitude, so shouldn't hit VTOLs
-            if (asfFlak && !(entity instanceof Aero)) {
+            // is actually altitude, so shouldn't hit VTOLs
+            if (asfFlak && !entity.isAero()) {
                 continue;
             }
 
@@ -34662,7 +34659,7 @@ public class Server implements Runnable {
                 // Check: is entity not a VTOL in flight or an ASF
                 if (!((entity instanceof VTOL)
                         || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                        || (entity instanceof Aero))) {
+                        || entity.isAero())) {
                     continue;
                 }
                 // Check: is entity at correct elevation?
@@ -34673,7 +34670,7 @@ public class Server implements Runnable {
                 // Check: is entity a VTOL or Aero in flight?
                 if ((entity instanceof VTOL)
                     || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                    || (entity instanceof Aero)) {
+                    || entity.isAero()) {
                     // VTOLs take no damage from normal artillery unless landed
                     if ((entity.getElevation() != 0)
                         && (entity.getElevation() != hex

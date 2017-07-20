@@ -22,13 +22,13 @@ package megamek.common.actions;
 
 import java.util.Enumeration;
 
-import megamek.common.Aero;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.FighterSquadron;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
@@ -171,7 +171,7 @@ public class RamAttackAction extends AbstractAttackAction {
         
         toHit = new ToHitData(base, "base");
 
-        Aero a = (Aero)ae;
+        IAero a = (IAero)ae;
         
         //target type
         if(target instanceof SpaceStation) {
@@ -273,34 +273,34 @@ public class RamAttackAction extends AbstractAttackAction {
      * Damage that an Aero does on a successful ramming attack
      * 
      */
-   public static int getDamageFor(Aero entity, Entity target) {
-       int avel = entity.getCurrentVelocity();
+   public static int getDamageFor(IAero attacker, Entity target) {
+       int avel = attacker.getCurrentVelocity();
        int tvel = 0;
-       if(target instanceof Aero) {
-           tvel = ((Aero)target).getCurrentVelocity();
+       if(target.isAero()) {
+           tvel = ((IAero)target).getCurrentVelocity();
        }
-       return getDamageFor(entity, target, entity.getPriorPosition(), avel, tvel);
+       return getDamageFor(attacker, target, attacker.getEntity().getPriorPosition(), avel, tvel);
    }
    
-   public static int getDamageFor(Aero entity, Entity target, Coords atthex, int avel, int tvel) {
+   public static int getDamageFor(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {
        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
        return (int) Math.ceil(
-               (entity.getWeight() / 10.0) * netv);
+               (attacker.getEntity().getWeight() / 10.0) * netv);
    }
      
    /**
     * Damage that an Aero suffers after a successful charge.
     */
-   public static int getDamageTakenBy(Aero entity, Entity target) {
-       int avel = entity.getCurrentVelocity();
+   public static int getDamageTakenBy(IAero attacker, Entity target) {
+       int avel = attacker.getCurrentVelocity();
        int tvel = 0;
-       if(target instanceof Aero) {
-           tvel = ((Aero)target).getCurrentVelocity();
+       if(target.isAero()) {
+           tvel = ((IAero)target).getCurrentVelocity();
        }
-       return getDamageTakenBy(entity, target, entity.getPriorPosition(), avel, tvel);
+       return getDamageTakenBy(attacker, target, attacker.getEntity().getPriorPosition(), avel, tvel);
    }
    
-   public static int getDamageTakenBy(Aero entity, Entity target, Coords atthex, int avel, int tvel) {
+   public static int getDamageTakenBy(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {
        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
        return (int) Math.ceil(
                (target.getWeight() / 10.0) * netv);

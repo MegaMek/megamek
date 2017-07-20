@@ -3224,13 +3224,6 @@ public class Aero extends Entity implements IAero {
         vstol = b;
     }
 
-    public int getFuelUsed(int thrust) {
-        int overThrust = Math.max(thrust - getWalkMP(), 0);
-        int safeThrust = thrust - overThrust;
-        int used = safeThrust + (2 * overThrust);
-        return used;
-    }
-
     public boolean didFailManeuver() {
         return failedManeuver;
     }
@@ -3463,16 +3456,6 @@ public class Aero extends Entity implements IAero {
         }
 
         return super.canLoad(unit, checkFalse);
-    }
-
-    /***
-     * use the specified amount of fuel for this Aero. The amount may be
-     * adjusted by certain game options
-     *
-     * @param fuel  The number of fuel points to use
-     */
-    public void useFuel(int fuelUsed) {
-        setFuel(Math.max(0, getFuel() - fuelUsed));
     }
 
     public void updateWeaponGroups() {

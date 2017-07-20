@@ -53,6 +53,11 @@ public interface IAero {
     void setRandomMove(boolean randmove);
     boolean didAccLast();
     void setAccLast(boolean b);
+    boolean didFailManeuver();
+    void setFailedManeuver(boolean b);
+    void setAccDecNow(boolean b);
+    boolean didAccDecNow();
+    
     int getStraightMoves();
     void setStraightMoves(int straightMoves);
     int getAltLoss();
@@ -68,11 +73,13 @@ public interface IAero {
     boolean canLandHorizontally();
     
     int getNoseArmor();
+    void setSI(int si);
     int getSI();
     int get0SI();
     int getAvionicsHits();
     int getSensorHits();
     boolean hasLifeSupport();
+    void setGearHit(boolean hit);
     int getLandingGearMod(boolean vTakeoff);
     int getLeftThrustHits();
     int getRightThrustHits();
@@ -460,6 +467,23 @@ public interface IAero {
         setOutCtrlHeat(false);
         setRandomMove(false);
         getEntity().delta_distance = 0;
+    }
+
+    default int getFuelUsed(int thrust) {
+        int overThrust = Math.max(thrust - getEntity().getWalkMP(), 0);
+        int safeThrust = thrust - overThrust;
+        int used = safeThrust + (2 * overThrust);
+        return used;
+    }
+
+    /***
+     * use the specified amount of fuel for this Aero. The amount may be
+     * adjusted by certain game options
+     *
+     * @param fuel  The number of fuel points to use
+     */
+    default void useFuel(int fuelUsed) {
+        setFuel(Math.max(0, getFuel() - fuelUsed));
     }
 
 }

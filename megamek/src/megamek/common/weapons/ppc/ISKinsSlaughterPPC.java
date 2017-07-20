@@ -36,10 +36,10 @@ public class ISKinsSlaughterPPC extends PPCWeapon {
         this.addLookupName("IS Kinslaughter H ER PPC");
         this.heat = 13;
         this.damage = 10;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 23;
-        this.extremeRange = 28;
+        this.shortRange = 4;
+        this.mediumRange = 10;
+        this.longRange = 16;
+        this.extremeRange = 20;
         this.waterShortRange = 4;
         this.waterMediumRange = 10;
         this.waterLongRange = 16;

@@ -42,7 +42,6 @@ public class ISBALaserSmall extends LaserWeapon {
         extremeRange = 4;
         waterShortRange = 1;
         waterMediumRange = 2;
-        waterLongRange = 2;
         waterExtremeRange = 4;
         tonnage = 0.2;
         criticals = 1;

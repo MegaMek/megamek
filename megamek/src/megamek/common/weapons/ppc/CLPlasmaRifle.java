@@ -48,10 +48,6 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         mediumRange = 14;
         longRange = 22;
         extremeRange = 28;
-        waterShortRange = 4;
-        waterMediumRange = 10;
-        waterLongRange = 15;
-        waterExtremeRange = 20;
         tonnage = 6.0f;
         criticals = 2;
         bv = 400;

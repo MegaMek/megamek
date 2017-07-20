@@ -27,7 +27,6 @@ import java.util.TreeMap;
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
-import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Compute;
@@ -35,6 +34,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
+import megamek.common.IAero;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -150,7 +150,7 @@ public class BasicPathRanker extends PathRanker {
 
             //Aeros always move after other units, and would require an entirely different evaluation
             //TODO (low priority) implement a way to see if I can dodge aero units
-            if (enemy instanceof Aero) {
+            if (enemy.isAero()) {
                 return returnResponse;
             }
             
@@ -315,7 +315,7 @@ public class BasicPathRanker extends PathRanker {
         }
 
         FiringPlan myFiringPlan;
-        if (path.getEntity() instanceof Aero) {
+        if (path.getEntity().isAero()) {
             myFiringPlan = getFireControl().guessFullAirToGroundPlan(path.getEntity(), enemy,
                                                                      new EntityState(enemy), path, game, false);
         } else {
@@ -452,9 +452,9 @@ public class BasicPathRanker extends PathRanker {
 
         try {
 
-            if (movingUnit instanceof Aero || movingUnit instanceof VTOL) {
+            if (movingUnit.isAero() || movingUnit instanceof VTOL) {
                 boolean isVTOL = (movingUnit instanceof VTOL);
-                boolean isSpheroid = isVTOL ? false : ((Aero)movingUnit).isSpheroid();
+                boolean isSpheroid = isVTOL ? false : ((IAero)movingUnit).isSpheroid();
                 RankedPath aeroRankedPath = doAeroSpecificRanking(path, isVTOL, isSpheroid);
                 if (aeroRankedPath != null) {
                     return aeroRankedPath;
@@ -497,7 +497,7 @@ public class BasicPathRanker extends PathRanker {
                 // TODO: Always consider Aeros to have moved, as right now we
                 // don't try to predict their movement.
                 if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()
-                        || (enemy instanceof Aero)) { //For units that have already moved
+                        || enemy.isAero()) { //For units that have already moved
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
                     eval = evaluateUnmovedEnemy(enemy, path, extremeRange, losRange);
@@ -558,7 +558,7 @@ public class BasicPathRanker extends PathRanker {
             utility += braveryMod;
 
             //noinspection StatementWithEmptyBody
-            if (path.getEntity() instanceof Aero) {
+            if (path.getEntity().isAero()) {
                 // No idea what original implementation was meant to be.
 
             } else {

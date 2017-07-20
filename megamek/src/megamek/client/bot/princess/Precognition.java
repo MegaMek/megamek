@@ -31,7 +31,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
-import megamek.common.Aero;
 import megamek.common.Board;
 import megamek.common.Building;
 import megamek.common.ComputeECM;
@@ -583,7 +582,7 @@ public class Precognition implements Runnable {
             // if a unit has moved or deployed, then it becomes dirty, and any units
             // with its initial or final position
             // in their list become dirty
-            if (!(getGame().getEntity(id) instanceof Aero)) {
+            if (!getGame().getEntity(id).isAero()) {
                 TreeSet<Integer> toDirty = new TreeSet<>(
                         getPathEnumerator().getEntitiesWithLocation(
                                 getGame().getEntity(id).getPosition(), true));

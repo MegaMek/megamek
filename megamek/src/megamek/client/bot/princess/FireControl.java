@@ -21,7 +21,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BuildingTarget;
@@ -34,6 +33,7 @@ import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.FixedWingSupport;
 import megamek.common.GunEmplacement;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -268,8 +268,8 @@ public class FireControl {
      * @return The {@link Coords} from the target's flight path closest to the shooter.
      */
     @StaticWrapper
-    protected Coords getNearestPointInFlightPath(Coords shooterPosition, Aero targetAero) {
-        return Compute.getClosestFlightPath(-1, shooterPosition, targetAero);
+    protected Coords getNearestPointInFlightPath(Coords shooterPosition, IAero targetAero) {
+        return Compute.getClosestFlightPath(-1, shooterPosition, targetAero.getEntity());
     }
 
     /**
@@ -329,8 +329,8 @@ public class FireControl {
 
         // Ground units attacking airborne aeros.
         if (!shooterState.isAero() && targetState.isAirborneAero()) {
-            Aero targetAero = (Aero) target;
-            if (targetAero.isNOE()) {
+            IAero targetAero = (IAero) target;
+            if (targetAero.getEntity().isNOE()) {
                 Coords closestInFlightPath = getNearestPointInFlightPath(shooterState.getPosition(), targetAero);
                 int aeroDistance = closestInFlightPath.distance(shooterState.getPosition());
                 if (aeroDistance <= 1) {
@@ -1078,7 +1078,7 @@ public class FireControl {
         }
 
         // Don't bother checking these as the guesses are minimal (or non-existant).
-        if ((shooter instanceof Aero) || (shooter.getPosition() == null) || (target.getPosition() == null)) {
+        if (shooter.isAero() || (shooter.getPosition() == null) || (target.getPosition() == null)) {
             return null;
         }
 
@@ -1596,7 +1596,7 @@ public class FireControl {
         }
 
         // Rank how useful this plan is.
-        calculateUtility(myPlan, calcHeatTolerance(shooter, null), (shooter instanceof Aero));
+        calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
         return myPlan;
     }
 
@@ -1641,7 +1641,7 @@ public class FireControl {
         }
 
         // Rank how useful this plan is.
-        calculateUtility(myPlan, calcHeatTolerance(shooter, null), (shooter instanceof Aero));
+        calculateUtility(myPlan, calcHeatTolerance(shooter, null), shooter.isAero());
         return myPlan;
     }
 
@@ -1655,7 +1655,7 @@ public class FireControl {
         int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
 
         if (isAero == null) {
-            isAero = (entity instanceof Aero);
+            isAero = entity.isAero();
         }
 
         // Aeros *really* don't want to overheat.
@@ -1686,7 +1686,7 @@ public class FireControl {
 
         Targetable target = alphaStrike.getTarget();
 
-        boolean isAero = (shooter instanceof Aero);
+        boolean isAero = shooter.isAero();
         int heatTolerance = calcHeatTolerance(shooter, isAero);
 
         // How many plans do I need to compute?
@@ -1908,7 +1908,7 @@ public class FireControl {
 
         // Determine the best plan taking into account our heat tolerance.
         FiringPlan bestPlan = new FiringPlan(target);
-        boolean isAero = (shooter instanceof Aero);
+        boolean isAero = shooter.isAero();
         int heatTolerance = calcHeatTolerance(shooter, isAero);
         calculateUtility(bestPlan, heatTolerance, isAero);
         for (FiringPlan firingPlan : allPlans) {

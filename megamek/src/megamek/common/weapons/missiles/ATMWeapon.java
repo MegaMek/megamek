@@ -11,14 +11,15 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.missiles;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.missiles.MissileWeapon;
+import megamek.common.weapons.ATMHandler;
+import megamek.common.weapons.AttackHandler;
 import megamek.server.Server;
 
 /**

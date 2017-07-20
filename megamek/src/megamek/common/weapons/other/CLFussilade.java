@@ -15,7 +15,7 @@ package megamek.common.weapons.other;
 
 import megamek.common.BattleForceElement;
 import megamek.common.WeaponType;
-import megamek.common.weapons.ATMWeapon;
+import megamek.common.weapons.missiles.ATMWeapon;
 
 /**
  * @author beerockxs

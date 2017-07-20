@@ -1299,6 +1299,7 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createLightBridgeLayer());
 		EquipmentType.addType(MiscType.createMediumBridgeLayer());
 		EquipmentType.addType(MiscType.createHeavyBridgeLayer());
+		
 		// For industrials and tanks
 		EquipmentType.addType(MiscType.createEnvironmentalSealing());
 		EquipmentType.addType(MiscType.createFieldKitchen());
@@ -1424,8 +1425,6 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createMASH());
 		EquipmentType.addType(MiscType.createMASHExtraTheater());
 		EquipmentType.addType(MiscType.createParamedicEquipment());
-		EquipmentType.addType(MiscType.createCLProtoMyomerBooster());
-		EquipmentType.addType(MiscType.createProtoPartialWing());
 		EquipmentType.addType(MiscType.createISMastMount());
 		EquipmentType.addType(MiscType.createFuel1());
 		EquipmentType.addType(MiscType.createFuelHalf());
@@ -1473,6 +1472,11 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createVehicularStealth());
 		EquipmentType.addType(MiscType.createEmergencyC3M());
 		EquipmentType.addType(MiscType.createNovaCEWS());
+		
+		//ProtoMek Stuff
+		EquipmentType.addType(MiscType.createCLProtoMyomerBooster());
+        EquipmentType.addType(MiscType.createProtoPartialWing());
+        EquipmentType.addType(MiscType.createExtendedJumpJet());
 
 		// Start BattleArmor equipment
 		EquipmentType.addType(MiscType.createISBAStandardArmor());
@@ -1571,7 +1575,6 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createAdvancedFireControl());
 		EquipmentType.addType(MiscType.createISMineSweeper());
 		EquipmentType.addType(MiscType.createISMobileFieldBase());
-		EquipmentType.addType(MiscType.createElectricDischargeArmor());
 		EquipmentType.addType(MiscType.createISPrototypeJumpJet());
 		EquipmentType.addType(MiscType.createISPrototypeImprovedJumpJet());
 		EquipmentType.addType(MiscType.createBoobyTrap());
@@ -1609,6 +1612,9 @@ public class MiscType extends EquipmentType {
 		//Prototype Stuff
 		EquipmentType.addType(MiscType.createISProtoArtemis());
         EquipmentType.addType(MiscType.createCASEPrototype());
+        EquipmentType.addType(MiscType.createElectricDischargeArmor());
+        EquipmentType.addType(MiscType.createProtoMagneticClamp());
+        EquipmentType.addType(MiscType.createProtoQuadMeleeSystem());
 		
 		// Drone and Robotic Systems
 		EquipmentType.addType(MiscType.createISRemoteDroneCommandConsole());
@@ -1784,8 +1790,26 @@ public class MiscType extends EquipmentType {
 	}
 
 	// TODO Protomech Jump Jets See IO, pg 35
-
-	// TODO Extended Jump Jets (XJJ) System [ProtoMech] See IO, pg 35
+	
+	   public static MiscType createExtendedJumpJet() {
+	        MiscType misc = new MiscType();
+	        //TODO Game Rules.
+	        misc.name = "Extended Jump Jet System";
+	        misc.setInternalName("ExtendedJumpJetSystem");
+	        misc.tonnage = 0;
+	        misc.criticals = 1;
+	        misc.cost = 0;
+	        misc.flags = misc.flags.or(F_JUMP_JET).or(F_PROTOMECH_EQUIPMENT);
+	        misc.subType |= S_IMPROVED;
+	        misc.bv = 0;
+	        misc.rulesRefs = "65,IO";
+	        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+	                .setClanAdvancement(3071, 3075, 3085, DATE_NONE, DATE_NONE)
+	                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSR)
+	                .setProductionFactions(F_CSR).setTechRating(RATING_F)
+	                .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D);
+	        return misc;
+	    }
 
 	public static MiscType createCLProtoMyomerBooster() {
 		MiscType misc = new MiscType();
@@ -2009,7 +2033,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createQVWheels() {
         MiscType misc = new MiscType();
 
-        misc.name = "Wheels";
+        misc.name = "QuadVee Wheels";
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
@@ -4877,12 +4901,14 @@ public class MiscType extends EquipmentType {
 	}
 
 	public static MiscType createISRemoteDroneCommandConsole() {
+	    
 		MiscType misc = new MiscType();
 		misc.name = "Remote Drone Command Console";
 		misc.setInternalName("ISRemoteDroneCommandConsole");
 		misc.tonnage = 2;
 		misc.criticals = 1;
 		misc.cost = 50000;
+	    misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT);
 		misc.rulesRefs = "90,IO";
 		misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_D)
 		        .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
@@ -4918,7 +4944,7 @@ public class MiscType extends EquipmentType {
 		misc.setInternalName("SmartRoboticControlSystem");
 		misc.tonnage = 0;
 		misc.criticals = 0;
-		misc.cost = 0;
+		misc.cost = 0; 
 		misc.rulesRefs = "140,IO";
 		misc.techAdvancement.setTechBase(TECH_BASE_ALL).setIntroLevel(false).setUnofficial(false)
 		        .setTechRating(RATING_C).setAvailability(RATING_E, RATING_F, RATING_F, RATING_F)
@@ -8541,7 +8567,7 @@ public class MiscType extends EquipmentType {
 		misc.name = "Magnetic Clamps System";
 		misc.setInternalName("ProtoMagneticClamp");
 		misc.addLookupName("Proto Magnetic Clamp");
-		misc.tonnage = 0;
+		misc.tonnage = 0;  //see IO pg 66
 		misc.criticals = 1;
 		misc.cost = 25000;
 		misc.hittable = false;
@@ -8559,6 +8585,31 @@ public class MiscType extends EquipmentType {
 		        .setProductionFactions(F_CSF);
 		return misc;
 	}
+	
+	   public static MiscType createProtoQuadMeleeSystem() {
+	        MiscType misc = new MiscType();
+	        // TODO Game Rules
+	        misc.name = "ProtoMech Quad Melee System";
+	        misc.setInternalName("ProtoQuadMeleeSystem");
+	        misc.tonnage = 1;
+	        misc.criticals = 1;
+	        misc.cost = 70000;
+	        misc.hittable = false;
+	        misc.flags = misc.flags.or(F_PROTOMECH_EQUIPMENT).andNot(F_MECH_EQUIPMENT)
+	                .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+	        misc.bv = 1;
+	        misc.rulesRefs = "67,IO";
+	        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+	        .setIntroLevel(false)
+	        .setUnofficial(false)
+	        .setTechRating(RATING_F)
+	        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E) 
+	        .setClanAdvancement(3066, 3072, 3085,DATE_NONE, DATE_NONE)
+	        .setClanApproximate(true, false, false,false,false)
+	        .setPrototypeFactions(F_CCC)
+	        .setProductionFactions(F_CHH);
+	        return misc;
+	    }
 
 	/*I've done the Tech Progression for them but nothing else.
 	 * TODO ProtoMech Melee Weapon - IO 45 misc.rulesRefs = "370,TO";
@@ -8569,14 +8620,9 @@ public class MiscType extends EquipmentType {
 	 * false) .setPrototypeFactions(F_CLAN) .setProductionFactions(F_CLAN);
 	 */
 
-	/*
-	 * TODO ProtoMech QuadMeleeWeapon misc.rulesRefs = "67,IO";
-	 * misc.techAdvancement.setTechBase(TECH_BASE_CLAN) .setIntroLevel(false)
-	 * .setUnofficial(false) .setTechRating(RATING_F) .setAvailability(RATING_X,
-	 * RATING_X RATING_F, RATING_E) .setClanAdvancement(3066, 3072, 3085,
-	 * DATE_NONE, DATE_NONE) .setClanApproximate(true, false, false,false,
-	 * false) .setPrototypeFactions(F_CCC) .setProductionFactions(F_CHH);
-	 */
+	
+
+
 
 	// Mobile Hyperpulse Generators
 	public static MiscType createISMobileHPG() {
@@ -8693,6 +8739,8 @@ public class MiscType extends EquipmentType {
 	}
 
 	public static MiscType createRISCViralJammerDecoy() {
+	    
+	    //TODO Game Rules
 		MiscType misc = new MiscType();
 		misc.name = "RISC Viral Jammer (Decoy)";
 		misc.setInternalName(misc.name);
@@ -8712,6 +8760,8 @@ public class MiscType extends EquipmentType {
 	}
 
 	public static MiscType createRISCViralJammerHoming() {
+	   
+	    //TODO Game Rules
 		MiscType misc = new MiscType();
 		misc.name = "RISC Viral Jammer (Homing)";
 		misc.setInternalName(misc.name);

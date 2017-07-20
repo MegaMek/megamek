@@ -30,7 +30,7 @@ public class CLIATM3 extends CLIATMWeapon {
      */
     public CLIATM3() {
         super();
-        this.name = "iATM 3";
+        this.name = "Improved ATM 3";
         this.setInternalName("CLiATM3");
         this.addLookupName("Clan iATM-3");
         this.heat = 2;

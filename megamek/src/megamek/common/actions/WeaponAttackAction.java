@@ -47,6 +47,7 @@ import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LandAirMech;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
@@ -795,7 +796,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // check for heavy gauss rifle on fighter of small craft
-            if ((weapon.getType() instanceof ISHGaussRifle) && (ae instanceof Aero) && !(ae instanceof Dropship)
+            if ((weapon.getType() instanceof ISHGaussRifle) && !(ae instanceof Dropship)
                     && !(ae instanceof Jumpship)) {
                 toHit.addModifier(+1, "weapon to-hit modifier");
             }
@@ -940,9 +941,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(2, "Mass Driver to-hit Penalty");
         }
 
-        if ((te instanceof Aero) && te.isAirborne()) {
+        if (te instanceof Entity && te.isAero() && te.isAirborne()) {
 
-            Aero a = (Aero) te;
+            IAero a = (IAero) te;
 
             // is the target at zero velocity
             if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
@@ -984,14 +985,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
                     && game.getBoard().inSpace()) {
                 for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(a) && en.isLargeCraft() && ((en.getWeight() - a.getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
                 }
                 for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(a) && en.isLargeCraft() && !en.equals(a)
-                            && ((en.getWeight() - a.getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf(te) && en.isLargeCraft() && !en.equals(a)
+                            && ((en.getWeight() - te.getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
@@ -1283,7 +1284,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(2, "EMI");
         }
 
-        if (ae.isAirborne() && !(ae instanceof Aero)) {
+        if (ae.isAirborne() && !ae.isAero()) {
             toHit.addModifier(+2, "dropping");
             toHit.addModifier(+3, "jumping");
         }
@@ -1630,7 +1631,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
             // grounded dropships are treated as immobile as well for purpose of
             // the mods
-            if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Aero)
+            if ((null != te) && !te.isAirborne() && !te.isSpaceborne() && (te instanceof Dropship)
                     && ((Aero) te).isSpheroid()) {
                 immobileMod = new ToHitData(-4, "immobile dropship");
             }
@@ -1920,9 +1921,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
             } else if ((tAlt - aAlt) > 2) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
-            } else if (((aAlt - tAlt) > 0) && ((te instanceof Aero) && ((Aero) te).isSpheroid())) {
+            } else if (((aAlt - tAlt) > 0) && (te.isAero() && ((IAero) te).isSpheroid())) {
                 toHit.setHitTable(ToHitData.HIT_ABOVE);
-            } else if (((aAlt - tAlt) < 0) && ((te instanceof Aero) && ((Aero) te).isSpheroid())) {
+            } else if (((aAlt - tAlt) < 0) && (te.isAero() && ((IAero) te).isSpheroid())) {
                 toHit.setHitTable(ToHitData.HIT_BELOW);
             }
         }
@@ -1930,20 +1931,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.setHitTable(ToHitData.HIT_BELOW);
         }
 
-        if (target.isAirborne() && (target instanceof Aero)) {
-            if (!(((Aero) target).isSpheroid() && !game.getBoard().inSpace())) {
+        if (target.isAirborne() && target.isAero()) {
+            if (!(((IAero) target).isSpheroid() && !game.getBoard().inSpace())) {
                 // get mods for direction of attack
                 int side = toHit.getSideTable();
                 // if this is an aero attack using advanced movement rules then
                 // determine side differently
-                if ((target instanceof Aero) && game.useVectorMove()) {
+                if (game.useVectorMove()) {
                     boolean usePrior = false;
                     Coords attackPos = ae.getPosition();
                     if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {
-                        if (((Aero) ae).shouldMoveBackHex((Aero) target)) {
+                        int moveSort = Compute.shouldMoveBackHex(ae, (Entity)target);
+                        if (moveSort < 0) {
                             attackPos = ae.getPriorPosition();
                         }
-                        usePrior = ((Aero) target).shouldMoveBackHex((Aero) ae);
+                        usePrior = moveSort > 0;
                     }
                     side = ((Entity) target).chooseSide(attackPos, usePrior);
                 }
@@ -2187,58 +2189,29 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         if (Compute.isGroundToAir(ae, target)
                 && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE) && (null != te)
-                && (te instanceof Aero)) {
-            int vMod = ((Aero) te).getCurrentVelocity();
+                && te.isAero()) {
+            int vMod = ((IAero) te).getCurrentVelocity();
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AA_MOVE_MOD)) {
                 vMod = Math.min(vMod / 2, 4);
             }
             toHit.addModifier(vMod, "velocity");
         }
 
-        // Aeros may suffer from criticals
-        if (ae instanceof Aero) {
-            Aero aero = (Aero) ae;
-
-            // sensor hits
-            int sensors = aero.getSensorHits();
-
-            if (!aero.isCapitalFighter()) {
-                if ((sensors > 0) && (sensors < 3)) {
-                    toHit.addModifier(sensors, "sensor damage");
-                }
-                if (sensors > 2) {
-                    toHit.addModifier(+5, "sensors destroyed");
-                }
-            }
-
-            // FCS hits
-            int fcs = aero.getFCSHits();
-
-            if ((fcs > 0) && !aero.isCapitalFighter()) {
-                toHit.addModifier(fcs * 2, "fcs damage");
-            }
-
+        // Damage effects for Aero, including LAMs.
+        if (ae.isAero()) {
             // pilot hits
-            int pilothits = aero.getCrew().getHits();
-            if ((pilothits > 0) && !aero.isCapitalFighter()) {
+            int pilothits = ae.getCrew().getHits();
+            if ((pilothits > 0) && !ae.isCapitalFighter()) {
                 toHit.addModifier(pilothits, "pilot hits");
             }
 
             // out of control
-            if (aero.isOutControlTotal()) {
+            if (((IAero)ae).isOutControlTotal()) {
                 toHit.addModifier(+2, "out-of-control");
             }
 
-            if (aero instanceof Jumpship) {
-                Jumpship js = (Jumpship) aero;
-                int cic = js.getCICHits();
-                if (cic > 0) {
-                    toHit.addModifier(cic * 2, "CIC damage");
-                }
-            }
-
             // targeting mods for evasive action by large craft
-            if (aero.isEvading()) {
+            if (ae.isEvading()) {
                 toHit.addModifier(+2, "attacker is evading");
             }
 
@@ -2264,12 +2237,43 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toHit.addModifier(-2, "grounded dropships firing on ground units");
                 }
             }
+        }
+        
+        // Aeros may suffer from criticals
+        if (ae instanceof Aero) {
+            Aero aero = (Aero) ae;
 
+            // sensor hits
+            int sensors = aero.getSensorHits();
+
+            if (!aero.isCapitalFighter()) {
+                if ((sensors > 0) && (sensors < 3)) {
+                    toHit.addModifier(sensors, "sensor damage");
+                }
+                if (sensors > 2) {
+                    toHit.addModifier(+5, "sensors destroyed");
+                }
+            }
+
+            // FCS hits
+            int fcs = aero.getFCSHits();
+
+            if ((fcs > 0) && !aero.isCapitalFighter()) {
+                toHit.addModifier(fcs * 2, "fcs damage");
+            }
+
+            if (aero instanceof Jumpship) {
+                Jumpship js = (Jumpship) aero;
+                int cic = js.getCICHits();
+                if (cic > 0) {
+                    toHit.addModifier(cic * 2, "CIC damage");
+                }
+            }
         }
 
-        if (target.isAirborne() && (target instanceof Aero)) {
+        if (target.isAirborne() && target.isAero()) {
 
-            Aero a = (Aero) target;
+            IAero a = (IAero) target;
 
             // is the target at zero velocity
             if ((a.getCurrentVelocity() == 0) && !(a.isSpheroid() && !game.getBoard().inSpace())) {
@@ -2280,14 +2284,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
                     && game.getBoard().inSpace()) {
                 for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(a) && en.isLargeCraft() && ((en.getWeight() - a.getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf(a.getEntity()) && en.isLargeCraft() && ((en.getWeight()
+                            - a.getEntity().getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
                 }
                 for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(a) && en.isLargeCraft() && !en.equals(a)
-                            && ((en.getWeight() - a.getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf(a.getEntity()) && en.isLargeCraft() && !en.equals(a)
+                            && ((en.getWeight() - a.getEntity().getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
@@ -2402,7 +2407,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.addModifier(2, "EMI");
         }
 
-        if (ae.isAirborne() && !(ae instanceof Aero)) {
+        if (ae.isAirborne() && !ae.isAero()) {
             toHit.addModifier(+2, "dropping");
             toHit.addModifier(+3, "jumping");
         }
@@ -2631,20 +2636,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             toHit.setHitTable(ToHitData.HIT_UNDERWATER);
         }
 
-        if (target.isAirborne() && (target instanceof Aero)) {
-            if (!(((Aero) target).isSpheroid() && !game.getBoard().inSpace())) {
+        if (target.isAirborne() && target.isAero()) {
+            if (!(((IAero) target).isSpheroid() && !game.getBoard().inSpace())) {
                 // get mods for direction of attack
                 int side = toHit.getSideTable();
                 // if this is an aero attack using advanced movement rules then
                 // determine side differently
-                if ((target instanceof Aero) && game.useVectorMove()) {
+                if (game.useVectorMove()) {
                     boolean usePrior = false;
                     Coords attackPos = ae.getPosition();
                     if (game.getBoard().inSpace() && ae.getPosition().equals(target.getPosition())) {
-                        if (((Aero) ae).shouldMoveBackHex((Aero) target)) {
+                        int moveSort = Compute.shouldMoveBackHex(ae, (Entity)target);
+                        if (moveSort < 0) {
                             attackPos = ae.getPriorPosition();
                         }
-                        usePrior = ((Aero) target).shouldMoveBackHex((Aero) ae);
+                        usePrior = moveSort > 0;
                     }
                     side = ((Entity) target).chooseSide(attackPos, usePrior);
                 }
@@ -2963,7 +2969,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
             // Aeros must have enough ammo for the maximum rate of fire because
             // they cannot lower it
-            if ((ae instanceof Aero) && usesAmmo && (ammo != null)
+            if (ae.isAero() && usesAmmo && (ammo != null)
                     && (ae.getTotalAmmoOfType(ammo.getType()) < weapon.getCurrentShots())) {
                 return "weapon does not have enough ammo.";
             }
@@ -3006,7 +3012,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return "CIC destroyed.";
                 }
             }
-
+        }
+        
+        if (ae.isAero()) {
             // if bombing, then can't do other attacks
             // also for altitude bombing, you must either be the first or be
             // adjacent to a prior one
@@ -3055,7 +3063,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (wtype.hasModes()
                 && (weapon.curMode().equals("Bracket 80%") || weapon.curMode().equals("Bracket 60%")
                         || weapon.curMode().equals("Bracket 40%"))
-                && (target instanceof Aero) && !te.isLargeCraft()
+                && target.isAero() && !te.isLargeCraft()
                 && (RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(weapon),
                         true, false) == RangeType.RANGE_SHORT)) {
             return "small craft cannot be bracketed at short range";
@@ -3451,7 +3459,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (ae.getBombs(AmmoType.F_GROUND_BOMB).isEmpty()) {
                 return "no bombs left to drop";
             }
-            if ((ae instanceof Aero) && ((Aero) ae).isSpheroid()) {
+            if (ae.isAero() && ((IAero) ae).isSpheroid()) {
                 return "spheroid units cannot make bombing attacks";
             }
             if (!ae.isAirborne()) {
@@ -3470,8 +3478,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     return "no dive bombing above altitude 5";
                 }
                 int altLoss = 0;
-                if (ae instanceof Aero) {
-                    altLoss = ((Aero) ae).getAltLossThisRound();
+                if (ae.isAero()) {
+                    altLoss = ((IAero) ae).getAltLossThisRound();
                 }
                 if ((ae.getAltitude() + altLoss) < 3) {
                     return "no dive bombing below altitude 3";
@@ -3685,14 +3693,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
 
             // only certain weapons can be used for air to ground attacks
-            if (ae instanceof Aero) {
+            if (ae.isAero()) {
                 // Spheroids can't strafe
-                if (isStrafing && ((Aero) ae).isSpheroid()) {
+                if (isStrafing && ((IAero) ae).isSpheroid()) {
                     return "spheroid craft are not allowed to strafe!";
                 }
-                if (((Aero) ae).isSpheroid()) {
+                if (((IAero) ae).isSpheroid()) {
                     if ((weapon.getLocation() != Aero.LOC_AFT) && !weapon.isRearMounted()) {
                         return "only aft and rear mounted weapons can be fired air to ground from spheroid";
+                    }
+                } else if (ae instanceof LandAirMech) {
+                    if ((weapon.getLocation() == Mech.LOC_LLEG)
+                            || (weapon.getLocation() == Mech.LOC_RLEG)
+                            || weapon.isRearMounted()) {
+                        return "only forward firing weapons can be fired air to ground from an aerodyne";
                     }
                 } else {
                     if ((weapon.getLocation() == Aero.LOC_AFT) || weapon.isRearMounted()) {
@@ -3720,8 +3734,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 altitudeLoss = 0;
             }
             int altLossThisRound = 0;
-            if (ae instanceof Aero) {
-                altLossThisRound = ((Aero) ae).getAltLossThisRound();
+            if (ae.isAero()) {
+                altLossThisRound = ((IAero) ae).getAltLossThisRound();
             }
             // you cant make attacks that would lower you to zero altitude
             if (altitudeLoss >= (ae.getAltitude() + altLossThisRound)) {

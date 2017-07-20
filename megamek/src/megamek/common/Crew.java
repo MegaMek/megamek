@@ -124,6 +124,13 @@ public class Crew implements Serializable {
     public static final String RANGEMASTER_LONG = "Long";
     public static final String RANGEMASTER_EXTREME = "Extreme";
 
+    // SPA Human TRO entity types
+    public static final String HUMANTRO_NONE = "None";
+    public static final String HUMANTRO_MECH = "Mek";
+    public static final String HUMANTRO_AERO = "Aero";
+    public static final String HUMANTRO_VEE = "Vee";
+    public static final String HUMANTRO_BA = "BA";
+
     public static final String SPECIAL_NONE = "None";
     public static final String SPECIAL_LASER = "Laser";
     public static final String SPECIAL_BALLISTIC = "Ballistic";

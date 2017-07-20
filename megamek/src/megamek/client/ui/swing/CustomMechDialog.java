@@ -749,6 +749,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             optionComp.setSelected(option.stringValue());
         }
 
+        if (OptionsConstants.MISC_HUMAN_TRO.equals(option.getName())) { //$NON-NLS-1$
+            optionComp.addValue(Crew.HUMANTRO_NONE);
+            optionComp.addValue(Crew.HUMANTRO_MECH);
+            optionComp.addValue(Crew.HUMANTRO_AERO);
+            optionComp.addValue(Crew.HUMANTRO_VEE);
+            optionComp.addValue(Crew.HUMANTRO_BA);
+            optionComp.setSelected(option.stringValue());
+        }
+
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);
 

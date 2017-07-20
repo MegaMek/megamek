@@ -51,8 +51,8 @@ public class PlanetaryConditions implements Serializable {
     public static final int WE_LIGHT_HAIL       = 13;
     public static final int WE_HEAVY_HAIL       = 14;
     private static String[] weatherNames = { "Clear", "Light Rain", "Moderate Rain", "Heavy Rain", "Gusting Rain", "Torrential Downpour",
-                                             "Light Snowfall", "Moderate Snowfall", "Snow Flurries", "Heavy Snowfall", "Sleet", "Ice Storm"};//,
-                                             //"Light Hail", "Heavy Hail"};
+                                             "Light Snowfall", "Moderate Snowfall", "Snow Flurries", "Heavy Snowfall", "Sleet", "Blizzard",
+                                             "Ice Storm"};//, "Light Hail", "Heavy Hail"};
     public static final int WE_SIZE = weatherNames.length;
 
     //Wind

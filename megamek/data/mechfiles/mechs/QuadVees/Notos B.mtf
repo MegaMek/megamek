@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 Notos
 B
 
@@ -13,6 +13,8 @@ Engine:300 XL (Clan) Engine(IS)
 Structure:Clan Endo Steel
 Myomer:Standard
 Motive:Wheel
+Cockpit:QuadVee Cockpit
+Gyro:Standard Gyro
 
 Heat Sinks:10 Laser
 Base Chassis Heat Sinks:10
@@ -32,13 +34,11 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:10
 
-Weapons:6
+Weapons:4
+LRM 15, Left Torso
+LRM 15, Right Torso
 ER Medium Laser, Center Torso
 ER Medium Laser, Center Torso
-LRM 15, Right Torso
-LRM 15, Right Torso
-LRM 15, Left Torso
-LRM 15, Left Torso
 
 Front Left Leg:
 Hip
@@ -47,6 +47,12 @@ Lower Leg Actuator
 Foot Actuator
 Conversion Gear
 Wheels
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Front Right Leg:
 Hip
@@ -55,12 +61,16 @@ Lower Leg Actuator
 Foot Actuator
 Conversion Gear
 Wheels
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-CLLRM15 (omnipod)
-CLLRM15 (omnipod)
 CLLRM15 (omnipod)
 CLLRM15 (omnipod)
 Clan Ammo LRM-15 (omnipod)
@@ -69,20 +79,22 @@ Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
 -Empty-
+-Empty-
+-Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 CLLRM15 (omnipod)
 CLLRM15 (omnipod)
-CLLRM15 (omnipod)
-CLLRM15 (omnipod)
 Clan Ammo LRM-15 (omnipod)
 Clan Ammo LRM-15 (omnipod)
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
 Clan Endo Steel
+-Empty-
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -105,6 +117,12 @@ Cockpit
 Cockpit
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Rear Left Leg:
 Hip
@@ -113,6 +131,12 @@ Lower Leg Actuator
 Foot Actuator
 Conversion Gear
 Wheels
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Rear Right Leg:
 Hip
@@ -121,5 +145,11 @@ Lower Leg Actuator
 Foot Actuator
 Conversion Gear
 Wheels
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 

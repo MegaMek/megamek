@@ -188,6 +188,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox autoDeclareSearchlight;
     private JCheckBox nagForMASC;
     private JCheckBox nagForPSR;
+    private JCheckBox nagForWiGELanding;
     private JCheckBox nagForNoAction;
     private JCheckBox animateMove;
     private JCheckBox showWrecks;
@@ -532,6 +533,11 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(nagForPSR);
         comps.add(row);
 
+        nagForWiGELanding = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForWiGELanding")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(nagForWiGELanding);
+        comps.add(row);
+
         nagForNoAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(nagForNoAction);
@@ -696,6 +702,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         autoDeclareSearchlight.setSelected(gs.getAutoDeclareSearchlight());
         nagForMASC.setSelected(gs.getNagForMASC());
         nagForPSR.setSelected(gs.getNagForPSR());
+        nagForWiGELanding.setSelected(gs.getNagForWiGELanding());
         nagForNoAction.setSelected(gs.getNagForNoAction());
         animateMove.setSelected(gs.getShowMoveStep());
         showWrecks.setSelected(gs.getShowWrecks());
@@ -860,6 +867,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setDefaultWeaponSortOrder(defaultWeaponSortOrder.getSelectedIndex());
         gs.setNagForMASC(nagForMASC.isSelected());
         gs.setNagForPSR(nagForPSR.isSelected());
+        gs.setNagForWiGELanding(nagForWiGELanding.isSelected());
         gs.setNagForNoAction(nagForNoAction.isSelected());
         gs.setShowMoveStep(animateMove.isSelected());
         gs.setShowWrecks(showWrecks.isSelected());

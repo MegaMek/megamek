@@ -8852,12 +8852,10 @@ public class Server implements Runnable {
                 // TODO: what if a building collapses into rubble?
             }
             
-            if (isOnGround
-                    || (curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))
-                    || (curHex.containsTerrain(Terrains.BLDG_ELEV)
-                            && (curElevation <= curHex.terrainLevel(Terrains.BLDG_ELEV)
-                                    || (entity.getMovementMode() == EntityMovementMode.WIGE
-                                            && curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV) + 1)))) {
+            if (stepMoveType != EntityMovementType.MOVE_JUMP
+                    && (step.getClearance() == 0
+                        || (entity.getMovementMode() == EntityMovementMode.WIGE && step.getClearance() == 1)
+                        || curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV))) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
                 if ((bldg != null) && (entity.getElevation() >= 0)) {
                     boolean wigeFlyingOver = entity.getMovementMode() == EntityMovementMode.WIGE
@@ -9548,39 +9546,57 @@ public class Server implements Runnable {
                 send(entity.getOwner().getId(), createSpecialReportPacket());
             }
         } else {
-            if ((entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && (entity.getElevation() > 0)) {
+            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                 IHex hex = game.getBoard().getHex(curPos);
-                if (hex.containsTerrain(Terrains.BLDG_ELEV)
-                        && entity.getElevation() == hex.terrainLevel(Terrains.BLDG_ELEV)) {
-                    // On the roof of a building, treated as if on the ground.
-                } else if (!entity.wigeLiftoffHover() && (entity.delta_distance < 5)) {
+                if (md.automaticWiGELanding()) {
                     // try to land safely
                     r = new Report(2123);
                     r.addDesc(entity);
                     r.subject = entity.getId();
                     vPhaseReport.add(r);
-                    if (entity instanceof LandAirMech) {
-                        landAirMech((LandAirMech)entity, entity.getPosition(), entity.getElevation(),
-                                entity.delta_distance, md.getLastStep());
-                    } else if (entity instanceof Protomech) {
-                        landGliderPM((Protomech)entity, entity.getPosition(), entity.getElevation(),
-                                entity.delta_distance);
-                    } else if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+    
+                    if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
                         Building bldg = game.getBoard().getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         addAffectedBldg(bldg, checkBuildingCollapseWhileMoving(bldg,
                                 entity, entity.getPosition()));
-                    } else if (!entity.isLocationProhibited(entity.getPosition(), 0) || hex.hasPavement()) {
-                        entity.setElevation(0);                                
-                    } else {
+                    } else if (entity.isLocationProhibited(entity.getPosition(), 0) && !hex.hasPavement()){
                         // crash
                         r = new Report(2124);
                         r.addDesc(entity);
                         r.subject = entity.getId();
                         vPhaseReport.add(r);
-                        if (entity instanceof Tank) {
-                            vPhaseReport.addAll(crashVTOLorWiGE((Tank) entity));
+                        vPhaseReport.addAll(crashVTOLorWiGE((Tank) entity));
+                    } else {
+                        entity.setElevation(0);                                
+                    }
+                    
+                    // Check for stacking violations in the target hex
+                    Entity violation = Compute.stackingViolation(game,
+                            entity.getId(), entity.getPosition());
+                    if (violation != null) {
+                        PilotingRollData prd = new PilotingRollData(
+                                violation.getId(), 2, "fallen on");
+                        if (violation instanceof Dropship) {
+                            violation = entity;
+                            prd = null;
+                        }
+                        Coords targetDest = Compute.getValidDisplacement(game,
+                                violation.getId(), entity.getPosition(), 0);
+                        if (targetDest != null) {
+                            vPhaseReport.addAll(doEntityDisplacement(violation,
+                                    entity.getPosition(), targetDest, prd));
+                            // Update the violating entity's postion on the
+                            // client.
+                            entityUpdate(violation.getId());
+                        } else {
+                            // ack! automatic death! Tanks
+                            // suffer an ammo/power plant hit.
+                            // TODO : a Mech suffers a Head Blown Off crit.
+                            vPhaseReport.addAll(destroyEntity(violation,
+                                    "impossible displacement",
+                                    violation instanceof Mech,
+                                    violation instanceof Mech));
                         }
                     }
                 } else {
@@ -21828,6 +21844,20 @@ public class Server implements Runnable {
             && (damage_orig > 0)
             && ((te instanceof Mech) || (te instanceof Protomech))) {
             critBonus = Math.min((damage_orig - 1) / 5, 4);
+        }
+
+        // Find out if Human TRO plays a part it crit bonus
+        Entity ae = game.getEntity(hit.getAttackerId());
+        if ((ae != null) && !ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).isEmpty() && !areaSatArty) {
+            if ((te instanceof Mech) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_MECH)) {
+                critBonus += 1;
+            } else if ((te instanceof Aero) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_AERO)) {
+                critBonus += 1;
+            } else if ((te instanceof Tank) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_VEE)) {
+                critBonus += 1;
+            } else if ((te instanceof BattleArmor) && ae.getCrew().getOptions().stringOption(OptionsConstants.MISC_HUMAN_TRO).equals(Crew.HUMANTRO_BA)) {
+                critBonus += 1;
+            }
         }
 
         HitData nextHit = null;

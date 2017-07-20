@@ -30,66 +30,58 @@ public class SpaceStation extends Jumpship {
 
     @Override
     public double getCost(boolean ignoreAmmo) {
+        double[] costs = new double[20];
+        int costIdx = 0;
+        double cost = 0;
 
-        double cost = 0.0f;
+        // Control Systems
+        // Bridge
+        costs[costIdx++] += 200000 + 10 * weight;
+        // Computer
+        costs[costIdx++] += 200000;
+        // Life Support
+        costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
+        // Sensors
+        costs[costIdx++] += 80000;
+        // Fire Control Computer
+        costs[costIdx++] += 100000;
+        // Gunnery Control Systems
+        costs[costIdx++] += 10000 * getArcswGuns();
+        // Structural Integrity
+        costs[costIdx++] += 100000 * getSI();
 
-        // Double.MAX
-        // add in controls
-        // bridge
-        cost += 200000 + 10 * weight;
-        // computer
-        cost += 200000;
-        // life support
-        cost += 5000 * (getNCrew() + getNPassenger());
-        // sensors
-        cost += 80000;
-        // fcs
-        cost += 100000;
-        // gunnery/control systems
-        cost += 10000 * getArcswGuns();
+        // Station-Keeping Drive
+        // Engine
+        costs[costIdx++] += 1000 * weight * 0.012;
+        // Engine Control Unit
+        costs[costIdx++] += 1000;
 
-        // structural integrity
-        cost += 100000 * getSI();
+        // Additional Ships Systems
+        // Attitude Thrusters
+        costs[costIdx++] += 25000;
+        // Docking Collars
+        costs[costIdx++] += 100000 * getDocks();
+        // Fuel Tanks
+        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
 
-        // additional flight systems (attitude thruster and landing gear)
-        cost += 25000;
+        // Armor
+        costs[costIdx++] += getArmorWeight(locations()) * EquipmentType.getArmorCost(armorType[0]);
 
-        // docking hard point
-        cost += 100000 * getDocks();
+        // Heat Sinks
+        int sinkCost = 2000 + (4000 * getHeatType());
+        costs[costIdx++] += sinkCost * getHeatSinks();
 
-        double engineWeight = getOriginalWalkMP() * weight * 0.06;
-        cost += engineWeight * 1000;
-        // drive unit
-        cost += 500 * getOriginalWalkMP() * weight / 100.0;
-        // control equipment
-        cost += 1000;
+        // Escape Craft
+        costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
 
-        // HPG
-        if (hasHPG()) {
-            cost += 1000000000;
-        }
+        // Grav Decks
+        double deckCost = 0;
+        deckCost += 5000000 * getGravDeck();
+        deckCost += 10000000 * getGravDeckLarge();
+        deckCost += 40000000 * getGravDeckHuge();
+        costs[costIdx++] += deckCost;
 
-        // fuel tanks
-        cost += 200 * getFuel() / getFuelPerTon();
-
-        // armor
-        cost += getArmorWeight(locations() - 2) * EquipmentType.getArmorCost(armorType[0]);
-
-        // heat sinks
-        int sinkCost = 2000 + 4000 * getHeatType();// == HEAT_DOUBLE ? 6000:
-                                                   // 2000;
-        cost += sinkCost * getHeatSinks();
-
-        // grav deck
-        cost += 5000000 * getGravDeck();
-        cost += 10000000 * getGravDeckLarge();
-        cost += 40000000 * getGravDeckHuge();
-
-        // weapons
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
-
-        // get bays
-        // Bay doors are not counted in the AT2r example
+        // Transport Bays
         int baydoors = 0;
         int bayCost = 0;
         for (Bay next : getTransportBays()) {
@@ -102,14 +94,29 @@ public class SpaceStation extends Jumpship {
             }
         }
 
-        cost += bayCost + baydoors * 1000;
+        costs[costIdx++] += bayCost + (baydoors * 1000);
 
-        // life boats and escape pods
-        cost += 5000 * (getLifeBoats() + getEscapePods());
+        // Weapons and Equipment
+        // HPG
+        if (hasHPG()) {
+            costs[costIdx++] += 1000000000;
+        } else {
+            costs[costIdx++] += 0;
+        }
+        // Weapons and Equipment
+        costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         double weightMultiplier = 5.00f;
 
-        return Math.round(cost * weightMultiplier);
+        // Sum Costs
+        for (int i = 0; i < costIdx; i++) {
+            cost += costs[i];
+        }
+
+        costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
+        cost = Math.round(cost * weightMultiplier);
+
+        return cost;
 
     }
 

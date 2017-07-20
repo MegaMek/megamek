@@ -160,6 +160,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_LAUNCH_DOORS = "NagForLaunchDoors";
     public static final String NAG_FOR_MECHANICAL_FALL_DAMAGE = "NagForMechanicalFallDamage";
     public static final String NAG_FOR_DOOMED = "NagForDoomed";
+    public static final String NAG_FOR_WIGE_LANDING = "NagForWiGELanding";
     public static final String RULER_COLOR_1 = "RulerColor1";
     public static final String RULER_COLOR_2 = "RulerColor2";
     public static final String RULER_POS_X = "RulerPosX";
@@ -322,6 +323,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_LAUNCH_DOORS, true);
         store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE,true);
         store.setDefault(NAG_FOR_DOOMED, true);
+        store.setDefault(NAG_FOR_WIGE_LANDING, true);
         setDefault(RULER_COLOR_1, Color.cyan);
         setDefault(RULER_COLOR_2, Color.magenta);
         store.setDefault(RULER_POS_X, 0);
@@ -651,6 +653,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getNagForDoomed() {
         return store.getBoolean(NAG_FOR_DOOMED);
+    }
+    
+    public boolean getNagForWiGELanding() {
+        return store.getBoolean(NAG_FOR_WIGE_LANDING);
     }
 
     public Color getRulerColor1() {
@@ -1020,6 +1026,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setNagForDoomed(boolean b){
         store.setValue(NAG_FOR_DOOMED,b);
+    }
+    
+    public void setNagForWiGELanding(boolean b) {
+        store.setValue(NAG_FOR_WIGE_LANDING, b);
     }
 
     public void setRulerPosX(int i) {

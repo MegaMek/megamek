@@ -2316,10 +2316,7 @@ public class MoveStep implements Serializable {
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
-            } else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)
-                    && ((entity instanceof Mech && !(entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
-                            || ((entity instanceof Tank || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE))
-                            && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS)))
+            } else if (canUseSprint(game)
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
                     && !isRunProhibited() && !isEvading()) {
@@ -3365,8 +3362,11 @@ public class MoveStep implements Serializable {
                 if (elevation == destHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
                     return false;
                 }
-            } else if (elevation <= (destHex.ceiling() - destHex.surface())
-                    && !(entity.getMovementMode() == EntityMovementMode.WIGE && isPavementStep())) {
+            } else if (elevation <= (destHex.ceiling() - destHex.surface())) {
+                // VTOLs and WiGEs can fly through woods and jungle below the level of the treetops on a road.
+                if (destHex.containsTerrain(Terrains.WOODS) || destHex.containsTerrain(Terrains.JUNGLE)) {
+                    return destHex.containsTerrainExit(Terrains.ROAD, dest.direction(src));
+                }
                 // System.err.println("can't fly into woods or a cliff face");
                 return false; // can't fly into woods or a cliff face
             }
@@ -3760,5 +3760,24 @@ public class MoveStep implements Serializable {
 
     public boolean isCareful() {
         return isCarefulPath;
+    }
+    
+    /**
+     * Helper function to determine whether sprint is available as a game option to the entity
+     */
+    public boolean canUseSprint(IGame game) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
+            return false;
+        }
+        if (entity instanceof Tank
+                || (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
+            return  game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
+        }
+        if (entity instanceof LandAirMech) {
+            return entity.getMovementMode() != EntityMovementMode.AERODYNE
+                    && (entity.getMovementMode() != EntityMovementMode.WIGE
+                        || elevation > 0);
+        }
+        return entity instanceof Mech;
     }
 }

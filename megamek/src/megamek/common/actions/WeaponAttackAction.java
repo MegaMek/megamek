@@ -39,6 +39,7 @@ import megamek.common.EntityMovementType;
 import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
+import megamek.common.IAero;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -770,59 +771,27 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         if (Compute.isGroundToAir(ae, target)
                 && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE) && (null != te)
-                && (te instanceof Aero)) {
-            int vMod = ((Aero) te).getCurrentVelocity();
+                && (te.isAero())) {
+            int vMod = ((IAero) te).getCurrentVelocity();
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AA_MOVE_MOD)) {
                 vMod = Math.min(vMod / 2, 4);
             }
             toHit.addModifier(vMod, "velocity");
         }
 
-        // Aeros may suffer from criticals
-        if (ae instanceof Aero) {
-            Aero aero = (Aero) ae;
-
-            // sensor hits
-            int sensors = aero.getSensorHits();
-
-            if (!aero.isCapitalFighter()) {
-                if ((sensors > 0) && (sensors < 3)) {
-                    toHit.addModifier(sensors, "sensor damage");
-                }
-                if (sensors > 2) {
-                    toHit.addModifier(+5, "sensors destroyed");
-                }
-            }
-
-            // FCS hits
-            int fcs = aero.getFCSHits();
-
-            if ((fcs > 0) && !aero.isCapitalFighter()) {
-                toHit.addModifier(fcs * 2, "fcs damage");
-            }
+        // Situational modifiers for aero units, including fighter LAMs
+        if (ae.isAero()) {
+            IAero aero = (IAero) ae;
 
             // pilot hits
-            int pilothits = aero.getCrew().getHits();
-            if ((pilothits > 0) && !aero.isCapitalFighter()) {
+            int pilothits = ae.getCrew().getHits();
+            if ((pilothits > 0) && !ae.isCapitalFighter()) {
                 toHit.addModifier(pilothits, "pilot hits");
             }
 
             // out of control
             if (aero.isOutControlTotal()) {
                 toHit.addModifier(+2, "out-of-control");
-            }
-
-            if (aero instanceof Jumpship) {
-                Jumpship js = (Jumpship) aero;
-                int cic = js.getCICHits();
-                if (cic > 0) {
-                    toHit.addModifier(cic * 2, "CIC damage");
-                }
-            }
-
-            // targeting mods for evasive action by large craft
-            if (aero.isEvading()) {
-                toHit.addModifier(+2, "attacker is evading");
             }
 
             // check for heavy gauss rifle on fighter of small craft
@@ -852,6 +821,44 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 } else if (!target.isAirborne() && !isArtilleryIndirect) {
                     toHit.addModifier(-2, "grounded dropships firing on ground units");
                 }
+            }
+
+        }
+        
+        // Situational modifiers for aero units, not including LAMs.
+        if (ae instanceof Aero) {
+            Aero aero = (Aero) ae;
+
+            // sensor hits
+            int sensors = aero.getSensorHits();
+
+            if (!ae.isCapitalFighter()) {
+                if ((sensors > 0) && (sensors < 3)) {
+                    toHit.addModifier(sensors, "sensor damage");
+                }
+                if (sensors > 2) {
+                    toHit.addModifier(+5, "sensors destroyed");
+                }
+            }
+
+            // FCS hits
+            int fcs = aero.getFCSHits();
+
+            if ((fcs > 0) && !aero.isCapitalFighter()) {
+                toHit.addModifier(fcs * 2, "fcs damage");
+            }
+
+            if (aero instanceof Jumpship) {
+                Jumpship js = (Jumpship) aero;
+                int cic = js.getCICHits();
+                if (cic > 0) {
+                    toHit.addModifier(cic * 2, "CIC damage");
+                }
+            }
+
+            // targeting mods for evasive action by large craft
+            if (aero.isEvading()) {
+                toHit.addModifier(+2, "attacker is evading");
             }
 
             // check for particular kinds of weapons in weapon bays

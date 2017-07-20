@@ -3462,7 +3462,7 @@ public class Compute {
         // their positions to see who was further back
         if (game.getBoard().inSpace()
             && ae.getPosition().equals(t.getPosition())
-            && (ae.isAero()) && (t instanceof Entity && ((Entity)t).isAero())) {
+            && (ae.isAero()) && (t instanceof Entity && t.isAero())) {
             int moveSort = shouldMoveBackHex(ae, (Entity)t);
             if (moveSort < 0) {
                 aPos = ae.getPriorPosition();
@@ -4051,7 +4051,7 @@ public class Compute {
         // table
         if (isAirToAir(attacker, target)
             && attackPos.equals(target.getPosition())
-            && (attacker.isAero()) && (target instanceof Entity && ((Entity)target).isAero())) {
+            && (attacker.isAero()) && (target instanceof Entity && target.isAero())) {
             int moveSort = shouldMoveBackHex(attacker, (Entity)target);
             if (moveSort < 0) {
                 attackPos = attacker.getPriorPosition();
@@ -4491,7 +4491,7 @@ public class Compute {
         // must be in control
         if (a.isOutControlTotal()) {
             reason.append("the attacker is out of control");
-        } else if (a.getBombs(AmmoType.F_SPACE_BOMB).size() < 1) {
+        } else if (attacker.getBombs(AmmoType.F_SPACE_BOMB).size() < 1) {
             reason.append("the attacker has no useable bombs");
         } else if (!rightFacing) {
             reason.append("the attacker is not facing the direction of travel");

@@ -1194,9 +1194,9 @@ public class MoveStep implements Serializable {
             IAero a = (IAero) entity;
             velocity = a.getCurrentVelocity();
             velocityN = a.getNextVelocity();
-            velocityLeft = a.getCurrentVelocity() - a.getDeltaDistance();
+            velocityLeft = a.getCurrentVelocity() - entity.delta_distance;
             if (game.getBoard().onGround()) {
-                velocityLeft = a.getCurrentVelocity() - (a.getDeltaDistance() / 16);
+                velocityLeft = a.getCurrentVelocity() - (entity.delta_distance / 16);
             }
             isRolled = false;// a.isRolled();
             nStraight = a.getStraightMoves();
@@ -1866,7 +1866,7 @@ public class MoveStep implements Serializable {
 
             // check the fuel requirements
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION)) {
-                int fuelUsed = mpUsed + Math.max(mpUsed - a.getWalkMP(), 0);
+                int fuelUsed = mpUsed + Math.max(mpUsed - entity.getWalkMP(), 0);
                 if (fuelUsed > a.getFuel()) {
                     return;
                 }

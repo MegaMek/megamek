@@ -88,6 +88,14 @@ public interface Targetable extends Serializable {
     /** @return if this is off the board */
     public boolean isOffBoard();
     
+
+    /**
+     * @return if this is an <code>Entity</code> capable of aerospace movement
+     */
+    default boolean isAero() {
+        return false;
+    }
+
     /**
      * @return Is the entity airborne in the fashion of an aerospace unit?
      * Does not include VTOL movement (see {@link Targetable#isAirborneVTOLorWIGE()}

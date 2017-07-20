@@ -224,6 +224,10 @@ public class BuildingTarget implements Targetable {
     public boolean isOffBoard() {
         return false;
     }
+    
+    public boolean isAero() {
+        return false;
+    }
 
     /*
      * (non-Javadoc)

@@ -94,11 +94,11 @@ public class RamAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is null");
         }
         
-        if(!(ae instanceof Aero)) {
+        if(!ae.isAero()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not Aero");
         }
         
-        if(!(target instanceof Aero)) {
+        if(!target.isAero()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not Aero");
         }   
         

@@ -863,7 +863,7 @@ public class EntityListFile {
                             output.write(CommonConstants.NL);
                         }
                     }
-                    for (Mounted m : a.getBombs()) {
+                    for (Mounted m : a.getEntity().getBombs()) {
                         if (!(m.getType() instanceof BombType)) {
                             continue;
                         }

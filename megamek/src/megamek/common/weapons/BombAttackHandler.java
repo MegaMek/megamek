@@ -20,7 +20,6 @@ package megamek.common.weapons;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import megamek.common.Aero;
 import megamek.common.BombType;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -69,7 +68,7 @@ public class BombAttackHandler extends WeaponHandler {
     @Override
     protected void useAmmo() {
         int[] payload = waa.getBombPayload();
-        if (!(ae instanceof Aero) || (null == payload)) {
+        if (!ae.isAero() || (null == payload)) {
             return;
         }
         for (int type = 0; type < payload.length; type++) {

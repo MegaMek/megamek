@@ -215,6 +215,11 @@ public class Aero extends Entity implements IAero {
         // need to set altitude to something different than entity
         altitude = 5;
     }
+    /** Needed by IAero for default methods **/
+    @Override
+    public Entity getEntity() {
+        return this;
+    }
 
     /**
      * Returns this entity's safe thrust, factored for heat, extreme

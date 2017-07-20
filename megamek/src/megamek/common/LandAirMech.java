@@ -801,6 +801,13 @@ public class LandAirMech extends BipedMech implements IAero {
     }
     
     /** Fighter Mode **/
+    
+    /** Needed by IAero for default methods **/
+    @Override
+    public Entity getEntity() {
+        return this;
+    }
+    
     public void setWhoFirst() {
         whoFirst = Compute.randomInt(500);
     }
@@ -1144,6 +1151,11 @@ public class LandAirMech extends BipedMech implements IAero {
             }
         }
         return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+    }
+    
+    @Override
+    public void applyBombs() {
+        //TODO: load the bays with the selected bombs
     }
 
     @Override

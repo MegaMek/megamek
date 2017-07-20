@@ -1359,7 +1359,23 @@ public class LandAirMech extends BipedMech implements IAero {
     public boolean isAero() {
         return getConversionMode() == CONV_MODE_FIGHTER;
     }
-    
+
+    @Override
+    public boolean canSpot() {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
+            return !isAirborne()
+                    || hasWorkingMisc(MiscType.F_RECON_CAMERA)
+                    || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
+                    || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
+                    || (hasWorkingMisc(MiscType.F_HIRES_IMAGER)
+                            && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY)
+                                    || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)));
+        } else {
+            return super.canSpot();
+        }
+    }
+
+
     public long getEntityType(){
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
     }

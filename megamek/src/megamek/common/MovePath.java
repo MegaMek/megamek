@@ -1394,7 +1394,8 @@ public class MovePath implements Cloneable, Serializable {
      * @return whether the unit is an airborne WiGE that must land at the end of movement.
      */
     public boolean automaticWiGELanding() {
-        if (getEntity().getMovementMode() != EntityMovementMode.WIGE) {
+        if (getEntity().getMovementMode() != EntityMovementMode.WIGE
+                || getEntity().isAirborne()) {
             return false;
         }
         // A LAM converting from AirMech to Mech mode automatically lands at the end of movement.

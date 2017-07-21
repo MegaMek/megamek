@@ -654,7 +654,7 @@ class StepSprite extends Sprite {
                     .append("}");
         }
 
-        if (step.getEntity().isAirborne()) {
+        if (step.getAltitude() > 0) {
             costStringBuf.append("{").append(step.getAltitude())
                     .append("}");
         }

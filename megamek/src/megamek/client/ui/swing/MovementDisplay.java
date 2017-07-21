@@ -940,6 +940,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         if (ce.isDropping()) {
             disableButtons();
+            if (ce instanceof LandAirMech
+                    && ce.getMovementMode() == EntityMovementMode.WIGE
+                    && ce.getAltitude() <= 3) {
+                updateHoverButton();
+                if (numButtonGroups > 1) {
+                    getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
+                }
+            }
             butDone.setEnabled(true);
         }
 
@@ -1150,6 +1158,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (ce.isDropping()) {
             gear = MovementDisplay.GEAR_TURN;
             disableButtons();
+            if (ce instanceof LandAirMech
+                    && ce.getMovementMode() == EntityMovementMode.WIGE
+                    && ce.getAltitude() <= 3) {
+                updateHoverButton();
+                if (numButtonGroups > 1) {
+                    getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
+                }
+            }
             butDone.setEnabled(true);
         }
 
@@ -2153,7 +2169,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 return;
             }            
         } else if (!(ce instanceof LandAirMech
-                && ((LandAirMech)ce).getConversionMode() == LandAirMech.CONV_MODE_AIRMECH)) {
+                && (((LandAirMech)ce).getConversionMode() == LandAirMech.CONV_MODE_AIRMECH))
+                && (ce.getAltitude() <= 3)) {
             return;
         }
 
@@ -4452,6 +4469,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_HOVER.getCmd())) {
             cmd.addStep(MoveStepType.HOVER);
+            if (ce instanceof LandAirMech
+                    && ce.getMovementMode() == EntityMovementMode.WIGE
+                    && ce.isAirborne()) {
+                gear = GEAR_LAND;
+            }
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_MANEUVER.getCmd())) {
             ManeuverChoiceDialog choiceDialog = new ManeuverChoiceDialog(

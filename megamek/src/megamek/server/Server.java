@@ -6923,7 +6923,8 @@ public class Server implements Runnable {
         }
 
         // check for dropping troops and drop them
-        if (entity.isDropping()) {
+        if (entity.isDropping()
+                && !md.contains(MoveStepType.HOVER)) {
             entity.setAltitude(entity.getAltitude()
                     - game.getPlanetaryConditions().getDropRate());
             // they may have changed their facing
@@ -7052,9 +7053,11 @@ public class Server implements Runnable {
             }
 
             if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                if ((step.getType() == MoveStepType.UP && !entity.isAirborneVTOLorWIGE())
-                            || step.getType() == MoveStepType.HOVER) {
+                if (step.getType() == MoveStepType.UP && !entity.isAirborneVTOLorWIGE()) {
                     entity.setWigeLiftoffHover(true);
+                } else if (step.getType() == MoveStepType.HOVER) {
+                    entity.setWigeLiftoffHover(true);
+                    entity.setAssaultDropInProgress(false);
                 } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
                     if (entity instanceof LandAirMech) {
                         landAirMech((LandAirMech)entity, step.getPosition(), prevStep.getElevation(),

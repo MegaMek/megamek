@@ -8990,7 +8990,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isEligibleForMovement() {
         // check if entity is offboard
-        if (isOffBoard() || isAssaultDropInProgress()) {
+        if (isOffBoard() || (isAssaultDropInProgress()
+                && !(movementMode == EntityMovementMode.WIGE))) {
             return false;
         }
         // check game options

@@ -602,7 +602,7 @@ public class MoveStep implements Serializable {
         }
 
         // if this is a flying aero, then there is no MP cost for moving
-        if (entity.isAirborne()) {
+        if (prev.getAltitude() > 0) {
             setMp(0);
             // if this a spheroid in atmosphere then the cost is always two
             if (useSpheroidAtmosphere(game, entity)) {
@@ -1008,10 +1008,17 @@ public class MoveStep implements Serializable {
                 setMp(2);
                 break;
             case HOVER:
-                if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                    setMp(entity instanceof Protomech? 4 : 5);
-                } else {
+                if (entity.isAero()) {
                     setMp(2);
+                } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                    if (entity instanceof LandAirMech
+                            && entity.getAltitude() > 0) {
+                        setMp(10);
+                        setElevation(altitude * 10);
+                        setAltitude(0);
+                    } else {
+                        setMp(entity instanceof Protomech? 4 : 5);
+                    }
                 }
                 break;
             case MANEUVER:
@@ -1833,10 +1840,23 @@ public class MoveStep implements Serializable {
         // return from it
         // only if Aeros are airborne, otherwise they should move like other
         // units
-        if (entity.isAirborne()) {
+        if (type == MoveStepType.HOVER && entity instanceof LandAirMech
+                && entity.getMovementMode() == EntityMovementMode.WIGE
+                && entity.getAltitude() <= 3) {
+            if (mpUsed <= entity.getWalkMP()) {
+                movementType = EntityMovementType.MOVE_VTOL_WALK;
+            } else if (mpUsed <= entity.getRunMP()) {
+                movementType = EntityMovementType.MOVE_VTOL_RUN;
+            } else {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            }
+            return;
+        }
+        
+        if (prev.getAltitude() > 0) {
 
             // If airborne and not an Aero then everything is illegal, except
-            // turns
+            // turns and AirMech 
             if (!entity.isAero()) {
                 switch (type) {
                     case TURN_LEFT:
@@ -2964,7 +2984,10 @@ public class MoveStep implements Serializable {
         }
 
         // Assault dropping units cannot move
-        if (entity.isAssaultDropInProgress() || entity.isDropping()) {
+        if ((entity.isAssaultDropInProgress() || entity.isDropping())
+                && !((entity instanceof LandAirMech)
+                && (entity.getMovementMode() == EntityMovementMode.WIGE)
+                && (entity.getAltitude() <= 3))) {
             return false;
         }
         

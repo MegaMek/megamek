@@ -3774,9 +3774,9 @@ public class MoveStep implements Serializable {
             return  game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
         }
         if (entity instanceof LandAirMech) {
-            return entity.getMovementMode() != EntityMovementMode.AERODYNE
-                    && (entity.getMovementMode() != EntityMovementMode.WIGE
-                        || elevation > 0);
+            return entity.getConversionMode() == LandAirMech.CONV_MODE_MECH
+                    || (entity.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH
+                            && getClearance() <= 0);
         }
         return entity instanceof Mech;
     }

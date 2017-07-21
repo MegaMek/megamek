@@ -179,12 +179,30 @@ public class LandAirMech extends BipedMech implements IAero {
         return mp;
     }
     
+    @Override
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
+        int mp;
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
+            mp = getFighterModeRunMP(gravity, ignoremodulararmor);
+        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
+            mp = getAirMechFlankMP(gravity, ignoremodulararmor);
+        } else {
+            mp = super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
+        }
+        if (convertingNow) {
+            mp /= 2;
+        }
+        return mp;
+    }
+    
     /**
      * This value should only be used for biped and airmech ground movement.
      */
     @Override
     public int getSprintMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        if (getConversionMode() == CONV_MODE_AIRMECH) {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
+            return getRunMP();
+        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
@@ -200,7 +218,9 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
-        if (getConversionMode() == CONV_MODE_AIRMECH) {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
+            return getRunMP();
+        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }

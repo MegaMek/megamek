@@ -536,8 +536,6 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         if (en.isAero()) {
             heatL.setVisible(true);
             heatR.setVisible(true);
-            mpR3.setVisible(false);
-            mpL3.setVisible(false);
             curMoveL.setVisible(true);
             curMoveR.setVisible(true);
             fuelL.setVisible(true);
@@ -545,6 +543,17 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.thrust"));
             mpL1.setString(Messages.getString("GeneralInfoMapSet.safe"));
             mpL2.setString(Messages.getString("GeneralInfoMapSet.over"));
+            if (en.getMovementMode() == EntityMovementMode.WHEELED) {
+                mpR1.setString(Integer.toString(((IAero)en).getCurrentThrust()));
+                mpR2.setString(Integer.toString((int)Math.ceil(((IAero)en).getCurrentThrust() * 1.5)));
+                mpL3.setString(Messages.getString("GeneralInfoMapSet.vehicle.mpL1"));
+                mpR3.setString(Integer.toString(en.getWalkMP()));
+                mpR3.setVisible(true);
+                mpL3.setVisible(true);
+            } else {
+                mpR3.setVisible(false);
+                mpL3.setVisible(false);
+            }
         } else if (en instanceof Tank
                 || (en instanceof QuadVee && en.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) {
             mpL0.setString(Messages.getString("GeneralInfoMapSet.mpL0"));

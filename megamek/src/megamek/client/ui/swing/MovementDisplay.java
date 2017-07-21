@@ -2143,16 +2143,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (null == ce) {
             return;
         }
-
-        if (!ce.isAero()) {
-            return;
-        }
-
-        if (!((IAero)ce).isVSTOL()) {
-            return;
-        }
-
-        if (clientgui.getClient().getGame().getBoard().inSpace()) {
+        
+        if (ce.isAero()) {
+            if (!((IAero)ce).isVSTOL()) {
+                return;
+            }
+            if (clientgui.getClient().getGame().getBoard().inSpace()) {
+                return;
+            }            
+        } else if (!(ce instanceof LandAirMech
+                && ((LandAirMech)ce).getConversionMode() == LandAirMech.CONV_MODE_AIRMECH)) {
             return;
         }
 
@@ -2161,9 +2161,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             setHoverEnabled(false);
         }
-
-        return;
-
     }
 
     private void updateThrustButton() {

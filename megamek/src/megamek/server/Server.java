@@ -9493,11 +9493,27 @@ public class Server implements Runnable {
             r = new Report(1210);
             r.subject = entity.getId();
             r.addDesc(entity);
-            if (entity instanceof QuadVee && entity.isProne() && entity.getConversionMode() == QuadVee.CONV_MODE_MECH) {
+            if (entity instanceof QuadVee && entity.isProne()
+                    && entity.getConversionMode() == QuadVee.CONV_MODE_MECH) {
                 //Fall while converting to vehicle mode cancels conversion.
                 entity.setConvertingNow(false);
                 r.messageId = 2454;
             } else {
+                // LAMs converting from fighter mode need to have the elevation set properly. 
+                if (entity.isAero()) {
+                    if (md.getFinalConversionMode() == EntityMovementMode.WIGE
+                            && entity.getAltitude() > 0 && entity.getAltitude() <= 3) {
+                        entity.setElevation(entity.getAltitude() * 10);
+                        entity.setAltitude(0);
+                    } else {
+                        IHex hex = game.getBoard().getHex(entity.getPosition());
+                        if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                            entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
+                        } else {
+                            entity.setElevation(0);
+                        }
+                    }
+                }
                 entity.setMovementMode(md.getFinalConversionMode());
                 if (entity instanceof Mech && ((Mech)entity).hasTracks()) {
                     r.messageId = 2455;
@@ -9511,6 +9527,17 @@ public class Server implements Runnable {
                     r.messageId = 2453;
                 } else {
                     r.messageId = 2450;
+                }
+                if (entity.isAero()) {
+                    int altitude = entity.getAltitude();
+                    if (altitude == 0 && md.getFinalElevation() >= 8) {
+                        altitude = 1;
+                    }
+                    if (altitude == 0) {
+                        ((IAero)entity).land();
+                    } else {
+                        ((IAero)entity).liftOff(altitude);
+                    }
                 }
             }
             addReport(r);
@@ -9599,7 +9626,8 @@ public class Server implements Runnable {
                                     violation instanceof Mech));
                         }
                     }
-                } else {
+                } else if (!((entity instanceof LandAirMech)
+                        || (entity instanceof Protomech))) {
                     // we didn't land, so we go to elevation 1 above the terrain
                     // features
                     // it might have been higher than one due to the extra MPs

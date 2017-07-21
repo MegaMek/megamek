@@ -816,6 +816,76 @@ public class LandAirMech extends BipedMech implements IAero {
         }
     }
     
+    /**
+     * Determines whether it is possible to assume a particular mode based on damage and type of map.
+     * 
+     * @param fromMode The mode to convert from (one of CONV_MODE_MECH, CONV_MODE_AIRMECH, or CONV_MODE_FIGHTER)
+     * @param toMode   The mode to convert to (one of CONV_MODE_MECH, CONV_MODE_AIRMECH, or CONV_MODE_FIGHTER)
+     * @return true if it is possible for the LAM to convert to the given mode.
+     */
+    public boolean canConvertTo(int fromMode, int toMode) {
+        // Cannot convert with any gyro damage
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO, LOC_CT);
+        if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+            gyroHits--;
+        }
+        if (gyroHits > 0) {
+            return false;
+        }
+        
+        // Cannot convert to or from mech mode with damage shoulder or arm actuators
+        if ((toMode == CONV_MODE_MECH || fromMode == CONV_MODE_MECH)
+                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, LOC_RARM)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, LOC_RARM)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, LOC_RARM)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, LOC_LARM)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, LOC_LARM)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, LOC_LARM) > 0)) {
+            return false;
+        }
+        
+        // Cannot convert to or from fighter mode with damage hip or leg actuators
+        if ((toMode == CONV_MODE_FIGHTER || fromMode == CONV_MODE_FIGHTER)
+                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, LOC_RLEG)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, LOC_RLEG)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, LOC_RLEG)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, LOC_LLEG)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, LOC_LLEG)
+                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, LOC_LLEG) > 0)) {
+            return false;
+        }
+        
+        if (toMode == CONV_MODE_AIRMECH) {
+            if (getLAMType() == LAM_BIMODAL) {
+                return false;
+            }
+        } else if (toMode == CONV_MODE_FIGHTER) {
+            // Standard LAMs can convert from mech to fighter mode in a single round on a space map
+            if (fromMode == CONV_MODE_MECH) {
+                return getLAMType() == LAM_BIMODAL
+                        || game.getBoard().inSpace();
+            }
+        } else if (toMode == CONV_MODE_MECH) {
+            // Standard LAMs can convert from fighter to mech mode in a single round on a space map
+            if (fromMode == CONV_MODE_FIGHTER) {
+                return getLAMType() == LAM_BIMODAL
+                        || game.getBoard().inSpace();
+            }
+        }
+        return true;
+    }
+    
+    public int getConversionModeFor(EntityMovementMode mmode) {
+        if (mmode == EntityMovementMode.AERODYNE
+                || mmode == EntityMovementMode.WHEELED) {
+            return CONV_MODE_FIGHTER;
+        } else if (mmode == EntityMovementMode.WIGE) {
+            return CONV_MODE_AIRMECH;
+        } else {
+            return CONV_MODE_MECH;
+        }
+    }
+    
     @Override
     public boolean canFall(boolean gyroLegDamage) {
         //TODO: in AirMech mode it is possible to fall if using walk/run (or standing) but not cruise/flank

@@ -2206,7 +2206,8 @@ public class MoveStep implements Serializable {
         
         if (stepType == MoveStepType.CONVERT_MODE) {
             //QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
-            if (currHex.containsTerrain(Terrains.WATER)) {
+            if (currHex.containsTerrain(Terrains.WATER)
+                    && !currHex.containsTerrain(Terrains.ICE)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
             //QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,
@@ -2215,10 +2216,9 @@ public class MoveStep implements Serializable {
                     && (getEntity() instanceof QuadVee || getEntity() instanceof LandAirMech)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
-            //LAMs cannot convert with a destroyed gyro.
-            if (getEntity() instanceof LandAirMech && getEntity().isGyroDestroyed()) {
-                movementType = EntityMovementType.MOVE_ILLEGAL;
-            }
+            // Illegal LAM conversions due to damage have to be determined by entire path, because
+            // some conversions take two convert steps and can be legal even though the first one
+            // is illegal on its own.
         }
         
         if ((getEntity().getMovementMode() == EntityMovementMode.INF_UMU)
@@ -2397,8 +2397,8 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_VTOL_SPRINT;
         }
         
-        //We've already invalidated conversion for LAMs with destroyed gyro and fighter mode ignores it.
-        if (entity.isGyroDestroyed() && entity.getMovementMode() != EntityMovementMode.AERODYNE) {
+        if (entity.isGyroDestroyed()
+                && !(entity instanceof LandAirMech && entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
             //A prone 'Mech with a destroyed gyro can only change a single hex side.
             if (entity.isProne()) {
                 if ((stepType != MoveStepType.TURN_LEFT && stepType != MoveStepType.TURN_RIGHT)
@@ -2479,6 +2479,16 @@ public class MoveStep implements Serializable {
                 && !entity.isHullDown() && !entity.isStuck()
                 && !entity.isGyroDestroyed() && (stepType == MoveStepType.FORWARDS)) {
             movementType = EntityMovementType.MOVE_RUN;
+        }
+        
+        // Bimodal LAMs cannot spend MP when converting to fighter mode on the ground.
+        if (entity instanceof LandAirMech
+                && ((LandAirMech)entity).getLAMType() == LandAirMech.LAM_BIMODAL
+                && entity.getConversionMode() == LandAirMech.CONV_MODE_MECH
+                && movementMode == EntityMovementMode.AERODYNE
+                && altitude == 0
+                && mp > 0) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
         // Is the entity unloading passengers?

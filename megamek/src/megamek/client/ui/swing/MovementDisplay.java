@@ -652,6 +652,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 } else {
                     flag = CMD_TANK;
                 }
+                if (ce instanceof LandAirMech) {
+                    flag |= CMD_CONVERTER;
+                }
             } else if (ce instanceof QuadVee) {
                 if (ce.getConversionMode() == QuadVee.CONV_MODE_MECH) {
                     flag = CMD_MECH | CMD_CONVERTER;
@@ -659,9 +662,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     flag = CMD_TANK | CMD_CONVERTER;
                 }
             } else if (ce instanceof LandAirMech) {
-                if (ce.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
-                    flag |= CMD_CONVERTER;
-                } else if (ce.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH) {
+                if (ce.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH) {
                     flag = CMD_TANK | CMD_CONVERTER | CMD_AIRMECH;
                 } else {
                     flag = CMD_MECH | CMD_CONVERTER;
@@ -2521,7 +2522,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         
         IHex currHex =  clientgui.getClient().getGame().getBoard().getHex(ce.getPosition());
-        if (currHex.containsTerrain(Terrains.WATER)) {
+        if (currHex.containsTerrain(Terrains.WATER)
+                && ce.getElevation() < 0) {
             setModeConvertEnabled(false);
             return;
         }

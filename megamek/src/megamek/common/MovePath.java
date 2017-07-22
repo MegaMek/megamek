@@ -509,7 +509,12 @@ public class MovePath implements Cloneable, Serializable {
                     getEntity().toggleConversionMode();
                 }
             }
-            
+            //Treat multiple convert steps as a single command
+            if (step1.getType() == MovePath.MoveStepType.CONVERT_MODE)
+                while (steps.size() > 0
+                    && steps.get(steps.size() - 1).getType() == MovePath.MoveStepType.CONVERT_MODE) {
+                steps.removeElementAt(steps.size() - 1);
+            }
         }
 
         // Find the new last step in the path.

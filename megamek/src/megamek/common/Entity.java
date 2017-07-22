@@ -11159,7 +11159,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         for (Mounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_BAP)
-                && (this instanceof Aero)
+                && (this instanceof Aero || this instanceof LandAirMech)
                 && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
@@ -11179,7 +11179,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         modes.add("ECM & ECCM");
                     }
                 } else if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
-                           && (this instanceof Aero)) {
+                           && (this instanceof Aero || this instanceof LandAirMech)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");

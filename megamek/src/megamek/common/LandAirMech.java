@@ -402,6 +402,7 @@ public class LandAirMech extends BipedMech implements IAero {
     
     @Override
     public void setMovementMode(EntityMovementMode mode) {
+        int prevMode = getConversionMode();
         if (mode == EntityMovementMode.AERODYNE
                 || mode == EntityMovementMode.WHEELED) {
             setConversionMode(CONV_MODE_FIGHTER);
@@ -411,6 +412,25 @@ public class LandAirMech extends BipedMech implements IAero {
             setConversionMode(CONV_MODE_MECH);
         }
         super.setMovementMode(mode);
+        
+        if (getConversionMode() != prevMode) {
+            if (getConversionMode() == CONV_MODE_FIGHTER) {
+                setRapidFire();
+            } else if (prevMode == CONV_MODE_FIGHTER) {
+                for (Mounted m : getTotalWeaponList()) {
+                    WeaponType wtype = (WeaponType) m.getType();
+                    if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                        m.setMode("");
+                        m.setModeSwitchable(true);
+                    } else if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+                        m.setMode("");
+                        m.setModeSwitchable(true);
+                    } else if (wtype.hasIndirectFire()) {
+                        m.setModeSwitchable(true);
+                    }
+                }
+            }
+        }
     }
     
     @Override

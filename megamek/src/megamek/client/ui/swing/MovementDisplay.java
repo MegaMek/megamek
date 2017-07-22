@@ -1448,6 +1448,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         }
 
+        // check to see if spheroids will drop an elevation
+        if (ce() instanceof LandAirMech && ce().isAssaultDropInProgress()
+                && cmd.getFinalConversionMode() == EntityMovementMode.AERODYNE) {
+            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.insufficientAltitudeForConversion") +
+                    //$NON-NLS-1$
+                            check, false);
+            nag.setVisible(true);
+            if (!nag.getAnswer()) {
+                return;
+            }
+        }
+        
         if ((ce() instanceof Infantry) && ((Infantry)ce()).hasMicrolite()
         		&& (ce().isAirborneVTOLorWIGE() || (ce().getElevation() != cmd.getFinalElevation()))
         		&& !cmd.contains(MoveStepType.FORWARDS)

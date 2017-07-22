@@ -34418,6 +34418,12 @@ public class Server implements Runnable {
         entity.setAltitude(0);
 
         PilotingRollData psr;
+        // LAMs that convert to fighter mode on the landing turn are processed as crashes
+        if ((entity instanceof LandAirMech)
+                && ((LandAirMech)entity).getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
+            addReport(processCrash(entity, 0, entity.getPosition()));
+            return;
+        }
         if ((entity instanceof Protomech) || (entity instanceof BattleArmor)) {
             psr = new PilotingRollData(entity.getId(), 5,
                                        "landing assault drop");
@@ -34500,6 +34506,7 @@ public class Server implements Runnable {
                 && !(entity instanceof BattleArmor)) {
                 HitData hit = new HitData(Infantry.LOC_INFANTRY);
                 addReport(damageEntity(entity, hit, 1));
+                // LAMs that convert to fighter mode on the landing turn are processed as crashes regardless of roll
             } else {
                 addReport(doEntityFallsInto(entity, c, psr, true));
             }

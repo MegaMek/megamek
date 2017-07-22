@@ -143,6 +143,16 @@ public class LandAirMech extends BipedMech implements IAero {
         return LAM_UNKNOWN;
     }
 
+    @Override
+    public boolean doomedInAtmosphere() {
+        return getConversionMode() != CONV_MODE_FIGHTER;
+    }
+
+    @Override
+    public boolean doomedInSpace() {
+        return getConversionMode() != CONV_MODE_FIGHTER;
+    }
+
     /**
      * Current MP is calculated differently depending on the LAM's mode. AirMech mode returns
      * cruise/flank; walk/run is treated as a special case of WiGE ground movement.
@@ -798,6 +808,7 @@ public class LandAirMech extends BipedMech implements IAero {
      */
     @Override
     public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
+        boolean inSpace = game != null && game.getBoard().inSpace();
         if (previousMovementMode == EntityMovementMode.WIGE) {
             if (afterMode == EntityMovementMode.WIGE) {
                 return EntityMovementMode.AERODYNE;
@@ -808,12 +819,20 @@ public class LandAirMech extends BipedMech implements IAero {
                 return EntityMovementMode.WIGE;
             }
         } else if (afterMode == EntityMovementMode.WIGE) {
-            return previousMovementMode;
-        } else if (afterMode == EntityMovementMode.AERODYNE) {
-            return lamType == LAM_BIMODAL? originalMovementMode : EntityMovementMode.WIGE;
+            return inSpace? EntityMovementMode.AERODYNE : previousMovementMode;
+        } else if (afterMode == EntityMovementMode.AERODYNE || afterMode == EntityMovementMode.WHEELED) {
+            return (inSpace || lamType == LAM_BIMODAL)? originalMovementMode : EntityMovementMode.WIGE;
         } else {
             return lamType == LAM_BIMODAL? EntityMovementMode.AERODYNE : EntityMovementMode.WIGE;
         }
+    }
+    
+    public boolean canConvertTo(EntityMovementMode toMode) {
+        return canConvertTo(getConversionMode(), getConversionModeFor(toMode));
+    }
+    
+    public boolean canConvertTo(int fromMode, EntityMovementMode toMode) {
+        return canConvertTo(fromMode, getConversionModeFor(toMode));
     }
     
     /**

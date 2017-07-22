@@ -40,7 +40,6 @@ import megamek.common.Building.DemolitionCharge;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.EquipmentMode;
 import megamek.common.HexTarget;
@@ -1179,23 +1178,30 @@ public class MapMenu extends JPopupMenu {
                     MovementDisplay.MoveCommand.MOVE_MODE_VEE,
                     myEntity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE));            
         } else if (myEntity instanceof LandAirMech) {
-            if (myEntity.getMovementMode() != EntityMovementMode.AERODYNE
-                    || ((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_BIMODAL) {
-                menu.add(createConvertMenuItem("MovementDisplay.moveModeMech",
-                        MovementDisplay.MoveCommand.MOVE_MODE_LEG,
-                        myEntity.getMovementMode() == EntityMovementMode.BIPED));
-            }
-            if (((LandAirMech)myEntity).getLAMType() != LandAirMech.LAM_BIMODAL) {
-                menu.add(createConvertMenuItem("MovementDisplay.moveModeAirmech",
+            int currentMode = myEntity.getConversionMode();
+            JMenuItem item = createConvertMenuItem("MovementDisplay.moveModeMech",
+                    MovementDisplay.MoveCommand.MOVE_MODE_LEG,
+                    currentMode == LandAirMech.CONV_MODE_MECH);
+            item.setEnabled(currentMode == LandAirMech.CONV_MODE_MECH
+                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
+                            LandAirMech.CONV_MODE_MECH));
+            menu.add(item);
+            if (((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_STANDARD) {
+                item = createConvertMenuItem("MovementDisplay.moveModeAirmech",
                         MovementDisplay.MoveCommand.MOVE_MODE_VEE,
-                        myEntity.getMovementMode() == EntityMovementMode.WIGE));
+                        currentMode == LandAirMech.CONV_MODE_AIRMECH);
+                item.setEnabled(currentMode == LandAirMech.CONV_MODE_AIRMECH
+                        || ((LandAirMech)myEntity).canConvertTo(currentMode,
+                                LandAirMech.CONV_MODE_AIRMECH));
+                menu.add(item);
             }
-            if (myEntity.getMovementMode() != EntityMovementMode.BIPED
-                    || ((LandAirMech)myEntity).getLAMType() == LandAirMech.LAM_BIMODAL) {
-                menu.add(createConvertMenuItem("MovementDisplay.moveModeFighter",
-                        MovementDisplay.MoveCommand.MOVE_MODE_AIR,
-                        myEntity.getMovementMode() == EntityMovementMode.AERODYNE));
-            }
+            item = createConvertMenuItem("MovementDisplay.moveModeFighter",
+                    MovementDisplay.MoveCommand.MOVE_MODE_AIR,
+                    currentMode == LandAirMech.CONV_MODE_FIGHTER);
+            item.setEnabled(currentMode == LandAirMech.CONV_MODE_FIGHTER
+                    || ((LandAirMech)myEntity).canConvertTo(currentMode,
+                            LandAirMech.CONV_MODE_FIGHTER));
+            menu.add(item);
         }
         return menu;
     }

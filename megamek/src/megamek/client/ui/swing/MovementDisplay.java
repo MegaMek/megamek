@@ -2558,6 +2558,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
             }
             if (!canConvert) {
+                setModeConvertEnabled(false);
                 return;
             }
         } else if (!(ce instanceof QuadVee
@@ -4119,6 +4120,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     : EntityMovementMode.QUAD_SWIM);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_CONVERT.getCmd())) {
             EntityMovementMode nextMode = ce.nextConversionMode(cmd.getFinalConversionMode());
+            // LAMs may have to skip the next mode due to damage
+            if (ce instanceof LandAirMech) {
+                if (!((LandAirMech)ce).canConvertTo(nextMode)) {
+                    nextMode = ce.nextConversionMode(nextMode);
+                }
+                if (!((LandAirMech)ce).canConvertTo(nextMode)) {
+                    nextMode = ce.getMovementMode();
+                }
+            }
             adjustConvertSteps(nextMode);
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_MODE_LEG.getCmd())) {
@@ -4780,7 +4790,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     private void adjustConvertSteps(EntityMovementMode endMode) {
         //Since conversion is not allowed in water, we shouldn't have to deal with the possibility of swim modes.
-        if (ce().getMovementMode() == endMode) {
+        if (ce().getMovementMode() == endMode
+                // Account for grounded LAMs in fighter mode with movement type wheeled 
+                || (ce().isAero() && endMode == EntityMovementMode.AERODYNE)) {
             cmd.clear();
             return;
         }

@@ -355,7 +355,7 @@ public class MovePath implements Cloneable, Serializable {
         if (shouldMechanicalJumpCauseFallDamage()) {
             step.setDanger(true);
         }
-
+        
         // If the new step is legal and is a different position than
         // the previous step, then update the older steps, letting
         // them know that they are no longer the end of the path.
@@ -484,6 +484,15 @@ public class MovePath implements Cloneable, Serializable {
                     break;
                 }
             }
+        }
+        
+        if (getEntity() instanceof LandAirMech
+                && !((LandAirMech)getEntity()).canConvertTo(getFinalConversionMode())) {
+            steps.forEach(s -> {
+                if (s.getType() == MoveStepType.CONVERT_MODE) {
+                    s.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+                }
+            });
         }
 
         if (clip) {

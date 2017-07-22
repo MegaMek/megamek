@@ -1770,6 +1770,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // Per errata, WiGEs have flotation hull, which makes no sense unless it changes the rule
                 // in TW that they cannot land on water.
                 // See 
+                if (isAirborne()) {
+                    return false;
+                }
                 if (hex.containsTerrain(Terrains.WATER)) {
                     minAlt = hex.surface();
                     break;
@@ -1868,6 +1871,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             case WIGE:
                 if (this instanceof LandAirMech) {
+                    if (isAirborne()) {
+                        return false;
+                    }
                     maxAlt = hex.surface() + 25;
                 } else if (this instanceof Protomech) {
                     maxAlt = hex.surface() + 12;

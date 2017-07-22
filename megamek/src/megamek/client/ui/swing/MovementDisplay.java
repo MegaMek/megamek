@@ -938,18 +938,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     && !ce.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
         }
 
-        if (ce.isDropping()) {
+        // if dropping unit only allow turning
+        if (!ce.isAero() && cmd.getFinalAltitude() > 0) {
             disableButtons();
-            if (ce instanceof LandAirMech
-                    && ce.getMovementMode() == EntityMovementMode.WIGE
-                    && ce.getAltitude() <= 3) {
-                updateHoverButton();
-                if (numButtonGroups > 1) {
-                    getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
+            if (ce instanceof LandAirMech) {
+                updateConvertModeButton();
+                if (ce.getMovementMode() == EntityMovementMode.WIGE
+                        && ce.getAltitude() <= 3) {
+                    updateHoverButton();
                 }
+                getBtn(MoveCommand.MOVE_MORE).setEnabled(numButtonGroups > 1);
             }
             butDone.setEnabled(true);
         }
+
 
         // if small craft/dropship that has unloaded units, then only allowed
         // to unload more
@@ -1155,16 +1157,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         checkAtmosphere();
 
         // if dropping unit only allow turning
-        if (ce.isDropping()) {
-            gear = MovementDisplay.GEAR_TURN;
+        if (!ce.isAero() && cmd.getFinalAltitude() > 0) {
             disableButtons();
-            if (ce instanceof LandAirMech
-                    && ce.getMovementMode() == EntityMovementMode.WIGE
-                    && ce.getAltitude() <= 3) {
-                updateHoverButton();
-                if (numButtonGroups > 1) {
-                    getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
+            if (ce instanceof LandAirMech) {
+                updateConvertModeButton();
+                if (ce.getMovementMode() == EntityMovementMode.WIGE
+                        && ce.getAltitude() <= 3) {
+                    updateHoverButton();
                 }
+                getBtn(MoveCommand.MOVE_MORE).setEnabled(numButtonGroups > 1);
+            } else {
+                gear = MovementDisplay.GEAR_TURN;
             }
             butDone.setEnabled(true);
         }
@@ -2532,7 +2535,18 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         
         final Entity ce = ce();
         
-        if (!(ce instanceof QuadVee || ce instanceof LandAirMech
+        if (ce instanceof LandAirMech) {
+            boolean canConvert = false;
+            for (int i = 0; i < 3; i++) {
+                if (i != ce.getConversionMode()
+                        && ((LandAirMech)ce).canConvertTo(ce.getConversionMode(), i)) {
+                    canConvert = true;
+                }
+            }
+            if (!canConvert) {
+                return;
+            }
+        } else if (!(ce instanceof QuadVee
                 || (ce instanceof Mech && ((Mech)ce).hasTracks()))) {
             setModeConvertEnabled(false);
             return;
@@ -2564,6 +2578,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         if (null == ce) {
             return;
+        }
+        
+        if (ce.isAirborne()) {
+            setRecklessEnabled(false);
         }
 
         if (ce instanceof Protomech) {

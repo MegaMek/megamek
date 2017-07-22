@@ -6935,6 +6935,22 @@ public class Server implements Runnable {
             entity.setPassedThrough(passedThrough);
             passedThroughFacing.add(entity.getFacing());
             entity.setPassedThroughFacing(passedThroughFacing);
+            // We may still need to process any conversions for dropping LAMs
+            if (entity instanceof LandAirMech && md.contains(MoveStepType.CONVERT_MODE)) {
+                entity.setMovementMode(md.getFinalConversionMode());
+                entity.setConvertingNow(true);
+                r = new Report(1210);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                    r.messageId = 2452;
+                } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
+                    r.messageId = 2453;
+                } else {
+                    r.messageId = 2450;
+                }
+                addReport(r);
+            }
             entity.setDone(true);
             entityUpdate(entity.getId());
             return;

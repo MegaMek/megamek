@@ -287,7 +287,6 @@ import megamek.common.weapons.mortars.ISVehicularGrenadeLauncher;
 import megamek.common.weapons.other.CLAMS;
 import megamek.common.weapons.other.CLFireExtinguisher;
 import megamek.common.weapons.other.CLFluidGun;
-import megamek.common.weapons.other.CLFussilade;
 import megamek.common.weapons.other.CLLaserAMS;
 import megamek.common.weapons.other.CLNarc;
 import megamek.common.weapons.other.CLNarcIOS;

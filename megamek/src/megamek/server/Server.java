@@ -7076,11 +7076,11 @@ public class Server implements Runnable {
                     entity.setAssaultDropInProgress(false);
                 } else if (step.getType() == MoveStepType.DOWN && step.getClearance() == 0) {
                     if (entity instanceof LandAirMech) {
-                        landAirMech((LandAirMech)entity, step.getPosition(), prevStep.getElevation(),
-                                distance, prevStep);
+                        addReport(landAirMech((LandAirMech)entity, step.getPosition(), prevStep.getElevation(),
+                                distance, prevStep));
                     } else if (entity instanceof Protomech) {
-                        landGliderPM((Protomech)entity, step.getPosition(), prevStep.getElevation(),
-                                distance);
+                        addReport(landGliderPM((Protomech)entity, step.getPosition(), prevStep.getElevation(),
+                                distance));
                     }
                     // landing always ends movement whether successful or not
                 }
@@ -20447,6 +20447,15 @@ public class Server implements Runnable {
                     }
                 }
             }
+            // Airborne AirMechs that take 20+ damage make a control roll instead of a PSR.
+            if (entity instanceof LandAirMech && entity.isAirborneVTOLorWIGE()
+                    && entity.damageThisPhase >= 20) {
+                PilotingRollData damPRD = new PilotingRollData(
+                        entity.getId());
+                int damMod = entity.damageThisPhase / 20;
+                damPRD.addModifier(damMod, (damMod * 20) + "+ damage");
+                game.addControlRoll(damPRD);
+            }
         }
     }
 
@@ -21095,7 +21104,7 @@ public class Server implements Runnable {
     }
 
     /**
-     * Resolves and reports all control skill rolls for a single aero.
+     * Resolves and reports all control skill rolls for a single aero or airborne LAM in airmech mode.
      */
     private Vector<Report> resolveControl(Entity e) {
         Vector<Report> vReport = new Vector<Report>();
@@ -21110,94 +21119,99 @@ public class Server implements Runnable {
          * http://forums.classicbattletech.com/index.php/topic,20424.0.html
          */
 
+        IAero a = null;
+        boolean canRecover = false;
         if (e.isAero() && (e.isAirborne() || e.isSpaceborne())) {
-            IAero a = (IAero) e;
-
+            a = (IAero) e;
             // they should get a shot at a recovery roll at the end of all this
             // if they are already out of control
-            boolean canRecover = a.isOutControl();
+            canRecover = a.isOutControl();
+        } else if (!(e instanceof LandAirMech) || !e.isAirborneVTOLorWIGE()) {
+            return vReport;
+        }
 
-            // if the unit already is moving randomly then it can't get any
-            // worse
-            if (!a.isRandomMove()) {
+        // if the unit already is moving randomly then it can't get any
+        // worse
+        if (a == null || !a.isRandomMove()) {
 
-                // find control rolls and make them
-                Vector<PilotingRollData> rolls = new Vector<PilotingRollData>();
-                StringBuffer reasons = new StringBuffer();
-                PilotingRollData base = e.getBasePilotingRoll();
-                // maneuvering ace
-                // TODO: pending rules query
-                // http://www.classicbattletech.com/forums/index.php/topic,63552.new.html#new
-                // for now I am assuming Man Ace applies to all out-of-control
-                // rolls, but not other
-                // uses of control rolls (thus it doesn't go in
-                // Entity#addEntityBonuses) and
-                // furthermore it doesn't apply to recovery rolls
-                if (e.isUsingManAce()) {
-                    base.addModifier(-1, "maneuvering ace");
+            // find control rolls and make them
+            Vector<PilotingRollData> rolls = new Vector<PilotingRollData>();
+            StringBuffer reasons = new StringBuffer();
+            PilotingRollData base = e.getBasePilotingRoll();
+            // maneuvering ace
+            // TODO: pending rules query
+            // http://www.classicbattletech.com/forums/index.php/topic,63552.new.html#new
+            // for now I am assuming Man Ace applies to all out-of-control
+            // rolls, but not other
+            // uses of control rolls (thus it doesn't go in
+            // Entity#addEntityBonuses) and
+            // furthermore it doesn't apply to recovery rolls
+            if (e.isUsingManAce()) {
+                base.addModifier(-1, "maneuvering ace");
+            }
+            for (Enumeration<PilotingRollData> j = game.getControlRolls(); j
+                    .hasMoreElements(); ) {
+                final PilotingRollData modifier = j.nextElement();
+                if (modifier.getEntityId() != e.getId()) {
+                    continue;
                 }
-                for (Enumeration<PilotingRollData> j = game.getControlRolls(); j
-                        .hasMoreElements(); ) {
-                    final PilotingRollData modifier = j.nextElement();
-                    if (modifier.getEntityId() != e.getId()) {
-                        continue;
-                    }
-                    // found a roll, add it
-                    rolls.addElement(modifier);
-                    if (reasons.length() > 0) {
-                        reasons.append("; ");
-                    }
-                    reasons.append(modifier.getCumulativePlainDesc());
-                    base.append(modifier);
+                // found a roll, add it
+                rolls.addElement(modifier);
+                if (reasons.length() > 0) {
+                    reasons.append("; ");
                 }
-                // any rolls needed?
-                if (rolls.size() > 0) {
-                    // loop thru rolls we do have to make...
-                    r = new Report(9310);
+                reasons.append(modifier.getCumulativePlainDesc());
+                base.append(modifier);
+            }
+            // any rolls needed?
+            if (rolls.size() > 0) {
+                // loop thru rolls we do have to make...
+                r = new Report(9310);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.add(rolls.size());
+                r.add(reasons.toString()); // international issue
+                vReport.add(r);
+                r = new Report(2285);
+                r.subject = e.getId();
+                r.add(base.getValueAsString());
+                r.add(base.getDesc()); // international issue
+                vReport.add(r);
+                for (int j = 0; j < rolls.size(); j++) {
+                    PilotingRollData modifier = rolls.elementAt(j);
+                    PilotingRollData target = base;
+                    r = new Report(2290);
                     r.subject = e.getId();
-                    r.addDesc(e);
-                    r.add(rolls.size());
-                    r.add(reasons.toString()); // international issue
+                    r.indent();
+                    r.newlines = 0;
+                    r.add(j + 1);
+                    r.add(modifier.getPlainDesc()); // international issue
                     vReport.add(r);
-                    r = new Report(2285);
-                    r.subject = e.getId();
-                    r.add(base.getValueAsString());
-                    r.add(base.getDesc()); // international issue
-                    vReport.add(r);
-                    for (int j = 0; j < rolls.size(); j++) {
-                        PilotingRollData modifier = rolls.elementAt(j);
-                        PilotingRollData target = base;
-                        r = new Report(2290);
+                    int diceRoll = Compute.d6(2);
+                    // different reports depending on out-of-control status
+                    if (a != null && a.isOutControl()) {
+                        r = new Report(9360);
                         r.subject = e.getId();
-                        r.indent();
-                        r.newlines = 0;
-                        r.add(j + 1);
-                        r.add(modifier.getPlainDesc()); // international issue
-                        vReport.add(r);
-                        int diceRoll = Compute.d6(2);
-                        // different reports depending on out-of-control status
-                        if (a.isOutControl()) {
-                            r = new Report(9360);
-                            r.subject = e.getId();
-                            r.add(target.getValueAsString());
-                            r.add(diceRoll);
-                            if (diceRoll < (target.getValue() - 5)) {
-                                r.choose(false);
-                                vReport.add(r);
-                                a.setRandomMove(true);
-                            } else {
-                                r.choose(true);
-                                vReport.add(r);
-                            }
+                        r.add(target.getValueAsString());
+                        r.add(diceRoll);
+                        if (diceRoll < (target.getValue() - 5)) {
+                            r.choose(false);
+                            vReport.add(r);
+                            a.setRandomMove(true);
                         } else {
-                            r = new Report(9315);
-                            r.subject = e.getId();
-                            r.add(target.getValueAsString());
-                            r.add(diceRoll);
-                            r.newlines = 1;
-                            if (diceRoll < target.getValue()) {
-                                r.choose(false);
-                                vReport.add(r);
+                            r.choose(true);
+                            vReport.add(r);
+                        }
+                    } else {
+                        r = new Report(9315);
+                        r.subject = e.getId();
+                        r.add(target.getValueAsString());
+                        r.add(diceRoll);
+                        r.newlines = 1;
+                        if (diceRoll < target.getValue()) {
+                            r.choose(false);
+                            vReport.add(r);
+                            if (a != null) {
                                 a.setOutControl(true);
                                 // do we have random movement?
                                 if ((target.getValue() - diceRoll) > 5) {
@@ -21211,7 +21225,7 @@ public class Server implements Runnable {
                                 // and check
                                 // for crash
                                 if (!game.getBoard().inSpace()
-                                    && a.isAirborne()) {
+                                        && a.isAirborne()) {
                                     int loss = Compute.d6(1);
                                     r = new Report(9366);
                                     r.newlines = 0;
@@ -21222,59 +21236,73 @@ public class Server implements Runnable {
                                     e.setAltitude(e.getAltitude() - loss);
                                     // check for crash
                                     if (checkCrash(e, e.getPosition(),
-                                                   e.getAltitude())) {
+                                            e.getAltitude())) {
                                         vReport.addAll(processCrash(e,
-                                                                    a.getCurrentVelocity(),
-                                                                    e.getPosition()));
+                                                a.getCurrentVelocity(),
+                                                e.getPosition()));
                                         break;
                                     }
                                 }
-                            } else {
-                                r.choose(true);
+                            } else if (e instanceof LandAirMech && e.isAirborneVTOLorWIGE()) {
+                                int loss = target.getValue() - diceRoll;
+                                r = new Report(9366);
+                                r.subject = e.getId();
+                                r.addDesc(e);
+                                r.add(loss);
                                 vReport.add(r);
+                                IHex hex = game.getBoard().getHex(e.getPosition());
+                                int elevation = Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
+                                if (e.getElevation() - loss <= elevation) {
+                                    crashAirMech(e, e.getPosition(), e.getElevation(),
+                                            e.delta_distance, target, vReport);
+                                } else {
+                                    e.setElevation(e.getElevation() - loss);
+                                }
                             }
+                        } else {
+                            r.choose(true);
+                            vReport.add(r);
                         }
                     }
                 }
             }
+        }
 
-            // if they were out-of-control to start with, give them a chance to
-            // regain control
-            if (canRecover) {
-                PilotingRollData base = e.getBasePilotingRoll();
-                // is our base roll impossible?
-                if ((base.getValue() == TargetRoll.AUTOMATIC_FAIL)
-                    || (base.getValue() == TargetRoll.IMPOSSIBLE)) {
-                    // report something
-                    r = new Report(9340);
-                    r.subject = e.getId();
-                    r.addDesc(e);
-                    r.add(base.getDesc()); // international issue
-                    vReport.add(r);
-                    return vReport;
-                }
-                r = new Report(9345);
+        // if they were out-of-control to start with, give them a chance to
+        // regain control
+        if (canRecover) {
+            PilotingRollData base = e.getBasePilotingRoll();
+            // is our base roll impossible?
+            if ((base.getValue() == TargetRoll.AUTOMATIC_FAIL)
+                || (base.getValue() == TargetRoll.IMPOSSIBLE)) {
+                // report something
+                r = new Report(9340);
                 r.subject = e.getId();
                 r.addDesc(e);
                 r.add(base.getDesc()); // international issue
                 vReport.add(r);
-                int diceRoll = Compute.d6(2);
-                r = new Report(9350);
-                r.subject = e.getId();
-                r.add(base.getValueAsString());
-                r.add(diceRoll);
-                if (diceRoll < base.getValue()) {
-                    r.choose(false);
-                    vReport.add(r);
-                } else {
-                    r.choose(true);
-                    vReport.add(r);
-                    a.setOutControl(false);
-                    a.setOutCtrlHeat(false);
-                    a.setRandomMove(false);
-                }
+                return vReport;
             }
-
+            r = new Report(9345);
+            r.subject = e.getId();
+            r.addDesc(e);
+            r.add(base.getDesc()); // international issue
+            vReport.add(r);
+            int diceRoll = Compute.d6(2);
+            r = new Report(9350);
+            r.subject = e.getId();
+            r.add(base.getValueAsString());
+            r.add(diceRoll);
+            if (diceRoll < base.getValue()) {
+                r.choose(false);
+                vReport.add(r);
+            } else {
+                r.choose(true);
+                vReport.add(r);
+                a.setOutControl(false);
+                a.setOutCtrlHeat(false);
+                a.setRandomMove(false);
+            }
         }
         return vReport;
     }
@@ -26060,8 +26088,10 @@ public class Server implements Runnable {
      * @param lastStep  the <code>MoveStep</code> just before the attempted landing                         
      * @param distance  the distance the unit moved in the turn prior to landing
      */
-    private void landAirMech(LandAirMech lam, Coords pos, int elevation,
+    private Vector<Report> landAirMech(LandAirMech lam, Coords pos, int elevation,
             int distance, MoveStep lastStep) {
+        Vector<Report> vDesc = new Vector<>();
+        
         lam.setPosition(pos);
         IHex hex = game.getBoard().getHex(pos);
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -26071,21 +26101,22 @@ public class Server implements Runnable {
         }
         PilotingRollData psr = lam.checkAirMechLanding();
         if (psr.getValue() != TargetRoll.CHECK_FALSE
-                && (0 < doSkillCheckWhileMoving(lam, elevation, pos, pos, psr, false))) {
-            crashAirMech(lam, pos, elevation, distance, psr);
+                && (0 > doSkillCheckWhileMoving(lam, elevation, pos, pos, psr, false))) {
+            crashAirMech(lam, pos, elevation, distance, psr, vDesc);
         }
+        return vDesc;
     }
     
     private boolean crashAirMech(Entity en, Coords pos, int elevation, int distance,
-            PilotingRollData psr) {
+            PilotingRollData psr, Vector<Report> vDesc) {
         MoveStep step = new MoveStep(null, MoveStepType.DOWN);
         step.setFromEntity(en, game);
-        return crashAirMech(en, pos, elevation, distance, psr, step);
+        return crashAirMech(en, pos, elevation, distance, psr, step, vDesc);
     }
     
     private boolean crashAirMech(Entity en, Coords pos, int elevation, int distance,
-            PilotingRollData psr, MoveStep lastStep) {
-        addReport(doEntityFallsInto(en, elevation, pos, pos, psr, true, 0));
+            PilotingRollData psr, MoveStep lastStep, Vector<Report> vDesc) {
+        vDesc.addAll(doEntityFallsInto(en, elevation, pos, pos, psr, true, 0));
         return en.isDoomed()
                 || processSkid(en, pos, 0, 0, distance,
                         lastStep, en.moved, false);
@@ -26101,8 +26132,10 @@ public class Server implements Runnable {
      *                          if the unit is forced to land due to insufficient movement
      * @param distance  the distance the unit moved in the turn prior to landing
      */
-    private boolean landGliderPM(Protomech en, Coords pos, int startElevation,
+    private Vector<Report> landGliderPM(Protomech en, Coords pos, int startElevation,
             int distance) {
+        Vector<Report> vDesc = new Vector<>();
+        
         en.setPosition(pos);
         IHex hex = game.getBoard().getHex(pos);
         if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -26112,15 +26145,13 @@ public class Server implements Runnable {
         }
         PilotingRollData psr = new PilotingRollData(en.getId(), 4, "attempting to land");
         if (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false)) {
-            return false;
-        } else {
             for (int i = 0; i < en.getNumberOfCriticals(Protomech.LOC_LEG); i++) {
                 en.getCritical(Protomech.LOC_LEG, i).setHit(true);
-                HitData hit = new HitData(Protomech.LOC_LEG);
-                addReport(damageEntity(en, hit, 2 * startElevation));
             }
-            return en.isDoomed();
+            HitData hit = new HitData(Protomech.LOC_LEG);
+            vDesc.addAll(damageEntity(en, hit, 2 * startElevation));
         }
+        return vDesc;
     }
     
     /**

@@ -927,8 +927,8 @@ public class LandAirMech extends BipedMech implements IAero {
     
     @Override
     public boolean canFall(boolean gyroLegDamage) {
-        //TODO: in AirMech mode it is possible to fall if using walk/run (or standing) but not cruise/flank
-        return getConversionMode() != CONV_MODE_FIGHTER;
+        return getConversionMode() != CONV_MODE_FIGHTER
+                && !isAirborneVTOLorWIGE();
     }
     
     /** Fighter Mode **/

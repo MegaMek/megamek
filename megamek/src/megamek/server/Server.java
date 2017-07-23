@@ -21253,8 +21253,7 @@ public class Server implements Runnable {
                                 IHex hex = game.getBoard().getHex(e.getPosition());
                                 int elevation = Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
                                 if (e.getElevation() - loss <= elevation) {
-                                    crashAirMech(e, e.getPosition(), e.getElevation(),
-                                            e.delta_distance, target, vReport);
+                                    crashAirMech(e, target, vReport);
                                 } else {
                                     e.setElevation(e.getElevation() - loss);
                                 }
@@ -24884,14 +24883,20 @@ public class Server implements Runnable {
                 }
                 break;
             case Mech.SYSTEM_GYRO:
-                //No PSR for Mechs in non-leg mode
-                if (en.canFall(true)) {
-                    break;
-                }
                 int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                                                   Mech.SYSTEM_GYRO, loc);
                 if (en.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
                     gyroHits++;
+                }
+                // Automatically falls in AirMech mode, which it seems would indicate a crash if airborne.
+                if (gyroHits == 3 && en instanceof LandAirMech && en.isAirborneVTOLorWIGE()) {
+                    crashAirMech(en, new PilotingRollData(en.getId(),
+                            TargetRoll.AUTOMATIC_FAIL, 1, "gyro destroyed"), reports);
+                    break;
+                }
+                //No PSR for Mechs in non-leg mode
+                if (en.canFall(true)) {
+                    break;
                 }
                 switch (gyroHits) {
                     case 3:
@@ -26105,6 +26110,11 @@ public class Server implements Runnable {
             crashAirMech(lam, pos, elevation, distance, psr, vDesc);
         }
         return vDesc;
+    }
+    
+    private boolean crashAirMech(Entity en, PilotingRollData psr, Vector<Report> vDesc) {
+        return crashAirMech(en, en.getPosition(), en.getElevation(), en.delta_distance,
+                psr, vDesc);
     }
     
     private boolean crashAirMech(Entity en, Coords pos, int elevation, int distance,

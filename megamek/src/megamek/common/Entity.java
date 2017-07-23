@@ -6623,42 +6623,34 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType moveType) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         addPilotingModifierForTerrain(roll, step);
+        int maxSafeMP = 0;
         switch (moveType) {
-            case MOVE_WALK:
-            case MOVE_RUN:
-            case MOVE_VTOL_WALK:
-            case MOVE_VTOL_RUN:
-                int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5) + wigeBonus;
+            case MOVE_JUMP:
+                maxSafeMP = getJumpMP(false);
+                break;
+            case MOVE_SPRINT:
+            case MOVE_VTOL_SPRINT:
+                maxSafeMP = getSprintMP(false, true, true) + wigeBonus;
                 if (isEligibleForPavementBonus() && gotPavementBonus) {
                     maxSafeMP++;
                 }
-                if (step.getMpUsed() > maxSafeMP) {
-                    roll.append(new PilotingRollData(getId(), 0,
-                            "used more MPs than at 1G possible"));
-                } else {
-                    roll.addModifier(TargetRoll.CHECK_FALSE,
-                            "Check false: Entity did not use more "
-                            + "MPs walking/running than possible at 1G");
-                }
-                break;
-            case MOVE_JUMP:
-                if (step.getMpUsed() > getJumpMP(false)) {
-                    roll.append(new PilotingRollData(getId(), 0,
-                            "used more MPs than at 1G possible"));
-                    int gravMod = game.getPlanetaryConditions()
-                            .getGravityPilotPenalty();
-                    if ((gravMod != 0) && !game.getBoard().inSpace()) {
-                        roll.addModifier(gravMod, game
-                                .getPlanetaryConditions().getGravity()
-                                + "G gravity");
-                    }
-                } else {
-                    roll.addModifier(TargetRoll.CHECK_FALSE,
-                            "Check false: Entity did not use more "
-                            + "MPs jumping than possible at 1G");
-                }
                 break;
             default:
+                // Max safe MP is based on whatever is the current maximum.
+                // http://bg.battletech.com/forums/index.php?topic=6681.msg154097#msg154097
+                maxSafeMP = getRunMP(false, true, true) + wigeBonus;
+                if (isEligibleForPavementBonus() && gotPavementBonus) {
+                    maxSafeMP++;
+                }
+                break;
+        }
+        if (step.getMpUsed() > maxSafeMP) {
+            roll.append(new PilotingRollData(getId(), 0,
+                    "used more MPs than at 1G possible"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: Entity did not use more "
+                    + "MPs walking/running than possible at 1G");
         }
         return roll;
     }

@@ -22200,9 +22200,9 @@ public class Server implements Runnable {
                 }
             }
 
-            if (te instanceof Aero) {
+            if (te.isAero()) {
                 // chance of a critical if damage greater than threshold
-                Aero a = (Aero) te;
+                IAero a = (IAero) te;
                 if ((threshDamage > a.getThresh(hit.getLocation()))) {
                     critThresh = true;
                     a.setCritThresh(true);

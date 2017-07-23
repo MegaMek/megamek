@@ -1234,7 +1234,6 @@ public class LandAirMech extends BipedMech implements IAero {
                 case 4: case 5:
                     return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
                 case 7:
-                    //TODO: control roll if exceeds threshold
                     return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
                 case 8: case 11:
                     return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
@@ -1252,10 +1251,7 @@ public class LandAirMech extends BipedMech implements IAero {
                     return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
                 case 6: case 8:
                     return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
-                case 9:
-                    //TODO: control roll if exceeds threshold
-                    return new HitData(LOC_LLEG, false, HitData.EFFECT_NONE);
-                case 10: case 12:
+                case 9: case 10: case 12:
                     return new HitData(LOC_LLEG, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_RIGHT) {
@@ -1269,10 +1265,7 @@ public class LandAirMech extends BipedMech implements IAero {
                 return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
             case 6: case 8:
                 return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
-            case 9:
-                //TODO: control roll if exceeds threshold
-                return new HitData(LOC_RLEG, false, HitData.EFFECT_NONE);
-            case 10: case 12:
+            case 9: case 10: case 12:
                 return new HitData(LOC_RLEG, false, HitData.EFFECT_NONE);
         }
         } else if (side == ToHitData.SIDE_REAR) {
@@ -1347,6 +1340,14 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public double getFuelTonnage(){
         return fuel / getFuelPointsPerTon();
+    }
+    
+    /**
+     * Exceeding damage threshold does not result in critical, but requires control roll.
+     */
+    @Override
+    public int getThresh(int loc) {
+        return getInternal(loc);
     }
 
     @Override

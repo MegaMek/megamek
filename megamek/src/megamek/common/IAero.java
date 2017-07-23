@@ -79,6 +79,7 @@ public interface IAero {
     int getLandingGearMod(boolean vTakeoff);
     int getLeftThrustHits();
     int getRightThrustHits();
+    int getThresh(int loc);
     boolean wasCritThresh();
     void setCritThresh(boolean b);
 

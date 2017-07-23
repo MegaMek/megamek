@@ -1381,7 +1381,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     value += "<b>No " + pilot.getCrewType().getRoleName(i) + "</b>";
                 } else {
                     value += "<b>" + pilot.getDesc(i) + "</b> (" + pilot.getCrewType().getRoleName(i) + "): ";
-                    value += pilot.getSkillsAsString();
+                    value += pilot.getSkillsAsString(i);
                 }
                 value += "<br/>";
             }

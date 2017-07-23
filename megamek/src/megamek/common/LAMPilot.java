@@ -192,7 +192,7 @@ public class LAMPilot extends Crew {
      *         gunnery (Mech)/piloting (Mech)/gunnery (Aero)/piloting (Aero)
      */
     @Override
-    public String getSkillsAsString(boolean showPiloting) {
+    public String getSkillsAsString(int pos, boolean showPiloting) {
         return getGunneryMech() + "/"
             + getPilotingMech() + "/"
             + getGunneryAero() + "/"

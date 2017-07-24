@@ -931,6 +931,14 @@ public class LandAirMech extends BipedMech implements IAero {
                 && !isAirborneVTOLorWIGE();
     }
     
+    @Override
+    public int height() {
+        if (getConversionMode() == CONV_MODE_MECH) {
+            return super.height();
+        }
+        return 0;
+    }
+    
     /** Fighter Mode **/
     
     public void setWhoFirst() {

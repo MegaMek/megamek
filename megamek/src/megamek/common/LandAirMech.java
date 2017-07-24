@@ -822,6 +822,15 @@ public class LandAirMech extends BipedMech implements IAero {
         }
     }
     
+    /**
+     * Cannot make any physical attacks in fighter mode except ramming, which is
+     * handled in the movement phase.
+     */
+    @Override
+    public boolean isEligibleForPhysical() {
+        return getConversionMode() != CONV_MODE_FIGHTER && super.isEligibleForPhysical();
+    }
+        
     /*
      * Cycling through conversion modes for LAMs in 'Mech or fighter mode is simple toggling between
      * two states. LAMs in AirMech mode have three possible states.

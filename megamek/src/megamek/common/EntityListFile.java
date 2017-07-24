@@ -837,8 +837,8 @@ public class EntityListFile {
                 output.write(EntityListFile.getTankCritString(tentity));
             }
             
-            // Aero stuff that also applies to LAMs in fighter mode
-            if (entity.isAero()) {
+            // Aero stuff that also applies to LAMs
+            if (entity instanceof IAero) {
                 IAero a = (IAero)entity;
                 // fuel
                 output.write(indentStr(indentLvl+1) + "<fuel left=\"");
@@ -1019,6 +1019,12 @@ public class EntityListFile {
         }
         output.write("\" piloting=\"");
         output.write(String.valueOf(crew.getPiloting(pos)));
+        if (crew instanceof LAMPilot) {
+            writeLAMAeroAttributes(output, (LAMPilot)crew,
+                    (null != entity.getGame())
+                    && entity.getGame().getOptions()
+                    .booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
+        }
         if ((null != entity.getGame())
                 && entity.getGame().getOptions()
                         .booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
@@ -1048,6 +1054,22 @@ public class EntityListFile {
             output.write(crew.getExternalIdAsString(pos));
         }
     }
+    
+    private static void writeLAMAeroAttributes(Writer output, final LAMPilot crew,
+            boolean rpgGunnery) throws IOException {
+        output.write("\" gunneryAero=\"");
+        output.write(String.valueOf(crew.getGunneryAero()));
+        if (rpgGunnery) {
+            output.write("\" gunneryAeroL=\"");
+            output.write(String.valueOf(crew.getGunneryAeroL()));
+            output.write("\" gunneryAeroM=\"");
+            output.write(String.valueOf(crew.getGunneryAeroM()));
+            output.write("\" gunneryAeroB=\"");
+            output.write(String.valueOf(crew.getGunneryAeroB()));
+        }
+        output.write("\" pilotingAero=\"");
+        output.write(String.valueOf(crew.getPilotingAero()));
+    }    
 
     /**
      * Writes attributes that pertain to entire crew.

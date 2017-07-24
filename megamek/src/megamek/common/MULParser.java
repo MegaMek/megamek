@@ -753,6 +753,26 @@ public class MULParser {
         }
         setCrewAttributes(crew, attributes, entity);
         setPilotAttributes(crew, 0, attributes);
+        // LAMs have a second set of gunnery and piloting stats, so we create a dummy crew
+        // and parse a copy of the attributes with the aero stats altered to their non-aero keys,
+        // then copy the results into the aero skills of the LAMPilot.
+        if (entity instanceof LandAirMech) {
+            crew = LAMPilot.convertToLAMPilot((LandAirMech)entity, crew);
+            Crew aeroCrew = new Crew(CrewType.SINGLE);
+            Map<String,String> aeroAttributes = new HashMap<>(attributes);
+            for (String key : attributes.keySet()) {
+                if (key.contains("Aero")) {
+                    aeroAttributes.put(key.replace("Aero", ""), attributes.get(key));
+                }
+            }
+            setPilotAttributes(aeroCrew, 0, aeroAttributes);
+            ((LAMPilot)crew).setGunneryAero(aeroCrew.getGunnery());
+            ((LAMPilot)crew).setGunneryAeroM(aeroCrew.getGunneryM());
+            ((LAMPilot)crew).setGunneryAeroB(aeroCrew.getGunneryB());
+            ((LAMPilot)crew).setGunneryAeroL(aeroCrew.getGunneryL());
+            ((LAMPilot)crew).setPilotingAero(aeroCrew.getPiloting());
+            entity.setCrew(crew);
+        }
         pilots.add(crew);
     }
     

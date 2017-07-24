@@ -2973,6 +2973,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     && (ae.getTotalAmmoOfType(ammo.getType()) < weapon.getCurrentShots())) {
                 return "weapon does not have enough ammo.";
             }
+            
+            if ((ae instanceof LandAirMech) && (ae.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)
+                    && usesAmmo && ammo != null && !((AmmoType)ammo.getType()).canAeroUse()) {
+                return "cannot use this ammunition in fighter mode.";
+            }
 
             if (ae instanceof Tank) {
                 sensorHits = ((Tank) ae).getSensorHits();

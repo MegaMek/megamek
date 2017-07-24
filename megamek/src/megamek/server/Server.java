@@ -12760,7 +12760,11 @@ public class Server implements Runnable {
                                                              entity.getElevation()));
 
         if (roll != null) {
-            game.addPSR(roll);
+            if (entity.canFall()) {
+                game.addPSR(roll);
+            } else if ((entity instanceof LandAirMech) && entity.isAirborneVTOLorWIGE()) {
+                game.addControlRoll(roll);
+            }
         }
 
         if ((waterDepth > 0)
@@ -15141,6 +15145,10 @@ public class Server implements Runnable {
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = paa.getArm() == PunchAttackAction.LEFT ? pr.damage
                                                             : pr.damageRight;
+        // LAMs in airmech mode do half damage if airborne.
+        if (ae.isAirborneVTOLorWIGE()) {
+            damage = (int)Math.ceil(damage * 0.5);
+        }
         final ToHitData toHit = paa.getArm() == PunchAttackAction.LEFT ? pr.toHit
                                                                        : pr.toHitRight;
         int roll = paa.getArm() == PunchAttackAction.LEFT ? pr.roll
@@ -15181,6 +15189,10 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
+            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                game.addControlRoll(new PilotingRollData(ae.getId(), 0,
+                        "missed punch attack"));
+            }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(4020);
@@ -15217,6 +15229,10 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             addReport(r);
 
+            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                game.addControlRoll(new PilotingRollData(ae.getId(), 0,
+                        "missed punch attack"));
+            }
             // If the target is in a building, the building absorbs the damage.
             if (targetInBuilding && (bldg != null)) {
 
@@ -15417,6 +15433,10 @@ public class Server implements Runnable {
 
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
+        // LAMs in airmech mode do half damage if airborne.
+        if (ae.isAirborneVTOLorWIGE()) {
+            damage = (int)Math.ceil(damage * 0.5);
+        }
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
@@ -15454,7 +15474,11 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-            game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+            } else {
+                game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+            }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(4065);
@@ -15491,7 +15515,11 @@ public class Server implements Runnable {
             r = new Report(4035);
             r.subject = ae.getId();
             addReport(r);
-            game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+            } else {
+                game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
+            }
 
             // If the target is in a building, the building absorbs the damage.
             if (targetInBuilding && (bldg != null)) {
@@ -16538,6 +16566,10 @@ public class Server implements Runnable {
         final Entity ae = game.getEntity(caa.getEntityId());
         // get damage, ToHitData and roll from the PhysicalResult
         int damage = pr.damage;
+        // LAMs in airmech mode do half damage if airborne.
+        if (ae.isAirborneVTOLorWIGE()) {
+            damage = (int)Math.ceil(damage * 0.5);
+        }
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
         final Targetable target = game.getTarget(caa.getTargetType(),
@@ -16614,8 +16646,13 @@ public class Server implements Runnable {
             pr.aaa.setTargetType(Targetable.TYPE_ENTITY);
             pr.roll = Integer.MAX_VALUE;
             resolveClubAttack(pr, ae.getId());
-            game.addPSR(new PilotingRollData(ae.getId(), 0,
-                                             "missed a flail/wrecking ball attack"));
+            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                game.addControlRoll(new PilotingRollData(ae.getId(), 0,
+                        "missed a flail/wrecking ball attack"));
+            } else {
+                game.addPSR(new PilotingRollData(ae.getId(), 0,
+                                                 "missed a flail/wrecking ball attack"));
+            }
             return;
         }
 
@@ -16657,13 +16694,23 @@ public class Server implements Runnable {
             addReport(r);
             if (((MiscType) caa.getClub().getType())
                     .hasSubType(MiscType.S_MACE_THB)) {
-                game.addPSR(new PilotingRollData(ae.getId(), 0,
-                                                 "missed a mace attack"));
+                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                    game.addControlRoll(new PilotingRollData(ae.getId(), 0,
+                            "missed a mace attack"));
+                } else {
+                    game.addPSR(new PilotingRollData(ae.getId(), 0,
+                            "missed a mace attack"));
+                }
             }
             if (((MiscType) caa.getClub().getType())
                     .hasSubType(MiscType.S_MACE)) {
-                game.addPSR(new PilotingRollData(ae.getId(), 2,
-                                                 "missed a mace attack"));
+                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                    game.addControlRoll(new PilotingRollData(ae.getId(), 0,
+                            "missed a mace attack"));
+                } else {
+                    game.addPSR(new PilotingRollData(ae.getId(), 0,
+                            "missed a mace attack"));
+                }
             }
             return;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
@@ -16704,13 +16751,23 @@ public class Server implements Runnable {
             addReport(r);
             if (((MiscType) caa.getClub().getType())
                     .hasSubType(MiscType.S_MACE_THB)) {
-                game.addPSR(new PilotingRollData(ae.getId(), 0,
-                                                 "missed a mace attack"));
+                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                    game.addControlRoll(new PilotingRollData(ae.getId(), 0,
+                            "missed a mace attack"));
+                } else {
+                    game.addPSR(new PilotingRollData(ae.getId(), 0,
+                            "missed a mace attack"));
+                }
             }
             if (((MiscType) caa.getClub().getType())
                     .hasSubType(MiscType.S_MACE)) {
-                game.addPSR(new PilotingRollData(ae.getId(), 2,
-                                                 "missed a mace attack"));
+                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                    game.addControlRoll(new PilotingRollData(ae.getId(), 2,
+                            "missed a mace attack"));
+                } else {
+                    game.addPSR(new PilotingRollData(ae.getId(), 2,
+                            "missed a mace attack"));
+                }
             }
 
             // If the target is in a building, the building absorbs the damage.
@@ -16849,8 +16906,13 @@ public class Server implements Runnable {
                     .hasSubType(MiscType.S_WRECKING_BALL)
             && (ae instanceof SupportTank) && (te instanceof Mech)) {
             // forces a PSR like a charge
-            game.addPSR(new PilotingRollData(te.getId(), 2,
-                                             "was hit by wrecking ball"));
+            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                game.addControlRoll(new PilotingRollData(te.getId(), 2,
+                        "was hit by wrecking ball"));
+            } else {
+                game.addPSR(new PilotingRollData(te.getId(), 2,
+                        "was hit by wrecking ball"));
+            }
         }
 
         // Chain whips can entangle 'Mech and ProtoMech limbs. This
@@ -17045,11 +17107,17 @@ public class Server implements Runnable {
                     PilotingRollData pushPRD = getKickPushPSR(ae, ae, te,
                             "was pushed");
                     game.addPSR(pushPRD);
+                } else if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                    game.addControlRoll(getKickPushPSR(ae, ae, te,
+                            "was pushed"));
                 }
                 if (te.canFall()) {
                     PilotingRollData targetPushPRD = getKickPushPSR(te, ae, te,
                                                                     "was pushed");
                     game.addPSR(targetPushPRD);
+                } else if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                    game.addControlRoll(getKickPushPSR(te, ae, te,
+                            "was pushed"));
                 }
                 return;
             }
@@ -17339,6 +17407,9 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
+            if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
+            }
             return;
         }
 
@@ -17362,6 +17433,9 @@ public class Server implements Runnable {
                 r = new Report(4035);
                 r.subject = ae.getId();
                 addReport(r);
+                if (ae instanceof LandAirMech && ae.isAirborneVTOLorWIGE()) {
+                    game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed a physical attack"));
+                }
                 return;
             }
 

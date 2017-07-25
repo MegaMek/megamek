@@ -22,14 +22,16 @@ public class OptionsConstants {
      
     public static final String QUIRK_POS_ANTI_AIR = "anti_air"; //$NON-NLS-1$
     public static final String QUIRK_POS_ATMO_FLYER= "atmo_flyer"; //$NON-NLS-1$
-    public static final String QUIRK_POS_BATTLE_COMP = "battle_computer"; //$NON-NLS-1$
     public static final String QUIRK_POS_BARREL_FIST_LA = "barrel_fists_la"; //$NON-NLS-1$
     public static final String QUIRK_POS_BARREL_FIST_RA = "barrel_fists_ra"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BATTLE_COMP = "battle_computer"; //$NON-NLS-1$
     public static final String QUIRK_POS_BATTLE_FIST = "battle_fists"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMBAT_COMPUTER= "combat_computer"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMMAND_MECH = "command_mech"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMPACT = "compact_mech"; //$NON-NLS-1$
     public static final String QUIRK_POS_COWL= "cowl"; //$NON-NLS-1$
+    //TODO - Code directional torso mount for play
+    public static final String QUIRK_POS_DIRECTIONAL_TORSO_MOUNT = "directional_torso_mount"; //$NON-NLS-1$
     public static final String QUIRK_POS_DISTRACTING= "distracting"; //$NON-NLS-1$
     public static final String QUIRK_POS_DOCKING_ARMS= "docking_arms"; //$NON-NLS-1$
     public static final String QUIRK_POS_EASY_MAINTAIN= "easy_maintain"; //$NON-NLS-1$
@@ -40,6 +42,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_GOOD_REP_1= "good_rep_1"; //$NON-NLS-1$
     public static final String QUIRK_POS_GOOD_REP_2= "good_rep_2"; //$NON-NLS-1$
     public static final String QUIRK_POS_HYPER_ACTUATOR= "hyper_actuator"; //$NON-NLS-1$
+    //TODO Improved Comms changed in BMM see pg 84
     public static final String QUIRK_POS_IMP_COM= "imp_com"; //$NON-NLS-1$
     public static final String QUIRK_POS_IMP_LIFE_SUPPORT= "imp_life_support"; //$NON-NLS-1$
     public static final String QUIRK_POS_IMP_TARG_L = "imp_target_long"; //$NON-NLS-1$
@@ -47,8 +50,9 @@ public class OptionsConstants {
     public static final String QUIRK_POS_IMP_TARG_S = "imp_target_short"; //$NON-NLS-1$
     public static final String QUIRK_POS_IMPROVED_SENSORS = "imp_sensors"; //$NON-NLS-1$
     public static final String QUIRK_POS_INTERNAL_BOMB= "internal_bomb"; //$NON-NLS-1$
+    //TODO Low profile has changed considerably in BMM needs to be updated see BMM pg 85
     public static final String QUIRK_POS_LOW_PROFILE = "low_profile"; //$NON-NLS-1$
-    public static final String QUIRK_POS_MOD_WEAPONS= "mod_weapons"; //$NON-NLS-1$
+//    public static final String QUIRK_POS_MOD_WEAPONS= "mod_weapons"; //$NON-NLS-1$
     public static final String QUIRK_POS_MULTI_TRAC= "multi_trac"; //$NON-NLS-1$
     public static final String QUIRK_POS_NIMBLE_JUMPER= "nimble_jumper"; //$NON-NLS-1$
     public static final String QUIRK_POS_OVERHEAD_ARMS = "overhead_arms"; //$NON-NLS-1$
@@ -65,6 +69,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_UBIQUITOUS_CLAN="ubiquitous_clan"; //$NON-NLS-1$
     public static final String QUIRK_POS_VAR_RNG_TARG_L = "variable_range_long"; //$NON-NLS-1$
     public static final String QUIRK_POS_VAR_RNG_TARG_S = "variable_range_short"; //$NON-NLS-1$
+    //TODO Game Rules
     public static final String QUIRK_POS_VERSTIGAL_HANDS = "vestigial_hands"; //$NON-NLS-1$
     public static final String QUIRK_POS_VTOL_ROTOR= "vtol_rotor"; //$NON-NLS-1$
     
@@ -72,7 +77,9 @@ public class OptionsConstants {
     public static final String QUIRK_WEAP_POS_IMP_COOLING = "imp_cooling"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_JETTISON_CAPABLE = "jettison_capable"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_STABLE_WEAPON = "stable_weapon"; //$NON-NLS-1$
-    public static final String QUIRK_WEAPN_POS_DIRECT_TORSO_MOUNT = "direct_torso_mount"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT = "direct_torso_mount"; //$NON-NLS-1$
+    //TODO These have been made specific to weapons.
+    public static final String QUIRK_WEAP_POS_MOD_WEAPONS= "mod_weapons"; //$NON-NLS-1$
  
     public static final String QUIRK_NEG_ATMO_INSTABILITY= "atmo_instability"; //$NON-NLS-1$
     public static final String QUIRK_NEG_BAD_REP_IS= "bad_rep_is"; //$NON-NLS-1$

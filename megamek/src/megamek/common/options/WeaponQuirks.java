@@ -61,7 +61,9 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAPN_POS_DIRECT_TORSO_MOUNT, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS, false); //$NON-NLS-1$
+
     }
     
     //TODO
@@ -148,6 +150,16 @@ public class WeaponQuirks extends AbstractOptions {
         if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE)) {
             if (en instanceof Protomech
                 || en instanceof Aero
+                || en instanceof Jumpship
+                || en instanceof Dropship) {
+
+                return false;
+            }
+        }
+        
+        if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS)) {
+            if (en instanceof Protomech
+                || en instanceof BattleArmor
                 || en instanceof Jumpship
                 || en instanceof Dropship) {
 

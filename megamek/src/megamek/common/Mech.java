@@ -4954,7 +4954,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double[] costs = new double[16 + locations()];
+        double[] costs = new double[17 + locations()];
         int i = 0;
 
         double cockpitCost = 0;
@@ -5074,7 +5074,17 @@ public abstract class Mech extends Entity {
         for (int x = 0; x < i; x++) {
             cost += costs[x];
         }
-
+                        
+        double quirkMultiplier = 0;
+        if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_1)) {
+        	quirkMultiplier = 1.1f;
+        	cost *= quirkMultiplier;
+        } else if (hasQuirk(OptionsConstants.QUIRK_POS_GOOD_REP_2)) {
+        	quirkMultiplier = 1.25f;
+        	cost *= quirkMultiplier;
+        }
+        costs[i++] = -quirkMultiplier; // negative just marks it as multiplier
+ 
         double omniMultiplier = 0;
         if (isOmni()) {
             omniMultiplier = 1.25f;
@@ -5098,7 +5108,7 @@ public abstract class Mech extends Entity {
                 "Structure", "Actuators", "Engine", "Gyro", "Jump Jets",
                 "Heatsinks", "Full Head Ejection System",
                 "Armored System Components", "Armor", "Equipment",
-                "Conversion Equipment", "Omni Multiplier", "Weight Multiplier" };
+                "Conversion Equipment", "Quirk Multiplier", "Omni Multiplier", "Weight Multiplier" };
 
         NumberFormat commafy = NumberFormat.getInstance();
 

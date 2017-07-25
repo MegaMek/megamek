@@ -53,6 +53,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_COMMAND_MECH, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_COMPACT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_COWL, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_DISTRACTING, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_DOCKING_ARMS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_MAINTAIN, false);
@@ -71,7 +72,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_IMPROVED_SENSORS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_INTERNAL_BOMB, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_LOW_PROFILE, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_MOD_WEAPONS, false);
+//        addOption(posQuirk, OptionsConstants.QUIRK_POS_MOD_WEAPONS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MULTI_TRAC, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_NIMBLE_JUMPER,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
@@ -217,7 +218,7 @@ public class Quirks extends AbstractOptions {
 
 		// Nov 2016 - Reviewed the idea of quirks with Ray from CGL. The working
 		// made sense to him. Uncertain at this time if CGL would adopt them but
-		// including them since Quirks is alread an option. Hammer
+		// including them since Quirks is already an option. Hammer
         if(en instanceof GunEmplacement) {
         	if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
         	        || qName.equals(OptionsConstants.QUIRK_POS_BARREL_FIST_LA)
@@ -234,7 +235,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
                     || qName.equals(OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE)
-                    || qName.equals(OptionsConstants.QUIRK_POS_MOD_WEAPONS)
+//                   || qName.equals(OptionsConstants.QUIRK_POS_MOD_WEAPONS)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
@@ -305,6 +306,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_EASY_PILOT)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
@@ -365,6 +367,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
@@ -424,6 +427,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
                     || qName.equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
@@ -431,7 +435,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
-                    || qName.equals(OptionsConstants.QUIRK_POS_MOD_WEAPONS)
+//                    || qName.equals(OptionsConstants.QUIRK_POS_MOD_WEAPONS)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
                     || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
@@ -481,6 +485,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
                     || qName.equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)
@@ -527,6 +532,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_COMP)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals(OptionsConstants.QUIRK_POS_COWL)
+                    || qName.equals(OptionsConstants.QUIRK_POS_DIRECTIONAL_TORSO_MOUNT)
                     || qName.equals(OptionsConstants.QUIRK_POS_DOCKING_ARMS)
                     || qName.equals(OptionsConstants.QUIRK_POS_EXT_TWIST)
                     || qName.equals(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)

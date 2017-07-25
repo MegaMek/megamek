@@ -37,7 +37,6 @@ public class OptionsConstants {
     public static final String QUIRK_POS_EASY_MAINTAIN= "easy_maintain"; //$NON-NLS-1$
     public static final String QUIRK_POS_EASY_PILOT = "easy_pilot"; //$NON-NLS-1$
     public static final String QUIRK_POS_EXT_TWIST= "ext_twist"; //$NON-NLS-1$
-    public static final String QUIRK_POS_FAST_RELOAD= "fast_reload"; //$NON-NLS-1$
     public static final String QUIRK_POS_FINE_MANIPULATORS= "fine_manipulators"; //$NON-NLS-1$
     public static final String QUIRK_POS_GOOD_REP_1= "good_rep_1"; //$NON-NLS-1$
     public static final String QUIRK_POS_GOOD_REP_2= "good_rep_2"; //$NON-NLS-1$
@@ -78,8 +77,9 @@ public class OptionsConstants {
     public static final String QUIRK_WEAP_POS_JETTISON_CAPABLE = "jettison_capable"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_STABLE_WEAPON = "stable_weapon"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT = "direct_torso_mount"; //$NON-NLS-1$
-    //TODO These have been made specific to weapons.
+    //These have been made specific to weapons.
     public static final String QUIRK_WEAP_POS_MOD_WEAPONS= "mod_weapons"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_POS_FAST_RELOAD= "fast_reload"; //$NON-NLS-1$
  
     public static final String QUIRK_NEG_ATMO_INSTABILITY= "atmo_instability"; //$NON-NLS-1$
     public static final String QUIRK_NEG_BAD_REP_IS= "bad_rep_is"; //$NON-NLS-1$

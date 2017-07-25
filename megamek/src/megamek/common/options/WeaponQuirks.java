@@ -50,19 +50,19 @@ public class WeaponQuirks extends AbstractOptions {
         IBasicOptionGroup wpnQuirk = addGroup("wpn_quirks", WPN_QUIRKS); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_ACCURATE, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_INACCURATE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false); //$NON-NLS-1$
-        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_STABLE_WEAPON, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_DIRECT_TORSO_MOUNT, false); //$NON-NLS-1$
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_MOD_WEAPONS, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false); //$NON-NLS-1$
 
     }
     
@@ -98,7 +98,7 @@ public class WeaponQuirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
                     || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)
                     || qName.equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
-                    || qName.equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)) {
+                    || qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
                 return false;
             }
             return true;
@@ -121,7 +121,7 @@ public class WeaponQuirks extends AbstractOptions {
         }
         
         if (en instanceof Protomech) {
-            if (qName.equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
+            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)
                 || qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
                 return false;
             }

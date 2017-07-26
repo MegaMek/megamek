@@ -82,6 +82,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.Transporter;
 import megamek.common.VTOL;
+import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
@@ -188,7 +189,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_RECOVER("MoveRecover", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_DROP("MoveDrop", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_DUMP("MoveDump", CMD_AERO_BOTH), //$NON-NLS-1$
-        MOVE_RAM("MoveRam", CMD_AERO_BOTH), //$NON-NLS-1$
+        MOVE_RAM("MoveRam", CMD_AERO_BOTH | CMD_AIRMECH), //$NON-NLS-1$
         MOVE_HOVER("MoveHover", CMD_AERO | CMD_AIRMECH), //$NON-NLS-1$
         MOVE_MANEUVER("MoveManeuver", CMD_AERO_BOTH), //$NON-NLS-1$
         MOVE_JOIN("MoveJoin", CMD_AERO_BOTH), //$NON-NLS-1$
@@ -1662,7 +1663,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         // don't make a movement path for aeros if advanced movement is on
-        boolean nopath = (ce.isAero())
+        boolean nopath = (ce != null && ce.isAero())
                          && clientgui.getClient().getGame().useVectorMove();
 
         // ignore buttons other than 1
@@ -1795,7 +1796,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 final Targetable target = chooseTarget(b.getCoords());
                 if ((target == null) || target.equals(ce)) {
                     clientgui.doAlertDialog(
-                            Messages.getString("MovementDisplay.CantCharge"), //$NON-NLS-1$
+                            Messages.getString(ce.isAirborneVTOLorWIGE()?
+                                    "MovementDisplay.CantRam":"MovementDisplay.CantCharge"), //$NON-NLS-1$
                             Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$
                     clear();
                     computeMovementEnvelope(ce);
@@ -1803,56 +1805,64 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
 
                 // check if it's a valid charge
-                ToHitData toHit = new ChargeAttackAction(cen,
-                        target.getTargetType(), target.getTargetId(),
-                        target.getPosition()).toHit(clientgui.getClient()
-                        .getGame(), cmd);
+                ToHitData toHit = null;
+                if (ce.isAirborneVTOLorWIGE()) {
+                    toHit = new AirmechRamAttackAction(cen,
+                            target.getTargetType(), target.getTargetId(),
+                            target.getPosition()).toHit(clientgui.getClient()
+                                    .getGame(), cmd);
+                } else {
+                    toHit = new ChargeAttackAction(cen,
+                            target.getTargetType(), target.getTargetId(),
+                            target.getPosition()).toHit(clientgui.getClient()
+                                    .getGame(), cmd);
+                }
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // Determine how much damage the charger will take.
+                    int toDefender = 0;
                     int toAttacker = 0;
-                    if (target.getTargetType() == Targetable.TYPE_ENTITY) {
-                        Entity te = (Entity) target;
-                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce,
-                                te,
-                                clientgui.getClient().getGame().getOptions()
-                                        .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), //$NON-NLS-1$
-                                cmd.getHexesMoved());
-                    } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                               || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
-                        Building bldg = clientgui.getClient().getGame()
-                                                 .getBoard().getBuildingAt(moveto);
-                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce,
-                                                                         bldg, moveto);
+                    if (ce.isAirborneVTOLorWIGE()) {
+                        toAttacker = AirmechRamAttackAction.getDamageTakenBy(ce, target, cmd.getHexesMoved());
+                        toDefender = AirmechRamAttackAction.getDamageFor(ce, cmd.getHexesMoved());
+                    } else {
+                        toDefender = ChargeAttackAction.getDamageFor(
+                                        ce, clientgui.getClient().getGame().getOptions()
+                                                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
+                                        cmd.getHexesMoved());
+                        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+                            Entity te = (Entity) target;
+                            toAttacker = ChargeAttackAction.getDamageTakenBy(ce,
+                                    te,
+                                    clientgui.getClient().getGame().getOptions()
+                                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), //$NON-NLS-1$
+                                    cmd.getHexesMoved());
+                        } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK)
+                                   || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
+                            Building bldg = clientgui.getClient().getGame()
+                                                     .getBoard().getBuildingAt(moveto);
+                            toAttacker = ChargeAttackAction.getDamageTakenBy(ce,
+                                                                             bldg, moveto);
+                        }
                     }
 
+                    String title = "MovementDisplay.ChargeDialog.title";
+                    String msg = "MovementDisplay.ChargeDialog.message";
+                    if (ce.isAirborneVTOLorWIGE()) {
+                        title = "MovementDisplay.AirmechRamDialog.title";
+                        msg = "MovementDisplay.AirmechRamDialog.message";
+                    }
                     // Ask the player if they want to charge.
                     if (clientgui
-                            .doYesNoDialog(
-                                    Messages.getString(
-                                            "MovementDisplay.ChargeDialog.title",
-                                            new Object[] { target
-                                                    .getDisplayName() }), //$NON-NLS-1$
-                                    Messages.getString(
-                                            "MovementDisplay.ChargeDialog.message",
-                                            new Object[] {//$NON-NLS-1$
-                                                    toHit.getValueAsString(),
-                                                    new Double(
-                                                            Compute.oddsAbove(toHit
-                                                                    .getValue())),
-                                                    toHit.getDesc(),
-                                                    new Integer(
-                                                            ChargeAttackAction
-                                                                    .getDamageFor(
-                                                                            ce,
-                                                                            clientgui
-                                                                                    .getClient()
-                                                                                    .getGame()
-                                                                                    .getOptions()
-                                                                                    .booleanOption(
-                                                                                            OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
-                                                                            cmd.getHexesMoved())),
-                                                    toHit.getTableDesc(),
-                                                    new Integer(toAttacker) }))) {
+                            .doYesNoDialog(Messages.getString(title, new Object[] { target.getDisplayName() }), //$NON-NLS-1$
+                                    Messages.getString(msg,new Object[] {//$NON-NLS-1$
+                                            toHit.getValueAsString(),
+                                            new Double(
+                                                    Compute.oddsAbove(toHit
+                                                            .getValue())),
+                                            toHit.getDesc(),
+                                            toDefender,
+                                            toHit.getTableDesc(),
+                                            new Integer(toAttacker) }))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -4262,7 +4272,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (gear != MovementDisplay.GEAR_LAND) {
                 clear();
             }
-            gear = MovementDisplay.GEAR_RAM;
+            if (ce.isAirborneVTOLorWIGE()) {
+                gear = MovementDisplay.GEAR_CHARGE;
+            } else {
+                gear = MovementDisplay.GEAR_RAM;
+            }
             computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_GET_UP.getCmd())) {
             // if the unit has a hull down step

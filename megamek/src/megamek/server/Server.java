@@ -174,6 +174,7 @@ import megamek.common.Warship;
 import megamek.common.WeaponComparatorBV;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.AirmechRamAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.BAVibroClawAttackAction;
@@ -7775,6 +7776,27 @@ public class Server implements Runnable {
                         entity.setDisplacementAttack(caa);
                         game.addCharge(caa);
                         charge = caa;
+                    } else {
+                        System.out.println("Illegal charge!! "
+                                + entity.getDisplayName() + " is attempting to "
+                                + "charge a null target!");
+                        sendServerChat("Illegal charge!! "
+                                + entity.getDisplayName() + " is attempting to "
+                                + "charge a null target!");
+                        return;
+                    }
+                } else if (entity.isAirborneVTOLorWIGE() && entity.canRam()) {
+                    checkExtremeGravityMovement(entity, step, lastStepMoveType,
+                            curPos, cachedGravityLimit);
+                    Targetable target = step.getTarget(game);
+                    if (target != null) {
+                        AirmechRamAttackAction raa = new AirmechRamAttackAction(
+                                entity.getId(), target.getTargetType(),
+                                target.getTargetId(), target.getPosition());
+                        entity.setDisplacementAttack(raa);
+                        entity.setRamming(true);
+                        game.addCharge(raa);
+                        charge = raa;
                     } else {
                         System.out.println("Illegal charge!! "
                                 + entity.getDisplayName() + " is attempting to "
@@ -17753,7 +17775,180 @@ public class Server implements Runnable {
         } else {
             // Resolve the damage.
             resolveChargeDamage(ae, te, toHit, direction, glancing,
-                                throughFront);
+                                throughFront, false);
+        }
+    }
+
+    /**
+     * Handle an Airmech ram attack
+     */
+    private void resolveAirmechRamAttack(PhysicalResult pr, int lastEntityId) {
+        final AirmechRamAttackAction caa = (AirmechRamAttackAction) pr.aaa;
+        final Entity ae = game.getEntity(caa.getEntityId());
+        final Targetable target = game.getTarget(caa.getTargetType(),
+                                                 caa.getTargetId());
+        // get damage, ToHitData and roll from the PhysicalResult
+        int damage = pr.damage;
+        final ToHitData toHit = pr.toHit;
+        int roll = pr.roll;
+
+        Entity te = null;
+        if ((target != null)
+            && (target.getTargetType() == Targetable.TYPE_ENTITY)) {
+            te = (Entity) target;
+        }
+        boolean throughFront = true;
+        if (te != null) {
+            throughFront = Compute
+                    .isThroughFrontHex(game, ae.getPosition(), te);
+        }
+        final boolean glancing = game.getOptions().booleanOption(
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
+                                 && (roll == toHit.getValue());
+
+        // Set Margin of Success/Failure.
+        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+        final boolean directBlow = game.getOptions().booleanOption(
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
+                                   && ((toHit.getMoS() / 3) >= 1);
+
+        Report r;
+
+        // Which building takes the damage?
+        Building bldg = game.getBoard().getBuildingAt(caa.getTargetPos());
+
+        // is the attacker dead? because that sure messes up the calculations
+        if (ae == null) {
+            return;
+        }
+
+        final int direction = ae.getFacing();
+
+        // entity isn't charging any more
+        ae.setDisplacementAttack(null);
+
+        if (lastEntityId != caa.getEntityId()) {
+            // who is making the attack
+            r = new Report(4005);
+            r.subject = ae.getId();
+            r.addDesc(ae);
+            addReport(r);
+        }
+
+        // should we even bother?
+        if ((target == null)
+            || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te
+                                                                               .isDestroyed() || te.isDoomed() || te
+                                                                               .getCrew()
+                                                                               .isDead()))) {
+            r = new Report(4192);
+            r.subject = ae.getId();
+            r.indent();
+            addReport(r);
+            game.addControlRoll(new PilotingRollData(
+                    ae.getId(), 0, "missed a ramming attack"));
+            return;
+        }
+
+        // attacker landed?
+        if (!ae.isAirborneVTOLorWIGE()) {
+            r = new Report(4197);
+            r.subject = ae.getId();
+            r.indent();
+            addReport(r);
+            return;
+        }
+
+        // attacker immobile?
+        if (ae.isImmobile()) {
+            r = new Report(4202);
+            r.subject = ae.getId();
+            r.indent();
+            addReport(r);
+            return;
+        }
+
+        r = new Report(4212);
+        r.subject = ae.getId();
+        r.indent();
+        r.add(target.getDisplayName());
+        r.newlines = 0;
+        addReport(r);
+
+        // if the attacker's prone, fudge the roll
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+            roll = -12;
+            r = new Report(4222);
+            r.subject = ae.getId();
+            r.add(toHit.getDesc());
+            addReport(r);
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+            roll = Integer.MAX_VALUE;
+            r = new Report(4227);
+            r.subject = ae.getId();
+            r.add(toHit.getDesc());
+            addReport(r);
+        } else {
+            // report the roll
+            r = new Report(4025);
+            r.subject = ae.getId();
+            r.add(toHit.getValue());
+            r.add(roll);
+            addReport(r);
+            if (glancing) {
+                r = new Report(4030);
+                r.subject = ae.getId();
+                addReport(r);
+            }
+            if (directBlow) {
+                r = new Report(4032);
+                r.subject = ae.getId();
+                addReport(r);
+            }
+
+        }
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            // miss
+            r = new Report(4035);
+            r.subject = ae.getId();
+            addReport(r);
+            // attacker must make a control roll
+            game.addControlRoll(new PilotingRollData(ae.getId(), 0, "missed ramming attack"));
+        } else if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                   || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) { // Targeting
+            // a building.
+            // The building takes the full brunt of the attack.
+            r = new Report(4040);
+            r.subject = ae.getId();
+            addReport(r);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage,
+                                                           target.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = ae.getId();
+            }
+            addReport(buildingReport);
+
+            // Damage any infantry in the hex.
+            addReport(damageInfantryIn(bldg, damage, target.getPosition()));
+
+            // Apply damage to the attacker.
+            int toAttacker = AirmechRamAttackAction.getDamageTakenBy(ae, target,
+                    ae.delta_distance);
+            HitData hit = new HitData(Mech.LOC_CT);
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+            addReport(damageEntity(ae, hit, toAttacker, false, DamageType.NONE,
+                                   false, false, throughFront));
+            addNewLines();
+            entityUpdate(ae.getId());
+
+            // TODO: Does the attacker enter the building?
+            // TODO: What if the building collapses?
+        } else {
+            // Resolve the damage.
+            resolveChargeDamage(ae, te, toHit, direction, glancing,
+                                throughFront, true);
         }
     }
 
@@ -18071,27 +18266,35 @@ public class Server implements Runnable {
      */
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit,
             int direction) {
-        resolveChargeDamage(ae, te, toHit, direction, false, true);
+        resolveChargeDamage(ae, te, toHit, direction, false, true, false);
     }
 
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit,
-            int direction, boolean glancing, boolean throughFront) {
+            int direction, boolean glancing, boolean throughFront, boolean airmechRam) {
 
         // we hit...
 
         PilotingRollData chargePSR = null;
         // If we're upright, we may fall down.
-        if (!ae.isProne()) {
+        if (!ae.isProne() && !airmechRam) {
             chargePSR = new PilotingRollData(ae.getId(), 2, "charging");
         }
 
         // Damage To Target
-        int damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions()
-                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), toHit.getMoS());
+        int damage;
 
         // Damage to Attacker
-        int damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game
-                .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE));
+        int damageTaken;
+        
+        if (airmechRam) {
+            damage = AirmechRamAttackAction.getDamageFor(ae);
+            damageTaken = AirmechRamAttackAction.getDamageTakenBy(ae, te);            
+        } else {
+            damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions()
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), toHit.getMoS());
+            damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game
+                    .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE));
+        }
         if (glancing) {
             // Glancing Blow rule doesn't state whether damage to attacker on
             // charge
@@ -18160,6 +18363,11 @@ public class Server implements Runnable {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(toHit.getHitTable(),
                                              ae.sideTable(te.getPosition()));
+            // An airmech ramming attack does all damage to attacker's CT
+            if (airmechRam) {
+                cluster = damageTaken;
+                hit = new HitData(Mech.LOC_CT);
+            }
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             if (spikes[hit.getLocation()] == 1) {
                 r = new Report(4335);
@@ -18214,6 +18422,10 @@ public class Server implements Runnable {
 
         while (damage > 0) {
             int cluster = Math.min(5, damage);
+            // Airmech ramming attacks do all damage to a single location
+            if (airmechRam) {
+                cluster = damage;
+            }
             damage -= cluster;
             if (bldgAbsorbs > 0) {
                 int toBldg = Math.min(bldgAbsorbs, cluster);
@@ -18269,20 +18481,54 @@ public class Server implements Runnable {
                                    throughFront));
         }
 
-        // move attacker and target, if possible
-        Coords src = te.getPosition();
-        Coords dest = src.translated(direction);
-
-        if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(),
-                                        direction)) {
+        if (airmechRam) {
+            if (!ae.isDoomed()) {
+                PilotingRollData controlRoll = ae.getBasePilotingRoll();
+                Vector<Report> reports = new Vector<>();
+                r = new Report(9320);
+                r.subject = ae.getId();
+                r.addDesc(ae);
+                r.add("successful ramming attack");
+                reports.add(r);
+                int diceRoll = Compute.d6(2);
+                // different reports depending on out-of-control status
+                r = new Report(9606);
+                r.subject = ae.getId();
+                r.add(controlRoll.getValueAsString());
+                r.add(controlRoll.getDesc());
+                r.add(diceRoll);
+                r.newlines = 1;
+                if (diceRoll < controlRoll.getValue()) {
+                    r.choose(false);
+                    reports.add(r);
+                    crashAirMech(ae, controlRoll, reports);
+                } else {
+                    r.choose(true);
+                    reports.addElement(r);
+                    if (ae instanceof LandAirMech) {
+                        MoveStep step = new MoveStep(null, MoveStepType.FORWARDS);
+                        step.setFromEntity(ae, game);
+                        reports.addAll(landAirMech((LandAirMech)ae, ae.getPosition(), 1, ae.delta_distance, step));
+                    }
+                }
+                addReport(reports);
+            }
+        } else {
+            // move attacker and target, if possible
+            Coords src = te.getPosition();
+            Coords dest = src.translated(direction);
+    
+            if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(),
+                                            direction)) {
+                addNewLines();
+                addReport(doEntityDisplacement(te, src, dest, new PilotingRollData(
+                        te.getId(), 2, "was charged")));
+                addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
+            }
+    
             addNewLines();
-            addReport(doEntityDisplacement(te, src, dest, new PilotingRollData(
-                    te.getId(), 2, "was charged")));
-            addReport(doEntityDisplacement(ae, ae.getPosition(), src, chargePSR));
         }
-
-        addNewLines();
-
+        
         // if the target is an industrial mech, it needs to check for crits
         // at the end of turn
         if ((te instanceof Mech) && ((Mech) te).isIndustrial()) {
@@ -32989,6 +33235,10 @@ public class Server implements Runnable {
             } else {
                 damage = ChargeAttackAction.getDamageFor(ae);
             }
+        } else if (aaa instanceof AirmechRamAttackAction) {
+            AirmechRamAttackAction raa = (AirmechRamAttackAction) aaa;
+            toHit = raa.toHit(game);
+            damage = AirmechRamAttackAction.getDamageFor(ae);
         } else if (aaa instanceof ClubAttackAction) {
             ClubAttackAction caa = (ClubAttackAction) aaa;
             toHit = caa.toHit(game);
@@ -33177,6 +33427,9 @@ public class Server implements Runnable {
             cen = aaa.getEntityId();
         } else if (aaa instanceof ChargeAttackAction) {
             resolveChargeAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof AirmechRamAttackAction) {
+            resolveAirmechRamAttack(pr, cen);
             cen = aaa.getEntityId();
         } else if (aaa instanceof DfaAttackAction) {
             resolveDfaAttack(pr, cen);

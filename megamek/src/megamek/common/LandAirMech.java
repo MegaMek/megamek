@@ -830,7 +830,28 @@ public class LandAirMech extends BipedMech implements IAero {
     public boolean isEligibleForPhysical() {
         return getConversionMode() != CONV_MODE_FIGHTER && super.isEligibleForPhysical();
     }
-        
+    
+    @Override
+    public boolean canCharge() {
+        if (getConversionMode() == CONV_MODE_FIGHTER
+                || ((getConversionMode() == CONV_MODE_AIRMECH) && isAirborneVTOLorWIGE())) {
+            return false;
+        } else {
+            return super.canCharge();
+        }
+    }
+
+    @Override
+    public boolean canRam() {
+        if (getConversionMode() == CONV_MODE_FIGHTER) {
+            return !isImmobile() && (getWalkMP() > 0);
+        } else if (getConversionMode() == CONV_MODE_AIRMECH){
+            return isAirborneVTOLorWIGE();
+        } else {
+            return false;
+        }
+    }
+
     /*
      * Cycling through conversion modes for LAMs in 'Mech or fighter mode is simple toggling between
      * two states. LAMs in AirMech mode have three possible states.

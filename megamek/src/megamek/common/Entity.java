@@ -9061,7 +9061,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // if you're charging or finding a club, it's already declared
-        if (isUnjammingRAC() || isCharging() || isMakingDfa()
+        if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming()
             || isFindingClub() || isOffBoard() || isAssaultDropInProgress()
             || isDropping()) {
             return false;

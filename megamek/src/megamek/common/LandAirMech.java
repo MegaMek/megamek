@@ -19,7 +19,7 @@ import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
 
-public class LandAirMech extends BipedMech implements IAero {
+public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     /**
      *
@@ -64,7 +64,6 @@ public class LandAirMech extends BipedMech implements IAero {
 
     private boolean critThresh = false;    
 
-    private int maxBombPoints = 0;
     private int[] bombChoices = new int[BombType.B_NUM];
 
     private int fuel;
@@ -430,6 +429,11 @@ public class LandAirMech extends BipedMech implements IAero {
                     }
                 }
             }
+            // Remove bomb attacks when switching to mech mode and make them available again when switching
+            // from mech mode.
+            if (prevMode == CONV_MODE_MECH || getConversionMode() == CONV_MODE_MECH) {
+                refreshBombAttacks();
+            }
         }
     }
     
@@ -776,50 +780,10 @@ public class LandAirMech extends BipedMech implements IAero {
             // get new random whofirst
             setWhoFirst();
 
-            /* TODO: implement bomb bays
-        // Remove all bomb attacks
-        List<Mounted> bombAttacksToRemove = new ArrayList<>();
-        EquipmentType spaceBomb = EquipmentType.get(SPACE_BOMB_ATTACK);
-        EquipmentType altBomb = EquipmentType.get(ALT_BOMB_ATTACK);
-        EquipmentType diveBomb = EquipmentType.get(DIVE_BOMB_ATTACK);
-        for (Mounted eq : equipmentList) {
-            if ((eq.getType() == spaceBomb) || (eq.getType() == altBomb)
-                    || (eq.getType() == diveBomb)) {
-                bombAttacksToRemove.add(eq);
-            }
-        }
-        equipmentList.removeAll(bombAttacksToRemove);
-        weaponList.removeAll(bombAttacksToRemove);
-        totalWeaponList.removeAll(bombAttacksToRemove);
-        weaponGroupList.removeAll(bombAttacksToRemove);
-        weaponBayList.removeAll(bombAttacksToRemove);
-
-        // Add the space bomb attack
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
-                && game.getBoard().inSpace()
-                && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
-            try {
-                addEquipment(spaceBomb, LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-            }
-        }
-        // Add ground bomb attacks
-        int numGroundBombs = getBombs(AmmoType.F_GROUND_BOMB).size();
-        if (!game.getBoard().inSpace() && (numGroundBombs > 0)) {
-            try {
-                addEquipment(diveBomb, LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-            }
-            for (int i = 0; i < Math.min(10, numGroundBombs); i++) {
-                try {
-                    addEquipment(altBomb, LOC_NOSE, false);
-                } catch (LocationFullException ex) {
-                }
-            }
-        }
-             */
             resetAltLossThisRound();
         }
+        
+        refreshBombAttacks();
     }
     
     /**
@@ -980,7 +944,7 @@ public class LandAirMech extends BipedMech implements IAero {
     }
 
     public int getMaxBombPoints() {
-        return maxBombPoints;
+        return countWorkingMisc(MiscType.F_BOMB_BAY);
     }
 
     public int[] getBombChoices() {
@@ -1336,11 +1300,6 @@ public class LandAirMech extends BipedMech implements IAero {
     }
     
     @Override
-    public void applyBombs() {
-        //TODO: load the bays with the selected bombs
-    }
-
-    @Override
     public int getFuel() {
         return fuel;
     }
@@ -1526,6 +1485,40 @@ public class LandAirMech extends BipedMech implements IAero {
     @Override
     public boolean isAero() {
         return getConversionMode() == CONV_MODE_FIGHTER;
+    }
+    
+    @Override
+    public boolean isBomber() {
+        return true;
+    }
+
+    @Override
+    public int availableBombLocation() {
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_BOMB_BAY)
+                    && m.getLinked() == null) {
+                return m.getLocation();
+            }
+        }
+        return LOC_NONE;
+    }
+    
+    protected void addBomb(Mounted mounted, int loc)
+            throws LocationFullException {
+        Mounted bay = null;
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_BOMB_BAY)
+                    && m.getLinked() == null) {
+                bay = m;
+                break;
+            }
+        }
+        if (bay == null) {
+            throw new LocationFullException();
+        }
+        mounted.setBombMounted(true);
+        addEquipment(mounted, loc, false);
+        bay.setLinked(mounted);
     }
 
     @Override

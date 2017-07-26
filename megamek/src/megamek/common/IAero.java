@@ -27,11 +27,6 @@ import megamek.common.MovePath.MoveStepType;
  */
 public interface IAero {
     
-    // bombs
-    public static final String SPACE_BOMB_ATTACK = "SpaceBombAttack";
-    public static final String DIVE_BOMB_ATTACK = "DiveBombAttack";
-    public static final String ALT_BOMB_ATTACK = "AltBombAttack";
-
     int getCurrentThrust();
     int getCurrentVelocity();
     void setCurrentVelocity(int velocity);
@@ -83,11 +78,6 @@ public interface IAero {
     boolean wasCritThresh();
     void setCritThresh(boolean b);
 
-    int getMaxBombPoints();
-    int[] getBombChoices();
-    void setBombChoices(int[] bc);
-    void applyBombs();
-            
     int getFuel();
     void setFuel(int gas);
     double getFuelPointsPerTon();
@@ -109,16 +99,12 @@ public interface IAero {
      * Default methods that are implemented the same for Aero and LandAirMech
      */
 
-    default Entity getEntity() {
-        return (Entity)this;
-    }
-    
     default PilotingRollData checkThrustSI(int thrust, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getEntity().getBasePilotingRoll(overallMoveType);
+        PilotingRollData roll = ((Entity)this).getBasePilotingRoll(overallMoveType);
 
         if (thrust > getSI()) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getEntity().getId(), thrust - getSI(), "Thrust exceeds current SI in a single hex"));
+            roll.append(new PilotingRollData(((Entity)this).getId(), thrust - getSI(), "Thrust exceeds current SI in a single hex"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         }
@@ -126,11 +112,11 @@ public interface IAero {
     }
 
     default PilotingRollData checkThrustSITotal(int thrust, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getEntity().getBasePilotingRoll(overallMoveType);
+        PilotingRollData roll = ((Entity)this).getBasePilotingRoll(overallMoveType);
 
         if (thrust > getSI()) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getEntity().getId(), 0, "Thrust spent this turn exceeds current SI"));
+            roll.append(new PilotingRollData(((Entity)this).getId(), 0, "Thrust spent this turn exceeds current SI"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding SI");
         }
@@ -138,11 +124,11 @@ public interface IAero {
     }
 
     default PilotingRollData checkVelocityDouble(int velocity, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getEntity().getBasePilotingRoll(overallMoveType);
+        PilotingRollData roll = ((Entity)this).getBasePilotingRoll(overallMoveType);
 
-        if ((velocity > (2 * getEntity().getWalkMP())) && !getEntity().getGame().getBoard().inSpace()) {
+        if ((velocity > (2 * ((Entity)this).getWalkMP())) && !((Entity)this).getGame().getBoard().inSpace()) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getEntity().getId(), 0, "Velocity greater than 2x safe thrust"));
+            roll.append(new PilotingRollData(((Entity)this).getId(), 0, "Velocity greater than 2x safe thrust"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not exceeding 2x safe thrust");
         }
@@ -150,11 +136,11 @@ public interface IAero {
     }
 
     default PilotingRollData checkDown(int drop, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getEntity().getBasePilotingRoll(overallMoveType);
+        PilotingRollData roll = ((Entity)this).getBasePilotingRoll(overallMoveType);
 
         if (drop > 2) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getEntity().getId(), drop, "lost more than two altitudes"));
+            roll.append(new PilotingRollData(((Entity)this).getId(), drop, "lost more than two altitudes"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity did not drop more than two altitudes");
         }
@@ -162,11 +148,11 @@ public interface IAero {
     }
 
     default PilotingRollData checkHover(MovePath md) {
-        PilotingRollData roll = getEntity().getBasePilotingRoll(md.getLastStepMovementType());
+        PilotingRollData roll = ((Entity)this).getBasePilotingRoll(md.getLastStepMovementType());
 
         if (md.contains(MoveStepType.HOVER) && (md.getLastStepMovementType() == EntityMovementType.MOVE_OVER_THRUST)) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getEntity().getId(), 0, "hovering above safe thrust"));
+            roll.append(new PilotingRollData(((Entity)this).getId(), 0, "hovering above safe thrust"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity did not hover");
         }
@@ -174,17 +160,17 @@ public interface IAero {
     }
 
     default PilotingRollData checkStall(MovePath md) {
-        PilotingRollData roll = getEntity().getBasePilotingRoll(md.getLastStepMovementType());
+        PilotingRollData roll = ((Entity)this).getBasePilotingRoll(md.getLastStepMovementType());
 
         if ((md.getFinalVelocity() == 0) && !md.contains(MoveStepType.HOVER)
-                && isAirborne() && !isSpheroid() && !getEntity().getGame().getBoard().inSpace()
+                && isAirborne() && !isSpheroid() && !((Entity)this).getGame().getBoard().inSpace()
                 && !md.contains(MoveStepType.LAND)
                 && !md.contains(MoveStepType.VLAND)
                 && !md.contains(MoveStepType.RETURN)
                 && !md.contains(MoveStepType.OFF)
                 && !md.contains(MoveStepType.FLEE)) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getEntity().getId(), 0, "stalled out"));
+            roll.append(new PilotingRollData(((Entity)this).getId(), 0, "stalled out"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: entity not stalled out");
         }
@@ -192,11 +178,11 @@ public interface IAero {
     }
 
     default PilotingRollData checkRolls(MoveStep step, EntityMovementType overallMoveType) {
-        PilotingRollData roll = getEntity().getBasePilotingRoll(overallMoveType);
+        PilotingRollData roll = ((Entity)this).getBasePilotingRoll(overallMoveType);
 
         if (((step.getType() == MoveStepType.ROLL) || (step.getType() == MoveStepType.YAW)) && (step.getNRolls() > 1)) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getEntity().getId(), 0, "More than one roll in the same turn"));
+            roll.append(new PilotingRollData(((Entity)this).getId(), 0, "More than one roll in the same turn"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Entity is not rolling more than once");
         }
@@ -204,7 +190,7 @@ public interface IAero {
     }
 
     default PilotingRollData checkVerticalTakeOff() {
-        PilotingRollData roll = getEntity().getBasePilotingRoll(EntityMovementType.MOVE_SAFE_THRUST);
+        PilotingRollData roll = ((Entity)this).getBasePilotingRoll(EntityMovementType.MOVE_SAFE_THRUST);
 
         if (getLandingGearMod(true) > 0) {
             roll.addModifier(+1, "landing gear damaged");
@@ -216,8 +202,8 @@ public interface IAero {
 
         // Supposed to be -1 for lifting off from an "airfield or landing pad."
         // We will just treat this as having paved terrain
-        Coords pos = getEntity().getPosition();
-        IHex hex = getEntity().getGame().getBoard().getHex(pos);
+        Coords pos = ((Entity)this).getPosition();
+        IHex hex = ((Entity)this).getGame().getBoard().getHex(pos);
         if ((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
@@ -230,14 +216,14 @@ public interface IAero {
         // TW doesn't define what a crater is, assume it means that the hex
         // level of all surrounding hexes is greater than what we are sitting on
         boolean allAdjacentHigher = true;
-        Set<Coords> positions = new HashSet<Coords>(getEntity().getSecondaryPositions()
+        Set<Coords> positions = new HashSet<Coords>(((Entity)this).getSecondaryPositions()
                 .values());
         IHex adjHex;
         for (Coords currPos : positions) {
-            hex = getEntity().getGame().getBoard().getHex(currPos);
+            hex = ((Entity)this).getGame().getBoard().getHex(currPos);
             for (int dir = 0; dir < 6; dir++) {
                 Coords adj = currPos.translated(dir);
-                adjHex = getEntity().getGame().getBoard().getHex(adj);
+                adjHex = ((Entity)this).getGame().getBoard().getHex(adj);
                 if (!positions.contains(adj) && (adjHex != null)
                         && adjHex.getLevel() <= hex.getLevel()) {
                     allAdjacentHigher = false;
@@ -270,7 +256,7 @@ public interface IAero {
     default PilotingRollData checkLanding(EntityMovementType moveType,
             int velocity, Coords landingPos, int face, boolean isVertical) {
         // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(getEntity().getId(), getEntity().getCrew()
+        PilotingRollData roll = new PilotingRollData(((Entity)this).getId(), ((Entity)this).getCrew()
                 .getPiloting(), "Base piloting skill");
         
         
@@ -310,7 +296,7 @@ public interface IAero {
             roll.addModifier(+2, "nose armor destroyed");
         }
         // Unit reduced to 50% or less of starting thrust
-        double thrustPercent = ((double)getEntity().getWalkMP())/getEntity().getOriginalWalkMP();
+        double thrustPercent = ((double)((Entity)this).getWalkMP())/((Entity)this).getOriginalWalkMP();
         if (thrustPercent <= .5) {
             roll.addModifier(+2, "thrust reduced to 50% or less of original");
         }
@@ -353,7 +339,7 @@ public interface IAero {
         }
         
         for (Coords pos : landingPositions) {
-            IHex hex = getEntity().getGame().getBoard().getHex(pos);
+            IHex hex = ((Entity)this).getGame().getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.ROUGH)
                     || hex.containsTerrain(Terrains.RUBBLE)) {
                 rough = true;
@@ -394,7 +380,7 @@ public interface IAero {
      */
     default PilotingRollData checkManeuver(MoveStep step,
             EntityMovementType overallMoveType) {
-        PilotingRollData roll = getEntity().getBasePilotingRoll(overallMoveType);
+        PilotingRollData roll = ((Entity)this).getBasePilotingRoll(overallMoveType);
 
         if ((step == null) || (step.getType() != MoveStepType.MANEUVER)) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -402,7 +388,7 @@ public interface IAero {
             return roll;
         }
         boolean sideSlipMod = (this instanceof ConvFighter) && isVSTOL();
-        roll.append(new PilotingRollData(getEntity().getId(), ManeuverType.getMod(
+        roll.append(new PilotingRollData(((Entity)this).getId(), ManeuverType.getMod(
                 step.getManeuverType(), sideSlipMod), ManeuverType
                 .getTypeName(step.getManeuverType()) + " maneuver"));
 
@@ -472,26 +458,26 @@ public interface IAero {
 
     default String hasRoomForHorizontalTakeOff() {
         // walk along the hexes in the facing of the unit
-        IHex hex = getEntity().getGame().getBoard().getHex(getEntity().getPosition());
+        IHex hex = ((Entity)this).getGame().getBoard().getHex(((Entity)this).getPosition());
         int elev = hex.getLevel();
-        int facing = getEntity().getFacing();
+        int facing = ((Entity)this).getFacing();
         String lenString = " (" + getTakeOffLength() + " hexes required)";
         // dropships need a strip three hexes wide
         Vector<Coords> startingPos = new Vector<Coords>();
-        startingPos.add(getEntity().getPosition());
-        if (getEntity() instanceof Dropship) {
-            startingPos.add(getEntity().getPosition().translated((facing + 4) % 6));
-            startingPos.add(getEntity().getPosition().translated((facing + 2) % 6));
+        startingPos.add(((Entity)this).getPosition());
+        if (((Entity)this) instanceof Dropship) {
+            startingPos.add(((Entity)this).getPosition().translated((facing + 4) % 6));
+            startingPos.add(((Entity)this).getPosition().translated((facing + 2) % 6));
         }
         for (Coords pos : startingPos) {
             for (int i = 0; i < getTakeOffLength(); i++) {
                 pos = pos.translated(facing);
                 // check for buildings
-                if (getEntity().getGame().getBoard().getBuildingAt(pos) != null) {
+                if (((Entity)this).getGame().getBoard().getBuildingAt(pos) != null) {
                     return "Buildings in the way" + lenString;
                 }
                 // no units in the way
-                for (Entity en : getEntity().getGame().getEntitiesVector(pos)) {
+                for (Entity en : ((Entity)this).getGame().getEntitiesVector(pos)) {
                     if (en.equals(this)) {
                         continue;
                     }
@@ -499,7 +485,7 @@ public interface IAero {
                         return "Ground units in the way" + lenString;
                     }
                 }
-                hex = getEntity().getGame().getBoard().getHex(pos);
+                hex = ((Entity)this).getGame().getBoard().getHex(pos);
                 // if the hex is null, then we are offboard. Don't let units
                 // take off offboard.
                 if (null == hex) {
@@ -519,31 +505,31 @@ public interface IAero {
 
     default String hasRoomForHorizontalLanding() {
         // walk along the hexes in the facing of the unit
-        IHex hex = getEntity().getGame().getBoard().getHex(getEntity().getPosition());
+        IHex hex = ((Entity)this).getGame().getBoard().getHex(((Entity)this).getPosition());
         int elev = hex.getLevel();
-        int facing = getEntity().getFacing();
+        int facing = ((Entity)this).getFacing();
         String lenString = " (" + getLandingLength() + " hexes required)";
         // dropships need a a landing strip three hexes wide
         Vector<Coords> startingPos = new Vector<Coords>();
-        startingPos.add(getEntity().getPosition());
+        startingPos.add(((Entity)this).getPosition());
         if (this instanceof Dropship) {
-            startingPos.add(getEntity().getPosition().translated((facing + 5) % 6));
-            startingPos.add(getEntity().getPosition().translated((facing + 1) % 6));
+            startingPos.add(((Entity)this).getPosition().translated((facing + 5) % 6));
+            startingPos.add(((Entity)this).getPosition().translated((facing + 1) % 6));
         }
         for (Coords pos : startingPos) {
             for (int i = 0; i < getLandingLength(); i++) {
                 pos = pos.translated(facing);
                 // check for buildings
-                if (getEntity().getGame().getBoard().getBuildingAt(pos) != null) {
+                if (((Entity)this).getGame().getBoard().getBuildingAt(pos) != null) {
                     return "Buildings in the way" + lenString;
                 }
                 // no units in the way
-                for (Entity en : getEntity().getGame().getEntitiesVector(pos)) {
+                for (Entity en : ((Entity)this).getGame().getEntitiesVector(pos)) {
                     if (!en.isAirborne()) {
                         return "Ground units in the way" + lenString;
                     }
                 }
-                hex = getEntity().getGame().getBoard().getHex(pos);
+                hex = ((Entity)this).getGame().getBoard().getHex(pos);
                 // if the hex is null, then we are offboard. Don't let units
                 // land offboard.
                 if (null == hex) {
@@ -563,18 +549,18 @@ public interface IAero {
     }
 
     default String hasRoomForVerticalLanding() {
-        Coords pos = getEntity().getPosition();
-        IHex hex = getEntity().getGame().getBoard().getHex(getEntity().getPosition());
-        if (getEntity().getGame().getBoard().getBuildingAt(pos) != null) {
+        Coords pos = ((Entity)this).getPosition();
+        IHex hex = ((Entity)this).getGame().getBoard().getHex(((Entity)this).getPosition());
+        if (((Entity)this).getGame().getBoard().getBuildingAt(pos) != null) {
             return "Buildings in the way";
         }
         // no units in the way
-        for (Entity en : getEntity().getGame().getEntitiesVector(pos)) {
+        for (Entity en : ((Entity)this).getGame().getEntitiesVector(pos)) {
             if (!en.isAirborne()) {
                 return "Ground units in the way";
             }
         }
-        hex = getEntity().getGame().getBoard().getHex(pos);
+        hex = ((Entity)this).getGame().getBoard().getHex(pos);
         // if the hex is null, then we are offboard. Don't let units
         // land offboard.
         if (null == hex) {
@@ -590,33 +576,33 @@ public interface IAero {
 
     default void liftOff(int altitude) {
         if (isSpheroid()) {
-            getEntity().setMovementMode(EntityMovementMode.SPHEROID);
+            ((Entity)this).setMovementMode(EntityMovementMode.SPHEROID);
         } else {
-            getEntity().setMovementMode(EntityMovementMode.AERODYNE);
+            ((Entity)this).setMovementMode(EntityMovementMode.AERODYNE);
         }
-        getEntity().setAltitude(altitude);
+        ((Entity)this).setAltitude(altitude);
 
-        HashSet<Coords> positions = getEntity().getOccupiedCoords();
-        getEntity().getSecondaryPositions().clear();
-        if (getEntity().getGame() != null) {
-            getEntity().getGame().updateEntityPositionLookup((Entity)this, positions);
+        HashSet<Coords> positions = ((Entity)this).getOccupiedCoords();
+        ((Entity)this).getSecondaryPositions().clear();
+        if (((Entity)this).getGame() != null) {
+            ((Entity)this).getGame().updateEntityPositionLookup((Entity)this, positions);
         }
     }
 
     default void land() {
-        getEntity().setMovementMode(EntityMovementMode.WHEELED);
-        getEntity().setAltitude(0);
-        getEntity().setElevation(0);
+        ((Entity)this).setMovementMode(EntityMovementMode.WHEELED);
+        ((Entity)this).setAltitude(0);
+        ((Entity)this).setElevation(0);
         setCurrentVelocity(0);
         setNextVelocity(0);
         setOutControl(false);
         setOutCtrlHeat(false);
         setRandomMove(false);
-        getEntity().delta_distance = 0;
+        ((Entity)this).delta_distance = 0;
     }
 
     default int getFuelUsed(int thrust) {
-        int overThrust = Math.max(thrust - getEntity().getWalkMP(), 0);
+        int overThrust = Math.max(thrust - ((Entity)this).getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
         int used = safeThrust + (2 * overThrust);
         return used;

@@ -34,7 +34,7 @@ import megamek.common.weapons.PPCWeapon;
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
-public class Aero extends Entity implements IAero {
+public class Aero extends Entity implements IAero, IBomber {
     /**
      *
      */
@@ -771,47 +771,8 @@ public class Aero extends Entity implements IAero {
 
         // get new random whofirst
         setWhoFirst();
-
-        // Remove all bomb attacks
-        List<Mounted> bombAttacksToRemove = new ArrayList<>();
-        EquipmentType spaceBomb = EquipmentType.get(SPACE_BOMB_ATTACK);
-        EquipmentType altBomb = EquipmentType.get(ALT_BOMB_ATTACK);
-        EquipmentType diveBomb = EquipmentType.get(DIVE_BOMB_ATTACK);
-        for (Mounted eq : equipmentList) {
-            if ((eq.getType() == spaceBomb) || (eq.getType() == altBomb)
-                    || (eq.getType() == diveBomb)) {
-                bombAttacksToRemove.add(eq);
-            }
-        }
-        equipmentList.removeAll(bombAttacksToRemove);
-        weaponList.removeAll(bombAttacksToRemove);
-        totalWeaponList.removeAll(bombAttacksToRemove);
-        weaponGroupList.removeAll(bombAttacksToRemove);
-        weaponBayList.removeAll(bombAttacksToRemove);
-
-        // Add the space bomb attack
-        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
-                && game.getBoard().inSpace()
-                && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
-            try {
-                addEquipment(spaceBomb, LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-            }
-        }
-        // Add ground bomb attacks
-        int numGroundBombs = getBombs(AmmoType.F_GROUND_BOMB).size();
-        if (!game.getBoard().inSpace() && (numGroundBombs > 0)) {
-            try {
-                addEquipment(diveBomb, LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-            }
-            for (int i = 0; i < Math.min(10, numGroundBombs); i++) {
-                try {
-                    addEquipment(altBomb, LOC_NOSE, false);
-                } catch (LocationFullException ex) {
-                }
-            }
-        }
+        
+        refreshBombAttacks();
 
         resetAltLossThisRound();
     }
@@ -3153,52 +3114,6 @@ public class Aero extends Entity implements IAero {
         return 0;
     }
 
-    // I need a function that takes the bombChoices variable and uses it to
-    // produce bombs
-    public void applyBombs() {
-        int loc = LOC_NOSE;
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions()
-                .stringOption("techlevel"));
-        for (int type = 0; type < BombType.B_NUM; type++) {
-            for (int i = 0; i < bombChoices[type]; i++) {
-                if ((type == BombType.B_ALAMO)
-                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
-                    continue;
-                }
-                if ((type > BombType.B_TAG)
-                        && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
-                    continue;
-                }
-
-                // some bombs need an associated weapon and if so
-                // they need a weapon for each bomb
-                if ((null != BombType.getBombWeaponName(type))
-                        && (type != BombType.B_ARROW)
-                        && (type != BombType.B_HOMING)) {
-                    try {
-                        addBomb(EquipmentType.get(BombType
-                                .getBombWeaponName(type)), loc);
-                    } catch (LocationFullException ex) {
-                        // throw new LocationFullException(ex.getMessage());
-                    }
-                }
-                if (type != BombType.B_TAG) {
-                    try {
-                        addEquipment(EquipmentType.get(BombType
-                                .getBombInternalName(type)), loc, false);
-                    } catch (LocationFullException ex) {
-                        // throw new LocationFullException(ex.getMessage());
-                    }
-                }
-            }
-            // Clear out the bomb choice once the bombs are loaded
-            bombChoices[type] = 0;
-        }
-
-        updateWeaponGroups();
-        loadAllWeapons();
-    }
-
     public int getStraightMoves() {
         return straightMoves;
     }
@@ -4000,6 +3915,16 @@ public class Aero extends Entity implements IAero {
     @Override
     public boolean isAero() {
         return true;
+    }
+    
+    @Override
+    public boolean isBomber() {
+        return isFighter();
+    }
+    
+    @Override
+    public int availableBombLocation() {
+        return LOC_NOSE;
     }
     
     /**

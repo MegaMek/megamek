@@ -86,7 +86,7 @@ import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
-import megamek.common.IAero;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.IPlayer;
@@ -1522,8 +1522,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         // the movement turn are considered selectable
                         entity.setDone(true);
                         entity.setUnloaded(true);
-                        if (entity.isFighter()) {
-                            ((IAero)entity).applyBombs();
+                        if (entity instanceof IBomber) {
+                            ((IBomber)entity).applyBombs();
                         }
                     }
                 }

@@ -3545,7 +3545,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return miscList;
     }
 
-    public ArrayList<Mounted> getBombs() {
+    public List<Mounted> getBombs() {
         return bombList;
     }
 
@@ -3560,6 +3560,65 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return bombs;
     }
+    
+    /**
+     * Reset bomb attacks according to what bombs are available.
+     */
+    protected void refreshBombAttacks() {
+        // Remove all bomb attacks
+        List<Mounted> bombAttacksToRemove = new ArrayList<>();
+        EquipmentType spaceBomb = EquipmentType.get(IBomber.SPACE_BOMB_ATTACK);
+        EquipmentType altBomb = EquipmentType.get(IBomber.ALT_BOMB_ATTACK);
+        EquipmentType diveBomb = EquipmentType.get(IBomber.DIVE_BOMB_ATTACK);
+        for (Mounted eq : equipmentList) {
+            if ((eq.getType() == spaceBomb) || (eq.getType() == altBomb)
+                    || (eq.getType() == diveBomb)) {
+                bombAttacksToRemove.add(eq);
+            }
+        }
+        equipmentList.removeAll(bombAttacksToRemove);
+        weaponList.removeAll(bombAttacksToRemove);
+        totalWeaponList.removeAll(bombAttacksToRemove);
+        weaponGroupList.removeAll(bombAttacksToRemove);
+        weaponBayList.removeAll(bombAttacksToRemove);
+        
+        // The location to add the bombing attack pseudo-equipment.
+        int loc = Aero.LOC_NOSE;
+        if (this instanceof Mech) {
+            loc = Mech.LOC_CT;
+        } else if (this instanceof Tank) {
+            loc = Tank.LOC_BODY;
+        }
+
+        // Add the space bomb attack
+        if (isFighter() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
+                && game.getBoard().inSpace()
+                && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
+            try {
+                addEquipment(spaceBomb, loc, false);
+            } catch (LocationFullException ex) {
+            }
+        }
+        // Add ground bomb attacks
+        int numGroundBombs = getBombs(AmmoType.F_GROUND_BOMB).size();
+        if (!game.getBoard().inSpace() && (numGroundBombs > 0)
+                && !((this instanceof LandAirMech)
+                        && (getConversionMode() == LandAirMech.CONV_MODE_MECH))) {
+            try {
+                addEquipment(diveBomb, loc, false);
+            } catch (LocationFullException ex) {
+            }
+            if (isFighter()) {
+                for (int i = 0; i < Math.min(10, numGroundBombs); i++) {
+                    try {
+                        addEquipment(altBomb, loc, false);
+                    } catch (LocationFullException ex) {
+                    }
+                }
+            }
+        }
+    }
+
 
     /**
      * Removes the first misc eq. whose name equals the specified string. Used
@@ -10630,7 +10689,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isFighter() {
         return isAero();
     }
-
+    
     public boolean isCapitalFighter() {
         return isCapitalFighter(false);
     }

@@ -1873,8 +1873,8 @@ public class MULParser {
      * @param entity
      */
     private void parseBombs(Element bombsTag, Entity entity){
-        if (!(entity instanceof IAero)) {
-            warning.append("Found a bomb but Entity is not a Fighter.\n");
+        if (!(entity instanceof IBomber)) {
+            warning.append("Found a bomb but Entity cannot carry bombs.\n");
             return;
         }
         
@@ -1891,13 +1891,13 @@ public class MULParser {
                 Element currEle = (Element)currNode;
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(BOMB)){
-                    int[] bombChoices = ((IAero) entity).getBombChoices();
+                    int[] bombChoices = ((IBomber) entity).getBombChoices();
                     String type = currEle.getAttribute(TYPE);
                     String load = currEle.getAttribute(LOAD);
                     if (type.length() > 0 && load.length() > 0){
                         bombChoices[BombType.getBombTypeFromInternalName(type)] 
                                 += Integer.parseInt(load);
-                        ((IAero) entity).setBombChoices(bombChoices);
+                        ((IBomber) entity).setBombChoices(bombChoices);
                     }
                 }
             } else {

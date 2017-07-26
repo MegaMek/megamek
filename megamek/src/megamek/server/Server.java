@@ -115,6 +115,7 @@ import megamek.common.HitData;
 import megamek.common.IAero;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
+import megamek.common.IBomber;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
@@ -2772,13 +2773,16 @@ public class Server implements Runnable {
                         a.liftOff(entity.getAltitude());
                     }
                 }
+            }
+            
+            if (entity instanceof IBomber) {
                 // apply bombs and santa annas
                 if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)
                     && ((entity instanceof Dropship) || (entity instanceof Jumpship))) {
                     entity.applySantaAnna();
                 }
                 if (!((entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
-                    a.applyBombs();
+                    ((IBomber)entity).applyBombs();
                 }
             }
 
@@ -10003,7 +10007,7 @@ public class Server implements Runnable {
     private void checkForTakeoffDamage(IAero a) {
 
         boolean unsecured = false;
-        for (Entity loaded : a.getEntity().getLoadedUnits()) {
+        for (Entity loaded : ((Entity)a).getLoadedUnits()) {
             if (loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
                 unsecured = true;
                 // uh-oh, you forgot your seatbelt
@@ -18194,7 +18198,7 @@ public class Server implements Runnable {
     private void resolveRamDamage(IAero aero, Entity te, ToHitData toHit,
                                   boolean glancing, boolean throughFront) {
 
-        Entity ae = aero.getEntity();
+        Entity ae = (Entity)aero;
         
         int damage = RamAttackAction.getDamageFor(aero, te);
         int damageTaken = RamAttackAction.getDamageTakenBy(aero, te);

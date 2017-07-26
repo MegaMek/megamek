@@ -95,6 +95,13 @@ public interface Targetable extends Serializable {
     default boolean isAero() {
         return false;
     }
+    
+    /**
+     * @return if this is an <code>Entity</code> capable of carrying and using bombs
+     */
+    default boolean isBomber() {
+        return false;
+    }
 
     /**
      * @return Is the entity airborne in the fashion of an aerospace unit?

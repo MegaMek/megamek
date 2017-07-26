@@ -554,8 +554,7 @@ public class FighterSquadron extends Aero {
             for (Integer fId : fighters) {
                 int bombCount = 0;
                 Aero fighter = (Aero) game.getEntity(fId);
-                ArrayList<Mounted> bombs = fighter.getBombs();
-                for (Mounted m : bombs) {
+                for (Mounted m : fighter.getBombs()) {
                     if (((BombType) m.getType()).getBombType() == btype) {
                         bombCount++;
                     }

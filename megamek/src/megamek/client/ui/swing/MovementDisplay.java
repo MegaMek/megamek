@@ -1748,10 +1748,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     // Determine how much damage the charger will take.
                     IAero ta = (IAero) target;
                     IAero ae = (IAero) ce;
-                    int toAttacker = RamAttackAction.getDamageTakenBy(ae, ta.getEntity(),
+                    int toAttacker = RamAttackAction.getDamageTakenBy(ae, (Entity)ta,
                             cmd.getSecondFinalPosition(ce.getPosition()),
                             cmd.getHexesMoved(), ta.getCurrentVelocity());
-                    int toDefender = RamAttackAction.getDamageFor(ae, ta.getEntity(),
+                    int toDefender = RamAttackAction.getDamageFor(ae, (Entity)ta,
                             cmd.getSecondFinalPosition(ce.getPosition()),
                             cmd.getHexesMoved(), ta.getCurrentVelocity());
 

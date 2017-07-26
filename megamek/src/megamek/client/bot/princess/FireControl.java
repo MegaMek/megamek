@@ -269,7 +269,7 @@ public class FireControl {
      */
     @StaticWrapper
     protected Coords getNearestPointInFlightPath(Coords shooterPosition, IAero targetAero) {
-        return Compute.getClosestFlightPath(-1, shooterPosition, targetAero.getEntity());
+        return Compute.getClosestFlightPath(-1, shooterPosition, (Entity)targetAero);
     }
 
     /**
@@ -330,7 +330,7 @@ public class FireControl {
         // Ground units attacking airborne aeros.
         if (!shooterState.isAero() && targetState.isAirborneAero()) {
             IAero targetAero = (IAero) target;
-            if (targetAero.getEntity().isNOE()) {
+            if (((Entity)targetAero).isNOE()) {
                 Coords closestInFlightPath = getNearestPointInFlightPath(shooterState.getPosition(), targetAero);
                 int aeroDistance = closestInFlightPath.distance(shooterState.getPosition());
                 if (aeroDistance <= 1) {

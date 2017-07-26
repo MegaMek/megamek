@@ -845,10 +845,13 @@ public class EntityListFile {
                 output.write(String.valueOf(a.getFuel()));
                 output.write("\"/>");
                 output.write(CommonConstants.NL);
+            }
 
                 // Write the Bomb Data if needed
+            if (entity.isBomber()) {
+                IBomber b = (IBomber)entity;
                 int[] bombChoices = new int[BombType.B_NUM];
-                bombChoices = a.getBombChoices();
+                bombChoices = b.getBombChoices();
                 if (bombChoices.length > 0) {
                     output.write(indentStr(indentLvl+1) + "<bombs>");
                     output.write(CommonConstants.NL);
@@ -863,7 +866,7 @@ public class EntityListFile {
                             output.write(CommonConstants.NL);
                         }
                     }
-                    for (Mounted m : a.getEntity().getBombs()) {
+                    for (Mounted m : b.getBombs()) {
                         if (!(m.getType() instanceof BombType)) {
                             continue;
                         }

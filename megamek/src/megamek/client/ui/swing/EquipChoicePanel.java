@@ -48,7 +48,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.IAero;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
@@ -277,7 +277,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        if (entity.isFighter()) {
+        if (entity.isBomber()) {
             setupBombs();
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -422,7 +422,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 .getGame().getOptions().stringOption("techlevel")); //$NON-NLS-1$
         boolean allowNukes = client.getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES); //$NON-NLS-1$
-        m_bombs = new BombChoicePanel((IAero) entity, allowNukes,
+        m_bombs = new BombChoicePanel((IBomber) entity, allowNukes,
                 techlvl >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
     }

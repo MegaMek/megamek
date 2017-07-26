@@ -279,13 +279,13 @@ public class RamAttackAction extends AbstractAttackAction {
        if(target.isAero()) {
            tvel = ((IAero)target).getCurrentVelocity();
        }
-       return getDamageFor(attacker, target, attacker.getEntity().getPriorPosition(), avel, tvel);
+       return getDamageFor(attacker, target, ((Entity)attacker).getPriorPosition(), avel, tvel);
    }
    
    public static int getDamageFor(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {
        int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
        return (int) Math.ceil(
-               (attacker.getEntity().getWeight() / 10.0) * netv);
+               (((Entity)attacker).getWeight() / 10.0) * netv);
    }
      
    /**
@@ -297,7 +297,7 @@ public class RamAttackAction extends AbstractAttackAction {
        if(target.isAero()) {
            tvel = ((IAero)target).getCurrentVelocity();
        }
-       return getDamageTakenBy(attacker, target, attacker.getEntity().getPriorPosition(), avel, tvel);
+       return getDamageTakenBy(attacker, target, ((Entity)attacker).getPriorPosition(), avel, tvel);
    }
    
    public static int getDamageTakenBy(IAero attacker, Entity target, Coords atthex, int avel, int tvel) {

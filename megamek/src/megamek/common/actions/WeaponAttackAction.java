@@ -2284,15 +2284,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW)
                     && game.getBoard().inSpace()) {
                 for (Entity en : Compute.getAdjacentEntitiesAlongAttack(ae.getPosition(), target.getPosition(), game)) {
-                    if (!en.isEnemyOf(a.getEntity()) && en.isLargeCraft() && ((en.getWeight()
-                            - a.getEntity().getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf((Entity)a) && en.isLargeCraft() && ((en.getWeight()
+                            - ((Entity)a).getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }
                 }
                 for (Entity en : game.getEntitiesVector(target.getPosition())) {
-                    if (!en.isEnemyOf(a.getEntity()) && en.isLargeCraft() && !en.equals(a)
-                            && ((en.getWeight() - a.getEntity().getWeight()) >= -100000.0)) {
+                    if (!en.isEnemyOf((Entity)a) && en.isLargeCraft() && !en.equals(a)
+                            && ((en.getWeight() - ((Entity)a).getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
                         break;
                     }

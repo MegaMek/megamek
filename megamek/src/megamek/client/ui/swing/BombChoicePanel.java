@@ -24,7 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import megamek.common.BombType;
-import megamek.common.IAero;
+import megamek.common.IBomber;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -32,7 +32,7 @@ import megamek.common.IAero;
  * @since 2012-04-07
  */
 public class BombChoicePanel extends JPanel implements Serializable, ItemListener {
-    private final IAero aero;
+    private final IBomber aero;
     private final boolean at2Nukes;
     private final boolean allowAdvancedAmmo;
 
@@ -48,7 +48,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     //private JPanel panBombs = new JPanel();
 
     @SuppressWarnings("unchecked")
-    public BombChoicePanel(IAero aero, boolean at2Nukes, boolean allowAdvancedAmmo) {
+    public BombChoicePanel(IBomber aero, boolean at2Nukes, boolean allowAdvancedAmmo) {
         this.aero = aero;
         this.at2Nukes = at2Nukes;
         this.allowAdvancedAmmo = allowAdvancedAmmo;

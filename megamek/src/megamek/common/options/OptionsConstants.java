@@ -374,6 +374,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_TACOPS_WOODS_COVER= "tacops_woods_cover";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE= "tacops_vehicle_effective";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_VEHICLE_ARCS= "tacops_vehicle_arcs";  //$NON-NLS$
+    public static final String ADVCOMBAT_TACOPS_VTOL_ATTACKS = "tacops_vtol_attacks";
     public static final String ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS= "tacops_advanced_mech_hit_locations";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_COOLANT_FAILURE= "tacops_coolant_failure";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_BA_VS_BA= "tacops_ba_vs_ba";  //$NON-NLS$

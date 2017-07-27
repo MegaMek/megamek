@@ -3560,7 +3560,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         return bombs;
     }
-    
     /**
      * Reset bomb attacks according to what bombs are available.
      */
@@ -3582,43 +3581,43 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         weaponGroupList.removeAll(bombAttacksToRemove);
         weaponBayList.removeAll(bombAttacksToRemove);
         
-        // The location to add the bombing attack pseudo-equipment.
-        int loc = Aero.LOC_NOSE;
-        if (this instanceof Mech) {
-            loc = Mech.LOC_CT;
-        } else if (this instanceof Tank) {
-            loc = Tank.LOC_BODY;
-        }
-
-        // Add the space bomb attack
-        if (isFighter() && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
-                && game.getBoard().inSpace()
-                && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
-            try {
-                addEquipment(spaceBomb, loc, false);
-            } catch (LocationFullException ex) {
+        boolean foundSpaceBomb = false;
+        int numGroundBombs = 0;
+        
+        for (Mounted m : getBombs()) {
+            // Add the space bomb attack
+            if (!foundSpaceBomb
+                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB)
+                    && m.getType().hasFlag(AmmoType.F_SPACE_BOMB)
+                    && isFighter()
+                    && game.getBoard().inSpace()) {
+                try {
+                    addEquipment(spaceBomb, m.getLocation(), false);
+                } catch (LocationFullException ex) {
+                    
+                }
+                foundSpaceBomb = true;
             }
-        }
-        // Add ground bomb attacks
-        int numGroundBombs = getBombs(AmmoType.F_GROUND_BOMB).size();
-        if (!game.getBoard().inSpace() && (numGroundBombs > 0)
-                && !((this instanceof LandAirMech)
-                        && (getConversionMode() == LandAirMech.CONV_MODE_MECH))) {
-            try {
-                addEquipment(diveBomb, loc, false);
-            } catch (LocationFullException ex) {
-            }
-            if (isFighter()) {
-                for (int i = 0; i < Math.min(10, numGroundBombs); i++) {
+            if (!game.getBoard().inSpace()
+                    && m.getType().hasFlag(AmmoType.F_GROUND_BOMB)
+                    && !((this instanceof LandAirMech)
+                            && (getConversionMode() == LandAirMech.CONV_MODE_MECH))) {
+                if (numGroundBombs < 1) {
                     try {
-                        addEquipment(altBomb, loc, false);
+                        addEquipment(diveBomb, m.getLocation(), false);
                     } catch (LocationFullException ex) {
                     }
                 }
+                if (numGroundBombs < 10 && isFighter()) {
+                    try {
+                        addEquipment(altBomb, m.getLocation(), false);
+                    } catch (LocationFullException ex) {
+                    }
+                }
+                numGroundBombs++;
             }
         }
     }
-
 
     /**
      * Removes the first misc eq. whose name equals the specified string. Used

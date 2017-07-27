@@ -1503,22 +1503,35 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return LOC_NONE;
     }
     
-    protected void addBomb(Mounted mounted, int loc)
+    protected void addBomb(Mounted bombMount, int loc)
             throws LocationFullException {
-        Mounted bay = null;
-        for (Mounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BOMB_BAY)
-                    && m.getLinked() == null) {
-                bay = m;
-                break;
+        for (int i = 0; i < crits[loc].length; i++) {
+            final CriticalSlot slot = crits[loc][i];
+            if (slot != null && slot.getType() == CriticalSlot.TYPE_EQUIPMENT
+                    && (slot.getMount().getType() instanceof MiscType)
+                    && slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)
+                    && (slot.getMount2() == null)) {
+                slot.setMount2(bombMount);
+                bombMount.setBombMounted(true);
+                bombList.add(bombMount);
+                return;
             }
         }
-        if (bay == null) {
-            throw new LocationFullException();
+        throw new LocationFullException();
+        
+    }
+
+    @Override
+    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted)
+        throws LocationFullException {
+        if (etype instanceof BombType) {
+            Mounted mounted = new Mounted(this, etype);
+            mounted.setLocation(loc);
+            addBomb(mounted, loc);
+            return mounted;
+        } else {
+            return super.addEquipment(etype, loc, rearMounted);
         }
-        mounted.setBombMounted(true);
-        addEquipment(mounted, loc, false);
-        bay.setLinked(mounted);
     }
 
     @Override

@@ -3923,7 +3923,7 @@ public class Aero extends Entity implements IAero, IBomber {
     }
     
     @Override
-    public int availableBombLocation() {
+    public int availableBombLocation(int cost) {
         return LOC_NOSE;
     }
     

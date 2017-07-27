@@ -3,6 +3,7 @@
  */
 package megamek.common;
 
+import java.util.Arrays;
 import java.util.List;
 
 import megamek.common.options.OptionsConstants;
@@ -23,7 +24,7 @@ public interface IBomber {
     int getMaxBombPoints();
     int[] getBombChoices();
     void setBombChoices(int[] bc);
-    int availableBombLocation();
+    int availableBombLocation(int cost);
             
     List<Mounted> getBombs();
 
@@ -33,9 +34,16 @@ public interface IBomber {
         IGame game = ((Entity)this).getGame();
         int gameTL = TechConstants.getSimpleLevel(game.getOptions()
                 .stringOption("techlevel"));
-        for (int type = 0; type < BombType.B_NUM; type++) {
+        Integer[] sorted = new Integer[BombType.B_NUM];
+        // Apply the largest bombs first because we need to fit larger bombs into a single location
+        // in LAMs.
+        for (int i = 0; i < sorted.length; i++) {
+            sorted[i] = i;
+        }
+        Arrays.sort(sorted, (a, b) -> BombType.bombCosts[b] - BombType.bombCosts[a]);
+        for (int type : sorted) {
             for (int i = 0; i < getBombChoices()[type]; i++) {
-                int loc = availableBombLocation();
+                int loc = availableBombLocation(BombType.bombCosts[type]);
                 if ((type == BombType.B_ALAMO)
                         && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)) {
                     continue;

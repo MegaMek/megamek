@@ -1489,20 +1489,50 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return true;
     }
 
+    /**
+     * Try to find a location that has enough empty bomb bays to accommodate the bomb size
+     */
     @Override
-    public int availableBombLocation() {
-        for (Mounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BOMB_BAY)
-                    && m.getLinked() == null) {
-                return m.getLocation();
+    public int availableBombLocation(int cost) {
+        if (emptyBaysInLoc(LOC_RT) >= cost) {
+            return LOC_RT;
+        } else if (emptyBaysInLoc(LOC_LT) >= cost) {
+            return LOC_LT;
+        } else if (emptyBaysInLoc(LOC_LT) >= cost) {
+            return LOC_CT;
+        } else {
+            return LOC_NONE;
+        }
+    }
+    
+    
+    private int emptyBaysInLoc(int loc) {
+        int bays = 0;
+        for (CriticalSlot slot : crits[loc]) {
+            if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                    && slot.getMount2() == null
+                    && slot.getMount().getType() instanceof MiscType
+                    && slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
+                bays++;
             }
         }
-        return LOC_NONE;
+        return bays;
     }
     
     protected void addBomb(Mounted mounted, int loc)
             throws LocationFullException {
         mounted.setLocation(loc, false);
+        int slots = 1;
+        if (mounted.getType() instanceof BombType) {
+            slots = BombType.getBombCost(((BombType)mounted.getType()).getBombType());
+        } else if (mounted.getType() instanceof WeaponType) {
+            int type = BombType.getBombTypeForWeapon(mounted.getType());
+            if (type >= 0) {
+                slots = BombType.getBombCost(type);
+            } else {
+                slots = mounted.getType().getCriticals(this);
+            }
+        }
         for (int i = 0; i < crits[loc].length; i++) {
             final CriticalSlot slot = crits[loc][i];
             if (slot != null && slot.getType() == CriticalSlot.TYPE_EQUIPMENT
@@ -1510,38 +1540,42 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                     && slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)
                     && (slot.getMount2() == null)) {
                 slot.setMount2(mounted);
-                mounted.setBombMounted(true);
-                if (mounted.getType() instanceof BombType) {
-                    bombList.add(mounted);
+                slots--;
+                if (slots == 0) {
+                    break;
                 }
-                if (mounted.getType() instanceof WeaponType) {
-                    totalWeaponList.add(mounted);
-                    weaponList.add(mounted);
-                    if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
-                        aTracker.addWeapon(mounted);
-                    }
-                    if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
-                            && (AmmoType.getOneshotAmmo(mounted) != null)) {
-                        Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
-                        m.setShotsLeft(1);
-                        mounted.setLinked(m);
-                        // Oneshot ammo will be identified by having a location
-                        // of null. Other areas in the code will rely on this.
-                        addEquipment(m, Entity.LOC_NONE, false);
-                    }
-                }
-                if (mounted.getType() instanceof AmmoType) {
-                    ammoList.add(mounted);
-                }
-                if (mounted.getType() instanceof MiscType) {
-                    miscList.add(mounted);
-                }
-                equipmentList.add(mounted);
-                return;
             }
         }
-        throw new LocationFullException();
-        
+        if (slots > 0) {
+            throw new LocationFullException();
+        }
+        mounted.setBombMounted(true);
+        if (mounted.getType() instanceof BombType) {
+            bombList.add(mounted);
+        }
+        if (mounted.getType() instanceof WeaponType) {
+            totalWeaponList.add(mounted);
+            weaponList.add(mounted);
+            if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                aTracker.addWeapon(mounted);
+            }
+            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
+                    && (AmmoType.getOneshotAmmo(mounted) != null)) {
+                Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
+                m.setShotsLeft(1);
+                mounted.setLinked(m);
+                // Oneshot ammo will be identified by having a location
+                // of null. Other areas in the code will rely on this.
+                addEquipment(m, Entity.LOC_NONE, false);
+            }
+        }
+        if (mounted.getType() instanceof AmmoType) {
+            ammoList.add(mounted);
+        }
+        if (mounted.getType() instanceof MiscType) {
+            miscList.add(mounted);
+        }
+        equipmentList.add(mounted);
     }
 
     @Override

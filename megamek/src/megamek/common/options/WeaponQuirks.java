@@ -114,11 +114,18 @@ public class WeaponQuirks extends AbstractOptions {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
                 return false;
             }
+            if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
+                return false;
+            }
         }
 
         if (!(wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
             return false;
         }
+        
+/*        if ((wtype instanceof EnergyWeapon) && qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)) {
+            return false;
+        }*/
         
         if (en instanceof Protomech) {
             if (qName.equals(OptionsConstants.QUIRK_WEAP_POS_FAST_RELOAD)

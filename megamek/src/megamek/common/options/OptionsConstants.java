@@ -25,7 +25,8 @@ public class OptionsConstants {
     public static final String QUIRK_POS_BARREL_FIST_LA = "barrel_fists_la"; //$NON-NLS-1$
     public static final String QUIRK_POS_BARREL_FIST_RA = "barrel_fists_ra"; //$NON-NLS-1$
     public static final String QUIRK_POS_BATTLE_COMP = "battle_computer"; //$NON-NLS-1$
-    public static final String QUIRK_POS_BATTLE_FIST = "battle_fists"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BATTLE_FIST_LA = "battle_fists_la"; //$NON-NLS-1$
+    public static final String QUIRK_POS_BATTLE_FIST_RA = "battle_fists_ra"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMBAT_COMPUTER= "combat_computer"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMMAND_MECH = "command_mech"; //$NON-NLS-1$
     public static final String QUIRK_POS_COMPACT = "compact_mech"; //$NON-NLS-1$
@@ -60,7 +61,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_REINFORCED_LEGS= "reinforced_legs"; //$NON-NLS-1$
     public static final String QUIRK_POS_RUGGED_1 = "rugged_1" ; //$NON-NLS-1$
     public static final String QUIRK_POS_RUGGED_2 = "rugged_2" ; //$NON-NLS-1$
-    public static final String QUIRK_POS_RUMBLE_SEAT= "rumble_seat"; //$NON-NLS-1$
+//    public static final String QUIRK_POS_RUMBLE_SEAT= "rumble_seat"; //$NON-NLS-1$
     public static final String QUIRK_POS_SEARCHLIGHT= "searchlight"; //$NON-NLS-1$
     public static final String QUIRK_POS_STABLE= "stable"; //$NON-NLS-1$
     public static final String QUIRK_POS_TRAILER_HITCH= "trailer_hitch"; //$NON-NLS-1$
@@ -108,6 +109,7 @@ public class OptionsConstants {
     public static final String QUIRK_NEG_POOR_TARG_S = "poor_target_short"; //$NON-NLS-1$
     public static final String QUIRK_NEG_POOR_WORK= "poor_work"; //$NON-NLS-1$
     public static final String QUIRK_NEG_PROTOTYPE= "prototype"; //$NON-NLS-1$
+    public static final String QUIRK_NEG_RAMSHACKLE= "ramshackle"; //$NON-NLS-1$
     public static final String QUIRK_NEG_SENSOR_GHOSTS= "sensor_ghosts"; //$NON-NLS-1$
     public static final String QUIRK_NEG_SUSCEPTIBLE_CWS= "susceptible_cws"; //$NON-NLS-1$
     public static final String QUIRK_NEG_UNBALANCED= "unbalanced"; //$NON-NLS-1$

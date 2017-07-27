@@ -26526,7 +26526,7 @@ public class Server implements Runnable {
             int critMod, boolean rollNumber, boolean isCapital, int damage,
             boolean damagedByFire) {
 
-        if (en.hasQuirk("poor_work")) {
+        if (en.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_WORK)) {
             critMod += 1;
         }
         if (en.hasQuirk(OptionsConstants.QUIRK_NEG_PROTOTYPE)) {

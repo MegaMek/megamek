@@ -24,7 +24,7 @@ import megamek.common.options.OptionsConstants;
 /**
  * @author Andrew Hunter VTOLs are helicopters (more or less.)
  */
-public class VTOL extends Tank {
+public class VTOL extends Tank implements IBomber {
 
     /**
      *
@@ -68,6 +68,8 @@ public class VTOL extends Tank {
     public int getLocTurret2() {
         return LOC_TURRET_2;
     }
+
+    private int[] bombChoices = new int[BombType.B_NUM];
 
     /*
      * (non-Javadoc)
@@ -251,6 +253,25 @@ public class VTOL extends Tank {
     public boolean isBomber() {
         return (game != null)
                 && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS);
+    }
+    
+    @Override
+    public int availableBombLocation(int cost) {
+        return LOC_BODY;
+    }
+    
+    public int getMaxBombPoints() {
+        return (int) Math.round(getWeight() / 5);
+    }
+
+    public int[] getBombChoices() {
+        return bombChoices.clone();
+    }
+
+    public void setBombChoices(int[] bc) {
+        if (bc.length == bombChoices.length) {
+            bombChoices = bc;
+        }
     }
 
     @Override
@@ -536,6 +557,9 @@ public class VTOL extends Tank {
         if (hasWorkingMisc(MiscType.F_DUNE_BUGGY)) {
             j--;
         }
+
+        // get bomb load
+        j = Math.max(0, j - (int) Math.ceil(getBombPoints() / 5.0));
 
         if (gravity) {
             j = applyGravityEffectsOnMP(j);

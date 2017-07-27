@@ -28,6 +28,16 @@ public interface IBomber {
             
     List<Mounted> getBombs();
 
+    default int getBombPoints() {
+        int points = 0;
+        for (Mounted bomb : getBombs()) {
+            if (bomb.getUsableShotsLeft() > 0) {
+                points += BombType.getBombCost(((BombType) bomb.getType()).getBombType());
+            }
+        }
+        return points;
+    }
+
     // I need a function that takes the bombChoices variable and uses it to
     // produce bombs
     default void applyBombs() {

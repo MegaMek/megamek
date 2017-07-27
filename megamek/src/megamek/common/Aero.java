@@ -356,16 +356,6 @@ public class Aero extends Entity implements IAero, IBomber {
         accLast = b;
     }
 
-    public int getBombPoints() {
-        int points = 0;
-        for (Mounted bomb : getBombs()) {
-            if (bomb.getUsableShotsLeft() > 0) {
-                points += BombType.getBombCost(((BombType) bomb.getType()).getBombType());
-            }
-        }
-        return points;
-    }
-
     public int getMaxBombPoints() {
         return maxBombPoints;
     }

@@ -1503,17 +1503,43 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return LOC_NONE;
     }
     
-    protected void addBomb(Mounted bombMount, int loc)
+    protected void addBomb(Mounted mounted, int loc)
             throws LocationFullException {
+        mounted.setLocation(loc, false);
         for (int i = 0; i < crits[loc].length; i++) {
             final CriticalSlot slot = crits[loc][i];
             if (slot != null && slot.getType() == CriticalSlot.TYPE_EQUIPMENT
                     && (slot.getMount().getType() instanceof MiscType)
                     && slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)
                     && (slot.getMount2() == null)) {
-                slot.setMount2(bombMount);
-                bombMount.setBombMounted(true);
-                bombList.add(bombMount);
+                slot.setMount2(mounted);
+                mounted.setBombMounted(true);
+                if (mounted.getType() instanceof BombType) {
+                    bombList.add(mounted);
+                }
+                if (mounted.getType() instanceof WeaponType) {
+                    totalWeaponList.add(mounted);
+                    weaponList.add(mounted);
+                    if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+                        aTracker.addWeapon(mounted);
+                    }
+                    if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
+                            && (AmmoType.getOneshotAmmo(mounted) != null)) {
+                        Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
+                        m.setShotsLeft(1);
+                        mounted.setLinked(m);
+                        // Oneshot ammo will be identified by having a location
+                        // of null. Other areas in the code will rely on this.
+                        addEquipment(m, Entity.LOC_NONE, false);
+                    }
+                }
+                if (mounted.getType() instanceof AmmoType) {
+                    ammoList.add(mounted);
+                }
+                if (mounted.getType() instanceof MiscType) {
+                    miscList.add(mounted);
+                }
+                equipmentList.add(mounted);
                 return;
             }
         }
@@ -1526,7 +1552,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         throws LocationFullException {
         if (etype instanceof BombType) {
             Mounted mounted = new Mounted(this, etype);
-            mounted.setLocation(loc);
             addBomb(mounted, loc);
             return mounted;
         } else {

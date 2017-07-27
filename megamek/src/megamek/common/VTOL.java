@@ -257,7 +257,7 @@ public class VTOL extends Tank implements IBomber {
     
     @Override
     public int availableBombLocation(int cost) {
-        return LOC_BODY;
+        return LOC_FRONT;
     }
     
     public int getMaxBombPoints() {

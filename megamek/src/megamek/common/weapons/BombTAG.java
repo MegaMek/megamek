@@ -35,6 +35,7 @@ public class BombTAG extends TAGWeapon {
         this.techLevel.put(3071, TechConstants.T_TW_ALL);
         this.name = "TAG (Bomb)";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_TAG));
+        this.flags = flags.or(F_BOMB_WEAPON);
         this.tonnage = 0;
         this.criticals = 0;
         this.hittable = false;

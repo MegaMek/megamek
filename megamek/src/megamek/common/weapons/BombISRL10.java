@@ -32,6 +32,7 @@ public class BombISRL10 extends MissileWeapon {
         this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "RL 10 (Bomb)";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_RL));
+        flags = flags.or(F_BOMB_WEAPON);
         this.heat = 0;
         this.rackSize = 10;
         this.shortRange = 5;

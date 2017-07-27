@@ -295,8 +295,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (!(weapon.getType() instanceof WeaponType)) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Not a weapon");
         }
-
+        
+        
         final WeaponType wtype = (WeaponType) weapon.getType();
+
+        // LAMs carrying certain types of bombs that require a weapon have attacks that cannot
+        // be used in mech mode.
+        if ((ae instanceof LandAirMech)
+                && (ae.getConversionMode() == LandAirMech.CONV_MODE_MECH)
+                && wtype.hasFlag(WeaponType.F_BOMB_WEAPON)
+                && wtype.getAmmoType() != AmmoType.T_RL_BOMB
+                && !wtype.hasFlag(WeaponType.F_TAG)) {
+            return (new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Cannot launch bomb in mech mode."));
+        }
+        
         Targetable swarmSecondaryTarget = target;
         Targetable swarmPrimaryTarget = oldTarget;
         if (exchangeSwarmTarget) {

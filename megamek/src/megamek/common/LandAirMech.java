@@ -429,11 +429,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                     }
                 }
             }
-            // Remove bomb attacks when switching to mech mode and make them available again when switching
-            // from mech mode.
-            if (prevMode == CONV_MODE_MECH || getConversionMode() == CONV_MODE_MECH) {
-                refreshBombAttacks();
-            }
+            
+            refreshBombAttacks();
         }
     }
     

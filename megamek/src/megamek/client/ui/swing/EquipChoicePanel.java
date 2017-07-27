@@ -419,7 +419,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         panBombs.setLayout(gbl);
 
         int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES, client
-                .getGame().getOptions().stringOption("techlevel")); //$NON-NLS-1$
+                .getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL)); //$NON-NLS-1$
         boolean allowNukes = client.getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES); //$NON-NLS-1$
         m_bombs = new BombChoicePanel((IBomber) entity, allowNukes,

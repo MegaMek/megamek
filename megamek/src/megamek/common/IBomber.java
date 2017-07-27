@@ -50,14 +50,25 @@ public interface IBomber {
                 if ((null != BombType.getBombWeaponName(type))
                         && (type != BombType.B_ARROW)
                         && (type != BombType.B_HOMING)) {
+                    Mounted m = null;
                     try {
-                        ((Entity)this).addBomb(EquipmentType.get(BombType
+                        m = ((Entity)this).addBomb(EquipmentType.get(BombType
                                 .getBombWeaponName(type)), loc);
+                        // Add bomb itself as single-shot ammo.
+                        if (type != BombType.B_TAG) {
+                            Mounted ammo = new Mounted((Entity)this,
+                                    EquipmentType.get(BombType.getBombInternalName(type)));
+                            ammo.setShotsLeft(1);
+                            m.setLinked(ammo);
+                            // Oneshot ammo will be identified by having a location
+                            // of null. Other areas in the code will rely on this.
+                            ((Entity)this).addEquipment(ammo, Entity.LOC_NONE, false);
+                            
+                        }
                     } catch (LocationFullException ex) {
                         // throw new LocationFullException(ex.getMessage());
                     }
-                }
-                if (type != BombType.B_TAG) {
+                } else {
                     try {
                         ((Entity)this).addEquipment(EquipmentType.get(BombType
                                 .getBombInternalName(type)), loc, false);

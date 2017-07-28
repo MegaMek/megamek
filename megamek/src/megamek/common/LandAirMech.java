@@ -940,14 +940,23 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return whoFirst;
     }
 
+    @Override
     public int getMaxBombPoints() {
         return countWorkingMisc(MiscType.F_BOMB_BAY);
     }
+    
+    @Override
+    public int getMaxBombSize() {
+        return Math.max(emptyBaysInLoc(LOC_CT),
+                Math.max(emptyBaysInLoc(LOC_RT), emptyBaysInLoc(LOC_LT)));
+    }
 
+    @Override
     public int[] getBombChoices() {
         return bombChoices.clone();
     }
 
+    @Override
     public void setBombChoices(int[] bc) {
         if (bc.length == bombChoices.length) {
             bombChoices = bc;

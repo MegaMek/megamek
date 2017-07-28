@@ -21,13 +21,45 @@ public interface IBomber {
     public static final String DIVE_BOMB_ATTACK = "DiveBombAttack";
     public static final String ALT_BOMB_ATTACK = "AltBombAttack";
 
+    /**
+     * @return The total number of bomb points that the bomber can carry.
+     */
     int getMaxBombPoints();
+    
+    /**
+     * Fighters and VTOLs can carry any size bomb up to the maximum number of points, but LAMs are limited
+     * to the number of bays in a single location.
+     * 
+     * @return The largest single bomb that can be carried
+     */
+    default int getMaxBombSize() {
+        return getMaxBombPoints();
+    }
+    
+    /**
+     * @return The number of each bomb type that was selected prior to deployment
+     */
     int[] getBombChoices();
+    
+    /**
+     * Sets the bomb type selections prior to deployment.
+     * 
+     * @param bc An array with the count of each bomb type as the value of the bomb type's index
+     */
     void setBombChoices(int[] bc);
+    
+    /**
+     * @param cost The cost of the bomb to be mounted
+     * @return A location with sufficient space to mount the bomb, or Entity.LOC_NONE if the unit does not have the space.
+     */
     int availableBombLocation(int cost);
-            
+
+    // For convenience
     List<Mounted> getBombs();
 
+    /**
+     * @return The number of points taken up by all mounted bombs or other external stores.
+     */
     default int getBombPoints() {
         int points = 0;
         for (Mounted bomb : getBombs()) {
@@ -38,8 +70,10 @@ public interface IBomber {
         return points;
     }
 
-    // I need a function that takes the bombChoices variable and uses it to
-    // produce bombs
+    /**
+     * Iterate through the bomb choices that were configured prior to deployment and add the corresponding
+     * equipment.
+     */
     default void applyBombs() {
         IGame game = ((Entity)this).getGame();
         int gameTL = TechConstants.getSimpleLevel(game.getOptions()

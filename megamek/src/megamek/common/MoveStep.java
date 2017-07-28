@@ -2243,6 +2243,16 @@ public class MoveStep implements Serializable {
             // is illegal on its own.
         }
         
+        if (stepType == MoveStepType.VTOL_BOMB) {
+            if (!getEntity().isBomber() || getClearance() <= 0) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+            } else if (isFirstStep()) {
+                movementType = EntityMovementType.MOVE_NONE;
+            } else {
+                movementType = prev.getMovementType(false);
+            }
+        }
+        
         if ((getEntity().getMovementMode() == EntityMovementMode.INF_UMU)
                 && (currHex.containsTerrain(Terrains.WATER)
                 && lastHex.containsTerrain(Terrains.WATER) && (entity

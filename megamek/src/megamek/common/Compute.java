@@ -1107,6 +1107,7 @@ public class Compute {
                 !(isWeaponInfantry || isSwarmOrLegAttack
                   || isAttackerBA))
             && !(ae.isAirborne())
+            && !(ae.isBomber() && ((IBomber)ae).isVTOLBombing())
             && !((ae instanceof Dropship) && ((Dropship) ae).isSpheroid()
                  && !ae.isAirborne() && !ae.isSpaceborne())
             && !((ae instanceof Mech) && (((Mech) ae).getGrappled() == target
@@ -1456,7 +1457,8 @@ public class Compute {
     public static int effectiveDistance(IGame game, Entity attacker,
                                         Targetable target, boolean useGroundDistance) {
 
-        if (Compute.isAirToGround(attacker, target)) {
+        if (Compute.isAirToGround(attacker, target)
+                || (attacker.isBomber() && target.getTargetType() == Targetable.TYPE_HEX_AERO_BOMB)) {
             // always a distance of zero
             return 0;
         }

@@ -54,6 +54,19 @@ public interface IBomber {
      */
     int availableBombLocation(int cost);
 
+    /**
+     * Used by VTOLs and LAMs in airmech mode to declare the target hex for a bomb attack during the movement
+     * phase.
+     */
+    
+    default void setVTOLBombTarget(Coords position) {}
+    default Coords getVTOLBombTarget() {
+        return null;
+    }
+    default boolean isVTOLBombing() {
+        return getVTOLBombTarget() != null;
+    }
+
     // For convenience
     List<Mounted> getBombs();
 

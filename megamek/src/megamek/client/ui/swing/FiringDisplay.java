@@ -58,6 +58,7 @@ import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.IAimingModes;
 import megamek.common.IBoard;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
@@ -761,15 +762,22 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
             } // End ce()-not-on-board
 
-            int lastTarget = ce().getLastTarget();
-            if (ce() instanceof Mech) {
-                int grapple = ((Mech) ce()).getGrappled();
-                if (grapple != Entity.NONE) {
-                    lastTarget = grapple;
+            if (ce().isBomber() && ((IBomber)ce()).isVTOLBombing()) {
+                Coords c = ((IBomber)ce()).getVTOLBombTarget();
+                target(new HexTarget(c, clientgui.getClient().getGame().getBoard(),
+                        Targetable.TYPE_HEX_AERO_BOMB));
+                clientgui.bv.addStrafingCoords(c);
+            } else {
+                int lastTarget = ce().getLastTarget();
+                if (ce() instanceof Mech) {
+                    int grapple = ((Mech) ce()).getGrappled();
+                    if (grapple != Entity.NONE) {
+                        lastTarget = grapple;
+                    }
                 }
+                Entity t = clientgui.getClient().getGame().getEntity(lastTarget);
+                target(t);
             }
-            Entity t = clientgui.getClient().getGame().getEntity(lastTarget);
-            target(t);
 
             if (!ce().isOffBoard()) {
                 clientgui.getBoardView().highlight(ce().getPosition());
@@ -1433,7 +1441,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     private int[] getBombPayload(boolean isSpace, int limit) {
         int[] payload = new int[BombType.B_NUM];
-        if (!ce().isAero()) {
+        if (!ce().isBomber()) {
             return payload;
         }
         int[] loadout = ce().getBombLoadout();

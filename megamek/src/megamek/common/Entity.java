@@ -3563,7 +3563,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Reset bomb attacks according to what bombs are available.
      */
-    protected void refreshBombAttacks() {
+    protected void resetBombAttacks() {
         // Remove all bomb attacks
         List<Mounted> bombAttacksToRemove = new ArrayList<>();
         EquipmentType spaceBomb = EquipmentType.get(IBomber.SPACE_BOMB_ATTACK);
@@ -5706,6 +5706,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         resetFiringArcs();
 
         resetBays();
+
+        if (isBomber()) {
+            resetBombAttacks();
+        }
 
         // reset evasion
         setEvading(false);

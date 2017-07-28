@@ -55,6 +55,7 @@ import megamek.common.EntitySelector;
 import megamek.common.GameTurn;
 import megamek.common.IAero;
 import megamek.common.IBoard;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
@@ -177,6 +178,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_FORTIFY("moveFortify", CMD_INF), //$NON-NLS-1$
         MOVE_TAKE_COVER("moveTakeCover", CMD_INF), //$NON-NLS-1$
         MOVE_CALL_SUPPORT("moveCallSuport", CMD_INF), //$NON-NLS-1$
+        // VTOL attacks, declared in the movement phase
+        MOVE_STRAFE("moveStrafe", CMD_VTOL), //$NON-NLS-1$
+        MOVE_BOMB("moveBomb", CMD_VTOL | CMD_AIRMECH), //$NON-NLS-1$
         // Aero Movement
         MOVE_ACC("MoveAccelerate", CMD_AERO), //$NON-NLS-1$
         MOVE_DEC("MoveDecelerate", CMD_AERO), //$NON-NLS-1$
@@ -322,6 +326,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int GEAR_SPLIT_S = 9;
     public static final int GEAR_LONGEST_RUN = 10;
     public static final int GEAR_LONGEST_WALK = 11;
+    // VTOL attacks
+    public static final int GEAR_STRAFE = 12;
 
     /**
      * Creates and lays out a new movement phase display for the specified
@@ -888,6 +894,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateRecklessButton();
         updateHoverButton();
         updateManeuverButton();
+        updateStrafeButton();
+        updateBombButton();
 
         // Infantry - Fortify
         if (isInfantry
@@ -1071,6 +1079,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setRecklessEnabled(false);
         setGoProneEnabled(false);
         setManeuverEnabled(false);
+        setStrafeEnabled(false);
+        setBombEnabled(false);
 
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
         getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
@@ -2652,7 +2662,40 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setManeuverEnabled(true);
         }
     }
-
+    
+    private void updateStrafeButton() {
+        if (ce() instanceof VTOL
+                && ce().isAirborneVTOLorWIGE()
+                && clientgui.getClient().getGame().getOptions()
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS)) {
+            setStrafeEnabled(true);
+        }
+    }
+    
+    private void updateBombButton() {
+        MoveStep lastStep = cmd.getLastStep();
+        if ((lastStep == null)
+                && !ce().isAirborneVTOLorWIGE()) {
+            setBombEnabled(false);
+            return;
+        }
+        
+        if (lastStep != null
+                && lastStep.getClearance() <= 0) {
+            setBombEnabled(false);
+            return;
+        }
+        
+        if (ce().isBomber()
+                && ((ce() instanceof LandAirMech)
+                        || clientgui.getClient().getGame().getOptions()
+                        .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS))
+                && ((IBomber)ce()).getBombPoints() > 0
+                && !cmd.contains(MoveStepType.VTOL_BOMB)) {
+            setBombEnabled(true);
+        }
+    }
+    
     private synchronized void updateLoadButtons() {
         final IGame game = clientgui.getClient().getGame();
         final Entity ce = ce();
@@ -4473,6 +4516,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_RECKLESS.getCmd())) {
             cmd.setCareful(false);
+        } else if (actionCmd.equals(MoveCommand.MOVE_STRAFE.getCmd())) {
+            gear = GEAR_STRAFE;
+        } else if (actionCmd.equals(MoveCommand.MOVE_BOMB.getCmd())) {
+            if (!cmd.contains(MoveStepType.VTOL_BOMB)) {
+                cmd.addStep(MoveStepType.VTOL_BOMB);
+                clientgui.bv.drawMovementData(ce, cmd);
+            }
         } else if (actionCmd.equals(MoveCommand.MOVE_ACCN.getCmd())) {
             cmd.addStep(MoveStepType.ACCN);
             clientgui.bv.drawMovementData(ce, cmd);
@@ -5230,6 +5280,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void setEndOverEnabled(boolean enabled) {
         getBtn(MoveCommand.MOVE_END_OVER).setEnabled(enabled);
         clientgui.getMenuBar().setMoveEndOverEnabled(enabled);
+    }
+
+    private void setStrafeEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_STRAFE).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveStrafeEnabled(enabled);
+    }
+
+    private void setBombEnabled(boolean enabled) {
+        getBtn(MoveCommand.MOVE_BOMB).setEnabled(enabled);
+        clientgui.getMenuBar().setMoveBombEnabled(enabled);
     }
 
     /**

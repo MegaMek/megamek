@@ -41,6 +41,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAero;
 import megamek.common.IAimingModes;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -1407,7 +1408,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // air-to-ground strikes apply a +2 mod
-        if (Compute.isAirToGround(ae, target)) {
+        if (Compute.isAirToGround(ae, target)
+                || (ae.isBomber() && ((IBomber)ae).isVTOLBombing())) {
             if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 toHit.addModifier(ae.getAltitude(), "bombing altitude");
                 if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
@@ -2450,7 +2452,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
 
         // air-to-ground strikes apply a +2 mod
-        if (Compute.isAirToGround(ae, target)) {
+        if (Compute.isAirToGround(ae, target)
+                || (ae.isBomber() && ((IBomber)ae).isVTOLBombing())) {
             toHit.addModifier(+2, "air to ground strike");
         }
 
@@ -2864,7 +2867,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (isArtilleryDirect && (Compute.effectiveDistance(game, ae, target) <= 6)) {
             return "Direct-Fire artillery attacks impossible at range <= 6";
         }
-
+        
         // check called shots
         if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
             String reason = weapon.getCalledShot().isValid(target);
@@ -3479,7 +3482,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             if (ae.isAero() && ((IAero) ae).isSpheroid()) {
                 return "spheroid units cannot make bombing attacks";
             }
-            if (!ae.isAirborne()) {
+            if (!ae.isAirborne() && !ae.isAirborneVTOLorWIGE()) {
                 return "no bombing for grounded units";
             }
 
@@ -3494,12 +3497,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 if (ae.getAltitude() > 5) {
                     return "no dive bombing above altitude 5";
                 }
-                int altLoss = 0;
                 if (ae.isAero()) {
-                    altLoss = ((IAero) ae).getAltLossThisRound();
-                }
-                if ((ae.getAltitude() + altLoss) < 3) {
-                    return "no dive bombing below altitude 3";
+                    int altLoss = ((IAero) ae).getAltLossThisRound();
+                    if ((ae.getAltitude() + altLoss) < 3) {
+                        return "no dive bombing below altitude 3";
+                    }
                 }
             }
         }
@@ -3660,7 +3662,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)
-                && (!Compute.isAirToGround(ae, target) || isArtilleryIndirect)) {
+                && (!Compute.isAirToGround(ae, target) || isArtilleryIndirect)
+                && !(ae.isBomber() && ((IBomber)ae).isVTOLBombing())) {
             return "Target not in arc.";
         }
 

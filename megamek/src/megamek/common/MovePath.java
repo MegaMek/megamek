@@ -63,7 +63,7 @@ public class MovePath implements Cloneable, Serializable {
         CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE,
         SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER,
         RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK, TAKE_COVER,
-        CONVERT_MODE, BOOTLEGGER;
+        CONVERT_MODE, BOOTLEGGER, VTOL_BOMB;
     }
 
     public static class Key {
@@ -328,6 +328,19 @@ public class MovePath implements Cloneable, Serializable {
                 }
             }
             if (containsOtherLayMineStep) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            }
+        }
+
+        // Ensure we only bomb one hex
+        if ((step.getType() == MoveStepType.VTOL_BOMB)) {
+            boolean containsOtherBombStep = false;
+            for (int i = 0; i < steps.size() - 1; i++) {
+                if (steps.get(i).getType() == MoveStepType.VTOL_BOMB) {
+                    containsOtherBombStep = true;
+                }
+            }
+            if (containsOtherBombStep) {
                 step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
         }

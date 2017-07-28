@@ -65,6 +65,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private boolean critThresh = false;    
 
     private int[] bombChoices = new int[BombType.B_NUM];
+    private Coords airmechBombTarget = null;
 
     private int fuel;
     private int whoFirst;
@@ -430,7 +431,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 }
             }
             
-            refreshBombAttacks();
+            resetBombAttacks();
         }
     }
     
@@ -758,6 +759,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         if (getRecoveryTurn() > 0) {
             setRecoveryTurn(getRecoveryTurn() - 1);
         }
+        
+        airmechBombTarget = null;
 
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             // if in atmosphere, then halve next turn's velocity
@@ -779,8 +782,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
             resetAltLossThisRound();
         }
-        
-        refreshBombAttacks();
     }
     
     /**
@@ -961,6 +962,16 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         if (bc.length == bombChoices.length) {
             bombChoices = bc;
         }
+    }
+    
+    @Override
+    public Coords getVTOLBombTarget() {
+        return airmechBombTarget;
+    }
+    
+    @Override
+    public void setVTOLBombTarget(Coords c) {
+        airmechBombTarget = c;
     }
 
     @Override

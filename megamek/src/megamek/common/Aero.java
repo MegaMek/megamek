@@ -762,8 +762,6 @@ public class Aero extends Entity implements IAero, IBomber {
         // get new random whofirst
         setWhoFirst();
         
-        refreshBombAttacks();
-
         resetAltLossThisRound();
     }
 

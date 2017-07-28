@@ -7877,6 +7877,11 @@ public class Server implements Runnable {
                 }
                 break;
             }
+            
+            if (step.getType() == MoveStepType.VTOL_BOMB) {
+                ((IBomber)entity).setVTOLBombTarget(step.getPosition());
+                continue;
+            }
 
             if ((step.getType() == MoveStepType.ACC)
                     || (step.getType() == MoveStepType.ACCN)) {

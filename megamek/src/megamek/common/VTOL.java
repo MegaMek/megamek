@@ -70,6 +70,7 @@ public class VTOL extends Tank implements IBomber {
     }
 
     private int[] bombChoices = new int[BombType.B_NUM];
+    private Coords bombTarget = null;
 
     /*
      * (non-Javadoc)
@@ -272,6 +273,16 @@ public class VTOL extends Tank implements IBomber {
         if (bc.length == bombChoices.length) {
             bombChoices = bc;
         }
+    }
+    
+    @Override
+    public Coords getVTOLBombTarget() {
+        return bombTarget;
+    }
+    
+    @Override
+    public void setVTOLBombTarget(Coords c) {
+        bombTarget = c;
     }
 
     @Override
@@ -530,6 +541,14 @@ public class VTOL extends Tank implements IBomber {
         }
 
         return prd;
+    }
+
+
+    @Override
+    public void newRound(int roundNumber) {
+        super.newRound(roundNumber);
+        
+        bombTarget = null;
     }
 
     @Override

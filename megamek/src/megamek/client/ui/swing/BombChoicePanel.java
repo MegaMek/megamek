@@ -93,8 +93,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
                 && !allowAdvancedAmmo) {
                 b_choices[type].setEnabled(false);
             }
-            if ((type == BombType.B_ASEW) || (type == BombType.B_ALAMO)
-                || (type == BombType.B_TAG)) {
+            if ((type == BombType.B_ASEW) || (type == BombType.B_ALAMO)) {
                 b_choices[type].setEnabled(false);
             }
 

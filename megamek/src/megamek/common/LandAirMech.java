@@ -65,7 +65,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private boolean critThresh = false;    
 
     private int[] bombChoices = new int[BombType.B_NUM];
-    private Coords airmechBombTarget = null;
+    private Targetable airmechBombTarget = null;
 
     private int fuel;
     private int whoFirst;
@@ -965,13 +965,18 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
     
     @Override
-    public Coords getVTOLBombTarget() {
+    public Targetable getVTOLBombTarget() {
         return airmechBombTarget;
     }
     
     @Override
-    public void setVTOLBombTarget(Coords c) {
-        airmechBombTarget = c;
+    public void setVTOLBombTarget(Targetable t) {
+        airmechBombTarget = t;
+    }
+    
+    @Override
+    public boolean isMakingVTOLGroundAttack() {
+        return airmechBombTarget != null;
     }
 
     @Override

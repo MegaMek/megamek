@@ -7879,7 +7879,9 @@ public class Server implements Runnable {
             }
             
             if (step.getType() == MoveStepType.VTOL_BOMB) {
-                ((IBomber)entity).setVTOLBombTarget(step.getPosition());
+                Targetable t = new HexTarget(step.getPosition(), game.getBoard(),
+                        Targetable.TYPE_HEX_AERO_BOMB);
+                ((IBomber)entity).setVTOLBombTarget(t);
                 continue;
             }
 

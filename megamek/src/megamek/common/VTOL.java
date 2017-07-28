@@ -17,6 +17,8 @@
  */
 package megamek.common;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import megamek.common.options.OptionsConstants;
@@ -70,7 +72,8 @@ public class VTOL extends Tank implements IBomber {
     }
 
     private int[] bombChoices = new int[BombType.B_NUM];
-    private Coords bombTarget = null;
+    private Targetable bombTarget = null;
+    private List<Coords> strafingCoords = new ArrayList<>();
 
     /*
      * (non-Javadoc)
@@ -276,13 +279,22 @@ public class VTOL extends Tank implements IBomber {
     }
     
     @Override
-    public Coords getVTOLBombTarget() {
+    public Targetable getVTOLBombTarget() {
         return bombTarget;
     }
     
     @Override
-    public void setVTOLBombTarget(Coords c) {
-        bombTarget = c;
+    public void setVTOLBombTarget(Targetable t) {
+        bombTarget = t;
+    }
+    
+    public List<Coords> getStrafingCoords() {
+        return strafingCoords;
+    }
+    
+    @Override
+    public boolean isMakingVTOLGroundAttack() {
+        return bombTarget != null || strafingCoords.size() > 0;
     }
 
     @Override

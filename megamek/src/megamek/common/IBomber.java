@@ -59,8 +59,8 @@ public interface IBomber {
      * phase.
      */
     
-    default void setVTOLBombTarget(Coords position) {}
-    default Coords getVTOLBombTarget() {
+    default void setVTOLBombTarget(Targetable target) {}
+    default Targetable getVTOLBombTarget() {
         return null;
     }
     default boolean isVTOLBombing() {

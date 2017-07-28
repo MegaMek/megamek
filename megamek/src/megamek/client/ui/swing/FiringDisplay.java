@@ -763,10 +763,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             } // End ce()-not-on-board
 
             if (ce().isBomber() && ((IBomber)ce()).isVTOLBombing()) {
-                Coords c = ((IBomber)ce()).getVTOLBombTarget();
-                target(new HexTarget(c, clientgui.getClient().getGame().getBoard(),
-                        Targetable.TYPE_HEX_AERO_BOMB));
-                clientgui.bv.addStrafingCoords(c);
+                target(((IBomber)ce()).getVTOLBombTarget());
+                clientgui.bv.addStrafingCoords(target.getPosition());
             } else {
                 int lastTarget = ce().getLastTarget();
                 if (ce() instanceof Mech) {
@@ -1747,7 +1745,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void clearAttacks() {
         isStrafing = false;
         strafingCoords.clear();
-        clientgui.bv.clearStrafingCoords();
+        if (!ce().isMakingVTOLGroundAttack()) {
+            clientgui.bv.clearStrafingCoords();
+        }
         
         // We may not have an entity selected yet (race condition).
         if (ce() == null) {
@@ -2098,7 +2098,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 if (shiftheld) {
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
-                } else if (targ != null) {
+                } else if (targ != null && !ce().isMakingVTOLGroundAttack()) {
                     if ((targ instanceof Entity) 
                             && Compute.isGroundToAir(ce(), targ)) {
                         Entity entTarg = (Entity)targ;
@@ -2381,7 +2381,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && Compute.isGroundToAir(ce(), target)) {
             ((Entity)target).setPlayerPickedPassThrough(cen, null);
         }
-        target(null);
+        if (!ce().isMakingVTOLGroundAttack()) {
+            target(null);
+        }
         clearAttacks();        
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);

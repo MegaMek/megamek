@@ -1232,6 +1232,13 @@ public class MapMenu extends JPopupMenu {
             return menu;
         }
 
+        // VTOLs/AirMechs making strafing or bombing attacks already declared the target hex(es)
+        // in the movement phase and cannot change them.
+        if (myEntity.isMakingVTOLGroundAttack()) {
+            menu.setEnabled(false);
+            return menu;
+        }
+
         final boolean isFiringDisplay = (currentPanel instanceof FiringDisplay);
         final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame().getOptions()

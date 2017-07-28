@@ -1478,6 +1478,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean getArmsFlipped() {
         return armsFlipped;
     }
+    
+    /**
+     * @return true if the VTOL or LAM is making a VTOL strafe or VTOL/AirMech bomb attack
+     */
+    public boolean isMakingVTOLGroundAttack() {
+        return false;
+    }
+    
 
     /**
      * Returns the current position of this entity on the board. This is not

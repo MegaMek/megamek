@@ -764,7 +764,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
             if (ce().isBomber() && ((IBomber)ce()).isVTOLBombing()) {
                 target(((IBomber)ce()).getVTOLBombTarget());
-                clientgui.bv.addStrafingCoords(target.getPosition());
             } else {
                 int lastTarget = ce().getLastTarget();
                 if (ce() instanceof Mech) {
@@ -1745,9 +1744,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     protected void clearAttacks() {
         isStrafing = false;
         strafingCoords.clear();
-        if (!ce().isMakingVTOLGroundAttack()) {
-            clientgui.bv.clearStrafingCoords();
-        }
+        clientgui.bv.clearStrafingCoords();
         
         // We may not have an entity selected yet (race condition).
         if (ce() == null) {

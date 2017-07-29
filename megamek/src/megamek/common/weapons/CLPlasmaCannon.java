@@ -15,16 +15,14 @@
  * Created on May 29, 2004
  *
  */
-package megamek.common.weapons.ppc;
+package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleForceElement;
 import megamek.common.IGame;
+import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.AmmoWeapon;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.PlasmaCannonHandler;
 import megamek.server.Server;
 
 /**
@@ -38,6 +36,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
     private static final long serialVersionUID = 322396740172378519L;
 
     public CLPlasmaCannon() {
+        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Plasma Cannon";
         setInternalName("CLPlasmaCannon");
         heat = 7;
@@ -59,16 +58,11 @@ public class CLPlasmaCannon extends AmmoWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-        rulesRefs = "234,TM";
-        techAdvancement.setTechBase(TECH_BASE_CLAN)
-        	.setIntroLevel(false)
-        	.setUnofficial(false)
-            .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setClanAdvancement(3068, 3069, 3070, DATE_NONE, DATE_NONE)
-            .setClanApproximate(true, false, false,false, false)
-            .setPrototypeFactions(F_CSF)
-            .setProductionFactions(F_CSF);
+        introDate = 3069;
+        techLevel.put(3069, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_F;
+
     }
 
     /*

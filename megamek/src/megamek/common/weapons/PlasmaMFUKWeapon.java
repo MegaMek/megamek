@@ -21,6 +21,8 @@ import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.PlasmaMFUKWeaponHandler;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.server.Server;
 
@@ -36,7 +38,7 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
      */
     public PlasmaMFUKWeapon() {
         super();
-        flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA_MFUK);
+        flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA_MFUK).or(F_ENERGY);
         ammoType = AmmoType.T_NA;
         atClass = CLASS_PLASMA;
     }

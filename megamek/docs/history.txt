@@ -4,6 +4,8 @@ v0.43.4-git
 + Issue #573: Jumping through buildings.
 + Issue #414[MekHQ] - Longinus (WoB) not showing in Hanger
 + Fixing issues with sprite names in the mechset.
++ Fixing some quirks to be inline with the new BMM
++ Plasma weapons should have the energy weapon tag.
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

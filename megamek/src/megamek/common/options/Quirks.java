@@ -60,6 +60,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_MAINTAIN, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_PILOT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EXT_TWIST, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_FINE_MANIPULATORS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_GOOD_REP_1, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_GOOD_REP_2, false);
@@ -217,20 +218,12 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             
-        	if (en.getWeight()<60) {
-        		if (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED)){
-        			return false;
-        		} else {
-        			return true;
-        		}
+        	if ((en.getWeight()<60) && (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED))) {
+        		return false;
         	}
         	
-        	if (en.getWeight()>55) {
-        		if (qName.equals(OptionsConstants.QUIRK_POS_COMPACT)){
-        			return false;
-        		} else {
-        			return true;
-        		}
+        	if ((en.getWeight()>55) && (qName.equals(OptionsConstants.QUIRK_POS_COMPACT))) {
+        		return false;
         	}
             
             return true;

@@ -398,6 +398,30 @@ public class MoveStep implements Serializable {
             targetType = target.getTargetType();
         }
     }
+    
+    /**
+     * Turns VTOL bombing on or off for this step.
+     */
+    public void toggleBombing() {
+        if (isVTOLBombingStep()) {
+            setTarget(null);
+        } else {
+            setTarget(new HexTarget(getPosition(), getGame().getBoard(),
+                            Targetable.TYPE_HEX_AERO_BOMB));
+        }
+    }
+
+    /**
+     * Turns VTOL strafing on or off for this step.
+     */
+    public void toggleStrafing() {
+        if (isStrafingStep()) {
+            setTarget(null);
+        } else {
+            setTarget(new HexTarget(getPosition(), getGame().getBoard(),
+                            Targetable.TYPE_HEX_CLEAR));
+        }
+    }
 
     /**
      * Get the target of the current step.
@@ -1410,7 +1434,15 @@ public class MoveStep implements Serializable {
     public boolean isRolled() {
         return isRolled;
     }
-
+    
+    public boolean isVTOLBombingStep() {
+        return targetType == Targetable.TYPE_HEX_AERO_BOMB;
+    }
+    
+    public boolean isStrafingStep() {
+        return targetType == Targetable.TYPE_HEX_CLEAR;
+    }
+    
     /**
      * Determine if this is a legal step as part of the supplied MovePath.
      *
@@ -1742,7 +1774,7 @@ public class MoveStep implements Serializable {
     protected void setSelfDestructing(boolean b) {
         isSelfDestructing = b;
     }
-
+    
     /**
      * @param b
      */
@@ -2243,7 +2275,7 @@ public class MoveStep implements Serializable {
             // is illegal on its own.
         }
         
-        if (stepType == MoveStepType.VTOL_BOMB) {
+        if (isVTOLBombingStep()) {
             if (!getEntity().isBomber() || getClearance() <= 0) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             } else if (isFirstStep()) {

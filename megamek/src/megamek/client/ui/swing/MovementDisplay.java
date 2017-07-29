@@ -326,8 +326,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int GEAR_SPLIT_S = 9;
     public static final int GEAR_LONGEST_RUN = 10;
     public static final int GEAR_LONGEST_WALK = 11;
-    // VTOL attacks
-    public static final int GEAR_STRAFE = 12;
 
     /**
      * Creates and lays out a new movement phase display for the specified
@@ -2690,8 +2688,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 && ((ce() instanceof LandAirMech)
                         || clientgui.getClient().getGame().getOptions()
                         .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS))
-                && ((IBomber)ce()).getBombPoints() > 0
-                && !cmd.contains(MoveStepType.VTOL_BOMB)) {
+                && ((IBomber)ce()).getBombPoints() > 0) {
             setBombEnabled(true);
         }
     }
@@ -4517,12 +4514,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_RECKLESS.getCmd())) {
             cmd.setCareful(false);
         } else if (actionCmd.equals(MoveCommand.MOVE_STRAFE.getCmd())) {
-            gear = GEAR_STRAFE;
-        } else if (actionCmd.equals(MoveCommand.MOVE_BOMB.getCmd())) {
-            if (!cmd.contains(MoveStepType.VTOL_BOMB)) {
-                cmd.addStep(MoveStepType.VTOL_BOMB);
-                clientgui.bv.drawMovementData(ce, cmd);
+            if (cmd.length() > 0) {
+                if (cmd.getLastStep() == null) {
+                    cmd.addStep(MoveStepType.NONE);
+                }
+                cmd.getLastStep().toggleStrafing();
             }
+            cmd.compile(clientgui.getClient().getGame(), ce, false);
+            clientgui.bv.drawMovementData(ce, cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_BOMB.getCmd())) {
+            if (cmd.getLastStep() == null) {
+                cmd.addStep(MoveStepType.NONE);
+            }
+            cmd.getLastStep().toggleBombing();
+            cmd.compile(clientgui.getClient().getGame(), ce, false);
+            clientgui.bv.drawMovementData(ce, cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_ACCN.getCmd())) {
             cmd.addStep(MoveStepType.ACCN);
             clientgui.bv.drawMovementData(ce, cmd);

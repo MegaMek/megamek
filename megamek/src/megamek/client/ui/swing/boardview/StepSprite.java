@@ -439,15 +439,15 @@ class StepSprite extends Sprite {
                 graph.drawString(mode, modeX - 1, modePos);
 
                 break;
-            case VTOL_BOMB:
-                graph.setColor(Color.yellow);
-                ((Graphics2D)graph).fill(
-                        AffineTransform.getTranslateInstance(stepPos.x, stepPos.y).createTransformedShape(
-                        HexDrawUtilities.getHexFullBorderArea(3, 0)));
-                break;
-
             default:
                 break;
+        }
+        
+        if (step.isVTOLBombingStep() || step.isStrafingStep()) {
+            graph.setColor(col);
+            ((Graphics2D)graph).fill(
+                    AffineTransform.getTranslateInstance(stepPos.x, stepPos.y).createTransformedShape(
+                    HexDrawUtilities.getHexFullBorderArea(3, 0)));
         }
 
         baseScaleImage = bv.createImage(tempImage.getSource());

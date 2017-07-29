@@ -11,41 +11,39 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons.missiles;
-
-import megamek.common.weapons.lrms.LRMWeapon;
+package megamek.common.weapons.lrms;
 
 /**
  * @author Sebastian Brocks
  */
-public class ISLRM10OS extends LRMWeapon {
+public class ISLRM5OS extends LRMWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -2792101005477263443L;
+    private static final long serialVersionUID = 3915337270241715850L;
 
     /**
      *
      */
-    public ISLRM10OS() {
+    public ISLRM5OS() {
         super();
-        name = "LRM 10 (OS)";
+        name = "LRM 5 (OS)";
         setInternalName(name);
-        addLookupName("IS OS LRM-10");
-        addLookupName("ISLRM10 (OS)");
-        addLookupName("IS LRM 10 (OS)");
-        heat = 4;
-        rackSize = 10;
+        addLookupName("IS OS LRM-5");
+        addLookupName("ISLRM5 (OS)");
+        addLookupName("IS LRM 5 (OS)");
+        heat = 2;
+        rackSize = 5;
         minimumRange = 6;
-        tonnage = 5.5f;
-        criticals = 2;
-        bv = 18;
+        tonnage = 2.5f;
+        criticals = 1;
+        bv = 9;
         flags = flags.or(F_ONESHOT);
-        cost = 50000;
-        shortAV = 6;
-        medAV = 6;
-        longAV = 6;
+        cost = 15000;
+        shortAV = 3;
+        medAV = 3;
+        longAV = 3;
         maxRange = RANGE_LONG;
         rulesRefs = "230,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)

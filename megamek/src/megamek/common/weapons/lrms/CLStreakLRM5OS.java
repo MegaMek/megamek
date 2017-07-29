@@ -11,44 +11,42 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons.missiles;
-
-import megamek.common.weapons.lrms.StreakLRMWeapon;
+package megamek.common.weapons.lrms;
 
 /**
  * @author Sebastian Brocks
  */
-public class CLStreakLRM20OS extends StreakLRMWeapon {
+public class CLStreakLRM5OS extends StreakLRMWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -7687203185594888323L;
+    private static final long serialVersionUID = 540083231235504476L;
 
     /**
      *
      */
-    public CLStreakLRM20OS() {
+    public CLStreakLRM5OS() {
         super();
-        name = "Streak LRM 20 (OS)";
-        setInternalName("CLOSStreakLRM20");
-        addLookupName("Clan Streak LRM-20 (OS)");
-        addLookupName("Clan Streak LRM 20 (OS)");
-        addLookupName("CLStreakLRM20 (OS)");
-        heat = 6;
-        rackSize = 20;
+        name = "Streak LRM 5 (OS)";
+        setInternalName("CLOSStreakLRM5");
+        addLookupName("Clan Streak LRM-5 (OS)");
+        addLookupName("Clan Streak LRM 5 (OS)");
+        addLookupName("CLStreakLRM5 (OS)");
+        heat = 2;
+        rackSize = 5;
         shortRange = 7;
         mediumRange = 14;
         longRange = 21;
         extremeRange = 28;
-        tonnage = 10.5f;
-        criticals = 5;
-        bv = 69;
+        tonnage = 2.5f;
+        criticals = 1;
+        bv = 17;
         flags = flags.or(F_ONESHOT);
-        cost = 300000;
-        shortAV = 20;
-        medAV = 20;
-        longAV = 20;
+        cost = 37500;
+        shortAV = 5;
+        medAV = 5;
+        longAV = 5;
         maxRange = RANGE_LONG;
         // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression. 
         //But LRM Tech Base and Avail Ratings.

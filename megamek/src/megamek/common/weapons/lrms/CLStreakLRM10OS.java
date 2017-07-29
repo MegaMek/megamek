@@ -11,9 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons.missiles;
-
-import megamek.common.weapons.lrms.StreakLRMWeapon;
+package megamek.common.weapons.lrms;
 
 /**
  * @author Sebastian Brocks

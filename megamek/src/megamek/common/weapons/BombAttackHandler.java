@@ -68,7 +68,7 @@ public class BombAttackHandler extends WeaponHandler {
     @Override
     protected void useAmmo() {
         int[] payload = waa.getBombPayload();
-        if (!ae.isAero() || (null == payload)) {
+        if (!ae.isBomber() || (null == payload)) {
             return;
         }
         for (int type = 0; type < payload.length; type++) {

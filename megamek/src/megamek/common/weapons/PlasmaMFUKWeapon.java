@@ -37,7 +37,7 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
     public PlasmaMFUKWeapon() {
         super();
         techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
-        flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA_MFUK);
+        flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA_MFUK).or(F_ENERGY);
         ammoType = AmmoType.T_NA;
         atClass = CLASS_PLASMA;
         introDate = 3068;

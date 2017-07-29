@@ -11,31 +11,30 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
-package megamek.common.weapons;
+package megamek.common.weapons.srms;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleForceElement;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.lrms.LRMWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.StreakHandler;
 import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
  */
 
-public abstract class StreakLRMWeapon extends LRMWeapon {
+public abstract class StreakSRMWeapon extends SRMWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -2552069184709782928L;
+    private static final long serialVersionUID = 9157660680598071296L;
 
-    public StreakLRMWeapon() {
+    public StreakSRMWeapon() {
         super();
-        this.ammoType = AmmoType.T_LRM_STREAK;
-        clearModes();
+        this.ammoType = AmmoType.T_SRM_STREAK;
     }
 
     /*
@@ -49,17 +48,14 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new StreakLRMHandler(toHit, waa, game, server);
+        return new StreakHandler(toHit, waa, game, server);
     }
 
     @Override
     public double getBattleForceDamage(int range) {
         double damage = 0;
         if (range <= getLongRange()) {
-            damage = getRackSize();
-            if (range == BattleForceElement.SHORT_RANGE && getMinimumRange() > 0) {
-                damage = adjustBattleForceDamageForMinRange(damage);
-            }
+            damage = getRackSize() * 2;
         }
         return damage / 10.0;
     }

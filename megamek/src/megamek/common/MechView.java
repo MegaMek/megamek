@@ -30,7 +30,7 @@ import java.util.Iterator;
 import megamek.client.ui.Messages;
 import megamek.common.options.IOption;
 import megamek.common.options.PilotOptions;
-import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * A utility class for retrieving mech information in a formatted string.

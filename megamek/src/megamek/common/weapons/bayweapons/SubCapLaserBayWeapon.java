@@ -14,14 +14,14 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
  */
-public class MMLBayWeapon extends AmmoBayWeapon {
+public class SubCapLaserBayWeapon extends BayWeapon {
     /**
      * 
      */
@@ -30,21 +30,23 @@ public class MMLBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
-    public MMLBayWeapon() {
+    public SubCapLaserBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "MML Bay";
+        this.name = "Sub-Capital Laser Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
-        this.shortRange = 6;
-        this.mediumRange = 12;
-        this.longRange = 20;
-        this.extremeRange = 25;
+        this.shortRange = 12;
+        this.mediumRange = 24;
+        this.longRange = 40;
+        this.extremeRange = 50;
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.atClass = CLASS_MML;
+        this.atClass = CLASS_CAPITAL_LASER;
+        this.capital = true;
+        this.subCapital = true;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);
@@ -53,6 +55,6 @@ public class MMLBayWeapon extends AmmoBayWeapon {
     
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_MML;
+        return BFCLASS_SUBCAPITAL;
     }
 }

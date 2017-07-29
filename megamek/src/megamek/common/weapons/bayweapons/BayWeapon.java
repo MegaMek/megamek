@@ -15,26 +15,30 @@
  * Created on Sep 24, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.BayWeaponHandler;
+import megamek.common.weapons.Weapon;
 import megamek.server.Server;
 
 /**
  * @author Jay Lawson This is my attempt to get weapon bays treated as normal
  *         weapons rather than the current hack in place
  */
-public abstract class AmmoBayWeapon extends BayWeapon {
+public abstract class BayWeapon extends Weapon {
     /**
      * 
      */
-    private static final long serialVersionUID = 4718603486868464292L;
+    private static final long serialVersionUID = -1787970217528405766L;
 
-    public AmmoBayWeapon() {
+    public BayWeapon() {
         super();
     }
 
@@ -43,24 +47,7 @@ public abstract class AmmoBayWeapon extends BayWeapon {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
-        checkAmmo(waa, game);
         return super.fire(waa, game, server);
-    }
-
-    /**
-     * 
-     */
-    protected void checkAmmo(WeaponAttackAction waa, IGame g) {
-        Entity ae = waa.getEntity(g);
-        Mounted m = ae.getEquipment(waa.getWeaponId());
-        for (int wId : m.getBayWeapons()) {
-            Mounted weapon = ae.getEquipment(wId);
-            Mounted ammo = weapon.getLinked();
-            if (ammo == null || ammo.getUsableShotsLeft() < 1) {
-                ae.loadWeaponWithSameAmmo(weapon);
-                ammo = weapon.getLinked();
-            }
-        }
     }
 
     /*
@@ -73,6 +60,22 @@ public abstract class AmmoBayWeapon extends BayWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new AmmoBayWeaponHandler(toHit, waa, game, server);
+        return new BayWeaponHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public int getMaxRange(Mounted weapon) {
+        int mrange = RANGE_SHORT;
+        Entity ae = weapon.getEntity();
+        if(null != ae) {
+            for (int wId : weapon.getBayWeapons()) {
+                Mounted bayW = ae.getEquipment(wId);
+                WeaponType bayWType = (WeaponType) bayW.getType();
+                if (bayWType.getMaxRange(bayW) > mrange) {
+                    mrange = bayWType.getMaxRange(bayW);
+                }
+            }
+        }
+        return mrange;
     }
 }

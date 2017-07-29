@@ -14,15 +14,14 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons.capitalweapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.BayWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class SubCapLaserBayWeapon extends BayWeapon {
+public class PPCBayWeapon extends BayWeapon {
     /**
      * 
      */
@@ -31,31 +30,24 @@ public class SubCapLaserBayWeapon extends BayWeapon {
     /**
      * 
      */
-    public SubCapLaserBayWeapon() {
+    public PPCBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "Sub-Capital Laser Bay";
+        this.name = "PPC Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
-        this.shortRange = 12;
-        this.mediumRange = 24;
-        this.longRange = 40;
-        this.extremeRange = 50;
+        this.shortRange = 6;
+        this.mediumRange = 12;
+        this.longRange = 20;
+        this.extremeRange = 25;
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.atClass = CLASS_CAPITAL_LASER;
-        this.capital = true;
-        this.subCapital = true;
+        this.atClass = CLASS_PPC;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
-    }
-    
-    @Override
-    public int getBattleForceClass() {
-        return BFCLASS_SUBCAPITAL;
     }
 }

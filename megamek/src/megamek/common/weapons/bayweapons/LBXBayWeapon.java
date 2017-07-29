@@ -14,14 +14,14 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
  */
-public class PulseLaserBayWeapon extends BayWeapon {
+public class LBXBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -30,10 +30,10 @@ public class PulseLaserBayWeapon extends BayWeapon {
     /**
      * 
      */
-    public PulseLaserBayWeapon() {
+    public LBXBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "Pulse Laser Bay";
+        this.name = "LBX AC Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
@@ -44,11 +44,15 @@ public class PulseLaserBayWeapon extends BayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.toHitModifier = -2;
-        this.atClass = CLASS_PULSE_LASER;
+        this.atClass = CLASS_LBX_AC;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_FLAK;
     }
 }

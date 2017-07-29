@@ -13,7 +13,7 @@
  */
 package megamek.common.weapons.missiles;
 
-import megamek.common.weapons.StreakLRMWeapon;
+import megamek.common.weapons.lrms.StreakLRMWeapon;
 
 /**
  * @author Sebastian Brocks

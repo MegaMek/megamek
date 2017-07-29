@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons.srms;
 
-import megamek.common.weapons.StreakSRMWeapon;
-
 /**
  * @author Sebastian Brocks
  */

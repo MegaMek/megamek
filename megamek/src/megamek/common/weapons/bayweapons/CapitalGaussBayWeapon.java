@@ -14,15 +14,14 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons.capitalweapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.AmmoBayWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class CapitalACBayWeapon extends AmmoBayWeapon {
+public class CapitalGaussBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -31,10 +30,10 @@ public class CapitalACBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
-    public CapitalACBayWeapon() {
+    public CapitalGaussBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "Capital AC Bay";
+        this.name = "Capital Gauss Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
@@ -45,7 +44,7 @@ public class CapitalACBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.atClass = CLASS_CAPITAL_AC;
+        this.atClass = CLASS_CAPITAL_GAUSS;
         this.capital = true;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);

@@ -14,15 +14,14 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons.capitalweapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.AmmoBayWeapon;
 
 /**
  * @author Jay Lawson
  */
-public class CapitalMDBayWeapon extends AmmoBayWeapon {
+public class CapitalLaserBayWeapon extends BayWeapon {
     /**
      * 
      */
@@ -31,26 +30,26 @@ public class CapitalMDBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
-    public CapitalMDBayWeapon() {
+    public CapitalLaserBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "Capital Mass Driver Bay";
+        this.name = "Capital Laser Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
         this.shortRange = 12;
         this.mediumRange = 24;
         this.longRange = 40;
+        this.extremeRange = 50;
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.atClass = CLASS_CAPITAL_MD;
+        this.atClass = CLASS_CAPITAL_LASER;
         this.capital = true;
-        this.flags = F_MASS_DRIVER;    
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_IS);
-        techAdvancement.setISAdvancement(2715, DATE_NONE, DATE_NONE);
-        techAdvancement.setTechRating(RATING_D);
-        techAdvancement.setAvailability( new int[] { RATING_E, RATING_X, RATING_E, RATING_X });
+        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
+        techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
+        techAdvancement.setTechRating(RATING_C);
+        techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
     }
     
     @Override

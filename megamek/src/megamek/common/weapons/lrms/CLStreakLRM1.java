@@ -14,7 +14,6 @@
 package megamek.common.weapons.lrms;
 
 import megamek.common.TechAdvancement;
-import megamek.common.weapons.StreakLRMWeapon;
 
 /**
  * @author Sebastian Brocks

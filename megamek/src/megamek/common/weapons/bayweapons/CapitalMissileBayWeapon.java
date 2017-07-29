@@ -14,14 +14,20 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bayweapons;
 
+import megamek.common.IGame;
 import megamek.common.TechAdvancement;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.CapitalMissileBayHandler;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
  */
-public class MiscBayWeapon extends BayWeapon {
+public class CapitalMissileBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -30,25 +36,43 @@ public class MiscBayWeapon extends BayWeapon {
     /**
      * 
      */
-    public MiscBayWeapon() {
+    public CapitalMissileBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "Misc Bay";
+        this.name = "Capital Missile Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
-        this.shortRange = 0;
-        this.mediumRange = 0;
-        this.longRange = 0;
-        this.extremeRange = 0;
+        this.shortRange = 12;
+        this.mediumRange = 24;
+        this.longRange = 40;
+        this.extremeRange = 50;
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.atClass = CLASS_NONE;
-        this.capital = false;
+        this.atClass = CLASS_CAPITAL_MISSILE;
+        this.capital = true;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);
         techAdvancement.setAvailability( new int[] { RATING_E, RATING_E, RATING_E, RATING_E });
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     * megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     */
+    @Override
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new CapitalMissileBayHandler(toHit, waa, game, server);
+    }
+    
+    @Override
+    public int getBattleForceClass() {
+        return BFCLASS_CAPITAL_MISSILE;
     }
 }

@@ -11,34 +11,36 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-package megamek.common.weapons;
+/*
+ * Created on Sep 21, 2005
+ *
+ */
+package megamek.common.weapons.unofficial;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.missiles.MissileWeapon;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.PlasmaMFUKWeaponHandler;
+import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.server.Server;
 
 /**
- * @author Sebastian Brocks
+ * @author Andrew Hunter
  */
-public abstract class PrototypeRLWeapon extends MissileWeapon {
+public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
+
+    private static final long serialVersionUID = -6903718412622554494L;
 
     /**
      *
      */
-    private static final long serialVersionUID = 8711414106566769466L;
-
-    /**
-     *
-     */
-    public PrototypeRLWeapon() {
+    public PlasmaMFUKWeapon() {
         super();
-        ammoType = AmmoType.T_ROCKET_LAUNCHER;
-        flags = flags.or(F_ONESHOT);
-        toHitModifier = 1;
-        atClass = CLASS_ROCKET_LAUNCHER;
+        flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA_MFUK).or(F_ENERGY);
+        ammoType = AmmoType.T_NA;
+        atClass = CLASS_PLASMA;
     }
 
     /*
@@ -52,6 +54,7 @@ public abstract class PrototypeRLWeapon extends MissileWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new PrototypeRLHandler(toHit, waa, game, server);
+        return new PlasmaMFUKWeaponHandler(toHit, waa, game, server);
     }
+
 }

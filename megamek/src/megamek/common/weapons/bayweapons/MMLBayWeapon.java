@@ -14,14 +14,14 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.bayweapons;
 
 import megamek.common.TechAdvancement;
 
 /**
  * @author Jay Lawson
  */
-public class LRMBayWeapon extends AmmoBayWeapon {
+public class MMLBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -30,10 +30,10 @@ public class LRMBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
-    public LRMBayWeapon() {
+    public MMLBayWeapon() {
         super();
         // tech levels are a little tricky
-        this.name = "LRM Bay";
+        this.name = "MML Bay";
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
@@ -44,7 +44,7 @@ public class LRMBayWeapon extends AmmoBayWeapon {
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;
-        this.atClass = CLASS_LRM;
+        this.atClass = CLASS_MML;
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);
@@ -53,6 +53,6 @@ public class LRMBayWeapon extends AmmoBayWeapon {
     
     @Override
     public int getBattleForceClass() {
-        return BFCLASS_LRM;
+        return BFCLASS_MML;
     }
 }

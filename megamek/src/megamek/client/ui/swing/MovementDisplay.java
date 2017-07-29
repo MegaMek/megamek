@@ -326,6 +326,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static final int GEAR_SPLIT_S = 9;
     public static final int GEAR_LONGEST_RUN = 10;
     public static final int GEAR_LONGEST_WALK = 11;
+    public static final int GEAR_STRAFE = 12;
 
     /**
      * Creates and lays out a new movement phase display for the specified
@@ -1581,6 +1582,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             src.direction(dest), ce().getFacing());
                     break;
             }
+        } else if (gear == GEAR_STRAFE) {
+            // Only set the steps that enter new hexes.
+            int start = cmd.length();
+            cmd.findPathTo(dest, MoveStepType.FORWARDS);
+            // Skip turns at the beginning of the new part of the path unless we're extending
+            // an existing strafing pattern.
+            if (start > 0 && !cmd.getStep(start - 1).isStrafingStep()) {
+                while (start < cmd.length()
+                        && cmd.getStep(start).getType() != MoveStepType.FORWARDS) {
+                    start++;
+                }
+            }
+            for (int i = cmd.length() - 1; i >= start; i--) {
+                cmd.setStrafingStep(cmd.getStep(i).getPosition());
+            }
+            cmd.compile(clientgui.getClient().getGame(), ce(), false);
+            gear = GEAR_LAND;
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
             cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_BACKUP) {
@@ -4514,19 +4532,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_RECKLESS.getCmd())) {
             cmd.setCareful(false);
         } else if (actionCmd.equals(MoveCommand.MOVE_STRAFE.getCmd())) {
-            if (cmd.length() > 0) {
-                if (cmd.getLastStep() == null) {
-                    cmd.addStep(MoveStepType.NONE);
-                }
-                cmd.getLastStep().toggleStrafing();
-            }
-            cmd.compile(clientgui.getClient().getGame(), ce, false);
-            clientgui.bv.drawMovementData(ce, cmd);
+            gear = GEAR_STRAFE;
         } else if (actionCmd.equals(MoveCommand.MOVE_BOMB.getCmd())) {
             if (cmd.getLastStep() == null) {
                 cmd.addStep(MoveStepType.NONE);
             }
-            cmd.getLastStep().toggleBombing();
+            cmd.setVTOLBombStep(cmd.getFinalCoords());
             cmd.compile(clientgui.getClient().getGame(), ce, false);
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_ACCN.getCmd())) {

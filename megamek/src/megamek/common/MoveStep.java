@@ -402,24 +402,24 @@ public class MoveStep implements Serializable {
     /**
      * Turns VTOL bombing on or off for this step.
      */
-    public void toggleBombing() {
-        if (isVTOLBombingStep()) {
-            setTarget(null);
-        } else {
+    public void setVTOLBombing(boolean bombing) {
+        if (bombing) {
             setTarget(new HexTarget(getPosition(), getGame().getBoard(),
-                            Targetable.TYPE_HEX_AERO_BOMB));
+                    Targetable.TYPE_HEX_AERO_BOMB));
+        } else {
+            setTarget(null);
         }
     }
 
     /**
      * Turns VTOL strafing on or off for this step.
      */
-    public void toggleStrafing() {
-        if (isStrafingStep()) {
-            setTarget(null);
-        } else {
+    public void setStrafing(boolean strafing) {
+        if (strafing) {
             setTarget(new HexTarget(getPosition(), getGame().getBoard(),
-                            Targetable.TYPE_HEX_CLEAR));
+                    Targetable.TYPE_HEX_CLEAR));
+        } else {
+            setTarget(null);
         }
     }
 

@@ -1580,4 +1580,53 @@ public class MovePath implements Cloneable, Serializable {
         }
         return step.isEndPos(this);
     }
+    
+    /**
+     * Searches the movement path for the first step that has the given position and sets it as
+     * a VTOL bombing step. If found, any previous bombing step is cleared. If the coordinates are not
+     * part of the path nothing is changed.
+     * 
+     * @param pos The <code>Coords</code> of the hex to be bombed.
+     * @return Whether the position was found in the movement path
+     */
+    public boolean setVTOLBombStep(Coords pos) {
+        boolean foundPos = false;
+        MoveStep prevBombing = null;
+        for (MoveStep step : steps) {
+            if (step.getPosition().equals(pos)) {
+                if (step.isVTOLBombingStep()) {
+                    return true;
+                } else {
+                    step.setVTOLBombing(true);
+                    foundPos = true;
+                }
+            } else if (step.isVTOLBombingStep()) {
+                prevBombing = step;
+            }
+        }
+        if (foundPos && prevBombing != null) {
+            prevBombing.setVTOLBombing(false);
+        }
+        return foundPos;
+    }
+    
+    /**
+     * Searches the path for the first <code>MoveStep</code> that matches the given position and sets it
+     * as a strafing step. In cases where there are multiple steps with the same coordinates, we want the
+     * first one because it is the one that enters the hex.
+     * 
+     * FIXME: this does not deal with paths that cross themselves
+     * 
+     * @param pos The <code>Coords</code> of the hex to be strafed
+     * @return Whether the position was found in the path
+     */
+    public boolean setStrafingStep(Coords pos) {
+        for (MoveStep step : steps) {
+            if (step.getPosition().equals(pos)) {
+                step.setStrafing(true);
+                return true;
+            }
+        }
+        return false;
+    }
 }

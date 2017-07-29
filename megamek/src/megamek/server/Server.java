@@ -7881,7 +7881,7 @@ public class Server implements Runnable {
             if (step.isVTOLBombingStep()) {
                 ((IBomber)entity).setVTOLBombTarget(step.getTarget(game));
             } else if (step.isStrafingStep() && (entity instanceof VTOL)) {
-                ((VTOL)entity).getStrafingCoords().add(step.getTargetPosition());
+                ((VTOL)entity).getStrafingCoords().add(step.getPosition());
             }
 
             if ((step.getType() == MoveStepType.ACC)

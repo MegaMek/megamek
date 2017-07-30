@@ -127,14 +127,13 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
         if (size() == 0) {
             return actionVector;
         }
-        // todo Consider extended twists.
-        if (getTwist() == -1) {
-            actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                                                  FireControl.correctFacing(get(0).getShooter().getFacing() - 1)));
-        } else if (getTwist() == +1) {
-            actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
-                                                  FireControl.correctFacing(get(0).getShooter().getFacing() + 1)));
+        
+        if(getTwist() != 0)
+        {
+        	actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
+        		FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }
+        
         for (WeaponFireInfo weaponFireInfo : this) {
             actionVector.add(weaponFireInfo.getWeaponAttackAction());
         }

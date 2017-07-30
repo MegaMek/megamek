@@ -1948,30 +1948,27 @@ public class FireControl {
             return noTwistPlan;
         }
 
-        // Turn to the right.
-        shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
-        rightTwistPlan.setTwist(1);
-
-        // Turn to the left.
-        shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
-        leftTwistPlan.setTwist(-1);
-
-        // todo extended torso twist.
-
+        ArrayList<Integer> validFacingChanges = getValidFacingChanges(shooter);
+        
+        // Now, we loop through all possible facings. If one facing produces a better plan 
+        // than what we currently have as the best plan then use that. Start with "no twist" as default.
+        FiringPlan bestFiringPlan = noTwistPlan;
+        for(int index = 0; index < validFacingChanges.size(); index++)
+        {
+        	int currentTwist = validFacingChanges.get(index);
+        	
+        	shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
+        	FiringPlan twistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
+        	twistPlan.setTwist(currentTwist);
+        	
+        	if(twistPlan.getUtility() > bestFiringPlan.getUtility())
+        		bestFiringPlan = twistPlan;
+        }
+        
         // Back to where we started.
         shooter.setSecondaryFacing(originalFacing);
 
-        // Return the highest utility plan.
-        if ((noTwistPlan.getUtility() > rightTwistPlan.getUtility()) &&
-            (noTwistPlan.getUtility() > leftTwistPlan.getUtility())) {
-            return noTwistPlan;
-        }
-        if (leftTwistPlan.getUtility() > rightTwistPlan.getUtility()) {
-            return leftTwistPlan;
-        }
-        return rightTwistPlan;
+        return bestFiringPlan;
     }
 
     /**
@@ -2001,32 +1998,27 @@ public class FireControl {
         // Keep track of our original facing so we can go back to it.
         int originalFacing = shooter.getSecondaryFacing();
 
-        // Turn to the right.
-        shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = guessBestFiringPlanUnderHeat(shooter,
-                shooterState, target, targetState, maxHeat, game);
-        rightTwistPlan.setTwist(1);
-
-        // Turn to the left.
-        shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = guessBestFiringPlanUnderHeat(shooter,
-                shooterState, target, targetState, maxHeat, game);
-        leftTwistPlan.setTwist(-1);
-
-        // todo extended torso twist.
+        ArrayList<Integer> validFacingChanges = getValidFacingChanges(shooter);
+        
+        // Now, we loop through all possible facings. If one facing produces a better plan 
+        // than what we currently have as the best plan then use that. Start with "no twist" as default.
+        FiringPlan bestFiringPlan = noTwistPlan;
+        for(int index = 0; index < validFacingChanges.size(); index++)
+        {
+        	int currentTwist = validFacingChanges.get(index);
+        	
+        	shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
+        	FiringPlan twistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, game);
+        	twistPlan.setTwist(currentTwist);
+        	
+        	if(twistPlan.getUtility() > bestFiringPlan.getUtility())
+        		bestFiringPlan = twistPlan;
+        }
 
         // Back to where we started.
         shooter.setSecondaryFacing(originalFacing);
 
-        // Return the highest utility plan.
-        if ((noTwistPlan.getUtility() > rightTwistPlan.getUtility()) &&
-            (noTwistPlan.getUtility() > leftTwistPlan.getUtility())) {
-            return noTwistPlan;
-        }
-        if (leftTwistPlan.getUtility() > rightTwistPlan.getUtility()) {
-            return leftTwistPlan;
-        }
-        return rightTwistPlan;
+        return bestFiringPlan;
     }
 
     /**
@@ -2048,32 +2040,27 @@ public class FireControl {
         // Keep track of our original facing so we can go back to it.
         int originalFacing = shooter.getSecondaryFacing();
 
-        // Turn to the right.
-        shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = guessBestFiringPlan(shooter, shooterState,
-                target, targetState, game);
-        rightTwistPlan.setTwist(1);
-
-        // Turn to the left.
-        shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = guessBestFiringPlan(shooter, shooterState,
-                target, targetState, game);
-        leftTwistPlan.setTwist(-1);
-
-        // todo extended torso twist.
+        ArrayList<Integer> validFacingChanges = getValidFacingChanges(shooter);
+        
+        // Now, we loop through all possible facings. If one facing produces a better plan 
+        // than what we currently have as the best plan then use that. Start with "no twist" as default.
+        FiringPlan bestFiringPlan = noTwistPlan;
+        for(int index = 0; index < validFacingChanges.size(); index++)
+        {
+        	int currentTwist = validFacingChanges.get(index);
+        	
+        	shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
+        	FiringPlan twistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState, game);
+        	twistPlan.setTwist(currentTwist);
+        	
+        	if(twistPlan.getUtility() > bestFiringPlan.getUtility())
+        		bestFiringPlan = twistPlan;
+        }
 
         // Back to where we started.
         shooter.setSecondaryFacing(originalFacing);
 
-        // Return the highest utility plan.
-        if ((noTwistPlan.getUtility() > rightTwistPlan.getUtility()) &&
-            (noTwistPlan.getUtility() > leftTwistPlan.getUtility())) {
-            return noTwistPlan;
-        }
-        if (leftTwistPlan.getUtility() > rightTwistPlan.getUtility()) {
-            return leftTwistPlan;
-        }
-        return rightTwistPlan;
+        return bestFiringPlan;
     }
 
     /**
@@ -2835,5 +2822,39 @@ public class FireControl {
         }
 
         return returnAmmo;
+    }
+
+    // Helper method that figures out the valid facing changes for the given shooter
+    private ArrayList<Integer> getValidFacingChanges(Entity shooter)
+    {
+    	// figure out all valid twists or turret turns
+        // mechs can turn:
+        //		one left, one right unless he has "no torso twist" quirk
+        //		two left, two right if he has "extended torso twist" quirk
+        // vehicles and turrets can turn any direction unless he has no turret
+        ArrayList<Integer> validFacingChanges = new ArrayList<Integer>();
+        if(shooter instanceof Mech &&
+        	!shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST))
+        {
+        	validFacingChanges.add(1);
+            validFacingChanges.add(-1);
+
+        	if(shooter.hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST))
+        	{
+                validFacingChanges.add(2);
+                validFacingChanges.add(-2);
+        	}
+        }
+        else if(shooter instanceof Tank &&
+        		!((Tank) shooter).hasNoTurret())
+        {
+        	validFacingChanges.add(1);
+        	validFacingChanges.add(-1);
+        	validFacingChanges.add(2);
+        	validFacingChanges.add(-2);
+        	validFacingChanges.add(3);
+        }
+        
+        return validFacingChanges;
     }
 }

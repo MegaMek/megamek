@@ -1613,7 +1613,8 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Searches the path for the first <code>MoveStep</code> that matches the given position and sets it
      * as a strafing step. In cases where there are multiple steps with the same coordinates, we want the
-     * first one because it is the one that enters the hex.
+     * first one because it is the one that enters the hex. In the rare case where the path crosses
+     * itself, select the one closest to the end of the path.
      * 
      * FIXME: this does not deal with paths that cross themselves
      * 
@@ -1621,11 +1622,18 @@ public class MovePath implements Cloneable, Serializable {
      * @return Whether the position was found in the path
      */
     public boolean setStrafingStep(Coords pos) {
-        for (MoveStep step : steps) {
-            if (step.getPosition().equals(pos)) {
-                step.setStrafing(true);
+        MoveStep found = null;
+        for (int i = steps.size() - 1; i >= 0; i--) {
+            if (steps.get(i).getPosition().equals(pos)) {
+                found = steps.get(i);
+            } else if (found != null) {
+                found.setStrafing(true);
                 return true;
             }
+        }
+        if (found != null) {
+            found.setStrafing(true);
+            return true;
         }
         return false;
     }

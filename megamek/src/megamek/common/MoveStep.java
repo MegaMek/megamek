@@ -873,20 +873,22 @@ public class MoveStep implements Serializable {
                 if (entity.isAirborne()) {
                     setAltitude(altitude + 1);
                     setMp(2);
-                } else if (entity.getMovementMode() == EntityMovementMode.WIGE) {
-                    // If on the ground, pay liftoff cost. If airborne, pay 1 MP to increase elevation
-                    // (LAMs and glider protomechs only)
-                    if (getClearance() == 0) {
-                        setMp((entity instanceof Protomech)? 4 : 5);
-                    } else {
-                        setMp(1);
-                    }
-                    setElevation(elevation + 1);
                 } else {
-                    if (entity instanceof Protomech) {
-                        setMp(isJumping() ? 0 : 2);
+                    setElevation(elevation + 1);
+                    if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                        // If on the ground, pay liftoff cost. If airborne, pay 1 MP to increase elevation
+                        // (LAMs and glider protomechs only)
+                        if (getClearance() == 0) {
+                            setMp((entity instanceof Protomech)? 4 : 5);
+                        } else {
+                            setMp(1);
+                        }
                     } else {
-                        setMp(isJumping() ? 0 : 1);
+                        if (entity instanceof Protomech) {
+                            setMp(isJumping() ? 0 : 2);
+                        } else {
+                            setMp(isJumping() ? 0 : 1);
+                        }
                     }
                 }
                 break;

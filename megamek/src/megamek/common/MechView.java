@@ -165,9 +165,7 @@ public class MechView {
 
         //We may have altered the starting mode during configuration, so we save the current one here to restore it
         int originalMode = entity.getConversionMode();
-        if (entity instanceof QuadVee) {
-            entity.setConversionMode(QuadVee.CONV_MODE_MECH);
-        }
+        entity.setConversionMode(0);
         if (!isGunEmplacement) {
             sBasic.append("<br>"); //$NON-NLS-1$
             sBasic.append(Messages.getString("MechView.Movement")) //$NON-NLS-1$
@@ -209,6 +207,19 @@ public class MechView {
                 .append(entity.getWalkMP()).append("/") //$NON-NLS-1$
                 .append(entity.getRunMPasString());
             entity.setConversionMode(originalMode);
+        } else if (entity instanceof LandAirMech) {
+            if (((LandAirMech)entity).getLAMType() == LandAirMech.LAM_STANDARD) {
+                sBasic.append("<br>").append(Messages.getString("MovementType.AirMech")).append(": ") //$NON-NLS-1$
+                .append(((LandAirMech)entity).getAirMechWalkMP()).append("/")
+                .append(((LandAirMech)entity).getAirMechRunMP()).append("/")
+                .append(((LandAirMech)entity).getAirMechCruiseMP()).append("/")
+                .append(((LandAirMech)entity).getAirMechFlankMP());
+            }
+
+            entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
+            sBasic.append("<br>").append(Messages.getString("MovementType.Fighter")).append(": ") //$NON-NLS-1$            
+            .append(entity.getWalkMP()).append("/") //$NON-NLS-1$
+            .append(entity.getRunMP());
         }
         if (isVehicle) {
             sBasic.append(" (") //$NON-NLS-1$

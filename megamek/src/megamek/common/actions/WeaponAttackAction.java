@@ -1409,7 +1409,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
 
         // air-to-ground strikes apply a +2 mod
         if (Compute.isAirToGround(ae, target)
-                || (ae.isBomber() && ((IBomber)ae).isVTOLBombing())) {
+                || (ae.isMakingVTOLGroundAttack())) {
             if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 toHit.addModifier(ae.getAltitude(), "bombing altitude");
                 if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
@@ -3663,7 +3663,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)
                 && (!Compute.isAirToGround(ae, target) || isArtilleryIndirect)
-                && !(ae.isBomber() && ((IBomber)ae).isVTOLBombing())) {
+                && !ae.isMakingVTOLGroundAttack()) {
             return "Target not in arc.";
         }
 
@@ -3777,6 +3777,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     }
                 }
             }
+        } else if ((ae instanceof VTOL) && isStrafing) {
+            EquipmentType wt = weapon.getType();
+            if (!(wt.hasFlag(WeaponType.F_DIRECT_FIRE)
+                    && (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC)
+                            || wt.hasFlag(WeaponType.F_PLASMA) || wt.hasFlag(WeaponType.F_PLASMA_MFUK)))
+                    || wt.hasFlag(WeaponType.F_FLAMER)) {
+                return "only direct-fire energy weapons can strafe!";
+            }
+            if (weapon.getLocation() != VTOL.LOC_FRONT
+                    && weapon.getLocation() != VTOL.LOC_TURRET
+                    && weapon.getLocation() != VTOL.LOC_TURRET_2) {
+                return "can only strafe with weapons mounted in the front or turret!";
+            }
+                
         }
 
         // only one ground-to-air attack allowed per turn

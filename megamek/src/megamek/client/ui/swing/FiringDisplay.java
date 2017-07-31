@@ -75,6 +75,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -762,9 +763,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
             } // End ce()-not-on-board
 
-            if (ce().isBomber() && ((IBomber)ce()).isVTOLBombing()) {
-                target(((IBomber)ce()).getVTOLBombTarget());
+            if (ce().isMakingVTOLGroundAttack()) {
+                this.updateVTOLGroundTarget();
             } else {
+                // Need to clear attacks again in case previous en was making VTOL ground attack
+                clearAttacks();
                 int lastTarget = ce().getLastTarget();
                 if (ce() instanceof Mech) {
                     int grapple = ((Mech) ce()).getGrappled();
@@ -1750,7 +1753,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-
+        
         // remove attacks, set weapons available again
         Enumeration<AbstractEntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
@@ -1808,6 +1811,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.displayEntity(ce());
         clientgui.mechD.showPanel("weapons"); //$NON-NLS-1$
         clientgui.mechD.wPan.selectFirstWeapon();
+        if (ce().isMakingVTOLGroundAttack()) {
+            this.updateVTOLGroundTarget();
+        }
         updateTarget();
     }
 
@@ -1978,6 +1984,25 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    /**
+     * A VTOL or LAM in airmech mode making a bombing or strafing attack already has the target set
+     * during the movement phase. 
+     */
+    void updateVTOLGroundTarget() {
+        clientgui.bv.clearStrafingCoords();
+        target(null);
+        isStrafing = false;
+        strafingCoords.clear();
+        if (ce().isBomber() && ((IBomber)ce()).isVTOLBombing()) {
+            target(((IBomber)ce()).getVTOLBombTarget());
+            clientgui.bv.addStrafingCoords(target.getPosition());
+        } else if ((ce() instanceof VTOL) && ((VTOL)ce()).getStrafingCoords().size() > 0) {
+            strafingCoords.addAll(((VTOL)ce()).getStrafingCoords());
+            strafingCoords.forEach(c -> clientgui.bv.addStrafingCoords(c));
+            isStrafing = true;
+        }
+    }
+    
     /**
      * Torso twist in the proper direction.
      */

@@ -561,6 +561,7 @@ public class VTOL extends Tank implements IBomber {
         super.newRound(roundNumber);
         
         bombTarget = null;
+        strafingCoords.clear();
     }
 
     @Override

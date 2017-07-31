@@ -263,11 +263,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
          */
         public static MoveCommand[] values(int f, GameOptions opts,
                 boolean forwardIni) {
-            boolean manualShutdown = false, selfDestruct = false, advVehicle = false;
+            boolean manualShutdown = false, selfDestruct = false, advVehicle = false, vtolStrafe = false;
             if (opts != null) {
                 manualShutdown = opts.booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN);
                 selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
                 advVehicle = opts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_ADVANCED_MANEUVERS);
+                vtolStrafe = opts.booleanOption(OptionsConstants.ADVCOMBAT_VTOL_STRAFING);
             }
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
             for (MoveCommand cmd : MoveCommand.values()) {
@@ -286,6 +287,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
                 
                 if (cmd == MOVE_BOOTLEGGER && !advVehicle) {
+                    continue;
+                }
+                
+                if (cmd == MOVE_STRAFE && !vtolStrafe) {
                     continue;
                 }
 
@@ -2680,12 +2685,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
     
     private void updateStrafeButton() {
-        if (ce() instanceof VTOL
-                && ce().isAirborneVTOLorWIGE()
-                && clientgui.getClient().getGame().getOptions()
-                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VTOL_ATTACKS)) {
-            setStrafeEnabled(true);
+        if (!clientgui.getClient().getGame().getOptions()
+                .booleanOption(OptionsConstants.ADVCOMBAT_VTOL_STRAFING)) {
+            return;
         }
+        
+        setStrafeEnabled(ce() instanceof VTOL);
     }
     
     private void updateBombButton() {

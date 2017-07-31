@@ -382,6 +382,7 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_VEHICLES_THRESHOLD= "vehicles_threshold";  //$NON-NLS$
     public static final String ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE= "vehicles_threshold_variable";  //$NON-NLS$
     public static final String ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR= "vehicles_threshold_divisor";  //$NON-NLS$
+    public static final String ADVCOMBAT_VTOL_STRAFING = "vtol_strafing"; //$NON-NLS$
     public static final String ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS= "vehicles_safe_from_infernos";  //$NON-NLS$
     public static final String ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS= "protos_safe_from_infernos";  //$NON-NLS$
     public static final String ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE= "indirect_always_possible";  //$NON-NLS$

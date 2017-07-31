@@ -27,10 +27,12 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.IPlayer;
+import megamek.common.Infantry;
 import megamek.common.LandAirMech;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
+import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -144,6 +146,18 @@ public class AirmechRamAttackAction extends DisplacementAttackAction {
         if (Entity.NONE != te.getSwarmTargetId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                                  "Target is swarming a Mek.");
+        }
+        
+        // Cannot target infantry
+        if (te instanceof Infantry) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target is infantry.");
+        }
+
+        // Cannot target protomech
+        if (te instanceof Protomech) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target is protomech.");
         }
 
         // check range

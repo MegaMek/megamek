@@ -96,7 +96,7 @@ public abstract class PathRanker {
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                                           .round(new MathContext(0, RoundingMode.DOWN));
                 if ((percent.compareTo(interval) >= 0)
-                    && (LogLevel.INFO.getLevel() <= getOwner().getVerbosity().getLevel())) {
+                    && (LogLevel.INFO.toInt() <= getOwner().getVerbosity().toInt())) {
                     getOwner().sendChat("... " + percent.intValue() + "% complete.");
                     interval = percent.add(new BigDecimal(5));
                 }

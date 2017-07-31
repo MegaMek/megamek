@@ -50,9 +50,13 @@ import megamek.common.MechSummaryCache;
 import megamek.common.MechView;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogLevel;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.util.MegaMekFile;
+import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
@@ -61,6 +65,11 @@ import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.server.DedicatedServer;
+import org.apache.log4j.Layout;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
+import org.apache.log4j.RollingFileAppender;
+
 /**
  * @author mev This is the class where the execution of the megamek game starts.
  */
@@ -97,6 +106,8 @@ public class MegaMek {
                 }
             }
 
+            configureLogging(logFileName);
+
             // Redirect output to logfiles, unless turned off.
             if (logFileName != null) {
                 MegaMek.redirectOutput(logFileName);
@@ -125,6 +136,39 @@ public class MegaMek {
             message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
             MegaMek.displayMessageAndExit(message.toString());
         }
+    }
+
+    private static void configureLegacyLogging(@Nullable final String logFileName) {
+        // Redirect output to logfiles, unless turned off.
+        if (logFileName == null) {
+            return;
+        }
+        MegaMek.redirectOutput(logFileName);
+    }
+
+    private static void configureLog4j(@Nullable final String logFileName) {
+        if (null == logFileName) {
+            DefaultMmLogger.getInstance().setLogLevel("megamek", LogLevel.OFF);
+            return;
+        }
+
+        Layout layout = new PatternLayout("%-5.5p [%c#%N{method}] %m%n");
+        Logger rootLogger = Logger.getRootLogger();
+
+        try {
+            RollingFileAppender fileAppender = new RollingFileAppender(layout, logFileName);
+            fileAppender.setName("MegaMekLog");
+            fileAppender.setMaxFileSize("10MB");
+            fileAppender.setMaxBackupIndex(5);
+            rootLogger.addAppender(fileAppender);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    private static void configureLogging(@Nullable final String logFileName) {
+        configureLegacyLogging(logFileName);
+        configureLog4j(logFileName);
     }
 
     /**

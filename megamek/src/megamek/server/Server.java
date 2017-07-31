@@ -5282,11 +5282,22 @@ public class Server implements Runnable {
                 }
             }
 
-            // however WIGE can gain 1 level to avoid crashing into the terrain
-            if (entity.getMovementMode() == EntityMovementMode.WIGE
-                    && nextElevation == 0 && elevation > 0) {
-                nextElevation = 1;
-                crashedIntoTerrain = false;
+            // however WIGE can gain 1 level to avoid crashing into the terrain.
+            if (entity.getMovementMode() == EntityMovementMode.WIGE && (elevation > 0)) {
+                if (curAltitude == nextHex.floor()) {
+                    nextElevation = 1;
+                    crashedIntoTerrain = false;
+                } else if ((entity instanceof LandAirMech) && (curAltitude + 1 == nextHex.floor())) {
+                    // LAMs in airmech mode skid across terrain that is two levels higher rather than crashing,
+                    // Reset the skid distance for skid damage calculations.
+                    nextElevation = 0;
+                    skidDistance = 0;
+                    crashedIntoTerrain = false;
+                    r = new Report(2102);
+                    r.subject = entity.getId();
+                    r.indent();
+                    addReport(r);
+                }
             }
 
             Entity crashDropship = null;
@@ -5345,8 +5356,10 @@ public class Server implements Runnable {
                             break;
                     }
                     elevation = nextElevation;
-                    addReport(crashVTOLorWiGE((VTOL) entity, false, true,
-                            distance, curPos, elevation, table));
+                    if (entity instanceof Tank) {
+                        addReport(crashVTOLorWiGE((Tank) entity, false, true,
+                                distance, curPos, elevation, table));
+                    }
 
                     if ((nextHex.containsTerrain(Terrains.WATER) && !nextHex
                             .containsTerrain(Terrains.ICE))
@@ -5890,6 +5903,7 @@ public class Server implements Runnable {
             // Update the position and keep skidding.
             curPos = nextPos;
             curHex = nextHex;
+            elevation = nextElevation;
             r = new Report(2085);
             r.subject = entity.getId();
             r.indent();
@@ -5938,7 +5952,7 @@ public class Server implements Runnable {
         // damage only if flipping.
         boolean mechDamage = entity instanceof Mech
                 && !(entity.getMovementMode() == EntityMovementMode.WIGE
-                    && step.getClearance() > 0);
+                    && entity.getElevation() > 0);
         if (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE) {
             mechDamage = flip;
         }
@@ -8223,7 +8237,7 @@ public class Server implements Runnable {
                         } else {
                             elev = prevStep.getElevation();
                             // maximum distance is hexes moved / 2
-                            sideslipDistance = Math.min(moF, distance - 1);
+                            sideslipDistance = Math.min(moF, distance / 2);
                             skidDirection = prevFacing;
                             start = lastPos;
                         }

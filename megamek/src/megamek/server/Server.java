@@ -25096,13 +25096,13 @@ public class Server implements Runnable {
             reports.addElement(r);
             stealth.setMode("Off");
         }
-
+        
         // Handle equipment explosions.
         // Equipment explosions are secondary effects and
         // do not occur when loading from a scenario.
         if (((secondaryEffects && eqType.isExplosive(mounted))
-             || mounted.isHotLoaded() || (mounted.hasChargedCapacitor() != 0))
-            && !hitBefore) {
+                || mounted.isHotLoaded() || (mounted.hasChargedCapacitor() != 0))
+                && !hitBefore) {
             reports.addAll(explodeEquipment(en, loc, mounted));
         }
 
@@ -27992,7 +27992,34 @@ public class Server implements Runnable {
                                + " equipment (" + mounted.getName() + ')');
             return vDesc;
         }
-
+        
+        // Special case: LAM bomb bays explode the bomb stored there, which may involve going through a
+        // launch weapon to the bomb ammo.
+        if ((mounted.getType() instanceof MiscType)
+                && mounted.getType().hasFlag(MiscType.F_BOMB_BAY)) {
+            while (mounted.getLinked() != null) {
+                mounted = mounted.getLinked();
+            }
+            // Fuel tank explodes on 2d6 roll of 10+
+            if ((mounted.getType() instanceof MiscType)
+                    && mounted.getType().hasFlag(MiscType.F_FUEL)) {
+                Report r = new Report(9120);
+                r.subject = en.getId();
+                int boomTarget = 9;
+                // check for possible explosion
+                int fuelroll = Compute.d6(2);
+                r.choose(fuelroll > boomTarget);
+                if (fuelroll > boomTarget) {
+                    r.choose(true);
+                    vDesc.add(r);
+                } else {
+                    r.choose(false);
+                    vDesc.add(r);
+                    return vDesc;
+                }
+            }
+        }
+        
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((mounted.getType() instanceof MPodWeapon) || (mounted.getType() instanceof BPodWeapon))
             && (mounted.getLinked().getHittableShotsLeft() == 0)) {
@@ -28062,14 +28089,20 @@ public class Server implements Runnable {
 
         // Inferno ammo causes heat buildup as well as the damage
         if ((mounted.getType() instanceof AmmoType)
-            && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM)
-                || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM) || (((AmmoType) mounted
-                .getType()).getAmmoType() == AmmoType.T_MML))
-            && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_INFERNO)
-            && (mounted.getHittableShotsLeft() > 0)) {
+                && ((((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM)
+                        || (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_IATM) || (((AmmoType) mounted
+                                .getType()).getAmmoType() == AmmoType.T_MML))
+                && (((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_INFERNO)
+                && (mounted.getHittableShotsLeft() > 0)) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
         }
-
+        
+        // Inferno bombs in LAM bomb bays
+        if ((mounted.getType() instanceof BombType)
+                && (((BombType)mounted.getType()).getBombType() == BombType.B_INFERNO)) {
+            en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
+        }
+        
         // determine and deal damage
         int damage = mounted.getExplosionDamage();
 

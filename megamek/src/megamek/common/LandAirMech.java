@@ -1566,6 +1566,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                     && (slot.getMount2() == null)) {
                 slot.setMount2(mounted);
                 slots--;
+                // Link the bay to the slot so we can find the bomb to explode when the slot is hit.
+                slot.getMount().setLinked(mounted);
                 if (slots == 0) {
                     break;
                 }

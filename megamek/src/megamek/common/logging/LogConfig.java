@@ -21,7 +21,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class LogConfig {
 
-    private static final String SIMPLE_LOGGING_PATTERN = "%p [%c#N{method}] %m%n";
+    // timestamp priority [category] {thread} message
+    private static final String SIMPLE_LOGGING_PATTERN =
+            "%d{HH:mm:ss,SSS} %p [%c#N] {%t} %m%n"; 
     private static final LogConfig instance = new LogConfig();
 
     private final AtomicBoolean simpleLoggingConfigured = new AtomicBoolean(false);

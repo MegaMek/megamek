@@ -25262,7 +25262,7 @@ public class Server implements Runnable {
                     break;
                 }
                 //No PSR for Mechs in non-leg mode
-                if (en.canFall(true)) {
+                if (!en.canFall(true)) {
                     break;
                 }
                 switch (gyroHits) {

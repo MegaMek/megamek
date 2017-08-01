@@ -107,6 +107,10 @@ public class MechSetTest {
         if (!exactmatch) {
             System.out.print("Error with " + entryName + ": ");
             String dirFiles[] = imgFile.getParentFile().list();
+            if (dirFiles == null) {
+                System.out.println("File is not a directory! Entry Path: " + imageName);
+                return;
+            }
             Arrays.sort(dirFiles, new StringCompCaseInsensitive());
             int result = Arrays.binarySearch(dirFiles, imgFile.getName(),
                     new StringCompCaseInsensitive());

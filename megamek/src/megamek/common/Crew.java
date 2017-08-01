@@ -132,7 +132,7 @@ public class Crew implements Serializable {
     public static final String HUMANTRO_BA = "BA";
 
     public static final String SPECIAL_NONE = "None";
-    public static final String SPECIAL_LASER = "Laser";
+    public static final String SPECIAL_ENERGY = "Energy";
     public static final String SPECIAL_BALLISTIC = "Ballistic";
     public static final String SPECIAL_MISSILE = "Missile";
 

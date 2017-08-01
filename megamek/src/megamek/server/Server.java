@@ -2585,11 +2585,10 @@ public class Server implements Runnable {
                 // through the fighters in squadrons and damage them.
                 for (Iterator<Entity> ents = game.getEntities(); ents.hasNext(); ) {
                     Entity entity = ents.next();
-                    if ((entity instanceof Aero)
+                    if ((entity.isFighter())
                         && !(entity instanceof FighterSquadron)) {
-                        Aero a = (Aero) entity;
-                        if (a.isPartOfFighterSquadron() || a.isCapitalFighter()) {
-                            a.doDisbandDamage();
+                        if (entity.isPartOfFighterSquadron() || entity.isCapitalFighter()) {
+                            ((IAero)entity).doDisbandDamage();
                         }
                     }
                 // fix the armor and SI of aeros if using aero sanity rules for
@@ -2773,6 +2772,11 @@ public class Server implements Runnable {
                         a.liftOff(entity.getAltitude());
                     }
                 }
+
+                if (entity.isFighter()) {
+                    a.updateWeaponGroups();
+                    entity.loadAllWeapons();
+                }
             }
             
             if (entity instanceof IBomber) {
@@ -2797,15 +2801,20 @@ public class Server implements Runnable {
             }
 
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
-                && (entity instanceof Aero)) {
-                Aero a = (Aero) entity;
+                    && (entity.isAero())) {
+                Aero a = null;
+                if (entity instanceof Aero) {
+                    a = (Aero) entity;
+                }
                 if (entity.isCapitalScale()) {
-                    int currentSI = a.getSI() * 20;
-                    a.initializeSI(a.get0SI() * 20);
-                    a.setSI(currentSI);
+                    if (a != null) {
+                        int currentSI = a.getSI() * 20;
+                        a.initializeSI(a.get0SI() * 20);
+                        a.setSI(currentSI);
+                    }
                     if (entity.isCapitalFighter()) {
-                        a.autoSetCapArmor();
-                        a.autoSetFatalThresh();
+                        ((IAero)entity).autoSetCapArmor();
+                        ((IAero)entity).autoSetFatalThresh();
                     } else {
                         // all armor and SI is going to be at standard scale, so
                         // we need to adjust
@@ -2819,7 +2828,7 @@ public class Server implements Runnable {
                             }
                         }
                     }
-                } else {
+                } else if (a != null) {
                     int currentSI = a.getSI() * 2;
                     a.initializeSI(a.get0SI() * 2);
                     a.setSI(currentSI);
@@ -4363,7 +4372,7 @@ public class Server implements Runnable {
         // adjusted based on the bomb-loadout on the fighter.
         if ((game.getPhase() == Phase.PHASE_LOUNGE)
             && (loader instanceof FighterSquadron)) {
-            ((Aero) unit).setBombChoices(((FighterSquadron) loader)
+            ((IBomber) unit).setBombChoices(((FighterSquadron) loader)
                                                  .getBombChoices());
         }
 
@@ -21966,7 +21975,7 @@ public class Server implements Runnable {
             if (!en.isCapitalFighter() || (nextAE == Entity.NONE)) {
                 continue;
             }
-            Aero ship = (Aero) en;
+            IAero ship = (IAero) en;
             int damage = ship.getCurrentDamage();
             double divisor = 2.0;
             if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
@@ -21977,9 +21986,9 @@ public class Server implements Runnable {
                         + (int) Math.floor((damage - ship.getFatalThresh())
                                 / divisor);
                 if (roll > 9) {
-                    vDesc.addAll(destroyEntity(ship, "fatal damage threshold"));
+                    vDesc.addAll(destroyEntity(en, "fatal damage threshold"));
                     if (prevAE != Entity.NONE) {
-                        creditKill(ship, game.getEntity(prevAE));
+                        creditKill(en, game.getEntity(prevAE));
                     }
                 }
             }
@@ -22555,7 +22564,7 @@ public class Server implements Runnable {
 
             // Capital fighters receive damage differently
             if (te.isCapitalFighter()) {
-                Aero a = (Aero) te;
+                IAero a = (IAero) te;
                 a.setCurrentDamage(a.getCurrentDamage() + damage);
                 a.setCapArmor(a.getCapArmor() - damage);
                 r = new Report(9065);
@@ -22575,13 +22584,15 @@ public class Server implements Runnable {
                             "Structural Integrity Collapse"));
                     a.setCapArmor(0);
                     if (hit.getAttackerId() != Entity.NONE) {
-                        creditKill(a, game.getEntity(hit.getAttackerId()));
+                        creditKill(te, game.getEntity(hit.getAttackerId()));
                     }
                 }
                 damage = 0;
-                // check for crits
-                checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh,
-                               critSI, ammoExplosion, nukeS2S);
+                // check for aero crits from natural 12 or threshold; LAMs take damage as mechs
+                if (te instanceof Aero) {
+                    checkAeroCrits(vDesc, (Aero) te, hit, damage_orig, critThresh,
+                                   critSI, ammoExplosion, nukeS2S);
+                }
                 return vDesc;
             }
 
@@ -25125,6 +25136,17 @@ public class Server implements Runnable {
         if (mounted.getBaseShotsLeft() > 0) {
             mounted.setShotsLeft(0);
         }
+        
+        // LAMs that are part of a fighter squadron will need to have the squadron recalculate
+        // the bomb loadout on a bomb bay critical.
+        if (en.isPartOfFighterSquadron()
+                && (mounted.getType() instanceof MiscType)
+                && mounted.getType().hasFlag(MiscType.F_BOMB_BAY)) {
+            Entity squadron = game.getEntity(en.getTransportId());
+            if (squadron instanceof FighterSquadron) {
+                ((FighterSquadron) squadron).computeSquadronBombLoadout();
+            }
+        }
         return reports;
     }
 
@@ -25281,6 +25303,20 @@ public class Server implements Runnable {
                     // hip piloting roll
                     game.addPSR(new PilotingRollData(en.getId(), 2,
                                                      "hip actuator hit"));
+                }
+                break;
+            case LandAirMech.LAM_AVIONICS:
+                if (en.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
+                    if (en.isPartOfFighterSquadron()) {
+                        game.addControlRoll(new PilotingRollData(
+                                en.getTransportId(), 1, "avionics hit"));
+                    } else if (en.isCapitalFighter()){
+                        game.addControlRoll(new PilotingRollData(en.getId(), 1,
+                                                                 "avionics hit"));
+                    } else {
+                        game.addControlRoll(new PilotingRollData(en.getId(), 0,
+                                                                 "avionics hit"));
+                    }
                 }
                 break;
         }
@@ -30133,14 +30169,14 @@ public class Server implements Runnable {
         }
         game.addEntity(fs);
         for (int id : fighters) {
-            Aero fighter = (Aero) game.getEntity(id);
+            Entity fighter = game.getEntity(id);
             if (null != fighter) {
                 fs.load(fighter, false);
                 fs.autoSetMaxBombPoints();
                 fighter.setTransportId(fs.getId());
                 // If this is the lounge, we want to configure bombs
                 if (game.getPhase() == Phase.PHASE_LOUNGE) {
-                    fighter.setBombChoices(fs.getBombChoices());
+                    ((IBomber)fighter).setBombChoices(fs.getBombChoices());
                 }
                 entityUpdate(fighter.getId());
             }

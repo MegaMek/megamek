@@ -442,8 +442,7 @@ public class Protomech extends Entity {
      * importnat... For cost and validation purposes.
      */
     @Override
-    public int getHeatCapacity() {
-
+    public int getHeatCapacity(boolean radicalHeatSinks) {
         return 999;
     }
 

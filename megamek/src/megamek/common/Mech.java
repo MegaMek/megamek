@@ -1662,6 +1662,11 @@ public abstract class Mech extends Entity {
     public int getHeatCapacity() {
         return getHeatCapacity(true, true);
     }
+    
+    @Override
+    public int getHeatCapacity(boolean radicalHeatSink) {
+        return getHeatCapacity(true, radicalHeatSink);
+    }
 
     /**
      * Returns the name of the heat sinks mounted on this 'mech.
@@ -2934,8 +2939,8 @@ public abstract class Mech extends Entity {
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted,
             int critSlot)
             throws LocationFullException {
-        // if there's no actual location, then don't add criticals
-        if (loc == LOC_NONE) {
+        // if there's no actual location or this is a LAM capital fighter weapons group, then don't add criticals
+        if (loc == LOC_NONE || mounted.isWeaponGroup()) {
             super.addEquipment(mounted, loc, rearMounted);
             return;
         }

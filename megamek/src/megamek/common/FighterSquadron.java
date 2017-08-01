@@ -88,27 +88,27 @@ public class FighterSquadron extends Aero {
 
     @Override
     public int get0SI() {
-        return fighters.stream().map(fid -> (Aero) game.getEntity(fid))
-            .filter(ACTIVE_CHECK).mapToInt(ent -> ent.get0SI()).min().orElse(0);
+        return fighters.stream().map(fid -> game.getEntity(fid))
+            .filter(ACTIVE_CHECK).mapToInt(ent -> ((IAero)ent).get0SI()).min().orElse(0);
     }
 
     @Override
     public int getSI() {
-        return fighters.stream().map(fid -> (Aero) game.getEntity(fid))
-            .filter(ACTIVE_CHECK).mapToInt(ent -> ent.getSI()).min().orElse(0);
+        return fighters.stream().map(fid -> game.getEntity(fid))
+            .filter(ACTIVE_CHECK).mapToInt(ent -> ((IAero)ent).getSI()).min().orElse(0);
     }
 
     @Override
     public int getTotalArmor() {
         return fighters.stream()
-                .mapToInt(fid -> ((Aero) game.getEntity(fid)).getCapArmor())
+                .mapToInt(fid -> ((IAero)game.getEntity(fid)).getCapArmor())
                 .sum();
     }
 
     @Override
     public int getTotalOArmor() {
         return fighters.stream()
-                .mapToInt(fid -> ((Aero) game.getEntity(fid)).getCap0Armor())
+                .mapToInt(fid -> ((IAero) game.getEntity(fid)).getCap0Armor())
                 .sum();
     }
 
@@ -126,7 +126,7 @@ public class FighterSquadron extends Aero {
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
-        return fighters.stream().map(fid -> (Aero) game.getEntity(fid))
+        return fighters.stream().map(fid -> game.getEntity(fid))
                 .filter(ACTIVE_CHECK)
                 .mapToInt(ent -> ent.getWalkMP(gravity, ignoreheat)).min()
                 .orElse(0);
@@ -134,8 +134,8 @@ public class FighterSquadron extends Aero {
 
     @Override
     public int getFuel() {
-        return fighters.stream().map(fid -> (Aero) game.getEntity(fid))
-            .filter(ACTIVE_CHECK).mapToInt(ent -> ent.getFuel()).min().orElse(0);
+        return fighters.stream().map(fid -> game.getEntity(fid))
+            .filter(ACTIVE_CHECK).mapToInt(ent -> ((IAero)ent).getFuel()).min().orElse(0);
     }
 
     /*
@@ -166,7 +166,7 @@ public class FighterSquadron extends Aero {
                 || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
-        return fighters.stream().map(fid -> (Aero) game.getEntity(fid))
+        return fighters.stream().map(fid -> game.getEntity(fid))
                 .filter(ACTIVE_CHECK).filter(ent -> ent.hasActiveECM())
                 .findFirst().isPresent();
     }
@@ -205,8 +205,8 @@ public class FighterSquadron extends Aero {
 
         // according to personal communication with Welshman, the normal crit
         // penalties are added up across the fighter squadron
-        fighters.stream().map(fid -> (Aero) game.getEntity(fid))
-            .filter(ACTIVE_CHECK).forEachOrdered(
+        fighters.stream().map(fid -> game.getEntity(fid))
+            .filter(ACTIVE_CHECK).map(ent -> (IAero)ent).forEachOrdered(
             ent -> {
                 int avihits = ent.getAvionicsHits();
                 if ((avihits > 0) && (avihits < 3)) {
@@ -221,7 +221,7 @@ public class FighterSquadron extends Aero {
                     prd.addModifier(2, "No life support");
                 }
 
-                if(ent.hasModularArmor()) {
+                if(((Entity)ent).hasModularArmor()) {
                     prd.addModifier(1, "Modular Armor");
                 }
             });
@@ -230,9 +230,9 @@ public class FighterSquadron extends Aero {
 
     @Override
     public int getClusterMods() {
-        return fighters.stream().map(fid -> (Aero) game.getEntity(fid))
-            .filter(ACTIVE_CHECK).filter(ent -> (ent.getFCSHits() <= 2))
-            .mapToInt(ent -> ent.getClusterMods()).sum();
+        return fighters.stream().map(fid -> game.getEntity(fid))
+            .filter(ACTIVE_CHECK).filter(ent -> (((IAero)ent).getFCSHits() <= 2))
+            .mapToInt(ent -> ((IAero)ent).getClusterMods()).sum();
     }
 
     @Override
@@ -264,8 +264,8 @@ public class FighterSquadron extends Aero {
 
     @Override
     public int getHeatSinks() {
-        return fighters.stream().map(fid -> (Aero) game.getEntity(fid))
-            .filter(ACTIVE_CHECK).mapToInt(ent -> ent.getHeatSinks()).sum();
+        return fighters.stream().map(fid -> game.getEntity(fid))
+            .filter(ACTIVE_CHECK).mapToInt(ent -> ((IAero)ent).getHeatSinks()).sum();
     }
     
     @Override
@@ -278,8 +278,8 @@ public class FighterSquadron extends Aero {
     }
 
     public void resetHeatCapacity() {
-        List<Aero> activeFighters = fighters.stream()
-                .map(fid -> (Aero) game.getEntity(fid)).filter(ACTIVE_CHECK)
+        List<Entity> activeFighters = fighters.stream()
+                .map(fid -> game.getEntity(fid)).filter(ACTIVE_CHECK)
                 .collect(Collectors.toList());
         heatcap = activeFighters.stream()
                 .mapToInt(ent -> ent.getHeatCapacity(true)).sum();
@@ -289,7 +289,7 @@ public class FighterSquadron extends Aero {
 
     @Override
     public double getWeight() {
-        return fighters.stream().map(fid -> (Aero) game.getEntity(fid))
+        return fighters.stream().map(fid -> game.getEntity(fid))
             .filter(ACTIVE_CHECK).mapToDouble(ent -> ent.getWeight()).sum();
     }
 
@@ -313,17 +313,23 @@ public class FighterSquadron extends Aero {
      */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
+        // Create a list of the indices of all the active fighters, which serves as the list of valid hit locations
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < fighters.size(); i++) {
+            if (ACTIVE_CHECK.test(game.getEntity(fighters.get(i)))) {
+                indices.add(i);
+            }
+        }
         // If this squadron is doomed or is of size 1 then just return the first
         // one
-        List<Entity> activeFighters = getActiveSubEntities().orElse(Collections.emptyList());
-        if(isDoomed() || activeFighters.isEmpty()) {
+        if (isDoomed() || indices.isEmpty()) {
             return new HitData(0);
         }
 
         // Pick a random number between 0 and the number of fighters in the
         // squadron.
-        int hit = activeFighters.get(Compute.randomInt(activeFighters.size())).getId();
-        return new HitData(fighters.stream().filter(fid -> (fid == hit)).findFirst().orElse(0));
+        int hit = indices.get(Compute.randomInt(indices.size()));
+        return new HitData(hit);
     }
 
     @Override
@@ -357,12 +363,13 @@ public class FighterSquadron extends Aero {
         // now collect a hash of all the same weapons in each location by id
         Map<String, Integer> groups = new HashMap<String, Integer>();
         for (Integer fId : fighters) {
-            Aero fighter = (Aero) game.getEntity(fId);
+            Entity entity = game.getEntity(fId);
+            IAero fighter = (IAero) entity;
             if (fighter.getFCSHits() > 2) {
                 // can't fire with no more FCS
                 continue;
             }
-            for (Mounted mounted : fighter.getWeaponGroupList()) {
+            for (Mounted mounted : entity.getWeaponGroupList()) {
                 if (mounted.isHit() || mounted.isDestroyed()) {
                     continue;
                 }
@@ -457,7 +464,7 @@ public class FighterSquadron extends Aero {
     public ArrayList<Mounted> getAmmo() {
         ArrayList<Mounted> allAmmo = new ArrayList<Mounted>();
         for (Integer fId : fighters) {
-            Aero fighter = (Aero) game.getEntity(fId);
+            Entity fighter = game.getEntity(fId);
             allAmmo.addAll(fighter.getAmmo());
         }
         return allAmmo;
@@ -466,7 +473,7 @@ public class FighterSquadron extends Aero {
     @Override
     public void useFuel(int fuel) {
         for (Integer fId : fighters) {
-            Aero fighter = (Aero) game.getEntity(fId);
+            IAero fighter = (IAero) game.getEntity(fId);
             fighter.useFuel(fuel);
         }
     }
@@ -475,7 +482,7 @@ public class FighterSquadron extends Aero {
     public void autoSetMaxBombPoints() {
         maxBombPoints = Integer.MAX_VALUE;
         for (Integer fId : fighters) {
-            Aero fighter = (Aero) game.getEntity(fId);
+            Entity fighter = game.getEntity(fId);
             int currBombPoints = (int) Math.round(fighter.getWeight() / 5);
             maxBombPoints = Math.min(maxBombPoints, currBombPoints);
         }
@@ -489,7 +496,7 @@ public class FighterSquadron extends Aero {
         }
         // Update each fighter in the squadron
         for (Integer fId : fighters) {
-            Aero fighter = (Aero) game.getEntity(fId);
+            IBomber fighter = (IBomber) game.getEntity(fId);
             fighter.setBombChoices(bc);
         }
     }
@@ -507,7 +514,7 @@ public class FighterSquadron extends Aero {
     public int[] getBombLoadout() {
         int[] loadout = new int[BombType.B_NUM];
         for (Integer fId : fighters) {
-            Aero fighter = (Aero) game.getEntity(fId);
+            Entity fighter = (Entity) game.getEntity(fId);
             for (Mounted m : fighter.getBombs()) {
                 loadout[((BombType) m.getType()).getBombType()]++;
             }
@@ -522,7 +529,7 @@ public class FighterSquadron extends Aero {
         // once the bombs are applied, the choices are cleared, so it's not an
         // issue if the bombs are applied twice for an Aero
         for (Integer fId : fighters) {
-            Aero fighter = (Aero) game.getEntity(fId);
+            IBomber fighter = (IBomber) game.getEntity(fId);
             fighter.applyBombs();
         }
         computeSquadronBombLoadout();
@@ -553,7 +560,7 @@ public class FighterSquadron extends Aero {
             int maxBombCount = 0;
             for (Integer fId : fighters) {
                 int bombCount = 0;
-                Aero fighter = (Aero) game.getEntity(fId);
+                Entity fighter = game.getEntity(fId);
                 for (Mounted m : fighter.getBombs()) {
                     if (((BombType) m.getType()).getBombType() == btype) {
                         bombCount++;
@@ -784,7 +791,7 @@ public class FighterSquadron extends Aero {
      */
     @Override
     public double getUnused(Entity e) {
-        if (e instanceof Aero) {
+        if (e.isFighter()) {
             return getUnused();
         } else {
             return 0;

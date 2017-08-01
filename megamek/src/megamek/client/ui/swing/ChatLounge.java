@@ -90,7 +90,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorHandlesTank;
@@ -108,6 +107,7 @@ import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
@@ -2108,7 +2108,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         // fighter
         if (loader instanceof FighterSquadron) {
             FighterSquadron fSquad = (FighterSquadron) loader;
-            Aero fighter = (Aero) loadee;
             // We can't use Aero.getBombPoints() because the bombs haven't been
             // loaded yet, only selected, so we have to count the choices
             int[] bombChoice = fSquad.getBombChoices();
@@ -2117,7 +2116,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 numLoadedBombs += bombChoice[i];
             }
             // We can't load all of the squadrons bombs
-            if (numLoadedBombs > fighter.getMaxBombPoints()) {
+            if (numLoadedBombs > ((IBomber)loadee).getMaxBombPoints()) {
                 JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.bomberror"),
                         Messages.getString("FighterSquadron.error"), JOptionPane.ERROR_MESSAGE);
                 return;

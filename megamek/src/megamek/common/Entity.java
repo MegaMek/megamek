@@ -3913,7 +3913,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Returns the amount of heat that the entity can sink each turn.
      */
-    public abstract int getHeatCapacity();
+    public int getHeatCapacity() {
+        return getHeatCapacity(true);
+    }
+    
+    public abstract int getHeatCapacity(boolean radicalHeatSink);
 
     /**
      * Returns the amount of heat that the entity can sink each turn, factoring

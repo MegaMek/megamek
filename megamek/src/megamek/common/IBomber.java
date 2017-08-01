@@ -145,11 +145,6 @@ public interface IBomber {
             // Clear out the bomb choice once the bombs are loaded
             getBombChoices()[type] = 0;
         }
-
-        if (this instanceof Aero) {
-            ((Aero)this).updateWeaponGroups();
-        }
-        ((Entity)this).loadAllWeapons();
     }
 
 }

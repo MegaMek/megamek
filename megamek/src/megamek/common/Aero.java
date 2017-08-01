@@ -2517,10 +2517,6 @@ public class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    public int getHeatCapacity() {
-        return getHeatCapacity(true);
-    }
-
     public int getHeatCapacity(boolean includeRadicalHeatSink){
         int capacity = (getHeatSinks() * (getHeatType() + 1));
         if (includeRadicalHeatSink
@@ -3369,7 +3365,7 @@ public class Aero extends Entity implements IAero, IBomber {
         Map<String, Integer> groups = new HashMap<String, Integer>();
         for (Mounted mounted : getTotalWeaponList()) {
             int loc = mounted.getLocation();
-            if ((loc == Aero.LOC_RWING) || (loc == Aero.LOC_LWING)) {
+            if (isFighter() && ((loc == Aero.LOC_RWING) || (loc == Aero.LOC_LWING))) {
                 loc = Aero.LOC_WINGS;
             }
             if (mounted.isRearMounted()) {

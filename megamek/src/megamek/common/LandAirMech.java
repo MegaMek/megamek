@@ -14,8 +14,11 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import megamek.common.options.OptionsConstants;
 
@@ -43,6 +46,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     
     public static final String[] LAM_STRING = { "Standard", "Bimodal" };
 
+    private static String[] CAPITAL_LOCATION_ABBRS =
+        { "NOS", "LWG", "RWG", "AFT", "WNG" };
+
+    @Override
+    public String[] getLocationAbbrs() {
+        if (isCapitalFighter()) {
+            return CAPITAL_LOCATION_ABBRS;
+        }
+        return super.getLocationAbbrs();
+    }
+
     private int lamType;
     
     /** Fighter mode **/
@@ -69,6 +83,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     private int fuel;
     private int whoFirst;
+
+    // Capital Fighter stuff
+    private int capitalArmor = 0;
+    private int capitalArmor_orig = 2;
+    private int fatalThresh = 0;
+    private int currentDamage = 0;
+    private Map<String, Integer> weaponGroups = new HashMap<String, Integer>();
 
     public LandAirMech(int inGyroType, int inCockpitType, int inLAMType) {
         super(inGyroType, inCockpitType);
@@ -383,7 +404,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return super.getEngineCritHeat();
         }
     }
-
+    
+    @Override
+    public int getHeatSinks() {
+        return getActiveSinks();
+    }
+    
     @Override
     public boolean usesTurnMode() {
         // Turn mode rule is not optional for LAMs in AirMech mode.
@@ -1108,6 +1134,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
     
     @Override
+    public int getFCSHits() {
+        return 0;
+    }
+    
+    @Override
     public int getLeftThrustHits() {
         return 0;
     }
@@ -1167,6 +1198,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         final Mounted mounted = getEquipment(wn);
         if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             return Compute.ARC_360;
+        }
+        // We use Aero locations for weapon groups for fighter squadron compatibility
+        if (mounted.isWeaponGroup()) {
+            return (mounted.getLocation() == Aero.LOC_AFT)?
+                    Compute.ARC_AFT : Compute.ARC_NOSE;
         }
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
@@ -1466,6 +1502,169 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     public boolean didAccDecNow() {
         return accDecNow;
+    }
+
+    public int getCapArmor() {
+        return capitalArmor;
+    }
+    
+    public void setCapArmor(int i) {
+        capitalArmor = i;
+    }
+    
+    public int getCap0Armor() {
+        return capitalArmor_orig;
+    }
+
+    public int getFatalThresh() {
+        return fatalThresh;
+    }
+    
+    @Override
+    public void autoSetInternal() {
+        super.autoSetInternal();
+        autoSetCapArmor();
+        autoSetFatalThresh();
+    }
+
+    public void autoSetCapArmor() {
+        double divisor = 10.0;
+        if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            divisor = 1.0;
+        }
+        capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
+        capitalArmor = (int) Math.round(getTotalArmor() / divisor);
+    }
+
+    public void autoSetFatalThresh() {
+        int baseThresh = 2;
+        if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            baseThresh = 20;
+        }
+        fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
+    }
+
+    public int getCurrentDamage() {
+        return currentDamage;
+    }
+
+    public void setCurrentDamage(int i) {
+        currentDamage = i;
+    }
+
+    /**
+     * Provide weapon groups for capital fighters. For capital fighter purposes we use Aero locations.
+     */
+    public void updateWeaponGroups() {
+        // first we need to reset all the weapons in our existing mounts to zero
+        // until proven otherwise
+        Set<String> set = weaponGroups.keySet();
+        Iterator<String> iter = set.iterator();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            this.getEquipment(weaponGroups.get(key)).setNWeapons(0);
+        }
+        // now collect a hash of all the same weapons in each location by id
+        Map<String, Integer> groups = new HashMap<String, Integer>();
+        for (Mounted mounted : getTotalWeaponList()) {
+            int loc = Aero.LOC_WINGS;
+            if ((loc == Mech.LOC_CT) || (loc == Mech.LOC_HEAD)) {
+                loc = Aero.LOC_NOSE;
+            }
+            if (mounted.isRearMounted()
+                    || (loc == Mech.LOC_LLEG) || (loc == Mech.LOC_RLEG)) {
+                loc = Aero.LOC_AFT;
+            }
+            String key = mounted.getType().getInternalName() + ":" + loc;
+            if (null == groups.get(key)) {
+                groups.put(key, mounted.getNWeapons());
+            } else {
+                groups.put(key, groups.get(key) + mounted.getNWeapons());
+            }
+        }
+        // now we just need to traverse the hash and either update our existing
+        // equipment or add new ones if there is none
+        Set<String> newSet = groups.keySet();
+        Iterator<String> newIter = newSet.iterator();
+        while (newIter.hasNext()) {
+            String key = newIter.next();
+            if (null != weaponGroups.get(key)) {
+                // then this equipment is already loaded, so we just need to
+                // correctly update the number of weapons
+                this.getEquipment(weaponGroups.get(key)).setNWeapons(groups.get(key));
+            } else {
+                // need to add a new weapon
+                String name = key.split(":")[0];
+                int loc = Integer.parseInt(key.split(":")[1]);
+                EquipmentType etype = EquipmentType.get(name);
+                Mounted newmount;
+                if (etype != null) {
+                    try {
+                        newmount = addWeaponGroup(etype, loc);
+                        newmount.setNWeapons(groups.get(key));
+                        weaponGroups.put(key, getEquipmentNum(newmount));
+                    } catch (LocationFullException ex) {
+                        System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$
+                        ex.printStackTrace();
+                        return;
+                    }
+                } else if (name != "0") {
+                    addFailedEquipment(name);
+                }
+            }
+        }
+    }
+
+    // Damage a fighter that was part of a squadron when splitting it. Per StratOps pg. 32 & 34
+    @Override
+    public void doDisbandDamage() {
+        // Check for critical threshold and if so damage one facing of the fighter completely.
+        // We also destroy the center torso regardless of direction.
+        if (wasCritThresh()) {
+            int side = Compute.randomInt(4);
+            switch (side) {
+            case 0: // Nose
+                destroyLocation(LOC_HEAD);
+                break;
+            case 1: // Left wing
+                destroyLocation(LOC_LT);
+                destroyLocation(LOC_LARM);
+                break;
+            case 2: // Right wing
+                destroyLocation(LOC_RT);
+                destroyLocation(LOC_RARM);
+                break;
+            case 3: // Aft
+                destroyLocation(LOC_LLEG);
+                destroyLocation(LOC_RLEG);
+                break;
+            }
+            destroyLocation(LOC_CT);
+        }
+
+        // Move on to actual damage...
+        int damage = getCap0Armor() - getCapArmor();
+        if (damage < 1) {
+            return;
+        }
+        int hits = (int) Math.ceil(damage / 5.0);
+        int damPerHit = 5;
+        for (int i = 0; i < hits; i++) {
+            int loc = rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_RANDOM).getLocation();
+            setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
+            // We did too much damage, so we need to damage the internal structure
+            if (getArmor(loc) < 0) {
+                if (getInternal(loc) > 1) {
+                    int internal = getInternal(loc) + getArmor(loc);
+                    if (internal <= 0) {
+                        internal = (loc == LOC_CT || loc == LOC_HEAD)? 1 : 0; // We don't want to destroy the fighter if it didn't pass the fatal threshold
+                    }
+                    setInternal(internal, loc);
+                }
+                setArmor(0, loc);
+            }
+            damage -= damPerHit;
+        }
     }
 
     @Override

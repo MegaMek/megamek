@@ -69,6 +69,10 @@ public interface IAero {
     int get0SI();
     int getAvionicsHits();
     int getSensorHits();
+    int getFCSHits();
+    default int getClusterMods() {
+        return -1 * (getFCSHits() + getSensorHits());
+    }
     boolean hasLifeSupport();
     void setGearHit(boolean hit);
     int getLandingGearMod(boolean vTakeoff);
@@ -81,6 +85,20 @@ public interface IAero {
     int getFuel();
     void setFuel(int gas);
     double getFuelPointsPerTon();
+    
+    // Capital fighters
+    int getCapArmor();
+    void setCapArmor(int i);
+    int getCap0Armor();
+    int getFatalThresh();
+    int getCurrentDamage();
+    void setCurrentDamage(int i);
+    int getHeatSinks();
+    void doDisbandDamage();
+    void updateWeaponGroups();
+    void autoSetCapArmor();
+    void autoSetFatalThresh();
+    
     /**
      * Set number of fuel points based on fuel tonnage.
      *

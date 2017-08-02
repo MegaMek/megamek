@@ -874,7 +874,6 @@ public class MoveStep implements Serializable {
                     setAltitude(altitude + 1);
                     setMp(2);
                 } else {
-                    setElevation(elevation + 1);
                     if (entity.getMovementMode() == EntityMovementMode.WIGE) {
                         // If on the ground, pay liftoff cost. If airborne, pay 1 MP to increase elevation
                         // (LAMs and glider protomechs only)
@@ -890,6 +889,7 @@ public class MoveStep implements Serializable {
                             setMp(isJumping() ? 0 : 1);
                         }
                     }
+                    setElevation(elevation + 1);
                 }
                 break;
             case DOWN:

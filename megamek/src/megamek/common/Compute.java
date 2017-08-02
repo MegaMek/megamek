@@ -548,7 +548,7 @@ public class Compute {
         if ((entity instanceof VTOL)
                 || (entity.getMovementMode() == EntityMovementMode.HOVER)
                 || (entity.getMovementMode() == EntityMovementMode.WIGE
-                        && destElevation > 0)) {
+                        && destElevation > 0 && !(entity instanceof Protomech))) {
             if (isTurning
                     && ((movementType == EntityMovementType.MOVE_RUN) 
                             || (movementType == EntityMovementType.MOVE_SPRINT)

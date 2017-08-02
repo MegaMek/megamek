@@ -10876,9 +10876,14 @@ public class Server implements Runnable {
                         HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL,
                                                          ToHitData.SIDE_FRONT);
                         if (hit.getLocation() == Protomech.LOC_NMISS) {
-                            r = new Report(6035);
+                            Protomech proto = (Protomech) te;
+                            r = new Report(6305);
                             r.subject = te.getId();
-                            r.indent(2);
+                            r.indent(2);            
+                            if (proto.isGlider()) {
+                                r.messageId = 6306;
+                                proto.setWingHits(proto.getWingHits() + 1);
+                            }
                             vPhaseReport.add(r);
                         } else {
                             r = new Report(6690);
@@ -20527,9 +20532,14 @@ public class Server implements Runnable {
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                                                      ToHitData.SIDE_FRONT);
                 if (hit.getLocation() == Protomech.LOC_NMISS) {
-                    r = new Report(6035);
+                    Protomech proto = (Protomech) entity;
+                    r = new Report(6305);
                     r.subject = entity.getId();
-                    r.indent(1);
+                    r.indent(2);            
+                    if (proto.isGlider()) {
+                        r.messageId = 6306;
+                        proto.setWingHits(proto.getWingHits() + 1);
+                    }
                     addReport(r);
                 } else {
                     r = new Report(6690);
@@ -21216,6 +21226,14 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
             }
         }
+        
+        // Glider protomechs without sufficient movement to stay airborne make forced landings.
+        if ((entity instanceof Protomech) && ((Protomech)entity).isGlider()
+                && entity.isAirborneVTOLorWIGE() && (entity.getRunMP() < 4)) {
+            vPhaseReport.addAll(landGliderPM((Protomech) entity, entity.getPosition(), entity.getElevation(),
+                    entity.delta_distance));
+        }
+        
         // non mechs and prone mechs can now return
         if (!entity.canFall()
             || (entity.isHullDown() && entity.canGoHullDown())) {
@@ -22302,11 +22320,16 @@ public class Server implements Runnable {
 
         // Some "hits" on a Protomech are actually misses.
         if ((te instanceof Protomech)
-            && (hit.getLocation() == Protomech.LOC_NMISS)) {
-            r = new Report(6035);
-            r.subject = te_n;
-            r.indent(2);
-            vDesc.addElement(r);
+                && (hit.getLocation() == Protomech.LOC_NMISS)) {
+            Protomech proto = (Protomech) te;
+            r = new Report(6305);
+            r.subject = te.getId();
+            r.indent(2);            
+            if (proto.isGlider()) {
+                r.messageId = 6306;
+                proto.setWingHits(proto.getWingHits() + 1);
+            }
+            vDesc.add(r);
             return vDesc;
         }
 
@@ -26534,7 +26557,7 @@ public class Server implements Runnable {
         } else {
             en.setElevation(0);
         }
-        PilotingRollData psr = new PilotingRollData(en.getId(), 4, "attempting to land");
+        PilotingRollData psr = en.checkGliderLanding();
         if (0 > doSkillCheckWhileMoving(en, startElevation, pos, pos, psr, false)) {
             for (int i = 0; i < en.getNumberOfCriticals(Protomech.LOC_LEG); i++) {
                 en.getCritical(Protomech.LOC_LEG, i).setHit(true);

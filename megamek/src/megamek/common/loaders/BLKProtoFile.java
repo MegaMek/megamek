@@ -59,6 +59,12 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
 
         if (dataFile.exists("quad") && dataFile.getDataAsString("quad")[0].equalsIgnoreCase("true")) {
             t.setIsQuad(true);
+            t.setMovementMode(EntityMovementMode.QUAD);
+        }
+
+        if (dataFile.exists("glider") && dataFile.getDataAsString("glider")[0].equalsIgnoreCase("true")) {
+            t.setIsQuad(true);
+            t.setMovementMode(EntityMovementMode.WIGE);
         }
 
         if (dataFile.exists("source")) {

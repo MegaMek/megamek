@@ -2225,8 +2225,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             if (clientgui.getClient().getGame().getBoard().inSpace()) {
                 return;
-            }            
-        } else if (!(ce instanceof LandAirMech
+            }
+        } else if (!(ce instanceof Protomech) && !(ce instanceof LandAirMech
                 && (((LandAirMech)ce).getConversionMode() == LandAirMech.CONV_MODE_AIRMECH))
                 && (ce.getAltitude() <= 3)) {
             return;

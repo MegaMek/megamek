@@ -10601,20 +10601,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((moveType != EntityMovementType.MOVE_JUMP)
-            && (prevHex != null)
-            && (distance > 1)
-            && ((overallMoveType == EntityMovementType.MOVE_RUN)
-                    || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
-                    || (overallMoveType == EntityMovementType.MOVE_SPRINT)
-                    || (overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT))
-            && (prevFacing != curFacing) && !lastPos.equals(curPos)
-            && !(this instanceof Infantry)) {
+                && (prevHex != null)
+                && (distance > 1)
+                && ((overallMoveType == EntityMovementType.MOVE_RUN)
+                        || (overallMoveType == EntityMovementType.MOVE_VTOL_RUN)
+                        || (overallMoveType == EntityMovementType.MOVE_SPRINT)
+                        || (overallMoveType == EntityMovementType.MOVE_VTOL_SPRINT))
+                && (prevFacing != curFacing) && !lastPos.equals(curPos)
+                && !(this instanceof Infantry)
+                && !(this instanceof Protomech)) {
             roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
             if (isUsingManAce()) {
                 roll.addModifier(-1, "Maneuvering Ace");
             }
             if ((getMovementMode() == EntityMovementMode.VTOL) && isMASCUsed()
-                && hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
+                    && hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
                 roll.addModifier(3, "used VTOL Jet Booster");
             }
         } else if (moveType != EntityMovementType.MOVE_JUMP
@@ -10625,7 +10626,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             roll.append(new PilotingRollData(getId(), 0, "controlled sideslip"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: not apparently sideslipping");
+                    "Check false: not apparently sideslipping");
         }
 
         return roll;

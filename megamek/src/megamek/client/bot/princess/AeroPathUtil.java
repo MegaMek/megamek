@@ -49,7 +49,7 @@ public class AeroPathUtil
 	public static boolean IsSafePathOffBoard(MovePath movePath)
 	{
 		// also need to include whether the path has any piloting rolls involved
-		return !WillStall(movePath) && !WillCrash(movePath) && WillGoOffBoard(movePath) && movePath.contains(MoveStepType.MANEUVER);
+		return !WillStall(movePath) && !WillCrash(movePath) && WillGoOffBoard(movePath) && !movePath.contains(MoveStepType.MANEUVER);
 	}
 
 }

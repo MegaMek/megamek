@@ -186,12 +186,6 @@ public class MegaMek {
         resetLogFile(logFileName);
         configureLegacyLogging(logFileName);
         configureLog4j(logFileName);
-
-        try {
-            int err = 10 / 0;
-        } catch (Throwable t) {
-            logger.log(MegaMek.class, "configureLogging(String)", t);
-        }
     }
 
     /**

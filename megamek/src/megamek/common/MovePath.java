@@ -96,6 +96,9 @@ public class MovePath implements Cloneable, Serializable {
 
     private transient IGame game;
     private transient Entity entity;
+    
+    // holds the types of steps present in this movement 
+    private HashSet<MoveStepType> containedStepTypes = new HashSet<>();
 
     public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 500;
 
@@ -257,6 +260,7 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         steps.addElement(step);
+        containedStepTypes.add(step.getType());
 
         final MoveStep prev = getStep(steps.size() - 2);
 
@@ -537,13 +541,7 @@ public class MovePath implements Cloneable, Serializable {
      * Check for any of the specified type of step in the path
      */
     public boolean contains(final MoveStepType type) {
-        for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements(); ) {
-            final MoveStep step = i.nextElement();
-            if (step.getType() == type) {
-                return true;
-            }
-        }
-        return false;
+        return containedStepTypes.contains(type);
     }
 
     /**
@@ -766,9 +764,12 @@ public class MovePath implements Cloneable, Serializable {
             return;
         }
         // Do final check for bad moves, and clip movement after first bad one
+        // also clear and re-constitute "contained steps" cache
+        containedStepTypes = new HashSet<MoveStepType>();
         final Vector<MoveStep> goodSteps = new Vector<>();
         for (MoveStep step : steps) {
             if (step.getMovementType(isEndStep(step)) != EntityMovementType.MOVE_ILLEGAL) {
+            	containedStepTypes.add(step.getType());
                 goodSteps.addElement(step);
             } else {
                 break;

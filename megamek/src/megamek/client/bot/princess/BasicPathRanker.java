@@ -53,6 +53,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.TripodMech;
+import megamek.common.UnitType;
 import megamek.common.VTOL;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
@@ -197,27 +198,21 @@ public class BasicPathRanker extends PathRanker {
         }
     }
 
-    protected RankedPath doAeroSpecificRanking(MovePath movePath, boolean vtol,
-            boolean isSpheroid) {
-        // stalling is bad.
-        if (movePath.getFinalVelocity() == 0 && !vtol && !isSpheroid) {
-            return new RankedPath(-1000d, movePath, "stall");
-        }
-        // Spheroids only stall if they don't move
-        if (isSpheroid && (movePath.getFinalNDown() == 0)
-                && (movePath.getMpUsed() == 0)
-                && !movePath.contains(MoveStepType.VLAND)) {
+    // performs some evaluation of the path specific to aerotech units
+    protected RankedPath doAeroSpecificRanking(MovePath movePath) {
+    	if(AeroPathUtil.WillStall(movePath)) {
             return new RankedPath(-1000d, movePath, "stall");
         }
 
         // So is crashing.
-        if (movePath.getFinalAltitude() < 1) {
+        if (AeroPathUtil.WillCrash(movePath)) {
             return new RankedPath(-10000d, movePath, "crash");
         }
 
         // Flying off board should only be done if necessary, but is better than taking a lot of damage.
-        if ((movePath.getLastStep() != null) && (movePath.getLastStep().getType() == MoveStepType.RETURN)) {
-            if (vtol) {
+        // VTOLs really should not be flying off board.
+        if (AeroPathUtil.WillGoOffBoard(movePath)) {
+            if (UnitType.isVTOL(movePath.getEntity())) {
                 return new RankedPath(-5000d, movePath, "off-board");
             }
             return new RankedPath(-5d, movePath, "off-board");
@@ -453,9 +448,7 @@ public class BasicPathRanker extends PathRanker {
         try {
 
             if (movingUnit instanceof Aero || movingUnit instanceof VTOL) {
-                boolean isVTOL = (movingUnit instanceof VTOL);
-                boolean isSpheroid = isVTOL ? false : ((Aero)movingUnit).isSpheroid();
-                RankedPath aeroRankedPath = doAeroSpecificRanking(path, isVTOL, isSpheroid);
+            	RankedPath aeroRankedPath = doAeroSpecificRanking(path);
                 if (aeroRankedPath != null) {
                     return aeroRankedPath;
                 }

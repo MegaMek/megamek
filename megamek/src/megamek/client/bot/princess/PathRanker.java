@@ -34,6 +34,7 @@ import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.UnitType;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
@@ -120,11 +121,6 @@ public abstract class PathRanker {
 
         Entity mover = startingPathList.get(0).getEntity();
 
-        // No support yet for Aero units.
-        if (mover instanceof Aero) {
-            return startingPathList;
-        }
-
         Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
         int startingTargetDistance = (closestTarget == null ?
                                       Integer.MAX_VALUE :
@@ -140,10 +136,29 @@ public abstract class PathRanker {
             startingPathList.add(new MovePath(game, mover)); //If we can't move and still fire, we want to consider not moving.
         }
 
+        boolean alreadyHaveSafePathOffBoard = false;
+        
         for (MovePath path : startingPathList) {
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
 
             try {
+            	// if we are an aero unit
+            	if(UnitType.isAero(path.getEntity()))
+            	{
+            		// all safe (no rolls or crashes) paths off board might as well be the same 
+            		// so we prune any beyond the first one we find
+            		if(alreadyHaveSafePathOffBoard && AeroPathUtil.WillGoOffBoard(path))
+            		{
+            			continue;
+            		}
+            		
+            		// make note of the first time we find a safe path off board
+            		if(AeroPathUtil.IsSafePathOffBoard(path))
+            		{
+            			alreadyHaveSafePathOffBoard = true;
+            		}
+            	}
+            	
                 Coords finalCoords = path.getFinalCoords();
 
                 // If fleeing, skip any paths that don't get me closer to home.

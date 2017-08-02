@@ -3,6 +3,8 @@ package megamek.common.logging;
 import org.apache.log4j.Logger;
 
 /**
+ * Fake logger implementation for unit testing.
+ * 
  * @author Deric Page (deric.page@nisc.coop) (ext 2335)
  * @version %Id%
  * @since 7/31/2017 2:35 PM
@@ -71,31 +73,6 @@ public class FakeLogger implements MMLogger {
     @Override
     public LogLevel getLogLevel(String category) {
         return null;
-    }
-
-    @Override
-    public void newTransaction() {
-
-    }
-
-    @Override
-    public void newTransaction(int transactionId) {
-
-    }
-
-    @Override
-    public void setServerIp(String ip) {
-
-    }
-
-    @Override
-    public void setClientIp(String ip) {
-
-    }
-
-    @Override
-    public void setUserName(String userName) {
-
     }
 
     @Override

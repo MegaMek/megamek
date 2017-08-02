@@ -15,9 +15,7 @@ package megamek.common.logging;
 
 import org.apache.log4j.Logger;
 
-import java.util.Date;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -38,8 +36,10 @@ public class DefaultMmLogger implements MMLogger {
 
     private final Map<String, Logger> nameToLogger = new ConcurrentHashMap<>();
 
-    private static AtomicBoolean initialized = new AtomicBoolean(false);
+    private static AtomicBoolean initialized =
+            new AtomicBoolean(false);
 
+    // Prevent instantiation.
     private DefaultMmLogger() {
 
     }
@@ -64,6 +64,8 @@ public class DefaultMmLogger implements MMLogger {
                                        final LogLevel logLevel,
                                        final String message,
                                        final T throwable) {
+
+        // Make sure logging has been initialized.
         if (!initialized.get()) {
             if (!Logger.getRootLogger().getAllAppenders().hasMoreElements()) {
                 LogConfig.getInstance().enableSimplifiedLogging();
@@ -72,62 +74,86 @@ public class DefaultMmLogger implements MMLogger {
         }
 
         Logger logger = getLogger(className);
+
+        // If logging has been turned off simply return.
         if (!logger.isEnabledFor(logLevel.getLevel())) {
             return throwable;
         }
 
-        LoggingProperties.getInstance().putProperty("method", methodName);
-        String logMessage = "\n\t[" + Thread.currentThread().getName() + "] " + new Date() + "\t" + message + "\n";
-        logger.log(logLevel.getLevel(), logMessage, throwable);
+        // Track the methods logged.
+        LoggingProperties.getInstance().putProperty("method",
+                                                    methodName);
+
+        // Write the log entry.
+        logger.log(logLevel.getLevel(), message, throwable);
 
         return throwable;
     }
 
     @Override
-    public <T extends Throwable> T log(final Class callingClass, final String methodName, final T throwable) {
+    public <T extends Throwable> T log(final Class callingClass,
+                                       final String methodName,
+                                       final T throwable) {
         return log(callingClass, methodName, LogLevel.ERROR, throwable);
     }
 
     @Override
-    public <T extends Throwable> T log(Class callingClass, String methodName, LogLevel logLevel, T throwable) {
+    public <T extends Throwable> T log(final Class callingClass,
+                                       final String methodName,
+                                       final LogLevel logLevel,
+                                       final T throwable) {
+
+        // Construct the message from the Throwable's message.
         String message = "";
         if (null != throwable) {
             message = throwable.getMessage();
         }
-        return log(callingClass.getName(), methodName, logLevel, message, throwable);
+        return log(callingClass.getName(), methodName, logLevel, message,
+                   throwable);
     }
 
     @Override
-    public <T extends Throwable> T log(final Class callingClass, final String methodName, final LogLevel level,
-                                       final String message, final T throwable) {
-        return log(callingClass.getName(), methodName, level, message, throwable);
+    public <T extends Throwable> T log(final Class callingClass,
+                                       final String methodName,
+                                       final LogLevel level,
+                                       final String message,
+                                       final T throwable) {
+        return log(callingClass.getName(), methodName, level, message,
+                   throwable);
     }
 
     @Override
-    public void log(final Class callingClass, final String methodName, final LogLevel level,
+    public void log(final Class callingClass,
+                    final String methodName,
+                    final LogLevel level,
                     final String message) {
         log(callingClass.getName(), methodName, level, message, null);
     }
 
     @Override
-    public void log(final Class callingClass, final String methodName, final LogLevel level,
+    public void log(final Class callingClass,
+                    final String methodName,
+                    final LogLevel level,
                     final StringBuilder message) {
         log(callingClass, methodName, level, message.toString());
     }
 
     @Override
     public void methodBegin(Class callingClass, String methodName) {
-        log(callingClass, methodName, LogLevel.DEBUG, METHOD_BEGIN + methodName);
+        log(callingClass, methodName, LogLevel.DEBUG,
+            METHOD_BEGIN + methodName);
     }
 
     @Override
     public void methodEnd(Class callingClass, String methodName) {
-        log(callingClass, methodName, LogLevel.DEBUG, METHOD_END + methodName);
+        log(callingClass, methodName, LogLevel.DEBUG,
+            METHOD_END + methodName);
     }
 
     @Override
     public void methodCalled(Class callingClass, String methodName) {
-        log(callingClass, methodName, LogLevel.DEBUG, METHOD_CALLED + methodName);
+        log(callingClass, methodName, LogLevel.DEBUG,
+            METHOD_CALLED + methodName);
     }
 
     @Override
@@ -145,32 +171,6 @@ public class DefaultMmLogger implements MMLogger {
     @Override
     public LogLevel getLogLevel(String category) {
         return LogLevel.getFromLog4jLevel(getLogger(category).getLevel().toInt());
-    }
-
-    @Override
-    public void newTransaction() {
-        int randomNumber = new Random().nextInt();
-        newTransaction(randomNumber);
-    }
-
-    @Override
-    public void newTransaction(final int transactionId) {
-        LoggingProperties.getInstance().putProperty("transaction", transactionId);
-    }
-
-    @Override
-    public void setServerIp(final String ip) {
-        LoggingProperties.getInstance().putProperty("serverIp", ip);
-    }
-
-    @Override
-    public void setClientIp(final String ip) {
-        LoggingProperties.getInstance().putProperty("clientIp", ip);
-    }
-
-    @Override
-    public void setUserName(final String userName) {
-        LoggingProperties.getInstance().putProperty("userName", userName);
     }
 
     @Override

@@ -8,6 +8,7 @@ v0.43.4-git
 + Plasma weapons should have the energy weapon tag.
 + New Sprites and Maps(Thanks arekP64)
 + Bug: gyro hits require PSR for tracked mechs and QuadVees in vee mode instead of the other way around.
++ Issue #542: Megamek can't exit attack phase using fighter squadrons 0.43.1
 + Enhancement #581: Implement Log4J
 
 v0.43.3 (2017-07-18 18:30 UTC)

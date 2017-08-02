@@ -313,17 +313,23 @@ public class FighterSquadron extends Aero {
      */
     @Override
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode, int cover) {
+        // Create a list of the indices of all the active fighters, which serves as the list of valid hit locations
+        List<Integer> indices = new ArrayList<>();
+        for (int i = 0; i < fighters.size(); i++) {
+            if (ACTIVE_CHECK.test(game.getEntity(fighters.get(i)))) {
+                indices.add(i);
+            }
+        }
         // If this squadron is doomed or is of size 1 then just return the first
         // one
-        List<Entity> activeFighters = getActiveSubEntities().orElse(Collections.emptyList());
-        if(isDoomed() || activeFighters.isEmpty()) {
+        if (isDoomed() || indices.isEmpty()) {
             return new HitData(0);
         }
 
         // Pick a random number between 0 and the number of fighters in the
         // squadron.
-        int hit = activeFighters.get(Compute.randomInt(activeFighters.size())).getId();
-        return new HitData(fighters.stream().filter(fid -> (fid == hit)).findFirst().orElse(0));
+        int hit = indices.get(Compute.randomInt(indices.size()));
+        return new HitData(hit);
     }
 
     @Override

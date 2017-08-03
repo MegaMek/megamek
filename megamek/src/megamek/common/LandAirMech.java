@@ -1520,13 +1520,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return fatalThresh;
     }
     
-    @Override
-    public void autoSetInternal() {
-        super.autoSetInternal();
-        autoSetCapArmor();
-        autoSetFatalThresh();
-    }
-
     public void autoSetCapArmor() {
         double divisor = 10.0;
         if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
@@ -1640,6 +1633,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 break;
             }
             destroyLocation(LOC_CT);
+            applyDamage();
         }
 
         // Move on to actual damage...

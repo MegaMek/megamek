@@ -21762,6 +21762,13 @@ public class Server implements Runnable {
             r.indent(2);
             vDesc.add(r);
         }
+        if (en.isAirborneVTOLorWIGE() && !en.getCrew().isActive()) {
+            if (en instanceof LandAirMech) {
+                crashAirMech(en, en.getBasePilotingRoll(), vDesc);
+            } else if (en instanceof Protomech) {
+                vDesc.addAll(landGliderPM((Protomech)en));
+            }
+        }
         return vDesc;
     }
     
@@ -26541,6 +26548,16 @@ public class Server implements Runnable {
         return en.isDoomed()
                 || processSkid(en, pos, 0, 0, distance,
                         lastStep, en.moved, false);
+    }
+    
+    /**
+     * Makes the landing roll required for a glider protomech and resolves any damage
+     * resulting from a failed roll. Updates final position and elevation.
+     * 
+     * @param en    the landing glider protomech
+     */
+    private Vector<Report> landGliderPM(Protomech en) {
+        return landGliderPM(en, en.getPosition(), en.getElevation(), en.delta_distance);
     }
     
     /**

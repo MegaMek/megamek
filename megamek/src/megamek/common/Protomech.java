@@ -2175,6 +2175,10 @@ public class Protomech extends Entity {
             return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
                     "Landing with destroyed legs.");
         }
+        if (!getCrew().isActive()) {
+            return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
+                    "Landing incapacitated pilot.");
+        }
         if (getRunMP() < 4) {
             return new PilotingRollData(getId(), 8,
                     "Forced landing with insufficient thrust.");

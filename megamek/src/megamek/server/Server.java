@@ -23887,7 +23887,14 @@ public class Server implements Runnable {
                         te.setSelfDestructing(false);
                         te.setSelfDestructInitiated(false);
                     }
+
+                    // Torso destruction in airborn LAM in airmech mode causes immediate crash.
+                    if ((te instanceof LandAirMech) && te.isAirborneVTOLorWIGE()) {
+                        crashAirMech(te, new PilotingRollData(te.getId(), TargetRoll.AUTOMATIC_FAIL,
+                                "side torso destroyed"), vDesc);
+                    }
                 }
+                
             }
 
             // If damage remains, loop to next location; if not, be sure to stop

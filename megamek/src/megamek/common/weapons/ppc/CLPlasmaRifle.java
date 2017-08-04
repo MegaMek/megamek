@@ -18,7 +18,7 @@
 package megamek.common.weapons.ppc;
 
 import megamek.common.BattleForceElement;
-import megamek.common.weapons.PlasmaMFUKWeapon;
+import megamek.common.weapons.unofficial.PlasmaMFUKWeapon;
 
 /**
  * @author Sebastian Brocks

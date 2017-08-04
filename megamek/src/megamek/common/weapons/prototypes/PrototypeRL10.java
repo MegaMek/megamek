@@ -13,8 +13,6 @@
  */
 package megamek.common.weapons.prototypes;
 
-import megamek.common.weapons.PrototypeRLWeapon;
-
 /**
  * @author Sebastian Brocks
  */

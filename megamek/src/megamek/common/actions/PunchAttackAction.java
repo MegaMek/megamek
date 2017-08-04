@@ -273,7 +273,12 @@ public class PunchAttackAction extends PhysicalAttackAction {
             toHit.addModifier(1, "Using Claws");
         }
         
-        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST)
+        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
+                && hasHandActuator) {
+            toHit.addModifier(-1, "Battlefist");
+        }
+        
+        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)
                 && hasHandActuator) {
             toHit.addModifier(-1, "Battlefist");
         }

@@ -17,6 +17,7 @@
 package megamek.common.weapons;
 
 import megamek.common.TechAdvancement;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 
 /**
  * @author Jay Lawson

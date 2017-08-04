@@ -23,7 +23,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * @author Jay Lawson

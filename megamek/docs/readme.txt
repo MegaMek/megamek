@@ -69,18 +69,22 @@ http://www.oracle.com/technetwork/java/javase/downloads/index.html
 **Mac OSX:**
 See this support article on the apple support website for 
 instructions:
-https://support.apple.com/en-us/HT204036
+https://support.apple.com/en-us/HT204036.
+_Note: For advanced users, it is recommended to install java via
+[homebrew](https://brew.sh/). See this
+[stack overflow](https://stackoverflow.com/questions/24342886/how-to-install-java-8-on-mac)
+article for more instructions._
 
 **OpenJDK (Linux):**
 Open source version of Java. Used by most major Linux distributions.
-http://openjdk.java.net/install/
+http://openjdk.java.net/install/.
 
-GCJ/Gnu classpath (Linux):
+**GCJ/Gnu classpath (Linux):**
 Of interest to experienced developers, there may be some
 compatibility problems.
-http://gcc.gnu.org/java/
+http://gcc.gnu.org/java/. _Note: GCJ support was removed in GCC 7._
 
-Microsoft VM (Windows):
+**Microsoft VM (Windows):**
 Microsoft no longer makes their VM available for separate download.
 This version of MegaMek uses features not supported by the Microsoft JVM.
 
@@ -103,8 +107,8 @@ Once the lobby screen comes up, other players can connect and the game can
 begin.  The other players will need to know the IP address of the host computer.
 There are several ways to determine your IP address.  If you are on 
 Windows 9x/ME, you can use the Run command on the start menu and enter 
-"winipcfg".  On Windows 2000/NT/XP/Vista/7/8/10, you will need to open a command 
-prompt and type "ipconfig".  As a last resort, there are some web pages, such as 
+`winipcfg`.  On Windows 2000/NT/XP/Vista/7/8/10, you will need to open a command
+prompt and type `ipconfig`.  As a last resort, there are some web pages, such as
 www.whatismyip.com that will try to detect your IP address, but if your internet
 service uses a proxy or firewall, these pages cannot accurately detect it.
 
@@ -114,24 +118,24 @@ player name and the host's IP address.
 To play in a hotseat fashion, you can run the host and any number of other 
 players on the same computer.  First, launch and host a game.  Then, launch
 another copy of the game for each connecting player, and in the "Server Address"
-field of the connect dialog, type "localhost".  Each player will need to switch
+field of the connect dialog, type `localhost`.  Each player will need to switch
 to his/her copy of the game to play their turn.
 
-To start a dedicated server, use the -dedicated command line switch.  A
+To start a dedicated server, use the `-dedicated` command line switch.  A
 dedicated server just runs the server, in the console, without a "host" player
 in the game.  People, including yourself, can join it like a game with a host.
 The dedicated server reads the password and port options from the 
-clientsettings.xml file, or uses the default (no password and port 2346.) If you
+`clientsettings.xml` file, or uses the default (no password and port 2346.) If you
 want the dedicated server to load a saved game, supply the filename after the
--dedicated switch, like this: "-dedicated savedgame.sav".  To stop the server,
-you will need to tell the Java machine to halt execution, which is CTRL + C on
+`-dedicated` switch, like this: `-dedicated savedgame.sav`.  To stop the server,
+you will need to tell the Java machine to halt execution, which is `CTRL + C` on
 most platforms.
 
 
 PLAYING THE GAME
 ================
 
-###Pre-game Lobby:
+### Pre-game Lobby:
 
 Here you can chat, specify what units you wish to use, select map settings,
 declare starting positions, and change your player's color.  When everybody
@@ -210,13 +214,13 @@ Other terrain will just be bulldozed in the name of progress, though you may fin
 There is also an "advanced" button, which lets you fine-tune the map to your liking.
 See the "advanced map settings" section near the end of this file
 
-###Initiative Report:
+### Initiative Report:
 
 Each player's initiative rolls and the corresponding turn order will be shown
 here.
 
 
-###Movement Phase:
+### Movement Phase:
 
 The buttons at the bottom of the screen let you change between different
 modes of movement, switch to another unit, or commit to your current path.
@@ -229,7 +233,7 @@ hex.  Cyan indicates walking, yellow running, and red jump movement.  Dark grey
 sections of the path indicate where you have exceeded your movement capacity,
 or other illegal moves.  You can drag the mouse to see movement options for 
 several different hexes.  Please note that you can change the colors used to
-display the movement points by editing clientsettings.xml; you may specify a
+display the movement points by editing `clientsettings.xml`; you may specify a
 color in RGB notation (e.g. 255 255 255 for white) or with any of the following
 text values: black, blue, cyan, darkgray, gray, green, lightgray, magenta, 
 orange, pink, red, white, or yellow.
@@ -238,7 +242,7 @@ Units can also be moved by using "waypoints."  By clicking each hex between
 the unit's current location and destination, you can delineate the exact path 
 to be taken.
 
-Holding the Shift key while clicking on the map allows you to change the 
+Holding the `Shift` key while clicking on the map allows you to change the
 unit's facing without moving.  Since you automatically change facing while 
 moving, this is best done at the end of any movement.
 
@@ -294,22 +298,22 @@ choose which floor to jump through the window of.  Click the building hex you wa
 into first, and the game will pick the highest floor you can reach (or the roof).  Then use
 the "go down" button to select a lower floor if you want to.
 
-The Esc key clears all current movement.
+The `Esc` key clears all current movement.
 
 
-###Movement Report:
+### Movement Report:
 
 If any units needed piloting skill rolls during their movement, a report
 showing the results of these rolls will be shown.
 
 
-###Weapons Fire Phase:
+### Weapons Fire Phase:
 
 If you need to check the range and line of sight (LoS) between two hexes, 
 there are two tools available for you to use; the LoS tool and the ruler 
-tool.  To use the LoS tool, hold CTRL and click on the two hexes you want to 
-check. The ruler tool works like the LoS tool, but uses the ALT key instead 
-of the CTRL key.  The ruler tool can also be used by middle-clicking the 
+tool.  To use the LoS tool, hold `CTRL` and click on the two hexes you want to
+check. The ruler tool works like the LoS tool, but uses the `ALT` key instead
+of the `CTRL` key.  The ruler tool can also be used by middle-clicking the
 two hexes with a three-button mouse.  Both tools will pop up a window that
 tells you what terrain is intervening and whether one or both hexes has
 partial cover.  The ruler tool also draws the line of sight on the board 
@@ -338,13 +342,13 @@ Note that fire is resolved in the order that it is declared, so if you feel
 that it is a good idea to fire weapons in a different order than they are 
 listed, go ahead.
 
-Secondary facing changes (torso twists) are accomplished by holding Shift and 
+Secondary facing changes (torso twists) are accomplished by holding `Shift` and
 clicking on the board.  Your unit will attempt to change its secondary facing 
 in the direction specified.  If you assign a weapon to a target and then
 attempt a facing change, the weapons fire will be canceled.
 
 You can not switch to another unit after declaring some weapons fire.  To 
-switch to another unit, first cancel all current fire by hitting the Esc key.  
+switch to another unit, first cancel all current fire by hitting the `Esc` key.
 When you hit the fire button for your last available weapon, all declared 
 fire will be committed.
 
@@ -367,14 +371,14 @@ to do so will cancel the "solo" action.  Swarming infantry can not be targeted
 by any attacks other than a "Brush Off" attack (see Physical Attacks Phase).
 
 
-###Weapons Fire Report:
+### Weapons Fire Report:
 
 If there were any weapon attacks, the server will resolve them all at the end
 of the phase in the order they were declared.  The results will be shown in a
 report.
 
 
-###Physical Attacks Phase:
+### Physical Attacks Phase:
 
 To declare a physical attack, select your target on the board and click the
 button corresponding to the attack you want to make.  If a physical attack 
@@ -396,7 +400,7 @@ Armor squad can attempt to "Brush Off" the squad with either or both arms.  Any
 the Mek.  Any successful "Brush Off" attack ends a Swarm Mek attack.
 
 
-###End of Turn Report:
+### End of Turn Report:
 
 If there were any physical attacks, the results will be shown.  
 The results of the Heat and End phases will be shown.  
@@ -597,6 +601,6 @@ WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
 or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
 for more details.
 
-MechWarrior, BattleMech, ‘Mech and AeroTech are registered trademarks of 
+_MechWarrior, BattleMech, ‘Mech and AeroTech are registered trademarks of
 The Topps Company, Inc. Original BattleTech material Copyright by Catalyst Game Labs
-All Rights Reserved.  Used without permission. 
+All Rights Reserved.  Used without permission._

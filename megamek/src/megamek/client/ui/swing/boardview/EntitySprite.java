@@ -780,6 +780,13 @@ class EntitySprite extends Sprite {
         addToTT("ArmorInternals", BR, entity.getTotalArmor(),
                 entity.getTotalInternal());
 
+        // BV info
+        int currentBV = entity.calculateBattleValue(false, false);
+        int initialBV = currentBV;
+        double percentage = ((double)currentBV / initialBV) * 100;
+
+        addToTT("BV", BR, currentBV, initialBV, percentage);
+
         // Heat, not shown for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {
             if (entity.heat == 0) 

@@ -796,6 +796,15 @@ public interface IGame {
      */
     public abstract Iterator<Entity> getEnemyEntities(final Coords c,
             final Entity currentEntity);
+    
+    /**
+     * Returns an <code>Enumeration</code> of active enemy entities
+     *
+     * @param currentEntity the <code>Entity</code> whose enemies are needed.
+     * @return an <code>Enumeration</code> of <code>Entity</code>s at the
+     *         given coordinates who are enemies of the given unit.
+     */
+    public abstract Iterator<Entity> getAllEnemyEntities(final Entity currentEntity);
 
     /**
      * Returns an <code>Enumeration</code> of friendly active entities at the

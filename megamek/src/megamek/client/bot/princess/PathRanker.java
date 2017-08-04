@@ -149,12 +149,14 @@ public abstract class PathRanker {
             		// so we prune any beyond the first one we find
             		if(alreadyHaveSafePathOffBoard && AeroPathUtil.WillGoOffBoard(path))
             		{
+            			msg.append("\n\tUNNECESSARY: Already have a safe path off board");
             			continue;
             		}
             		
             		// make note of the first time we find a safe path off board
             		if(AeroPathUtil.IsSafePathOffBoard(path))
             		{
+            			msg.append("\n\tFirst safe path off board found");
             			alreadyHaveSafePathOffBoard = true;
             		}
             	}

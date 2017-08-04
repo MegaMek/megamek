@@ -446,7 +446,8 @@ public class BasicPathRanker extends PathRanker {
         StringBuilder formula = new StringBuilder("Calculation: {");
 
         try {
-
+        	getOwner().log(this.getClass(), "rankPath", LogLevel.WARNING, path.toString());
+        	
             if (movingUnit instanceof Aero || movingUnit instanceof VTOL) {
             	RankedPath aeroRankedPath = doAeroSpecificRanking(path);
                 if (aeroRankedPath != null) {

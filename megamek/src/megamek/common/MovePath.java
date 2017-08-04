@@ -1317,6 +1317,7 @@ public class MovePath implements Cloneable, Serializable {
         final MovePath copy = new MovePath(getGame(), getEntity());
         copy.steps = new Vector<MoveStep>(steps);
         copy.careful = careful;
+        copy.containedStepTypes = new HashSet<MoveStepType>(containedStepTypes);
         return copy;
     }
 

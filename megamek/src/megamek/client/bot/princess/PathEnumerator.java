@@ -15,6 +15,7 @@ package megamek.client.bot.princess;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -189,6 +190,7 @@ public class PathEnumerator {
                 Aero aeroMover = (Aero)mover;
                 // Get the shortest paths possible.
                 ShortestPathFinder spf;
+                
                 int maxVel;
                 if (aeroMover.isSpheroid()) {
                     spf = ShortestPathFinder.newInstanceOfOneToAllSpheroid(
@@ -202,7 +204,7 @@ public class PathEnumerator {
                 }
                 spf.setAdjacencyMap(new MovePathFinder.NextStepsExtendedAdjacencyMap(
                         MoveStepType.FORWARDS));
-
+                
                 // Make sure we accelerate to avoid stalling as needed.
                 MovePath startPath = new MovePath(getGame(), mover);
                 // This is kind of a hack, if we're on a ground map, each time
@@ -235,6 +237,13 @@ public class PathEnumerator {
                     }
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
+                
+                for(Iterator<Entity> iter = getGame().getAllEnemyEntities(aeroMover); iter.hasNext();)
+                {
+                	Entity nextTarget = (Entity) iter.next();
+                	MovePath pathToTarget = spf.getComputedPath(nextTarget.getPosition());
+                	boolean barf = isLegalAeroMove(pathToTarget);
+                }
 
             } else { // Non-Aero movement
                 //add running moves

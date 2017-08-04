@@ -372,6 +372,23 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 result.add(mp.clone().addStep(MoveStepType.FORWARDS));
             }
             
+            AddUpAndDown(result, last, entity, mp);
+            
+            return result;
+        }
+        
+        /**
+         * Worker method that adds "UP" and "DOWN" steps to the given move path collection if
+         * the entity is eligible to do so
+         *
+         * @param result The collection of move paths to improve
+         * @param last The last step along the parent move path
+         * @param entity The entity taking the move path
+         * @param movePath The parent movePath
+         * @see AbstractPathFinder.AdjacencyMap
+         */
+        public void AddUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp)
+        {
             Coords pos;
             int elevation;
             if (last != null) {
@@ -389,7 +406,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 result.add(mp.clone().addStep(MoveStepType.DOWN));
             }            
 
-            return result;
         }
     }
 
@@ -412,12 +428,29 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          */
         @Override
         public Collection<MovePath> getAdjacent(MovePath mp) {
-            // These steps are terminal, and shouldn't have anything after them
+        	// These steps are terminal, and shouldn't have anything after them
             if (mp.contains(MoveStepType.RETURN)
                     || mp.contains(MoveStepType.OFF)) {
                 return new ArrayList<MovePath>();
             }
-            Collection<MovePath> result = super.getAdjacent(mp);
+        	
+            Collection<MovePath> result = new ArrayList<MovePath>();
+            MoveStep lastStep = mp.getLastStep();
+            
+            // we can move forward if we have some velocity left
+            if(mp.getFinalVelocityLeft() > 0)
+            {
+            	result.add(mp.clone().addStep(MoveStepType.FORWARDS));
+            }
+            
+            
+        	// we can turn if we can turn. very philosophical.
+        	if(lastStep.canAeroTurn(lastStep.getGame()))
+        	{
+        		result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
+        		result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
+        	}
+        	
             // fly off of edge of board
             Coords c = mp.getFinalCoords();
             IGame game = mp.getEntity().getGame();
@@ -427,7 +460,8 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 && (mp.getFinalVelocity() > 0)) {
                 result.add(mp.clone().addStep(MoveStepType.RETURN));
             }
-            if (!mp.contains(MoveStepType.MANEUVER)) {
+                                    
+            /*if (!mp.contains(MoveStepType.MANEUVER)) {
                 // side slips
                 result.add(mp.clone()
                              .addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT)
@@ -453,7 +487,10 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                                      .addStep(MoveStepType.LOOP, true, true));
                     }
                 }
-            }
+            }*/
+            
+            AddUpAndDown(result, lastStep, mp.getEntity(), mp);
+            
             return result;
         }
     }

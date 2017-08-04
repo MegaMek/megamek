@@ -199,6 +199,10 @@ public class LAMPilot extends Crew {
         }
     }
 
+    public String getSkillsAsString(boolean showPiloting) {
+        return getSkillsAsString(0, showPiloting);
+    }
+    
     /**
      * @return a String showing the overall skills in the format
      *         gunnery (Mech)/piloting (Mech)/gunnery (Aero)/piloting (Aero)

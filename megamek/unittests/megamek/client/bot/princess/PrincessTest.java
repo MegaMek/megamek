@@ -27,8 +27,10 @@ import megamek.common.MechWarrior;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
+import megamek.common.logging.FakeLogger;
 import megamek.common.logging.LogLevel;
 
+import megamek.common.logging.MMLogger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,12 +60,14 @@ public class PrincessTest {
 
         MoralUtil mockMoralUtil = Mockito.mock(MoralUtil.class);
 
+        MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.doNothing().when(mockPrincess).log(Mockito.any(Class.class), Mockito.anyString(),
                                                    Mockito.any(LogLevel.class), Mockito.anyString());
         Mockito.when(mockPrincess.getPathRanker()).thenReturn(mockPathRanker);
         Mockito.when(mockPrincess.getMoralUtil()).thenReturn(mockMoralUtil);
         Mockito.when(mockPrincess.getMyFleeingEntities()).thenReturn(new HashSet<>(0));
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
     }
 
     @Test

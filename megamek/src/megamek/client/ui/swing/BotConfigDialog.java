@@ -40,7 +40,7 @@ import megamek.client.bot.princess.PrincessException;
 import megamek.client.ui.Messages;
 import megamek.common.IPlayer;
 import megamek.common.logging.LogLevel;
-import megamek.common.logging.Logger;
+import megamek.common.logging.DefaultMmLogger;
 
 /**
  * BotConfigDialog is a dialog box that configures bot properties
@@ -544,7 +544,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
     private void handleError(String method, Throwable t) {
         JOptionPane.showMessageDialog(this, t.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);
-        new Logger().log(getClass(), method, t);
+        DefaultMmLogger.getInstance().log(getClass(), method, t);
     }
 
     private void savePrincessProperties() {
@@ -613,7 +613,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
 
         } else if (princessRadiobutton.isSelected()) {
             Princess toReturn = new Princess(getBotName(), host, port,
-                                             LogLevel.getLogLevel(verbosityCombo.getSelectedIndex()));
+                                             LogLevel.getLogLevel((String) verbosityCombo.getSelectedItem()));
             toReturn.setBehaviorSettings(princessBehavior);
             toReturn.log(getClass(), "getSelectedBot(String, int)", LogLevel.DEBUG,
                          toReturn.getBehaviorSettings().toLog());

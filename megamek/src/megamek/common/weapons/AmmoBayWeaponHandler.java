@@ -13,11 +13,18 @@
  */
 package megamek.common.weapons;
 
+import java.util.ArrayList;
+import java.util.Vector;
+
 import megamek.common.AmmoType;
+import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
+import megamek.common.Report;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -34,6 +41,8 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
         // deserialization only
     }
 
+    public boolean amsEngaged = false;
+    
     /**
      * @param t
      * @param w
@@ -98,7 +107,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                     for (int i = 0; i < shots; i++) {
                         if (null == bayWAmmo
                                 || bayWAmmo.getUsableShotsLeft() < 1) {
-                            // try loadinsg something else
+                            // try loading something else
                             ae.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinked();
                         }
@@ -204,4 +213,110 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
         }
         return current_av;
     }
-}
+  // Start of AMS Counterfire
+    
+    protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
+        if ((target == null)
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
+            return 0;
+        }
+        int apdsMod = 0;
+        int amsMod = 0;
+        Entity entityTarget = (Entity) target;
+ // any AMS attacks by the target?
+    ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+    if (null != lCounters) {
+        // resolve AMS counter-fire
+        // for (int x = 0; x < lCounters.size(); x++) {
+        for (Mounted counter : lCounters) {
+            boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
+           // boolean isPDBay = counter.getType().hasModes() && mounted.curMode().equals("Point Defense"));
+            if (isAMS) /* && counter.ispdBay() && !pdbayEngaged) */ {
+                Mounted mAmmo = counter.getLinked();
+                Entity apdsEnt = counter.getEntity();
+                boolean isInArc;
+                // If the apdsUnit is the target, use attacker for arc
+                if (entityTarget.equals(apdsEnt)) {
+                    isInArc = Compute.isInArc(game, apdsEnt.getId(),
+                            apdsEnt.getEquipmentNum(counter),
+                            ae);
+                } else { // Otherwise, the attack target must be in arc
+                    isInArc = Compute.isInArc(game, apdsEnt.getId(),
+                            apdsEnt.getEquipmentNum(counter),
+                            entityTarget);
+                }
+                if (!(counter.getType() instanceof WeaponType)
+                        || !counter.isReady() || counter.isMissing()
+                        // no AMS when a shield in the AMS location
+                        || (apdsEnt.hasShield() && apdsEnt.hasActiveShield(
+                                counter.getLocation(), false))
+                        // shutdown means no AMS
+                        || apdsEnt.isShutDown()
+                        // AMS only fires vs attacks in arc covered by ams
+                        || !isInArc) {
+                    continue;
+                }
+
+                // build up some heat (assume target is ams owner)
+                if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                    entityTarget.heatBuildup += Compute.d6(counter
+                            .getCurrentHeat());
+                } else {
+                    entityTarget.heatBuildup += counter.getCurrentHeat();
+                }
+
+                // decrement the ammo
+                if (mAmmo != null) {
+                    mAmmo.setShotsLeft(Math.max(0,
+                            mAmmo.getBaseShotsLeft() - 1));
+                }
+                // set the ams as having fired
+                counter.setUsedThisRound(true);
+                amsEngaged = true;
+                Report r = new Report(3350);
+                r.subject = entityTarget.getId();
+                r.newlines = 0;
+                vPhaseReport.add(r);
+                amsMod = -4;
+            }
+        }
+    }
+    return apdsMod + amsMod;
+    } 
+
+         //Handle point defense damage to the missile bay attack
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        if (!cares(phase)) {
+            return true;
+        }
+        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                : null;
+            int nCluster = calcnCluster();
+            int id = vPhaseReport.size();
+            int hits;
+                if (target.isAirborne() || game.getBoard().inSpace()) {
+                // Ensures AMS state is properly updated
+                getAMSHitsMod(new Vector<Report>());
+                int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
+                hits = aeroResults[0];
+                nCluster = aeroResults[1];
+                // Need to report hit (normally reported in calcHits)
+                if (!bMissed && amsEngaged && !ae.isCapitalFighter()) {
+                int amsRoll = Compute.d6();
+                Report r = new Report(3352);
+                r.subject = subjectId;
+                r.add(amsRoll);
+                vPhaseReport.add(r);
+                hits = Math.max(0, hits - amsRoll);
+                } else if (!bMissed) {
+                Report r = new Report(3390);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+                }
+            } else {
+              hits = calcHits(vPhaseReport);
+            }
+            Report.addNewline(vPhaseReport);
+            return false;
+        }
+    }

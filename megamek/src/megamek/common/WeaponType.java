@@ -29,6 +29,7 @@ import megamek.common.weapons.LegAttack;
 import megamek.common.weapons.MMLBayWeapon;
 import megamek.common.weapons.MRMBayWeapon;
 import megamek.common.weapons.MiscBayWeapon;
+import megamek.common.weapons.AMSBayWeapon;
 import megamek.common.weapons.PPCBayWeapon;
 import megamek.common.weapons.PlasmaBayWeapon;
 import megamek.common.weapons.PointDefenseBayWeapon;

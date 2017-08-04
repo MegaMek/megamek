@@ -965,6 +965,8 @@ public class WeaponType extends EquipmentType {
                 return EquipmentType.get("Laser Bay");
             case (CLASS_POINT_DEFENSE):
                 return EquipmentType.get("Point Defense Bay");
+            case (CLASS_AMS):
+                return EquipmentType.get("AMS Bay");
             case (CLASS_PPC):
                 return EquipmentType.get("PPC Bay");
             case (CLASS_PULSE_LASER):

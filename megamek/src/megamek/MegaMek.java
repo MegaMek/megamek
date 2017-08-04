@@ -25,6 +25,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -50,6 +54,11 @@ import megamek.common.MechSummaryCache;
 import megamek.common.MechView;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
+import megamek.common.logging.DefaultMmLogger;
+import megamek.common.logging.LogConfig;
+import megamek.common.logging.LogLevel;
+import megamek.common.logging.MMLogger;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
 import megamek.common.util.MegaMekFile;
@@ -61,10 +70,13 @@ import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.server.DedicatedServer;
+
 /**
  * @author mev This is the class where the execution of the megamek game starts.
  */
 public class MegaMek {
+
+    private static final MMLogger logger = DefaultMmLogger.getInstance();
 
     public static String VERSION = "0.43.4-git"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
@@ -78,7 +90,6 @@ public class MegaMek {
     private static final String UNKNOWN_GUI_MESSAGE = "Unknown GUI:"; //$NON-NLS-1$
     private static final String GUI_CLASS_NOT_FOUND_MESSAGE = "Couldn't find the GUI Class:"; //$NON-NLS-1$
     private static final String DEFAULT_LOG_FILE_NAME = "megameklog.txt"; //$NON-NLS-1$
-    private static String PROPERTIES_FILE = "megamek/MegaMek.properties"; //$NON-NLS-1$
 
     public static void main(String[] args) {
 
@@ -97,10 +108,7 @@ public class MegaMek {
                 }
             }
 
-            // Redirect output to logfiles, unless turned off.
-            if (logFileName != null) {
-                MegaMek.redirectOutput(logFileName);
-            }
+            configureLogging(logFileName);
 
             MegaMek.showInfo();
 
@@ -120,11 +128,64 @@ public class MegaMek {
             }
 
         } catch (CommandLineParser.ParseException e) {
-            StringBuffer message = new StringBuffer(INCORRECT_ARGUMENTS_MESSAGE)
+            StringBuilder message = new StringBuilder(INCORRECT_ARGUMENTS_MESSAGE)
                     .append(e.getMessage()).append('\n');
             message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
-            MegaMek.displayMessageAndExit(message.toString());
+            MegaMek.displayMessageAndExit(message.toString(),
+                                          "main(String[])");
         }
+    }
+
+    private static void configureLegacyLogging(@Nullable final String logFileName) {
+        // Redirect output to logfiles, unless turned off.
+        if (logFileName == null) {
+            return;
+        }
+        MegaMek.redirectOutput(logFileName);
+    }
+
+    private static void configureLog4j(@Nullable final String logFileName) {
+        if (null == logFileName) {
+            LogConfig.getInstance().disableAll();
+            return;
+        }
+
+        LogConfig.getInstance().enableSimplifiedLogging();
+    }
+
+    /**
+     * This needs to be done as we are currently using two different loggers.
+     * Both loggers must be set to append in order to prevent them from over-
+     * writing each other.  So, in order to get a clean log file each run,
+     * the existing log file must be cleared.
+     * <p>
+     * Alternatively, consider rolling the log file over instead.
+     * <p>
+     * If we ever manage to completely get rid of the legacy logger, we can
+     * get rid of this method.
+     */
+    private static void resetLogFile(@Nullable final String logFileName) {
+        if (null == logFileName) {
+            return;
+        }
+        File file = new File(PreferenceManager.getClientPreferences()
+                                              .getLogDirectory() +
+                             File.separator + logFileName);
+        if (file.exists()) {
+            try {
+                PrintWriter writer = new PrintWriter(file);
+                writer.print("");
+                writer.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void configureLogging(@Nullable final String logFileName) {
+        resetLogFile(logFileName);
+        configureLegacyLogging(logFileName);
+        configureLog4j(logFileName);
     }
 
     /**
@@ -159,24 +220,22 @@ public class MegaMek {
             for (byte d : digest) {
                 sb.append(String.format("%02x", d));
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException | NoSuchAlgorithmException e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            return null;
-        } catch (NoSuchAlgorithmException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.log(MegaMek.class,
+                       "getMegaMekSHA256()",
+                       e);
             return null;
         } finally {
             try {
-                in.close();
+                if (null != in) {
+                    in.close();
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
-                e.printStackTrace();
+                logger.log(MegaMek.class,
+                           "getMegaMekSHA256()",
+                           e);
                 return null;
             }
         }
@@ -214,7 +273,7 @@ public class MegaMek {
             }
             PrintStream ps = new PrintStream(
                     new BufferedOutputStream(new FileOutputStream(sLogDir
-                            + File.separator + logFileName) {
+                                                                  + File.separator + logFileName, true) {
                         @Override
                         public void flush() throws IOException {
                             super.flush();
@@ -241,7 +300,8 @@ public class MegaMek {
     private static void startDedicatedServer(String[] args) {
         StringBuffer message = new StringBuffer("Starting Dedicated Server. "); //$NON-NLS-1$
         MegaMek.dumpArgs(message, args);
-        MegaMek.displayMessage(message.toString());
+        MegaMek.displayMessage(message.toString(),
+                               "startDedicatedServer(String[])");
         DedicatedServer.start(args);
     }
 
@@ -255,16 +315,27 @@ public class MegaMek {
      *            the arguments to be passed onto the GUI.
      */
     private static void startGUI(String guiName, String[] args) {
-        assert (guiName != null) : "guiName must be non-null"; //$NON-NLS-1$
-        assert (args != null) : "args must be non-null"; //$NON-NLS-1$
+        final String METHOD_NAME = "startGUI(String, String[])";
+        if (null == guiName) {
+            logger.log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
+                       "guiName must be non-null");
+            return;
+        }
+        if (null == args) {
+            logger.log(MegaMek.class, METHOD_NAME, LogLevel.ERROR,
+                       "args must be non-null");
+            return;
+        }
         IMegaMekGUI mainGui = MegaMek.getGui(guiName);
         if (mainGui == null) {
-            MegaMek.displayMessageAndExit(UNKNOWN_GUI_MESSAGE + guiName);
+            MegaMek.displayMessageAndExit(UNKNOWN_GUI_MESSAGE + guiName,
+                                          METHOD_NAME);
         } else {
             StringBuffer message = new StringBuffer("Starting GUI "); //$NON-NLS-1$
             message.append(guiName).append(". "); //$NON-NLS-1$
             MegaMek.dumpArgs(message, args);
-            MegaMek.displayMessage(message.toString());
+            MegaMek.displayMessage(message.toString(),
+                                   METHOD_NAME);
             mainGui.start(args);
         }
     }
@@ -276,7 +347,7 @@ public class MegaMek {
      *            the name of the GUI, will be passed on to
      *            {@link #getGUIClassName(String)}.
      * @return An that can start a GUI such as
-     *         {@link megamek.client.ui.AWT.MegaMekGUI}.
+     *         {@link IMegaMekGUI}.
      */
     @SuppressWarnings({ "rawtypes" })
     private static IMegaMekGUI getGui(String guiName) {
@@ -291,7 +362,7 @@ public class MegaMek {
                 }
             } catch (Exception e) {
                 MegaMek.displayMessage(GUI_CLASS_NOT_FOUND_MESSAGE
-                        + guiClassName);
+                                       + guiClassName, "getGui(String)");
             }
         }
         return null;
@@ -301,13 +372,15 @@ public class MegaMek {
         assert (guiName != null) : "guiName must be non-null"; //$NON-NLS-1$
         Properties p = new Properties();
         String key = "gui." + guiName; //$NON-NLS-1$
+        final String PROPERTIES_FILE = "megamek/MegaMek.properties";
         try(InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
             if (is != null) {
                 p.load(is);
                 return p.getProperty(key);
             }
         } catch (IOException e) {
-            MegaMek.displayMessage("Property file load failed."); //$NON-NLS-1$
+            MegaMek.displayMessage("Property file load failed.",
+                                   "getGUIClassName(String)"); //$NON-NLS-1$
         }
         return null;
     }
@@ -340,8 +413,9 @@ public class MegaMek {
      * @param message
      *            the message to be displayed.
      */
-    private static void displayMessageAndExit(String message) {
-        MegaMek.displayMessage(message);
+    private static void displayMessageAndExit(String message,
+                                              String methodName) {
+        MegaMek.displayMessage(message, methodName);
         TimerSingleton.getInstance().killTimer();
         System.exit(1);
     }
@@ -351,9 +425,8 @@ public class MegaMek {
      *
      * @param message
      */
-    private static void displayMessage(String message) {
-        System.out.println(message);
-        System.out.flush();
+    private static void displayMessage(String message, String methodName) {
+        logger.log(MegaMek.class, methodName, LogLevel.INFO, message);
     }
 
     /**
@@ -361,24 +434,23 @@ public class MegaMek {
      * JVM and version of MegaMek.
      */
     private static void showInfo() {
+        final String METHOD_NAME = "showInfo";
         // echo some useful stuff
-        System.out.println("Starting MegaMek v" + VERSION + " ..."); //$NON-NLS-1$ //$NON-NLS-2$
-        System.out.println("Compiled on " + new Date(TIMESTAMP).toString()); //$NON-NLS-1$
-        System.out.println("Today is " + new Date().toString()); //$NON-NLS-1$
-        System.out.println("Java vendor " + System.getProperty("java.vendor")); //$NON-NLS-1$ //$NON-NLS-2$
-        System.out
-                .println("Java version " + System.getProperty("java.version")); //$NON-NLS-1$ //$NON-NLS-2$
-        System.out.println("Platform " //$NON-NLS-1$
-                + System.getProperty("os.name") //$NON-NLS-1$
-                + " " //$NON-NLS-1$
-                + System.getProperty("os.version") //$NON-NLS-1$
-                + " (" //$NON-NLS-1$
-                + System.getProperty("os.arch") //$NON-NLS-1$
-                + ")"); //$NON-NLS-1$
+        String msg = "Starting MegaMek v" + VERSION + " ..."; //$NON-NLS-1$ //$NON-NLS-2$
+        msg += "\n\tCompiled on " + new Date(TIMESTAMP).toString(); //$NON-NLS-1$
+        msg += "\n\tToday is " + new Date().toString(); //$NON-NLS-1$
+        msg += "\n\tJava vendor " + System.getProperty("java.vendor"); //$NON-NLS-1$ //$NON-NLS-2$
+        msg += "\n\tJava version " + System.getProperty("java.version"); //$NON-NLS-1$ //$NON-NLS-2$
+        msg += "\n\tPlatform " //$NON-NLS-1$
+               + System.getProperty("os.name") //$NON-NLS-1$
+               + " " //$NON-NLS-1$
+               + System.getProperty("os.version") //$NON-NLS-1$
+               + " (" //$NON-NLS-1$
+               + System.getProperty("os.arch") //$NON-NLS-1$
+               + ")"; //$NON-NLS-1$
         long maxMemory = Runtime.getRuntime().maxMemory() / 1024;
-        System.out
-                .println("Total memory available to MegaMek: " + MegaMek.commafy.format(maxMemory) + " kB"); //$NON-NLS-1$ //$NON-NLS-2$
-        System.out.println();
+        msg += "\n\tTotal memory available to MegaMek: " + MegaMek.commafy.format(maxMemory) + " kB"; //$NON-NLS-1$ //$NON-NLS-2$
+        displayMessage(msg, METHOD_NAME);
     }
 
     /**
@@ -414,7 +486,7 @@ public class MegaMek {
         private static final String OPTION_UNIT_ALPHASTRIKE_CONVERSION = "asc"; //$NON-NLS-1$
         private static final String OPTION_DATADIR = "data"; //$NON-NLS-1$
 
-        public CommandLineParser(String[] args) {
+        CommandLineParser(String[] args) {
             super(args);
         }
 
@@ -423,7 +495,7 @@ public class MegaMek {
          *
          * @return true iff this is a dedicated server.
          */
-        public boolean dedicatedServer() {
+        boolean dedicatedServer() {
             return dedicatedServer;
         }
 
@@ -433,7 +505,7 @@ public class MegaMek {
          *
          * @return GUI Name option value or <code>null</code> if it wasn't set
          */
-        public String getGuiName() {
+        String getGuiName() {
             return guiName;
         }
 
@@ -444,7 +516,7 @@ public class MegaMek {
          * @return the log file name option value or <code>null</code> if it
          *         wasn't set
          */
-        public String getLogFilename() {
+        String getLogFilename() {
             return logFilename;
         }
 
@@ -453,7 +525,7 @@ public class MegaMek {
          *
          * @return the the <code>array</code> of the unprocessed arguments
          */
-        public String[] getRestArgs() {
+        String[] getRestArgs() {
             return restArgs;
         }
 
@@ -584,6 +656,8 @@ public class MegaMek {
         }
 
         private void processUnitValidator() throws ParseException {
+            final String METHOD_NAME = "processUnitValidator()";
+
             String filename;
             if (getToken() == TOK_LITERAL) {
                 filename = getTokenValue();
@@ -592,7 +666,7 @@ public class MegaMek {
                         filename);
                 if (ms == null) {
                     MechSummary[] units = MechSummaryCache.getInstance()
-                            .getAllMechs();
+                                                          .getAllMechs();
                     // System.err.println("units: "+units.length);
                     for (MechSummary unit : units) {
                         // System.err.println(unit.getSourceFile().getName());
@@ -605,54 +679,53 @@ public class MegaMek {
                 }
 
                 if (ms == null) {
-                    System.err
-                            .println(filename
-                                    + " not found try using \"chassis model\" for input."); //$NON-NLS-1$
+                    logger.log(MegaMek.class, METHOD_NAME,
+                               new IOException(filename + " not found.  Try using \"cassis model\" for input."));
                 } else {
                     try {
                         Entity entity = new MechFileParser(ms.getSourceFile(),
-                                ms.getEntryName()).getEntity();
-                        System.err
-                                .println("Validating Entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                                                           ms.getEntryName()).getEntity();
+                        displayMessage("Validating Entity: " +
+                                       entity.getShortNameRaw(), METHOD_NAME); //$NON-NLS-1$
                         EntityVerifier entityVerifier = EntityVerifier.getInstance(
                                 new MegaMekFile(Configuration.unitsDir(),
-                                        EntityVerifier.CONFIG_FILENAME).getFile());
+                                                EntityVerifier.CONFIG_FILENAME).getFile());
                         MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(
                                 mechView.getMechReadout());
                         if ((entity instanceof Mech)
-                                || (entity instanceof Tank)
-                                || (entity instanceof Aero)
-                                || (entity instanceof BattleArmor)) {
+                            || (entity instanceof Tank)
+                            || (entity instanceof Aero)
+                            || (entity instanceof BattleArmor)) {
                             TestEntity testEntity = null;
                             if (entity instanceof Mech) {
                                 testEntity = new TestMech((Mech) entity,
-                                        entityVerifier.mechOption, null);
+                                                          entityVerifier.mechOption, null);
                             }
                             if ((entity instanceof Tank)
-                                    && !(entity instanceof GunEmplacement)) {
+                                && !(entity instanceof GunEmplacement)) {
                                 if (entity.isSupportVehicle()) {
                                     testEntity = new TestSupportVehicle(
                                             (Tank) entity,
                                             entityVerifier.tankOption, null);
                                 } else {
                                     testEntity = new TestTank((Tank) entity,
-                                            entityVerifier.tankOption, null);
+                                                              entityVerifier.tankOption, null);
                                 }
                             }
                             if ((entity.getEntityType() == Entity.ETYPE_AERO)
-                                    && (entity.getEntityType() !=
-                                            Entity.ETYPE_DROPSHIP)
-                                    && (entity.getEntityType() !=
-                                            Entity.ETYPE_SMALL_CRAFT)
-                                    && (entity.getEntityType() !=
-                                            Entity.ETYPE_FIGHTER_SQUADRON)
-                                    && (entity.getEntityType() !=
-                                            Entity.ETYPE_JUMPSHIP)
-                                    && (entity.getEntityType() !=
-                                            Entity.ETYPE_SPACE_STATION)) {
+                                && (entity.getEntityType() !=
+                                    Entity.ETYPE_DROPSHIP)
+                                && (entity.getEntityType() !=
+                                    Entity.ETYPE_SMALL_CRAFT)
+                                && (entity.getEntityType() !=
+                                    Entity.ETYPE_FIGHTER_SQUADRON)
+                                && (entity.getEntityType() !=
+                                    Entity.ETYPE_JUMPSHIP)
+                                && (entity.getEntityType() !=
+                                    Entity.ETYPE_SPACE_STATION)) {
                                 testEntity = new TestAero((Aero)entity,
-                                        entityVerifier.aeroOption, null);
+                                                          entityVerifier.aeroOption, null);
                             }
                             if (entity instanceof BattleArmor){
                                 testEntity = new TestBattleArmor(
@@ -664,7 +737,7 @@ public class MegaMek {
                                 testEntity.correctEntity(sb);
                             }
                         }
-                        System.err.println(sb.toString());
+                        displayMessage(sb.toString(), METHOD_NAME);
                     } catch (Exception ex) {
                         // ex.printStackTrace();
                         error("\"chassis model\" expected as input"); //$NON-NLS-1$
@@ -710,7 +783,9 @@ public class MegaMek {
                     }
                     w.close();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.log(getClass(),
+                               "processUnitBattleForceConverter()",
+                               ex);
                 }
             }
 
@@ -751,7 +826,9 @@ public class MegaMek {
                    }
                     w.close();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.log(getClass(),
+                               "processUnitAlphaStrikeConverter()",
+                               ex);
                 }
             }
 
@@ -852,7 +929,9 @@ public class MegaMek {
                     }
                     w.close();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    logger.log(getClass(),
+                               "processUnitExporter(boolean)",
+                               ex);
                 }
             }
 

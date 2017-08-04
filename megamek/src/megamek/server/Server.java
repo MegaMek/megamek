@@ -24783,7 +24783,7 @@ public class Server implements Runnable {
                 break;
             case Mech.SYSTEM_GYRO:
                 //No PSR for Mechs in non-leg mode
-                if (en.canFall(true)) {
+                if (!en.canFall(true)) {
                     break;
                 }
                 int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,

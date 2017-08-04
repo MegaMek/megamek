@@ -35,6 +35,8 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
+import megamek.common.logging.FakeLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.PilotOptions;
 import megamek.common.util.StringUtil;
@@ -63,6 +65,7 @@ public class BasicPathRankerTest {
     private final DecimalFormat LOG_DECIMAL = new DecimalFormat("0.00");
     private final NumberFormat LOG_INT = NumberFormat.getIntegerInstance();
     private final NumberFormat LOG_PERCENT = NumberFormat.getPercentInstance();
+    private final MMLogger fakeLogger = new FakeLogger();
 
     private final double TOLERANCE = 0.001;
 
@@ -92,6 +95,7 @@ public class BasicPathRankerTest {
         Mockito.when(mockPrincess.getFireControl()).thenReturn(mockFireControl);
         Mockito.when(mockPrincess.getHomeEdge()).thenReturn(HomeEdge.NORTH);
         Mockito.when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
     }
 
     private void assertRankedPathEquals(RankedPath expected, RankedPath actual) {

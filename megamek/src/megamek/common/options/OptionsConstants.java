@@ -62,7 +62,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_REINFORCED_LEGS= "reinforced_legs"; //$NON-NLS-1$
     public static final String QUIRK_POS_RUGGED_1 = "rugged_1" ; //$NON-NLS-1$
     public static final String QUIRK_POS_RUGGED_2 = "rugged_2" ; //$NON-NLS-1$
-//    public static final String QUIRK_POS_RUMBLE_SEAT= "rumble_seat"; //$NON-NLS-1$
+    public static final String QUIRK_POS_RUMBLE_SEAT= "rumble_seat"; //$NON-NLS-1$
     public static final String QUIRK_POS_SEARCHLIGHT= "searchlight"; //$NON-NLS-1$
     public static final String QUIRK_POS_STABLE= "stable"; //$NON-NLS-1$
     public static final String QUIRK_POS_TRAILER_HITCH= "trailer_hitch"; //$NON-NLS-1$

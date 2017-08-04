@@ -38,6 +38,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_EASY_MAINTAIN= "easy_maintain"; //$NON-NLS-1$
     public static final String QUIRK_POS_EASY_PILOT = "easy_pilot"; //$NON-NLS-1$
     public static final String QUIRK_POS_EXT_TWIST= "ext_twist"; //$NON-NLS-1$
+    public static final String QUIRK_POS_FAST_RELOAD= "fast_reload"; //$NON-NLS-1$
     public static final String QUIRK_POS_FINE_MANIPULATORS= "fine_manipulators"; //$NON-NLS-1$
     public static final String QUIRK_POS_GOOD_REP_1= "good_rep_1"; //$NON-NLS-1$
     public static final String QUIRK_POS_GOOD_REP_2= "good_rep_2"; //$NON-NLS-1$
@@ -61,7 +62,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_REINFORCED_LEGS= "reinforced_legs"; //$NON-NLS-1$
     public static final String QUIRK_POS_RUGGED_1 = "rugged_1" ; //$NON-NLS-1$
     public static final String QUIRK_POS_RUGGED_2 = "rugged_2" ; //$NON-NLS-1$
-//    public static final String QUIRK_POS_RUMBLE_SEAT= "rumble_seat"; //$NON-NLS-1$
+    public static final String QUIRK_POS_RUMBLE_SEAT= "rumble_seat"; //$NON-NLS-1$
     public static final String QUIRK_POS_SEARCHLIGHT= "searchlight"; //$NON-NLS-1$
     public static final String QUIRK_POS_STABLE= "stable"; //$NON-NLS-1$
     public static final String QUIRK_POS_TRAILER_HITCH= "trailer_hitch"; //$NON-NLS-1$

@@ -60,6 +60,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_MAINTAIN, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_PILOT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_EXT_TWIST, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_FINE_MANIPULATORS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_GOOD_REP_1, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_GOOD_REP_2, false);
@@ -80,7 +81,7 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_1,false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUGGED_2,false);
-//        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false); removed from per BMM
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false); 	
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
@@ -217,20 +218,12 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             
-        	if (en.getWeight()<60) {
-        		if (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED)){
-        			return false;
-        		} else {
-        			return true;
-        		}
+        	if ((en.getWeight()<60) && (qName.equals(OptionsConstants.QUIRK_NEG_OVERSIZED))) {
+        		return false;
         	}
         	
-        	if (en.getWeight()>55) {
-        		if (qName.equals(OptionsConstants.QUIRK_POS_COMPACT)){
-        			return false;
-        		} else {
-        			return true;
-        		}
+        	if ((en.getWeight()>55) && (qName.equals(OptionsConstants.QUIRK_POS_COMPACT))) {
+        		return false;
         	}
             
             return true;
@@ -257,7 +250,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
-//                    || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
                     || qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)
@@ -425,7 +418,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_4)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)
                     || qName.equals(OptionsConstants.QUIRK_NEG_GAS_HOG)
-//                    || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE)
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
@@ -484,7 +477,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_4)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)
                     || qName.equals(OptionsConstants.QUIRK_NEG_GAS_HOG)
-//                    || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE)
                     || qName.equals(OptionsConstants.QUIRK_POS_DISTRACTING)
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_SEALING)
@@ -529,7 +522,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_VTOL_ROTOR)
                     || qName.equals(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)
-//                    || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_1)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_2)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_3)

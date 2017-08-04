@@ -49,6 +49,7 @@ public class CLFlamer extends FlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
+        this.atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "218,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)

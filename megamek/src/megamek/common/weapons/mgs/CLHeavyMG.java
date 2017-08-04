@@ -54,6 +54,7 @@ public class CLHeavyMG extends MGWeapon {
         this.cost = 7500;
         this.shortAV = 3;
         this.maxRange = RANGE_SHORT;
+        this.atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228,TM";
         techAdvancement.setTechBase(TECH_BASE_CLAN)
         	.setIntroLevel(false)

@@ -293,6 +293,9 @@ public class FireCommand extends ClientCommand {
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 str += " Can't shoot: "
                        + Messages.getString("FiringDisplay.autoFiringWeapon");
+            } else if (m.getType().hasModes() && m.curMode().equals("Point Defense")) {
+                str += " Can't shoot: "
+                       + Messages.getString("FiringDisplay.autoFiringWeapon");
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 str += " Automatic Failure: " + toHit.getValueAsString();
             } else if (toHit.getValue() > 12) {

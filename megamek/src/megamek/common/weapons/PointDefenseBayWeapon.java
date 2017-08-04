@@ -45,6 +45,8 @@ public class PointDefenseBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_POINT_DEFENSE;
+        setModes(new String[] { "Normal", "Point Defense" });
+        setInstantModeSwitch(false);
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 3071);
         techAdvancement.setTechRating(RATING_C);

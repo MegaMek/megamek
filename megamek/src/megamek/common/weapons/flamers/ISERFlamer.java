@@ -50,6 +50,7 @@ public class ISERFlamer extends FlamerWeapon {
         cost = 15000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
+        this.atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "312,TO";
         techAdvancement.setTechBase(TECH_BASE_IS)
         	.setIntroLevel(false)

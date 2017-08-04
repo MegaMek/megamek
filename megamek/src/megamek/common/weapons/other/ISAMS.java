@@ -51,7 +51,9 @@ public class ISAMS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 100000;
-        atClass = CLASS_POINT_DEFENSE;
+        atClass = CLASS_AMS;
+        shortAV = 3; // StratOps Advanced Point Defense Damage
+        maxRange = RANGE_SHORT; //TODO: add point defense range of 1.
         rulesRefs = "204,TM";
         techAdvancement.setTechBase(TECH_BASE_IS)
             .setTechRating(RATING_E)

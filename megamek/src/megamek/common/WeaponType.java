@@ -609,7 +609,8 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_SCREEN = 21;
     public static final int CLASS_SUB_CAPITAL_CANNON = 22;
     public static final int CLASS_CAPITAL_MD = 23;
-    public static final int NUM_CLASSES = 24;
+    public static final int CLASS_AMS = 24;
+    public static final int NUM_CLASSES = 25;
 
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
@@ -2110,6 +2111,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new SubCapLaserBayWeapon());
         EquipmentType.addType(new SubCapitalMissileBayWeapon());
         EquipmentType.addType(new MiscBayWeapon());
+        EquipmentType.addType(new AMSBayWeapon());
 
         // Improved OS Weapons
         EquipmentType.addType(new ISLRM5IOS());

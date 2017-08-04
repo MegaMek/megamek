@@ -70,7 +70,7 @@ http://www.oracle.com/technetwork/java/javase/downloads/index.html
 See this support article on the apple support website for 
 instructions:
 https://support.apple.com/en-us/HT204036.
-_Note: For advanced users, it is recommended to install java via
+_Note: For advanced users, it is recommended you install java via
 [homebrew](https://brew.sh/). See this
 [stack overflow](https://stackoverflow.com/questions/24342886/how-to-install-java-8-on-mac)
 article for more instructions._

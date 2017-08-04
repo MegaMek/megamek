@@ -363,13 +363,20 @@ public class Crew implements Serializable {
     public int getArtillery(int pos) {
         return artillery[pos];
     }
-
+    
     public int getPiloting() {
         return piloting[pilotPos];
     }
     
     public int getPiloting(int pos) {
         return piloting[pos];
+    }
+
+    /**
+     * LAMs use a different skill in AirMech mode depending on whether they are grounded or airborne.
+     */
+    public int getPiloting(EntityMovementType moveType) {
+        return piloting[pilotPos];
     }
 
     /**

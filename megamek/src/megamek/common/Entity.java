@@ -6258,19 +6258,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return new PilotingRollData(entityId, TargetRoll.IMPOSSIBLE,
                                         "Pilot unconscious");
         }
-        // gyro operational?
-        if (isGyroDestroyed()) {
+        // gyro operational? does not apply if using tracked/quadvee vehicle/lam fighter movement
+        if (isGyroDestroyed() && canFall()
+                && moveType != EntityMovementType.MOVE_VTOL_WALK
+                && moveType != EntityMovementType.MOVE_VTOL_RUN) {
             return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL,
                                         getCrew().getPiloting() + 6, "Gyro destroyed");
         }
 
         // both legs present?
-        if (this instanceof BipedMech) {
-            if (((BipedMech) this).countBadLegs() == 2) {
+        if ((this instanceof BipedMech)
+             && (((BipedMech) this).countBadLegs() == 2)
+             && (moveType != EntityMovementType.MOVE_VTOL_WALK)
+             && (moveType != EntityMovementType.MOVE_VTOL_RUN)) {
                 return new PilotingRollData(entityId,
                                             TargetRoll.AUTOMATIC_FAIL,
                                             getCrew().getPiloting() + 10, "Both legs destroyed");
-            }
         } else if (this instanceof QuadMech) {
             if (((QuadMech) this).countBadLegs() >= 3) {
                 return new PilotingRollData(entityId,
@@ -6289,7 +6292,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // okay, let's figure out the stuff then
-        roll = new PilotingRollData(entityId, getCrew().getPiloting(),
+        roll = new PilotingRollData(entityId, getCrew().getPiloting(moveType),
                                     "Base piloting skill");
 
         // Let's see if we have a modifier to our piloting skill roll. We'll

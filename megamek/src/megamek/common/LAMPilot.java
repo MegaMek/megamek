@@ -169,7 +169,7 @@ public class LAMPilot extends Crew {
     
     @Override
     public int getGunnery() {
-        if (lam.getMovementMode() == EntityMovementMode.AERODYNE) {
+        if (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
             return gunneryAero;
         } else {
             return super.getGunnery();
@@ -178,9 +178,21 @@ public class LAMPilot extends Crew {
     
     @Override
     public int getPiloting() {
-        if (lam.getMovementMode() == EntityMovementMode.AERODYNE
-                || (lam.getMovementMode() == EntityMovementMode.WIGE
+        if (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER
+                || (lam.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH
                         && lam.isAirborneVTOLorWIGE())) {
+            return pilotingAero;
+        } else {
+            return super.getPiloting();
+        }
+    }
+    
+    @Override
+    public int getPiloting(EntityMovementType moveType) {
+        if (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER
+                || (lam.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH
+                && (moveType == EntityMovementType.MOVE_VTOL_WALK
+                || moveType == EntityMovementType.MOVE_VTOL_RUN))) {
             return pilotingAero;
         } else {
             return super.getPiloting();

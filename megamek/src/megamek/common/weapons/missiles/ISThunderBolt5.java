@@ -55,7 +55,7 @@ public class ISThunderBolt5 extends ThunderBoltWeapon {
         	.setUnofficial(false)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-            .setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+            .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
             .setISApproximate(false, false, false,false, false)
             .setPrototypeFactions(F_FS)
             .setProductionFactions(F_FS,F_LC);

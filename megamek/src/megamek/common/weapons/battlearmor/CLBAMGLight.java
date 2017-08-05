@@ -54,10 +54,17 @@ public class CLBAMGLight extends BAMGWeapon {
         bv = 5;
         cost = 5000;
         rulesRefs = "258,TM";
-        techAdvancement.setTechBase(TechAdvancement.TECH_BASE_CLAN);
-        techAdvancement.setClanAdvancement(3050, 3060, 3068);
-        techAdvancement.setTechRating(RATING_C);
-        techAdvancement.setAvailability( new int[] { RATING_X, RATING_X, RATING_C, RATING_B });
+        techAdvancement.setTechBase(TECH_BASE_ALL)
+    	.setIntroLevel(false)
+    	.setUnofficial(false)
+        .setTechRating(RATING_C)
+        .setAvailability(RATING_X, RATING_X, RATING_C, RATING_B)
+        .setISAdvancement(DATE_NONE, DATE_NONE, 3068, DATE_NONE, DATE_NONE)
+        .setISApproximate(false, false, false, false, false)
+        .setClanAdvancement(3055, 3060, 3068, DATE_NONE, DATE_NONE)
+        .setClanApproximate(true, false, false, false, false)
+        .setPrototypeFactions(F_CSJ)
+        .setProductionFactions(F_CSJ);
     }
 
 }

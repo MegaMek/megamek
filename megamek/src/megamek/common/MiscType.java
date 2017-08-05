@@ -425,9 +425,9 @@ public class MiscType extends EquipmentType {
 			}
 		} else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_MECH_EQUIPMENT)) {
 			if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-				return (Math.ceil((entity.getWeight() * 0.05) * 2.0)) / 2.0;
+				return Math.floor((entity.getWeight() * 0.05f) * 2.0f) / 2.0;
 			} else {
-				return (Math.ceil((entity.getWeight() * 0.07) * 2.0)) / 2.0;
+				return Math.floor((entity.getWeight() * 0.07f) * 2.0f) / 2.0;
 			}
 		} else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMECH_EQUIPMENT)) {
 			return Math.ceil((entity.getWeight() / 5.0f) * 2.0f) / 2.0;
@@ -1349,6 +1349,7 @@ public class MiscType extends EquipmentType {
 		EquipmentType.addType(MiscType.createVibroShovel());
 		EquipmentType.addType(MiscType.createDemolitionCharge());
 		EquipmentType.addType(MiscType.createISSuperCharger());
+		EquipmentType.addType(MiscType.createCLSuperCharger());
 		EquipmentType.addType(MiscType.createISMediumShield());
 		EquipmentType.addType(MiscType.createISSmallShield());
 		EquipmentType.addType(MiscType.createISLargeShield());
@@ -1903,51 +1904,70 @@ public class MiscType extends EquipmentType {
 		misc.name = "Partial Wing";
 		misc.setInternalName("ISPartialWing");
 		misc.addLookupName("IS Partial Wing");
+		misc.addLookupName("PartialWing");
 		misc.tonnage = TONNAGE_VARIABLE;
 		misc.criticals = 8;
 		misc.spreadable = true;
 		misc.cost = COST_VARIABLE;
 		misc.flags = misc.flags.or(F_PARTIAL_WING).or(F_MECH_EQUIPMENT);
 		misc.rulesRefs = "292,TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setISAdvancement(3074, DATE_NONE, 3090, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_CJF, F_MERC)
-                .setProductionFactions(F_CJF).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+        misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setISAdvancement(3074, DATE_NONE, 3090, DATE_NONE, DATE_NONE)
+            .setISApproximate(false, false, false, false, false)
+            .setPrototypeFactions(F_CJF, F_MERC)
+            .setProductionFactions(F_CJF);
+
 		return misc;
 	}
 
-	   public static MiscType createCLPartialWing() {
-	        MiscType misc = new MiscType();
+   public static MiscType createCLPartialWing() {
+        MiscType misc = new MiscType();
 
-	        misc.name = "Partial Wing";
-	        misc.setInternalName("CLPartialWing");
-	        misc.addLookupName("Clan Partial Wing");
-	        misc.tonnage = TONNAGE_VARIABLE;
-	        misc.criticals = 6;
-	        misc.spreadable = true;
-	        misc.cost = COST_VARIABLE;
-	        misc.flags = misc.flags.or(F_PARTIAL_WING).or(F_MECH_EQUIPMENT);
-	        misc.rulesRefs = "292,TO";
-        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
-                .setClanAdvancement(3067, 3085, 3090, DATE_NONE, DATE_NONE)
-                .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CJF, F_MERC)
-                .setProductionFactions(F_CJF).setTechRating(RATING_F)
-                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
-	        return misc;
+        misc.name = "Partial Wing (Clan)";
+        misc.setInternalName("CLPartialWing");
+        misc.addLookupName("Clan Partial Wing");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 6;
+        misc.spreadable = true;
+        misc.cost = COST_VARIABLE;
+        misc.flags = misc.flags.or(F_PARTIAL_WING).or(F_MECH_EQUIPMENT);
+        misc.rulesRefs = "292,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+    		.setIntroLevel(false)
+    		.setUnofficial(false)
+            .setTechRating(RATING_F)
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setClanAdvancement(3067, 3085, 3090, DATE_NONE, DATE_NONE)
+            .setClanApproximate(false, true, false, false, false)
+            .setPrototypeFactions(F_CJF, F_MERC)
+            .setProductionFactions(F_CJF);
+
+        return misc;
 	    }
+   
 	public static MiscType createProtoPartialWing() {
 		MiscType misc = new MiscType();
-		misc.name = "Partial Wing";
+		misc.name = "Protomech Partial Wing";
 		misc.setInternalName("ProtoMechPartialWing");
 		misc.tonnage = TONNAGE_VARIABLE;
 		misc.cost = COST_VARIABLE;
 		misc.flags = misc.flags.or(F_PROTOMECH_EQUIPMENT).or(F_PARTIAL_WING);
 
 		misc.rulesRefs = "292,TO";
-		misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3070, 3085, 3090, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CBS)
-		        .setProductionFactions(F_CSR).setTechRating(RATING_F)
-		        .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+		.setIntroLevel(false)
+		.setUnofficial(false)
+			.setTechRating(RATING_F)
+			.setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+			.setClanAdvancement(3070, 3085, 3090, DATE_NONE, DATE_NONE)
+	        .setClanApproximate(false, false, false, false, false)
+	        .setPrototypeFactions(F_CBS)
+	        .setProductionFactions(F_CSR);
+
 		return misc;
 	}
 
@@ -2015,11 +2035,42 @@ public class MiscType extends EquipmentType {
 		String[] saModes = { "Armed", "Off" };
 		misc.setModes(saModes);
 		misc.rulesRefs = "345,TO";
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(DATE_ES, 3078, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setISApproximate(false, true, false, false, false)
-		        .setClanAdvancement(DATE_ES, 3078, DATE_NONE, DATE_NONE, DATE_NONE)
-		        .setClanApproximate(false, true, false, false, false).setTechRating(RATING_C)
-		        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D);
+		misc.techAdvancement.setTechBase(TECH_BASE_IS)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+	        .setTechRating(RATING_C)
+	        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
+			.setISAdvancement(DATE_ES, 3078, DATE_NONE, DATE_NONE, DATE_NONE)
+	        .setISApproximate(false, true, false, false, false);
+
+		return misc;
+	}
+	
+	public static MiscType createCLSuperCharger() {
+		MiscType misc = new MiscType();
+
+		misc.name = "Supercharger (Clan)";
+		misc.setInternalName(misc.name);
+		misc.addLookupName("CLSuperCharger");
+		misc.addLookupName("CL SuperCharger");
+		misc.addLookupName("CL Super Charger");
+		misc.tonnage = TONNAGE_VARIABLE;
+		misc.criticals = 1;
+		misc.cost = COST_VARIABLE;
+		misc.flags = misc.flags.or(F_MASC).or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT);
+		misc.subType |= S_SUPERCHARGER;
+		misc.bv = 0;
+		String[] saModes = { "Armed", "Off" };
+		misc.setModes(saModes);
+		misc.rulesRefs = "345,TO";
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN)
+			.setIntroLevel(false)
+			.setUnofficial(false)
+	        .setTechRating(RATING_C)
+	        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_D)
+	        .setClanAdvancement(DATE_ES, 3078, DATE_NONE, DATE_NONE, DATE_NONE)
+	        .setClanApproximate(false, true, false, false, false);
+
 		return misc;
 	}
 
@@ -4113,7 +4164,7 @@ public class MiscType extends EquipmentType {
 		misc.flags = misc.flags.or(F_ARMORED_MOTIVE_SYSTEM).or(F_TANK_EQUIPMENT);
 		misc.bv = 0;
 		misc.rulesRefs = "283,TO";
-		misc.techAdvancement.setTechBase(TECH_BASE_ALL).setTechRating(RATING_F)
+		misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
 		        .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
 		        .setClanAdvancement(3057, 3083, DATE_NONE, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CHH)
@@ -5765,7 +5816,7 @@ public class MiscType extends EquipmentType {
 		misc.setInternalName(misc.name);
 		misc.tonnage = TONNAGE_VARIABLE;
 		misc.criticals = 0;
-		misc.tankslots = 1;
+		misc.tankslots = 0;
 		misc.flags = misc.flags.or(MiscType.F_BASIC_FIRECONTROL).or(MiscType.F_SUPPORT_TANK_EQUIPMENT)
 		        .or(MiscType.F_TANK_EQUIPMENT);
 		misc.omniFixedOnly = true;
@@ -5786,6 +5837,7 @@ public class MiscType extends EquipmentType {
 		misc.setInternalName(misc.name);
 		misc.tonnage = TONNAGE_VARIABLE;
 		misc.criticals = 0;
+		misc.tankslots = 0;
 		misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL)
 		        .or(MiscType.F_SUPPORT_TANK_EQUIPMENT.or(MiscType.F_TANK_EQUIPMENT));
 		misc.omniFixedOnly = true;

@@ -374,6 +374,9 @@ public class FighterSquadron extends Aero {
                     continue;
                 }
                 int loc = mounted.getLocation();
+                if (entity instanceof LandAirMech) {
+                    loc = LandAirMech.getAeroLocation(loc);
+                }
                 String key = mounted.getType().getInternalName() + ":" + loc;
                 if (null == groups.get(key)) {
                     groups.put(key, mounted.getNWeapons());

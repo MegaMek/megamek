@@ -45,16 +45,69 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public static final int LAM_BIMODAL  = 1;
     
     public static final String[] LAM_STRING = { "Standard", "Bimodal" };
+    
+    /** Locations for capital fighter weapons groups */
+    public static final int LOC_CAPITAL_NOSE  = 8;
+    public static final int LOC_CAPITAL_AFT   = 9;
+    public static final int LOC_CAPITAL_WINGS = 10;
+    
+    /**
+     * Translate a 'Mech location to the equivalent Aero location.
+     */
+    public static int getAeroLocation(int loc) {
+        switch (loc) {
+        case LOC_HEAD:
+        case LOC_CT:
+        case LOC_CAPITAL_NOSE:
+            return Aero.LOC_NOSE;
+        case LOC_RT:
+        case LOC_RARM:
+            return Aero.LOC_RWING;
+        case LOC_LT:
+        case LOC_LARM:
+            return Aero.LOC_LWING;
+        case LOC_RLEG:
+        case LOC_LLEG:
+        case LOC_CAPITAL_AFT:
+            return Aero.LOC_AFT;
+        case LOC_CAPITAL_WINGS:
+            return Aero.LOC_WINGS;
+        }
+        return LOC_NONE;
+    }
 
-    private static String[] CAPITAL_LOCATION_ABBRS =
-        { "NOS", "LWG", "RWG", "AFT", "WNG" };
+    private static final String[] LOCATION_NAMES =
+        {"Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg",
+                "Nose", "Aft", "Wings"};
 
+    private static final String[] LOCATION_ABBRS =
+        {"HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL", "NOS", "AFT", "WNG"};
+
+    private static final int[] NUM_OF_SLOTS =
+        {6, 12, 12, 12, 12, 12, 6, 6, 100, 100, 100};
+
+    /**
+     * Returns a vector of slot counts for all locations
+     */
+    @Override
+    protected int[] getNoOfSlots() {
+        return NUM_OF_SLOTS;
+    }
+
+    /**
+     * Returns a vector of names for all locations
+     */
+    @Override
+    public String[] getLocationNames() {
+        return LOCATION_NAMES;
+    }
+
+    /**
+     * Returns a vector of abbreviations for all locations
+     */
     @Override
     public String[] getLocationAbbrs() {
-        if (isCapitalFighter()) {
-            return CAPITAL_LOCATION_ABBRS;
-        }
-        return super.getLocationAbbrs();
+        return LOCATION_ABBRS;
     }
 
     private int lamType;
@@ -1560,13 +1613,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         // now collect a hash of all the same weapons in each location by id
         Map<String, Integer> groups = new HashMap<String, Integer>();
         for (Mounted mounted : getTotalWeaponList()) {
-            int loc = Aero.LOC_WINGS;
+            int loc = LOC_CAPITAL_WINGS;
             if ((loc == Mech.LOC_CT) || (loc == Mech.LOC_HEAD)) {
-                loc = Aero.LOC_NOSE;
+                loc = LOC_CAPITAL_NOSE;
             }
             if (mounted.isRearMounted()
                     || (loc == Mech.LOC_LLEG) || (loc == Mech.LOC_RLEG)) {
-                loc = Aero.LOC_AFT;
+                loc = LOC_CAPITAL_AFT;
             }
             String key = mounted.getType().getInternalName() + ":" + loc;
             if (null == groups.get(key)) {

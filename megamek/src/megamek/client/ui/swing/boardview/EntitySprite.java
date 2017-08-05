@@ -780,12 +780,19 @@ class EntitySprite extends Sprite {
         addToTT("ArmorInternals", BR, entity.getTotalArmor(),
                 entity.getTotalInternal());
 
-        // BV info
-        int currentBV = entity.calculateBattleValue(false, false);
-        int initialBV = currentBV;
-        double percentage = ((double)currentBV / initialBV) * 100;
+        // BV Info
+        // Only show this if we aren't in double blind and hide enemy bv isn't selected.
+        // Should always see this on your own Entities.
+        boolean suppressEnemyBV = bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV) &&
+                bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
 
-        addToTT("BV", BR, currentBV, initialBV, percentage);
+        if (!(suppressEnemyBV && !trackThisEntitiesVisibilityInfo(entity))) {
+            int currentBV = entity.calculateBattleValue(false, false);
+            int initialBV = entity.getInitialBV();
+            double percentage = (double) currentBV / initialBV;
+
+            addToTT("BV", BR, currentBV, initialBV, percentage);
+        }
 
         // Heat, not shown for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {

@@ -477,6 +477,7 @@ public class MoveStep implements Serializable {
                 // http://www.classicbattletech.com/forums/index.php/topic,37171.new.html#new
                 setNTurns(0);
             }
+                        
             if (!hasFreeTurn()) {
                 // check conditions
                 if (dueFreeTurn()) {
@@ -3658,7 +3659,7 @@ public class MoveStep implements Serializable {
      * Should we treat this movement as if it is occuring for an aerodyne unit
      * flying in atmosphere?
      */
-    private boolean useAeroAtmosphere(IGame game, Entity en) {
+	public boolean useAeroAtmosphere(IGame game, Entity en) {
         if (!(en instanceof Aero)) {
             return false;
         }

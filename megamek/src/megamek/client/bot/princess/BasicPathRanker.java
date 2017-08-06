@@ -455,6 +455,11 @@ public class BasicPathRanker extends PathRanker {
                 }
             }
 
+            if(path.getFliesOverEnemy() == true)
+            {
+            	int alpha = 1;
+            }
+            
             // Copy the path to avoid inadvertent changes.
             MovePath pathCopy = path.clone();
 

@@ -33,6 +33,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.logging.LogLevel;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.LongestPathFinder;
@@ -202,7 +203,7 @@ public class PathEnumerator {
                             MoveStepType.FORWARDS, getGame());
                     maxVel = Math.min(4, mover.getWalkMP());
                 }
-                spf.setAdjacencyMap(new MovePathFinder.NextStepsExtendedAdjacencyMap(
+                spf.setAdjacencyMap(new MovePathFinder.NextStepsAeroAdjacencyMap(
                         MoveStepType.FORWARDS));
                 
                 // Make sure we accelerate to avoid stalling as needed.
@@ -211,7 +212,7 @@ public class PathEnumerator {
                 // we accelerate, that's 16 ground MP, so if we accelerate a
                 // a lot, we'll be here forever, so cap the amount of velocity
                 
-                int startVel = startPath.getFinalVelocity();
+                /*int startVel = startPath.getFinalVelocity();
                 // If we're already moving at a high velocity, don't acc
                 if (startVel >= maxVel) {
                     // Generate the paths and add them to our list.
@@ -221,13 +222,19 @@ public class PathEnumerator {
                 // Check different accelerations
                 for (int velocity = startVel; velocity < maxVel; velocity++) {
                     // Spheroids don't need to accelerate
-                    if (!((Aero)mover).isSpheroid()) {
+                	// Neither do aerodynes initially if they started at velocity > 0
+                	// loop is kind of weird, we want to "accelerate"
+                	
+                    if (!((Aero)mover).isSpheroid() ) {
                         startPath.addStep(MoveStepType.ACC);
                     }
                     // Generate the paths and add them to our list.
                     spf.run(startPath);
                     paths.addAll(spf.getAllComputedPathsUncategorized());
-                }
+                }*/
+                
+                spf.run(startPath);
+                paths.addAll(spf.getAllComputedPathsUncategorized());
 
                 // Remove illegal paths.
                 Filter<MovePath> filter = new Filter<MovePath>() {
@@ -238,13 +245,13 @@ public class PathEnumerator {
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
                 
-                for(Iterator<Entity> iter = getGame().getAllEnemyEntities(aeroMover); iter.hasNext();)
+                for(Iterator<MovePath> iter = paths.iterator(); iter.hasNext();)
                 {
-                	Entity nextTarget = (Entity) iter.next();
-                	MovePath pathToTarget = spf.getComputedPath(nextTarget.getPosition());
-                	boolean barf = isLegalAeroMove(pathToTarget);
+                	MovePath path = (MovePath) iter.next();
+                	this.getOwner().log(this.getClass(), METHOD_NAME, LogLevel.WARNING, 
+                			path.length() + ":" + path.getFliesOverEnemy() + ":" + 
+                			path.toString());
                 }
-
             } else { // Non-Aero movement
                 //add running moves
                 // TODO: Will this cause Princess to never use MASC?

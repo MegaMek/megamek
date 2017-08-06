@@ -19,6 +19,7 @@ import megamek.common.Facing;
 import megamek.common.IGame;
 import megamek.common.ManeuverType;
 import megamek.common.Tank;
+import megamek.common.UnitType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.MovePath;
@@ -323,17 +324,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
             final ArrayList<MovePath> result = new ArrayList<MovePath>();
 
-            /*
-             * In case we process Aero lets check if it have flown of the map,
-             * if thats the case no more movements are possible and return empty
-             * list.
-             */
-            if (entity instanceof Aero &&
-                (lType == MoveStepType.OFF || lType == MoveStepType.RETURN)) {
-                return result;
-            }
-
-
             if (lType != MoveStepType.TURN_LEFT) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
             }
@@ -412,10 +402,10 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
     /**
      * Functional Interface for {@link #getAdjacent(MovePath)}
      */
-    public static class NextStepsExtendedAdjacencyMap extends NextStepsAdjacencyMap {
+    public static class NextStepsAeroAdjacencyMap extends NextStepsAdjacencyMap {
         //this class is not tested, yet.
 
-        public NextStepsExtendedAdjacencyMap(MoveStepType stepType) {
+        public NextStepsAeroAdjacencyMap(MoveStepType stepType) {
             super(stepType);
         }
 
@@ -437,21 +427,26 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             Collection<MovePath> result = new ArrayList<MovePath>();
             MoveStep lastStep = mp.getLastStep();
             
+            // if we haven't done anything else yet, and we are an aerodyne unit, we can attempt to accelerate
+            if(!mp.containsAnyOther(MoveStepType.ACC) && !UnitType.isSpheroidDropship(mp.getEntity()))
+            {
+            	result.add(mp.clone().addStep(MoveStepType.ACC));
+            }
+            
             // we can move forward if we have some velocity left
             if(mp.getFinalVelocityLeft() > 0)
             {
             	result.add(mp.clone().addStep(MoveStepType.FORWARDS));
-            }
-            
+            }            
             
         	// we can turn if we can turn. very philosophical.
-        	if(lastStep.canAeroTurn(lastStep.getGame()))
+        	if(lastStep != null && lastStep.canAeroTurn(lastStep.getGame()))
         	{
         		result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
         		result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
         	}
         	
-            // fly off of edge of board
+            // we can fly off of edge of board if we're at the edge of the board
             Coords c = mp.getFinalCoords();
             IGame game = mp.getEntity().getGame();
             if (((c.getX() == 0) || (c.getY() == 0)

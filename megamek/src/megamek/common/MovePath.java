@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import megamek.common.MovePath.MoveStepType;
 import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.AbstractPathFinder;
@@ -99,6 +100,10 @@ public class MovePath implements Cloneable, Serializable {
     
     // holds the types of steps present in this movement 
     private HashSet<MoveStepType> containedStepTypes = new HashSet<>();
+    
+    // whether this movePath take us directly over an enemy unit
+    // useful for aircraft
+    private boolean fliesOverEnemy;
 
     public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 500;
 
@@ -261,7 +266,7 @@ public class MovePath implements Cloneable, Serializable {
 
         steps.addElement(step);
         containedStepTypes.add(step.getType());
-
+        
         final MoveStep prev = getStep(steps.size() - 2);
 
         if (compile) {
@@ -409,6 +414,14 @@ public class MovePath implements Cloneable, Serializable {
                 prevStep = s;
             }
         }
+        
+        if(step.useAeroAtmosphere(game, entity) 
+        		&& game.getBoard().onGround()											//we're an aerospace unit on a ground map
+        		&& step.getPosition() != null  											//null
+        		&& game.getFirstEnemyEntity(step.getPosition(), entity) != null)
+        {
+        	fliesOverEnemy = true;
+        }
 
         return this;
     }
@@ -539,9 +552,45 @@ public class MovePath implements Cloneable, Serializable {
 
     /**
      * Check for any of the specified type of step in the path
+     * @param type The step type to check for
+     * @return Whether or not this step type is contained within this path 
      */
     public boolean contains(final MoveStepType type) {
         return containedStepTypes.contains(type);
+    }
+    
+    /**
+     * Whether any of the steps in the path (except for the last one, based on experimentation)
+     * pass over an enemy unit eligible for targeting. Useful for aerotech units.
+     * @return Whether or not this flight path takes us over an enemy unit
+     */
+    public boolean getFliesOverEnemy()
+    {
+    	/*if(fliesOverEnemy == null)
+    	{
+    		for(Iterator<MoveStep> iter = steps.iterator(); steps)
+            if (game.getBoard().onGround())
+            {
+            	getGame().getFirstEnemyEntity(prev.getTargetPosition().getCoords(), entity)
+            }
+    	}*/
+    	
+    	return fliesOverEnemy;
+    }
+    
+    /**
+     * Check for the presence of any step type that's not the specified step type in the move path
+     * @param type The step type to check for
+     * @return Whether or not there are any other step types 
+     */
+    public boolean containsAnyOther(final MoveStepType type) {
+    	for(Iterator<MoveStepType> iter = containedStepTypes.iterator(); iter.hasNext();)
+    	{
+    		if(iter.next() != type)
+				return true;
+    	}
+    	
+    	return false;
     }
 
     /**

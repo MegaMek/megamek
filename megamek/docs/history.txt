@@ -5302,6 +5302,7 @@ v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Bug: large shield with all crits destroyed still hindering movement
 + stupid me, fixed the problem where clicking done in the ReportDialog didn't
     work with more than one player
++ Made the resetLogFile method public so that it can be used by MML and MHQ.
 
 v0.35.9 (2009-11-09, 19:32 UTC+1)
 + Bug: Extended LRMs not properly added

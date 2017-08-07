@@ -218,7 +218,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected int manualBV = -1;
 
     protected int initialBV = -1;
-    protected boolean initialBVSet = false;
 
     protected String displayName = null;
     protected String shortName = null;
@@ -12309,9 +12308,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setInitialBV(int bv) {
-        if (!initialBVSet) {
+        if (initialBV < 0) {
             initialBV = bv;
-            initialBVSet = true;
         }
     }
 

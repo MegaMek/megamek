@@ -10,6 +10,7 @@ v0.43.4-git
 + Bug: gyro hits require PSR for tracked mechs and QuadVees in vee mode instead of the other way around.
 + Issue #542: Megamek can't exit attack phase using fighter squadrons 0.43.1
 + Enhancement #581: Implement Log4J
++ Made the resetLogFile method public so that it can be used by MML and MHQ.
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft
@@ -5302,7 +5303,6 @@ v0.35.10 (2009-11-10, 20:14 UTC+1)
 + Bug: large shield with all crits destroyed still hindering movement
 + stupid me, fixed the problem where clicking done in the ReportDialog didn't
     work with more than one player
-+ Made the resetLogFile method public so that it can be used by MML and MHQ.
 
 v0.35.9 (2009-11-09, 19:32 UTC+1)
 + Bug: Extended LRMs not properly added

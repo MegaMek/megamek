@@ -4432,7 +4432,7 @@ public class Aero extends Entity {
 
         // Check for critical threshold and if so damage all armor on one facing of the fighter completely,
         // reduce SI by half, and mark three engine hits.
-        if (wasCritThresh()) {
+        if (isDestroyed() || isDoomed()) {
             int loc = Compute.randomInt(4);
             dealt = getArmor(loc);
             setArmor(0, loc);
@@ -4457,11 +4457,11 @@ public class Aero extends Entity {
             int loc = Compute.randomInt(4);
             setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
             // We did too much damage, so we need to damage the SI, but we wont reduce the SI below 1 here
-            // unless the fatal threshold was exceeded.
+            // unless the fighter is destroyed.
             if (getArmor(loc) < 0) {
                 if (getSI() > 1) {
                     int si = getSI() + (getArmor(loc) / 2);
-                    si = Math.max(si, wasCritThresh()? 0 : 1);
+                    si = Math.max(si, isDestroyed() || isDoomed()? 0 : 1);
                     setSI(si);
                 }
                 setArmor(0, loc);

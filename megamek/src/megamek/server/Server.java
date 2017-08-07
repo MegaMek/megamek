@@ -21532,6 +21532,7 @@ public class Server implements Runnable {
                                 / divisor);
                 if (roll > 9) {
                     vDesc.addAll(destroyEntity(ship, "fatal damage threshold"));
+                    ship.doDisbandDamage();
                     if (prevAE != Entity.NONE) {
                         creditKill(ship, game.getEntity(prevAE));
                     }

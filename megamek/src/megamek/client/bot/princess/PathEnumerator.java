@@ -244,14 +244,6 @@ public class PathEnumerator {
                     }
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
-                
-                for(Iterator<MovePath> iter = paths.iterator(); iter.hasNext();)
-                {
-                	MovePath path = (MovePath) iter.next();
-                	this.getOwner().log(this.getClass(), METHOD_NAME, LogLevel.WARNING, 
-                			path.length() + ":" + path.getFliesOverEnemy() + ":" + 
-                			path.toString());
-                }
             } else { // Non-Aero movement
                 //add running moves
                 // TODO: Will this cause Princess to never use MASC?
@@ -373,24 +365,28 @@ public class PathEnumerator {
         final String METHOD_NAME = "isLegalAeroMove(MovePath)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
         try {
-            // no non-aeros allowed
+        	// no non-aeros allowed
             if (!(path.getEntity() instanceof Aero)) {
                 return true;
             }
 
             if (!path.isMoveLegal()) {
                 if (path.getLastStep() == null) {
+                	LogAeroMoveLegalityEvaluation("illegal move with null last step", path);
                     return false;
                 }
                 if ((path.getLastStep().getType() != MoveStepType.RETURN) &&
                     (path.getLastStep().getType() != MoveStepType.OFF)) {
+                	LogAeroMoveLegalityEvaluation("illegal move without return/off at the end", path);
                     return false;
                 }
             }
 
+            // we have to have used all velocity by the last step
             if ((path.getLastStep() != null) && (path.getLastStep().getVelocityLeft() != 0)) {
                 if ((path.getLastStep().getType() != MoveStepType.RETURN) &&
                     (path.getLastStep().getType() != MoveStepType.OFF)) {
+                	LogAeroMoveLegalityEvaluation("not all velocity used without return/off at the end", path);
                     return false;
                 }
             }
@@ -398,6 +394,13 @@ public class PathEnumerator {
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
+    }
+    
+    private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path)
+    {
+    	this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.WARNING, 
+    			path.length() + ":" + path.getFliesOverEnemy() + ":" + 
+    			path.toString() + ":" + whyNot);
     }
 
     protected Map<Integer, List<MovePath>> getUnitPaths() {

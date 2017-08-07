@@ -21,6 +21,7 @@ import megamek.common.ManeuverType;
 import megamek.common.Tank;
 import megamek.common.UnitType;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.logging.LogLevel;
 import megamek.common.MoveStep;
 import megamek.common.MovePath;
 
@@ -259,21 +260,32 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * need to spend all of their remaining velocity, so should explore
      * paths that expend the velocity first.
      * 
+     * However, a path that flies over an enemy is superior to one that does not. Treat those as having nominally greater value.
+     * 
      * Order paths with lower remaining velocities higher.
      */
     public static class MovePathVelocityCostComparator implements
             Comparator<MovePath> {
         @Override
         public int compare(final MovePath first, final MovePath second) {
-            boolean firstFlyoff = first.contains(MoveStepType.OFF)
-                    || first.contains(MoveStepType.RETURN);
+        	// Pretty "simple" criteria adjustment
+        	// A path that takes us over an enemy and stays on the board is superior to one that does not
+        	// otherwise we use existing comparison criteria
+        	if(first.getFliesOverEnemy() || second.getFliesOverEnemy())
+        	{
+        		int firstPathEnemyFlyover = first.getFliesOverEnemy() && !first.fliesOffBoard() ? 1 : 0;
+        		int secondPathEnemyFlyover = second.getFliesOverEnemy() && !second.fliesOffBoard() ? 1 : 0;
+        		
+        		return firstPathEnemyFlyover - secondPathEnemyFlyover;
+        	}
+        	
+            boolean firstFlyoff = first.fliesOffBoard();
             int velFirst = first.getFinalVelocityLeft();
             // If we are flying off, treat this as 0 remaining velocity
             if (firstFlyoff) {
                 velFirst = 0;
             }
-            boolean secondFlyoff = second.contains(MoveStepType.OFF)
-                    || second.contains(MoveStepType.RETURN); 
+            boolean secondFlyoff = second.fliesOffBoard(); 
             int velSecond = second.getFinalVelocityLeft();
             // If we are flying off, treat this as 0 remaining velocity
             if (secondFlyoff) {
@@ -427,10 +439,20 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             Collection<MovePath> result = new ArrayList<MovePath>();
             MoveStep lastStep = mp.getLastStep();
             
-            // if we haven't done anything else yet, and we are an aerodyne unit, we can attempt to accelerate
-            if(!mp.containsAnyOther(MoveStepType.ACC) && !UnitType.isSpheroidDropship(mp.getEntity()))
+            // if we haven't done anything else yet, and we are an aerodyne unit, and have not used all our thrust
+            // we can attempt to accelerate or decelerate
+            if(!UnitType.isSpheroidDropship(mp.getEntity()))
             {
-            	result.add(mp.clone().addStep(MoveStepType.ACC));
+            	if(!mp.containsAnyOther(MoveStepType.ACC))
+            	{
+            		result.add(mp.clone().addStep(MoveStepType.ACC));
+            	}
+            	// we also don't want to bother decelerating to 0, as that'll just crash our aircraft
+            	// todo: account for space maps instead
+            	else if(!mp.containsAnyOther(MoveStepType.DEC) && mp.getFinalVelocityLeft() > 16)
+            	{
+            		result.add(mp.clone().addStep(MoveStepType.DEC));
+            	}
             }
             
             // we can move forward if we have some velocity left

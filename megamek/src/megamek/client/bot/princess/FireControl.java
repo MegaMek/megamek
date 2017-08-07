@@ -1587,13 +1587,21 @@ public class FireControl {
 
         // cycle through my weapons
         for (Mounted weapon : shooter.getWeaponList()) {
-
-            WeaponFireInfo shoot = buildWeaponFireInfo(shooter, flightPath, target, targetState, weapon, game, true,
+        	WeaponFireInfo shoot = buildWeaponFireInfo(shooter, flightPath, target, targetState, weapon, game, true,
                                                        true);
-            if (shoot.getProbabilityToHit() > 0) {
+
+        	// for now, just fire weapons that will do damage until we get to heat capacity
+            if (shoot.getProbabilityToHit() > 0 && 
+            		myPlan.getHeat() + shoot.getHeat() + shooter.getHeat() <= shooter.getHeatCapacity() &&
+            		shoot.getExpectedDamage() > 0) {
                 myPlan.add(shoot);
             }
         }
+        
+        // insert logic for bombs somewhere here
+        
+        // how about we don't overheat instead
+        //myPlan = this.guessBestFiringPlanUnderHeat(shooter, new EntityState(flightPath), target, targetState, shooter.getHeatCapacity(), game);
 
         // Rank how useful this plan is.
         calculateUtility(myPlan, calcHeatTolerance(shooter, null), (shooter instanceof Aero));

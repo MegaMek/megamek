@@ -129,6 +129,11 @@ public class MovePath implements Cloneable, Serializable {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer();
+        if(this.getFliesOverEnemy())
+        {
+        	sb.append("E! ");
+        }
+        
         for (final Enumeration<MoveStep> i = steps.elements(); i.hasMoreElements(); ) {
             sb.append(i.nextElement().toString());
             sb.append(' ');
@@ -560,21 +565,21 @@ public class MovePath implements Cloneable, Serializable {
     }
     
     /**
+     * Convenience function to determine whether this path results in the unit moving off board
+     * @return Whether or not this path will result in the unit moving off board
+     */
+    public boolean fliesOffBoard()
+    {
+    	return contains(MoveStepType.OFF) || contains(MoveStepType.RETURN) || contains(MoveStepType.FLEE);
+    }
+    
+    /**
      * Whether any of the steps in the path (except for the last one, based on experimentation)
      * pass over an enemy unit eligible for targeting. Useful for aerotech units.
      * @return Whether or not this flight path takes us over an enemy unit
      */
     public boolean getFliesOverEnemy()
     {
-    	/*if(fliesOverEnemy == null)
-    	{
-    		for(Iterator<MoveStep> iter = steps.iterator(); steps)
-            if (game.getBoard().onGround())
-            {
-            	getGame().getFirstEnemyEntity(prev.getTargetPosition().getCoords(), entity)
-            }
-    	}*/
-    	
     	return fliesOverEnemy;
     }
     
@@ -1367,6 +1372,7 @@ public class MovePath implements Cloneable, Serializable {
         copy.steps = new Vector<MoveStep>(steps);
         copy.careful = careful;
         copy.containedStepTypes = new HashSet<MoveStepType>(containedStepTypes);
+        copy.fliesOverEnemy = fliesOverEnemy;
         return copy;
     }
 

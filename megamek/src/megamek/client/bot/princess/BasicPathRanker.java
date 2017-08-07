@@ -292,8 +292,11 @@ public class BasicPathRanker extends PathRanker {
         Entity me = path.getEntity();
 
         // If I don't have range, I can't do damage.
+        // exception: I might, if I'm an aero on a ground map attacking a ground unit
+        boolean aeroAttackingGroundUnitOnGroundMap = UnitType.isAero(path.getEntity()) && !UnitType.isAero(enemy) && game.getBoard().onGround();
+        
         int maxRange = me.getMaxWeaponRange();
-        if (distance > maxRange) {
+        if (distance > maxRange && !aeroAttackingGroundUnitOnGroundMap) {
             return 0;
         }
 

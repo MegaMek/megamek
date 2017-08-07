@@ -1664,13 +1664,18 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     // Damage a fighter that was part of a squadron when splitting it. Per StratOps pg. 32 & 34
     @Override
     public void doDisbandDamage() {
+        
+        int dealt = 0;
         // Check for critical threshold and if so damage one facing of the fighter completely.
-        // We also destroy the center torso regardless of direction.
-        if (wasCritThresh()) {
+        if (isDestroyed() || isDoomed()) {
+            // Note starting armor + internal so we can compute how many damage points were allocated
+            // in this step.
+            int start = getTotalArmor() + getTotalInternal();
             int side = Compute.randomInt(4);
             switch (side) {
             case 0: // Nose
                 destroyLocation(LOC_HEAD);
+                destroyLocation(LOC_CT);
                 break;
             case 1: // Left wing
                 destroyLocation(LOC_LT);
@@ -1685,33 +1690,56 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 destroyLocation(LOC_RLEG);
                 break;
             }
-            destroyLocation(LOC_CT);
-            applyDamage();
+            // Also apply three engine hits
+            int i = 0;
+            int engineHits = getEngineHits();
+            while (engineHits < 3 && i < getNumberOfCriticals(LOC_CT)) {
+                final CriticalSlot slot = getCritical(LOC_CT, i);
+                if (slot != null
+                        && slot.getType() == CriticalSlot.TYPE_SYSTEM
+                        && slot.getIndex() == SYSTEM_ENGINE
+                        && !slot.isDamaged()) {
+                    slot.setHit(true);
+                    engineHits++;
+                }
+                i++;
+            }
+            
+            dealt = start - getTotalArmor() - getTotalInternal();
         }
 
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
-        if (damage < 1) {
-            return;
+        if ((null != game) || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            damage *= 10;
         }
-        int hits = (int) Math.ceil(damage / 5.0);
-        int damPerHit = 5;
-        for (int i = 0; i < hits; i++) {
-            int loc = rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_RANDOM).getLocation();
-            setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
-            // We did too much damage, so we need to damage the internal structure
-            if (getArmor(loc) < 0) {
-                if (getInternal(loc) > 1) {
-                    int internal = getInternal(loc) + getArmor(loc);
-                    if (internal <= 0) {
-                        internal = (loc == LOC_CT || loc == LOC_HEAD)? 1 : 0; // We don't want to destroy the fighter if it didn't pass the fatal threshold
+        damage -= dealt;
+        
+        if (damage >= 0) {
+            int hits = (int) Math.ceil(damage / 5.0);
+            int damPerHit = 5;
+            for (int i = 0; i < hits; i++) {
+                int loc = rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_RANDOM).getLocation();
+                setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
+                // We did too much damage, so we need to damage the internal structure
+                if (getArmor(loc) < 0) {
+                    if (getInternal(loc) > 1) {
+                        int internal = getInternal(loc) + getArmor(loc);
+                        if (internal <= 0) {
+                            if ((loc == LOC_CT || loc == LOC_HEAD)
+                                    && !isDestroyed() && !isDoomed()) {
+                                setInternal(1, loc);// We don't want to destroy the fighter if it didn't pass the fatal threshold
+                            } else {
+                                destroyLocation(loc);
+                            }
+                        }
                     }
-                    setInternal(internal, loc);
+                    setArmor(0, loc);
                 }
-                setArmor(0, loc);
+                damage -= damPerHit;
             }
-            damage -= damPerHit;
         }
+        applyDamage();
     }
 
     @Override

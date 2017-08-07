@@ -22613,6 +22613,7 @@ public class Server implements Runnable {
                 if (a.getCapArmor() <= 0) {
                     vDesc.addAll(destroyEntity(te,
                             "Structural Integrity Collapse"));
+                    a.doDisbandDamage();
                     a.setCapArmor(0);
                     if (hit.getAttackerId() != Entity.NONE) {
                         creditKill(te, game.getEntity(hit.getAttackerId()));

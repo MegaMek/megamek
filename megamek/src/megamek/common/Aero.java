@@ -4427,26 +4427,26 @@ public class Aero extends Entity {
 
     // Damage a fighter that was part of a squadron when splitting it. Per StratOps pg. 32 & 34
     public void doDisbandDamage() {
-        int loc = -1;
-        int roll = -1;
+        
         int dealt = 0;
 
-        // Check for critical threshold and if so damage one facing of the fighter completely. Armor and SI. Also 3 engine hits.
+        // Check for critical threshold and if so damage all armor on one facing of the fighter completely,
+        // reduce SI by half, and mark three engine hits.
         if (wasCritThresh()) {
-            while (loc == -1) {
-                roll = Compute.d6();
-                if (roll > 4) {
-                    continue;
-                }
-                loc = roll;
-            }
+            int loc = Compute.randomInt(4);
+            dealt = getArmor(loc);
             setArmor(0, loc);
-            setSI(0);
+            int finalSI = Math.min(getSI(), getSI() / 2);
+            dealt += getSI() - finalSI;
+            setSI(finalSI);
             setEngineHits(Math.max(3, getEngineHits()));
         }
 
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
+        if ((null != game) || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+            damage *= 10;
+        }
         damage -= dealt; // We already dealt a bunch of damage, move on.
         if (damage < 1) {
             return;
@@ -4454,21 +4454,15 @@ public class Aero extends Entity {
         int hits = (int) Math.ceil(damage / 5.0);
         int damPerHit = 5;
         for (int i = 0; i < hits; i++) {
-            loc = -1;
-            roll = -1;
-            while (loc == -1) {
-                roll = Compute.d6();
-                if (roll > 4) {
-                    continue;
-                }
-                loc = roll;
-            }
+            int loc = Compute.randomInt(4);
             setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
-            // We did too much damage, so we need to damage the SI, but we wont reduce the SI below 1 here since the fighter survived or was crit threshed.
+            // We did too much damage, so we need to damage the SI, but we wont reduce the SI below 1 here
+            // unless the fatal threshold was exceeded.
             if (getArmor(loc) < 0) {
                 if (getSI() > 1) {
-                    int damageSI = ((0 - getArmor(loc)) / 2); // SI Damage is halved
-                    setSI(Math.max(getSI() - damageSI, 1)); // If the fighter wasn't actually destroyed, then we've got this going on.
+                    int si = getSI() + (getArmor(loc) / 2);
+                    si = Math.max(si, wasCritThresh()? 0 : 1);
+                    setSI(si);
                 }
                 setArmor(0, loc);
             }

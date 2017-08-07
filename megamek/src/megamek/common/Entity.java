@@ -12303,10 +12303,22 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         manualBV = bv;
     }
 
+    /**
+     * Gets the initial BV of a unit.
+     *
+     * Useful for comparisons with the current BV.
+     * @return The initial BV of a unit.
+     */
     public int getInitialBV() {
         return initialBV;
     }
 
+    /**
+     * Sets the initial BV for a unit.
+     *
+     * Called when the game is initialized.
+     * @param bv The initial BV of a unit.
+     */
     public void setInitialBV(int bv) {
         if (initialBV < 0) {
             initialBV = bv;

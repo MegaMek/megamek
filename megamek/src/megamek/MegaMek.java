@@ -160,14 +160,14 @@ public class MegaMek {
      * <p>
      * If we ever manage to completely get rid of the legacy logger, we can
      * get rid of this method.
+     *
+     * @param logFileName The name of the log file to reset.
      */
-    private static void resetLogFile(@Nullable final String logFileName) {
+    public static void resetLogFile(@Nullable final String logFileName) {
         if (null == logFileName) {
             return;
         }
-        File file = new File(PreferenceManager.getClientPreferences()
-                                              .getLogDirectory() +
-                             File.separator + logFileName);
+        File file = new File(logFileName);
         if (file.exists()) {
             try {
                 PrintWriter writer = new PrintWriter(file);
@@ -180,7 +180,11 @@ public class MegaMek {
     }
 
     private static void configureLogging(@Nullable final String logFileName) {
-        resetLogFile(logFileName);
+        final String qualifiedLogFilename =
+                PreferenceManager.getClientPreferences().getLogDirectory() +
+                File.separator +
+                logFileName;
+        resetLogFile(qualifiedLogFilename);
         configureLegacyLogging(logFileName);
         configureLog4j(logFileName);
     }

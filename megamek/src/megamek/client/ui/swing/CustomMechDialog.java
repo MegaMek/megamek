@@ -399,6 +399,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     .getString("CustomMechDialog.startingModeToolTip")); //$NON-NLS-1$
             choStartingMode.setToolTipText(Messages
                     .getString("CustomMechDialog.startingModeToolTip")); //$NON-NLS-1$
+            refreshDeployment();
         }
         if (isVTOL || isLAM || isGlider) {
             panDeploy.add(labStartHeight, GBC.std());
@@ -804,9 +805,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeAirMech"));
             }
             choStartingMode.addItem(Messages.getString("CustomMechDialog.ModeFighter"));
-            if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+            if (entity.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH) {
                 choStartingMode.setSelectedIndex(1);
-            } else if (entity.getMovementMode() == EntityMovementMode.AERODYNE) {
+            } else if (entity.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
                 choStartingMode.setSelectedIndex(choStartingMode.getItemCount() - 1);
             }
             updateStartingModeOptions();

@@ -11,6 +11,8 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.logging.FakeLogger;
+import megamek.common.logging.MMLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -71,8 +73,10 @@ public class WeaponFireInfoTest {
                                                                  Mockito.any(Mounted.class), Mockito.any(IGame.class)))
                .thenReturn(mockToHitEight);
 
+        MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
         Mockito.when(mockPrincess.getFireControl()).thenReturn(mockFireControl);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
 
         mockShooter = Mockito.mock(BipedMech.class);
         Mockito.when(mockShooter.getPosition()).thenReturn(SHOOTER_COORDS);

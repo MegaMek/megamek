@@ -2263,7 +2263,7 @@ public class MoveStep implements Serializable {
         if (stepType == MoveStepType.CONVERT_MODE) {
             //QuadVees and LAMs cannot convert in water, and Mech tracks cannot be used in water.
             if (currHex.containsTerrain(Terrains.WATER)
-                    && !currHex.containsTerrain(Terrains.ICE)) {
+                    && getClearance() < 0) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
             }
             //QuadVees and LAMs cannot convert while prone. Mechs with tracks don't actually convert,

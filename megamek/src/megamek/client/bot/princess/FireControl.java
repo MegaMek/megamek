@@ -1964,10 +1964,8 @@ public class FireControl {
         // Now, we loop through all possible facings. If one facing produces a better plan 
         // than what we currently have as the best plan then use that. Start with "no twist" as default.
         FiringPlan bestFiringPlan = noTwistPlan;
-        for(int index = 0; index < validFacingChanges.size(); index++)
-        {
-        	int currentTwist = validFacingChanges.get(index);
-        	
+        for(int currentTwist : validFacingChanges)
+        {        	
         	shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
         	
         	FiringPlan twistPlan = null;

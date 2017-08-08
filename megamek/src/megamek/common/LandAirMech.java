@@ -1224,6 +1224,25 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return getArmor(LOC_CT);
     }
 
+    /**
+     * returns exposure or breached flag for location
+     */
+    @Override
+    public int getLocationStatus(int loc) {
+        switch (loc) {
+        case LOC_CAPITAL_NOSE:
+            return Math.max(super.getLocationStatus(LOC_HEAD), super.getLocationStatus(LOC_CT));
+        case LOC_CAPITAL_AFT:
+            return Math.max(super.getLocationStatus(LOC_RLEG), super.getLocationStatus(LOC_LLEG));
+        case LOC_CAPITAL_WINGS:
+            return Math.max(
+                    Math.max(super.getLocationStatus(LOC_RT), super.getLocationStatus(LOC_RARM)),
+                    Math.max(super.getLocationStatus(LOC_LT), super.getLocationStatus(LOC_LARM)));
+        default:
+            return super.getLocationStatus(loc);
+        }
+    }
+
     @Override
     public int getAvionicsHits() {
         int hits = 0;

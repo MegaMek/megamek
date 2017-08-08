@@ -12329,7 +12329,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // we start adding multiple maps to the same game and so I should try to
         // replace most calls to
         // game.getBoard().inSpace() with this one
-        return game.getBoard().inSpace();
+        return game != null && game.getBoard().inSpace();
     }
 
     /**

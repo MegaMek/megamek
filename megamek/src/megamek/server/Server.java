@@ -11950,7 +11950,8 @@ public class Server implements Runnable {
             if ((entity instanceof Mech) && !entity.isProne()
                 && (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
-                    if (game.getPlanetaryConditions().isVacuum()) {
+                    if (game.getPlanetaryConditions().isVacuum()
+                            || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && game.getBoard().inSpace())) {
                         entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                     } else {
                         entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);
@@ -11978,7 +11979,8 @@ public class Server implements Runnable {
             }
         } else {
             for (int loop = 0; loop < entity.locations(); loop++) {
-                if (game.getPlanetaryConditions().isVacuum()) {
+                if (game.getPlanetaryConditions().isVacuum()
+                        || ((entity.getEntityType() & Entity.ETYPE_AERO) == 0 && game.getBoard().inSpace())) {
                     entity.setLocationStatus(loop, ILocationExposureStatus.VACUUM);
                 } else {
                     entity.setLocationStatus(loop, ILocationExposureStatus.NORMAL);

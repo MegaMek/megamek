@@ -20,10 +20,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
@@ -3351,18 +3349,21 @@ public class Aero extends Entity implements IAero, IBomber {
 
         return super.canLoad(unit, checkFalse);
     }
+    
+    @Override
+    public Map<String,Integer> getWeaponGroups() {
+        return weaponGroups;
+    }
 
-    public void updateWeaponGroups() {
-        // first we need to reset all the weapons in our existing mounts to zero
-        // until proven otherwise
-        Set<String> set = weaponGroups.keySet();
-        Iterator<String> iter = set.iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            this.getEquipment(weaponGroups.get(key)).setNWeapons(0);
-        }
-        // now collect a hash of all the same weapons in each location by id
-        Map<String, Integer> groups = new HashMap<String, Integer>();
+    /**
+     * Iterate through current weapons and count the number in each capital fighter location.
+     * 
+     * @return A map with keys in the format "weaponName:loc", with the number of weapons of that type
+     *         in that location as the value.
+     */
+    @Override
+    public Map<String,Integer> groupWeaponsByLocation() {
+        Map<String, Integer> groups = new HashMap<>();
         for (Mounted mounted : getTotalWeaponList()) {
             int loc = mounted.getLocation();
             if (isFighter() && ((loc == Aero.LOC_RWING) || (loc == Aero.LOC_LWING))) {
@@ -3378,37 +3379,7 @@ public class Aero extends Entity implements IAero, IBomber {
                 groups.put(key, groups.get(key) + mounted.getNWeapons());
             }
         }
-        // now we just need to traverse the hash and either update our existing
-        // equipment or add new ones if there is none
-        Set<String> newSet = groups.keySet();
-        Iterator<String> newIter = newSet.iterator();
-        while (newIter.hasNext()) {
-            String key = newIter.next();
-            if (null != weaponGroups.get(key)) {
-                // then this equipment is already loaded, so we just need to
-                // correctly update the number of weapons
-                this.getEquipment(weaponGroups.get(key)).setNWeapons(groups.get(key));
-            } else {
-                // need to add a new weapon
-                String name = key.split(":")[0];
-                int loc = Integer.parseInt(key.split(":")[1]);
-                EquipmentType etype = EquipmentType.get(name);
-                Mounted newmount;
-                if (etype != null) {
-                    try {
-                        newmount = addWeaponGroup(etype, loc);
-                        newmount.setNWeapons(groups.get(key));
-                        weaponGroups.put(key, getEquipmentNum(newmount));
-                    } catch (LocationFullException ex) {
-                        System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$
-                        ex.printStackTrace();
-                        return;
-                    }
-                } else if (name != "0") {
-                    addFailedEquipment(name);
-                }
-            }
-        }
+        return groups;
     }
 
     /**

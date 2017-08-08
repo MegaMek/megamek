@@ -15,10 +15,8 @@ package megamek.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import megamek.common.options.OptionsConstants;
 
@@ -1668,21 +1666,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public void setCurrentDamage(int i) {
         currentDamage = i;
     }
+    
+    @Override
+    public Map<String,Integer> getWeaponGroups() {
+        return weaponGroups;
+    }
 
     /**
      * Provide weapon groups for capital fighters. For capital fighter purposes we use Aero locations.
      */
-    public void updateWeaponGroups() {
-        // first we need to reset all the weapons in our existing mounts to zero
-        // until proven otherwise
-        Set<String> set = weaponGroups.keySet();
-        Iterator<String> iter = set.iterator();
-        while (iter.hasNext()) {
-            String key = iter.next();
-            this.getEquipment(weaponGroups.get(key)).setNWeapons(0);
-        }
-        // now collect a hash of all the same weapons in each location by id
-        Map<String, Integer> groups = new HashMap<String, Integer>();
+    public Map<String, Integer> groupWeaponsByLocation() {
+        Map<String, Integer> groups = new HashMap<>();
         for (Mounted mounted : getTotalWeaponList()) {
             int loc = LOC_CAPITAL_WINGS;
             if ((loc == Mech.LOC_CT) || (loc == Mech.LOC_HEAD)) {
@@ -1699,37 +1693,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 groups.put(key, groups.get(key) + mounted.getNWeapons());
             }
         }
-        // now we just need to traverse the hash and either update our existing
-        // equipment or add new ones if there is none
-        Set<String> newSet = groups.keySet();
-        Iterator<String> newIter = newSet.iterator();
-        while (newIter.hasNext()) {
-            String key = newIter.next();
-            if (null != weaponGroups.get(key)) {
-                // then this equipment is already loaded, so we just need to
-                // correctly update the number of weapons
-                this.getEquipment(weaponGroups.get(key)).setNWeapons(groups.get(key));
-            } else {
-                // need to add a new weapon
-                String name = key.split(":")[0];
-                int loc = Integer.parseInt(key.split(":")[1]);
-                EquipmentType etype = EquipmentType.get(name);
-                Mounted newmount;
-                if (etype != null) {
-                    try {
-                        newmount = addWeaponGroup(etype, loc);
-                        newmount.setNWeapons(groups.get(key));
-                        weaponGroups.put(key, getEquipmentNum(newmount));
-                    } catch (LocationFullException ex) {
-                        System.out.println("Unable to compile weapon groups"); //$NON-NLS-1$
-                        ex.printStackTrace();
-                        return;
-                    }
-                } else if (name != "0") {
-                    addFailedEquipment(name);
-                }
-            }
-        }
+        return groups;
     }
 
     // Damage a fighter that was part of a squadron when splitting it. Per StratOps pg. 32 & 34

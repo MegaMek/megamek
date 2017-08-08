@@ -240,7 +240,12 @@ public class Dropship extends SmallCraft {
     	
     	double tonsperday = 0;
     	
-    	if (weight >= 70000) {
+    	
+    	if (military) {
+    		tonsperday = 1.84;
+    		return tonsperday;
+    	} 
+    	else if (weight >= 70000) {
     		tonsperday = 8.83;
     		return tonsperday;
     	}
@@ -276,10 +281,6 @@ public class Dropship extends SmallCraft {
     		tonsperday = 1.84;
     		return tonsperday;
     	}
-    	/* if (military) {
-    		tonsperday = 1.84;
-    		return tonsperday;
-    	} */
     	
     return tonsperday;
     }

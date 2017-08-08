@@ -26,8 +26,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      *
      */
     private static final long serialVersionUID = -8118673802295814548L;
-    
-    public static final int CONV_MODE_MECH    = 0;
+
+    public static final int CONV_MODE_MECH = 0;
     public static final int CONV_MODE_AIRMECH = 1;
     public static final int CONV_MODE_FIGHTER = 2;
 
@@ -35,20 +35,21 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     public static final int LAM_LANDING_GEAR = 16;
 
-    public static final String systemNames[] =
-        { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot", "Avionics", "Landing Gear" };
-    
-    public static final int LAM_UNKNOWN  = -1;
+    public static final String systemNames[] = { "Life Support", "Sensors", "Cockpit", "Engine", "Gyro", null, null,
+            "Shoulder", "Upper Arm", "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot", "Avionics",
+            "Landing Gear" };
+
+    public static final int LAM_UNKNOWN = -1;
     public static final int LAM_STANDARD = 0;
-    public static final int LAM_BIMODAL  = 1;
-    
+    public static final int LAM_BIMODAL = 1;
+
     public static final String[] LAM_STRING = { "Standard", "Bimodal" };
-    
+
     /** Locations for capital fighter weapons groups */
-    public static final int LOC_CAPITAL_NOSE  = 8;
-    public static final int LOC_CAPITAL_AFT   = 9;
+    public static final int LOC_CAPITAL_NOSE = 8;
+    public static final int LOC_CAPITAL_AFT = 9;
     public static final int LOC_CAPITAL_WINGS = 10;
-    
+
     /**
      * Translate a 'Mech location to the equivalent Aero location.
      */
@@ -74,15 +75,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return LOC_NONE;
     }
 
-    private static final String[] LOCATION_NAMES =
-        {"Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm", "Left Arm", "Right Leg", "Left Leg",
-                "Nose", "Aft", "Wings"};
+    private static final String[] LOCATION_NAMES = { "Head", "Center Torso", "Right Torso", "Left Torso", "Right Arm",
+            "Left Arm", "Right Leg", "Left Leg", "Nose", "Aft", "Wings" };
 
-    private static final String[] LOCATION_ABBRS =
-        {"HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL", "NOS", "AFT", "WNG"};
+    private static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL", "NOS", "AFT",
+            "WNG" };
 
-    private static final int[] NUM_OF_SLOTS =
-        {6, 12, 12, 12, 12, 12, 6, 6, 100, 100, 100};
+    private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 12, 12, 6, 6, 100, 100, 100 };
 
     /**
      * Returns a vector of slot counts for all locations
@@ -109,7 +108,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     private int lamType;
-    
+
     /** Fighter mode **/
     // out of control
     private boolean outControl = false;
@@ -127,7 +126,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     private int altLoss = 0;
     private int altLossThisRound = 0;
 
-    private boolean critThresh = false;    
+    private boolean critThresh = false;
 
     private int[] bombChoices = new int[BombType.B_NUM];
     private Targetable airmechBombTarget = null;
@@ -156,10 +155,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
         previousMovementMode = movementMode;
         setFuel(80);
-        
+
         setCrew(new LAMPilot(this));
     }
-    
+
+    @Override
     public void setCrew(Crew newCrew) {
         if (newCrew instanceof LAMPilot) {
             super.setCrew(newCrew);
@@ -183,22 +183,22 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public String getRawSystemName(int index) {
         return systemNames[index];
     }
-    
+
     public int getLAMType() {
         return lamType;
     }
-    
+
     public void setLAMType(int lamType) {
         this.lamType = lamType;
     }
-    
+
     public String getLAMTypeString(int lamType) {
         if (lamType < 0 || lamType >= LAM_STRING.length) {
             return LAM_STRING[LAM_UNKNOWN];
         }
         return LAM_STRING[lamType];
     }
-    
+
     public String getLAMTypeString() {
         return getLAMTypeString(getLAMType());
     }
@@ -226,8 +226,9 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     /**
-     * Current MP is calculated differently depending on the LAM's mode. AirMech mode returns
-     * cruise/flank; walk/run is treated as a special case of WiGE ground movement.
+     * Current MP is calculated differently depending on the LAM's mode. AirMech
+     * mode returns cruise/flank; walk/run is treated as a special case of WiGE
+     * ground movement.
      */
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
@@ -244,7 +245,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return mp;
     }
-    
+
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int mp;
@@ -260,7 +261,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return mp;
     }
-    
+
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int mp;
@@ -276,7 +277,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return mp;
     }
-    
+
     /**
      * This value should only be used for biped and airmech ground movement.
      */
@@ -288,8 +289,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
-            return (int)Math.ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor)
-                    * (hasArmedMASC()? 2.5 : 2.0));
+            return (int) Math
+                    .ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * (hasArmedMASC() ? 2.5 : 2.0));
         }
         return super.getSprintMP(gravity, ignoreheat, ignoremodulararmor);
     }
@@ -298,22 +299,22 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      * This value should only be used for biped and airmech ground movement.
      */
     @Override
-    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat,
-            boolean ignoremodulararmor) {
+    public int getSprintMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             return getRunMP();
         } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             if (hasHipCrit()) {
                 return getAirMechRunMP(gravity, ignoreheat, ignoremodulararmor);
             }
-            return getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor)  * 2;
+            return getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * 2;
         }
         return super.getSprintMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
     }
 
+    @Override
     public int getOriginalSprintMPwithoutMASC() {
         if (getConversionMode() == CONV_MODE_MECH) {
-            return (int) Math.ceil(getOriginalWalkMP() * 2.0);            
+            return (int) Math.ceil(getOriginalWalkMP() * 2.0);
         } else {
             return getOriginalRunMP();
         }
@@ -332,33 +333,33 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 && (isLocationBad(Mech.LOC_LT) || isLocationBad(Mech.LOC_RT))) {
             return 0;
         }
-        return (int)Math.ceil(getAirMechCruiseMP(gravity, ignoremodulararmor) * 1.5);
+        return (int) Math.ceil(getAirMechCruiseMP(gravity, ignoremodulararmor) * 1.5);
     }
-    
+
     public int getAirMechWalkMP() {
         return getAirMechWalkMP(true, false, false);
     }
 
     public int getAirMechWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int mp = (int)Math.ceil(super.getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 0.33);
+        int mp = (int) Math.ceil(super.getWalkMP(gravity, ignoreheat, ignoremodulararmor) * 0.33);
         if (convertingNow) {
             mp /= 2;
         }
         return mp;
     }
-    
+
     public int getAirMechRunMP() {
         return getAirMechRunMP(true, false, false);
     }
 
     public int getAirMechRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-        int mp = (int)Math.ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * 1.5);
+        int mp = (int) Math.ceil(getAirMechWalkMP(gravity, ignoreheat, ignoremodulararmor) * 1.5);
         if (convertingNow) {
             mp /= 2;
         }
         return mp;
     }
-    
+
     public int getFighterModeWalkMP(boolean gravity, boolean ignoremodulararmor) {
         int thrust = getCurrentThrust();
         if (!isAirborne()) {
@@ -370,7 +371,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public int getFighterModeRunMP(boolean gravity, boolean ignoremodulararmor) {
         int walk = getFighterModeWalkMP(gravity, ignoremodulararmor);
         if (isAirborne()) {
-            return (int)Math.ceil(walk * 1.5);
+            return (int) Math.ceil(walk * 1.5);
         } else {
             return walk; // Grounded asfs cannot use flanking movement
         }
@@ -379,8 +380,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public int getCurrentThrust() {
         // Cannot fly in atmosphere with missing side torso
-        if (!isSpaceborne()
-                && (isLocationBad(LOC_RT) || isLocationBad(LOC_LT))) {
+        if (!isSpaceborne() && (isLocationBad(LOC_RT) || isLocationBad(LOC_LT))) {
             return 0;
         }
         int j = getJumpMP();
@@ -408,9 +408,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public int getFighterModeRunMP() {
         return getFighterModeRunMP(true, false);
     }
-    
+
     /**
-     * LAMs cannot benefit from MASC in AirMech or fighter mode and cannot mount a supercharger.
+     * LAMs cannot benefit from MASC in AirMech or fighter mode and cannot mount
+     * a supercharger.
      */
     @Override
     public boolean hasArmedMASC() {
@@ -420,16 +421,15 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return false;
         }
     }
-    
+
     @Override
     public boolean isImmobile() {
-        if (getConversionMode() == CONV_MODE_FIGHTER
-                && (isAirborne() || isSpaceborne())) {
+        if (getConversionMode() == CONV_MODE_FIGHTER && (isAirborne() || isSpaceborne())) {
             return false;
         }
         return super.isImmobile();
     }
-    
+
     @Override
     public int getWalkHeat() {
         if (moved == EntityMovementType.MOVE_VTOL_WALK) {
@@ -437,7 +437,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return super.getWalkHeat();
     }
-    
+
     @Override
     public int getRunHeat() {
         if (moved == EntityMovementType.MOVE_VTOL_RUN) {
@@ -445,27 +445,27 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return super.getRunHeat();
     }
-    
+
     public int getAirMechHeat() {
-        int mod = bDamagedCoolantSystem?1:0;
-        return mod + (int)Math.round(getJumpHeat(mpUsed) / 3.0);
+        int mod = bDamagedCoolantSystem ? 1 : 0;
+        return mod + (int) Math.round(getJumpHeat(mpUsed) / 3.0);
     }
 
     @Override
     public int getEngineCritHeat() {
-        // Engine crit heat follows ASF rules in fighter mode. 
+        // Engine crit heat follows ASF rules in fighter mode.
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             return 2 * getEngineHits();
         } else {
             return super.getEngineCritHeat();
         }
     }
-    
+
     @Override
     public int getHeatSinks() {
         return getActiveSinks();
     }
-    
+
     @Override
     public boolean usesTurnMode() {
         // Turn mode rule is not optional for LAMs in AirMech mode.
@@ -473,15 +473,16 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     /**
-     * When cycling through possible movement modes, we need to know if we've returned to the previous
-     * mode, which means that no conversion is actually going to take place.
-     * 
+     * When cycling through possible movement modes, we need to know if we've
+     * returned to the previous mode, which means that no conversion is actually
+     * going to take place.
+     *
      * @return The movement mode on the previous turn.
      */
     public EntityMovementMode getPreviousMovementMode() {
         return previousMovementMode;
     }
-    
+
     public int getPreviousConversionMode() {
         switch (previousMovementMode) {
         case AERODYNE:
@@ -494,12 +495,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return CONV_MODE_MECH;
         }
     }
-    
+
     @Override
     public void setMovementMode(EntityMovementMode mode) {
         int prevMode = getConversionMode();
-        if (mode == EntityMovementMode.AERODYNE
-                || mode == EntityMovementMode.WHEELED) {
+        if (mode == EntityMovementMode.AERODYNE || mode == EntityMovementMode.WHEELED) {
             setConversionMode(CONV_MODE_FIGHTER);
         } else if (mode == EntityMovementMode.WIGE) {
             setConversionMode(CONV_MODE_AIRMECH);
@@ -507,7 +507,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             setConversionMode(CONV_MODE_MECH);
         }
         super.setMovementMode(mode);
-        
+
         if (getConversionMode() != prevMode) {
             if (getConversionMode() == CONV_MODE_FIGHTER) {
                 setRapidFire();
@@ -525,11 +525,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                     }
                 }
             }
-            
+
             resetBombAttacks();
         }
     }
-    
+
     @Override
     public void setConversionMode(int mode) {
         if (mode == getConversionMode()) {
@@ -546,7 +546,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         super.setConversionMode(mode);
     }
-    
+
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         // Fighter mode has the same terrain restrictions as ASFs.
@@ -562,13 +562,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             // Additional restrictions for hidden units
             if (isHidden()) {
                 // Can't deploy in paved hexes
-                if (hex.containsTerrain(Terrains.PAVEMENT)
-                        || hex.containsTerrain(Terrains.ROAD)) {
+                if (hex.containsTerrain(Terrains.PAVEMENT) || hex.containsTerrain(Terrains.ROAD)) {
                     return true;
                 }
                 // Can't deploy on a bridge
-                if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
-                        && hex.containsTerrain(Terrains.BRIDGE)) {
+                if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) && hex.containsTerrain(Terrains.BRIDGE)) {
                     return true;
                 }
                 // Can't deploy on the surface of water
@@ -578,54 +576,50 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
 
             // grounded aeros have the same prohibitions as wheeled tanks
-            return hex.containsTerrain(Terrains.WOODS)
-                    || hex.containsTerrain(Terrains.ROUGH)
-                    || ((hex.terrainLevel(Terrains.WATER) > 0) 
-                            && !hex.containsTerrain(Terrains.ICE))
-                    || hex.containsTerrain(Terrains.RUBBLE)
-                    || hex.containsTerrain(Terrains.MAGMA)
-                    || hex.containsTerrain(Terrains.JUNGLE)
-                    || (hex.terrainLevel(Terrains.SNOW) > 1)
+            return hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.ROUGH)
+                    || ((hex.terrainLevel(Terrains.WATER) > 0) && !hex.containsTerrain(Terrains.ICE))
+                    || hex.containsTerrain(Terrains.RUBBLE) || hex.containsTerrain(Terrains.MAGMA)
+                    || hex.containsTerrain(Terrains.JUNGLE) || (hex.terrainLevel(Terrains.SNOW) > 1)
                     || (hex.terrainLevel(Terrains.GEYSER) == 2);
         } else if (getConversionMode() == CONV_MODE_AIRMECH && currElevation > 0) {
-            // Cannot enter woods or a building hex in AirMech mode unless using ground movement
+            // Cannot enter woods or a building hex in AirMech mode unless using
+            // ground movement
             // or flying over the terrain.
             IHex hex = game.getBoard().getHex(c);
-            return (hex.containsTerrain(Terrains.WOODS)
-                    || hex.containsTerrain(Terrains.JUNGLE)
-                    || hex.containsTerrain(Terrains.BLDG_ELEV))
-                    && hex.ceiling() > currElevation;
+            return (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)
+                    || hex.containsTerrain(Terrains.BLDG_ELEV)) && hex.ceiling() > currElevation;
         } else {
-            // Mech mode or AirMech mode using ground MP have the same restrictions as Biped Mech.
+            // Mech mode or AirMech mode using ground MP have the same
+            // restrictions as Biped Mech.
             return super.isLocationProhibited(c, currElevation);
         }
     }
-    
+
     @Override
     public String getMovementString(EntityMovementType mtype) {
         switch (mtype) {
-            case MOVE_WALK:
-                if (getConversionMode() == CONV_MODE_FIGHTER) {
-                    return "Cruised";
-                } else {
-                    return "Walked";
-                }
-            case MOVE_RUN:
-                if (getConversionMode() == CONV_MODE_FIGHTER) {
-                    return "Flanked";
-                } else {
-                    return "Ran";
-                }
-            case MOVE_VTOL_WALK:
+        case MOVE_WALK:
+            if (getConversionMode() == CONV_MODE_FIGHTER) {
                 return "Cruised";
-            case MOVE_VTOL_RUN:
+            } else {
+                return "Walked";
+            }
+        case MOVE_RUN:
+            if (getConversionMode() == CONV_MODE_FIGHTER) {
                 return "Flanked";
-            case MOVE_SAFE_THRUST:
-                return "Safe Thrust";
-            case MOVE_OVER_THRUST:
-                return "Over Thrust";
-            default:
-                return super.getMovementString(mtype);
+            } else {
+                return "Ran";
+            }
+        case MOVE_VTOL_WALK:
+            return "Cruised";
+        case MOVE_VTOL_RUN:
+            return "Flanked";
+        case MOVE_SAFE_THRUST:
+            return "Safe Thrust";
+        case MOVE_OVER_THRUST:
+            return "Over Thrust";
+        default:
+            return super.getMovementString(mtype);
         }
     }
 
@@ -648,16 +642,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return "C";
         case MOVE_VTOL_RUN:
             return "F";
-            case MOVE_NONE:
-                return "N";
-            case MOVE_SAFE_THRUST:
-                return "S";
-            case MOVE_OVER_THRUST:
-                return "O";
-            default:
-                return super.getMovementAbbr(mtype);
+        case MOVE_NONE:
+            return "N";
+        case MOVE_SAFE_THRUST:
+            return "S";
+        case MOVE_OVER_THRUST:
+            return "O";
+        default:
+            return super.getMovementAbbr(mtype);
         }
     }
+
     /**
      * Add in any piloting skill mods
      */
@@ -668,19 +663,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             roll.addModifier(getCrew().getHits(0), "pilot hits");
         }
 
-        if (getConversionMode() != CONV_MODE_FIGHTER
-                && !isAirborneVTOLorWIGE()) {
+        if (getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE()) {
             return super.addEntityBonuses(roll);
         }
-        
+
         // In fighter mode a destroyed gyro gives +6 to the control roll.
-        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT);
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
         if (gyroHits > 0) {
             if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
                 if (gyroHits == 1) {
                     roll.addModifier(1, "HD Gyro damaged once");
-                } else if (gyroHits == 2){
+                } else if (gyroHits == 2) {
                     roll.addModifier(3, "HD Gyro damaged twice");
                 } else {
                     roll.addModifier(6, "Gyro destroyed");
@@ -714,14 +707,14 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
             roll.addModifier(1, "cramped cockpit");
         }
-        
+
         int avionicsHits = getAvionicsHits();
         if (avionicsHits > 2) {
             roll.addModifier(5, "avionics destroyed");
         } else if (avionicsHits > 0) {
             roll.addModifier(avionicsHits, "avionics damage");
         }
-        
+
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             if (moved == EntityMovementType.MOVE_OVER_THRUST) {
                 roll.addModifier(+1, "Used more than safe thrust");
@@ -734,9 +727,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
             int atmoCond = game.getPlanetaryConditions().getAtmosphere();
             // add in atmospheric effects later
-            if (!(game.getBoard().inSpace()
-                    || (atmoCond == PlanetaryConditions.ATMO_VACUUM))
-                    && isAirborne()) {
+            if (!(game.getBoard().inSpace() || (atmoCond == PlanetaryConditions.ATMO_VACUUM)) && isAirborne()) {
                 roll.addModifier(+1, "Atmospheric operations");
             }
 
@@ -752,21 +743,20 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     /**
-     * Landing in AirMech mode requires a control roll only if the gyro or any of the hip or leg actuators
-     * are damaged.
-     * 
+     * Landing in AirMech mode requires a control roll only if the gyro or any
+     * of the hip or leg actuators are damaged.
+     *
      * @return The control roll that must be passed to land safely.
      */
     public PilotingRollData checkAirMechLanding() {
         // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(getId(), getCrew()
-                .getPiloting(), "Base piloting skill");
-        
+        PilotingRollData roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
+
         addEntityBonuses(roll);
-        
-        // Landing in AirMech mode only requires a roll if gyro or hip/leg actuators are damaged.
-        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT);
+
+        // Landing in AirMech mode only requires a roll if gyro or hip/leg
+        // actuators are damaged.
+        int gyroHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT);
         if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             gyroHits--;
         }
@@ -812,17 +802,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return roll;
     }
-    
+
     @Override
     public int getMaxElevationDown(int currElevation) {
-        // Cannot spend AirMech MP above altitude 3 (level 30) so we use that as max descent.
-        if ((currElevation > 0)
-                && (getConversionMode() == CONV_MODE_AIRMECH)) {
+        // Cannot spend AirMech MP above altitude 3 (level 30) so we use that as
+        // max descent.
+        if ((currElevation > 0) && (getConversionMode() == CONV_MODE_AIRMECH)) {
             return 30;
         }
         return super.getMaxElevationDown(currElevation);
     }
-    
+
     @Override
     public boolean canChangeSecondaryFacing() {
         if (getConversionMode() == CONV_MODE_MECH) {
@@ -831,11 +821,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return false;
         }
     }
-    
+
     /**
      * Start a new round
      *
-     * @param roundNumber the <code>int</code> number of the new round
+     * @param roundNumber
+     *            the <code>int</code> number of the new round
      */
     @Override
     public void newRound(int roundNumber) {
@@ -856,7 +847,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         if (getRecoveryTurn() > 0) {
             setRecoveryTurn(getRecoveryTurn() - 1);
         }
-        
+
         airmechBombTarget = null;
 
         if (getConversionMode() == CONV_MODE_FIGHTER) {
@@ -880,7 +871,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             resetAltLossThisRound();
         }
     }
-    
+
     /**
      * Cannot make any physical attacks in fighter mode except ramming, which is
      * handled in the movement phase.
@@ -889,7 +880,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public boolean isEligibleForPhysical() {
         return getConversionMode() != CONV_MODE_FIGHTER && super.isEligibleForPhysical();
     }
-    
+
     @Override
     public boolean canCharge() {
         if (getConversionMode() == CONV_MODE_FIGHTER
@@ -904,7 +895,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public boolean canRam() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             return !isImmobile() && (getWalkMP() > 0);
-        } else if (getConversionMode() == CONV_MODE_AIRMECH){
+        } else if (getConversionMode() == CONV_MODE_AIRMECH) {
             return isAirborneVTOLorWIGE();
         } else {
             return false;
@@ -912,8 +903,9 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     /*
-     * Cycling through conversion modes for LAMs in 'Mech or fighter mode is simple toggling between
-     * two states. LAMs in AirMech mode have three possible states.
+     * Cycling through conversion modes for LAMs in 'Mech or fighter mode is
+     * simple toggling between two states. LAMs in AirMech mode have three
+     * possible states.
      */
     @Override
     public EntityMovementMode nextConversionMode(EntityMovementMode afterMode) {
@@ -921,34 +913,38 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         if (previousMovementMode == EntityMovementMode.WIGE) {
             if (afterMode == EntityMovementMode.WIGE) {
                 return EntityMovementMode.AERODYNE;
-            } else if (afterMode == EntityMovementMode.AERODYNE
-                    || afterMode == EntityMovementMode.WHEELED) {
+            } else if (afterMode == EntityMovementMode.AERODYNE || afterMode == EntityMovementMode.WHEELED) {
                 return originalMovementMode;
             } else {
                 return EntityMovementMode.WIGE;
             }
         } else if (afterMode == EntityMovementMode.WIGE) {
-            return inSpace? EntityMovementMode.AERODYNE : previousMovementMode;
+            return inSpace ? EntityMovementMode.AERODYNE : previousMovementMode;
         } else if (afterMode == EntityMovementMode.AERODYNE || afterMode == EntityMovementMode.WHEELED) {
-            return (inSpace || lamType == LAM_BIMODAL)? originalMovementMode : EntityMovementMode.WIGE;
+            return (inSpace || lamType == LAM_BIMODAL) ? originalMovementMode : EntityMovementMode.WIGE;
         } else {
-            return lamType == LAM_BIMODAL? EntityMovementMode.AERODYNE : EntityMovementMode.WIGE;
+            return lamType == LAM_BIMODAL ? EntityMovementMode.AERODYNE : EntityMovementMode.WIGE;
         }
     }
-    
+
     public boolean canConvertTo(EntityMovementMode toMode) {
         return canConvertTo(getConversionMode(), getConversionModeFor(toMode));
     }
-    
+
     public boolean canConvertTo(int fromMode, EntityMovementMode toMode) {
         return canConvertTo(fromMode, getConversionModeFor(toMode));
     }
-    
+
     /**
-     * Determines whether it is possible to assume a particular mode based on damage and type of map.
-     * 
-     * @param fromMode The mode to convert from (one of CONV_MODE_MECH, CONV_MODE_AIRMECH, or CONV_MODE_FIGHTER)
-     * @param toMode   The mode to convert to (one of CONV_MODE_MECH, CONV_MODE_AIRMECH, or CONV_MODE_FIGHTER)
+     * Determines whether it is possible to assume a particular mode based on
+     * damage and type of map.
+     *
+     * @param fromMode
+     *            The mode to convert from (one of CONV_MODE_MECH,
+     *            CONV_MODE_AIRMECH, or CONV_MODE_FIGHTER)
+     * @param toMode
+     *            The mode to convert to (one of CONV_MODE_MECH,
+     *            CONV_MODE_AIRMECH, or CONV_MODE_FIGHTER)
      * @return true if it is possible for the LAM to convert to the given mode.
      */
     public boolean canConvertTo(int fromMode, int toMode) {
@@ -960,52 +956,53 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         if (gyroHits > 0) {
             return false;
         }
-        
-        // Cannot convert to or from mech mode with damage shoulder or arm actuators
+
+        // Cannot convert to or from mech mode with damage shoulder or arm
+        // actuators
         if ((toMode == CONV_MODE_MECH || fromMode == CONV_MODE_MECH)
                 && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, LOC_RARM)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, LOC_RARM)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, LOC_RARM)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, LOC_LARM)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, LOC_LARM)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, LOC_LARM) > 0)) {
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, LOC_RARM)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, LOC_RARM)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_SHOULDER, LOC_LARM)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_ARM, LOC_LARM)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM, LOC_LARM) > 0)) {
             return false;
         }
-        
-        // Cannot convert to or from fighter mode with damage hip or leg actuators
+
+        // Cannot convert to or from fighter mode with damage hip or leg
+        // actuators
         if ((toMode == CONV_MODE_FIGHTER || fromMode == CONV_MODE_FIGHTER)
                 && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, LOC_RLEG)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, LOC_RLEG)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, LOC_RLEG)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, LOC_LLEG)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, LOC_LLEG)
-                + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, LOC_LLEG) > 0)) {
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, LOC_RLEG)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, LOC_RLEG)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, LOC_LLEG)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, LOC_LLEG)
+                        + getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, LOC_LLEG) > 0)) {
             return false;
         }
-        
+
         if (toMode == CONV_MODE_AIRMECH) {
             if (getLAMType() == LAM_BIMODAL) {
                 return false;
             }
         } else if (toMode == CONV_MODE_FIGHTER) {
-            // Standard LAMs can convert from mech to fighter mode in a single round on a space map
+            // Standard LAMs can convert from mech to fighter mode in a single
+            // round on a space map
             if (fromMode == CONV_MODE_MECH) {
-                return getLAMType() == LAM_BIMODAL
-                        || game.getBoard().inSpace();
+                return getLAMType() == LAM_BIMODAL || game.getBoard().inSpace();
             }
         } else if (toMode == CONV_MODE_MECH) {
-            // Standard LAMs can convert from fighter to mech mode in a single round on a space map
+            // Standard LAMs can convert from fighter to mech mode in a single
+            // round on a space map
             if (fromMode == CONV_MODE_FIGHTER) {
-                return getLAMType() == LAM_BIMODAL
-                        || game.getBoard().inSpace();
+                return getLAMType() == LAM_BIMODAL || game.getBoard().inSpace();
             }
         }
         return true;
     }
-    
+
     public int getConversionModeFor(EntityMovementMode mmode) {
-        if (mmode == EntityMovementMode.AERODYNE
-                || mmode == EntityMovementMode.WHEELED) {
+        if (mmode == EntityMovementMode.AERODYNE || mmode == EntityMovementMode.WHEELED) {
             return CONV_MODE_FIGHTER;
         } else if (mmode == EntityMovementMode.WIGE) {
             return CONV_MODE_AIRMECH;
@@ -1013,13 +1010,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return CONV_MODE_MECH;
         }
     }
-    
+
     @Override
     public boolean canFall(boolean gyroLegDamage) {
-        return getConversionMode() != CONV_MODE_FIGHTER
-                && !isAirborneVTOLorWIGE();
+        return getConversionMode() != CONV_MODE_FIGHTER && !isAirborneVTOLorWIGE();
     }
-    
+
     @Override
     public int height() {
         if (getConversionMode() == CONV_MODE_MECH) {
@@ -1027,28 +1023,30 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return 0;
     }
-    
+
     /**
      * LAMs can only carry mechanized BA in mech mode
+     * 
      * @return
      */
     @Override
     public boolean canLoad(Entity unit, boolean checkElev) {
-        return (getConversionMode() == CONV_MODE_MECH)
-                && super.canLoad(unit, checkElev);
+        return (getConversionMode() == CONV_MODE_MECH) && super.canLoad(unit, checkElev);
     }
-    
+
     /**
-     * Bomb ordnance is treated as inferno ammo for purposes of avoiding explosion due to heat.
+     * Bomb ordnance is treated as inferno ammo for purposes of avoiding
+     * explosion due to heat.
      *
-     * @return <code>true</code> if the unit is still loaded with inferno rounds or bomb ordnance.
+     * @return <code>true</code> if the unit is still loaded with inferno rounds
+     *         or bomb ordnance.
      */
+    @Override
     public boolean hasInfernoAmmo() {
         for (Mounted m : getMisc()) {
-            if (m.getType().hasFlag(MiscType.F_BOMB_BAY)
-                    && m.getLinked() != null) {
+            if (m.getType().hasFlag(MiscType.F_BOMB_BAY) && m.getLinked() != null) {
                 Mounted bomb = m.getLinked();
-                // We may have to go through a launcher to get to the ordnance 
+                // We may have to go through a launcher to get to the ordnance
                 if (bomb.getLinked() != null) {
                     bomb = bomb.getLinked();
                 }
@@ -1059,9 +1057,9 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return super.hasInfernoAmmo();
     }
-    
+
     /** Fighter Mode **/
-    
+
     public void setWhoFirst() {
         whoFirst = Compute.randomInt(500);
     }
@@ -1074,11 +1072,10 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public int getMaxBombPoints() {
         return countWorkingMisc(MiscType.F_BOMB_BAY);
     }
-    
+
     @Override
     public int getMaxBombSize() {
-        return Math.max(emptyBaysInLoc(LOC_CT),
-                Math.max(emptyBaysInLoc(LOC_RT), emptyBaysInLoc(LOC_LT)));
+        return Math.max(emptyBaysInLoc(LOC_CT), Math.max(emptyBaysInLoc(LOC_RT), emptyBaysInLoc(LOC_LT)));
     }
 
     @Override
@@ -1092,17 +1089,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             bombChoices = bc;
         }
     }
-    
+
     @Override
     public Targetable getVTOLBombTarget() {
         return airmechBombTarget;
     }
-    
+
     @Override
     public void setVTOLBombTarget(Targetable t) {
         airmechBombTarget = t;
     }
-    
+
     @Override
     public boolean isMakingVTOLGroundAttack() {
         return airmechBombTarget != null;
@@ -1142,12 +1139,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public boolean isRolled() {
         return rolled;
     }
-    
+
     @Override
     public boolean isOutControlTotal() {
         return outControl || shutDown || getCrew().isUnconscious();
     }
-    
+
     @Override
     public boolean isOutControl() {
         return outControl;
@@ -1157,7 +1154,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public void setOutControl(boolean ocontrol) {
         outControl = ocontrol;
     }
-    
+
     @Override
     public boolean isOutCtrlHeat() {
         return outCtrlHeat;
@@ -1167,7 +1164,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public void setOutCtrlHeat(boolean octrlheat) {
         outCtrlHeat = octrlheat;
     }
-    
+
     @Override
     public boolean isRandomMove() {
         return randomMove;
@@ -1182,7 +1179,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public void setRolled(boolean roll) {
         rolled = roll;
     }
-    
+
     @Override
     public boolean didAccLast() {
         return accLast;
@@ -1192,7 +1189,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public void setAccLast(boolean b) {
         accLast = b;
     }
-    
+
     @Override
     public void setSI(int si) {
         setInternal(si, LOC_CT);
@@ -1207,13 +1204,12 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public int get0SI() {
         return getOInternal(LOC_CT);
     }
-    
+
     @Override
     public boolean hasLifeSupport() {
-        return getGoodCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT,
-                LOC_HEAD) > 0;
+        return getGoodCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT, LOC_HEAD) > 0;
     }
-    
+
     /**
      * Used to determine modifier for landing.
      */
@@ -1233,8 +1229,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         case LOC_CAPITAL_AFT:
             return Math.max(super.getLocationStatus(LOC_RLEG), super.getLocationStatus(LOC_LLEG));
         case LOC_CAPITAL_WINGS:
-            return Math.max(
-                    Math.max(super.getLocationStatus(LOC_RT), super.getLocationStatus(LOC_RARM)),
+            return Math.max(Math.max(super.getLocationStatus(LOC_RT), super.getLocationStatus(LOC_RARM)),
                     Math.max(super.getLocationStatus(LOC_LT), super.getLocationStatus(LOC_LARM)));
         default:
             return super.getLocationStatus(loc);
@@ -1249,27 +1244,27 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return hits;
     }
-    
+
     @Override
     public int getSensorHits() {
         return getBadCriticals(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS, LOC_HEAD);
     }
-    
+
     @Override
     public int getFCSHits() {
         return 0;
     }
-    
+
     @Override
     public int getLeftThrustHits() {
         return 0;
     }
-    
+
     @Override
     public int getRightThrustHits() {
         return 0;
     }
-    
+
     @Override
     public void setGearHit(boolean hit) {
         if (hit) {
@@ -1278,8 +1273,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 for (int i = 0; i < crits[loc].length; i++) {
                     final CriticalSlot slot = crits[loc][i];
                     if (slot != null && slot.getType() == CriticalSlot.TYPE_SYSTEM
-                            && slot.getIndex() == LAM_LANDING_GEAR
-                            && !slot.isDestroyed()) {
+                            && slot.getIndex() == LAM_LANDING_GEAR && !slot.isDestroyed()) {
                         gearSlots.add(slot);
                     }
                 }
@@ -1290,22 +1284,24 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             }
         }
     }
-    
+
     /**
      * Modifier to landing or vertical takeoff roll for landing gear damage.
-     * 
-     * @param vTakeoff true if this is for a vertical takeoff, false if for a landing
+     *
+     * @param vTakeoff
+     *            true if this is for a vertical takeoff, false if for a landing
      * @return the control roll modifier
      */
+    @Override
     public int getLandingGearMod(boolean vTakeoff) {
         int hits = 0;
         for (int loc = 0; loc < locations(); loc++) {
             hits += getBadCriticals(CriticalSlot.TYPE_SYSTEM, LAM_LANDING_GEAR, loc);
         }
         if (vTakeoff) {
-            return hits > 0? 1 : 0;
+            return hits > 0 ? 1 : 0;
         } else {
-            return hits > 3? 5 : hits;
+            return hits > 3 ? 5 : hits;
         }
     }
 
@@ -1318,52 +1314,53 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return super.getWeaponArc(wn);
         }
         final Mounted mounted = getEquipment(wn);
-        if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB) || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
+        if (mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB) || mounted.getType().hasFlag(WeaponType.F_DIVE_BOMB)
+                || mounted.getType().hasFlag(WeaponType.F_ALT_BOMB)) {
             return Compute.ARC_360;
         }
-        // We use Aero locations for weapon groups for fighter squadron compatibility
+        // We use Aero locations for weapon groups for fighter squadron
+        // compatibility
         if (mounted.isWeaponGroup()) {
-            return (mounted.getLocation() == Aero.LOC_AFT)?
-                    Compute.ARC_AFT : Compute.ARC_NOSE;
+            return (mounted.getLocation() == Aero.LOC_AFT) ? Compute.ARC_AFT : Compute.ARC_NOSE;
         }
         int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
-            case LOC_HEAD:
-                arc = Compute.ARC_NOSE;
-                break;
-            case LOC_CT:
-                if (mounted.isRearMounted()) {
-                    arc = Compute.ARC_AFT;
-                } else {
-                    arc = Compute.ARC_NOSE;
-                }
-                break;
-            case LOC_RT:
-                if (mounted.isRearMounted()) {
-                    arc = Compute.ARC_RWINGA;
-                } else {
-                    arc = Compute.ARC_RWING;
-                }
-                break;
-            case LOC_LT:
-                if (mounted.isRearMounted()) {
-                    arc = Compute.ARC_LWINGA;
-                } else {
-                    arc = Compute.ARC_LWING;
-                }
-                break;
-            case LOC_RARM:
-                arc = Compute.ARC_RWING;
-                break;
-            case LOC_LARM:
-                arc = Compute.ARC_LWING;
-                break;
-            case LOC_RLEG:
-            case LOC_LLEG:
+        case LOC_HEAD:
+            arc = Compute.ARC_NOSE;
+            break;
+        case LOC_CT:
+            if (mounted.isRearMounted()) {
                 arc = Compute.ARC_AFT;
-                break;
-            default:
-                arc = Compute.ARC_360;
+            } else {
+                arc = Compute.ARC_NOSE;
+            }
+            break;
+        case LOC_RT:
+            if (mounted.isRearMounted()) {
+                arc = Compute.ARC_RWINGA;
+            } else {
+                arc = Compute.ARC_RWING;
+            }
+            break;
+        case LOC_LT:
+            if (mounted.isRearMounted()) {
+                arc = Compute.ARC_LWINGA;
+            } else {
+                arc = Compute.ARC_LWING;
+            }
+            break;
+        case LOC_RARM:
+            arc = Compute.ARC_RWING;
+            break;
+        case LOC_LARM:
+            arc = Compute.ARC_LWING;
+            break;
+        case LOC_RLEG:
+        case LOC_LLEG:
+            arc = Compute.ARC_AFT;
+            break;
+        default:
+            arc = Compute.ARC_360;
         }
 
         return rollArcs(arc);
@@ -1392,93 +1389,118 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 legloc = LOC_LLEG;
             }
             switch (roll) {
-                case 2: case 6:
-                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
-                case 3: case 4:
-                case 10: case 11:
-                    return new HitData(armloc, false, HitData.EFFECT_NONE);
-                case 5: case 9:
-                    return new HitData(legloc, false, HitData.EFFECT_NONE);
-                case 7:
-                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-                case 8: case 12:
-                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+            case 2:
+            case 6:
+                return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+            case 3:
+            case 4:
+            case 10:
+            case 11:
+                return new HitData(armloc, false, HitData.EFFECT_NONE);
+            case 5:
+            case 9:
+                return new HitData(legloc, false, HitData.EFFECT_NONE);
+            case 7:
+                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+            case 8:
+            case 12:
+                return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
             }
         }
 
         if (side == ToHitData.SIDE_FRONT) {
             // normal front hits
             switch (roll) {
-                case 2: case 12:
-                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-                case 3: case 6:
-                    return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
-                case 4: case 5:
-                    return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
-                case 7:
-                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-                case 8: case 11:
-                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
-                case 9: case 10:
-                    return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
+            case 2:
+            case 12:
+                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+            case 3:
+            case 6:
+                return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
+            case 4:
+            case 5:
+                return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
+            case 7:
+                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+            case 8:
+            case 11:
+                return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+            case 9:
+            case 10:
+                return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_LEFT) {
             // normal left-side hits
             switch (roll) {
-                case 2:
-                    return new HitData(LOC_HEAD, false, HitData.EFFECT_NONE);
-                case 3: case 7: case 11:
-                    return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
-                case 4: case 5:
-                    return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-                case 6: case 8:
-                    return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
-                case 9: case 10: case 12:
-                    return new HitData(LOC_LLEG, false, HitData.EFFECT_NONE);
+            case 2:
+                return new HitData(LOC_HEAD, false, HitData.EFFECT_NONE);
+            case 3:
+            case 7:
+            case 11:
+                return new HitData(LOC_LARM, false, HitData.EFFECT_NONE);
+            case 4:
+            case 5:
+                return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
+            case 6:
+            case 8:
+                return new HitData(LOC_LT, false, HitData.EFFECT_NONE);
+            case 9:
+            case 10:
+            case 12:
+                return new HitData(LOC_LLEG, false, HitData.EFFECT_NONE);
             }
         } else if (side == ToHitData.SIDE_RIGHT) {
             // normal right-side hits
             switch (roll) {
             case 2:
                 return new HitData(LOC_HEAD, false, HitData.EFFECT_NONE);
-            case 3: case 7: case 11:
+            case 3:
+            case 7:
+            case 11:
                 return new HitData(LOC_RARM, false, HitData.EFFECT_NONE);
-            case 4: case 5:
+            case 4:
+            case 5:
                 return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
-            case 6: case 8:
+            case 6:
+            case 8:
                 return new HitData(LOC_RT, false, HitData.EFFECT_NONE);
-            case 9: case 10: case 12:
+            case 9:
+            case 10:
+            case 12:
                 return new HitData(LOC_RLEG, false, HitData.EFFECT_NONE);
-        }
+            }
         } else if (side == ToHitData.SIDE_REAR) {
             // rear torso locations are only hit on a roll of 5-6 on d6
             boolean rear = Compute.d6() > 4;
             switch (roll) {
-                case 2: case 12:
-                    return new HitData(LOC_CT, rear, HitData.EFFECT_NONE);
-                case 3: case 4:
-                    return new HitData(LOC_RT, rear, HitData.EFFECT_NONE);
-                case 5:
-                    return new HitData(LOC_RARM, rear, HitData.EFFECT_NONE);
-                case 6:
-                    return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
-                case 7:
-                    if (Compute.d6() > 3) {
-                        return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
-                    } else {
-                        return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
-                    }
-                case 8:
+            case 2:
+            case 12:
+                return new HitData(LOC_CT, rear, HitData.EFFECT_NONE);
+            case 3:
+            case 4:
+                return new HitData(LOC_RT, rear, HitData.EFFECT_NONE);
+            case 5:
+                return new HitData(LOC_RARM, rear, HitData.EFFECT_NONE);
+            case 6:
+                return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
+            case 7:
+                if (Compute.d6() > 3) {
                     return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
-                case 9:
-                    return new HitData(LOC_LARM, rear, HitData.EFFECT_NONE);
-                case 10: case 11:
-                    return new HitData(LOC_LT, rear, HitData.EFFECT_NONE);
+                } else {
+                    return new HitData(LOC_RLEG, rear, HitData.EFFECT_NONE);
+                }
+            case 8:
+                return new HitData(LOC_LLEG, rear, HitData.EFFECT_NONE);
+            case 9:
+                return new HitData(LOC_LARM, rear, HitData.EFFECT_NONE);
+            case 10:
+            case 11:
+                return new HitData(LOC_LT, rear, HitData.EFFECT_NONE);
             }
         }
         return new HitData(LOC_CT, false, HitData.EFFECT_NONE);
     }
-    
+
     @Override
     public int getFuel() {
         return fuel;
@@ -1486,7 +1508,9 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     /**
      * Sets the number of fuel points.
-     * @param gas  Number of fuel points.
+     * 
+     * @param gas
+     *            Number of fuel points.
      */
     @Override
     public void setFuel(int gas) {
@@ -1494,19 +1518,20 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
-    public double getFuelPointsPerTon(){
+    public double getFuelPointsPerTon() {
         return 80;
     }
 
     /**
      * Set number of fuel points based on fuel tonnage.
      *
-     * @param fuelTons  The number of tons of fuel
+     * @param fuelTons
+     *            The number of tons of fuel
      */
     @Override
-    public void setFuelTonnage(double fuelTons){
+    public void setFuelTonnage(double fuelTons) {
         double pointsPerTon = getFuelPointsPerTon();
-        fuel = (int)Math.ceil(pointsPerTon * fuelTons);
+        fuel = (int) Math.ceil(pointsPerTon * fuelTons);
     }
 
     /**
@@ -1515,12 +1540,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      * @return The number of tons of fuel on this Aero.
      */
     @Override
-    public double getFuelTonnage(){
+    public double getFuelTonnage() {
         return fuel / getFuelPointsPerTon();
     }
-    
+
     /**
-     * Exceeding damage threshold does not result in critical, but requires control roll.
+     * Exceeding damage threshold does not result in critical, but requires
+     * control roll.
      */
     @Override
     public int getThresh(int loc) {
@@ -1536,7 +1562,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     public void setCritThresh(boolean b) {
         critThresh = b;
     }
-    
+
     @Override
     public boolean isSpheroid() {
         return false;
@@ -1552,26 +1578,32 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         straightMoves = i;
     }
 
+    @Override
     public int getAltLoss() {
         return altLoss;
     }
 
+    @Override
     public void setAltLoss(int i) {
         altLoss = i;
     }
 
+    @Override
     public void resetAltLoss() {
         altLoss = 0;
     }
 
+    @Override
     public int getAltLossThisRound() {
         return altLossThisRound;
     }
 
+    @Override
     public void setAltLossThisRound(int i) {
         altLossThisRound = i;
     }
 
+    @Override
     public void resetAltLossThisRound() {
         altLossThisRound = 0;
     }
@@ -1603,6 +1635,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return super.getElevation();
     }
 
+    @Override
     public int getFuelUsed(int thrust) {
         int overThrust = Math.max(thrust - getWalkMP(), 0);
         int safeThrust = thrust - overThrust;
@@ -1610,71 +1643,85 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return used;
     }
 
+    @Override
     public boolean didFailManeuver() {
         return failedManeuver;
     }
 
+    @Override
     public void setFailedManeuver(boolean b) {
         failedManeuver = b;
     }
 
+    @Override
     public void setAccDecNow(boolean b) {
         accDecNow = b;
     }
 
+    @Override
     public boolean didAccDecNow() {
         return accDecNow;
     }
 
+    @Override
     public int getCapArmor() {
         return capitalArmor;
     }
-    
+
+    @Override
     public void setCapArmor(int i) {
         capitalArmor = i;
     }
-    
+
+    @Override
     public int getCap0Armor() {
         return capitalArmor_orig;
     }
 
+    @Override
     public int getFatalThresh() {
         return fatalThresh;
     }
-    
+
+    @Override
     public void autoSetCapArmor() {
         double divisor = 10.0;
-        if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             divisor = 1.0;
         }
         capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
         capitalArmor = (int) Math.round(getTotalArmor() / divisor);
     }
 
+    @Override
     public void autoSetFatalThresh() {
         int baseThresh = 2;
-        if((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
+        if ((null != game) && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             baseThresh = 20;
         }
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
     }
 
+    @Override
     public int getCurrentDamage() {
         return currentDamage;
     }
 
+    @Override
     public void setCurrentDamage(int i) {
         currentDamage = i;
     }
-    
+
     @Override
-    public Map<String,Integer> getWeaponGroups() {
+    public Map<String, Integer> getWeaponGroups() {
         return weaponGroups;
     }
 
     /**
-     * Provide weapon groups for capital fighters. For capital fighter purposes we use Aero locations.
+     * Provide weapon groups for capital fighters. For capital fighter purposes
+     * we use Aero locations.
      */
+    @Override
     public Map<String, Integer> groupWeaponsByLocation() {
         Map<String, Integer> groups = new HashMap<>();
         for (Mounted mounted : getTotalWeaponList()) {
@@ -1682,8 +1729,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if ((loc == Mech.LOC_CT) || (loc == Mech.LOC_HEAD)) {
                 loc = LOC_CAPITAL_NOSE;
             }
-            if (mounted.isRearMounted()
-                    || (loc == Mech.LOC_LLEG) || (loc == Mech.LOC_RLEG)) {
+            if (mounted.isRearMounted() || (loc == Mech.LOC_LLEG) || (loc == Mech.LOC_RLEG)) {
                 loc = LOC_CAPITAL_AFT;
             }
             String key = mounted.getType().getInternalName() + ":" + loc;
@@ -1696,14 +1742,17 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return groups;
     }
 
-    // Damage a fighter that was part of a squadron when splitting it. Per StratOps pg. 32 & 34
+    // Damage a fighter that was part of a squadron when splitting it. Per
+    // StratOps pg. 32 & 34
     @Override
     public void doDisbandDamage() {
-        
+
         int dealt = 0;
-        // Check for critical threshold and if so damage one facing of the fighter completely.
+        // Check for critical threshold and if so damage one facing of the
+        // fighter completely.
         if (isDestroyed() || isDoomed()) {
-            // Note starting armor + internal so we can compute how many damage points were allocated
+            // Note starting armor + internal so we can compute how many damage
+            // points were allocated
             // in this step.
             int start = getTotalArmor() + getTotalInternal();
             int side = Compute.randomInt(4);
@@ -1730,16 +1779,14 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             int engineHits = getEngineHits();
             while (engineHits < 3 && i < getNumberOfCriticals(LOC_CT)) {
                 final CriticalSlot slot = getCritical(LOC_CT, i);
-                if (slot != null
-                        && slot.getType() == CriticalSlot.TYPE_SYSTEM
-                        && slot.getIndex() == SYSTEM_ENGINE
+                if (slot != null && slot.getType() == CriticalSlot.TYPE_SYSTEM && slot.getIndex() == SYSTEM_ENGINE
                         && !slot.isDamaged()) {
                     slot.setHit(true);
                     engineHits++;
                 }
                 i++;
             }
-            
+
             dealt = start - getTotalArmor() - getTotalInternal();
         }
 
@@ -1749,21 +1796,23 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             damage *= 10;
         }
         damage -= dealt;
-        
+
         if (damage >= 0) {
             int hits = (int) Math.ceil(damage / 5.0);
             int damPerHit = 5;
             for (int i = 0; i < hits; i++) {
                 int loc = rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_RANDOM).getLocation();
                 setArmor(getArmor(loc) - Math.max(damPerHit, damage), loc);
-                // We did too much damage, so we need to damage the internal structure
+                // We did too much damage, so we need to damage the internal
+                // structure
                 if (getArmor(loc) < 0) {
                     if (getInternal(loc) > 1) {
                         int internal = getInternal(loc) + getArmor(loc);
                         if (internal <= 0) {
-                            if ((loc == LOC_CT || loc == LOC_HEAD)
-                                    && !isDestroyed() && !isDoomed()) {
-                                setInternal(1, loc);// We don't want to destroy the fighter if it didn't pass the fatal threshold
+                            if ((loc == LOC_CT || loc == LOC_HEAD) && !isDestroyed() && !isDoomed()) {
+                                setInternal(1, loc);// We don't want to destroy
+                                                    // the fighter if it didn't
+                                                    // pass the fatal threshold
                             } else {
                                 destroyLocation(loc);
                             }
@@ -1778,24 +1827,23 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
-    public void setBattleForceMovement(Map<String,Integer> movement) {
-    	super.setBattleForceMovement(movement);
-    	movement.put("g", getAirMechCruiseMP(true, false));
-    	movement.put("a", getFighterModeWalkMP(true, false));
+    public void setBattleForceMovement(Map<String, Integer> movement) {
+        super.setBattleForceMovement(movement);
+        movement.put("g", getAirMechCruiseMP(true, false));
+        movement.put("a", getFighterModeWalkMP(true, false));
     }
-    
+
     @Override
-    public void setAlphaStrikeMovement(Map<String,Integer> movement) {
-    	super.setBattleForceMovement(movement);
-    	movement.put("g", getAirMechCruiseMP(true, false) * 2);
-    	movement.put("a", getFighterModeWalkMP(true, false));
+    public void setAlphaStrikeMovement(Map<String, Integer> movement) {
+        super.setBattleForceMovement(movement);
+        movement.put("g", getAirMechCruiseMP(true, false) * 2);
+        movement.put("a", getFighterModeWalkMP(true, false));
     }
-    
+
     @Override
-    public void addBattleForceSpecialAbilities(Map<BattleForceSPA,Integer> specialAbilities) {
+    public void addBattleForceSpecialAbilities(Map<BattleForceSPA, Integer> specialAbilities) {
         super.addBattleForceSpecialAbilities(specialAbilities);
-        int bombs = (int)getEquipment().stream().filter(m -> m.getType().hasFlag(MiscType.F_BOMB_BAY))
-                .count();
+        int bombs = (int) getEquipment().stream().filter(m -> m.getType().hasFlag(MiscType.F_BOMB_BAY)).count();
         if (bombs > 0) {
             specialAbilities.put(BattleForceSPA.BOMB, bombs / 5);
         }
@@ -1812,19 +1860,20 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return "";
         }
     }
-    
+
     @Override
     public boolean isAero() {
         return getConversionMode() == CONV_MODE_FIGHTER;
     }
-    
+
     @Override
     public boolean isBomber() {
         return true;
     }
 
     /**
-     * Try to find a location that has enough empty bomb bays to accommodate the bomb size
+     * Try to find a location that has enough empty bomb bays to accommodate the
+     * bomb size
      */
     @Override
     public int availableBombLocation(int cost) {
@@ -1838,13 +1887,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             return LOC_NONE;
         }
     }
-    
-    
+
     private int emptyBaysInLoc(int loc) {
         int bays = 0;
         for (CriticalSlot slot : crits[loc]) {
-            if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
-                    && slot.getMount2() == null
+            if ((slot != null) && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT) && slot.getMount2() == null
                     && slot.getMount().getType() instanceof MiscType
                     && slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
                 bays++;
@@ -1852,13 +1899,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         return bays;
     }
-    
-    protected void addBomb(Mounted mounted, int loc)
-            throws LocationFullException {
+
+    @Override
+    protected void addBomb(Mounted mounted, int loc) throws LocationFullException {
         mounted.setLocation(loc, false);
         int slots = 1;
         if (mounted.getType() instanceof BombType) {
-            slots = BombType.getBombCost(((BombType)mounted.getType()).getBombType());
+            slots = BombType.getBombCost(((BombType) mounted.getType()).getBombType());
         } else if (mounted.getType() instanceof WeaponType) {
             int type = BombType.getBombTypeForWeapon(mounted.getType());
             if (type >= 0) {
@@ -1871,11 +1918,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             final CriticalSlot slot = crits[loc][i];
             if (slot != null && slot.getType() == CriticalSlot.TYPE_EQUIPMENT
                     && (slot.getMount().getType() instanceof MiscType)
-                    && slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)
-                    && (slot.getMount2() == null)) {
+                    && slot.getMount().getType().hasFlag(MiscType.F_BOMB_BAY) && (slot.getMount2() == null)) {
                 slot.setMount2(mounted);
                 slots--;
-                // Link the bay to the slot so we can find the bomb to explode when the slot is hit.
+                // Link the bay to the slot so we can find the bomb to explode
+                // when the slot is hit.
                 slot.getMount().setLinked(mounted);
                 if (slots == 0) {
                     break;
@@ -1895,8 +1942,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
             }
-            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
-                    && (AmmoType.getOneshotAmmo(mounted) != null)) {
+            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT) && (AmmoType.getOneshotAmmo(mounted) != null)) {
                 Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
                 m.setShotsLeft(1);
                 mounted.setLinked(m);
@@ -1915,8 +1961,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     }
 
     @Override
-    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted)
-        throws LocationFullException {
+    public Mounted addEquipment(EquipmentType etype, int loc, boolean rearMounted) throws LocationFullException {
         if (etype instanceof BombType) {
             Mounted mounted = new Mounted(this, etype);
             addBomb(mounted, loc);
@@ -1929,10 +1974,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     @Override
     public boolean canSpot() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
-            return !isAirborne()
-                    || hasWorkingMisc(MiscType.F_RECON_CAMERA)
-                    || hasWorkingMisc(MiscType.F_INFRARED_IMAGER)
-                    || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
+            return !isAirborne() || hasWorkingMisc(MiscType.F_RECON_CAMERA)
+                    || hasWorkingMisc(MiscType.F_INFRARED_IMAGER) || hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER)
                     || (hasWorkingMisc(MiscType.F_HIRES_IMAGER)
                             && ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY)
                                     || (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK)));
@@ -1941,8 +1984,8 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
     }
 
-
-    public long getEntityType(){
+    @Override
+    public long getEntityType() {
         return Entity.ETYPE_MECH | Entity.ETYPE_BIPED_MECH | Entity.ETYPE_LAND_AIR_MECH;
     }
 }

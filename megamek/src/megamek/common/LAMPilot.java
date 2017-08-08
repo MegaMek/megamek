@@ -16,32 +16,32 @@ package megamek.common;
 import java.util.Vector;
 
 /**
- * Crew class for LAMs which tracks separate skills for 'Mech and Fighter modes, and chooses the
- * correct one based on the LAM's current movement mode.
- * 
+ * Crew class for LAMs which tracks separate skills for 'Mech and Fighter modes,
+ * and chooses the correct one based on the LAM's current movement mode.
+ *
  * @author Neoancient
  *
  */
 public class LAMPilot extends Crew {
-    
+
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -5081079779376940577L;
-    
+
     final private LandAirMech lam;
     private int gunneryAero;
     private int gunneryAeroB;
     private int gunneryAeroL;
     private int gunneryAeroM;
     private int pilotingAero;
-    
+
     public LAMPilot(LandAirMech lam) {
         this(lam, "Unnamed", 4, 5, 4, 5);
     }
-    
-    public LAMPilot(LandAirMech lam, String name,
-            int gunneryMech, int pilotingMech, int gunneryAero, int pilotingAero) {
+
+    public LAMPilot(LandAirMech lam, String name, int gunneryMech, int pilotingMech, int gunneryAero,
+            int pilotingAero) {
         super(CrewType.SINGLE, name, 1, gunneryMech, pilotingMech);
         this.lam = lam;
         this.gunneryAero = gunneryAero;
@@ -50,17 +50,21 @@ public class LAMPilot extends Crew {
         this.gunneryAeroL = gunneryAero;
         this.gunneryAeroM = gunneryAero;
     }
-    
+
     /**
-     * Used by LandAirMech.setCrew to convert a <code>Crew</code> instance into a <code>LAMPilot</code> instance.
-     * 
-     * @param lam   The LAM that is piloted by this crew.
-     * @param crew  The crew to convert to LAMPilot.
-     * @return      An instance of <code>LAMPilot</code> that has the same values as the crew argument.
+     * Used by LandAirMech.setCrew to convert a <code>Crew</code> instance into
+     * a <code>LAMPilot</code> instance.
+     *
+     * @param lam
+     *            The LAM that is piloted by this crew.
+     * @param crew
+     *            The crew to convert to LAMPilot.
+     * @return An instance of <code>LAMPilot</code> that has the same values as
+     *         the crew argument.
      */
     public static LAMPilot convertToLAMPilot(LandAirMech lam, Crew crew) {
-        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(),
-                crew.getGunnery(), crew.getPiloting());
+        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(), crew.getGunnery(),
+                crew.getPiloting());
         pilot.setNickname(crew.getNickname(), 0);
         pilot.setGunneryL(crew.getGunneryL(), 0);
         pilot.setGunneryB(crew.getGunneryB(), 0);
@@ -90,7 +94,7 @@ public class LAMPilot extends Crew {
     public int getGunneryMech() {
         return super.getGunnery(0);
     }
-    
+
     public void setGunneryMech(int gunnery) {
         super.setGunnery(gunnery, 0);
     }
@@ -98,7 +102,7 @@ public class LAMPilot extends Crew {
     public int getGunneryMechB() {
         return super.getGunneryB(0);
     }
-    
+
     public void setGunneryMechB(int gunnery) {
         super.setGunneryB(gunnery, 0);
     }
@@ -106,7 +110,7 @@ public class LAMPilot extends Crew {
     public int getGunneryMechM() {
         return super.getGunneryM(0);
     }
-    
+
     public void setGunneryMechM(int gunnery) {
         super.setGunneryM(gunnery, 0);
     }
@@ -114,7 +118,7 @@ public class LAMPilot extends Crew {
     public int getGunneryMechL() {
         return super.getGunneryL(0);
     }
-    
+
     public void setGunneryMechL(int gunnery) {
         super.setGunneryL(gunnery, 0);
     }
@@ -122,7 +126,7 @@ public class LAMPilot extends Crew {
     public int getPilotingMech() {
         return super.getPiloting(0);
     }
-    
+
     public void setPilotingMech(int piloting) {
         super.setPiloting(piloting, 0);
     }
@@ -130,43 +134,43 @@ public class LAMPilot extends Crew {
     public int getGunneryAero() {
         return gunneryAero;
     }
-    
+
     public void setGunneryAero(int gunnery) {
         gunneryAero = gunnery;
     }
-    
+
     public int getGunneryAeroB() {
         return gunneryAeroB;
     }
-    
+
     public void setGunneryAeroB(int gunnery) {
         gunneryAeroB = gunnery;
     }
-    
+
     public int getGunneryAeroL() {
         return gunneryAeroL;
     }
-    
+
     public void setGunneryAeroL(int gunnery) {
         gunneryAeroL = gunnery;
     }
-    
+
     public int getGunneryAeroM() {
         return gunneryAeroM;
     }
-    
+
     public void setGunneryAeroM(int gunnery) {
         gunneryAeroM = gunnery;
     }
-    
+
     public int getPilotingAero() {
         return pilotingAero;
     }
-    
+
     public void setPilotingAero(int piloting) {
         pilotingAero = piloting;
     }
-    
+
     private boolean useAeroGunnery() {
         if (lam.isConvertingNow()) {
             return lam.getPreviousConversionMode() == LandAirMech.CONV_MODE_FIGHTER;
@@ -174,71 +178,69 @@ public class LAMPilot extends Crew {
             return lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER;
         }
     }
-    
+
     @Override
     public int getGunnery() {
-        return useAeroGunnery()? getGunneryAero() : getGunneryMech();
+        return useAeroGunnery() ? getGunneryAero() : getGunneryMech();
     }
-    
+
     @Override
     public int getGunneryB() {
-        return useAeroGunnery()? getGunneryAeroB() : getGunneryMechB();
+        return useAeroGunnery() ? getGunneryAeroB() : getGunneryMechB();
     }
-    
+
     @Override
     public int getGunneryL() {
-        return useAeroGunnery()? getGunneryAeroL() : getGunneryMechL();
+        return useAeroGunnery() ? getGunneryAeroL() : getGunneryMechL();
     }
-    
+
     @Override
     public int getGunneryM() {
-        return useAeroGunnery()? getGunneryAeroM() : getGunneryMechM();
+        return useAeroGunnery() ? getGunneryAeroM() : getGunneryMechM();
     }
-    
+
     @Override
     public int getPiloting() {
         if (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER
-                || (lam.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH
-                        && lam.isAirborneVTOLorWIGE())) {
-            return pilotingAero;
-        } else {
-            return super.getPiloting();
-        }
-    }
-    
-    @Override
-    public int getPiloting(EntityMovementType moveType) {
-        if (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER
-                || (lam.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH
-                && (moveType == EntityMovementType.MOVE_VTOL_WALK
-                || moveType == EntityMovementType.MOVE_VTOL_RUN))) {
+                || (lam.getConversionMode() == LandAirMech.CONV_MODE_AIRMECH && lam.isAirborneVTOLorWIGE())) {
             return pilotingAero;
         } else {
             return super.getPiloting();
         }
     }
 
+    @Override
+    public int getPiloting(EntityMovementType moveType) {
+        if (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER || (lam
+                .getConversionMode() == LandAirMech.CONV_MODE_AIRMECH
+                && (moveType == EntityMovementType.MOVE_VTOL_WALK || moveType == EntityMovementType.MOVE_VTOL_RUN))) {
+            return pilotingAero;
+        } else {
+            return super.getPiloting();
+        }
+    }
+
+    @Override
     public String getSkillsAsString(boolean showPiloting) {
         return getSkillsAsString(0, showPiloting);
     }
-    
+
     /**
-     * @return a String showing the overall skills in the format
-     *         gunnery (Mech)/piloting (Mech)/gunnery (Aero)/piloting (Aero)
+     * @return a String showing the overall skills in the format gunnery
+     *         (Mech)/piloting (Mech)/gunnery (Aero)/piloting (Aero)
      */
     @Override
     public String getSkillsAsString(int pos, boolean showPiloting) {
-        return getGunneryMech() + "/"
-            + getPilotingMech() + "/"
-            + getGunneryAero() + "/"
-            + getPilotingAero();
+        return getGunneryMech() + "/" + getPilotingMech() + "/" + getGunneryAero() + "/" + getPilotingAero();
     }
-    
+
     /**
      * Crew summary report used for victory phase.
-     * 
-     * @param gunneryOnly Do not show the piloting skill
+     *
+     * @param gunneryOnly
+     *            Do not show the piloting skill
      */
+    @Override
     public Vector<Report> getDescVector(boolean gunneryOnly) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
@@ -286,27 +288,27 @@ public class LAMPilot extends Crew {
     /**
      * Returns whether this pilot has non-standard piloting or gunnery values
      */
+    @Override
     public boolean isCustom() {
-        return getGunneryMech() != 4
-                || getGunneryAero() != 4
-                || getPilotingMech() != 5
-                || getPilotingAero() != 5;
+        return getGunneryMech() != 4 || getGunneryAero() != 4 || getPilotingMech() != 5 || getPilotingAero() != 5;
     }
 
     /**
      * Returns the BV multiplier for this pilot's gunnery/piloting
      *
-     * @param usePiloting whether or not to use the default value non-anti-mech
-     *                    infantry/BA should not use the anti-mech skill
+     * @param usePiloting
+     *            whether or not to use the default value non-anti-mech
+     *            infantry/BA should not use the anti-mech skill
      * @param game
      */
+    @Override
     public double getBVSkillMultiplier(boolean usePiloting, IGame game) {
         int pilotVal = (getPilotingMech() + getPilotingAero()) / 2;
         if (!usePiloting) {
             pilotVal = 5;
         }
-        return getBVImplantMultiplier() * getBVSkillMultiplier((getGunneryMech() + getGunneryAero()) / 2,
-                pilotVal, game);
+        return getBVImplantMultiplier()
+                * getBVSkillMultiplier((getGunneryMech() + getGunneryAero()) / 2, pilotVal, game);
     }
 
 }

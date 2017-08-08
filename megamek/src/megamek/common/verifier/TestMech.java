@@ -1014,6 +1014,21 @@ public class TestMech extends TestEntity {
                     buff.append("Non-industrial mech can't mount " + misc.getName() + "\n");
                 }
             }
+            
+            if ((mech instanceof LandAirMech)
+                    && (misc.hasFlag(MiscType.F_MODULAR_ARMOR)
+                            || misc.hasFlag(MiscType.F_JUMP_BOOSTER)
+                            || misc.hasFlag(MiscType.F_PARTIAL_WING)
+                            || misc.hasFlag(MiscType.F_DUMPER)
+                            || misc.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
+                            || misc.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
+                            || misc.hasFlag(MiscType.F_LIGHT_BRIDGE_LAYER)
+                            || (misc.hasFlag(MiscType.F_CLUB)
+                                    && (misc.getSubType() == MiscType.S_BACKHOE)
+                                    || (misc.getSubType() == MiscType.S_COMBINE)))) {
+                buff.append("LAMs may not mount ").append(misc.getName()).append("\n");
+                illegal = true;
+            }
         }
         
         if (mech.isSuperHeavy()) {
@@ -1102,6 +1117,14 @@ public class TestMech extends TestEntity {
         }
         
         if (mech instanceof LandAirMech) {
+            if (mech.isOmni()) {
+                buff.append("LAMs may not be constructed as omnis\n");
+                illegal = true;
+            }
+            if (mech.getWeight() > 55) {
+                buff.append("LAMs cannot be larger than 55 tons.\n");
+                illegal = true;
+            }
             EquipmentType structure = EquipmentType.get(EquipmentType.getStructureTypeName(mech.getStructureType(),
                     mech.isClan()));
             if (structure.getCriticals(mech) > 0) {
@@ -1125,8 +1148,8 @@ public class TestMech extends TestEntity {
                     }
                 }
             }
-            if (mech.hasWorkingMisc(MiscType.F_MODULAR_ARMOR)) {
-                buff.append("LAMs cannot use modular armor.\n");
+            if (mech.countWorkingMisc(MiscType.F_BOMB_BAY) > 20) {
+                buff.append("A LAM has a maximum of 20 bomb bays.\n");
                 illegal = true;
             }
             if (isCockpitLocation(Mech.LOC_CT)) {

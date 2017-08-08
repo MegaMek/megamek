@@ -479,6 +479,19 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return previousMovementMode;
     }
     
+    public int getPreviousConversionMode() {
+        switch (previousMovementMode) {
+        case AERODYNE:
+        case WHEELED:
+            return CONV_MODE_FIGHTER;
+        case WIGE:
+            return CONV_MODE_AIRMECH;
+        case BIPED:
+        default:
+            return CONV_MODE_MECH;
+        }
+    }
+    
     @Override
     public void setMovementMode(EntityMovementMode mode) {
         int prevMode = getConversionMode();

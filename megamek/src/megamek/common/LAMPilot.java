@@ -167,13 +167,32 @@ public class LAMPilot extends Crew {
         pilotingAero = piloting;
     }
     
+    private boolean useAeroGunnery() {
+        if (lam.isConvertingNow()) {
+            return lam.getPreviousConversionMode() == LandAirMech.CONV_MODE_FIGHTER;
+        } else {
+            return lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER;
+        }
+    }
+    
     @Override
     public int getGunnery() {
-        if (lam.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER) {
-            return gunneryAero;
-        } else {
-            return super.getGunnery();
-        }
+        return useAeroGunnery()? getGunneryAero() : getGunneryMech();
+    }
+    
+    @Override
+    public int getGunneryB() {
+        return useAeroGunnery()? getGunneryAeroB() : getGunneryMechB();
+    }
+    
+    @Override
+    public int getGunneryL() {
+        return useAeroGunnery()? getGunneryAeroL() : getGunneryMechL();
+    }
+    
+    @Override
+    public int getGunneryM() {
+        return useAeroGunnery()? getGunneryAeroM() : getGunneryMechM();
     }
     
     @Override

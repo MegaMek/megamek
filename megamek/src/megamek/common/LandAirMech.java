@@ -1023,6 +1023,16 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         return 0;
     }
     
+    /**
+     * LAMs can only carry mechanized BA in mech mode
+     * @return
+     */
+    @Override
+    public boolean canLoad(Entity unit, boolean checkElev) {
+        return (getConversionMode() == CONV_MODE_MECH)
+                && super.canLoad(unit, checkElev);
+    }
+    
     /** Fighter Mode **/
     
     public void setWhoFirst() {

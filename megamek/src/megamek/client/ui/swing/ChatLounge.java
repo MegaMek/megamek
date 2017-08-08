@@ -114,6 +114,7 @@ import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LAMPilot;
+import megamek.common.LandAirMech;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
@@ -2273,6 +2274,16 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (editable && cmd.isOkay()) {
             // send changes
             for (Entity entity : entities) {
+                // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
+                if ((entity instanceof LandAirMech)
+                        && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
+                    for (Entity loadee : entity.getLoadedUnits()) {
+                        entity.unload(loadee);
+                        loadee.setTransportId(Entity.NONE);
+                        client.sendUpdateEntity(loadee);
+                    }
+                 }
+
                 client.sendUpdateEntity(entity);
 
                 // Changing state to a transporting unit can update state of
@@ -2344,6 +2355,16 @@ public class ChatLounge extends AbstractPhaseDisplay
             GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
             cmdSelectedTab = cmd.getSelectedTab();
             if (editable && cmd.isOkay()) {
+                // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
+                if ((entity instanceof LandAirMech)
+                        && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
+                    for (Entity loadee : entity.getLoadedUnits()) {
+                        entity.unload(loadee);
+                        loadee.setTransportId(Entity.NONE);
+                        c.sendUpdateEntity(loadee);
+                    }
+                 }
+                
                 // send changes
                 c.sendUpdateEntity(entity);
 

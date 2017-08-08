@@ -235,7 +235,71 @@ public class Dropship extends SmallCraft {
 
         return points;
     }
-
+    
+    public double getStrategicFuelUse() {
+    	
+    	double tonsperday = 0;
+    	
+    	if (weight >= 70000) {
+    		tonsperday = 8.83;
+    		return tonsperday;
+    	}
+    	else if (weight >= 50000) {
+    		tonsperday = 8.37;
+    		return tonsperday;
+    	}
+    	else if (weight >= 40000) {
+    		tonsperday = 7.71;
+    		return tonsperday;
+    	}
+    	else if (weight >= 30000) {
+    		tonsperday = 6.52;
+    		return tonsperday;
+    	}
+    	else if (weight >= 20000) {
+    		tonsperday = 5.19;
+    		return tonsperday;
+    	}
+    	else if (weight >= 9000) {
+    		tonsperday = 4.22;
+    		return tonsperday;
+    	}
+    	else if (weight >= 4000) {
+    		tonsperday = 3.37;
+    		return tonsperday;
+    	}
+    	else if (weight >= 1000) {
+    		tonsperday = 2.82;
+    		return tonsperday;
+    	}
+    	else if (weight >= 100) {
+    		tonsperday = 1.84;
+    		return tonsperday;
+    	}
+    	/* if (military) {
+    		tonsperday = 1.84;
+    		return tonsperday;
+    	} */
+    	
+    return tonsperday;
+    }
+    
+    //Weights of various systems in TechManual construction order
+    public double getComponentWeight() {
+        double[] partweights = new double[19];
+        int partIdx = 0;
+        double ComponentWeight = 0;
+    //
+    
+    //Bridge and Controls
+        partweights[partIdx++] += (weight * .0075);
+        
+    //Sum component weights
+        for (int i = 0; i < partIdx; i++) {
+            ComponentWeight += partweights[i];
+        }
+    return ComponentWeight;
+    }
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[19];
@@ -279,7 +343,7 @@ public class Dropship extends SmallCraft {
 
         // Fuel Tanks
         costs[costIdx++] += (200 * getFuel()) / getFuelPerTon() * 1.02;
-
+        
         // Armor
         costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 

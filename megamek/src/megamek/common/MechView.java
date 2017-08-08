@@ -340,6 +340,12 @@ public class MechView {
             sBasic.append("<br><br>System Damage: <font color='red'>"
                     + ((Aero) entity).getCritDamageString() + "</font>");
         }
+        
+        //Strategic Fuel Use for Large Craft  TODO: Change reference to reflect different ship types
+        if (isSmallCraft) {
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br><br>Tons per Burn Day: "
+        			+ ((Dropship) entity).getStrategicFuelUse());
+        }
 
         sBasic.append("<br>"); //$NON-NLS-1$
         if (!isGunEmplacement) {

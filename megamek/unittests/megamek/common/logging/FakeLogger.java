@@ -21,17 +21,17 @@ public class FakeLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T log(Class callingClass, String methodName, T throwable) {
+    public <T extends Throwable> T log(Class<?> callingClass, String methodName, T throwable) {
         return null;
     }
 
     @Override
-    public <T extends Throwable> T log(Class callingClass, String methodName, LogLevel logLevel, T throwable) {
+    public <T extends Throwable> T log(Class<?> callingClass, String methodName, LogLevel logLevel, T throwable) {
         return null;
     }
 
     @Override
-    public <T extends Throwable> T log(Class callingClass, String methodName, LogLevel level, String message, T throwable) {
+    public <T extends Throwable> T log(Class<?> callingClass, String methodName, LogLevel level, String message, T throwable) {
         return null;
     }
 

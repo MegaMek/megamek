@@ -206,6 +206,10 @@ public class Dropship extends SmallCraft {
         return lifeBoats;
     }
 
+    public double getWeight() {
+    	return weight;
+    }
+
     public int getFuelPerTon() {
 
         int points = 80;
@@ -287,13 +291,21 @@ public class Dropship extends SmallCraft {
     
     //Weights of various systems in TechManual construction order
     public double getComponentWeight() {
-        double[] partweights = new double[19];
+        double[] partweights = new double[3];
         int partIdx = 0;
         double ComponentWeight = 0;
-    //
-    
+        
+    //Engine, see TM p185
+        double engineMultiplier = 0.065;
+        if (isClan()) {
+            engineMultiplier = 0.061;
+        }
+        double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
+        partweights[partIdx++] += engineWeight;
+    //Fuel Tanks and Pumps: See TM p 186
+        partweights[partIdx++] += getFuel() * 1.02;
     //Bridge and Controls
-        partweights[partIdx++] += (weight * .0075);
+        partweights[partIdx++] += (getWeight() * .0075);
         
     //Sum component weights
         for (int i = 0; i < partIdx; i++) {
@@ -301,6 +313,10 @@ public class Dropship extends SmallCraft {
         }
     return ComponentWeight;
     }
+    
+    //Placeholder to check weight calculations
+    double totalweight = this.getComponentWeight();
+    
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[19];

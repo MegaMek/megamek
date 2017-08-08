@@ -31788,37 +31788,48 @@ public class Server implements Runnable {
                         || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
                     continue;
                 }
-                // Ignore everything but weapons slots.
+                // Ignore everything but ammo or LAM bomb bay slots.
                 Mounted mounted = cs.getMount();
-                if (!(mounted.getType() instanceof AmmoType)) {
-                    continue;
-                }
-                // Ignore everything but Inferno ammo.
-                AmmoType atype = (AmmoType) mounted.getType();
-                if (!atype.isExplosive(mounted)
-                        || ((atype.getMunitionType() != AmmoType.M_INFERNO) && (atype
-                                .getMunitionType() != AmmoType.M_IATM_IIW))) {
+                int newRack = 0;
+                int newDamage = 0;
+                if (mounted.getType() instanceof AmmoType) {
+                    AmmoType atype = (AmmoType) mounted.getType();
+                    if (!atype.isExplosive(mounted)
+                            || ((atype.getMunitionType() != AmmoType.M_INFERNO) && (atype
+                                    .getMunitionType() != AmmoType.M_IATM_IIW))) {
+                        continue;
+                    }
+                    // ignore empty, destroyed, or missing bins
+                    if (mounted.getHittableShotsLeft() == 0) {
+                        continue;
+                    }
+                    // Find the most destructive undamaged ammo.
+                    // TW page 160, compare one rack's
+                    // damage. Ties go to most rounds.
+                    newRack = atype.getDamagePerShot() * atype.getRackSize();
+                    newDamage = mounted.getExplosionDamage();
+                    Mounted mount2 = cs.getMount2();
+                    if ((mount2 != null) && (mount2.getType() instanceof AmmoType)
+                            && (mount2.getHittableShotsLeft() > 0)) {
+                        // must be for same weapontype, so racksize stays
+                        atype = (AmmoType) mount2.getType();
+                        newRack += atype.getDamagePerShot() * atype.getRackSize();
+                        newDamage += mount2.getExplosionDamage();
+                    }
+                } else if ((mounted.getType() instanceof MiscType)
+                        && mounted.getType().hasFlag(MiscType.F_BOMB_BAY)) {
+                    while (mounted.getLinked() != null) {
+                        mounted = mounted.getLinked();
+                    }
+                    if (mounted.getExplosionDamage() == 0) {
+                        continue;
+                    }
+                    newRack = 1;
+                    newDamage = mounted.getExplosionDamage();
+                } else {
                     continue;
                 }
 
-                // ignore empty, destroyed, or missing bins
-                if (mounted.getHittableShotsLeft() == 0) {
-                    continue;
-                }
-
-                // Find the most destructive undamaged ammo.
-                // TW page 160, compare one rack's
-                // damage. Ties go to most rounds.
-                int newRack = atype.getDamagePerShot() * atype.getRackSize();
-                int newDamage = mounted.getExplosionDamage();
-                Mounted mount2 = cs.getMount2();
-                if ((mount2 != null) && (mount2.getType() instanceof AmmoType)
-                        && (mount2.getHittableShotsLeft() > 0)) {
-                    // must be for same weapontype, so racksize stays
-                    atype = (AmmoType) mount2.getType();
-                    newRack += atype.getDamagePerShot() * atype.getRackSize();
-                    newDamage += mount2.getExplosionDamage();
-                }
                 if (!mounted.isHit()
                         && ((rack < newRack) || ((rack == newRack) && (damage < newDamage)))) {
                     rack = newRack;
@@ -31836,7 +31847,12 @@ public class Server implements Runnable {
             equip.setHit(true);
             // We've allocated heatBuildup to heat in resolveHeat(),
             // so need to add to the entity's heat instead.
-            entity.heat += Math.min(equip.getExplosionDamage(), 30);
+            if ((equip.getType() instanceof AmmoType)
+                    || (equip.getLinked() != null
+                        && equip.getLinked().getType() instanceof BombType
+                        && ((BombType)equip.getLinked().getType()).getBombType() == BombType.B_INFERNO)) {
+                entity.heat += Math.min(equip.getExplosionDamage(), 30);
+            }
             vDesc.addAll(explodeEquipment(entity, boomloc, boomslot));
             r = new Report(5155);
             r.indent();

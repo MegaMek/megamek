@@ -1035,6 +1035,28 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
                 && super.canLoad(unit, checkElev);
     }
     
+    /**
+     * Bomb ordnance is treated as inferno ammo for purposes of avoiding explosion due to heat.
+     *
+     * @return <code>true</code> if the unit is still loaded with inferno rounds or bomb ordnance.
+     */
+    public boolean hasInfernoAmmo() {
+        for (Mounted m : getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_BOMB_BAY)
+                    && m.getLinked() != null) {
+                Mounted bomb = m.getLinked();
+                // We may have to go through a launcher to get to the ordnance 
+                if (bomb.getLinked() != null) {
+                    bomb = bomb.getLinked();
+                }
+                if (bomb.getExplosionDamage() > 0) {
+                    return true;
+                }
+            }
+        }
+        return super.hasInfernoAmmo();
+    }
+    
     /** Fighter Mode **/
     
     public void setWhoFirst() {

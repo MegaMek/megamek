@@ -9617,7 +9617,7 @@ public class Server implements Runnable {
             }
             addReport(r);
         }
-
+        
           // update entity's locations' exposure
         vPhaseReport.addAll(doSetLocationsExposure(entity,
                 game.getBoard().getHex(curPos), false, entity.getElevation()));
@@ -9712,6 +9712,24 @@ public class Server implements Runnable {
                             game.getBoard().inAtmosphere()));
                 }
             }
+            
+            // If we've somehow gotten here as an airborne LAM with a destroyed side torso
+            // (such as conversion while dropping), crash now.
+            if (entity instanceof LandAirMech
+                    && (entity.isLocationBad(Mech.LOC_RT) || entity.isLocationBad(Mech.LOC_LT))) {
+                r = new Report(9710);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                if (entity.isAirborneVTOLorWIGE()) {
+                    addReport(r);
+                    crashAirMech(entity, new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL,
+                            "side torso destroyed"), vPhaseReport);
+                } else if (entity.isAirborne() && entity.isAero()) {
+                    addReport(r);
+                    addReport(processCrash(entity, ((IAero)entity).getCurrentVelocity(), entity.getPosition()));
+                }
+            }
+
             entity.setDone(true);
         }
 
@@ -23897,10 +23915,19 @@ public class Server implements Runnable {
                         te.setSelfDestructInitiated(false);
                     }
 
-                    // Torso destruction in airborn LAM in airmech mode causes immediate crash.
-                    if ((te instanceof LandAirMech) && te.isAirborneVTOLorWIGE()) {
-                        crashAirMech(te, new PilotingRollData(te.getId(), TargetRoll.AUTOMATIC_FAIL,
-                                "side torso destroyed"), vDesc);
+                    // Torso destruction in airborne LAM causes immediate crash.
+                    if (te instanceof LandAirMech) {
+                        r = new Report(9710);
+                        r.subject = te.getId();
+                        r.addDesc(te);
+                        if (te.isAirborneVTOLorWIGE()) {
+                            vDesc.add(r);
+                            crashAirMech(te, new PilotingRollData(te.getId(), TargetRoll.AUTOMATIC_FAIL,
+                                    "side torso destroyed"), vDesc);
+                        } else if (te.isAirborne() && te.isAero()) {
+                            vDesc.add(r);
+                            vDesc.addAll(processCrash(te, ((IAero)te).getCurrentVelocity(), te.getPosition()));
+                        }
                     }
                 }
                 

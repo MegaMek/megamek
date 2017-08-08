@@ -380,6 +380,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
 
     @Override
     public int getCurrentThrust() {
+        // Cannot fly in atmosphere with missing side torso
+        if (!isSpaceborne()
+                && (isLocationBad(LOC_RT) || isLocationBad(LOC_LT))) {
+            return 0;
+        }
         int j = getJumpMP();
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions().getMovementMods(this);

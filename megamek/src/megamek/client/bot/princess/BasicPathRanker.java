@@ -269,9 +269,10 @@ public class BasicPathRanker extends PathRanker {
             targetState = new EntityState(path);
         }
 
-        return getFireControl().guessBestFiringPlanUnderHeatWithTwists(enemy,
+        return getFireControl().determineBestFiringPlan(
+        		new FiringPlanCalculationParameters(enemy,
                 shooterState, path.getEntity(), targetState,
-                (enemy.getHeatCapacity() - enemy.heat) + 5, game).getUtility();
+                (enemy.getHeatCapacity() - enemy.heat) + 5)).getUtility();
     }
 
     protected double calculateKickDamagePotential(Entity enemy, MovePath path,
@@ -319,8 +320,8 @@ public class BasicPathRanker extends PathRanker {
             myFiringPlan = getFireControl().guessFullAirToGroundPlan(path.getEntity(), enemy,
                                                                      new EntityState(enemy), path, game, false);
         } else {
-            myFiringPlan = getFireControl().guessBestFiringPlanWithTwists(path.getEntity(),
-                                                                          new EntityState(path), enemy, null, game);
+            myFiringPlan = getFireControl().determineBestFiringPlan(
+            		new FiringPlanCalculationParameters(path.getEntity(), new EntityState(path), enemy, null, null));
         }
         return myFiringPlan.getUtility();
     }
@@ -518,9 +519,8 @@ public class BasicPathRanker extends PathRanker {
                     || !game.getBoard().contains(target.getPosition())) {
                     continue; // Skip targets not actually on the board.
                 }
-                FiringPlan myFiringPlan = fireControl.guessBestFiringPlanWithTwists(path.getEntity(),
-                                                                                    new EntityState(path), target,
-                                                                                    null, game);
+                FiringPlan myFiringPlan = fireControl.determineBestFiringPlan(
+                		new FiringPlanCalculationParameters(path.getEntity(), new EntityState(path), target, null, null));
                 double myDamagePotential = myFiringPlan.getUtility();
                 if (myDamagePotential > maximumDamageDone) {
                     maximumDamageDone = myDamagePotential;
@@ -607,10 +607,9 @@ public class BasicPathRanker extends PathRanker {
             for (Entity e : enemies) {
                 double max_damage = 0;
                 for (Entity f : friends) {
-                    double damage = fireControl
-                            .guessBestFiringPlanUnderHeatWithTwists(e, null, f,
-                                    null, (e.getHeatCapacity() - e.heat) + 5,
-                                    game).getExpectedDamage();
+                    double damage = fireControl.determineBestFiringPlan(
+                    		new FiringPlanCalculationParameters(e, null, f,
+                                    null, (e.getHeatCapacity() - e.heat) + 5)).getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;
                     }

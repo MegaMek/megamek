@@ -82,6 +82,7 @@ public class FireControl {
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
     private static double CIVILIAN_TARGET_DISUTILITY = 250.0;
     private static double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
+    public static int DOES_NOT_TRACK_HEAT = 999;
 
     protected static double TARGET_POTENTIAL_DAMAGE_UTILITY = 1.0;
     protected static double COMMANDER_UTILITY = 0.5;
@@ -1648,8 +1649,8 @@ public class FireControl {
     private int calcHeatTolerance(Entity entity, @Nullable Boolean isAero) {
 
         // If the unit doesn't track heat, we won't worry about it.
-        if (entity.getHeatCapacity() == 999) {
-            return 999;
+        if (entity.getHeatCapacity() == DOES_NOT_TRACK_HEAT) {
+            return DOES_NOT_TRACK_HEAT;
         }
 
         int baseTolerance = entity.getHeatCapacity() - entity.getHeat();
@@ -1804,7 +1805,7 @@ public class FireControl {
         // between firing different weapons, because swarm/leg attacks are
         // mutually exclusive with normal firing, so we treat them similarly to
         // heat-tracking units.
-        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry)
+        if (shooter.getHeatCapacity() == DOES_NOT_TRACK_HEAT && !(shooter instanceof Infantry)
                 && !(shooter instanceof BattleArmor)) {
             return alphaStrike; // No need to worry about heat if the unit
                                 // doesn't track it.
@@ -1893,7 +1894,7 @@ public class FireControl {
         // between firing different weapons, because swarm/leg attacks are
         // mutually exclusive with normal firing, so we treat them similarly to
         // heat-tracking units.
-        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry)
+        if (shooter.getHeatCapacity() == DOES_NOT_TRACK_HEAT && !(shooter instanceof Infantry)
                 && !(shooter instanceof BattleArmor)) {
             return alphaStrike;
         }
@@ -1921,34 +1922,44 @@ public class FireControl {
     }
 
     /**
-     * Gets the 'best' firing plan using heat as disutiltiy includes the option
-     * of twisting
+     * Figures out the best firing plan
      *
-     * @param shooter
-     *            The unit doing the shooting.
-     * @param target
-     *            The unit being shot at.
-     * @param game
-     *            The game currently being played.
-     * @return the 'best' firing plan using heat as disutiltiy includes the
-     *         option of twisting
+     * @param params - the appropriate firing plan calculation parameters
+     * @return the 'best' firing plan - uses heat as disutility and includes the possibility of twisting
      */
-    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target,
-            IGame game, Map<Mounted, Double> ammoConservation) {
+    FiringPlan determineBestFiringPlan(FiringPlanCalculationParameters params)
+    {
+    	// unpack parameters for easier reference
+    	Entity shooter = params.getShooter();
+    	Targetable target = params.getTarget();
+    	EntityState shooterState = params.getShooterState();
+    	EntityState targetState = params.getTargetState();
+    	int maxHeat = params.getMaxHeat();
+    	Map<Mounted, Double> ammoConservation = params.getAmmoConservation();
+    	
+    	// Get the best plan without any twists.
+        FiringPlan noTwistPlan = null;
+        
+        switch(params.getCalculationType())
+        {
+        	case Get:
+        		noTwistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
+        		break;
+        	case Guess:
+        		noTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, owner.getGame());
+        		break;
+        }
+        
+
+        // If we can't change facing, we're done.
+        if (!params.getShooter().canChangeSecondaryFacing()) {
+            return noTwistPlan;
+        }
 
         // Keep track of our original facing so we can go back to it.
         int originalFacing = shooter.getSecondaryFacing();
 
-        // Get the best plan without any twists.
-        FiringPlan noTwistPlan = getBestFiringPlan(shooter, target, game,
-                ammoConservation);
-
-        // If we can't change facing, we're done.
-        if (!shooter.canChangeSecondaryFacing()) {
-            return noTwistPlan;
-        }
-
-        ArrayList<Integer> validFacingChanges = getValidFacingChanges(shooter);
+        List<Integer> validFacingChanges = getValidFacingChanges(shooter);
         
         // Now, we loop through all possible facings. If one facing produces a better plan 
         // than what we currently have as the best plan then use that. Start with "no twist" as default.
@@ -1958,103 +1969,23 @@ public class FireControl {
         	int currentTwist = validFacingChanges.get(index);
         	
         	shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
-        	FiringPlan twistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
+        	
+        	FiringPlan twistPlan = null;
+        	switch(params.getCalculationType())
+            {
+            	case Get:
+            		twistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
+            		break;
+            	case Guess:
+            		twistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, owner.getGame());
+            		break;
+            }
         	twistPlan.setTwist(currentTwist);
         	
         	if(twistPlan.getUtility() > bestFiringPlan.getUtility())
+        	{
         		bestFiringPlan = twistPlan;
-        }
-        
-        // Back to where we started.
-        shooter.setSecondaryFacing(originalFacing);
-
-        return bestFiringPlan;
-    }
-
-    /**
-     * Guesses the 'best' firing plan under a certain heat includes the option  of twisting
-     *
-     * @param shooter      The unit doing the shooting.
-     * @param shooterState The current state of the shooting unit.
-     * @param target       The unit being shot at.
-     * @param targetState  The current state of the target unit.
-     * @param maxHeat      How much heat we're willing to tolerate.
-     * @param game         The game currently being played.
-     * @return the 'best' firing plan under a certain heat includes the option  of twisting.
-     */
-    FiringPlan guessBestFiringPlanUnderHeatWithTwists(Entity shooter,
-            @Nullable EntityState shooterState, Targetable target,
-            @Nullable EntityState targetState, int maxHeat, IGame game) {
-
-        // Get the best plan without any twists.
-        FiringPlan noTwistPlan = guessBestFiringPlanUnderHeat(shooter,
-                shooterState, target, targetState, maxHeat, game);
-
-        // If we can't change facing, we're done.
-        if (!shooter.canChangeSecondaryFacing()) {
-            return noTwistPlan;
-        }
-
-        // Keep track of our original facing so we can go back to it.
-        int originalFacing = shooter.getSecondaryFacing();
-
-        ArrayList<Integer> validFacingChanges = getValidFacingChanges(shooter);
-        
-        // Now, we loop through all possible facings. If one facing produces a better plan 
-        // than what we currently have as the best plan then use that. Start with "no twist" as default.
-        FiringPlan bestFiringPlan = noTwistPlan;
-        for(int index = 0; index < validFacingChanges.size(); index++)
-        {
-        	int currentTwist = validFacingChanges.get(index);
-        	
-        	shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
-        	FiringPlan twistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, game);
-        	twistPlan.setTwist(currentTwist);
-        	
-        	if(twistPlan.getUtility() > bestFiringPlan.getUtility())
-        		bestFiringPlan = twistPlan;
-        }
-
-        // Back to where we started.
-        shooter.setSecondaryFacing(originalFacing);
-
-        return bestFiringPlan;
-    }
-
-    /**
-     * Guesses the 'best' firing plan under a certain heat includes the option of twisting
-     */
-    FiringPlan guessBestFiringPlanWithTwists(Entity shooter,
-            @Nullable EntityState shooterState, Targetable target,
-            @Nullable EntityState targetState, IGame game) {
-
-        // Get the best plan without any twists.
-        FiringPlan noTwistPlan = guessBestFiringPlan(shooter, shooterState,
-                target, targetState, game);
-
-        // If we can't change facing, we're done.
-        if (!shooter.canChangeSecondaryFacing()) {
-            return noTwistPlan;
-        }
-
-        // Keep track of our original facing so we can go back to it.
-        int originalFacing = shooter.getSecondaryFacing();
-
-        ArrayList<Integer> validFacingChanges = getValidFacingChanges(shooter);
-        
-        // Now, we loop through all possible facings. If one facing produces a better plan 
-        // than what we currently have as the best plan then use that. Start with "no twist" as default.
-        FiringPlan bestFiringPlan = noTwistPlan;
-        for(int index = 0; index < validFacingChanges.size(); index++)
-        {
-        	int currentTwist = validFacingChanges.get(index);
-        	
-        	shooter.setSecondaryFacing(correctFacing(originalFacing + currentTwist));
-        	FiringPlan twistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState, game);
-        	twistPlan.setTwist(currentTwist);
-        	
-        	if(twistPlan.getUtility() > bestFiringPlan.getUtility())
-        		bestFiringPlan = twistPlan;
+        	}
         }
 
         // Back to where we started.
@@ -2156,8 +2087,8 @@ public class FireControl {
                 continue;
             }
 
-            FiringPlan plan = getBestFiringPlanWithTwists(shooter, enemy,
-                                                          game, ammoConservation);
+            FiringPlan plan = determineBestFiringPlan(new FiringPlanCalculationParameters(shooter, enemy, ammoConservation));
+            
             owner.log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((bestPlan == null) || (plan.getUtility() > bestPlan.getUtility())) {
@@ -2825,16 +2756,17 @@ public class FireControl {
     }
 
     // Helper method that figures out the valid facing changes for the given shooter
-    private ArrayList<Integer> getValidFacingChanges(Entity shooter)
+    private List<Integer> getValidFacingChanges(Entity shooter)
     {
     	// figure out all valid twists or turret turns
         // mechs can turn:
-        //		one left, one right unless he has "no torso twist" quirk
+        //		one left, one right unless he has "no torso twist" quirk or is on the ground
         //		two left, two right if he has "extended torso twist" quirk
         // vehicles and turrets can turn any direction unless he has no turret
         ArrayList<Integer> validFacingChanges = new ArrayList<Integer>();
         if(shooter instanceof Mech &&
-        	!shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST))
+        	!shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST) &&
+        	!shooter.hasFallen())
         {
         	validFacingChanges.add(1);
             validFacingChanges.add(-1);

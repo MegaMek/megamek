@@ -660,6 +660,11 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
      */
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
+        // Modifier for pilot hits applies in all modes.
+        if (getCrew().getHits(0) > 0) {
+            roll.addModifier(getCrew().getHits(0), "pilot hits");
+        }
+
         if (getConversionMode() != CONV_MODE_FIGHTER
                 && !isAirborneVTOLorWIGE()) {
             return super.addEntityBonuses(roll);
@@ -715,9 +720,6 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
         }
         
         if (getConversionMode() == CONV_MODE_FIGHTER) {
-            if (getCrew().getHits(0) > 0) {
-                roll.addModifier(getCrew().getHits(0), "pilot hits");
-            }
             if (moved == EntityMovementType.MOVE_OVER_THRUST) {
                 roll.addModifier(+1, "Used more than safe thrust");
             }

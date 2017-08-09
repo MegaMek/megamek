@@ -673,6 +673,38 @@ public class Aero extends Entity {
     }
 
     /**
+     * Damages a randomly determined mech bay on the vessel, if one exists
+     */
+    /*
+    public boolean damageMechBay() {
+
+        boolean result = false;
+
+        Vector<DockingCollar> potential;
+        potential = new Vector<DockingCollar>();
+
+        Enumeration<Transporter> iter = transports.elements();
+        while (iter.hasMoreElements()) {
+            Transporter next = iter.nextElement();
+            if (next instanceof MechBay) {
+                MechBay nextBay = (MechBay) next;
+                if (!nextBay.isDamaged()) {
+                    potential.add(nextBay);
+                }
+            }
+        }
+
+        if (potential.size() > 0) {
+            DockingCollar chosenDC = potential.elementAt(Compute
+                                                                 .randomInt(potential.size()));
+            chosenDC.setDamaged(true);
+            result = true;
+        }
+
+        return result;
+    } 
+ */
+    /**
      * Sets the number of fuel points.
      * @param gas  Number of fuel points.
      */

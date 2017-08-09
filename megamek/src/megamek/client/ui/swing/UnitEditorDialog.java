@@ -1162,7 +1162,7 @@ public class UnitEditorDialog extends JDialog {
                 aero.setLeftThrustHits(leftThrusterCrit.getHits());
             }
             if (null != rightThrusterCrit) {
-                aero.setLeftThrustHits(leftThrusterCrit.getHits());
+                aero.setRightThrustHits(rightThrusterCrit.getHits());
             }
             if ((null != dockCollarCrit) && (aero instanceof Dropship)) {
                 ((Dropship) aero)

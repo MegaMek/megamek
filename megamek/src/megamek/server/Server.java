@@ -25520,10 +25520,14 @@ public class Server implements Runnable {
                 break;
             case Aero.CRIT_KF_BOOM:
                 // KF boom hit
-                // no real effect yet
+                // no real effect until MHQ starts checking for jump capability during travel
+            	// but here it is
+                if (aero instanceof Dropship) {
+                    ((Dropship)aero).setDamageKFBoom(true);
                 r = new Report(9180);
                 r.subject = aero.getId();
                 reports.add(r);
+                }
                 break;
             case Aero.CRIT_CIC:
                 if (js == null) {

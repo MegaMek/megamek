@@ -56,6 +56,8 @@ public class Dropship extends SmallCraft {
     // what needs to go here?
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
+    
+    private boolean kfBoomDamaged = false;
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
@@ -63,6 +65,10 @@ public class Dropship extends SmallCraft {
 
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
+    }
+    
+    public boolean isKFBoomDamaged() {
+    	return kfBoomDamaged = false;
     }
 
     public String getCritDamageString() {
@@ -74,6 +80,14 @@ public class Dropship extends SmallCraft {
             }
             toReturn += "Docking Collar";
             first = false;
+        }
+            
+        else if (isKFBoomDamaged()) {
+        	if (!first) {
+            	toReturn += ", ";
+            }
+        	toReturn += "K-F Boom";
+        	first = false;
         }
         return toReturn;
     }
@@ -189,6 +203,10 @@ public class Dropship extends SmallCraft {
     public void setDamageDockCollar(boolean b) {
         dockCollarDamaged = b;
     }
+    
+    public void setDamageKFBoom(boolean b) {
+    	kfBoomDamaged = b;
+    }
 
     public void setEscapePods(int n) {
         escapePods = n;
@@ -204,10 +222,6 @@ public class Dropship extends SmallCraft {
 
     public int getLifeBoats() {
         return lifeBoats;
-    }
-
-    public double getWeight() {
-    	return weight;
     }
 
     public int getFuelPerTon() {
@@ -289,34 +303,7 @@ public class Dropship extends SmallCraft {
     return tonsperday;
     }
     
-    //Weights of various systems in TechManual construction order
-    public double getComponentWeight() {
-        double[] partweights = new double[3];
-        int partIdx = 0;
-        double ComponentWeight = 0;
-        
-    //Engine, see TM p185
-        double engineMultiplier = 0.065;
-        if (isClan()) {
-            engineMultiplier = 0.061;
-        }
-        double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
-        partweights[partIdx++] += engineWeight;
-    //Fuel Tanks and Pumps: See TM p 186
-        partweights[partIdx++] += getFuel() * 1.02;
-    //Bridge and Controls
-        partweights[partIdx++] += (getWeight() * .0075);
-        
-    //Sum component weights
-        for (int i = 0; i < partIdx; i++) {
-            ComponentWeight += partweights[i];
-        }
-    return ComponentWeight;
-    }
-    
-    //Placeholder to check weight calculations
-    double totalweight = this.getComponentWeight();
-    
+  
     @Override
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[19];
@@ -1399,6 +1386,34 @@ public class Dropship extends SmallCraft {
         return retVal;
 
     }
+    
+ /*   //Weights of various systems in TechManual construction order
+    public double getComponentWeight() {
+        double[] partweights = new double[3];
+        int partIdx = 0;
+        double ComponentWeight = 0;
+        
+    //Engine, see TM p185
+        double engineMultiplier = 0.065;
+        if (isClan()) {
+            engineMultiplier = 0.061;
+        }
+        double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
+        partweights[partIdx++] += engineWeight;
+    //Fuel Tanks and Pumps: See TM p 186
+        partweights[partIdx++] += getFuel() * 1.02;
+    //Bridge and Controls
+        partweights[partIdx++] += (getWeight() * .0075);
+        
+    //Sum component weights
+        for (int i = 0; i < partIdx; i++) {
+            ComponentWeight += partweights[i];
+        }
+    return ComponentWeight;
+    }
+    
+    //Placeholder to check weight calculations
+    double totalweight = this.getComponentWeight();  /*
 
     /**
      * need to check bay location before loading ammo
@@ -1413,7 +1428,7 @@ public class Dropship extends SmallCraft {
             return success;
         }
 
-        // for large craft, ammo must be in the same ba
+        // for large craft, ammo must be in the same bay
         Mounted bay = whichBay(getEquipmentNum(mounted));
         if ((bay != null) && !bay.ammoInBay(getEquipmentNum(mountedAmmo))) {
             return success;

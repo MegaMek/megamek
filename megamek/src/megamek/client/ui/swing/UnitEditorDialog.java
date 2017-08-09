@@ -923,6 +923,20 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(dockCollarCrit, gridBagConstraints);
+            
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 9;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "K-F Boom"
+                    + "</b><br></html>"), gridBagConstraints);
+            int kfboomHits = 0;
+            if (((Dropship) aero).isKFBoomDamaged()) {
+            	kfboomHits = 1;
+            }
+            kfboomCrit = new CheckCritPanel(1, kfboomHits);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(kfboomCrit, gridBagConstraints);
 
         }
     }
@@ -1130,6 +1144,10 @@ public class UnitEditorDialog extends JDialog {
             if ((null != dockCollarCrit) && (aero instanceof Dropship)) {
                 ((Dropship) aero)
                         .setDamageDockCollar(dockCollarCrit.getHits() > 0);
+            }
+            if ((null != kfboomCrit) && (aero instanceof Dropship)) {
+                ((Dropship) aero)
+                        .setDamageKFBoom(kfboomCrit.getHits() > 0);
             }
         }
 

@@ -343,7 +343,7 @@ public class MechView {
         
         //Strategic Fuel Use for Large Craft  TODO: Change reference to reflect different ship types
         if (isSmallCraft) {
-        	sBasic.append("<br><br>Strategic Fuel Use" + "<br><br>Tons per Burn Day: "
+        	sBasic.append("<br><br>Strategic Fuel Use" + "<br>Tons per Burn Day: "
         			+ ((Dropship) entity).getStrategicFuelUse());
         }
 

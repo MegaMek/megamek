@@ -8,24 +8,24 @@ import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
 
 // This data structure contains parameters that may be passed to the "determineBestFiringPlan()"
-public class FiringPlanCalculationParameters
+public final class FiringPlanCalculationParameters
 {
 	//The type of firing plan calculation to carry out
 	public enum FiringPlanCalculationType
 	{
 		// We're guessing the firing plan based on our estimate of enemy movement
-		Guess,
+		GUESS,
 		// We're getting a firing plan based on exact known enemy movement results
-		Get
+		GET
 	}
 	
-	private Entity shooter;
-	private EntityState shooterState; 
-	private Targetable target;
-	private EntityState targetState; 
-	private int maxHeat; 
-	private Map<Mounted, Double> ammoConservation;
-	private FiringPlanCalculationType calculationType;
+	private final Entity shooter;
+	private final EntityState shooterState; 
+	private final Targetable target;
+	private final EntityState targetState; 
+	private final int maxHeat; 
+	private final Map<Mounted, Double> ammoConservation;
+	private final FiringPlanCalculationType calculationType;
     
 	public Entity getShooter() { return shooter; }
 	public EntityState getShooterState() { return shooterState; } 
@@ -34,6 +34,26 @@ public class FiringPlanCalculationParameters
 	public int getMaxHeat() { return maxHeat; } 
 	public Map<Mounted, Double> getAmmoConservation() { return ammoConservation; }
 	public FiringPlanCalculationType getCalculationType() { return calculationType; }
+	
+	// internal constructor
+	private FiringPlanCalculationParameters(Entity shooter,
+        @Nullable EntityState shooterState, Targetable target,
+        @Nullable EntityState targetState, @Nullable Integer maxHeat,
+        Map<Mounted, Double> ammoConservation, FiringPlanCalculationType calculationType)
+	{
+		this.shooter = shooter;
+		this.shooterState = shooterState;
+		this.target = target;
+		this.targetState = targetState;
+		
+		int localMaxHeat = maxHeat != null ? maxHeat : FireControl.DOES_NOT_TRACK_HEAT;
+		if (localMaxHeat < 0)
+			localMaxHeat = 0;
+		
+		this.maxHeat = localMaxHeat;
+		this.ammoConservation = ammoConservation;
+		this.calculationType = calculationType;
+	}
 	
     /**
      * Creates an instance of this data structure for when we're guessing the firing plan based on estimated movement
@@ -45,18 +65,12 @@ public class FiringPlanCalculationParameters
      * @param maxHeat      How much heat we're willing to tolerate.
      * @return the 'best' firing plan under a certain heat, includes the option of twisting.
      */
-    public FiringPlanCalculationParameters(Entity shooter,
+    public final static FiringPlanCalculationParameters GenerateGuessParams(Entity shooter,
         @Nullable EntityState shooterState, Targetable target,
         @Nullable EntityState targetState, @Nullable Integer maxHeat)
     {
-    	this.shooter = shooter;
-    	this.shooterState = shooterState;
-    	this.target = target;
-    	this.targetState = targetState;
-    	this.maxHeat = maxHeat != null ? maxHeat : FireControl.DOES_NOT_TRACK_HEAT;
-    	if(this.maxHeat < 0)
-    		this.maxHeat = 0;
-    	calculationType = FiringPlanCalculationType.Guess;
+    	return new FiringPlanCalculationParameters(
+    			shooter, shooterState, target, targetState, maxHeat, null, FiringPlanCalculationType.GUESS);
     }
     
     /**
@@ -67,11 +81,10 @@ public class FiringPlanCalculationParameters
      * @param ammoConservation  Ammo conservation biases of the unit's mounted weapons.
      * @return the 'best' firing plan under a certain heat, includes the option of twisting.
      */
-    public FiringPlanCalculationParameters(Entity shooter, Targetable target, Map<Mounted, Double> ammoConservation)
+    public final static FiringPlanCalculationParameters GenerateGetParams(Entity shooter, 
+    		Targetable target, Map<Mounted, Double> ammoConservation)
     {
-    	this.shooter = shooter;
-    	this.target = target;
-    	this.ammoConservation = ammoConservation;
-    	calculationType = FiringPlanCalculationType.Get;
+    	return new FiringPlanCalculationParameters(
+    			shooter, null, target, null, null, ammoConservation, FiringPlanCalculationType.GUESS);
     }
 }

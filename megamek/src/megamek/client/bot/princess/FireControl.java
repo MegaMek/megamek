@@ -1942,10 +1942,10 @@ public class FireControl {
         
         switch(params.getCalculationType())
         {
-        	case Get:
+        	case GET:
         		noTwistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
         		break;
-        	case Guess:
+        	case GUESS:
         		noTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, owner.getGame());
         		break;
         }
@@ -1971,10 +1971,10 @@ public class FireControl {
         	FiringPlan twistPlan = null;
         	switch(params.getCalculationType())
             {
-            	case Get:
+            	case GET:
             		twistPlan = getBestFiringPlan(shooter, target, owner.getGame(), ammoConservation);
             		break;
-            	case Guess:
+            	case GUESS:
             		twistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat, owner.getGame());
             		break;
             }
@@ -2085,7 +2085,8 @@ public class FireControl {
                 continue;
             }
 
-            FiringPlan plan = determineBestFiringPlan(new FiringPlanCalculationParameters(shooter, enemy, ammoConservation));
+            FiringPlan plan = determineBestFiringPlan( 
+            		FiringPlanCalculationParameters.GenerateGetParams(shooter, enemy, ammoConservation));
             
             owner.log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
@@ -2761,8 +2762,8 @@ public class FireControl {
         //		one left, one right unless he has "no torso twist" quirk or is on the ground
         //		two left, two right if he has "extended torso twist" quirk
         // vehicles and turrets can turn any direction unless he has no turret
-        ArrayList<Integer> validFacingChanges = new ArrayList<Integer>();
-        if(shooter instanceof Mech &&
+        List<Integer> validFacingChanges = new ArrayList<Integer>();
+        if(shooter.getEntityType() == Entity.ETYPE_MECH &&
         	!shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST) &&
         	!shooter.hasFallen())
         {

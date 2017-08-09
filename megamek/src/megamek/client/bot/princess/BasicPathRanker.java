@@ -270,7 +270,7 @@ public class BasicPathRanker extends PathRanker {
         }
 
         return getFireControl().determineBestFiringPlan(
-        		new FiringPlanCalculationParameters(enemy,
+        		FiringPlanCalculationParameters.GenerateGuessParams(enemy,
                 shooterState, path.getEntity(), targetState,
                 (enemy.getHeatCapacity() - enemy.heat) + 5)).getUtility();
     }
@@ -321,7 +321,7 @@ public class BasicPathRanker extends PathRanker {
                                                                      new EntityState(enemy), path, game, false);
         } else {
             myFiringPlan = getFireControl().determineBestFiringPlan(
-            		new FiringPlanCalculationParameters(path.getEntity(), new EntityState(path), enemy, null, null));
+            		FiringPlanCalculationParameters.GenerateGuessParams(path.getEntity(), new EntityState(path), enemy, null, null));
         }
         return myFiringPlan.getUtility();
     }
@@ -520,7 +520,7 @@ public class BasicPathRanker extends PathRanker {
                     continue; // Skip targets not actually on the board.
                 }
                 FiringPlan myFiringPlan = fireControl.determineBestFiringPlan(
-                		new FiringPlanCalculationParameters(path.getEntity(), new EntityState(path), target, null, null));
+                		FiringPlanCalculationParameters.GenerateGuessParams(path.getEntity(), new EntityState(path), target, null, null));
                 double myDamagePotential = myFiringPlan.getUtility();
                 if (myDamagePotential > maximumDamageDone) {
                     maximumDamageDone = myDamagePotential;
@@ -608,7 +608,7 @@ public class BasicPathRanker extends PathRanker {
                 double max_damage = 0;
                 for (Entity f : friends) {
                     double damage = fireControl.determineBestFiringPlan(
-                    		new FiringPlanCalculationParameters(e, null, f,
+                    		FiringPlanCalculationParameters.GenerateGuessParams(e, null, f,
                                     null, (e.getHeatCapacity() - e.heat) + 5)).getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;

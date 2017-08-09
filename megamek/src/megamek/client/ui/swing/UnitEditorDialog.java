@@ -38,6 +38,7 @@ import javax.swing.SpinnerNumberModel;
 
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Bay;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
@@ -45,6 +46,7 @@ import megamek.common.IArmorState;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
+import megamek.common.MechBay;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
@@ -100,6 +102,7 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel rightThrusterCrit;
     CheckCritPanel kfboomCrit;
     CheckCritPanel dockCollarCrit;
+    CheckCritPanel MechBayCrit;
     CheckCritPanel[] protoCrits;
 
     public UnitEditorDialog(JFrame parent, Entity m) {
@@ -906,7 +909,7 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(rightThrusterCrit, gridBagConstraints);
-        }
+            }
 
         if (aero instanceof Dropship) {
 
@@ -938,6 +941,26 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.weightx = 1.0;
             panSystem.add(kfboomCrit, gridBagConstraints);
 
+        }
+        
+        if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
+
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = 10;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Mech Bays"
+                    + "</b><br></html>"), gridBagConstraints);
+            double mechspace = 0;
+            for (Bay next : entity.getTransportBays()) {
+            	if (next instanceof MechBay) {
+            		mechspace += next.totalSpace;
+            	}
+                int mechbays = (int)mechspace;
+            MechBayCrit = new CheckCritPanel(mechbays, 0);
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(MechBayCrit, gridBagConstraints);
+            }
         }
     }
 
@@ -1149,6 +1172,10 @@ public class UnitEditorDialog extends JDialog {
                 ((Dropship) aero)
                         .setDamageKFBoom(kfboomCrit.getHits() > 0);
             }
+        //    if ((null != MechBayCrit) && ((aero instanceof Dropship) || (aero instanceof Jumpship))) {
+          //  	aero.MechBayHits(MechBayCrit.getHits());
+           // }
+
         }
 
     }

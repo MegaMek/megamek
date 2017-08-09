@@ -47,7 +47,7 @@ public class Bay implements Transporter {
     /**
      * The total amount of space available for troops.
      */
-    /* package */double totalSpace;
+    public /* package */double totalSpace;
 
     /**
      * The current amount of space available for troops.
@@ -59,7 +59,7 @@ public class Bay implements Transporter {
     /**
      * The default constructor is only for serialization.
      */
-    protected Bay() {
+    public Bay() {
         totalSpace = 0;
         currentSpace = 0;
     }

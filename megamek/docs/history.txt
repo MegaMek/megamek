@@ -12,6 +12,7 @@ v0.43.4-git
 + Enhancement #581: Implement Log4J
 + Made the resetLogFile method public so that it can be used by MML and MHQ.
 + Issue #587: Squadron disband damage is not applied correctly
++ Issue #588: Split equipment on Super heavies
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

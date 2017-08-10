@@ -14,6 +14,7 @@ v0.43.4-git
 + Issue #587: Squadron disband damage is not applied correctly
 + Issue #588: Split equipment on Super heavies
 + Issue #593: Wrong destroyed unit icon for Centurion aerospace fighter
++ Feature #479: Added BV listing to unit tooltip.
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

@@ -217,6 +217,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean useManualBV = false;
     protected int manualBV = -1;
 
+    protected int initialBV = -1;
+
     protected String displayName = null;
     protected String shortName = null;
     public int duplicateMarker = 1;
@@ -12300,6 +12302,29 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setManualBV(int bv) {
         manualBV = bv;
     }
+
+    /**
+     * Gets the initial BV of a unit.
+     *
+     * Useful for comparisons with the current BV.
+     * @return The initial BV of a unit.
+     */
+    public int getInitialBV() {
+        return initialBV;
+    }
+
+    /**
+     * Sets the initial BV for a unit.
+     *
+     * Called when the game is initialized.
+     * @param bv The initial BV of a unit.
+     */
+    public void setInitialBV(int bv) {
+        if (initialBV < 0) {
+            initialBV = bv;
+        }
+    }
+
 
     /**
      * produce an int array of the number of bombs of each type based on the

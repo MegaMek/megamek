@@ -174,6 +174,7 @@ public class Aero extends Entity {
     private boolean lifeSupport = true;
     private int leftThrustHits = 0;
     private int rightThrustHits = 0;
+    private int MechBayHits = 0;
 
     // out of control
     private boolean outControl = false;

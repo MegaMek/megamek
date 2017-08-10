@@ -953,10 +953,14 @@ public class UnitEditorDialog extends JDialog {
             double mechspace = 0;
             for (Bay next : entity.getTransportBays()) {
             	if (next instanceof MechBay) {
-            		mechspace += next.totalSpace;
+            		mechspace = next.getBayNumber();
             	}
                 int mechbays = (int)mechspace;
-            MechBayCrit = new CheckCritPanel(mechbays, 0);
+                int mechbayhits = 0;
+                if (MechBay.isDamaged()) {
+                	mechbayhits = 1;
+                }
+            MechBayCrit = new CheckCritPanel(mechbays, mechbayhits);
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(MechBayCrit, gridBagConstraints);
@@ -1169,12 +1173,12 @@ public class UnitEditorDialog extends JDialog {
                         .setDamageDockCollar(dockCollarCrit.getHits() > 0);
             }
             if ((null != kfboomCrit) && (aero instanceof Dropship)) {
-                ((Dropship) aero)
+                Dropship
                         .setDamageKFBoom(kfboomCrit.getHits() > 0);
             }
-        //    if ((null != MechBayCrit) && ((aero instanceof Dropship) || (aero instanceof Jumpship))) {
-          //  	aero.MechBayHits(MechBayCrit.getHits());
-           // }
+            if ((null != MechBayCrit) && ((aero instanceof Dropship) || (aero instanceof Jumpship))) {
+            	MechBay.setDamaged(MechBayCrit.getHits() > 0);
+            }
 
         }
 

@@ -32,6 +32,17 @@ public final class MechBay extends Bay {
         totalSpace = 0;
         currentSpace = 0;
     }
+    
+    private static boolean damaged = false;
+    
+    
+    public static boolean isDamaged() {
+        return damaged;
+    }
+
+    public static void setDamaged(boolean b) {
+        damaged = b;
+    }
 
     // Public constructors and methods.
 
@@ -81,6 +92,10 @@ public final class MechBay extends Bay {
         if (doors <= loadedThisTurn) {
             result = false;
         }
+        // the bay can't be damaged
+        if (isDamaged()) {
+        	result = false;
+        }
 
         // Return our result.
         return result;
@@ -107,5 +122,6 @@ public final class MechBay extends Bay {
     public String toString() {
         return "mechbay:" + totalSpace + ":" + doors;
     }
+
 
 } // End package class TroopSpace implements Transporter

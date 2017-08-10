@@ -10,6 +10,10 @@ public class AeroPathUtil
 	// Determines if the aircraft undertaking the given path will stall at the end of the turn. 
 	public static boolean WillStall(MovePath movePath)
 	{
+		// Stalling only happens in atmospheres on ground maps
+		if(!movePath.isOnAtmosphericGroundMap())
+			return false;
+		
 		// aircraft that are not vtols or spheroids will stall if the final velocity is zero
 		// aerodyne units can actually land or "vertical land" and it's ok to do so (even though you're unlikely to find the 20 clear spaces)
 		// spheroids will stall if they don't move or land

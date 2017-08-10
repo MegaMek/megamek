@@ -192,47 +192,18 @@ public class PathEnumerator {
                 // Get the shortest paths possible.
                 ShortestPathFinder spf;
                 
-                int maxVel;
                 if (aeroMover.isSpheroid()) {
                     spf = ShortestPathFinder.newInstanceOfOneToAllSpheroid(
                             MoveStepType.FORWARDS, getGame());
-                    // We don't need to iterate over velocities for Spheroids
-                    maxVel = 0;
                 } else { // Aerodynes must expend all velocity
                     spf = ShortestPathFinder.newInstanceOfOneToAllAerodyne(
                             MoveStepType.FORWARDS, getGame());
-                    maxVel = Math.min(4, mover.getWalkMP());
                 }
                 spf.setAdjacencyMap(new MovePathFinder.NextStepsAeroAdjacencyMap(
                         MoveStepType.FORWARDS));
                 
                 // Make sure we accelerate to avoid stalling as needed.
                 MovePath startPath = new MovePath(getGame(), mover);
-                // This is kind of a hack, if we're on a ground map, each time
-                // we accelerate, that's 16 ground MP, so if we accelerate a
-                // a lot, we'll be here forever, so cap the amount of velocity
-                
-                /*int startVel = startPath.getFinalVelocity();
-                // If we're already moving at a high velocity, don't acc
-                if (startVel >= maxVel) {
-                    // Generate the paths and add them to our list.
-                    spf.run(startPath);
-                    paths.addAll(spf.getAllComputedPathsUncategorized());
-                }
-                // Check different accelerations
-                for (int velocity = startVel; velocity < maxVel; velocity++) {
-                    // Spheroids don't need to accelerate
-                	// Neither do aerodynes initially if they started at velocity > 0
-                	// loop is kind of weird, we want to "accelerate"
-                	
-                    if (!((Aero)mover).isSpheroid() ) {
-                        startPath.addStep(MoveStepType.ACC);
-                    }
-                    // Generate the paths and add them to our list.
-                    spf.run(startPath);
-                    paths.addAll(spf.getAllComputedPathsUncategorized());
-                }*/
-                
                 spf.run(startPath);
                 paths.addAll(spf.getAllComputedPathsUncategorized());
 

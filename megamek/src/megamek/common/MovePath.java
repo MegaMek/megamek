@@ -1569,4 +1569,16 @@ public class MovePath implements Cloneable, Serializable {
         }
         return step.isEndPos(this);
     }
+    
+    /*
+     * Convenience method to determine whether this path is happening on a ground map with an atmosphere
+     */
+    public boolean isOnAtmosphericGroundMap()
+    {
+    	return (getEntity().getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_VACUUM ||
+    			getEntity().getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_TRACE) &&
+    			
+    			(getEntity().getGame().getBoard().onGround() || 
+    			getEntity().getGame().getBoard().inAtmosphere());
+    }
 }

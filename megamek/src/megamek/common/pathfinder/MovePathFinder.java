@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -268,15 +269,26 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             Comparator<MovePath> {
         @Override
         public int compare(final MovePath first, final MovePath second) {
-        	// Pretty "simple" criteria adjustment
+        	// Criteria:
         	// A path that takes us over an enemy and stays on the board is superior to one that does not
-        	// otherwise we use existing comparison criteria
+        	// A path that causes leaves us at 0 velocity on a ground map is inferior to anything else
+        	
+        	// Check whether we fly over an enemy or not
         	if(first.getFliesOverEnemy() || second.getFliesOverEnemy())
         	{
         		int firstPathEnemyFlyover = first.getFliesOverEnemy() && !first.fliesOffBoard() ? 1 : 0;
         		int secondPathEnemyFlyover = second.getFliesOverEnemy() && !second.fliesOffBoard() ? 1 : 0;
         		
         		return firstPathEnemyFlyover - secondPathEnemyFlyover;
+        	}
+        	
+        	// Check whether we will stall or not
+        	if(AeroPathUtil.WillStall(first) || AeroPathUtil.WillStall(second))
+        	{
+        		int firstPathWillStall = AeroPathUtil.WillStall(first) ? 1 : 0;
+        		int secondPathWillStall = AeroPathUtil.WillStall(second) ? 1 : 0;
+        		
+        		return firstPathWillStall - secondPathWillStall;
         	}
         	
             boolean firstFlyoff = first.fliesOffBoard();
@@ -439,17 +451,18 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             Collection<MovePath> result = new ArrayList<MovePath>();
             MoveStep lastStep = mp.getLastStep();
             
-            // if we haven't done anything else yet, and we are an aerodyne unit, and have not used all our thrust
+            // if we haven't done anything else yet, and we are an aerodyne unit on a ground map with atmosphere, 
             // we can attempt to accelerate or decelerate
-            if(!UnitType.isSpheroidDropship(mp.getEntity()))
+            if(mp.isOnAtmosphericGroundMap() &&
+            		!UnitType.isSpheroidDropship(mp.getEntity()))
             {
             	if(!mp.containsAnyOther(MoveStepType.ACC))
             	{
             		result.add(mp.clone().addStep(MoveStepType.ACC));
             	}
-            	// we also don't want to bother decelerating to 0, as that'll just crash our aircraft
-            	// todo: account for space maps instead
-            	else if(!mp.containsAnyOther(MoveStepType.DEC) && mp.getFinalVelocityLeft() > 16)
+            	// we also don't want to bother decelerating to 0 on ground maps, as that'll just crash our aircraft
+            	else if(!mp.containsAnyOther(MoveStepType.DEC) && 
+            			mp.getFinalVelocityLeft() > 1)
             	{
             		result.add(mp.clone().addStep(MoveStepType.DEC));
             	}
@@ -477,7 +490,8 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 && (mp.getFinalVelocity() > 0)) {
                 result.add(mp.clone().addStep(MoveStepType.RETURN));
             }
-                                    
+                               
+            // Manuevers are temporarily disabled, as Princess is a little bit cavalier with them at the moment
             /*if (!mp.contains(MoveStepType.MANEUVER)) {
                 // side slips
                 result.add(mp.clone()

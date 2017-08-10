@@ -1048,6 +1048,11 @@ exact "Shadow Hawk SHD-5D" "Shadow Hawk SHD-5D.png"
 #exact "Warlord WLD-1P" " .png"
 
 
+exact "Centurion CNT-1D" "default_naval_wreck.png"
+exact "Centurion CNT-1A" "default_naval_wreck.png"
+exact "Centurion CNT-2D" "default_naval_wreck.png"
+exact "Centurion CNT-3S" "default_naval_wreck.png"
+
 
 # Local Client moved here to support overrides of existing images!
 include localclient_wreckset.txt

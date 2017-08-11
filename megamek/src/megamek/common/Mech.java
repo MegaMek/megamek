@@ -8016,14 +8016,35 @@ public abstract class Mech extends Entity {
             toReturn += "Foot";
             first = false;
         }
-        if (hasSystem(QuadVee.SYSTEM_CONVERSION_GEAR, loc)
+        if ((getEntityType() & ETYPE_QUADVEE) != 0
+                && hasSystem(QuadVee.SYSTEM_CONVERSION_GEAR, loc)
                 && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
-                        ACTUATOR_FOOT, loc) > 0)) {
+                        QuadVee.SYSTEM_CONVERSION_GEAR, loc) > 0)) {
             if (!first) {
                 toReturn += ", ";
-                toReturn += "Conversion Gear";
-                first = false;
             }
+            toReturn += "Conversion Gear";
+            first = false;
+        }
+        if ((getEntityType() & ETYPE_LAND_AIR_MECH) != 0
+                && hasSystem(LandAirMech.LAM_AVIONICS, loc)
+                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
+                        LandAirMech.LAM_AVIONICS, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Avionics";
+            first = false;
+        }
+        if ((getEntityType() & ETYPE_LAND_AIR_MECH) != 0
+                && hasSystem(LandAirMech.LAM_LANDING_GEAR, loc)
+                && (getDamagedCriticals(CriticalSlot.TYPE_SYSTEM,
+                        LandAirMech.LAM_LANDING_GEAR, loc) > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Landing Gear";
+            first = false;
         }
         return toReturn;
     }

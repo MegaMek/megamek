@@ -79,7 +79,7 @@ public class MechView {
         if (!entity.usesWeaponBays() || !showDetail) {
             sLoadout.append(getAmmo()).append("<br>"); //$NON-NLS-1$
         }
-        if (entity instanceof Aero) {
+        if (entity.isBomber()) {
             sLoadout.append(getBombs()).append("<br>"); //$NON-NLS-1$
         }
         sLoadout.append(getMisc()) // has to occur before basic is processed
@@ -220,6 +220,7 @@ public class MechView {
             sBasic.append("<br>").append(Messages.getString("MovementType.Fighter")).append(": ") //$NON-NLS-1$            
             .append(entity.getWalkMP()).append("/") //$NON-NLS-1$
             .append(entity.getRunMP());
+            entity.setConversionMode(originalMode);
         }
         if (isVehicle) {
             sBasic.append(" (") //$NON-NLS-1$
@@ -844,8 +845,8 @@ public class MechView {
 
     private String getBombs() {
         StringBuffer sBombs = new StringBuffer();
-        Aero a = (Aero) entity;
-        int[] choices = a.getBombChoices();
+        IBomber b = (IBomber) entity;
+        int[] choices = b.getBombChoices();
         for (int type = 0; type < BombType.B_NUM; type++) {
             if (choices[type] > 0) {
                 sBombs.append(BombType.getBombName(type)).append(" (")

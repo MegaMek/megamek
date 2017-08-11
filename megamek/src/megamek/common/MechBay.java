@@ -33,16 +33,6 @@ public final class MechBay extends Bay {
         currentSpace = 0;
     }
     
-    private static boolean damaged = false;
-    
-    
-    public static boolean isDamaged() {
-        return damaged;
-    }
-
-    public static void setDamaged(boolean b) {
-        damaged = b;
-    }
 
     // Public constructors and methods.
 
@@ -93,7 +83,7 @@ public final class MechBay extends Bay {
             result = false;
         }
         // the bay can't be damaged
-        if (isDamaged()) {
+        if (bayDamaged() == 1) {
         	result = false;
         }
 

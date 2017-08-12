@@ -90,7 +90,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorHandlesTank;
@@ -108,11 +107,14 @@ import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LAMPilot;
+import megamek.common.LandAirMech;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
@@ -1359,7 +1361,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         } else {
             value += pilot.getDesc();
         }
-        value += " (" + pilot.getGunnery() + "/" + pilot.getPiloting() + ")";
+        value += " (" + pilot.getSkillsAsString() + ")";
         if (pilot.countOptions() > 0) {
             value += " (" + pilot.countOptions() + Messages.getString("ChatLounge.abilities") + ")";
         }
@@ -1380,7 +1382,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                     value += "<b>No " + pilot.getCrewType().getRoleName(i) + "</b>";
                 } else {
                     value += "<b>" + pilot.getDesc(i) + "</b> (" + pilot.getCrewType().getRoleName(i) + "): ";
-                    value += pilot.getGunnery(i) + "/" + pilot.getPiloting(i);
+                    value += pilot.getSkillsAsString(i);
                 }
                 value += "<br/>";
             }
@@ -1390,7 +1392,7 @@ public class ChatLounge extends AbstractPhaseDisplay
             } else {
                 value += "<b>" + pilot.getDesc() + "</b><br/>";
             }
-            value += "" + pilot.getGunnery() + "/" + pilot.getPiloting();
+            value += "" + pilot.getSkillsAsString();
         }
         if (crewAdvCount > 0) {
             value += ", " + crewAdvCount + Messages.getString("ChatLounge.advs");
@@ -1415,7 +1417,7 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (pilot.getHits() > 0) {
             value += "<font color='red'>" + Messages.getString("ChatLounge.Hits") + pilot.getHits() + "</font><br>";
         }
-        value += "" + pilot.getGunnery() + "/" + pilot.getPiloting() + "<br>";
+        value += "" + pilot.getSkillsAsString() + "<br>";
         if (tough) {
             value += Messages.getString("ChatLounge.Tough") + pilot.getToughness(0) + "<br>";
         }
@@ -1560,7 +1562,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 // Append ranges
                 WeaponType wtype = (WeaponType) curWp.getType();
                 int ranges[];
-                if (entity instanceof Aero) {
+                if (entity.isAero()) {
                     ranges = wtype.getATRanges();
                 } else {
                     ranges = wtype.getRanges(curWp);
@@ -2107,7 +2109,6 @@ public class ChatLounge extends AbstractPhaseDisplay
         // fighter
         if (loader instanceof FighterSquadron) {
             FighterSquadron fSquad = (FighterSquadron) loader;
-            Aero fighter = (Aero) loadee;
             // We can't use Aero.getBombPoints() because the bombs haven't been
             // loaded yet, only selected, so we have to count the choices
             int[] bombChoice = fSquad.getBombChoices();
@@ -2116,7 +2117,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 numLoadedBombs += bombChoice[i];
             }
             // We can't load all of the squadrons bombs
-            if (numLoadedBombs > fighter.getMaxBombPoints()) {
+            if (numLoadedBombs > ((IBomber)loadee).getMaxBombPoints()) {
                 JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("FighterSquadron.bomberror"),
                         Messages.getString("FighterSquadron.error"), JOptionPane.ERROR_MESSAGE);
                 return;
@@ -2273,6 +2274,16 @@ public class ChatLounge extends AbstractPhaseDisplay
         if (editable && cmd.isOkay()) {
             // send changes
             for (Entity entity : entities) {
+                // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
+                if ((entity instanceof LandAirMech)
+                        && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
+                    for (Entity loadee : entity.getLoadedUnits()) {
+                        entity.unload(loadee);
+                        loadee.setTransportId(Entity.NONE);
+                        client.sendUpdateEntity(loadee);
+                    }
+                 }
+
                 client.sendUpdateEntity(entity);
 
                 // Changing state to a transporting unit can update state of
@@ -2344,6 +2355,16 @@ public class ChatLounge extends AbstractPhaseDisplay
             GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
             cmdSelectedTab = cmd.getSelectedTab();
             if (editable && cmd.isOkay()) {
+                // If a LAM with mechanized BA was changed to non-mech mode, unload the BA.
+                if ((entity instanceof LandAirMech)
+                        && entity.getConversionMode() != LandAirMech.CONV_MODE_MECH) {
+                    for (Entity loadee : entity.getLoadedUnits()) {
+                        entity.unload(loadee);
+                        loadee.setTransportId(Entity.NONE);
+                        c.sendUpdateEntity(loadee);
+                    }
+                 }
+                
                 // send changes
                 c.sendUpdateEntity(entity);
 
@@ -3563,6 +3584,11 @@ public class ChatLounge extends AbstractPhaseDisplay
                         int[] skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
                         e.getCrew().setGunnery(skills[0], i);
                         e.getCrew().setPiloting(skills[1], i);
+                        if (e.getCrew() instanceof LAMPilot) {
+                            skills = c.getRandomSkillsGenerator().getRandomSkills(e, true);
+                            ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
+                            ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                        }
                     }
                     e.getCrew().sortRandomSkills();
                     c.sendUpdateEntity(e);

@@ -23,13 +23,12 @@ import java.util.Enumeration;
 import java.util.List;
 
 import megamek.client.ui.SharedUtility;
-import megamek.common.Aero;
-import megamek.common.Infantry;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
@@ -121,7 +120,7 @@ public abstract class PathRanker {
         Entity mover = startingPathList.get(0).getEntity();
 
         // No support yet for Aero units.
-        if (mover instanceof Aero) {
+        if (mover.isAero()) {
             return startingPathList;
         }
 
@@ -229,7 +228,7 @@ public abstract class PathRanker {
             List<Entity> enemies = getOwner().getEnemyEntities();
             for (Entity e : enemies) {
                 // Skip airborne aero units as they're further away than they seem and hard to catch.
-                if (e instanceof Aero && e.isAirborne()) {
+                if (e.isAero() && e.isAirborne()) {
                     continue;
                 }
 

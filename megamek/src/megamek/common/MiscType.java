@@ -10977,6 +10977,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 1;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BOMB_BAY).or(F_MECH_EQUIPMENT);
+        misc.explosive = true;
 
         misc.techAdvancement.setTechBase(TECH_BASE_IS);
         misc.techAdvancement.setISAdvancement(DATE_NONE, 3071, DATE_NONE);

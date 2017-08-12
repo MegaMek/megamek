@@ -66,6 +66,7 @@ import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.LAMPilot;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -921,6 +922,12 @@ WindowListener, TreeSelectionListener {
     
                 e.getCrew().setGunnery(gunnery, i);
                 e.getCrew().setPiloting(piloting, i);
+
+                if (e.getCrew() instanceof LAMPilot) {
+                    skills = m_client.getRandomSkillsGenerator().getRandomSkills(e, true);
+                    ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
+                    ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
+                }
             }
             e.getCrew().sortRandomSkills();
             if(cs.generateNames()) {

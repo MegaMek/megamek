@@ -489,6 +489,12 @@ public class MtfFile implements IMechLoader {
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);
             }
+            
+            // Set capital fighter stats for LAMs
+            if (mech instanceof LandAirMech) {
+                ((LandAirMech)mech).autoSetCapArmor();
+                ((LandAirMech)mech).autoSetFatalThresh();
+            }
 
             // oog, crits.
             compactCriticals(mech);

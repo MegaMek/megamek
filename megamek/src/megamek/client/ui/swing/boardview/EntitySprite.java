@@ -19,12 +19,12 @@ import java.util.Map.Entry;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.common.Aero;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
+import megamek.common.IAero;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
@@ -326,9 +326,9 @@ class EntitySprite extends Sprite {
         graph.scale(bv.scale, bv.scale);
         
         boolean isInfantry = (entity instanceof Infantry);
-        boolean isAero = (entity instanceof Aero);
+        boolean isAero = entity.isAero();
         
-        if ((isAero && ((Aero) entity).isSpheroid() && !board.inSpace())
+        if ((isAero && ((IAero) entity).isSpheroid() && !board.inSpace())
                 && (secondaryPos == 1)) {
             graph.setColor(Color.WHITE);
             graph.draw(bv.facingPolys[entity.getFacing()]);
@@ -443,10 +443,10 @@ class EntitySprite extends Sprite {
             
             // Aero
             if (isAero) {
-                Aero a = (Aero) entity;
+                IAero a = (IAero) entity;
                 if (a.isRolled()) stStr.add(new Status(Color.YELLOW, "ROLLED"));
                 if (a.getFuel() <= 0) stStr.add(new Status(Color.RED, "FUEL"));
-                if (a.isEvading()) stStr.add(new Status(Color.GREEN, "EVADE"));
+                if (entity.isEvading()) stStr.add(new Status(Color.GREEN, "EVADE"));
                 
                 if (a.isOutControlTotal() & a.isRandomMove()) {
                     stStr.add(new Status(Color.RED, "RANDOM"));
@@ -523,7 +523,7 @@ class EntitySprite extends Sprite {
             if ((entity.getFacing() != -1)
                     && !(isInfantry && !((Infantry) entity).hasFieldGun()
                             && !((Infantry) entity).isTakingCover())
-                    && !(isAero && ((Aero) entity).isSpheroid() && !board
+                    && !(isAero && ((IAero) entity).isSpheroid() && !board
                             .inSpace())) {
                 graph.draw(bv.facingPolys[entity.getFacing()]);
             }
@@ -541,7 +541,7 @@ class EntitySprite extends Sprite {
                 graph.setColor(Color.red);
                 graph.draw(bv.facingPolys[secFacing]);
             }
-            if ((entity instanceof Aero) && this.bv.game.useVectorMove()) {
+            if (entity.isAero() && this.bv.game.useVectorMove()) {
                 for (int head : entity.getHeading()) {
                     graph.setColor(Color.red);
                     graph.draw(bv.facingPolys[head]);
@@ -706,8 +706,8 @@ class EntitySprite extends Sprite {
         if (entity instanceof Infantry) thisInfantry = (Infantry) entity;
         GunEmplacement thisGunEmp = null;
         if (entity instanceof GunEmplacement) thisGunEmp = (GunEmplacement) entity;
-        Aero thisAero = null;
-        if (entity instanceof Aero) thisAero = (Aero) entity;
+        IAero thisAero = null;
+        if (entity.isAero()) thisAero = (IAero) entity;
         
         tooltipString = new StringBuffer();
 
@@ -939,7 +939,7 @@ class EntitySprite extends Sprite {
                 // Append ranges
                 WeaponType wtype = (WeaponType)curWp.getType();
                 int ranges[];
-                if (entity instanceof Aero) {
+                if (entity.isAero()) {
                     ranges = wtype.getATRanges();
                 } else {
                     ranges = wtype.getRanges(curWp);

@@ -635,6 +635,40 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         computeMovementEnvelope(ce); 
                     }
         });
+
+        // Register the action for mode conversion
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_CONVERSIONMODE.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        EntityMovementMode nextMode = ce().nextConversionMode(cmd.getFinalConversionMode());
+                        // LAMs may have to skip the next mode due to damage
+                        if (ce() instanceof LandAirMech) {
+                            if (!((LandAirMech)ce()).canConvertTo(nextMode)) {
+                                nextMode = ce().nextConversionMode(nextMode);
+                            }
+                            if (!((LandAirMech)ce()).canConvertTo(nextMode)) {
+                                nextMode = ce().getMovementMode();
+                            }
+                        }
+                        adjustConvertSteps(nextMode);
+                        clientgui.bv.drawMovementData(ce(), cmd);
+                    }
+                });
+
     }
 
     /**

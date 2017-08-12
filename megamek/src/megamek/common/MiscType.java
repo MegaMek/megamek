@@ -4433,8 +4433,8 @@ public class MiscType extends EquipmentType {
         misc.rulesRefs = "290,TO";
         misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setIntroLevel(false).setUnofficial(false)
                 .setTechRating(RATING_E).setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(3072, 3087, DATE_NONE, DATE_NONE, DATE_NONE)
-                .setISApproximate(false, false, false, false, false).setPrototypeFactions(F_CJF)
+                .setClanAdvancement(3072, 3087, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_CJF)
                 .setProductionFactions(F_CJF);
         return misc;
     }

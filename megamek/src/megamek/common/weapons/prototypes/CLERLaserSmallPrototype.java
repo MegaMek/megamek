@@ -59,8 +59,8 @@ public class CLERLaserSmallPrototype extends LaserWeapon {
             .setUnofficial(false)
             .setTechRating(RATING_E)
             .setAvailability(RATING_X, RATING_D, RATING_X, RATING_X)
-            .setISAdvancement(2819, DATE_NONE, DATE_NONE, 2825, DATE_NONE)
-            .setISApproximate(true, false, false, true, false)
+            .setClanAdvancement(2819, DATE_NONE, DATE_NONE, 2825, DATE_NONE)
+            .setClanApproximate(true, false, false, true, false)
             .setPrototypeFactions(F_CSJ);
 
     }

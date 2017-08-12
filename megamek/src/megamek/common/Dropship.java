@@ -57,7 +57,7 @@ public class Dropship extends SmallCraft {
     // loading and unloading of units?
     private boolean dockCollarDamaged = false;
     
-    private boolean kfBoomDamaged = false;
+    private static boolean kfBoomDamaged = false;
 
     public CrewType defaultCrewType() {
         return CrewType.VESSEL;
@@ -68,7 +68,7 @@ public class Dropship extends SmallCraft {
     }
     
     public boolean isKFBoomDamaged() {
-    	return kfBoomDamaged = false;
+    	return kfBoomDamaged;
     }
 
     public String getCritDamageString() {
@@ -204,7 +204,7 @@ public class Dropship extends SmallCraft {
         dockCollarDamaged = b;
     }
     
-    public void setDamageKFBoom(boolean b) {
+    public static void setDamageKFBoom(boolean b) {
     	kfBoomDamaged = b;
     }
 

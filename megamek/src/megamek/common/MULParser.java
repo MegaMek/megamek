@@ -140,6 +140,7 @@ public class MULParser {
     private static final String RIGHT_THRUST = "rightThrust";
     private static final String LIFE_SUPPORT = "lifeSupport";
     private static final String GEAR = "gear";
+    private static final String KFBOOM = "kfboom";
     private static final String MDAMAGE = "damage";
     private static final String MPENALTY = "penalty";
     private static final String C3MASTERIS = "c3MasterIs";
@@ -1771,6 +1772,7 @@ public class MULParser {
         String rightThrust = aeroCritTag.getAttribute(RIGHT_THRUST);
         String lifeSupport = aeroCritTag.getAttribute(LIFE_SUPPORT);
         String gear = aeroCritTag.getAttribute(GEAR);
+        String kfboom = aeroCritTag.getAttribute(KFBOOM);
 
         Aero a = (Aero) entity;
 
@@ -1808,6 +1810,10 @@ public class MULParser {
 
         if (gear.length() > 0) {
             a.setGearHit(true);
+        }
+        
+        if (kfboom.length() > 0) {
+            Dropship.setDamageKFBoom(true);
         }
     }
     

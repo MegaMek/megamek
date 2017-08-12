@@ -951,18 +951,23 @@ public class UnitEditorDialog extends JDialog {
             panSystem.add(new JLabel("<html><b>" + "Mech Bays"
                     + "</b><br></html>"), gridBagConstraints);
             double mechspace = 0;
+            int mechbayhits = 0;
             for (Bay next : entity.getTransportBays()) {
             	if (next instanceof MechBay) {
-            		mechspace += next.totalSpace;
+            		mechspace = next.getBayNumber();
+                    if (next.bayDamaged() > 0) {
+                    	mechbayhits += 1;
+                    }
             	}
+            }
                 int mechbays = (int)mechspace;
-            MechBayCrit = new CheckCritPanel(mechbays, 0);
+            MechBayCrit = new CheckCritPanel(mechbays, mechbayhits);
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(MechBayCrit, gridBagConstraints);
             }
         }
-    }
+    
 
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
         for (int i = 0; i < entity.locations(); i++) {
@@ -1169,12 +1174,21 @@ public class UnitEditorDialog extends JDialog {
                         .setDamageDockCollar(dockCollarCrit.getHits() > 0);
             }
             if ((null != kfboomCrit) && (aero instanceof Dropship)) {
-                ((Dropship) aero)
+                Dropship
                         .setDamageKFBoom(kfboomCrit.getHits() > 0);
             }
-        //    if ((null != MechBayCrit) && ((aero instanceof Dropship) || (aero instanceof Jumpship))) {
-          //  	aero.MechBayHits(MechBayCrit.getHits());
-           // }
+            if ((null != MechBayCrit) && ((aero instanceof Dropship) || (aero instanceof Jumpship))) {
+            	int damagedbays = (MechBayCrit.getHits());
+            	while (damagedbays > 0); {
+                 for (Bay next : aero.getTransportBays()) {
+                	if ((next instanceof MechBay)) {
+                		next.setbayDamaged();
+                        damagedbays--;
+                	}
+
+                	}
+            	}
+                }
 
         }
 
@@ -1182,7 +1196,7 @@ public class UnitEditorDialog extends JDialog {
 
     private class CheckCritPanel extends JPanel {
 
-        /**
+		/**
          *
          */
         private static final long serialVersionUID = 8662728291188274362L;

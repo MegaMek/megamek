@@ -26,6 +26,18 @@ import java.util.Vector;
 public class Bay implements Transporter {
 
     // Private attributes and helper functions.
+	
+	// For tracking damage to the bay itself, not the cargo it carries
+    private int damaged = 0;
+    
+    
+    public int bayDamaged() {
+        return damaged;
+    }
+
+    public void setbayDamaged() {
+        damaged = 1;
+    }
 
     /**
      *
@@ -139,6 +151,11 @@ public class Bay implements Transporter {
         // more doors than units loaded
         if (doors <= loadedThisTurn) {
             result = false;
+        }
+        
+        // the bay can't be damaged
+        if (bayDamaged() == 1) {
+        	result = false;
         }
 
         // Return our result.

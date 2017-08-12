@@ -36,6 +36,7 @@ public class BombArrowIV extends AmmoWeapon {
         this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "Arrow IV (Bomb)";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_ARROW));
+        this.flags = flags.or(F_BOMB_WEAPON);
         this.heat = 0;
         this.rackSize = 20;
         this.ammoType = AmmoType.T_ARROW_IV_BOMB;

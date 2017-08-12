@@ -71,7 +71,7 @@ public final class SmallCraftBay extends Bay {
         boolean result = false;
 
         // Only ASFs
-        if ((unit instanceof Aero) && !(unit instanceof FighterSquadron) && !(unit instanceof Dropship) && !(unit instanceof Jumpship)) {
+        if ((unit.isAero()) && !(unit instanceof FighterSquadron) && !(unit instanceof Dropship) && !(unit instanceof Jumpship)) {
             result = true;
         }
 

@@ -32,6 +32,7 @@ public class ISAAAMissileWeapon extends CapitalMissileWeapon {
         this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         this.name = "AAA Missile";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_AAA));
+        this.flags = flags.or(F_BOMB_WEAPON);
         this.heat = 0;
         this.damage = 20;
         this.rackSize = 1;

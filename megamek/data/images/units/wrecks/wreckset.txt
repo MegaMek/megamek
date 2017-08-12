@@ -1047,6 +1047,15 @@ exact "Shadow Hawk SHD-5D" "Shadow Hawk SHD-5D.png"
 #exact "Warlord WAR-TT1" " .png"
 #exact "Warlord WLD-1P" " .png"
 
+#ASF named after Mech ones.
+exact "Centurion CNT-1D" "default_naval_wreck.png"
+exact "Centurion CNT-1A" "default_naval_wreck.png"
+exact "Centurion CNT-2D" "default_naval_wreck.png"
+exact "Centurion CNT-3S" "default_naval_wreck.png"
+exact "Vulcan VLC-3N" "default_naval_wreck.png"
+exact "Vulcan VLC-5N" "default_naval_wreck.png"
+exact "Vulcan VLC-6N" "default_naval_wreck.png"
+exact "Vulcan VLC-8N" "default_naval_wreck.png"
 
 
 # Local Client moved here to support overrides of existing images!

@@ -91,14 +91,14 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T log(final Class callingClass,
+    public <T extends Throwable> T log(final Class<?> callingClass,
                                        final String methodName,
                                        final T throwable) {
         return log(callingClass, methodName, LogLevel.ERROR, throwable);
     }
 
     @Override
-    public <T extends Throwable> T log(final Class callingClass,
+    public <T extends Throwable> T log(final Class<?> callingClass,
                                        final String methodName,
                                        final LogLevel logLevel,
                                        final T throwable) {
@@ -113,7 +113,7 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
-    public <T extends Throwable> T log(final Class callingClass,
+    public <T extends Throwable> T log(final Class<?> callingClass,
                                        final String methodName,
                                        final LogLevel level,
                                        final String message,
@@ -123,7 +123,7 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
-    public void log(final Class callingClass,
+    public void log(final Class<?> callingClass,
                     final String methodName,
                     final LogLevel level,
                     final String message) {
@@ -131,7 +131,7 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
-    public void log(final Class callingClass,
+    public void log(final Class<?> callingClass,
                     final String methodName,
                     final LogLevel level,
                     final StringBuilder message) {
@@ -139,25 +139,25 @@ public class DefaultMmLogger implements MMLogger {
     }
 
     @Override
-    public void methodBegin(Class callingClass, String methodName) {
+    public void methodBegin(Class<?> callingClass, String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG,
             METHOD_BEGIN + methodName);
     }
 
     @Override
-    public void methodEnd(Class callingClass, String methodName) {
+    public void methodEnd(Class<?> callingClass, String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG,
             METHOD_END + methodName);
     }
 
     @Override
-    public void methodCalled(Class callingClass, String methodName) {
+    public void methodCalled(Class<?> callingClass, String methodName) {
         log(callingClass, methodName, LogLevel.DEBUG,
             METHOD_CALLED + methodName);
     }
 
     @Override
-    public boolean willLog(final Class callingClass, final LogLevel level) {
+    public boolean willLog(final Class<?> callingClass, final LogLevel level) {
         Logger logger = getLogger(callingClass.getName());
         return logger.isEnabledFor(level.getLevel());
     }

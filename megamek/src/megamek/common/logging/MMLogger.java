@@ -45,7 +45,7 @@ public interface MMLogger {
      * @param throwable    The error object to be logged.
      * @return The same throwable passed in to this method so that it may be re-thrown if desired.
      */
-    <T extends Throwable> T log(Class callingClass, String methodName,
+    <T extends Throwable> T log(Class<?> callingClass, String methodName,
                                 T throwable);
 
 
@@ -58,7 +58,7 @@ public interface MMLogger {
      * @param throwable    The error object to be logged.
      * @return The same throwable passed in to this method so that it may be re-thrown if desired.
      */
-    <T extends Throwable> T log(Class callingClass, String methodName,
+    <T extends Throwable> T log(Class<?> callingClass, String methodName,
                                 LogLevel logLevel, T throwable);
 
 
@@ -72,7 +72,7 @@ public interface MMLogger {
      * @param throwable    The error object to be logged.
      * @return The same throwable passed in to this method so that it may be re-thrown if desired.
      */
-    <T extends Throwable> T log(Class callingClass, String methodName,
+    <T extends Throwable> T log(Class<?> callingClass, String methodName,
                                 LogLevel level, String message, T throwable);
 
 
@@ -84,7 +84,7 @@ public interface MMLogger {
      * @param level        The priority of the log entry.
      * @param message      The message to be logged.
      */
-    void log(Class callingClass, String methodName, LogLevel level,
+    void log(Class<?> callingClass, String methodName, LogLevel level,
              String message);
 
 
@@ -96,7 +96,7 @@ public interface MMLogger {
      * @param level        The priority of the log entry.
      * @param message      The message to be logged.
      */
-    void log(Class callingClass, String methodName, LogLevel level,
+    void log(Class<?> callingClass, String methodName, LogLevel level,
              StringBuilder message);
 
     /**
@@ -106,7 +106,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param methodName   The name of the originating method.
      */
-    void methodBegin(final Class callingClass, final String methodName);
+    void methodBegin(final Class<?> callingClass, final String methodName);
 
     /**
      * Used to log exit from a method.  The log entry is written at the
@@ -115,7 +115,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param methodName   The name of the originating method.
      */
-    void methodEnd(final Class callingClass, final String methodName);
+    void methodEnd(final Class<?> callingClass, final String methodName);
 
     /**
      * Used to log when a method has been called.  The log entry is written at
@@ -124,7 +124,7 @@ public interface MMLogger {
      * @param callingClass The name of the originating class.
      * @param methodName   The name of the originating method.
      */
-    void methodCalled(final Class callingClass, final String methodName);
+    void methodCalled(final Class<?> callingClass, final String methodName);
 
     /**
      * Returns true if the given class will have log entries written for the
@@ -134,7 +134,7 @@ public interface MMLogger {
      * @param level        The level of logging to be verified.
      * @return Whether a log entry will be written or not.
      */
-    boolean willLog(Class callingClass, LogLevel level);
+    boolean willLog(Class<?> callingClass, LogLevel level);
 
     /**
      * Sets the {@link LogLevel} for the given category.

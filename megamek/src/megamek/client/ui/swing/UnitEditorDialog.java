@@ -955,9 +955,9 @@ public class UnitEditorDialog extends JDialog {
             for (Bay next : entity.getTransportBays()) {
             	if (next instanceof MechBay) {
             		mechspace = next.getBayNumber();
-                    if (next.bayDamaged() > 0) {
-                    	mechbayhits += 1;
-                    }
+            	    if (next.getbayDamaged() > 0) {
+            	    	mechbayhits += 1;
+            	    }
             	}
             }
                 int mechbays = (int)mechspace;
@@ -965,9 +965,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(MechBayCrit, gridBagConstraints);
-            }
         }
-    
+    }
 
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
         for (int i = 0; i < entity.locations(); i++) {
@@ -1170,7 +1169,7 @@ public class UnitEditorDialog extends JDialog {
                 aero.setRightThrustHits(rightThrusterCrit.getHits());
             }
             if ((null != dockCollarCrit) && (aero instanceof Dropship)) {
-                ((Dropship) aero)
+                Dropship
                         .setDamageDockCollar(dockCollarCrit.getHits() > 0);
             }
             if ((null != kfboomCrit) && (aero instanceof Dropship)) {
@@ -1179,17 +1178,14 @@ public class UnitEditorDialog extends JDialog {
             }
             if ((null != MechBayCrit) && ((aero instanceof Dropship) || (aero instanceof Jumpship))) {
             	int damagedbays = (MechBayCrit.getHits());
-            	while (damagedbays > 0); {
-                 for (Bay next : aero.getTransportBays()) {
-                	if ((next instanceof MechBay)) {
-                		next.setbayDamaged();
-                        damagedbays--;
-                	}
-
-                	}
-            	}
+                 for (Bay next : aero.getTransportBays()) { 
+                	 if (next instanceof MechBay && damagedbays > 0)  
+                	 next.setbayDamaged();
+                     damagedbays--; 
+            	 }
                 }
-
+         
+                
         }
 
     }

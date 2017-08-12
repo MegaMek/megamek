@@ -15,8 +15,8 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying ASFs and Small Craft
+ * aboard large spacecraft and mobile structures
  */
 
 public final class HeavyVehicleBay extends Bay {
@@ -67,8 +67,8 @@ public final class HeavyVehicleBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only smallcraft
-        if (unit instanceof Tank) {
+        // Only tanks equal or less than 100 tons
+        if ((unit instanceof Tank) && (unit.getWeight() <= 100)) {
             result = true;
         }
 
@@ -81,6 +81,11 @@ public final class HeavyVehicleBay extends Bay {
         // is the door functional
         if (doors < loadedThisTurn) {
             result = false;
+        }
+        
+        // the bay can't be damaged
+        if (bayDamaged() == 1) {
+        	result = false;
         }
 
         // Return our result.

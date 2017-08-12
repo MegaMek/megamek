@@ -15,8 +15,8 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying Battle Armor squads
+ * aboard large spacecraft and mobile structures
  */
 
 public final class BattleArmorBay extends Bay {
@@ -73,7 +73,7 @@ public final class BattleArmorBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only smallcraft
+        // Only Battle Armor squads
         if (unit instanceof BattleArmor) {
             result = true;
         }
@@ -87,6 +87,11 @@ public final class BattleArmorBay extends Bay {
         // is the door functional
         if (doors < loadedThisTurn) {
             result = false;
+        }
+        
+        // the bay can't be damaged
+        if (bayDamaged() == 1) {
+        	result = false;
         }
 
         // Return our result.

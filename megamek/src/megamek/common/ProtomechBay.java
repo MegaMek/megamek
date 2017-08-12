@@ -15,8 +15,8 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying protomechs aboard
- * dropships
+ * Represents a volume of space set aside for carrying protomechs aboard
+ * large spacecraft and mobile structures
  */
 
 public final class ProtomechBay extends Bay {
@@ -67,7 +67,7 @@ public final class ProtomechBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only smallcraft
+        // Only ProtoMechs
         if (unit instanceof Protomech) {
             result = true;
         }
@@ -81,6 +81,11 @@ public final class ProtomechBay extends Bay {
         // is the door functional
         if (doors <= loadedThisTurn) {
             result = false;
+        }
+        
+        // the bay can't be damaged
+        if (bayDamaged() == 1) {
+        	result = false;
         }
 
         // Return our result.

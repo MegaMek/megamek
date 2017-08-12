@@ -55,7 +55,7 @@ public class Dropship extends SmallCraft {
     
     // what needs to go here?
     // loading and unloading of units?
-    private boolean dockCollarDamaged = false;
+    private static boolean dockCollarDamaged = false;
     
     private static boolean kfBoomDamaged = false;
 
@@ -82,12 +82,22 @@ public class Dropship extends SmallCraft {
             first = false;
         }
             
-        else if (isKFBoomDamaged()) {
+        if (isKFBoomDamaged()) {
         	if (!first) {
             	toReturn += ", ";
             }
         	toReturn += "K-F Boom";
         	first = false;
+        }
+        
+       for (Bay next : getTransportBays()) {
+       	if ((next instanceof MechBay) && (next.bayDamaged() > 0)) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += ("Mech Bay # ") + (next.getBayNumber()) ;
+            first = false;
+       	}
         }
         return toReturn;
     }
@@ -200,7 +210,7 @@ public class Dropship extends SmallCraft {
         return isProhibited;
     }
 
-    public void setDamageDockCollar(boolean b) {
+    public static void setDamageDockCollar(boolean b) {
         dockCollarDamaged = b;
     }
     

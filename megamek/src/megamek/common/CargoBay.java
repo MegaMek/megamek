@@ -15,8 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying general cargo.
  */
 
 public final class CargoBay extends Bay {

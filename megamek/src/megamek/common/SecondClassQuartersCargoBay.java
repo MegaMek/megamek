@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying livestock
+ * Represents a volume of space set aside for carrying second class passengers
  */
 
 public final class SecondClassQuartersCargoBay extends Bay {

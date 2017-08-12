@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying mechs aboard dropships
+ * Represents a volume of space set aside for carrying mechs or LAMs aboard large spacecraft and mobile structures
  */
 
 public final class MechBay extends Bay {
@@ -67,8 +67,8 @@ public final class MechBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only mechs
-        if (unit instanceof Mech) {
+        // Only mechs and Land-Air Mechs
+        if ((unit instanceof Mech) || (unit instanceof LandAirMech)) {
             result = true;
         }
 

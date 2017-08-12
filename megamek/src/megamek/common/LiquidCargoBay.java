@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying liquid cargo
+ * Represents a volume of space set aside for carrying liquid cargo
  */
 
 public final class LiquidCargoBay extends Bay {

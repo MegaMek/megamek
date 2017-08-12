@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying livestock
+ * Represents a volume of space set aside for carrying a mobile structure or spacecraft's crew
  */
 
 public final class CrewQuartersCargoBay extends Bay {

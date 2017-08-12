@@ -34,6 +34,10 @@ public class Bay implements Transporter {
     public int bayDamaged() {
         return damaged;
     }
+    
+    public int getbayDamaged() {
+    	return damaged;
+    }
 
     public void setbayDamaged() {
         damaged = 1;

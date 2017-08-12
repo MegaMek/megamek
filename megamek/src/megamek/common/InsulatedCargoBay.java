@@ -15,7 +15,7 @@
 package megamek.common;
 
 /**
- * Represtents a volume of space set aside for carrying insulated cargo
+ * Represents a volume of space set aside for carrying insulated cargo
  */
 
 public final class InsulatedCargoBay extends Bay {

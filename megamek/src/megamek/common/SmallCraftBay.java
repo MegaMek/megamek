@@ -17,8 +17,8 @@ package megamek.common;
 import java.util.Vector;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying ASFs and Small Craft
+ * aboard large spacecraft and mobile structures
  */
 
 public final class SmallCraftBay extends Bay {
@@ -84,6 +84,11 @@ public final class SmallCraftBay extends Bay {
         // is there at least one recovery slot available?
         if (getRecoverySlots() < 1) {
             result = false;
+        }
+        
+        // the bay can't be damaged
+        if (bayDamaged() == 1) {
+        	result = false;
         }
 
         // Return our result.

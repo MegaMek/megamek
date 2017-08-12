@@ -140,8 +140,20 @@ public class MULParser {
     private static final String RIGHT_THRUST = "rightThrust";
     private static final String LIFE_SUPPORT = "lifeSupport";
     private static final String GEAR = "gear";
-    private static final String KFBOOM = "kfboom";
+    private static final String DOCKING_COLLAR = "docking collar";
+    private static final String KFBOOM = "k-f boom";
+    private static final String ASF_BAY = "ASF Bay";
+    private static final String BATTLE_ARMOR_BAY = "Battle Armor Bay";
+    private static final String CARGO_BAY = "Cargo Bay";
+    private static final String HEAVY_VEHICLE_BAY = "Heavy Vehicle Bay";
+    private static final String INFANTRY_BAY = "Infantry Bay";
+    private static final String LIGHT_VEHICLE_BAY = "Light Vehicle Bay";
+    private static final String MECH_BAY = "Mech Bay";
+    private static final String SMALL_CRAFT_BAY = "Small Craft Bay";
+    private static final String SUPERHEAVY_MECH_BAY = "Superheavy Mech Bay";
+    private static final String SUPERHEAVY_VEHICLE_BAY = "Superheavy Vehicle Bay";
     private static final String MDAMAGE = "damage";
+    private static final String DAMAGED = "damaged";
     private static final String MPENALTY = "penalty";
     private static final String C3MASTERIS = "c3MasterIs";
     private static final String C3UUID = "c3UUID";
@@ -211,7 +223,7 @@ public class MULParser {
     Vector<Entity> devastated;
     
     /**
-     * Keep a separate list of pilot/crews parsed becasue dismounted pilots may
+     * Keep a separate list of pilot/crews parsed because dismounted pilots may
      * need to be read separately
      */
     private Vector<Crew> pilots;
@@ -461,6 +473,8 @@ public class MULParser {
                     parseKF(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(SAIL)){
                     parseSail(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(DOCKING_COLLAR)){
+                    parseDockingCollar(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(AEROCRIT)){
                     parseAeroCrit(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(TANKCRIT)){
@@ -1757,6 +1771,15 @@ public class MULParser {
     }
     
     /**
+     * Parse a docking collar tag for the given <code>Entity</code>.
+     */
+    private static void parseDockingCollar(Element collarTag, Entity entity){
+    	Dropship d = (Dropship) entity;
+        String dockingcollar = collarTag.getAttribute(DAMAGED);
+        if (dockingcollar.length() > 0) 
+            d.setDamageDockCollar(true);
+    }
+    /**
      * Parse an aeroCrit tag for the given <code>Entity</code>.
      * 
      * @param aeroCritTag
@@ -1772,7 +1795,6 @@ public class MULParser {
         String rightThrust = aeroCritTag.getAttribute(RIGHT_THRUST);
         String lifeSupport = aeroCritTag.getAttribute(LIFE_SUPPORT);
         String gear = aeroCritTag.getAttribute(GEAR);
-        String kfboom = aeroCritTag.getAttribute(KFBOOM);
 
         Aero a = (Aero) entity;
 
@@ -1810,10 +1832,6 @@ public class MULParser {
 
         if (gear.length() > 0) {
             a.setGearHit(true);
-        }
-        
-        if (kfboom.length() > 0) {
-            Dropship.setDamageKFBoom(true);
         }
     }
     

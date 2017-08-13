@@ -83,7 +83,7 @@ public final class MechBay extends Bay {
             result = false;
         }
         // the bay can't be damaged
-        if (bayDamaged() == 1) {
+        if (damaged == 1) {
         	result = false;
         }
 

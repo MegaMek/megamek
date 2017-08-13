@@ -71,6 +71,7 @@ public class Dropship extends SmallCraft {
     	return kfBoomDamaged;
     }
 
+    // Critical hits
     public String getCritDamageString() {
         String toReturn = super.getCritDamageString();
         boolean first = toReturn.isEmpty();
@@ -90,15 +91,6 @@ public class Dropship extends SmallCraft {
         	first = false;
         }
         
-       for (Bay next : getTransportBays()) {
-       	if ((next instanceof MechBay) && (next.bayDamaged() > 0)) {
-            if (!first) {
-                toReturn += ", ";
-            }
-            toReturn += ("Mech Bay # ") + (next.getBayNumber()) ;
-            first = false;
-       	}
-        }
         return toReturn;
     }
 

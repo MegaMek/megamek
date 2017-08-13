@@ -4375,7 +4375,18 @@ public class Aero extends Entity {
             }
             toReturn += "Right Thruster (" + getRightThrustHits() + ")";
             first = false;
-        }        
+        }
+        // Cargo bays for large craft 
+       for (Bay next : getTransportBays()) {
+    	int bayN = next.getBayNumber();
+       	if (next.getbayDamaged(bayN) > 0) {
+            if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += next.getType() + " Bay # " + next.getBayNumber() ;
+            first = false;
+       	}
+        }
         return toReturn;
     }
 

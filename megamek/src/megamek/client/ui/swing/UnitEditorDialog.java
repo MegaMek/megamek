@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -102,7 +103,7 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel rightThrusterCrit;
     CheckCritPanel kfboomCrit;
     CheckCritPanel dockCollarCrit;
-    CheckCritPanel MechBayCrit;
+    CheckCritPanel[] bayCriticals;
     CheckCritPanel[] protoCrits;
 
     public UnitEditorDialog(JFrame parent, Entity m) {
@@ -944,29 +945,31 @@ public class UnitEditorDialog extends JDialog {
         }
         
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
-
+        	for (Bay next : aero.getTransportBays()) {
+        	int b = 0;
+        	int bayN = next.getBayNumber();
+        	bayCriticals = new CheckCritPanel[aero.getTransportBays().size()];
             gridBagConstraints.gridx = 0;
-            gridBagConstraints.gridy = 10;
+            gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + "Mech Bays"
+            panSystem.add(new JLabel("<html><b>" + next.getType() + " Bay # " + (next.getBayNumber())
                     + "</b><br></html>"), gridBagConstraints);
-            double mechspace = 0;
-            int mechbayhits = 0;
-            for (Bay next : entity.getTransportBays()) {
-            	if (next instanceof MechBay) {
-            		mechspace = next.getBayNumber();
-            	    if (next.getbayDamaged() > 0) {
-            	    	mechbayhits += 1;
-            	    }
-            	}
+            int bayHits = 0;
+            if (next.getbayDamaged(bayN) > 0) {
+            	bayHits = 1;
             }
-                int mechbays = (int)mechspace;
-            MechBayCrit = new CheckCritPanel(mechbays, mechbayhits);
+
+            CheckCritPanel bayCrit = new CheckCritPanel(1, bayHits);
+            bayCriticals[b] = bayCrit;
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
-            panSystem.add(MechBayCrit, gridBagConstraints);
+            panSystem.add(bayCrit, gridBagConstraints);
+            b++;
+        	}
+            
         }
     }
+
 
     private void btnOkayActionPerformed(java.awt.event.ActionEvent evt) {
         for (int i = 0; i < entity.locations(); i++) {
@@ -1176,16 +1179,21 @@ public class UnitEditorDialog extends JDialog {
                 Dropship
                         .setDamageKFBoom(kfboomCrit.getHits() > 0);
             }
-            if ((null != MechBayCrit) && ((aero instanceof Dropship) || (aero instanceof Jumpship))) {
-            	int damagedbays = (MechBayCrit.getHits());
-                 for (Bay next : aero.getTransportBays()) { 
-                	 if (next instanceof MechBay && damagedbays > 0)  
-                	 next.setbayDamaged();
-                     damagedbays--; 
-            	 }
-                }
-         
-                
+            if ((null != bayCriticals) && ((aero instanceof Dropship) || (aero instanceof Jumpship))) {
+            	for (Bay next : aero.getTransportBays()) {
+            	int b = 0;
+                int bayN = next.getBayNumber();
+            	CheckCritPanel bayCrit = bayCriticals[b];
+            		if (bayCrit.getHits() > 0) {
+                	    next.setbayDamaged(bayN);
+            		}
+            		else {
+            		    next.clearbayDamaged(bayN);
+            		}
+            	    b++;
+            	}
+            }
+               
         }
 
     }

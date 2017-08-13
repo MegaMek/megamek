@@ -88,7 +88,7 @@ public final class ASFBay extends Bay {
         }
         
         // the bay can't be damaged
-        if (bayDamaged() == 1) {
+        if (damaged == 1) {
         	result = false;
         }
 

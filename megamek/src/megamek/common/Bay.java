@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Represtents a volume of space set aside for carrying ASFs and Small Craft
- * aboard DropShips
+ * Represents a volume of space set aside for carrying cargo of some sort
+ * aboard large spacecraft and mobile structures
  */
 
 public class Bay implements Transporter {
@@ -28,19 +28,18 @@ public class Bay implements Transporter {
     // Private attributes and helper functions.
 	
 	// For tracking damage to the bay itself, not the cargo it carries
-    private int damaged = 0;
+    protected int damaged = 0;
     
-    
-    public int bayDamaged() {
-        return damaged;
-    }
-    
-    public int getbayDamaged() {
+    public int getbayDamaged(int bayN) {
     	return damaged;
     }
 
-    public void setbayDamaged() {
+    public void setbayDamaged(int bayN) {
         damaged = 1;
+    }
+    
+    public void clearbayDamaged(int bayN) {
+        damaged = 0;
     }
 
     /**
@@ -158,7 +157,7 @@ public class Bay implements Transporter {
         }
         
         // the bay can't be damaged
-        if (bayDamaged() == 1) {
+        if (damaged == 1) {
         	result = false;
         }
 

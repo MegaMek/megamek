@@ -104,6 +104,7 @@ public class UnitEditorDialog extends JDialog {
     CheckCritPanel kfboomCrit;
     CheckCritPanel dockCollarCrit;
     CheckCritPanel[] bayCriticals;
+    CheckCritPanel[] bayDoorCrit;
     CheckCritPanel[] protoCrits;
 
     public UnitEditorDialog(JFrame parent, Entity m) {
@@ -947,11 +948,12 @@ public class UnitEditorDialog extends JDialog {
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
         	int b = 0;
         	bayCriticals = new CheckCritPanel [aero.getTransportBays().size()];
+        	bayDoorCrit = new CheckCritPanel [aero.getTransportBays().size()];
         	for (Bay nextbay : aero.getTransportBays()) {
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + nextbay.getType() + " Bay # " + (nextbay.getBayNumber())
+            panSystem.add(new JLabel("<html><b>" + nextbay.getType() + " Bay # " + nextbay.getBayNumber()
                     + "</b><br></html>"), gridBagConstraints);
             int bayHits = 0;
             if (nextbay.getbayDamaged() > 0) {
@@ -963,6 +965,22 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
             panSystem.add(bayCrit, gridBagConstraints);
+            
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy++;
+            gridBagConstraints.weightx = 0.0;
+            panSystem.add(new JLabel("<html><b>" + "Bay # " + nextbay.getBayNumber() + " Doors" 
+                    + "</b><br></html>"), gridBagConstraints);
+          /*  int doorHits = 0;
+            if (nextbay.getbayDamaged() > 0) {
+            	doorHits = 1;
+            } */
+
+            CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), 0);
+            bayDoorCrit[b] = doorCrit;
+            gridBagConstraints.gridx = 1;
+            gridBagConstraints.weightx = 1.0;
+            panSystem.add(doorCrit, gridBagConstraints);
             b++;
         	}
             
@@ -1178,6 +1196,7 @@ public class UnitEditorDialog extends JDialog {
                 Dropship
                         .setDamageKFBoom(kfboomCrit.getHits() > 0);
             }
+            // cargo bays and bay doors
             if ((aero instanceof Dropship) || (aero instanceof Jumpship)) {
             	int b = 0;
             	for (Bay bay : aero.getTransportBays()) {
@@ -1191,6 +1210,10 @@ public class UnitEditorDialog extends JDialog {
             		 else {
             		  bay.clearbayDamaged();
             		 }
+                	CheckCritPanel doorCrit = bayDoorCrit[b];
+                    if (null != doorCrit) {
+                        bay.setDoors(bay.getDoors() - bayDoorCrit[b].getHits());
+                    }
             	    b++;
             	}
             }

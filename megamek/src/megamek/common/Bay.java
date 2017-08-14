@@ -30,15 +30,15 @@ public class Bay implements Transporter {
 	// For tracking damage to the bay itself, not the cargo it carries
     protected int damaged = 0;
     
-    public int getbayDamaged(int bayN) {
+    public int getbayDamaged() {
     	return damaged;
     }
 
-    public void setbayDamaged(int bayN) {
+    public void setbayDamaged() {
         damaged = 1;
     }
     
-    public void clearbayDamaged(int bayN) {
+    public void clearbayDamaged() {
         damaged = 0;
     }
 

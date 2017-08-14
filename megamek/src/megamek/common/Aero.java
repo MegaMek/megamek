@@ -4378,8 +4378,7 @@ public class Aero extends Entity {
         }
         // Cargo bays for large craft 
        for (Bay next : getTransportBays()) {
-    	int bayN = next.getBayNumber();
-       	if (next.getbayDamaged(bayN) > 0) {
+       	if (next.getbayDamaged() > 0) {
             if (!first) {
                 toReturn += ", ";
             }

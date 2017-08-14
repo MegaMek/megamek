@@ -945,17 +945,16 @@ public class UnitEditorDialog extends JDialog {
         }
         
         if ((aero instanceof SmallCraft) || (aero instanceof Jumpship)) {
-        	for (Bay next : aero.getTransportBays()) {
         	int b = 0;
-        	int bayN = next.getBayNumber();
-        	bayCriticals = new CheckCritPanel[aero.getTransportBays().size()];
+        	bayCriticals = new CheckCritPanel [aero.getTransportBays().size()];
+        	for (Bay nextbay : aero.getTransportBays()) {
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy++;
             gridBagConstraints.weightx = 0.0;
-            panSystem.add(new JLabel("<html><b>" + next.getType() + " Bay # " + (next.getBayNumber())
+            panSystem.add(new JLabel("<html><b>" + nextbay.getType() + " Bay # " + (nextbay.getBayNumber())
                     + "</b><br></html>"), gridBagConstraints);
             int bayHits = 0;
-            if (next.getbayDamaged(bayN) > 0) {
+            if (nextbay.getbayDamaged() > 0) {
             	bayHits = 1;
             }
 
@@ -1179,17 +1178,19 @@ public class UnitEditorDialog extends JDialog {
                 Dropship
                         .setDamageKFBoom(kfboomCrit.getHits() > 0);
             }
-            if ((null != bayCriticals) && ((aero instanceof Dropship) || (aero instanceof Jumpship))) {
-            	for (Bay next : aero.getTransportBays()) {
+            if ((aero instanceof Dropship) || (aero instanceof Jumpship)) {
             	int b = 0;
-                int bayN = next.getBayNumber();
+            	for (Bay bay : aero.getTransportBays()) {
             	CheckCritPanel bayCrit = bayCriticals[b];
+                if (null == bayCrit) {
+                    continue;
+                }
             		if (bayCrit.getHits() > 0) {
-                	    next.setbayDamaged(bayN);
+                	  bay.setbayDamaged();
             		}
-            		else {
-            		    next.clearbayDamaged(bayN);
-            		}
+            		 else {
+            		  bay.clearbayDamaged();
+            		 }
             	    b++;
             	}
             }

@@ -23,7 +23,6 @@ import megamek.common.util.StringUtil;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Vector;
 
@@ -122,7 +121,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
      *
      * @return The list of actions as a vector.
      */
-    synchronized public Vector<EntityAction> getEntityActionVector() {
+    synchronized Vector<EntityAction> getEntityActionVector() {
         Vector<EntityAction> actionVector = new Vector<>();
         if (size() == 0) {
             return actionVector;
@@ -229,8 +228,8 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
     /**
      * Hole punchers before crit seekers
      */
-    public void sortPlan() {
-        Collections.sort(this, new Comparator<WeaponFireInfo>() {
+    void sortPlan() {
+        this.sort(new Comparator<WeaponFireInfo>() {
             @Override
             public int compare(WeaponFireInfo o1, WeaponFireInfo o2) {
                 Mounted weapon1 = o1.getWeapon();
@@ -284,7 +283,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
         });
     }
 
-    public String getWeaponNames() {
+    String getWeaponNames() {
         StringBuilder out = new StringBuilder("");
         for (WeaponFireInfo wfi : this) {
             if (!StringUtil.isNullOrEmpty(out)) {

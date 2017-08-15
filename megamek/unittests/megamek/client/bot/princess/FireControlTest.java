@@ -2038,6 +2038,7 @@ public class FireControlTest {
         Assert.assertFalse(testFireControl.isTargetUnderFlightPath(mockPath, mockTargetState));
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Test
     public void testCalculateUtility() {
         final double TOLERANCE = 0.00001;
@@ -2624,6 +2625,7 @@ public class FireControlTest {
         Mockito.when(mockShooter.getWeaponList()).thenReturn(shooterWeapons);
         FiringPlan plan = testFireControl.getBestFiringPlan(mockShooter, mockTarget, mockGame,
                                                             testToHitThreshold);
-        Assert.assertNotEquals(0, plan.getUtility(), 0.00001);
+        Assert.assertFalse("Expected not 0.0.  Got " + plan.getUtility(),
+                           Math.abs(0 - plan.getUtility()) < 0.00001);
     }
 }

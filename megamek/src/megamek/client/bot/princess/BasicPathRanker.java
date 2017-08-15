@@ -310,12 +310,16 @@ public class BasicPathRanker extends PathRanker {
             targetState = new EntityState(path);
         }
 
-        return getFireControl().determineBestFiringPlan(
-        		FiringPlanCalculationParameters.GenerateGuessParams(enemy,
-        				shooterState, 
-        				path.getEntity(), 
-        				targetState,
-        				(enemy.getHeatCapacity() - enemy.heat) + 5)).getUtility();
+        int maxHeat = (enemy.getHeatCapacity() - enemy.heat) + 5;
+        FiringPlanCalculationParameters guess =
+                new FiringPlanCalculationParameters.Builder()
+                        .buildGuess(enemy,
+                                    shooterState,
+                                    path.getEntity(),
+                                    targetState,
+                                    maxHeat,
+                                    null);
+        return getFireControl().determineBestFiringPlan(guess).getUtility();
     }
 
     double calculateKickDamagePotential(Entity enemy, MovePath path,
@@ -365,12 +369,15 @@ public class BasicPathRanker extends PathRanker {
             myFiringPlan = getFireControl().guessFullAirToGroundPlan(path.getEntity(), enemy,
                                                                      new EntityState(enemy), path, game, false);
         } else {
-            myFiringPlan = getFireControl().determineBestFiringPlan(
-            		FiringPlanCalculationParameters.GenerateGuessParams(path.getEntity(), 
-            		        new EntityState(path),
-            		        enemy,
-            		        null,
-            		        null));
+            FiringPlanCalculationParameters guess =
+                    new FiringPlanCalculationParameters.Builder()
+                            .buildGuess(path.getEntity(),
+                                        new EntityState(path),
+                                        enemy,
+                                        null,
+                                        FireControl.DOES_NOT_TRACK_HEAT,
+                                        null);
+            myFiringPlan = getFireControl().determineBestFiringPlan(guess);
         }
         return myFiringPlan.getUtility();
     }
@@ -543,7 +550,7 @@ public class BasicPathRanker extends PathRanker {
 
             if (movingUnit.isAero() || movingUnit instanceof VTOL) {
                 boolean isVTOL = (movingUnit instanceof VTOL);
-                boolean isSpheroid = isVTOL ? false : ((IAero)movingUnit).isSpheroid();
+                boolean isSpheroid = !isVTOL && ((IAero) movingUnit).isSpheroid();
                 RankedPath aeroRankedPath = doAeroSpecificRanking(path, isVTOL, isSpheroid);
                 if (aeroRankedPath != null) {
                     return aeroRankedPath;
@@ -617,8 +624,15 @@ public class BasicPathRanker extends PathRanker {
                     || !game.getBoard().contains(target.getPosition())) {
                     continue; // Skip targets not actually on the board.
                 }
-                FiringPlan myFiringPlan = fireControl.determineBestFiringPlan(
-                		FiringPlanCalculationParameters.GenerateGuessParams(path.getEntity(), new EntityState(path), target, null, null));
+                FiringPlanCalculationParameters guess =
+                        new FiringPlanCalculationParameters.Builder()
+                                .buildGuess(path.getEntity(),
+                                            new EntityState(path),
+                                            target,
+                                            null,
+                                            FireControl.DOES_NOT_TRACK_HEAT,
+                                            null);
+                FiringPlan myFiringPlan = fireControl.determineBestFiringPlan(guess);
                 double myDamagePotential = myFiringPlan.getUtility();
                 if (myDamagePotential > maximumDamageDone) {
                     maximumDamageDone = myDamagePotential;
@@ -724,12 +738,16 @@ public class BasicPathRanker extends PathRanker {
             for (Entity e : enemies) {
                 double max_damage = 0;
                 for (Entity f : friends) {
-                    double damage = fireControl.determineBestFiringPlan(
-                    		FiringPlanCalculationParameters.GenerateGuessParams(e, 
-                    		        null,
-                    		        f,
-                    		        null,
-                    		        (e.getHeatCapacity() - e.heat) + 5)).getExpectedDamage();
+                    FiringPlanCalculationParameters guess =
+                            new FiringPlanCalculationParameters.Builder()
+                                    .buildGuess(e,
+                                                null,
+                                                f,
+                                                null,
+                                                (e.getHeatCapacity() - e.getHeat()) + 5,
+                                                null);
+                    double damage = fireControl.determineBestFiringPlan(guess)
+                                               .getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;
                     }

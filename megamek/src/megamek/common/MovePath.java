@@ -1579,6 +1579,8 @@ public class MovePath implements Cloneable, Serializable {
     			getEntity().getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_TRACE) &&
     			
     			(getEntity().getGame().getBoard().onGround() || 
-    			getEntity().getGame().getBoard().inAtmosphere());
+    			// doesn't make sense in english, but "atmospheric" map actually
+    			// covers maps that are within a planet's gravity well
+    			getEntity().getGame().getBoard().inAtmosphere()); 
     }
 }

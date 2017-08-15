@@ -51,6 +51,7 @@ public final class ProtomechBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -94,7 +95,7 @@ public final class ProtomechBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Protomech (" + getDoors() + " doors) - "
+        return "Protomech (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }

@@ -53,6 +53,7 @@ public final class InfantryBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -96,7 +97,7 @@ public final class InfantryBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Infantry Bay (" + getDoors() + " doors) - "
+        return "Infantry Bay (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " platoons" : " platoon");
     }

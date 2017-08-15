@@ -54,6 +54,7 @@ public final class SmallCraftBay extends Bay {
         doorsNext = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -70,7 +71,7 @@ public final class SmallCraftBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only ASFs
+        // Only ASFs or Small Craft
         if ((unit instanceof Aero) && !(unit instanceof FighterSquadron) && !(unit instanceof Dropship) && !(unit instanceof Jumpship)) {
             result = true;
         }
@@ -137,12 +138,12 @@ public final class SmallCraftBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         if (showrecovery) {
-            return "Small Craft (" + getDoors() + " doors) - "
+            return "Small Craft (" + getCurrentDoors() + " doors) - "
                     + String.format("%1$,.0f", currentSpace)
                     + (currentSpace > 1 ? " units (" : " unit (")
                     + getRecoverySlots() + " recovery open)";
         } else {
-            return "Small Craft (" + getDoors() + " doors) - "
+            return "Small Craft (" + getCurrentDoors() + " doors) - "
                     + String.format("%1$,.0f", currentSpace)
                     + (currentSpace > 1 ? " units" : " unit");
         }
@@ -172,7 +173,7 @@ public final class SmallCraftBay extends Bay {
 
         Vector<Integer> slots = new Vector<Integer>();
 
-        for (int i = 0; i < doors; i++) {
+        for (int i = 0; i < currentdoors; i++) {
             slots.add(0);
             slots.add(0);
         }
@@ -225,7 +226,7 @@ public final class SmallCraftBay extends Bay {
     @Override
     public void destroyDoor() {
 
-        doors -= 1;
+        currentdoors -= 1;
 
         // get rid of two empty recovery slots
         // it doesn't matter which ones
@@ -240,7 +241,7 @@ public final class SmallCraftBay extends Bay {
     // get doors should be different - first I must subtract the number of
     // active recoveries
     @Override
-    public int getDoors() {
+    public int getCurrentDoors() {
 
         // just take the available recovery slots, divided by two
         return (int) Math.floor(getRecoverySlots() / 2.0);

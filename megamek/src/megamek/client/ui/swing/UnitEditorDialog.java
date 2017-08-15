@@ -971,12 +971,8 @@ public class UnitEditorDialog extends JDialog {
             gridBagConstraints.weightx = 0.0;
             panSystem.add(new JLabel("<html><b>" + "Bay # " + nextbay.getBayNumber() + " Doors" 
                     + "</b><br></html>"), gridBagConstraints);
-          /*  int doorHits = 0;
-            if (nextbay.getbayDamaged() > 0) {
-            	doorHits = 1;
-            } */
 
-            CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), 0);
+            CheckCritPanel doorCrit = new CheckCritPanel(nextbay.getDoors(), (nextbay.getDoors() - nextbay.getCurrentDoors()));
             bayDoorCrit[b] = doorCrit;
             gridBagConstraints.gridx = 1;
             gridBagConstraints.weightx = 1.0;
@@ -1211,8 +1207,8 @@ public class UnitEditorDialog extends JDialog {
             		  bay.clearbayDamaged();
             		 }
                 	CheckCritPanel doorCrit = bayDoorCrit[b];
-                    if (null != doorCrit) {
-                        bay.setDoors(bay.getDoors() - bayDoorCrit[b].getHits());
+                    if ((null != doorCrit) && (bay.getCurrentDoors() > 0) && doorCrit.getHits() > 0) {
+                        bay.setCurrentDoors(bay.getDoors() - doorCrit.getHits());
                     }
             	    b++;
             	}

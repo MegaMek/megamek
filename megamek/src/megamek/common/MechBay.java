@@ -51,6 +51,7 @@ public final class MechBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -93,7 +94,7 @@ public final class MechBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Mech (" + getDoors() + " doors) - "
+        return "Mech (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }

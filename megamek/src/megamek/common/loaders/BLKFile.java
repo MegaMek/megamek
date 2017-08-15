@@ -47,6 +47,7 @@ import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.MechBay;
 import megamek.common.Mounted;
+import megamek.common.OfficerQuartersCargoBay;
 import megamek.common.PillionSeatCargoBay;
 import megamek.common.Protomech;
 import megamek.common.ProtomechBay;
@@ -57,6 +58,7 @@ import megamek.common.SmallCraftBay;
 import megamek.common.SpaceStation;
 import megamek.common.StandardSeatCargoBay;
 import megamek.common.SteerageQuartersCargoBay;
+import megamek.common.SuperHeavyVehicleBay;
 import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
@@ -924,6 +926,22 @@ public class BLKFile {
                         }
                         bayNumber = i;
                     }
+                    e.addTransporter(new SuperHeavyVehicleBay(size, doors, bayNumber));
+                } else if (transporter.startsWith("superheavyvehiclebay:", 0)) {
+                    String numbers = transporter.substring(16);
+                    String temp[] = numbers.split(":");
+                    double size = Double.parseDouble(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    try {
+                        bayNumber = Integer.parseInt(temp[2]);
+                    } catch (ArrayIndexOutOfBoundsException ex) {
+                        // Find an unused bay number and use it.
+                        int i = 1;
+                        while (e.getBayById(i) != null) {
+                            i++;
+                        }
+                        bayNumber = i;
+                    }
                     e.addTransporter(new HeavyVehicleBay(size, doors, bayNumber));
                 } else if (transporter.startsWith("infantrybay:", 0)) {
                     String numbers = transporter.substring(12);
@@ -1025,6 +1043,13 @@ public class BLKFile {
                     double size = Double.parseDouble(temp[0]);
                     int doors = Integer.parseInt(temp[1]);
                     e.addTransporter(new SecondClassQuartersCargoBay(size,
+                            doors));
+                } else if (transporter.startsWith("officerquarters:", 0)) {
+                    String numbers = transporter.substring(17);
+                    String temp[] = numbers.split(":");
+                    double size = Double.parseDouble(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    e.addTransporter(new OfficerQuartersCargoBay(size,
                             doors));
                 } else if (transporter.startsWith("1stclassquarters:", 0)) {
                     String numbers = transporter.substring(17);

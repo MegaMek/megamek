@@ -50,6 +50,7 @@ public final class OfficerQuartersCargoBay extends Bay {
         weight = space;
         currentSpace = (int)space/10;
         this.doors = doors;
+        currentdoors = doors; 
     }
 
     /**
@@ -72,7 +73,7 @@ public final class OfficerQuartersCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("Officer Quarters ("
-                + getDoors() + " doors) - ");
+                + getCurrentDoors() + " doors) - ");
         returnString.append((int)currentSpace);
         return returnString.toString();
     }

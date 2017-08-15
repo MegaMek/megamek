@@ -51,6 +51,7 @@ public final class SuperHeavyVehicleBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -94,7 +95,7 @@ public final class SuperHeavyVehicleBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Superheavy Vehicle Bay (" + getDoors() + " doors) - "
+        return "Superheavy Vehicle Bay (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }

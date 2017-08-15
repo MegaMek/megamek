@@ -7492,8 +7492,8 @@ public class Server implements Runnable {
                         // distribution
                         // of fighters to doors beyond the launch rate. The most
                         // sensible thing
-                        // is probably to distribut them evenly.
-                        int doors = currentBay.getDoors();
+                        // is probably to distribute them evenly.
+                        int doors = currentBay.getCurrentDoors();
                         int[] distribution = new int[doors];
                         for (int l = 0; l < nLaunched; l++) {
                             distribution[l % doors] = distribution[l % doors]

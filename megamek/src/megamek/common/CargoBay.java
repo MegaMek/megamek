@@ -48,6 +48,7 @@ public final class CargoBay extends Bay {
         currentSpace = space;
         this.doors = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -70,7 +71,7 @@ public final class CargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("Cargo Space ("
-                + getDoors() + " doors) - ");
+                + getCurrentDoors() + " doors) - ");
 
         if (currentSpace != Math.round(currentSpace)) {
             returnString.append(String.format("%1$,.3f", currentSpace));

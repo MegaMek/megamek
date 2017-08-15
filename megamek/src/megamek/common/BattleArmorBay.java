@@ -57,6 +57,7 @@ public final class BattleArmorBay extends Bay {
         this.bayNumber = bayNumber;
         this.isClan = isClan;
         this.isComStar = isComStar;
+        currentdoors = doors; 
     }
 
     /**
@@ -100,7 +101,7 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Battle Armor Bay (" + getDoors() + " doors) - "
+        return "Battle Armor Bay (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? isClan ? " Points"
                         : isComStar ? " Level I" : " Squads"

@@ -50,6 +50,7 @@ public final class SecondClassQuartersCargoBay extends Bay {
         weight = space;
         currentSpace = (int)space/7;
         this.doors = doors;
+        currentdoors = doors; 
     }
 
     /**
@@ -72,7 +73,7 @@ public final class SecondClassQuartersCargoBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         StringBuffer returnString = new StringBuffer("2nd Class Quarters ("
-                + getDoors() + " doors) - ");
+                + getCurrentDoors() + " doors) - ");
         returnString.append((int)currentSpace);
         return returnString.toString();
     }

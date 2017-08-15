@@ -7519,7 +7519,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Transporter next = iter.nextElement();
             if (next instanceof Bay) {
                 Bay nextBay = (Bay) next;
-                if (nextBay.getDoors() > 0) {
+                if (nextBay.getCurrentDoors() > 0) {
                     potential.add(nextBay);
                 }
             }
@@ -7530,7 +7530,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                           .size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
-            chosenBay.setDoors(chosenBay.getDoors() - 1);
+            chosenBay.setCurrentDoors(chosenBay.getCurrentDoors() - 1);
             bayType = chosenBay.getType();
         }
 
@@ -7741,7 +7741,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // I should only add entities in bays that are functional
         for (Transporter next : transports) {
-            if ((next instanceof Bay) && (((Bay) next).getDoors() > 0)) {
+            if ((next instanceof Bay) && (((Bay) next).getCurrentDoors() > 0)) {
                 Bay nextbay = (Bay) next;
                 for (Entity e : nextbay.getDroppableUnits()) {
                     result.addElement(e);
@@ -7805,7 +7805,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         for (Transporter next : transports) {
             if (((next instanceof ASFBay) || (next instanceof SmallCraftBay))
-                && (((Bay) next).getDoors() > 0)) {
+                && (((Bay) next).getCurrentDoors() > 0)) {
                 result.addElement((Bay) next);
             }
         }

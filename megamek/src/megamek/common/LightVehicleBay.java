@@ -51,6 +51,7 @@ public final class LightVehicleBay extends Bay {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
+        currentdoors = doors; 
     }
 
     /**
@@ -94,7 +95,7 @@ public final class LightVehicleBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Light Vehicle Bay (" + getDoors() + " doors) - "
+        return "Light Vehicle Bay (" + getCurrentDoors() + " doors) - "
                 + String.format("%1$,.0f", currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }

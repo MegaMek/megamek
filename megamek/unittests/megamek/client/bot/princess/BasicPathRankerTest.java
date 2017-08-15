@@ -225,6 +225,7 @@ public class BasicPathRankerTest {
         // Test an aero unit (doesn't really do anything at this point).
         Entity mockAero = Mockito.mock(Aero.class);
         Mockito.when(mockAero.getId()).thenReturn(2);
+        Mockito.when(mockAero.isAero()).thenReturn(true);
         EntityEvaluationResponse expected = new EntityEvaluationResponse();
         EntityEvaluationResponse actual = testRanker.evaluateUnmovedEnemy(mockAero, mockPath, false, false);
         assertEntityEvaluationResponseEquals(expected, actual);
@@ -1056,6 +1057,7 @@ public class BasicPathRankerTest {
 
         // Add in an aero unit right on top of me.
         Entity mockAero = Mockito.mock(ConvFighter.class);
+        Mockito.when(mockAero.isAero()).thenReturn(true);
         Mockito.when(mockAero.isAirborne()).thenReturn(true);
         Mockito.when(mockAero.getPosition()).thenReturn(new Coords(1, 1)); // Right on top of me, but being an aero, it
         // shouldn't count.
@@ -1163,12 +1165,8 @@ public class BasicPathRankerTest {
 
         FiringPlan mockFiringPlan = Mockito.mock(FiringPlan.class);
         Mockito.when(mockFiringPlan.getUtility()).thenReturn(12.5);
-        Mockito.when(mockFireControl.guessBestFiringPlanUnderHeatWithTwists(Mockito.any(Entity.class),
-                                                                            Mockito.any(EntityState.class),
-                                                                            Mockito.any(Targetable.class),
-                                                                            Mockito.any(EntityState.class),
-                                                                            Mockito.anyInt(),
-                                                                            Mockito.any(IGame.class)))
+        Mockito.when(mockFireControl.determineBestFiringPlan(
+                Mockito.any(FiringPlanCalculationParameters.class)))
                .thenReturn(mockFiringPlan);
 
 
@@ -1180,6 +1178,7 @@ public class BasicPathRankerTest {
         EntityState mockShooterState = Mockito.mock(EntityState.class);
         EntityState mockTargetState = Mockito.mock(EntityState.class);
         MovePath mockPath = Mockito.mock(MovePath.class);
+        Mockito.when(mockPath.getEntity()).thenReturn(mockEnemy);
         int testDistance = 30;
         IGame mockGame = Mockito.mock(IGame.class);
         Assert.assertEquals(0, testRanker.calculateDamagePotential(mockEnemy, mockShooterState, mockPath,
@@ -1195,8 +1194,13 @@ public class BasicPathRankerTest {
 
         // Test an enemy both in range and in LoS.
         Mockito.when(mockLosEffects.canSee()).thenReturn(true);
-        Assert.assertEquals(12.5, testRanker.calculateDamagePotential(mockEnemy, mockShooterState, mockPath,
-                                                                      mockTargetState, testDistance, mockGame),
+        Assert.assertEquals(12.5,
+                            testRanker.calculateDamagePotential(mockEnemy,
+                                                                mockShooterState,
+                                                                mockPath,
+                                                                mockTargetState,
+                                                                testDistance,
+                                                                mockGame),
                             TOLERANCE);
     }
 
@@ -1229,11 +1233,8 @@ public class BasicPathRankerTest {
 
         FiringPlan mockFiringPlan = Mockito.mock(FiringPlan.class);
         Mockito.when(mockFiringPlan.getUtility()).thenReturn(25.2);
-        Mockito.when(mockFireControl.guessBestFiringPlanWithTwists(Mockito.any(Entity.class),
-                                                                   Mockito.any(EntityState.class),
-                                                                   Mockito.any(Targetable.class),
-                                                                   Mockito.any(EntityState.class),
-                                                                   Mockito.any(IGame.class)))
+        Mockito.when(mockFireControl.determineBestFiringPlan(
+                Mockito.any(FiringPlanCalculationParameters.class)))
                .thenReturn(mockFiringPlan);
 
         // Test being in range and LoS.

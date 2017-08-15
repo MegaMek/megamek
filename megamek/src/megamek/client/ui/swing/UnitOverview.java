@@ -37,6 +37,7 @@ import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
+import megamek.common.IAero;
 import megamek.common.IArmorState;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -385,8 +386,8 @@ public class UnitOverview implements IDisplayable {
             int y) {
 
 //      out of control conditions for ASF
-        if(entity instanceof Aero) {
-            Aero a = (Aero)entity;
+        if(entity.isAero()) {
+            IAero a = (IAero)entity;
 
             if(a.isRolled()) {
                 // draw "rolled"
@@ -410,7 +411,7 @@ public class UnitOverview implements IDisplayable {
             }
 
             //is the unit evading? - can't evade and be out of control so just draw on top
-            if(a.isEvading()) {
+            if(entity.isEvading()) {
                 //draw evasion
                 graph.setColor(Color.darkGray);
                 graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24); //$NON-NLS-1$

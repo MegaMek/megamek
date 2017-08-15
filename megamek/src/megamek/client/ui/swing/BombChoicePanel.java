@@ -23,8 +23,8 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import megamek.common.Aero;
 import megamek.common.BombType;
+import megamek.common.IBomber;
 
 /**
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
@@ -32,7 +32,7 @@ import megamek.common.BombType;
  * @since 2012-04-07
  */
 public class BombChoicePanel extends JPanel implements Serializable, ItemListener {
-    private final Aero aero;
+    private final IBomber bomber;
     private final boolean at2Nukes;
     private final boolean allowAdvancedAmmo;
 
@@ -42,26 +42,28 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     private JComboBox[] b_choices = new JComboBox[BombType.B_NUM];
     private JLabel[] b_labels = new JLabel[BombType.B_NUM];
     private int maxPoints = 0;
+    private int maxSize = 0;
     private int maxRows = (int) Math.ceil(BombType.B_NUM / 2.0);
 
     //private BombChoicePanel m_bombs;
     //private JPanel panBombs = new JPanel();
 
     @SuppressWarnings("unchecked")
-    public BombChoicePanel(Aero aero, boolean at2Nukes, boolean allowAdvancedAmmo) {
-        this.aero = aero;
+    public BombChoicePanel(IBomber bomber, boolean at2Nukes, boolean allowAdvancedAmmo) {
+        this.bomber = bomber;
         this.at2Nukes = at2Nukes;
         this.allowAdvancedAmmo = allowAdvancedAmmo;
 
-        maxPoints = aero.getMaxBombPoints();
-        int[] bombChoices = aero.getBombChoices();
+        maxPoints = bomber.getMaxBombPoints();
+        maxSize = bomber.getMaxBombSize();
+        int[] bombChoices = bomber.getBombChoices();
 
         // how many bomb points am I currently using?
         int curBombPoints = 0;
         for (int i = 0; i < bombChoices.length; i++) {
             curBombPoints += bombChoices[i] * BombType.getBombCost(i);
         }
-        int availBombPoints = aero.getMaxBombPoints() - curBombPoints;
+        int availBombPoints = bomber.getMaxBombPoints() - curBombPoints;
 
         GridBagLayout g = new GridBagLayout();
         setLayout(g);
@@ -77,6 +79,9 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             int maxNumBombs = Math.round(availBombPoints
                     / BombType.getBombCost(type))
                     + bombChoices[type];
+            if (BombType.getBombCost(type) > maxSize) {
+                maxNumBombs = 0;
+            }
             for (int x = 0; x <= maxNumBombs; x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }
@@ -93,8 +98,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
                 && !allowAdvancedAmmo) {
                 b_choices[type].setEnabled(false);
             }
-            if ((type == BombType.B_ASEW) || (type == BombType.B_ALAMO)
-                || (type == BombType.B_TAG)) {
+            if ((type == BombType.B_ASEW) || (type == BombType.B_ALAMO)) {
                 b_choices[type].setEnabled(false);
             }
 
@@ -150,7 +154,7 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             choices[type] = b_choices[type].getSelectedIndex();
         }
 
-        aero.setBombChoices(choices);
+        bomber.setBombChoices(choices);
 
     }
 

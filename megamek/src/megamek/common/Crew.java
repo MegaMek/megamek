@@ -363,13 +363,62 @@ public class Crew implements Serializable {
     public int getArtillery(int pos) {
         return artillery[pos];
     }
-
+    
     public int getPiloting() {
         return piloting[pilotPos];
     }
     
     public int getPiloting(int pos) {
         return piloting[pos];
+    }
+
+    /**
+     * LAMs use a different skill in AirMech mode depending on whether they are grounded or airborne.
+     */
+    public int getPiloting(EntityMovementType moveType) {
+        return piloting[pilotPos];
+    }
+
+    /**
+     * @return a String showing the overall skills in the format gunnery/piloting
+     */
+    public String getSkillsAsString() {
+        return getSkillsAsString(true);
+    }
+    
+    /**
+     * @param showPiloting if false, only the gunnery skill is shown (used for protomechs; may be ignored
+     *                     for other unit types)
+     * @return a String showing the overall skills in the format gunnery/piloting
+     */
+    public String getSkillsAsString(boolean showPiloting) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getGunnery());
+        if (showPiloting) {
+            sb.append("/").append(getPiloting());
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * @return a String showing the skills for a particular slot in the format gunnery/piloting
+     */
+    public String getSkillsAsString(int pos) {
+        return getSkillsAsString(pos, true);
+    }
+    
+    /**
+     * @param showPiloting if false, only the gunnery skill is shown (used for protomechs; may be ignored
+     *                     for other unit types)
+     * @return a String showing the skills for a particular slot in the format gunnery/piloting
+     */
+    public String getSkillsAsString(int pos, boolean showPiloting) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getGunnery(pos));
+        if (showPiloting) {
+            sb.append("/").append(getPiloting(pos));
+        }
+        return sb.toString();
     }
     
     /**

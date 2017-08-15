@@ -367,10 +367,10 @@ public class BasicPathRanker extends PathRanker {
         } else {
             myFiringPlan = getFireControl().determineBestFiringPlan(
             		FiringPlanCalculationParameters.GenerateGuessParams(path.getEntity(), 
-            															new EntityState(path), 
-            															enemy, 
-            															null, 
-            															null));
+            		        new EntityState(path),
+            		        enemy,
+            		        null,
+            		        null));
         }
         return myFiringPlan.getUtility();
     }
@@ -726,10 +726,10 @@ public class BasicPathRanker extends PathRanker {
                 for (Entity f : friends) {
                     double damage = fireControl.determineBestFiringPlan(
                     		FiringPlanCalculationParameters.GenerateGuessParams(e, 
-                    															null, 
-                    															f,
-                    															null, 
-                    															(e.getHeatCapacity() - e.heat) + 5)).getExpectedDamage();
+                    		        null,
+                    		        f,
+                    		        null,
+                    		        (e.getHeatCapacity() - e.heat) + 5)).getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;
                     }

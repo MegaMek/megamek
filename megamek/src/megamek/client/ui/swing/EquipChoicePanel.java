@@ -50,6 +50,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IBomber;
 import megamek.common.IGame;
+import megamek.common.ITechnology;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
@@ -612,7 +613,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         IGame game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
-        boolean isClan = entity.isClan();
 
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
@@ -638,7 +638,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             for (AmmoType atCheck : vAllTypes) {
-                int legalLevel = TechConstants.getGameTechLevel(game, isClan);
+                ITechnology.SimpleTechLevel legalLevel = ITechnology.getGameTechLevel(game);
                 boolean bTechMatch = atCheck.isLegal(gameYear, legalLevel, entity.isClan(),
                         entity.isMixedTech());
 
@@ -1356,7 +1356,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             public void initialize() {
                 inf = (Infantry) entity;
                 
-                int gameTechLevel = TechConstants.getSimpleLevel(client.getGame());
+                ITechnology.SimpleTechLevel gameTechLevel = ITechnology.getGameTechLevel(client.getGame());
                 int year = client.getGame().getOptions().intOption("year");
                 for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
                 	final EquipmentType et = e.nextElement();

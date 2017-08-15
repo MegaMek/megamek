@@ -54,6 +54,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
+import megamek.common.ITechnology;
 import megamek.common.Infantry;
 import megamek.common.MapSettings;
 import megamek.common.Mech;
@@ -151,7 +152,7 @@ public class ScenarioLoader {
             return null;
         }
         if(!newAmmoType.isLegal(year,
-            TechConstants.getSimpleLevel(game),
+            ITechnology.getGameTechLevel(game),
             e.isClan(), e.isMixedTech())) {
             System.out.println(String.format("Ammo %s (TL %d) is not legal for year %d (TL %d)", //$NON-NLS-1$
                 newAmmoType.getName(), newAmmoType.getTechLevel(year), year,

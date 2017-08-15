@@ -9,6 +9,8 @@
  */
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * Implemented by any class that is subject to tech advancement (entities, equipment, systems, etc.)
  * 
@@ -16,6 +18,29 @@ package megamek.common;
  *
  */
 public interface ITechnology {
+    
+    public enum SimpleTechLevel {
+        INTRO ("Introductory"),
+        STANDARD ("Standard"), 
+        ADVANCED ("Advanced"),
+        EXPERIMENTAL ("Experimental"),
+        UNOFFICIAL ("Unofficial");
+        
+        private String strVal;
+        
+        SimpleTechLevel(String strVal) {
+            this.strVal = strVal;
+        }
+        
+        public static SimpleTechLevel parse(String strVal) {
+            for (SimpleTechLevel lvl : values()) {
+                if (strVal.equals(lvl.strVal)) {
+                    return lvl;
+                }
+            }
+            return null;
+        }
+    }
     
     public static final int TECH_BASE_ALL  = 0;
     public static final int TECH_BASE_IS   = 1;
@@ -159,29 +184,82 @@ public interface ITechnology {
     }
     
     default int getTechLevel(int year, boolean clan) {
-        return TechConstants.convertFromSimplelevel(getSimpleLevel(year, clan), clan);
+        switch (getSimpleLevel(year, clan)) {
+            case INTRO:
+                return TechConstants.T_INTRO_BOXSET;
+            case STANDARD:
+                return clan? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX;
+            case ADVANCED:
+                return clan? TechConstants.T_CLAN_ADVANCED : TechConstants.T_IS_ADVANCED;
+            case EXPERIMENTAL:
+                return clan? TechConstants.T_CLAN_EXPERIMENTAL : TechConstants.T_IS_EXPERIMENTAL;
+            case UNOFFICIAL:
+                return clan? TechConstants.T_CLAN_UNOFFICIAL: TechConstants.T_IS_UNOFFICIAL;
+            default:
+                return TechConstants.T_INTRO_BOXSET;
+        }
     }
     
     default int getTechLevel(int year) {
         return getTechLevel(year, isClan());
     }
     
-    default int getSimpleLevel(int year, boolean clan) {
+    default SimpleTechLevel getSimpleLevel(int year) {
+        if (getSimpleLevel(year, true).ordinal() < getSimpleLevel(year, false).ordinal()) {
+            return getSimpleLevel(year, true);
+        }
+        return getSimpleLevel(year, false);
+    }
+    
+    default SimpleTechLevel getSimpleLevel(int year, boolean clan) {
         if (isUnofficial()) {
-            return TechConstants.T_SIMPLE_UNOFFICIAL;
+            return SimpleTechLevel.UNOFFICIAL;
         } else if (year >= getCommonDate(clan) && getCommonDate(clan) != DATE_NONE) {
             if (isIntroLevel()) {
-                return TechConstants.T_SIMPLE_INTRO;
+                return SimpleTechLevel.INTRO;
             } else {
-                return TechConstants.T_SIMPLE_STANDARD;
+                return SimpleTechLevel.STANDARD;
             }
         } else if (year >= getProductionDate(clan) && getProductionDate(clan) != DATE_NONE) {
-            return TechConstants.T_SIMPLE_ADVANCED;
+            return SimpleTechLevel.ADVANCED;
         } else if (year >= getPrototypeDate(clan) && getPrototypeDate(clan) != DATE_NONE) {
-            return TechConstants.T_SIMPLE_EXPERIMENTAL;
+            return SimpleTechLevel.EXPERIMENTAL;
         } else {
-            return TechConstants.T_SIMPLE_UNOFFICIAL;
+            return SimpleTechLevel.UNOFFICIAL;
         }
+    }
+    
+    /**
+     * Finds simple tech level equivalent of compound tech base/rules level constant
+     * 
+     * @param level A TechConstants tech level constant
+     * @return
+     */
+    static SimpleTechLevel convertTechConstantsToSimple(int level) {
+        switch (level) {
+            case TechConstants.T_INTRO_BOXSET:
+                return SimpleTechLevel.INTRO;
+            case TechConstants.T_IS_TW_NON_BOX:
+            case TechConstants.T_CLAN_TW:
+            case TechConstants.T_IS_TW_ALL:
+            case TechConstants.T_TW_ALL:
+                return SimpleTechLevel.STANDARD;
+            case TechConstants.T_IS_ADVANCED:
+            case TechConstants.T_CLAN_ADVANCED:
+                return SimpleTechLevel.ADVANCED;
+            case TechConstants.T_IS_EXPERIMENTAL:
+            case TechConstants.T_CLAN_EXPERIMENTAL:
+                return SimpleTechLevel.EXPERIMENTAL;
+            case TechConstants.T_IS_UNOFFICIAL:
+            case TechConstants.T_CLAN_UNOFFICIAL:
+                return SimpleTechLevel.UNOFFICIAL;
+            default:
+                return SimpleTechLevel.STANDARD;
+        }
+    }
+    
+    static SimpleTechLevel getGameTechLevel(IGame game) {
+        return SimpleTechLevel.parse(game.getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL));
     }
     
     /**
@@ -191,17 +269,17 @@ public interface ITechnology {
      * @param clan - whether tech level is being calculated for a Clan faction
      * @return - the lowest tech level available to the item
      */
-    default int findMinimumRulesLevel(boolean clan) {
+    default SimpleTechLevel findMinimumRulesLevel(boolean clan) {
         if (getCommonDate(clan) != DATE_NONE) {
-            return isIntroLevel()? TechConstants.T_SIMPLE_INTRO : TechConstants.T_SIMPLE_STANDARD;
+            return isIntroLevel()? SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
         }
         if (getProductionDate(clan) != DATE_NONE) {
-            return TechConstants.T_SIMPLE_ADVANCED;
+            return SimpleTechLevel.ADVANCED;
         }
         if (getPrototypeDate(clan) != DATE_NONE) {
-            return TechConstants.T_SIMPLE_EXPERIMENTAL;
+            return SimpleTechLevel.EXPERIMENTAL;
         }
-        return TechConstants.T_SIMPLE_UNOFFICIAL;
+        return SimpleTechLevel.UNOFFICIAL;
     }
 
     /**
@@ -209,17 +287,17 @@ public interface ITechnology {
      * 
      * @return - the lowest tech level available to the item
      */
-    default int findMinimumRulesLevel() {
+    default SimpleTechLevel findMinimumRulesLevel() {
         if (getCommonDate() != DATE_NONE) {
-            return isIntroLevel()? TechConstants.T_SIMPLE_INTRO : TechConstants.T_SIMPLE_STANDARD;
+            return isIntroLevel()? SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
         }
         if (getProductionDate() != DATE_NONE) {
-            return TechConstants.T_SIMPLE_ADVANCED;
+            return SimpleTechLevel.ADVANCED;
         }
         if (getPrototypeDate() != DATE_NONE) {
-            return TechConstants.T_SIMPLE_EXPERIMENTAL;
+            return SimpleTechLevel.EXPERIMENTAL;
         }
-        return TechConstants.T_SIMPLE_UNOFFICIAL;
+        return SimpleTechLevel.UNOFFICIAL;
     }
 
     default boolean isExtinct(int year, boolean clan) {
@@ -245,16 +323,16 @@ public interface ITechnology {
     }
     
     default boolean isLegal(int year, int techLevel, boolean mixedTech) {
-        return isLegal(year, TechConstants.convertFromNormalToSimple(techLevel),
+        return isLegal(year, convertTechConstantsToSimple(techLevel),
                 TechConstants.isClan(techLevel), mixedTech);
     }
 
-    default boolean isLegal(int year, int simpleRulesLevel, boolean clanBase, boolean mixedTech) {
+    default boolean isLegal(int year, SimpleTechLevel simpleRulesLevel, boolean clanBase, boolean mixedTech) {
         if (mixedTech) {
             if (!isAvailableIn(year)) {
                 return false;
             } else {
-                return getTechLevel(year) <= simpleRulesLevel;
+                return getSimpleLevel(year).ordinal() <= simpleRulesLevel.ordinal();
             }
         } else {
             if (getTechBase() != TECH_BASE_ALL
@@ -264,7 +342,7 @@ public interface ITechnology {
             if (!isAvailableIn(year, clanBase)) {
                 return false;
             }
-            return getSimpleLevel(year, clanBase) <= simpleRulesLevel;
+            return getSimpleLevel(year, clanBase).ordinal() <= simpleRulesLevel.ordinal();
         }
     }
 

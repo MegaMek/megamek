@@ -128,8 +128,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> implements
             return actionVector;
         }
         
-        if(getTwist() != 0)
-        {
+        if(getTwist() != 0) {
         	actionVector.add(new TorsoTwistAction(get(0).getShooter().getId(),
         		FireControl.correctFacing(get(0).getShooter().getFacing() + getTwist())));
         }

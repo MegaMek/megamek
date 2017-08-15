@@ -7,6 +7,18 @@ v0.43.4-git
 + Fixing some quirks to be inline with the new BMM
 + Plasma weapons should have the energy weapon tag.
 + New Sprites and Maps(Thanks arekP64)
++ Bug: gyro hits require PSR for tracked mechs and QuadVees in vee mode instead of the other way around.
++ Issue #542: Megamek can't exit attack phase using fighter squadrons 0.43.1
++ Enhancement #581: Implement Log4J
++ Made the resetLogFile method public so that it can be used by MML and MHQ.
++ Issue #587: Squadron disband damage is not applied correctly
++ Issue #588: Split equipment on Super heavies
++ Issue #593: Wrong destroyed unit icon for Centurion aerospace fighter
++ Feature #479: Added BV listing to unit tooltip.
++ New Sprites and mechset fixes.
++ Updated GUIPreferences for BV Matching and changing default splash screen. 
++ Feature: LAMs and glider Protomechs.
++ Feature: TacOps VTOL bombing and strafing option (per pending errata, VTOL strafing is a separate unofficial option).
 
 v0.43.3 (2017-07-18 18:30 UTC)
 + Added support for specifying # of marines, BA & other for large craft

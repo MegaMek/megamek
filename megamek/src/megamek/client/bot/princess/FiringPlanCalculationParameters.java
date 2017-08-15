@@ -8,11 +8,9 @@ import megamek.common.Targetable;
 import megamek.common.annotations.Nullable;
 
 // This data structure contains parameters that may be passed to the "determineBestFiringPlan()"
-public final class FiringPlanCalculationParameters
-{
+public final class FiringPlanCalculationParameters {
 	//The type of firing plan calculation to carry out
-	public enum FiringPlanCalculationType
-	{
+	public enum FiringPlanCalculationType {
 		// We're guessing the firing plan based on our estimate of enemy movement
 		GUESS,
 		// We're getting a firing plan based on exact known enemy movement results
@@ -39,8 +37,7 @@ public final class FiringPlanCalculationParameters
 	private FiringPlanCalculationParameters(Entity shooter,
         @Nullable EntityState shooterState, Targetable target,
         @Nullable EntityState targetState, @Nullable Integer maxHeat,
-        Map<Mounted, Double> ammoConservation, FiringPlanCalculationType calculationType)
-	{
+        Map<Mounted, Double> ammoConservation, FiringPlanCalculationType calculationType) {
 		this.shooter = shooter;
 		this.shooterState = shooterState;
 		this.target = target;
@@ -67,8 +64,7 @@ public final class FiringPlanCalculationParameters
      */
     public final static FiringPlanCalculationParameters GenerateGuessParams(Entity shooter,
         @Nullable EntityState shooterState, Targetable target,
-        @Nullable EntityState targetState, @Nullable Integer maxHeat)
-    {
+        @Nullable EntityState targetState, @Nullable Integer maxHeat) {
     	return new FiringPlanCalculationParameters(
     			shooter, shooterState, target, targetState, maxHeat, null, FiringPlanCalculationType.GUESS);
     }
@@ -82,8 +78,7 @@ public final class FiringPlanCalculationParameters
      * @return the 'best' firing plan under a certain heat, includes the option of twisting.
      */
     public final static FiringPlanCalculationParameters GenerateGetParams(Entity shooter, 
-    		Targetable target, Map<Mounted, Double> ammoConservation)
-    {
+    		Targetable target, Map<Mounted, Double> ammoConservation) {
     	return new FiringPlanCalculationParameters(
     			shooter, null, target, null, null, ammoConservation, FiringPlanCalculationType.GUESS);
     }

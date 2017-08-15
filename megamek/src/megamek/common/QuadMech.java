@@ -189,7 +189,8 @@ public class QuadMech extends Mech {
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (countBadLegs() <= 1
-                || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode() && !convertingNow)) {
+                || (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE
+                && !convertingNow)) {
             return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
         }
         return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
@@ -201,7 +202,8 @@ public class QuadMech extends Mech {
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (countBadLegs() <= 1
-                || (this instanceof QuadVee && ((QuadVee)this).isInVehicleMode() && !convertingNow)) {
+                || (this instanceof QuadVee && getConversionMode() == QuadVee.CONV_MODE_VEHICLE
+                && !convertingNow)) {
             return super.getRunMPwithoutMASC(gravity, ignoreheat, ignoremodulararmor);
         }
         return getWalkMP(gravity, ignoreheat);

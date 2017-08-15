@@ -48,6 +48,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
@@ -57,7 +58,6 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
-import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
@@ -277,9 +277,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        if ((entity instanceof Aero)
-                && !((entity instanceof SmallCraft) ||
-                        (entity instanceof Jumpship))) {
+        if (entity.isBomber()) {
             setupBombs();
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -421,10 +419,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         panBombs.setLayout(gbl);
 
         int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES, client
-                .getGame().getOptions().stringOption("techlevel")); //$NON-NLS-1$
+                .getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL)); //$NON-NLS-1$
         boolean allowNukes = client.getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES); //$NON-NLS-1$
-        m_bombs = new BombChoicePanel((Aero) entity, allowNukes,
+        m_bombs = new BombChoicePanel((IBomber) entity, allowNukes,
                 techlvl >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
     }

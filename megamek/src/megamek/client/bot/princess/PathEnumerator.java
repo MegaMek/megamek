@@ -24,10 +24,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
-import megamek.common.Aero;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.MovePath;
@@ -127,7 +127,7 @@ public class PathEnumerator {
                 return returnSet;
             }
             for (Integer id : getUnitPotentialLocations().keySet()) {
-                if (groundOnly && (getGame().getEntity(id) instanceof Aero)) {
+                if (groundOnly && getGame().getEntity(id).isAero()) {
                     continue;
                 }
 
@@ -185,8 +185,8 @@ public class PathEnumerator {
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();
             // Aero movement
-            if (mover instanceof Aero) {
-                Aero aeroMover = (Aero)mover;
+            if (mover.isAero()) {
+                IAero aeroMover = (IAero)mover;
                 // Get the shortest paths possible.
                 ShortestPathFinder spf;
                 int maxVel;
@@ -219,7 +219,7 @@ public class PathEnumerator {
                 // Check different accelerations
                 for (int velocity = startVel; velocity < maxVel; velocity++) {
                     // Spheroids don't need to accelerate
-                    if (!((Aero)mover).isSpheroid()) {
+                    if (!((IAero)mover).isSpheroid()) {
                         startPath.addStep(MoveStepType.ACC);
                     }
                     // Generate the paths and add them to our list.
@@ -358,7 +358,7 @@ public class PathEnumerator {
         getOwner().methodBegin(getClass(), METHOD_NAME);
         try {
             // no non-aeros allowed
-            if (!(path.getEntity() instanceof Aero)) {
+            if (!path.getEntity().isAero()) {
                 return true;
             }
 

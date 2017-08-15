@@ -155,6 +155,11 @@ public class PushAttackAction extends DisplacementAttackAction {
         if (ae.entityIsQuad()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
+        
+        // LAM AirMechs can only push when grounded.
+        if (ae.isAirborneVTOLorWIGE()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot push while airborne");
+        }
 
         // Can only push mechs
         if (!(te instanceof Mech)) {

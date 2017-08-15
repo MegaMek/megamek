@@ -284,6 +284,14 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
         if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
             return null;
         }
+        if ((cs.getMount().getType() instanceof MiscType)
+                && cs.getMount().getType().hasFlag(MiscType.F_BOMB_BAY)) {
+            Mounted m = cs.getMount();
+            while (m.getLinked() != null) {
+                m = m.getLinked();
+            }
+            return m;
+        }
         if (cs.getMount2() != null) {
             ChoiceDialog choiceDialog = new ChoiceDialog(unitDisplay.getClientGUI().frame,
                     Messages.getString("MechDisplay.SelectMulti.title"),

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
@@ -75,8 +74,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             return true;
         }
         Coords targetPos = target.getPosition();
-        boolean isFlak = (target instanceof VTOL) || (target instanceof Aero);
-        boolean asfFlak = target instanceof Aero;
+        boolean isFlak = (target instanceof VTOL) || target.isAero();
+        boolean asfFlak = target.isAero();
         if (ae == null) {
             System.err.println("Artillery Entity is null!");
             return true;

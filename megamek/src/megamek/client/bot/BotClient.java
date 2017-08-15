@@ -37,7 +37,6 @@ import javax.swing.ScrollPaneConstants;
 import megamek.client.Client;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.ReportDisplay;
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -775,7 +774,7 @@ public abstract class BotClient extends Client {
     // ToDo: This will require a new PathFinder.
     private boolean hasPathToCenter(Entity entity, IBoard board) {
         // Flying units can always reach the center of the board.
-        if (entity instanceof Aero || entity instanceof VTOL) {
+        if (entity.isAero() || entity instanceof VTOL) {
             return true;
         }
 

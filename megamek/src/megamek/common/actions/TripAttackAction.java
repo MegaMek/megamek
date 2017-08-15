@@ -89,6 +89,11 @@ public class TripAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs can trip other mechs");
         }
 
+        // LAM AirMechs can only trip when grounded.
+        if (ae.isAirborneVTOLorWIGE()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot trip while airborne");
+        }
+
         // described as a leg hook
         // needs 2 legs present
         if (ae.isLocationBad(Mech.LOC_LLEG) || ae.isLocationBad(Mech.LOC_RLEG)) {

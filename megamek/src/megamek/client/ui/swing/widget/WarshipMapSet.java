@@ -26,6 +26,7 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
+import megamek.common.Bay;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Jumpship;
@@ -113,13 +114,18 @@ public class WarshipMapSet implements DisplayMapSet{
         WidgetUtils.setAreaColor(areas[6], vLabels[6], (double)a/(double)a0);
 
         //now for the vitals
+        // int l = 13;
         vLabels[7].setValue(getCriticalHitTally(t.getAvionicsHits(),3));
         vLabels[8].setValue(getCriticalHitTally(t.getCICHits(),3));
         vLabels[9].setValue(getCriticalHitTally(t.getEngineHits(),t.getMaxEngineHits()));
         vLabels[10].setValue(getCriticalHitTally(t.getSensorHits(),3));
         vLabels[11].setValue(getCriticalHitTally(t.getLeftThrustHits(),3));
         vLabels[12].setValue(getCriticalHitTally(t.getRightThrustHits(),3));
-
+       // for (Bay nextbay : t.getTransportBays()) {
+       // vLabels[13].setValue(getCriticalHitTally(nextbay.getbayDamaged(),1));
+       // vLabels[14].setValue(getCriticalHitTally((nextbay.getDoors() - nextbay.getCurrentDoors()),nextbay.getDoors()));
+        //l++;
+       // }
     }
 
     private void setContent(){

@@ -840,6 +840,7 @@ public class EntityListFile {
             // add a bunch of stuff for aeros
             if (entity instanceof Aero) {
                 Aero a = (Aero) entity;
+                Dropship d = (Dropship) entity;
 
                 // SI
                 output.write(indentStr(indentLvl+1) + "<structural integrity=\"");
@@ -891,112 +892,9 @@ public class EntityListFile {
                     output.write(CommonConstants.NL);
                 }
 
-                // large craft docking collars, bays
-                if (a instanceof Dropship) {
-                	Dropship d = (Dropship) a;
-                    if (d.isDockCollarDamaged()) {
-                    output.write(indentStr(indentLvl+1) +("<docking collar=\"damaged\"/>"));
-                    output.write(CommonConstants.NL);
-                }
-                    if (d.isKFBoomDamaged()) {
-                    output.write(indentStr(indentLvl+1) +("<k-f boom=\"damaged\"/>"));
-                    output.write(CommonConstants.NL);
-                }
-                }
-                
-               /* if ((a instanceof Dropship) || (a instanceof Jumpship))
-                    for (Bay next : entity.getTransportBays()) {
-                    	if (next instanceof ASFBay) {
-                            if (next.getbayDamaged(bayN))
-                            output.write(indentStr(indentLvl+1) +("<ASF Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof BattleArmorBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Battle Armor Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof CargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Cargo Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof CrewQuartersCargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Crew Quarters # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));          
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof FirstClassQuartersCargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Passenger Quarters # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));         
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof HeavyVehicleBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Heavy Vehicle Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));          
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof InfantryBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Infantry Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));          
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof InsulatedCargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Cargo Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));           
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof LightVehicleBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Light Vehicle Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));         
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof LiquidCargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Liquid Cargo Tank # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));          
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof LivestockCargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Cargo Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));          
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof MechBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Mech Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));         
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof OfficerQuartersCargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Officer Quarters # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));          
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof RefrigeratedCargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Reefer Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));          
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof SecondClassQuartersCargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Passenger Quarters # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));          
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof SmallCraftBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Small Craft Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));         
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof SteerageQuartersCargoBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Steerage Quarters # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\"/>"))));           
-                            output.write(CommonConstants.NL);
-                        	}
-                    	if (next instanceof SuperHeavyVehicleBay) {
-                            if (next.getbayDamaged() > 0)
-                            output.write(indentStr(indentLvl+1) +("<Superheavy Vehicle Bay # " + (String.valueOf(next.getBayNumber()) + ("\"=damaged\">"))));          
-                            output.write(CommonConstants.NL);
-                        	}
-                    } */
+                //TODO large craft docking collars, bays. 
+                // Their contents?
+
 
                 // jumpship, warship and space station stuff
                 if (a instanceof Jumpship) {
@@ -1017,6 +915,8 @@ public class EntityListFile {
 
                 // crits
                 output.write(EntityListFile.getAeroCritString(a));
+                output.write(EntityListFile.getDropshipCritString(d));
+
 
             }
 
@@ -1292,8 +1192,44 @@ public class EntityListFile {
         return retVal;
 
     }
+    
+    // Dropship crits
+    private static String getDropshipCritString(Dropship d) {
 
-    // Aero crits
+        String retVal = "      <dcriticals";
+        String critVal = "";
+
+        // crits
+        if (d.isDockCollarDamaged()) {
+            critVal = critVal.concat(" dockingcollar=\"none\"");
+        }
+        if (d.isKFBoomDamaged()) {
+            critVal = critVal.concat(" kfboom=\"none\"");
+        }
+        for (Bay nextbay : d.getTransportBays()) {
+        	if (nextbay.getbayDamaged() == 1)
+            critVal = critVal.concat(nextbay.getType() + "#" + nextbay.getBayNumber() + "=\"none\"");
+            if (nextbay.getCurrentDoors() < nextbay.getDoors())
+        	critVal = critVal.concat(nextbay.getType() + "#" + nextbay.getBayNumber() + " doors=\"");
+            critVal = critVal.concat(Integer.toString(nextbay.getDoors() - nextbay.getCurrentDoors()));
+            critVal = critVal.concat("\"");
+        } 	
+
+
+        if (!critVal.equals("")) {
+            // then add beginning and end
+            retVal = retVal.concat(critVal);
+            retVal = retVal.concat("/>\n");
+        } else {
+            return critVal;
+        }
+
+        return retVal;
+
+    }
+
+
+    // Tank crits?
     private static String getTankCritString(Tank t) {
 
         String retVal = "      <tcriticals";

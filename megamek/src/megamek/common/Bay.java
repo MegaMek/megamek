@@ -97,7 +97,7 @@ public class Bay implements Transporter {
         this.doors = doors;
         doorsNext = doors;
         this.bayNumber = bayNumber;
-        currentdoors = doors;      
+     
     }
 
     // the starting number of doors for the bay.
@@ -185,7 +185,7 @@ public class Bay implements Transporter {
      * @return
      */
     public boolean canUnloadUnits() {
-        return doors > unloadedThisTurn;
+        return currentdoors > unloadedThisTurn;
     }
 
     /**

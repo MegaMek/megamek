@@ -54,8 +54,9 @@ public final class SmallCraftBay extends Bay {
         doorsNext = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
+
     }
-    	int currentdoors = doors; 
+	    int currentdoors = doors; 
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.

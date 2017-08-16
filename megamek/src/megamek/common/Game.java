@@ -1338,6 +1338,8 @@ public class Game implements Serializable, IGame {
             ((Mech) entity).setCondEjectHeadshot(true);
         }
 
+        entity.setInitialBV(entity.calculateBattleValue(false, false));
+
         assert (entities.size() == entityIds.size()) : "Add Entity failed";
         if (genEvent) {
             processGameEvent(new GameEntityNewEvent(this, entity));

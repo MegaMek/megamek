@@ -615,11 +615,11 @@ public class MULParser {
             entity.setNeverDeployed(true);
         }
         
-        if (entity instanceof Aero){
+        if (entity.isAero()) {
             String velString = entityTag.getAttribute(VELOCITY);
             String altString = entityTag.getAttribute(ALTITUDE);
             
-            Aero a = (Aero) entity;
+            IAero a = (IAero) entity;
             if (velString.length() > 0){
                 int velocity = Integer.parseInt(velString);
                 a.setCurrentVelocity(velocity);
@@ -753,6 +753,26 @@ public class MULParser {
         }
         setCrewAttributes(crew, attributes, entity);
         setPilotAttributes(crew, 0, attributes);
+        // LAMs have a second set of gunnery and piloting stats, so we create a dummy crew
+        // and parse a copy of the attributes with the aero stats altered to their non-aero keys,
+        // then copy the results into the aero skills of the LAMPilot.
+        if (entity instanceof LandAirMech) {
+            crew = LAMPilot.convertToLAMPilot((LandAirMech)entity, crew);
+            Crew aeroCrew = new Crew(CrewType.SINGLE);
+            Map<String,String> aeroAttributes = new HashMap<>(attributes);
+            for (String key : attributes.keySet()) {
+                if (key.contains("Aero")) {
+                    aeroAttributes.put(key.replace("Aero", ""), attributes.get(key));
+                }
+            }
+            setPilotAttributes(aeroCrew, 0, aeroAttributes);
+            ((LAMPilot)crew).setGunneryAero(aeroCrew.getGunnery());
+            ((LAMPilot)crew).setGunneryAeroM(aeroCrew.getGunneryM());
+            ((LAMPilot)crew).setGunneryAeroB(aeroCrew.getGunneryB());
+            ((LAMPilot)crew).setGunneryAeroL(aeroCrew.getGunneryL());
+            ((LAMPilot)crew).setPilotingAero(aeroCrew.getPiloting());
+            entity.setCrew(crew);
+        }
         pilots.add(crew);
     }
     
@@ -1716,7 +1736,7 @@ public class MULParser {
         String value = fuelTag.getAttribute(LEFT);
         try {
             int newFuel = Integer.parseInt(value);
-            ((Aero) entity).setFuel(newFuel);
+            ((IAero) entity).setFuel(newFuel);
         } catch (Exception e) {
             warning.append("Invalid fuel value in fuel tag.\n");
         }
@@ -1853,8 +1873,8 @@ public class MULParser {
      * @param entity
      */
     private void parseBombs(Element bombsTag, Entity entity){
-        if (!(entity instanceof Aero)) {
-            warning.append("Found a bomb but Entity is not a Fighter.\n");
+        if (!(entity instanceof IBomber)) {
+            warning.append("Found a bomb but Entity cannot carry bombs.\n");
             return;
         }
         
@@ -1871,13 +1891,13 @@ public class MULParser {
                 Element currEle = (Element)currNode;
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(BOMB)){
-                    int[] bombChoices = ((Aero) entity).getBombChoices();
+                    int[] bombChoices = ((IBomber) entity).getBombChoices();
                     String type = currEle.getAttribute(TYPE);
                     String load = currEle.getAttribute(LOAD);
                     if (type.length() > 0 && load.length() > 0){
                         bombChoices[BombType.getBombTypeFromInternalName(type)] 
                                 += Integer.parseInt(load);
-                        ((Aero) entity).setBombChoices(bombChoices);
+                        ((IBomber) entity).setBombChoices(bombChoices);
                     }
                 }
             } else {

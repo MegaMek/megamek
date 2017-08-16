@@ -35,6 +35,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.Infantry;
+import megamek.common.LAMPilot;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.options.OptionsConstants;
@@ -66,6 +67,11 @@ public class CustomPilotView extends JPanel {
     private final JTextField fldGunneryM = new JTextField(3);
     private final JTextField fldGunneryB = new JTextField(3);
     private final JTextField fldPiloting = new JTextField(3);
+    private final JTextField fldGunneryAero = new JTextField(3);
+    private final JTextField fldGunneryAeroL = new JTextField(3);
+    private final JTextField fldGunneryAeroM = new JTextField(3);
+    private final JTextField fldGunneryAeroB = new JTextField(3);
+    private final JTextField fldPilotingAero = new JTextField(3);
     private final JTextField fldArtillery = new JTextField(3);
     private final JTextField fldTough = new JTextField(3);
     
@@ -111,6 +117,11 @@ public class CustomPilotView extends JPanel {
             int[] skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
             fldGunnery.setText(Integer.toString(skills[0]));
             fldPiloting.setText(Integer.toString(skills[1]));
+            if (entity.getCrew() instanceof LAMPilot) {
+                skills = parent.clientgui.getClient().getRandomSkillsGenerator().getRandomSkills(entity);
+                fldGunneryAero.setText(Integer.toString(skills[0]));
+                fldPilotingAero.setText(Integer.toString(skills[1]));
+            }
         });
         add(button, GBC.eop());
 
@@ -137,16 +148,52 @@ public class CustomPilotView extends JPanel {
             label = new JLabel(Messages.getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldGunneryB, GBC.eol());
+            
+            if (entity.getCrew() instanceof LAMPilot) {
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroL"), SwingConstants.RIGHT); //$NON-NLS-1$
+                add(label, GBC.std());
+                add(fldGunneryAeroL, GBC.eol());
+
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroM"), SwingConstants.RIGHT); //$NON-NLS-1$
+                add(label, GBC.std());
+                add(fldGunneryAeroM, GBC.eol());
+
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAeroB"), SwingConstants.RIGHT); //$NON-NLS-1$
+                add(label, GBC.std());
+                add(fldGunneryAeroB, GBC.eol());
+            }
 
         } else {
             label = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT); //$NON-NLS-1$
             add(label, GBC.std());
             add(fldGunnery, GBC.eol());
+
+            if (entity.getCrew() instanceof LAMPilot) {
+                label = new JLabel(Messages.getString("CustomMechDialog.labGunneryAero"), SwingConstants.RIGHT); //$NON-NLS-1$
+                add(label, GBC.std());
+                add(fldGunneryAero, GBC.eol());
+            }
         }
-        fldGunneryL.setText(Integer.toString(entity.getCrew().getGunneryL(slot)));
-        fldGunneryM.setText(Integer.toString(entity.getCrew().getGunneryM(slot)));
-        fldGunneryB.setText(Integer.toString(entity.getCrew().getGunneryB(slot)));
-        fldGunnery.setText(Integer.toString(entity.getCrew().getGunnery(slot)));
+        if (entity.getCrew() instanceof LAMPilot) {
+            LAMPilot pilot = (LAMPilot)entity.getCrew();
+            fldGunneryL.setText(Integer.toString(pilot.getGunneryMechL()));
+            fldGunneryM.setText(Integer.toString(pilot.getGunneryMechM()));
+            fldGunneryB.setText(Integer.toString(pilot.getGunneryMechB()));
+            fldGunnery.setText(Integer.toString(pilot.getGunneryMech()));
+            fldGunneryAeroL.setText(Integer.toString(pilot.getGunneryAeroL()));
+            fldGunneryAeroM.setText(Integer.toString(pilot.getGunneryAeroM()));
+            fldGunneryAeroB.setText(Integer.toString(pilot.getGunneryAeroB()));
+            fldGunneryAero.setText(Integer.toString(pilot.getGunneryAero()));
+        } else {
+            fldGunneryL.setText(Integer.toString(entity.getCrew().getGunneryL(slot)));
+            fldGunneryM.setText(Integer.toString(entity.getCrew().getGunneryM(slot)));
+            fldGunneryB.setText(Integer.toString(entity.getCrew().getGunneryB(slot)));
+            fldGunnery.setText(Integer.toString(entity.getCrew().getGunnery(slot)));
+            fldGunneryAeroL.setText("0");
+            fldGunneryAeroM.setText("0");
+            fldGunneryAeroB.setText("0");
+            fldGunneryAero.setText("0");
+        }
 
         label = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT); //$NON-NLS-1$
         if (entity instanceof Tank) {
@@ -156,9 +203,20 @@ public class CustomPilotView extends JPanel {
             label.setText(Messages
                     .getString("CustomMechDialog.labAntiMech"));
         }
-        add(label, GBC.std());
-        add(fldPiloting, GBC.eop());
-        fldPiloting.setText(Integer.toString(entity.getCrew().getPiloting(slot)));
+        if (entity.getCrew() instanceof LAMPilot) {
+            add(label, GBC.std());
+            add(fldPiloting, GBC.eol());
+            fldPiloting.setText(Integer.toString(((LAMPilot)entity.getCrew()).getPilotingMech()));
+            label = new JLabel(Messages.getString("CustomMechDialog.labPilotingAero"), SwingConstants.RIGHT); //$NON-NLS-1$
+            add(label, GBC.std());
+            add(fldPilotingAero, GBC.eop());
+            fldPilotingAero.setText(Integer.toString(((LAMPilot)entity.getCrew()).getPilotingAero()));
+        } else {
+            add(label, GBC.std());
+            add(fldPiloting, GBC.eop());
+            fldPiloting.setText(Integer.toString(entity.getCrew().getPiloting(slot)));
+            fldPilotingAero.setText("0");
+        }
 
         if (parent.clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             label = new JLabel(Messages.getString("CustomMechDialog.labArtillery"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -248,7 +306,12 @@ public class CustomPilotView extends JPanel {
             fldGunneryL.setEnabled(false);
             fldGunneryM.setEnabled(false);
             fldGunneryB.setEnabled(false);
+            fldGunneryAero.setEnabled(false);
+            fldGunneryAeroL.setEnabled(false);
+            fldGunneryAeroM.setEnabled(false);
+            fldGunneryAeroB.setEnabled(false);
             fldPiloting.setEnabled(false);
+            fldPilotingAero.setEnabled(false);
             fldArtillery.setEnabled(false);
             fldTough.setEnabled(false);
         }
@@ -318,12 +381,32 @@ public class CustomPilotView extends JPanel {
         return Integer.parseInt(fldGunneryB.getText());
     }
     
+    public int getGunneryAero() {
+        return Integer.parseInt(fldGunneryAero.getText());
+    }
+    
+    public int getGunneryAeroL() {
+        return Integer.parseInt(fldGunneryAeroL.getText());
+    }
+    
+    public int getGunneryAeroM() {
+        return Integer.parseInt(fldGunneryAeroM.getText());
+    }
+    
+    public int getGunneryAeroB() {
+        return Integer.parseInt(fldGunneryAeroB.getText());
+    }
+    
     public int getArtillery() {
         return Integer.parseInt(fldArtillery.getText());
     }
     
     public int getPiloting() {
         return Integer.parseInt(fldPiloting.getText());
+    }
+    
+    public int getPilotingAero() {
+        return Integer.parseInt(fldPilotingAero.getText());
     }
     
     public int getToughness() {

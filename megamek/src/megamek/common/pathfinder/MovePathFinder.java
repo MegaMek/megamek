@@ -12,19 +12,18 @@ import java.util.Objects;
 import java.util.Set;
 
 import megamek.client.bot.princess.AeroPathUtil;
-import megamek.common.Aero;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.Facing;
 import megamek.common.IGame;
 import megamek.common.ManeuverType;
-import megamek.common.Tank;
+import megamek.common.MovePath;
 import megamek.common.UnitType;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.logging.LogLevel;
 import megamek.common.MoveStep;
-import megamek.common.MovePath;
+import megamek.common.Tank;
 
 /**
  * Generic implementation of AbstractPathFinder when we restrict graph nodes to
@@ -160,7 +159,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         @Override
         public boolean shouldStay(MovePath edge) {
-            if (edge.getEntity() instanceof Aero) {
+            if (edge.getEntity().isAero()) {
                 /*
                  * isMovemementPossible is currently not working for aero units,
                  * so we have to use a substitute.

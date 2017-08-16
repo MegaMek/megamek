@@ -33,6 +33,7 @@ public class CLLAAMissileWeapon extends CapitalMissileWeapon {
         this.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         this.name = "LAA Missile";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_LAA));
+        this.flags = flags.or(F_BOMB_WEAPON);
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;

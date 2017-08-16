@@ -68,6 +68,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.Infantry;
+import megamek.common.LAMPilot;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -753,6 +754,12 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 // set in the BLK file, so we should ignore the defaults
                 if (!(e instanceof Infantry)) {
                     e.getCrew().setPiloting(piloting, i);
+                }
+
+                if (e.getCrew() instanceof LAMPilot) {
+                    skills = client.getRandomSkillsGenerator().getRandomSkills(e, true);
+                    ((LAMPilot)e.getCrew()).setGunneryAero(skills[0]);
+                    ((LAMPilot)e.getCrew()).setPilotingAero(skills[1]);
                 }
             }
             if(cs.generateNames()) {

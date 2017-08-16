@@ -23,6 +23,7 @@ import megamek.common.ConvFighter;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.Infantry;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.SmallCraft;
 import megamek.common.SupportTank;
@@ -235,6 +236,9 @@ public class RandomSkillsGenerator implements Serializable {
             if (lvl == L_ELITE) {
                 lbonus += 4;
             }
+            if (e instanceof LandAirMech) {
+                lbonus += 3;
+            }
 
             int lvlroll = Compute.d6(2) + lbonus;
 
@@ -261,6 +265,11 @@ public class RandomSkillsGenerator implements Serializable {
         }
         if (ty == T_MD) {
             bonus++;
+        }
+        
+        // Demands of dual training
+        if (e instanceof LandAirMech) {
+            bonus -= 2;
         }
 
         int gunroll = Compute.d6(1) + bonus;

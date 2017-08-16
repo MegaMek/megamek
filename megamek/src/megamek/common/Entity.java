@@ -1135,7 +1135,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             .setClanAdvancement(2820, 3082, 3115).setApproximate(true, true, true)
             .setPrototypeFactions(F_CLAN, F_DC, F_FS, F_LC)
             .setTechRating(RATING_A).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
-            .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     /**
      * Incorporate dates for components that are not in the equipment list, such as engines and structure.

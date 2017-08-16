@@ -256,7 +256,7 @@ public class Aero extends Entity implements IAero, IBomber {
     };
     
     public TechAdvancement getCockpitTechAdvancement() {
-        if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
+        if (getCockpitType() >= 0 && getCockpitType() < COCKPIT_TA.length) {
             return COCKPIT_TA[getCockpitType()];
         }
         return null;

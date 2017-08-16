@@ -261,7 +261,7 @@ public class Dropship extends SmallCraft {
     	double tonsperday = 0;
     	
     	
-    	if (military) {
+    	if (this.getDesignType() == 1) {
     		tonsperday = 1.84;
     		return tonsperday;
     	} 

@@ -77,11 +77,13 @@ public class SupportVTOL extends VTOL {
     
     private static final TechAdvancement TA_VTOL = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
-            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+            .setTechRating(RATING_C).setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement TA_VTOL_LARGE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_PS, DATE_ES, DATE_ES)
-            .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C);
+            .setTechRating(RATING_C).setAvailability(RATING_C, RATING_D, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
     protected TechAdvancement getConstructionTechAdvancement() {

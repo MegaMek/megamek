@@ -43,8 +43,7 @@ public class TechAdvancement implements ITechnology {
     private int[] productionFactions = {};
     private int[] extinctionFactions = {};
     private int[] reintroductionFactions = {};
-    private boolean isIntroLevel = false; //Whether RULES_STANDARD should be considered T_INTRO_BOXSET.
-    private boolean unofficial = false;
+    private SimpleTechLevel staticTechLevel;
     private int techRating = RATING_C;
     private int[] availability = new int[ERA_DA + 1];
     
@@ -83,8 +82,7 @@ public class TechAdvancement implements ITechnology {
             this.reintroductionFactions = new int[reintroductionFactions.length];
             System.arraycopy(ta.reintroductionFactions, 0, this.reintroductionFactions, 0, ta.reintroductionFactions.length);
         }
-        this.isIntroLevel = ta.isIntroLevel;
-        this.unofficial = ta.unofficial;
+        this.staticTechLevel = ta.staticTechLevel;
         this.techRating = ta.techRating;
         System.arraycopy(ta.availability, 0, this.availability, 0, ta.availability.length);
     }
@@ -521,22 +519,42 @@ public class TechAdvancement implements ITechnology {
         return Math.min(d1, d2);
     }
     
-    public boolean isIntroLevel() {
-        return isIntroLevel;
-    }
-
     public TechAdvancement setIntroLevel(boolean intro) {
-        isIntroLevel = intro;
+        if (intro) {
+            staticTechLevel = SimpleTechLevel.INTRO;
+        } else if (staticTechLevel == SimpleTechLevel.INTRO) {
+            staticTechLevel = SimpleTechLevel.STANDARD;
+        }
         return this;
-    }
-    
-    public boolean isUnofficial() {
-        return unofficial;
     }
     
     public TechAdvancement setUnofficial(boolean unofficial) {
-        this.unofficial = unofficial;
+        if (unofficial) {
+            staticTechLevel = SimpleTechLevel.UNOFFICIAL;
+        } else if (staticTechLevel == SimpleTechLevel.UNOFFICIAL) {
+            staticTechLevel = null;
+        }
         return this;
+    }
+    
+    @Override
+    public SimpleTechLevel getStaticTechLevel() {
+        return staticTechLevel;
+    }
+    
+    public TechAdvancement setStaticTechLevel(SimpleTechLevel level) {
+        staticTechLevel = level;
+        return this;
+    }
+    
+    public SimpleTechLevel guessStaticTechLevel(String rulesRefs) {
+        if (rulesRefs.contains("TW") || rulesRefs.contains("TM")) {
+            return SimpleTechLevel.STANDARD;
+        } else if (getProductionDate() != DATE_NONE) {
+            return SimpleTechLevel.ADVANCED;
+        } else {
+            return SimpleTechLevel.EXPERIMENTAL;
+        }
     }
     
     public TechAdvancement setTechRating(int rating) {

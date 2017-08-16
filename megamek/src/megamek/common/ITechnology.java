@@ -40,6 +40,11 @@ public interface ITechnology {
             }
             return null;
         }
+        
+        @Override
+        public String toString() {
+            return strVal;
+        }
     }
     
     public static final int TECH_BASE_ALL  = 0;
@@ -136,8 +141,6 @@ public interface ITechnology {
     
     boolean isClan();
     boolean isMixedTech();
-    boolean isIntroLevel();
-    boolean isUnofficial();
     default int getTechBase() {
         return isClan()? TECH_BASE_CLAN : TECH_BASE_IS;
     }
@@ -230,6 +233,21 @@ public interface ITechnology {
     }
     
     /**
+     * For non-era-based usage, provide a single tech level that does not vary with date.
+     * 
+     * @return The base rules level of the equipment or unit.
+     */
+    SimpleTechLevel getStaticTechLevel();
+    
+    default boolean isIntroLevel() {
+        return getStaticTechLevel() == SimpleTechLevel.INTRO;
+    }
+    
+    default boolean isUnofficial() {
+        return getStaticTechLevel() == SimpleTechLevel.UNOFFICIAL;
+    }
+    
+    /**
      * Finds simple tech level equivalent of compound tech base/rules level constant
      * 
      * @param level A TechConstants tech level constant
@@ -271,7 +289,8 @@ public interface ITechnology {
      */
     default SimpleTechLevel findMinimumRulesLevel(boolean clan) {
         if (getCommonDate(clan) != DATE_NONE) {
-            return isIntroLevel()? SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
+            return (getStaticTechLevel() == SimpleTechLevel.INTRO)?
+                    SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
         }
         if (getProductionDate(clan) != DATE_NONE) {
             return SimpleTechLevel.ADVANCED;
@@ -289,7 +308,8 @@ public interface ITechnology {
      */
     default SimpleTechLevel findMinimumRulesLevel() {
         if (getCommonDate() != DATE_NONE) {
-            return isIntroLevel()? SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
+            return (getStaticTechLevel() == SimpleTechLevel.INTRO)?
+                    SimpleTechLevel.INTRO : SimpleTechLevel.STANDARD;
         }
         if (getProductionDate() != DATE_NONE) {
             return SimpleTechLevel.ADVANCED;

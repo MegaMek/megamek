@@ -26,15 +26,16 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     
     private boolean clan;
     private boolean mixed;
-    private boolean introTech;
     private int introYear;
-    private boolean unofficial;
     private Integer experimental;
     private Integer advanced;
     private Integer standard;
     private List<DateRange> extinct;
     private int techRating;
     private int[] availability;
+    
+    // Provides a set tech level for non-era-based use.
+    private SimpleTechLevel staticTechLevel = SimpleTechLevel.INTRO;
     
     /**
      * @param initialTA - the base tech advancement for the composite equipment
@@ -145,6 +146,9 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         int prodDate = mixed?tech.getProductionDate() : tech.getProductionDate(clan);
         int commonDate = mixed?tech.getCommonDate() : tech.getCommonDate(clan);
         
+        if (staticTechLevel.compareTo(tech.getStaticTechLevel()) < 0) {
+            staticTechLevel = tech.getStaticTechLevel();
+        }
         //If this record is blank we ignore it
         if (protoDate == DATE_NONE
                 && prodDate == DATE_NONE
@@ -213,8 +217,6 @@ public class CompositeTechLevel implements ITechnology, Serializable {
         addExtinctionRange(mixed?tech.getExtinctionDate() : tech.getExtinctionDate(clan),
                 mixed?tech.getReintroductionDate() : tech.getReintroductionDate(clan));
         
-        introTech &= tech.isIntroLevel();
-        unofficial |= tech.isUnofficial();
         techRating = Math.max(techRating, tech.getTechRating());
         for (int era = 0; era < ERA_NUM; era++) {
             int av = tech.getBaseAvailability(era);
@@ -239,13 +241,13 @@ public class CompositeTechLevel implements ITechnology, Serializable {
      * @return - the TechConstants tech level for a particular year
      */
     public int getTechLevel(int year) {
-        if (unofficial) {
+        if (getStaticTechLevel() == SimpleTechLevel.UNOFFICIAL) {
             return clan? TechConstants.T_CLAN_UNOFFICIAL : TechConstants.T_IS_UNOFFICIAL;
         }
         if (standard != null && year >= standard) {
             if (clan) {
                 return TechConstants.T_CLAN_TW;
-            } else if (introTech) {
+            } else if (getStaticTechLevel() == SimpleTechLevel.INTRO) {
                 return TechConstants.T_INTRO_BOXSET;
             } else {
                 return TechConstants.T_IS_TW_NON_BOX;
@@ -361,16 +363,6 @@ public class CompositeTechLevel implements ITechnology, Serializable {
     }
 
     @Override
-    public boolean isIntroLevel() {
-        return introTech;
-    }
-
-    @Override
-    public boolean isUnofficial() {
-        return unofficial;
-    }
-
-    @Override
     public int getIntroductionDate() {
         return introYear;
     }
@@ -419,5 +411,10 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             return RATING_X;
         }
         return availability[era];
+    }
+    
+    @Override
+    public SimpleTechLevel getStaticTechLevel() {
+        return staticTechLevel;
     }
 }

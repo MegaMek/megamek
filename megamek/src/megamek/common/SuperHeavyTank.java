@@ -75,7 +75,8 @@ public class SuperHeavyTank extends Tank {
             .setAdvancement(2470, DATE_NONE, 3075)
             .setApproximate(true, false, true).setPrototypeFactions(F_LC)
             .setTechRating(RATING_C)
-            .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E);
+            .setAvailability(RATING_E, RATING_F, RATING_F, RATING_E)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     protected TechAdvancement getConstructionTechAdvancement() {

@@ -1721,7 +1721,8 @@ public class MiscType extends EquipmentType {
                 .setClanAdvancement(2464, 2471, 2500, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setPrototypeFactions(F_TH)
                 .setProductionFactions(F_TH).setTechRating(RATING_D)
-                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+                .setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.INTRO);
         return misc;
     }
 
@@ -4226,7 +4227,8 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_HATCHET;
         misc.bv = BV_VARIABLE;
         misc.rulesRefs = "220,TM";
-        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_B)
+        misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(true)
+                .setTechRating(RATING_B)
                 .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
                 .setISAdvancement(3015, 3022, 3025, DATE_NONE, DATE_NONE)
                 .setISApproximate(true, false, false, false, false).setPrototypeFactions(F_LC, F_FS)
@@ -6044,12 +6046,14 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_HEAT_SINK);
         misc.bv = 0;
+        misc.rulesRefs = "221,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL)
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
                 .setClanApproximate(false, false, false, false, false).setTechRating(RATING_C)
-                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B);
+                .setAvailability(RATING_B, RATING_B, RATING_B, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.INTRO);
         return misc;
     }
 
@@ -9130,7 +9134,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TSM).or(F_MECH_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
-        misc.rulesRefs = "240,TSM";
+        misc.rulesRefs = "240,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
                 .setISAdvancement(3028, 3050, 3055, DATE_NONE, DATE_NONE)

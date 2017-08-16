@@ -47,12 +47,14 @@ public class SmallCraft extends Aero {
     private final static TechAdvancement TA_SM_CRAFT = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2350, 2400).setISApproximate(false, true, false)
             .setProductionFactions(F_TH).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D);
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private final static TechAdvancement TA_SM_CRAFT_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(DATE_ES, 2200, DATE_NONE, 2400)
             .setISApproximate(false, true, false, false)
             .setProductionFactions(F_TA).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F);
+            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     protected TechAdvancement getConstructionTechAdvancement() {

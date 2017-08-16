@@ -107,7 +107,8 @@ public class QuadVee extends QuadMech {
             .setAvailability(RATING_X, RATING_X, RATING_X, RATING_F)
             .setClanAdvancement(3130, 3135, DATE_NONE, DATE_NONE, DATE_NONE)
             .setClanApproximate(true).setPrototypeFactions(F_CHH)
-            .setProductionFactions(F_CHH);
+            .setProductionFactions(F_CHH)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
     /**
      * This is used to identify Mechs that have tracks mounted as industrial equipment.

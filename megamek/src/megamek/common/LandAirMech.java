@@ -1020,11 +1020,13 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2683, 2688, DATE_NONE, 3085)
                 .setClanAdvancement(DATE_NONE, 2688, DATE_NONE, 2825)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F), //standard
+                .setTechRating(RATING_D).setAvailability(RATING_D, RATING_E, RATING_F, RATING_F)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //standard
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2680, 2684, DATE_NONE, 2781)
                 .setClanAdvancement(DATE_NONE, 2684, DATE_NONE, 2801)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
-                .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_X, RATING_X) //bimodal
+                .setTechRating(RATING_E).setAvailability(RATING_E, RATING_F, RATING_X, RATING_X)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED) //bimodal
     };
     
     @Override

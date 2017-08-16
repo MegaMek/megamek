@@ -5419,7 +5419,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.rulesRefs = "228,TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setIntroLevel(false)
+    	.setIntroLevel(true)
     	.setUnofficial(false)
         .setTechRating(RATING_B)
         .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
@@ -5480,7 +5480,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 500;
         ammo.rulesRefs = "228,TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setIntroLevel(false)
+    	.setIntroLevel(true)
     	.setUnofficial(false)
         .setTechRating(RATING_B)
         .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)

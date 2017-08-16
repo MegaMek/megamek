@@ -3595,7 +3595,8 @@ public class MiscType extends EquipmentType {
                 .setAvailability(RATING_X, RATING_E, RATING_E, RATING_C)
                 .setClanAdvancement(2850, 2900, DATE_NONE, DATE_NONE, DATE_NONE)
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CHH)
-                .setProductionFactions(F_CLAN);
+                .setProductionFactions(F_CLAN)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 
@@ -3894,7 +3895,8 @@ public class MiscType extends EquipmentType {
                 .setISAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false, false, false)
                 .setClanAdvancement(DATE_ES, DATE_ES, DATE_ES, DATE_NONE, DATE_NONE)
-                .setClanApproximate(false, false, false, false, false);
+                .setClanApproximate(false, false, false, false, false)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
         return misc;
     }
 
@@ -9162,7 +9164,7 @@ public class MiscType extends EquipmentType {
         misc.omniFixedOnly = true;
         misc.bv = 0;
         misc.industrial = true;
-        misc.rulesRefs = "240,TSM";
+        misc.rulesRefs = "240,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_IS).setIntroLevel(false).setUnofficial(false).setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
                 .setISAdvancement(3035, 3045, 3055, DATE_NONE, DATE_NONE)
@@ -9314,6 +9316,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_AMPHIBIOUS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2470);
@@ -9335,6 +9338,7 @@ public class MiscType extends EquipmentType {
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
@@ -9354,6 +9358,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BICYCLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
         misc.tankslots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -9374,6 +9379,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_CONVERTIBLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
         misc.tankslots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -9422,6 +9428,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HYDROFOIL).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
         misc.tankslots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -9442,6 +9449,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MONOCYCLE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
         misc.tankslots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -9466,6 +9474,7 @@ public class MiscType extends EquipmentType {
                 .or(F_SUPPORT_TANK_EQUIPMENT);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 2470);
@@ -9482,6 +9491,7 @@ public class MiscType extends EquipmentType {
         misc.tankslots = 0;
         misc.flags = misc.flags.andNot(F_AERO_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_PROP);
         misc.omniFixedOnly = true;
+        misc.rulesRefs = "122,TM";
         // Setting this Pre-Spaceflight
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
@@ -9501,6 +9511,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_SNOWMOBILE).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
         // TODO: implement game rules
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -9519,6 +9530,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
         misc.tankslots = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
@@ -9540,6 +9552,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
+        misc.rulesRefs = "122,TM";
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
         misc.techAdvancement.setTechRating(RATING_B);
@@ -9559,6 +9572,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
         misc.tankslots = 0;
         misc.industrial = true;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
@@ -9580,6 +9594,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HITCH).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
+        misc.rulesRefs = "101,TM";
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_PS, DATE_PS, DATE_PS);
@@ -9602,6 +9617,7 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.tankslots = 0;
         misc.industrial = true;
+        misc.rulesRefs = "122,TM";
 
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
@@ -9618,6 +9634,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
         misc.omniFixedOnly = true;
+        misc.rulesRefs = "122,TM";
         // Setting this Pre-Spaceflight
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);
@@ -9635,6 +9652,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_VSTOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.omniFixedOnly = true;
         misc.bv = 0;
+        misc.rulesRefs = "122,TM";
         misc.tankslots = 0;
         misc.techAdvancement.setTechBase(TECH_BASE_ALL);
         misc.techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 1950);

@@ -174,7 +174,7 @@ public final class ASFBay extends Bay {
 
         Vector<Integer> slots = new Vector<Integer>();
 
-        for (int i = 0; i < doors; i++) {
+        for (int i = 0; i < currentdoors; i++) {
             slots.add(0);
             slots.add(0);
         }
@@ -211,7 +211,9 @@ public final class ASFBay extends Bay {
     @Override
     public void destroyDoorNext() {
 
-        setDoorsNext(getDoorsNext() - 1);
+        if (getDoorsNext() > 0) {
+            setDoorsNext(getDoorsNext() - 1);
+        }
 
         // get rid of two empty recovery slots
         // it doesn't matter which ones
@@ -226,8 +228,10 @@ public final class ASFBay extends Bay {
     // destroy a door
     @Override
     public void destroyDoor() {
-
-        doors -= 1;
+    	
+      if (getCurrentDoors() > 0) {
+        setCurrentDoors(getCurrentDoors() - 1);
+      }
 
         // get rid of two empty recovery slots
         // it doesn't matter which ones
@@ -242,7 +246,7 @@ public final class ASFBay extends Bay {
     // get doors should be different - first I must subtract the number of
     // active recoveries
     @Override
-    public int getDoors() {
+    public int getCurrentDoors() {
 
         // just take the available recovery slots, divided by two
         return (int) Math.floor(getRecoverySlots() / 2.0);

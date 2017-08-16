@@ -48,7 +48,7 @@ public class Bay implements Transporter {
     private static final long serialVersionUID = -9056450317468016272L;
     int doors = 1;
     int doorsNext = 1;
-    int currentdoors = 1;
+    int currentdoors = doors;
     protected int unloadedThisTurn = 0;
     protected int loadedThisTurn = 0;
     Vector<Integer> recoverySlots = new Vector<Integer>();

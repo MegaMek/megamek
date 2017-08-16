@@ -47,7 +47,6 @@ import megamek.common.IArmorState;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
-import megamek.common.MechBay;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;

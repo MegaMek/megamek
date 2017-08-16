@@ -54,9 +54,8 @@ public final class SmallCraftBay extends Bay {
         doorsNext = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
-        currentdoors = doors; 
     }
-
+    	int currentdoors = doors; 
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
@@ -225,9 +224,9 @@ public final class SmallCraftBay extends Bay {
     // destroy a door
     @Override
     public void destroyDoor() {
-
+    	if (getCurrentDoors() > 0) {
         currentdoors -= 1;
-
+    	}
         // get rid of two empty recovery slots
         // it doesn't matter which ones
         if (recoverySlots.size() > 0) {

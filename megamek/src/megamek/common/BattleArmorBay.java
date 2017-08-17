@@ -110,7 +110,7 @@ public final class BattleArmorBay extends Bay {
 
     @Override
     public String getType() {
-        return "Battle Armor";
+        return "BattleArmor";
     }
 
     @Override

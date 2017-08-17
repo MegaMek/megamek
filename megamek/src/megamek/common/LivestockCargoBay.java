@@ -89,7 +89,7 @@ public final class LivestockCargoBay extends Bay {
 
     @Override
     public String getType() {
-        return "Livestock Cargo";
+        return "LivestockCargo";
     }
 
     @Override

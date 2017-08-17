@@ -1206,15 +1206,19 @@ public class EntityListFile {
         if (d.isKFBoomDamaged()) {
             critVal = critVal.concat(" kfboom=\"none\"");
         }
+        // Bays
         for (Bay nextbay : d.getTransportBays()) {
         	if (nextbay.getbayDamaged() == 1)
-            critVal = critVal.concat(nextbay.getType() + "#" + nextbay.getBayNumber() + "=\"none\"");
-            if (nextbay.getCurrentDoors() < nextbay.getDoors())
-        	critVal = critVal.concat(nextbay.getType() + "#" + nextbay.getBayNumber() + " doors=\"");
-            critVal = critVal.concat(Integer.toString(nextbay.getDoors() - nextbay.getCurrentDoors()));
-            critVal = critVal.concat("\"");
+            critVal = critVal.concat(" " + nextbay.getType() + "bay#" + nextbay.getBayNumber() + "=\"none\"");
+        }
+        
+        // Bay Doors	
+        	for (Bay nextbay : d.getTransportBays()) {
+            if (nextbay.getCurrentDoors() < nextbay.getDoors()) {
+        	critVal = critVal.concat(" " + nextbay.getType() + "bay#" + nextbay.getBayNumber() + "doors=\"");
+            critVal = critVal.concat(Integer.toString(nextbay.getCurrentDoors()) + "\"");
+            }
         } 	
-
 
         if (!critVal.equals("")) {
             // then add beginning and end

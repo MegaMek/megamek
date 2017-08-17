@@ -54,9 +54,9 @@ public final class SmallCraftBay extends Bay {
         doorsNext = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
+        this.currentdoors = doors;
+    }    
 
-    }
-	    int currentdoors = doors; 
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.
@@ -151,7 +151,7 @@ public final class SmallCraftBay extends Bay {
 
     @Override
     public String getType() {
-        return "Small Craft";
+        return "SmallCraft";
     }
 
     // update the time remaining in recovery slots
@@ -240,13 +240,14 @@ public final class SmallCraftBay extends Bay {
 
     // get doors should be different - first I must subtract the number of
     // active recoveries
-    @Override
+    // This is still here in case of later bugs from removing the override. 
+   /* @Override
     public int getCurrentDoors() {
 
         // just take the available recovery slots, divided by two
         return (int) Math.floor(getRecoverySlots() / 2.0);
 
-    }
+    } */
 
     @Override
     public double getWeight() {

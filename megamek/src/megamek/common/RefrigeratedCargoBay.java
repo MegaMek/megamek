@@ -89,7 +89,7 @@ public final class RefrigeratedCargoBay extends Bay {
 
     @Override
     public String getType() {
-        return "Refrigerated Cargo";
+        return "Reefer";
     }
 
     @Override

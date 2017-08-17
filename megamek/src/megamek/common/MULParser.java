@@ -57,6 +57,7 @@ public class MULParser {
     private static final String KF = "KF";
     private static final String SAIL = "sail";
     private static final String AEROCRIT = "acriticals";
+    private static final String DROPCRIT = "dcriticals";
     private static final String TANKCRIT = "tcriticals";
     private static final String STABILIZER = "stabilizer";
     private static final String BREACH = "breached";
@@ -140,8 +141,8 @@ public class MULParser {
     private static final String RIGHT_THRUST = "rightThrust";
     private static final String LIFE_SUPPORT = "lifeSupport";
     private static final String GEAR = "gear";
-    private static final String DOCKING_COLLAR = "docking collar";
-    private static final String KFBOOM = "k-f boom";
+    private static final String DOCKING_COLLAR = "dockingcollar";
+    private static final String KFBOOM = "kfboom";
     private static final String ASF_BAY = "ASF Bay";
     private static final String BATTLE_ARMOR_BAY = "Battle Armor Bay";
     private static final String CARGO_BAY = "Cargo Bay";
@@ -473,10 +474,10 @@ public class MULParser {
                     parseKF(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(SAIL)){
                     parseSail(currEle, entity);
-                } else if (nodeName.equalsIgnoreCase(DOCKING_COLLAR)){
-                    parseDockingCollar(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(AEROCRIT)){
                     parseAeroCrit(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(DROPCRIT)){
+                    parseDropCrit(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(TANKCRIT)){
                     parseTankCrit(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(BOMBS)){
@@ -1771,15 +1772,6 @@ public class MULParser {
     }
     
     /**
-     * Parse a docking collar tag for the given <code>Entity</code>.
-     */
-    private static void parseDockingCollar(Element collarTag, Entity entity){
-    	Dropship d = (Dropship) entity;
-        String dockingcollar = collarTag.getAttribute(DAMAGED);
-        if (dockingcollar.length() > 0) 
-            d.setDamageDockCollar(true);
-    }
-    /**
      * Parse an aeroCrit tag for the given <code>Entity</code>.
      * 
      * @param aeroCritTag
@@ -1833,6 +1825,29 @@ public class MULParser {
         if (gear.length() > 0) {
             a.setGearHit(true);
         }
+    }
+    /**
+     * Parse an dropCrit tag for the given <code>Entity</code>.
+     * 
+     * @param dropCritTag
+     * @param entity
+     */
+    private void parseDropCrit(Element dropCritTag, Entity entity){
+        String dockingcollar = dropCritTag.getAttribute(DOCKING_COLLAR);
+        String kfboom = dropCritTag.getAttribute(KFBOOM);
+        String leftThrust = dropCritTag.getAttribute(LEFT_THRUST);
+        String rightThrust = dropCritTag.getAttribute(RIGHT_THRUST);
+
+        Dropship d = (Dropship) entity;
+
+        if (dockingcollar.length() > 0) {
+            d.setDamageDockCollar(true);
+        }
+
+        if (kfboom.length() > 0) {
+            d.setDamageKFBoom(true);
+        }
+
     }
     
     /**

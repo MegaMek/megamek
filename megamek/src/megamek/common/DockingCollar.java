@@ -79,7 +79,7 @@ public class DockingCollar implements Transporter {
 
     // Type is Docking Collar
     public String getType() {
-        return "Docking Collar";
+        return "DockingCollar";
     }
 
     /**

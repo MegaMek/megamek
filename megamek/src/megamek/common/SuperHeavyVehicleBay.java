@@ -102,7 +102,7 @@ public final class SuperHeavyVehicleBay extends Bay {
 
     @Override
     public String getType() {
-        return "Superheavy Vehicle";
+        return "SuperheavyVehicle";
     }
 
     @Override

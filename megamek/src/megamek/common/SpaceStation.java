@@ -43,7 +43,7 @@ public class SpaceStation extends Jumpship {
             */
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         return TA_SPACE_STATION;
     }
 

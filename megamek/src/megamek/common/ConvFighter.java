@@ -68,7 +68,7 @@ public class ConvFighter extends Aero {
                 .setStaticTechLevel(SimpleTechLevel.STANDARD);
     
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         return TA_CONV_FIGHTER;
     }
     

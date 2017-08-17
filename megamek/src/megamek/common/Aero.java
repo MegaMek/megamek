@@ -221,7 +221,7 @@ public class Aero extends Entity implements IAero, IBomber {
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         if (isPrimitive()) {
             return TA_ASF_PRIMITIVE;
         } else {

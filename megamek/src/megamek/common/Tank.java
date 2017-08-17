@@ -212,7 +212,7 @@ public class Tank extends Entity {
             .setStaticTechLevel(SimpleTechLevel.INTRO);
     
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         return TA_COMBAT_VEHICLE;
     }
 

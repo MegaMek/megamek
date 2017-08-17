@@ -363,7 +363,7 @@ public class TripodMech extends Mech {
     }
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         if (isSuperHeavy()) {
             return TA_TRIPOD_SUPERHEAVY;
         } else {

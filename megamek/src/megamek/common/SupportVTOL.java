@@ -86,7 +86,7 @@ public class SupportVTOL extends VTOL {
             .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         /* Support vehicle dates and tech ratings are found in TM 120, 122. DA availability is assumed to
          * be the same as Clan invasion era. */
         if (getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT) {

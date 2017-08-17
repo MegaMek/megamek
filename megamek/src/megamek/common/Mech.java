@@ -3069,7 +3069,7 @@ public abstract class Mech extends Entity {
 
     
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         if (isSuperHeavy()) {
             return TA_SUPERHEAVY;
         } else if (getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) {

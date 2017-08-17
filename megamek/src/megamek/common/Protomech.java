@@ -381,7 +381,7 @@ public class Protomech extends Entity {
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         if (isQuad) {
             return TA_QUAD;
         } else if (isGlider) {

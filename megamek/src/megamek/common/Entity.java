@@ -1109,7 +1109,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * return - the base construction option tech advancement
      */
-    protected abstract TechAdvancement getConstructionTechAdvancement();
+    public abstract TechAdvancement getConstructionTechAdvancement();
     
     /**
      * Resets techAdvancement to initial value and adjusts for all installed equipment.
@@ -1136,6 +1136,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             .setPrototypeFactions(F_CLAN, F_DC, F_FS, F_LC)
             .setTechRating(RATING_A).setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
             .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+    
+    public static TechAdvancement getOmniAdvancement() {
+        return new TechAdvancement(TA_OMNI);
+    }
+    
+    public static TechAdvancement getPatchworkArmorAdvancement() {
+        return new TechAdvancement(TA_PATCHWORK_ARMOR);
+    }
+    
+    public static TechAdvancement getMixedTechAdvancement() {
+        return new TechAdvancement(TA_MIXED_TECH);
+    }
     
     /**
      * Incorporate dates for components that are not in the equipment list, such as engines and structure.

@@ -1030,7 +1030,7 @@ public class LandAirMech extends BipedMech implements IAero, IBomber {
     };
     
     @Override
-    protected TechAdvancement getConstructionTechAdvancement() {
+    public TechAdvancement getConstructionTechAdvancement() {
         return TA_LAM[lamType];
     }
     

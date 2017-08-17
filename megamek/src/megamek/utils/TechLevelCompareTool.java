@@ -6,11 +6,11 @@ import java.util.TreeSet;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
-import megamek.common.ITechnology;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
+import megamek.common.SimpleTechLevel;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
 
@@ -50,8 +50,8 @@ public class TechLevelCompareTool {
                 e.printStackTrace();
             }
             if (null != en) {
-                ITechnology.SimpleTechLevel fixed = ITechnology.convertTechConstantsToSimple(en.getTechLevel());
-                ITechnology.SimpleTechLevel calc = en.getStaticTechLevel();
+                 SimpleTechLevel fixed = SimpleTechLevel.convertCompoundToSimple(en.getTechLevel());
+                 SimpleTechLevel calc = en.getStaticTechLevel();
                 if (fixed.compareTo(calc) < 0) {
                     System.out.println(en.getShortName() + ": " + fixed.toString() + "/" + calc.toString());
                     for (Mounted m : en.getEquipment()) {

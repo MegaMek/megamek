@@ -35,6 +35,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
+import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.Transporter;
 import megamek.common.WeaponType;
@@ -741,7 +742,7 @@ public abstract class TestEntity implements TestEntityOption {
          * equipment. We also test for mixed IS/Clan tech in units that are not designated as mixed.
          */
         boolean retVal = false;
-        int eTechLevel = ITechnology.convertTechConstantsToSimple(getEntity().getTechLevel()).ordinal();
+        int eTechLevel = SimpleTechLevel.convertCompoundToSimple(getEntity().getTechLevel()).ordinal();
         int eRulesLevel = getEntity().findMinimumRulesLevel().ordinal();
         if (eTechLevel >= eRulesLevel) {
             return false;

@@ -1827,7 +1827,7 @@ public class MULParser {
         }
     }
     /**
-     * Parse an dropCrit tag for the given <code>Entity</code>.
+     * Parse a dropCrit tag for the given <code>Entity</code>.
      * 
      * @param dropCritTag
      * @param entity
@@ -1835,8 +1835,6 @@ public class MULParser {
     private void parseDropCrit(Element dropCritTag, Entity entity){
         String dockingcollar = dropCritTag.getAttribute(DOCKING_COLLAR);
         String kfboom = dropCritTag.getAttribute(KFBOOM);
-        String leftThrust = dropCritTag.getAttribute(LEFT_THRUST);
-        String rightThrust = dropCritTag.getAttribute(RIGHT_THRUST);
 
         Dropship d = (Dropship) entity;
 
@@ -1847,8 +1845,18 @@ public class MULParser {
         if (kfboom.length() > 0) {
             d.setDamageKFBoom(true);
         }
+      /*  int bay = 0;
+        for (Bay nextbay : d.getTransportBays()) {
+        	
+        } */
 
     }
+    /**
+     * Parse the cargo bay and door tag(s) for the given <code>Entity</code>.
+     * 
+     * @param dropCritTag
+     * @param entity
+     */
     
     /**
      * Parse a tankCrit tag for the given <code>Entity</code>.

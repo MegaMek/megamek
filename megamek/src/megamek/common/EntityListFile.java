@@ -1208,8 +1208,10 @@ public class EntityListFile {
         }
         // Bays
         for (Bay nextbay : d.getTransportBays()) {
-        	if (nextbay.getbayDamaged() == 1)
-            critVal = critVal.concat(" " + nextbay.getType() + "bay#" + nextbay.getBayNumber() + "=\"none\"");
+        	if (nextbay.getbayDamaged() == 0)
+            critVal = critVal.concat(" " + nextbay.getType() + "bay" + "" + nextbay.getBayNumber() + "" + "=\"none\"");
+        	else if (nextbay.getbayDamaged() == 1)
+                critVal = critVal.concat(" " + nextbay.getType() + "bay" + "" + nextbay.getBayNumber() + "" + "=\"hit\"");
         }
         
         // Bay Doors	

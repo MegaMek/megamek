@@ -52,9 +52,9 @@ public final class SmallCraftBay extends Bay {
         currentSpace = space;
         this.doors = doors;
         doorsNext = doors;
+        this.currentdoors = doors;
         recoverySlots = initializeRecoverySlots();
         this.bayNumber = bayNumber;
-        this.currentdoors = doors;
     }    
 
     /**

@@ -143,16 +143,20 @@ public class MULParser {
     private static final String GEAR = "gear";
     private static final String DOCKING_COLLAR = "dockingcollar";
     private static final String KFBOOM = "kfboom";
-    private static final String ASF_BAY = "ASF Bay";
-    private static final String BATTLE_ARMOR_BAY = "Battle Armor Bay";
-    private static final String CARGO_BAY = "Cargo Bay";
-    private static final String HEAVY_VEHICLE_BAY = "Heavy Vehicle Bay";
-    private static final String INFANTRY_BAY = "Infantry Bay";
-    private static final String LIGHT_VEHICLE_BAY = "Light Vehicle Bay";
-    private static final String MECH_BAY = "Mech Bay";
-    private static final String SMALL_CRAFT_BAY = "Small Craft Bay";
-    private static final String SUPERHEAVY_MECH_BAY = "Superheavy Mech Bay";
-    private static final String SUPERHEAVY_VEHICLE_BAY = "Superheavy Vehicle Bay";
+    private static final String ASF_BAY = "FighterBay";
+    private static final String BATTLE_ARMOR_BAY = "BattleArmorBay";
+    private static final String BAY = "TransportBay";
+    private static final String CARGO_BAY = "CargoBay";
+    private static final String HEAVY_VEHICLE_BAY = "HeavyVehicleBay";
+    private static final String INFANTRY_BAY = "InfantryBay";
+    private static final String LIGHT_VEHICLE_BAY = "LightVehicleBay";
+    private static final String LIQUID_CARGO_BAY = "LiquidCargoBay";
+    private static final String LIVESTOCK_CARGO_BAY = "LivestockCargoBay";
+    private static final String MECH_BAY = "MechBay";
+    private static final String PROTOMECH_BAY = "ProtomechBay";
+    private static final String REFRIGERATED_CARGO_BAY = "ReeferBay";
+    private static final String SMALL_CRAFT_BAY = "SmallCraftBay";
+    private static final String SUPERHEAVY_VEHICLE_BAY = "SuperheavyVehicleBay";
     private static final String MDAMAGE = "damage";
     private static final String DAMAGED = "damaged";
     private static final String MPENALTY = "penalty";
@@ -478,6 +482,8 @@ public class MULParser {
                     parseAeroCrit(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(DROPCRIT)){
                     parseDropCrit(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(BAY)){
+                    parseTransportBay(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(TANKCRIT)){
                     parseTankCrit(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(BOMBS)){
@@ -1845,10 +1851,15 @@ public class MULParser {
         if (kfboom.length() > 0) {
             d.setDamageKFBoom(true);
         }
-      /*  int bay = 0;
-        for (Bay nextbay : d.getTransportBays()) {
-        	
-        } */
+        int b = 1;
+        for (String bay = dropCritTag.getAttribute(BAY);;) {
+        	if (bay.startsWith("smallcraftbay:")) {
+                String numbers = bay.substring(14);
+                String temp[] = numbers.split(":");
+                b = Integer.parseInt(temp[1]);
+                int doors = Integer.parseInt(temp[2]);
+        	}
+        }
 
     }
     /**
@@ -1857,6 +1868,55 @@ public class MULParser {
      * @param dropCritTag
      * @param entity
      */
+    private void parseTransportBay (Element bayTag, Entity entity) {
+    	// Look for the element's attributes.
+    	String index = bayTag.getAttribute(INDEX);
+    	
+    	int bay;    
+    	    // Did we find the required index?
+    	if ((index == null) || (index.length() == 0)) {
+    		warning.append("Could not find index for bay.\n");
+    		return;
+    	} else {
+    		// Try to get a good index value.
+    		bay = -1;
+    		try {
+    			bay = Integer.parseInt(index);
+    		} catch (NumberFormatException excep) {
+    			// Handled by the next if test.
+    		}
+    		if (bay < 0) {
+    			warning.append("Found invalid index value for bay: ").append(index).append(".\n");
+    			return;
+    	    } else if (bay >= entity.getTransportBays().size()) {
+    	    	warning.append("The entity, ")
+    	    	.append(entity.getShortName())
+    	    	.append(" does not have a bay at index: ")
+    	    	.append(bay).append(".\n");
+    	    	return;
+    	        }
+    		
+    	    } //End check for required fields.
+    	
+ 
+    
+        // Handle children for each bay.
+        NodeList nl = bayTag.getChildNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+        	Node currNode = nl.item(i);
+        	
+        	if (currNode.getParentNode() != bayTag) {
+        		continue;
+        	}
+        	int nodeType = currNode.getNodeType();
+        	if (nodeType == Node.ELEMENT_NODE) {
+        		Element currEle = (Element) currNode;
+        		String nodeName = currNode.getNodeName();
+        	}
+        }
+    
+    
+    } // End parseTransportBay
     
     /**
      * Parse a tankCrit tag for the given <code>Entity</code>.

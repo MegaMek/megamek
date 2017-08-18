@@ -892,9 +892,24 @@ public class EntityListFile {
                     output.write(CommonConstants.NL);
                 }
 
-                //TODO large craft docking collars, bays. 
-                // Their contents?
-
+                //large craft bays and doors. 
+                // Bays and Doors
+                if ((a instanceof Dropship) || (a instanceof Jumpship)) {
+                for (Bay nextbay : a.getTransportBays()) {
+                	output.write(indentStr(indentLvl+1) + "<TransportBay" + " index=\"" + nextbay.getBayNumber() + "\"" + ">");
+                    output.write(CommonConstants.NL);
+                    if (nextbay.getbayDamaged() == 0) {
+                    output.write(indentStr(indentLvl+1) + "<BayDamaged=\"false\"/>\n");
+                    }
+                    if (nextbay.getbayDamaged() == 1) {
+                    output.write(indentStr(indentLvl+1) + "<BayDamaged=\"true\"/>\n");
+                    }
+                    output.write(indentStr(indentLvl+1) + "<Doors=\"" + nextbay.getCurrentDoors() + "\"/>");
+                    output.write(CommonConstants.NL);
+                    output.write(indentStr(indentLvl+1) + "</TransportBay" + " index=\"" + nextbay.getBayNumber() + "\"" + ">");
+                    output.write(CommonConstants.NL);
+                }
+                }
 
                 // jumpship, warship and space station stuff
                 if (a instanceof Jumpship) {
@@ -1206,22 +1221,7 @@ public class EntityListFile {
         if (d.isKFBoomDamaged()) {
             critVal = critVal.concat(" kfboom=\"none\"");
         }
-        // Bays
-        for (Bay nextbay : d.getTransportBays()) {
-        	if (nextbay.getbayDamaged() == 0)
-            critVal = critVal.concat(" " + nextbay.getType() + "bay" + "" + nextbay.getBayNumber() + "" + "=\"none\"");
-        	else if (nextbay.getbayDamaged() == 1)
-                critVal = critVal.concat(" " + nextbay.getType() + "bay" + "" + nextbay.getBayNumber() + "" + "=\"hit\"");
-        }
-        
-        // Bay Doors	
-        	for (Bay nextbay : d.getTransportBays()) {
-            if (nextbay.getCurrentDoors() < nextbay.getDoors()) {
-        	critVal = critVal.concat(" " + nextbay.getType() + "bay#" + nextbay.getBayNumber() + "doors=\"");
-            critVal = critVal.concat(Integer.toString(nextbay.getCurrentDoors()) + "\"");
-            }
-        } 	
-
+    
         if (!critVal.equals("")) {
             // then add beginning and end
             retVal = retVal.concat(critVal);
@@ -1233,6 +1233,7 @@ public class EntityListFile {
         return retVal;
 
     }
+  
 
 
     // Tank crits?

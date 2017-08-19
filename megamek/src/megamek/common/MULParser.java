@@ -127,6 +127,8 @@ public class MULParser {
     private static final String TYPE = "type";
     private static final String SHOTS = "shots";
     private static final String IS_HIT = "isHit";
+    private static final String TRUE = "true";
+    private static final String FALSE = "false";
     private static final String MUNITION = "munition";
     private static final String DIRECTION = "direction";
     private static final String INTEGRITY = "integrity";
@@ -143,20 +145,10 @@ public class MULParser {
     private static final String GEAR = "gear";
     private static final String DOCKING_COLLAR = "dockingcollar";
     private static final String KFBOOM = "kfboom";
-    private static final String ASF_BAY = "FighterBay";
-    private static final String BATTLE_ARMOR_BAY = "BattleArmorBay";
+    private static final String BAYDOORS = "BayDoors";
+    private static final String DOORS = "doors";
     private static final String BAY = "TransportBay";
-    private static final String CARGO_BAY = "CargoBay";
-    private static final String HEAVY_VEHICLE_BAY = "HeavyVehicleBay";
-    private static final String INFANTRY_BAY = "InfantryBay";
-    private static final String LIGHT_VEHICLE_BAY = "LightVehicleBay";
-    private static final String LIQUID_CARGO_BAY = "LiquidCargoBay";
-    private static final String LIVESTOCK_CARGO_BAY = "LivestockCargoBay";
-    private static final String MECH_BAY = "MechBay";
-    private static final String PROTOMECH_BAY = "ProtomechBay";
-    private static final String REFRIGERATED_CARGO_BAY = "ReeferBay";
-    private static final String SMALL_CRAFT_BAY = "SmallCraftBay";
-    private static final String SUPERHEAVY_VEHICLE_BAY = "SuperheavyVehicleBay";
+    private static final String BAYDAMAGED = "BayDamaged";
     private static final String MDAMAGE = "damage";
     private static final String DAMAGED = "damaged";
     private static final String MPENALTY = "penalty";
@@ -1851,17 +1843,10 @@ public class MULParser {
         if (kfboom.length() > 0) {
             d.setDamageKFBoom(true);
         }
-        int b = 1;
-        for (String bay = dropCritTag.getAttribute(BAY);;) {
-        	if (bay.startsWith("smallcraftbay:")) {
-                String numbers = bay.substring(14);
-                String temp[] = numbers.split(":");
-                b = Integer.parseInt(temp[1]);
-                int doors = Integer.parseInt(temp[2]);
-        	}
-        }
 
     }
+
+    
     /**
      * Parse the cargo bay and door tag(s) for the given <code>Entity</code>.
      * 
@@ -1888,17 +1873,19 @@ public class MULParser {
     		if (bay < 0) {
     			warning.append("Found invalid index value for bay: ").append(index).append(".\n");
     			return;
-    	    } else if (bay >= entity.getTransportBays().size()) {
+    	    } else if (bay > entity.getTransportBays().size()) {
     	    	warning.append("The entity, ")
     	    	.append(entity.getShortName())
     	    	.append(" does not have a bay at index: ")
     	    	.append(bay).append(".\n");
     	    	return;
-    	        }
+    	      }
     		
-    	    } //End check for required fields.
+
+    		
+    	   } //End check for required fields.
     	
- 
+		Bay currentbay = entity.getBayById(bay);
     
         // Handle children for each bay.
         NodeList nl = bayTag.getChildNodes();
@@ -1912,10 +1899,18 @@ public class MULParser {
         	if (nodeType == Node.ELEMENT_NODE) {
         		Element currEle = (Element) currNode;
         		String nodeName = currNode.getNodeName();
-        	}
-        }
-    
-    
+        		if (nodeName.equalsIgnoreCase(BAYDAMAGED)) {
+        			String bayhit = currEle.getAttribute(DAMAGED);
+        			if (bayhit.equals("true")) {
+        				currentbay.setbayDamaged();
+        			}
+        		} else if (nodeName.equalsIgnoreCase(BAYDOORS)) {
+        			String currentdoors = currEle.getAttribute(DOORS);
+        			int doors = Integer.parseInt(currentdoors);
+        			    currentbay.setCurrentDoors(doors);
+        		  }
+             }
+         }
     } // End parseTransportBay
     
     /**

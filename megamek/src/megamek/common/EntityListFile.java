@@ -899,14 +899,14 @@ public class EntityListFile {
                 	output.write(indentStr(indentLvl+1) + "<TransportBay" + " index=\"" + nextbay.getBayNumber() + "\"" + ">");
                     output.write(CommonConstants.NL);
                     if (nextbay.getbayDamaged() == 0) {
-                    output.write(indentStr(indentLvl+1) + "<BayDamaged=\"false\"/>\n");
+                    output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"false\"/>\n");
                     }
                     if (nextbay.getbayDamaged() == 1) {
-                    output.write(indentStr(indentLvl+1) + "<BayDamaged=\"true\"/>\n");
+                    output.write(indentStr(indentLvl+1) + "<BayDamaged damaged=\"true\"/>\n");
                     }
-                    output.write(indentStr(indentLvl+1) + "<Doors=\"" + nextbay.getCurrentDoors() + "\"/>");
+                    output.write(indentStr(indentLvl+1) + "<BayDoors doors=\"" + nextbay.getCurrentDoors() + "\"/>");
                     output.write(CommonConstants.NL);
-                    output.write(indentStr(indentLvl+1) + "</TransportBay" + " index=\"" + nextbay.getBayNumber() + "\"" + ">");
+                    output.write(indentStr(indentLvl+1) + "</TransportBay>");
                     output.write(CommonConstants.NL);
                 }
                 }

@@ -37,6 +37,7 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.logging.LogLevel;
 import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
+import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
@@ -187,8 +188,34 @@ public class PathEnumerator {
 
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();
-            // Aero movement
-            if (mover.isAero()) {
+            
+            // Aero movement on atmospheric ground maps
+            if(mover.isAero() &&
+               mover.isOnAtmosphericGroundMap() &&
+               mover.isAirborne() &&
+               !((IAero) mover).isSpheroid())
+            {
+                AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
+                MovePath startPath = new MovePath(getGame(), mover);
+                apf.run(startPath);
+                paths.addAll(apf.getAllComputedPathsUncategorized());
+                
+                // Remove illegal paths.
+                Filter<MovePath> filter = new Filter<MovePath>() {
+                    @Override
+                    public boolean shouldStay(MovePath movePath) {
+                        return isLegalAeroMove(movePath);
+                    }
+                };
+                paths = new ArrayList<>(filter.doFilter(paths));
+                
+                this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, "Filtered paths");
+                for(MovePath path : paths)
+                {
+                    this.owner.log(this.getClass(), METHOD_NAME, LogLevel.WARNING, path.toString());
+                }
+            }
+            else if (mover.isAero()) {
                 IAero aeroMover = (IAero)mover;
                 // Get the shortest paths possible.
                 ShortestPathFinder spf;
@@ -370,9 +397,9 @@ public class PathEnumerator {
     
     private void LogAeroMoveLegalityEvaluation(String whyNot, MovePath path)
     {
-    	this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.WARNING, 
+    	/*this.getOwner().log(this.getClass(), "isLegalAeroMove", LogLevel.WARNING, 
     			path.length() + ":" + path.getFliesOverEnemy() + ":" + 
-    			path.toString() + ":" + whyNot);
+    			path.toString() + ":" + whyNot);*/
     }
 
     protected Map<Integer, List<MovePath>> getUnitPaths() {

@@ -1643,13 +1643,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     public boolean isOnAtmosphericGroundMap()
     {
-    	return (getEntity().getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_VACUUM ||
-    			getEntity().getGame().getPlanetaryConditions().getAtmosphere() != PlanetaryConditions.ATMO_TRACE) &&
-    			
-    			(getEntity().getGame().getBoard().onGround() || 
-    			// doesn't make sense in english, but "atmospheric" map actually
-    			// covers maps that are within a planet's gravity well
-    			getEntity().getGame().getBoard().inAtmosphere()); 
+    	return getEntity().isOnAtmosphericGroundMap(); 
     }
     
     /**

@@ -400,17 +400,12 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          * @param movePath The parent movePath
          * @see AbstractPathFinder.AdjacencyMap
          */
-        public void AddUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp)
+        protected void AddUpAndDown(Collection<MovePath> result, final MoveStep last, final Entity entity, final MovePath mp)
         {
             Coords pos;
             int elevation;
-            if (last != null) {
-                pos = last.getPosition();
-                elevation = last.getElevation();
-            } else {
-                pos = entity.getPosition();
-                elevation = entity.getElevation();
-            }                
+            pos = last != null ? last.getPosition() : entity.getPosition();
+            elevation = last != null ? last.getElevation() : entity.getElevation();          
              
             if (entity.canGoUp(elevation, pos)) {
                 result.add(mp.clone().addStep(MoveStepType.UP));
@@ -418,7 +413,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             if (entity.canGoDown(elevation, pos)) {
                 result.add(mp.clone().addStep(MoveStepType.DOWN));
             }            
-
         }
     }
 
@@ -489,37 +483,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 && (mp.getFinalVelocity() > 0)) {
                 result.add(mp.clone().addStep(MoveStepType.RETURN));
             }
-                               
-            // Manuevers are temporarily disabled, as Princess is a little bit cavalier with them at the moment
-            /*if (!mp.contains(MoveStepType.MANEUVER)) {
-                // side slips
-                result.add(mp.clone()
-                             .addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT)
-                             .addStep(MoveStepType.LATERAL_LEFT, true, true));
-                result.add(mp.clone()
-                             .addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT)
-                             .addStep(MoveStepType.LATERAL_RIGHT, true, true));
-                boolean has_moved = mp.getHexesMoved() == 0;
-                if (!has_moved) {
-                    //result.add(mp.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
-                    //result.add(mp.clone().addManeuver(MoveStepType.YAW, true, true);
-                    // immelmen
-                    if (mp.getFinalVelocity() > 2) {
-                        result.add(mp.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
-                    }
-                    // split s
-                    if (mp.getFinalAltitude() > 2) {
-                        result.add(mp.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
-                    }
-                    // loop
-                    if (mp.getFinalVelocity() > 4) {
-                        result.add(mp.clone().addManeuver(ManeuverType.MAN_LOOP)
-                                     .addStep(MoveStepType.LOOP, true, true));
-                    }
-                }
-            }*/
-            
-            AddUpAndDown(result, lastStep, mp.getEntity(), mp);
             
             return result;
         }

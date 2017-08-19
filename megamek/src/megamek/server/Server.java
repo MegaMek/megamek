@@ -891,7 +891,7 @@ public class Server implements Runnable {
             System.out.println("ERROR: Client/Server Version Mismatch -- Client: "+version+" Server: "+MegaMek.VERSION);
             needs = true;
         }
-        if (!clientChecksum.equals(serverChecksum)) {
+        if (clientChecksum != null && serverChecksum != null && !clientChecksum.equals(serverChecksum)) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append(System.lineSeparator());
             }

@@ -1870,7 +1870,7 @@ public class MULParser {
     /**
      * Parse the cargo bay and door tag(s) for the given <code>Entity</code>.
      * 
-     * @param dropCritTag
+     * @param 
      * @param entity
      */
     private void parseTransportBay (Element bayTag, Entity entity) {

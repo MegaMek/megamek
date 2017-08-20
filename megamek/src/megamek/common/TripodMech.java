@@ -363,15 +363,6 @@ public class TripodMech extends Mech {
     }
 
     @Override
-    public TechAdvancement getConstructionTechAdvancement() {
-        if (isSuperHeavy()) {
-            return TA_TRIPOD_SUPERHEAVY;
-        } else {
-            return TA_TRIPOD;
-        }
-    }
-
-    @Override
     protected double getArmActuatorCost() {
         double cost = 0;
         int numOfUpperArmActuators = 0;

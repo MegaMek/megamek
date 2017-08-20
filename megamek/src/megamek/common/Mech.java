@@ -3017,79 +3017,67 @@ public abstract class Mech extends Entity {
     }
   
     //From IO pg 50
-    protected static final TechAdvancement TA_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(2439, 2443, 2470, 2520).setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH).setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
-    protected static final TechAdvancement TA_STANDARD_MECH = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH).setTechRating(RATING_D)
-            .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
-            .setStaticTechLevel(SimpleTechLevel.INTRO);
-    
-    protected static final TechAdvancement TA_PRIMITIVE_INDUSTRIAL = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(2300, 2350, 2425, 2520).setPrototypeFactions(F_TA)
-            .setProductionFactions(F_TH).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
-    protected static final TechAdvancement TA_INDUSTRIAL = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH).setTechRating(RATING_C)
-            .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
-            .setStaticTechLevel(SimpleTechLevel.STANDARD);
-    
-    protected static final TechAdvancement TA_TRIPOD = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(F_FW)
-            .setProductionFactions(F_FW).setTechRating(RATING_D)
-            .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
-    protected static final TechAdvancement TA_SUPERHEAVY = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(3077, 3078).setPrototypeFactions(F_WB)
-            .setProductionFactions(F_WB).setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
-    protected static final TechAdvancement TA_TRIPOD_SUPERHEAVY = new TechAdvancement(TECH_BASE_IS)
-            .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(F_TH)
-            .setProductionFactions(F_TH).setTechRating(RATING_D)
-            .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-    
-    protected static final TechAdvancement TA_ULTRALIGHT = new TechAdvancement(TECH_BASE_ALL)
-            .setAdvancement(2500, 2519, 3075).setPrototypeFactions(F_TH, F_FW)
-            .setProductionFactions(F_FW).setApproximate(true, false, true)
-            .setTechRating(RATING_D)
-            .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
-            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
- 
-
-    
-    @Override
-    public TechAdvancement getConstructionTechAdvancement() {
-        if (isSuperHeavy()) {
-            return TA_SUPERHEAVY;
-        } else if (getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
-            return TA_ULTRALIGHT;
-        } else if (isPrimitive()) {
-            if (isIndustrial()) {
-                return TA_PRIMITIVE_INDUSTRIAL;
+    public static TechAdvancement getTechAdvancement(long etype, boolean primitive, boolean industrial, int weightClass) {
+        if ((etype & ETYPE_TRIPOD_MECH) != 0) {
+            if (weightClass == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
+                return new TechAdvancement(TECH_BASE_IS)
+                        .setISAdvancement(2585, 2602).setISApproximate(true).setPrototypeFactions(F_FW)
+                        .setProductionFactions(F_FW).setTechRating(RATING_D)
+                        .setAvailability(RATING_F, RATING_F, RATING_F, RATING_E)
+                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             } else {
-                return TA_PRIMITIVE;
+                return new TechAdvancement(TECH_BASE_IS)
+                        .setISAdvancement(2930, 2940).setISApproximate(true).setPrototypeFactions(F_TH)
+                        .setProductionFactions(F_TH).setTechRating(RATING_D)
+                        .setAvailability(RATING_X, RATING_F, RATING_X, RATING_F)
+                        .setStaticTechLevel(SimpleTechLevel.ADVANCED);
             }
+        } else if (primitive && industrial) {
+            return new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(2300, 2350, 2425, 2520).setPrototypeFactions(F_TA)
+                    .setProductionFactions(F_TH).setTechRating(RATING_D)
+                    .setAvailability(RATING_D, RATING_X, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        } else if (primitive) {
+            return new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(2439, 2443, 2470, 2520).setPrototypeFactions(F_TH)
+                    .setProductionFactions(F_TH).setTechRating(RATING_C)
+                    .setAvailability(RATING_C, RATING_X, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        } else if (industrial) {
+            return new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
+                    .setProductionFactions(F_TH).setTechRating(RATING_C)
+                    .setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+                    .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        } else if (EntityWeightClass.WEIGHT_ULTRA_LIGHT == weightClass) {
+            return new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(2500, 2519, 3075).setPrototypeFactions(F_TH, F_FW)
+                    .setProductionFactions(F_FW).setApproximate(true, false, true)
+                    .setTechRating(RATING_D)
+                    .setAvailability(RATING_E, RATING_F, RATING_E, RATING_E)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        } else if (EntityWeightClass.WEIGHT_SUPER_HEAVY == weightClass) {
+            return new TechAdvancement(TECH_BASE_IS)
+                    .setISAdvancement(3077, 3078).setPrototypeFactions(F_WB)
+                    .setProductionFactions(F_WB).setTechRating(RATING_D)
+                    .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
+                    .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         } else {
-            if (isIndustrial()) {
-                return TA_INDUSTRIAL;
-            } else {
-                return TA_STANDARD_MECH;
-            }
+            return new TechAdvancement(TECH_BASE_ALL)
+                    .setAdvancement(2460, 2470, 2500).setPrototypeFactions(F_TH)
+                    .setProductionFactions(F_TH).setTechRating(RATING_D)
+                    .setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+                    .setStaticTechLevel(SimpleTechLevel.INTRO);
         }
     }
     
-    protected final static TechAdvancement[] GYRO_TA =  {
+    @Override
+    public TechAdvancement getConstructionTechAdvancement() {
+        return getTechAdvancement(getEntityType(), isPrimitive(), isIndustrial(), getWeightClass());
+    }
+    
+    private final static TechAdvancement[] GYRO_TA =  {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2300, 2350, 2505)
                 .setApproximate(true, false, false).setPrototypeFactions(F_TA)
                 .setProductionFactions(F_TH).setTechRating(RATING_D)
@@ -3121,7 +3109,7 @@ public abstract class Mech extends Entity {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy
     };
     
-    protected final static TechAdvancement[] COCKPIT_TA = {
+    private final static TechAdvancement[] COCKPIT_TA = {
             new TechAdvancement(TECH_BASE_ALL).setAdvancement(2468, 2470, 2487)
                 .setApproximate(true, false, false).setTechRating(RATING_D)
                 .setPrototypeFactions(F_TH).setProductionFactions(F_TH)
@@ -3202,32 +3190,51 @@ public abstract class Mech extends Entity {
                 .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy industrial            
     };
 
+    public static TechAdvancement getCockpitTechAdvancement(int cockpitType) {
+        if (cockpitType >= 0 && cockpitType < COCKPIT_TA.length) {
+            return new TechAdvancement(COCKPIT_TA[cockpitType]);
+        }
+        return null;
+    }
+    
     public TechAdvancement getCockpitTechAdvancement() {
-        if (getCockpitType() > 0 && getCockpitType() < COCKPIT_TA.length) {
-            return COCKPIT_TA[getCockpitType()];
+        return getCockpitTechAdvancement(getCockpitType());
+    }
+    
+    public static TechAdvancement getGyroTechAdvancement(int gyroType) {
+        if ((gyroType >= 0) && (gyroType < GYRO_TA.length)) {
+            return new TechAdvancement(GYRO_TA[gyroType]);
         }
         return null;
     }
 
     public TechAdvancement getGyroTechAdvancement() {
-        if (getGyroType() > 0 && getGyroType() < GYRO_TA.length) {
-            return GYRO_TA[getGyroType()];
-        }
-        return null;
+        return getGyroTechAdvancement(getGyroType());
+    }
+    
+    public static TechAdvancement getFullHeadEjectAdvancement() {
+        return new TechAdvancement(TECH_BASE_ALL).setISAdvancement(3020, 3023, 3100)
+                .setClanAdvancement(DATE_NONE, 3052, 3100).setPrototypeFactions(F_LC)
+                .setProductionFactions(F_LC, F_CWF).setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     }
 
     @Override
     protected void addSystemTechAdvancement() {
         super.addSystemTechAdvancement();
-        // battlemechs with non-fusion engines have level of mixed tech regardless of tech base 
+        // battlemechs with non-fusion engines are experimental
         if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
-            compositeTechLevel.addComponent(TA_MIXED_TECH);
+            compositeTechLevel.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
         }
         if (getGyroTechAdvancement() != null) {
             compositeTechLevel.addComponent(getGyroTechAdvancement());
         }
         if (getCockpitTechAdvancement() != null) {
             compositeTechLevel.addComponent(getCockpitTechAdvancement());
+        }
+        if (hasFullHeadEject()) {
+            compositeTechLevel.addComponent(getFullHeadEjectAdvancement());
         }
         //FIXME: Clan interface cockpit has higher tech rating
         //if (getCockpitType() == COCKPIT_INTERFACE && isClan()) {

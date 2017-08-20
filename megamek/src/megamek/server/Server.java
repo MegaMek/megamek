@@ -7263,7 +7263,7 @@ public class Server implements Runnable {
                 // Non-omni QuadVees converting to vehicle mode dump any riding BA in the
                 // starting hex if they fail to make an anti-mech check.
                 // http://bg.battletech.com/forums/index.php?topic=55263.msg1271423#msg1271423
-                if (entity instanceof QuadVee && !((QuadVee)entity).isInVehicleMode()
+                if (entity instanceof QuadVee && entity.getConversionMode() == QuadVee.CONV_MODE_MECH
                         && !entity.isOmni()) {
                     for (Entity rider : entity.getExternalUnits()) {
                         addReport(checkDropBAFromConverting(entity, rider, curPos, curFacing,

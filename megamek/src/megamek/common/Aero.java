@@ -29,7 +29,7 @@ import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.lasers.EnergyWeapon;
 import megamek.common.weapons.ppc.PPCWeapon;
 
@@ -2401,7 +2401,7 @@ public class Aero extends Entity {
         boolean hasBombs = false;
         double bombBV = 0;
         for (int bombType = 0; bombType < BombType.B_NUM; bombType++ ){
-            BombType bomb = BombType.createBombByType(bombType, isClan());
+            BombType bomb = BombType.createBombByType(bombType);
             bombBV += bomb.bv * bombChoices[bombType];
             if (bombChoices[bombType] > 0) {
                 hasBombs = true;

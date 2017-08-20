@@ -727,11 +727,11 @@ public class EntityListFile {
             output.write(String.valueOf(entity.getStartingPos(false)));
             output.write("\" neverDeployed=\"");
             output.write(String.valueOf(entity.wasNeverDeployed()));
-            if (entity instanceof Aero){
+            if (entity.isAero()) {
                 output.write("\" velocity=\"");
-                output.write(((Aero)entity).getCurrentVelocity() + "");
+                output.write(((IAero)entity).getCurrentVelocity() + "");
                 output.write("\" altitude=\"");
-                output.write(((Aero)entity).getAltitude() + "");
+                output.write(entity.getAltitude() + "");
             }
             if (!entity.getExternalIdAsString().equals("-1")) {
                 output.write("\" externalId=\"");
@@ -836,24 +836,10 @@ public class EntityListFile {
                 // crits
                 output.write(EntityListFile.getTankCritString(tentity));
             }
-
-            // add a bunch of stuff for aeros
-            if (entity instanceof Aero) {
-                Aero a = (Aero) entity;
-                Dropship d = (Dropship) entity;
-
-                // SI
-                output.write(indentStr(indentLvl+1) + "<structural integrity=\"");
-                output.write(String.valueOf(a.getSI()));
-                output.write("\"/>");
-                output.write(CommonConstants.NL);
-
-                // heat sinks
-                output.write(indentStr(indentLvl+1) + "<heat sinks=\"");
-                output.write(String.valueOf(a.getHeatSinks()));
-                output.write("\"/>");
-                output.write(CommonConstants.NL);
-
+           
+            // Aero stuff that also applies to LAMs
+            if (entity instanceof IAero) {
+                IAero a = (IAero)entity;
                 // fuel
                 output.write(indentStr(indentLvl+1) + "<fuel left=\"");
                 output.write(String.valueOf(a.getFuel()));
@@ -891,6 +877,22 @@ public class EntityListFile {
                     output.write(indentStr(indentLvl+1) + "</bombs>");
                     output.write(CommonConstants.NL);
                 }
+
+            // aero stuff that does not apply to LAMs
+            if (entity instanceof Aero) {
+                Aero a = (Aero) entity;
+
+                // SI
+                output.write(indentStr(indentLvl+1) + "<structural integrity=\"");
+                output.write(String.valueOf(a.getSI()));
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
+
+                // heat sinks
+                output.write(indentStr(indentLvl+1) + "<heat sinks=\"");
+                output.write(String.valueOf(a.getHeatSinks()));
+                output.write("\"/>");
+                output.write(CommonConstants.NL);
 
                 //large craft bays and doors. 
                 // Bays and Doors

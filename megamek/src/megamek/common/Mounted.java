@@ -31,9 +31,9 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
-import megamek.common.weapons.AmmoBayWeapon;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.common.weapons.gaussrifles.GaussWeapon;
 
 /**
@@ -1010,6 +1010,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             AmmoType atype = (AmmoType) type;
             int rackSize = atype.getRackSize();
             int damagePerShot = atype.getDamagePerShot();
+            // Anti-ship EW bomb does no damage but deals a 5-point explosion if LAM bomb bay is hit
+            if ((type instanceof BombType)
+                    && (((BombType)type).getBombType() == BombType.B_ASEW)) {
+                damagePerShot = 5;
+            }
 
             long mType = atype.getMunitionType();
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per

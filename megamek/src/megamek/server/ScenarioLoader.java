@@ -36,7 +36,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.client.ui.swing.util.ImageFileFactory;
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
@@ -49,11 +48,13 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.Game;
 import megamek.common.HitData;
+import megamek.common.IAero;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.IStartingPositions;
+import megamek.common.ITechnology;
 import megamek.common.Infantry;
 import megamek.common.MapSettings;
 import megamek.common.Mech;
@@ -151,7 +152,7 @@ public class ScenarioLoader {
             return null;
         }
         if(!newAmmoType.isLegal(year,
-            TechConstants.getSimpleLevel(game),
+            ITechnology.getGameTechLevel(game),
             e.isClan(), e.isMixedTech())) {
             System.out.println(String.format("Ammo %s (TL %d) is not legal for year %d (TL %d)", //$NON-NLS-1$
                 newAmmoType.getName(), newAmmoType.getTechLevel(year), year,
@@ -524,10 +525,10 @@ public class ScenarioLoader {
                         break;
                     case PARAM_ALTITUDE:
                         int altitude = Math.min(Integer.parseInt(p.getString(key)), 10);
-                        if(e instanceof Aero) {
+                        if(e.isAero()) {
                             e.setAltitude(altitude);
                             if(altitude <= 0) {
-                                ((Aero) e).land();
+                                ((IAero) e).land();
                             }
                         } else {
                             System.out.println(String.format("Altitude setting for a non-aerospace unit %s; ignoring", //$NON-NLS-1$

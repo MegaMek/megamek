@@ -23,6 +23,7 @@ import megamek.common.Mounted;
 import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.bayweapons.AmmoBayWeapon;
 import megamek.server.Server;
 
 /**

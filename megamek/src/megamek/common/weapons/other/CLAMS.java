@@ -58,8 +58,6 @@ public class CLAMS extends AmmoWeapon {
 		rulesRefs = "204,TM";
 		techAdvancement.setTechBase(TECH_BASE_CLAN).setTechRating(RATING_F)
 		        .setAvailability(RATING_X, RATING_F, RATING_D, RATING_C)
-		        .setISAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
-		        .setISApproximate(true, false, false, false, false)
 		        .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)
 		        .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSA)
 		        .setProductionFactions(F_CSA);

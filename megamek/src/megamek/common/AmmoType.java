@@ -444,6 +444,30 @@ public class AmmoType extends EquipmentType {
     }
 
     /**
+     * Aerospace units cannot use specialty munitions except Artemis and LBX cluster (but not standard).
+     * ATM ER and HE rounds are considered standard munitions. AR10 missiles are designed for aerospace
+     * units and all munition types are available.
+     * 
+     * @return true if the munition can be used by aerospace units
+     */
+    public boolean canAeroUse() {
+        switch (ammoType) {
+        case T_AC_LBX:
+            return munitionType == M_CLUSTER;
+        case T_ATM:
+            return (munitionType == M_STANDARD)
+                    || (munitionType == M_HIGH_EXPLOSIVE)
+                    || (munitionType == M_EXTENDED_RANGE);
+        case T_AR10:
+            return true;
+        default:
+            return (munitionType == M_STANDARD)
+                    || (munitionType == M_ARTEMIS_CAPABLE)
+                    || (munitionType == M_ARTEMIS_V_CAPABLE);
+        }
+    }
+
+    /**
      * Returns the first usable ammo type for the given oneshot launcher
      *
      * @param mounted
@@ -5395,7 +5419,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 1000;
         ammo.rulesRefs = "228,TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setIntroLevel(false)
+    	.setIntroLevel(true)
     	.setUnofficial(false)
         .setTechRating(RATING_B)
         .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
@@ -5456,7 +5480,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 500;
         ammo.rulesRefs = "228,TM";
         ammo.techAdvancement.setTechBase(TECH_BASE_ALL)
-    	.setIntroLevel(false)
+    	.setIntroLevel(true)
     	.setUnofficial(false)
         .setTechRating(RATING_B)
         .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)
@@ -11963,7 +11987,7 @@ public class AmmoType extends EquipmentType {
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false,false, false)
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS,F_LC);
@@ -11993,7 +12017,7 @@ public class AmmoType extends EquipmentType {
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false,false, false)
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS,F_LC);
@@ -12023,7 +12047,7 @@ public class AmmoType extends EquipmentType {
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false,false, false)
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS,F_LC);
@@ -12053,7 +12077,7 @@ public class AmmoType extends EquipmentType {
                 .setUnofficial(false)
                 .setTechRating(RATING_E)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_E)
-                .setISAdvancement(DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)
+                .setISAdvancement(3052, 3072, 3081, DATE_NONE, DATE_NONE)
                 .setISApproximate(false, false, false,false, false)
                 .setPrototypeFactions(F_FS)
                 .setProductionFactions(F_FS,F_LC);
@@ -15076,7 +15100,7 @@ public class AmmoType extends EquipmentType {
 
         return false;
     }
-
+    
     private void addToEnd(AmmoType base, String modifier) {
         Enumeration<String> n = base.getNames();
         while (n.hasMoreElements()) {

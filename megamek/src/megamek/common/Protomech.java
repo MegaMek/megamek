@@ -120,6 +120,8 @@ public class Protomech extends Entity {
     private int edpChargeTurns = 0;
 
     private boolean isQuad = false;
+    private boolean isGlider = false;
+    private int wingHits = 0;
 
     // for MHQ
     private boolean engineHit = false;
@@ -241,7 +243,6 @@ public class Protomech extends Entity {
                 return (0 < numHit);
             case LOC_MAINGUN:
             case LOC_NMISS:
-                return false;
             case LOC_LEG:
                 return (3 == numHit);
         }
@@ -254,7 +255,6 @@ public class Protomech extends Entity {
             return 0;
         }
         int wmp = getOriginalWalkMP();
-        int legCrits = getCritsHit(LOC_LEG);
         int j;
         if (null != game) {
             int weatherMod = game.getPlanetaryConditions()
@@ -272,18 +272,38 @@ public class Protomech extends Entity {
         if (j < wmp) {
             wmp = j;
         }
-        switch (legCrits) {
-            case 0:
-                break;
-            case 1:
-                wmp--;
-                break;
-            case 2:
-                wmp = wmp / 2;
-                break;
-            case 3:
-                wmp = 0;
-                break;
+        if (isGlider()) {
+            // Torso crits reduce glider mp as jump
+            int torsoCrits = getCritsHit(LOC_TORSO);
+            switch (torsoCrits) {
+                case 0:
+                    break;
+                case 1:
+                    if (wmp > 0) {
+                        wmp--;
+                    }
+                    break;
+                case 2:
+                    wmp /= 2;
+                    break;
+            }
+            // Near misses damage the wings/flight systems, which reduce MP by one per hit.
+            wmp = Math.max(0, wmp - wingHits);
+        } else {
+            int legCrits = getCritsHit(LOC_LEG);
+            switch (legCrits) {
+                case 0:
+                    break;
+                case 1:
+                    wmp--;
+                    break;
+                case 2:
+                    wmp = wmp / 2;
+                    break;
+                case 3:
+                    wmp = 0;
+                    break;
+            }
         }
         return wmp;
     }
@@ -315,7 +335,7 @@ public class Protomech extends Entity {
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         return roll;
     }
-
+    
     /**
      * Returns the number of total critical slots in a location
      */
@@ -339,29 +359,33 @@ public class Protomech extends Entity {
             .setClanAdvancement(3055, 3059, 3060).setClanApproximate(true, false, false)
             .setPrototypeFactions(F_CSJ).setProductionFactions(F_CSJ)
             .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD);
     private static final TechAdvancement TA_QUAD = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCC)
             .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     private static final TechAdvancement TA_ULTRA = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3075, 3083, 3100).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CLAN).setProductionFactions(F_CCY)
             .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D);
-    /*
+            .setAvailability(RATING_X, RATING_X, RATING_D, RATING_D)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     private static final TechAdvancement TA_GLIDER = new TechAdvancement(TECH_BASE_CLAN)
             .setClanAdvancement(3075, 3084, 3100).setClanApproximate(false, true, false)
             .setPrototypeFactions(F_CLAN).setProductionFactions(F_CSR)
             .setTechRating(RATING_F)
-            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E);
-            */
+            .setAvailability(RATING_X, RATING_X, RATING_E, RATING_E)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
     @Override
     protected TechAdvancement getConstructionTechAdvancement() {
         if (isQuad) {
-            return TA_QUAD; 
+            return TA_QUAD;
+        } else if (isGlider) {
+            return TA_GLIDER;
         } else if (getWeightClass() == EntityWeightClass.WEIGHT_SUPER_HEAVY) {
             return TA_ULTRA;
         } else {
@@ -476,8 +500,7 @@ public class Protomech extends Entity {
      * importnat... For cost and validation purposes.
      */
     @Override
-    public int getHeatCapacity() {
-
+    public int getHeatCapacity(boolean radicalHeatSinks) {
         return 999;
     }
 
@@ -495,7 +518,9 @@ public class Protomech extends Entity {
             case MOVE_NONE:
                 return "None";
             case MOVE_WALK:
+            case MOVE_VTOL_WALK:
                 return "Walked";
+            case MOVE_VTOL_RUN:
             case MOVE_RUN:
                 return "Ran";
             case MOVE_JUMP:
@@ -514,8 +539,10 @@ public class Protomech extends Entity {
             case MOVE_NONE:
                 return "N";
             case MOVE_WALK:
+            case MOVE_VTOL_WALK:
                 return "W";
             case MOVE_RUN:
+            case MOVE_VTOL_RUN:
                 return "R";
             case MOVE_JUMP:
                 return "J";
@@ -1255,6 +1282,10 @@ public class Protomech extends Entity {
 
         // adjust for target movement modifier
         double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game).getValue();
+        // Gliders get +1 for being airborne.
+        if (isGlider) {
+            tmmRan++;
+        }
         
         final int jumpMP = getJumpMP(false);
         final int tmmJumped = (jumpMP > 0) ? Compute.
@@ -1887,6 +1918,16 @@ public class Protomech extends Entity {
     }
 
     @Override
+    public int getMaxElevationDown(int currElevation) {
+        // Gliders have a maximum elevation of 12 over the surface terrain.
+        if ((currElevation > 0)
+                && (getMovementMode() == EntityMovementMode.WIGE)) {
+            return 12;
+        }
+        return super.getMaxElevationDown(currElevation);
+    }
+
+    @Override
     public int getArmor(int loc, boolean rear) {
         if (loc == LOC_NMISS) {
             return IArmorState.ARMOR_NA;
@@ -1971,7 +2012,11 @@ public class Protomech extends Entity {
         double retVal = 0;
 
         // Add the cockpit, a constant cost.
-        retVal += 500000;
+        if (weight >= 10) {
+            retVal += 800000;
+        } else {
+            retVal += 500000;
+        }
 
         // Add life support, a constant cost.
         retVal += 75000;
@@ -1983,7 +2028,13 @@ public class Protomech extends Entity {
         retVal += 2000 * weight;
 
         // Internal Structure cost is based on tonnage.
-        retVal += 400 * weight;
+        if (isGlider) {
+            retVal += 600 * weight;
+        } else if (isQuad) {
+            retVal += 500 * weight;
+        } else {
+            retVal += 400 * weight;
+        }
 
         // Arm actuators are based on tonnage.
         // Their cost is listed separately?
@@ -2159,6 +2210,26 @@ public class Protomech extends Entity {
                 "ProtoMechs can't skid");
     }
 
+    public PilotingRollData checkGliderLanding() {
+        if (!isGlider) {
+            return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
+                    "Not a glider protomech.");
+        }
+        if (getCritsHit(LOC_LEG) > 2) {
+            return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
+                    "Landing with destroyed legs.");
+        }
+        if (!getCrew().isActive()) {
+            return new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
+                    "Landing incapacitated pilot.");
+        }
+        if (getRunMP() < 4) {
+            return new PilotingRollData(getId(), 8,
+                    "Forced landing with insufficient thrust.");
+        }
+        return new PilotingRollData(getId(), 4, "Attempting to land");
+    }
+
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat,
             boolean ignoremodulararmor) {
@@ -2219,6 +2290,14 @@ public class Protomech extends Entity {
         }
         return 0;
     }
+    
+    public int getWingHits() {
+        return wingHits;
+    }
+    
+    public void setWingHits(int hits) {
+        wingHits = hits;
+    }
 
     public boolean isEDPCharged() {
         return hasWorkingMisc(MiscType.F_ELECTRIC_DISCHARGE_ARMOR)
@@ -2245,6 +2324,14 @@ public class Protomech extends Entity {
 
     public void setIsQuad(boolean isQuad) {
         this.isQuad = isQuad;
+    }
+    
+    public boolean isGlider() {
+        return isGlider;
+    }
+    
+    public void setIsGlider(boolean isGlider) {
+        this.isGlider = isGlider;
     }
 
     @Override

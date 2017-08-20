@@ -4360,11 +4360,11 @@ public class Aero extends Entity {
        	if (next.getCurrentDoors() < next.getDoors()) {
             if (!first) {
                 toReturn += ", ";
-                }
+            }
             toReturn += next.getType() + " Bay #" + next.getBayNumber() + " Doors (" + (next.getDoors() - next.getCurrentDoors()) + ")";
             first = false;
-            }
-       }
+        }
+        }
         return toReturn;
     }
 

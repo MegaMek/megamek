@@ -99,8 +99,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        int attackerElevation = attHex.getLevel();
-        int attackerHeight = ae.relHeight() + attackerElevation;
+        int attackerElevation = ae.getElevation() + attHex.getLevel();
+        int attackerHeight = ae.relHeight();
         if (ae.isHullDown()) {
             attackerHeight--;
         }
@@ -154,7 +154,7 @@ public class PunchAttackAction extends PhysicalAttackAction {
 
         // check elevation
         if (target.isAirborneVTOLorWIGE()) {
-            if (((targetElevation - attackerElevation) > 2) || ((targetElevation - attackerElevation) < 1)) {
+            if (((targetElevation - attackerElevation) > 2) || ((targetElevation - attackerElevation) < ae.height())) {
                 return "Target elevation not in range";
             }
         } else if ((attackerHeight < targetElevation) || (attackerHeight > targetHeight)) {
@@ -273,7 +273,12 @@ public class PunchAttackAction extends PhysicalAttackAction {
             toHit.addModifier(1, "Using Claws");
         }
         
-        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST)
+        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_LA)
+                && hasHandActuator) {
+            toHit.addModifier(-1, "Battlefist");
+        }
+        
+        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST_RA)
                 && hasHandActuator) {
             toHit.addModifier(-1, "Battlefist");
         }

@@ -51,7 +51,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        rulesRefs = "255,TO";
+        rulesRefs = "255,TM";
         techAdvancement.setTechBase(TechAdvancement.TECH_BASE_ALL);
         techAdvancement.setClanAdvancement(2860, 2868, 3050);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, 3050);

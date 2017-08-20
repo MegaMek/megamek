@@ -38,6 +38,7 @@ public class StopSwarmAttack extends InfantryAttack {
         this.name = "Stop Swarm Attack";
         this.setInternalName(Infantry.STOP_SWARM);
         techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(2456, 2460, 2500)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD)
             .setApproximate(true, false, false).setTechBase(RATING_D)
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D);

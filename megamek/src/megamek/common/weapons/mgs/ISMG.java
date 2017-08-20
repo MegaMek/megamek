@@ -53,7 +53,7 @@ public class ISMG extends MGWeapon {
         this.atClass = CLASS_POINT_DEFENSE;
         rulesRefs = "228,TM";
         techAdvancement.setTechBase(TECH_BASE_ALL)
-        	.setIntroLevel(false)
+        	.setIntroLevel(true)
         	.setUnofficial(false)
             .setTechRating(RATING_B)
             .setAvailability(RATING_A, RATING_A, RATING_B, RATING_A)

@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import megamek.common.weapons.ArtilleryBayWeapon;
-import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.bayweapons.BayWeapon;
 import megamek.common.weapons.missiles.MissileWeapon;
 
 /**

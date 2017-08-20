@@ -46,7 +46,6 @@ import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
-import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
 import megamek.common.Building;
@@ -56,8 +55,10 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.HexTarget;
+import megamek.common.IAero;
 import megamek.common.IAimingModes;
 import megamek.common.IBoard;
+import megamek.common.IBomber;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
@@ -74,6 +75,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -761,15 +763,21 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
             } // End ce()-not-on-board
 
-            int lastTarget = ce().getLastTarget();
-            if (ce() instanceof Mech) {
-                int grapple = ((Mech) ce()).getGrappled();
-                if (grapple != Entity.NONE) {
-                    lastTarget = grapple;
+            if (ce().isMakingVTOLGroundAttack()) {
+                this.updateVTOLGroundTarget();
+            } else {
+                // Need to clear attacks again in case previous en was making VTOL ground attack
+                clearAttacks();
+                int lastTarget = ce().getLastTarget();
+                if (ce() instanceof Mech) {
+                    int grapple = ((Mech) ce()).getGrappled();
+                    if (grapple != Entity.NONE) {
+                        lastTarget = grapple;
+                    }
                 }
+                Entity t = clientgui.getClient().getGame().getEntity(lastTarget);
+                target(t);
             }
-            Entity t = clientgui.getClient().getGame().getEntity(lastTarget);
-            target(t);
 
             if (!ce().isOffBoard()) {
                 clientgui.getBoardView().highlight(ce().getPosition());
@@ -1433,7 +1441,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
     private int[] getBombPayload(boolean isSpace, int limit) {
         int[] payload = new int[BombType.B_NUM];
-        if (!(ce() instanceof Aero)) {
+        if (!ce().isBomber()) {
             return payload;
         }
         int[] loadout = ce().getBombLoadout();
@@ -1745,7 +1753,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (ce() == null) {
             return;
         }
-
+        
         // remove attacks, set weapons available again
         Enumeration<AbstractEntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
@@ -1803,6 +1811,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.displayEntity(ce());
         clientgui.mechD.showPanel("weapons"); //$NON-NLS-1$
         clientgui.mechD.wPan.selectFirstWeapon();
+        if (ce().isMakingVTOLGroundAttack()) {
+            this.updateVTOLGroundTarget();
+        }
         updateTarget();
     }
 
@@ -1978,6 +1989,25 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     /**
+     * A VTOL or LAM in airmech mode making a bombing or strafing attack already has the target set
+     * during the movement phase. 
+     */
+    void updateVTOLGroundTarget() {
+        clientgui.bv.clearStrafingCoords();
+        target(null);
+        isStrafing = false;
+        strafingCoords.clear();
+        if (ce().isBomber() && ((IBomber)ce()).isVTOLBombing()) {
+            target(((IBomber)ce()).getVTOLBombTarget());
+            clientgui.bv.addStrafingCoords(target.getPosition());
+        } else if ((ce() instanceof VTOL) && ((VTOL)ce()).getStrafingCoords().size() > 0) {
+            strafingCoords.addAll(((VTOL)ce()).getStrafingCoords());
+            strafingCoords.forEach(c -> clientgui.bv.addStrafingCoords(c));
+            isStrafing = true;
+        }
+    }
+    
+    /**
      * Torso twist in the proper direction.
      */
     void torsoTwist(Coords twistTarget) {
@@ -2094,7 +2124,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 if (shiftheld) {
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
-                } else if (targ != null) {
+                } else if (targ != null && !ce().isMakingVTOLGroundAttack()) {
                     if ((targ instanceof Entity) 
                             && Compute.isGroundToAir(ce(), targ)) {
                         Entity entTarg = (Entity)targ;
@@ -2289,9 +2319,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void updateStrafe() {
-        if (ce() instanceof Aero) {
-            Aero a = (Aero) ce();
-            setStrafeEnabled(a.getAltitude() <= 3 && !a.isSpheroid());
+        if (ce().isAero()) {
+            setStrafeEnabled(ce().getAltitude() <= 3 && !((IAero)ce()).isSpheroid());
         } else {
             setStrafeEnabled(false);
         }
@@ -2378,7 +2407,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && Compute.isGroundToAir(ce(), target)) {
             ((Entity)target).setPlayerPickedPassThrough(cen, null);
         }
-        target(null);
+        if (!ce().isMakingVTOLGroundAttack()) {
+            target(null);
+        }
         clearAttacks();        
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
@@ -2576,10 +2607,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     
     private boolean validStrafingCoord(Coords newCoord) {
         // Only Aeros can strafe...
-        if (ce() == null || !(ce() instanceof Aero)) {
+        if (ce() == null || !ce().isAero()) {
             return false;
         }
-        Aero a = (Aero)ce();
         
         // Can't update strafe hexes after weapons are fired, otherwise we'd
         // have to have a way to update the attacks vector
@@ -2588,7 +2618,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
         
         // Can only strafe hexes that were flown over
-        if (!a.passedThrough(newCoord)) {
+        if (!ce().passedThrough(newCoord)) {
             return false;
         }
         

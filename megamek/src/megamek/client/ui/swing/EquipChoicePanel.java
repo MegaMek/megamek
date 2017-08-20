@@ -48,7 +48,9 @@ import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.IBomber;
 import megamek.common.IGame;
+import megamek.common.ITechnology;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
@@ -57,7 +59,6 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
-import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
@@ -277,9 +278,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     GBC.eop().anchor(GridBagConstraints.CENTER));
         }
 
-        if ((entity instanceof Aero)
-                && !((entity instanceof SmallCraft) ||
-                        (entity instanceof Jumpship))) {
+        if (entity.isBomber()) {
             setupBombs();
             add(panBombs, GBC.eop().anchor(GridBagConstraints.CENTER));
         }
@@ -421,10 +420,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         panBombs.setLayout(gbl);
 
         int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES, client
-                .getGame().getOptions().stringOption("techlevel")); //$NON-NLS-1$
+                .getGame().getOptions().stringOption(OptionsConstants.ALLOWED_TECHLEVEL)); //$NON-NLS-1$
         boolean allowNukes = client.getGame().getOptions()
                 .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES); //$NON-NLS-1$
-        m_bombs = new BombChoicePanel((Aero) entity, allowNukes,
+        m_bombs = new BombChoicePanel((IBomber) entity, allowNukes,
                 techlvl >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
     }
@@ -614,7 +613,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         IGame game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
         int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
-        boolean isClan = entity.isClan();
 
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
@@ -640,7 +638,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             for (AmmoType atCheck : vAllTypes) {
-                int legalLevel = TechConstants.getGameTechLevel(game, isClan);
+                ITechnology.SimpleTechLevel legalLevel = ITechnology.getGameTechLevel(game);
                 boolean bTechMatch = atCheck.isLegal(gameYear, legalLevel, entity.isClan(),
                         entity.isMixedTech());
 
@@ -1358,7 +1356,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             public void initialize() {
                 inf = (Infantry) entity;
                 
-                int gameTechLevel = TechConstants.getSimpleLevel(client.getGame());
+                ITechnology.SimpleTechLevel gameTechLevel = ITechnology.getGameTechLevel(client.getGame());
                 int year = client.getGame().getOptions().intOption("year");
                 for (Enumeration<EquipmentType> e = MiscType.getAllTypes(); e.hasMoreElements();) {
                 	final EquipmentType et = e.nextElement();

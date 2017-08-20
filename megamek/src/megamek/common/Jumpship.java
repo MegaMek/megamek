@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import megamek.common.options.OptionsConstants;
-import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.bayweapons.BayWeapon;
 
 /**
  * @author Jay Lawson
@@ -90,12 +90,14 @@ public class Jumpship extends Aero {
     protected static final TechAdvancement TA_JUMPSHIP = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE, 2300).setISApproximate(false, true)
             .setProductionFactions(F_TA).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F);
+            .setAvailability(RATING_D, RATING_E, RATING_D, RATING_F)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     protected static final TechAdvancement TA_JUMPSHIP_PRIMITIVE = new TechAdvancement(TECH_BASE_IS)
             .setISAdvancement(2100, 2200, DATE_NONE, 2500)
             .setISApproximate(true, true, false, false)
             .setProductionFactions(F_TA).setTechRating(RATING_D)
-            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X);
+            .setAvailability(RATING_D, RATING_X, RATING_X, RATING_X)
+            .setStaticTechLevel(SimpleTechLevel.ADVANCED);
     
     @Override
     protected TechAdvancement getConstructionTechAdvancement() {
@@ -1401,6 +1403,11 @@ public class Jumpship extends Aero {
         }
     }
     
+    @Override
+    public boolean isFighter() {
+        return false;
+    }
+
     @Override
     public long getEntityType() {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;

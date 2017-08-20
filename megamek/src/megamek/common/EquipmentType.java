@@ -250,7 +250,7 @@ public class EquipmentType implements ITechnology {
     @Deprecated
     public Map<Integer, Integer> getTechLevels() {
         Map<Integer,Integer> techLevel = new HashMap<>();
-        if (techAdvancement.isUnofficial()) {
+        if (isUnofficial()) {
             if (techAdvancement.getTechBase() == TECH_BASE_CLAN) {
                 techLevel.put(techAdvancement.getIntroductionDate(true), TechConstants.T_CLAN_UNOFFICIAL);
             } else {
@@ -277,7 +277,7 @@ public class EquipmentType implements ITechnology {
             techLevel.put(techAdvancement.getCommonDate(true), TechConstants.T_CLAN_TW);
         } else if (techAdvancement.getCommonDate(false) > 0) {
             techLevel.put(techAdvancement.getCommonDate(false),
-                    techAdvancement.isIntroLevel()?TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX);
+                    isIntroLevel()? TechConstants.T_INTRO_BOXSET : TechConstants.T_IS_TW_NON_BOX);
         }
         return techLevel;
     }
@@ -288,6 +288,14 @@ public class EquipmentType implements ITechnology {
     
     public int getTechLevel(int date, boolean clan) {
         return techAdvancement.getTechLevel(date, clan);
+    }
+    
+    public SimpleTechLevel getStaticTechLevel() {
+        if (null != techAdvancement.getStaticTechLevel()) {
+            return techAdvancement.getStaticTechLevel();
+        } else {
+            return techAdvancement.guessStaticTechLevel(rulesRefs);
+        }
     }
 
     public double getTonnage(Entity entity) {
@@ -610,6 +618,12 @@ public class EquipmentType implements ITechnology {
             AmmoType.initializeTypes();
             MiscType.initializeTypes();
             BombType.initializeTypes();
+            for (EquipmentType et : allTypes) {
+                if (et.getTechAdvancement().getStaticTechLevel() == null) {
+                    et.getTechAdvancement().setStaticTechLevel(et.getTechAdvancement()
+                            .guessStaticTechLevel(et.getRulesRefs()));
+                }
+            }
         }
     }
 
@@ -744,13 +758,16 @@ public class EquipmentType implements ITechnology {
 
     protected final static TechAdvancement TA_STANDARD_ARMOR = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2460, 2470, 2470).setApproximate(true, false, false).setIntroLevel(true)
-            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B);
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_B)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
     protected final static TechAdvancement TA_STANDARD_STRUCTURE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(2430, 2439, 2505).setApproximate(true, false, false).setIntroLevel(true)
-            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C);
+            .setTechRating(RATING_D).setAvailability(RATING_C, RATING_C, RATING_C, RATING_C)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
     protected final static TechAdvancement TA_NONE = new TechAdvancement(TECH_BASE_ALL)
             .setAdvancement(DATE_NONE).setTechRating(RATING_A)
-            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A);
+            .setAvailability(RATING_A, RATING_A, RATING_A, RATING_A)
+            .setStaticTechLevel(SimpleTechLevel.INTRO);
 
     public static TechAdvancement getArmorTechAdvancement(int at, boolean clan) {
         if (at == T_ARMOR_STANDARD) {

@@ -1,0 +1,126 @@
+3067-3081 Capellan Confederation Conventional Infantry
+Foot Platoon (Rifle),90
+Foot Platoon (MG),24
+Foot Platoon (Flamer),18
+Foot Platoon (SRM),24
+Foot Platoon (Laser),24
+Foot Platoon (Heavy MG),15
+Foot Platoon (Autocannon),12
+Foot Platoon (Grenade Launcher),12
+Foot Platoon (Recoilless),15
+CCAF Foot Platoon (Gyroslug Carbine),12
+Foot Platoon (Mortar),6
+Foot Platoon (LRM),9
+Foot Platoon (Pulse Laser),9
+Foot Platoon (Flechette),3
+Foot Platoon (Heavy Laser),12
+Foot Platoon (PPC),9
+CCAF Foot Platoon (Plasma),6
+Motorized Platoon (Rifle),90
+Motorized Platoon (MG),24
+Motorized Platoon (Flamer),18
+Motorized Platoon (SRM),24
+Motorized Platoon (Laser),24
+Motorized Platoon (Heavy MG),15
+Motorized Platoon (Autocannon),12
+Motorized Platoon (Grenade Launcher),12
+Motorized Platoon (Recoilless),15
+CCAF Motorized Platoon (Gyroslug Carbine),12
+Motorized Platoon (Mortar),6
+Motorized Platoon (LRM),9
+Motorized Platoon (Pulse Laser),9
+Motorized Platoon (Flechette),3
+Motorized Platoon (Heavy Laser),12
+Motorized Platoon (PPC),9
+CCAF Motorized Platoon (Plasma),6
+Mechanized Tracked Platoon (Rifle),15
+Mechanized Tracked Platoon (MG),4
+Mechanized Tracked Platoon (Flamer),3
+Mechanized Tracked Platoon (SRM),4
+Mechanized Tracked Platoon (Laser),4
+Mechanized Tracked Platoon (Heavy MG),3
+Mechanized Tracked Platoon (Autocannon),2
+Mechanized Tracked Platoon (Grenade Launcher),2
+Mechanized Tracked Platoon (Recoilless),2
+CCAF Mechanized Tracked Platoon (Gyroslug Carbine),2
+Mechanized Tracked Platoon (Mortar),2
+Mechanized Tracked Platoon (LRM),2
+Mechanized Tracked Platoon (Pulse Laser),1
+Mechanized Tracked Platoon (Heavy Laser),2
+Mechanized Tracked Platoon (PPC),1
+CCAF Mechanized Tracked Platoon (Plasma),1
+Mechanized Wheeled Platoon (Rifle),30
+Mechanized Wheeled Platoon (MG),8
+Mechanized Wheeled Platoon (Flamer),6
+Mechanized Wheeled Platoon (SRM),8
+Mechanized Wheeled Platoon (Laser),8
+Mechanized Wheeled Platoon (Heavy MG),5
+Mechanized Wheeled Platoon (Autocannon),4
+Mechanized Wheeled Platoon (Grenade Launcher),4
+Mechanized Wheeled Platoon (Recoilless),5
+CCAF Mechanized Wheeled Platoon (Gyroslug Carbine),4
+Mechanized Wheeled Platoon (Mortar),3
+Mechanized Wheeled Platoon (LRM),3
+Mechanized Wheeled Platoon (Pulse Laser),3
+Mechanized Wheeled Platoon (Heavy Laser),4
+Mechanized Wheeled Platoon (PPC),3
+CCAF Mechanized Wheeled Platoon (Plasma),2
+Jump Platoon (Rifle),30
+Jump Platoon (MG),8
+Jump Platoon (Flamer),6
+Jump Platoon (SRM),8
+Jump Platoon (Laser),8
+Jump Platoon (Heavy MG),5
+Jump Platoon (Autocannon),4
+Jump Platoon (Grenade Launcher),4
+Jump Platoon (Recoilless),5
+CCAF Jump Platoon (Gyroslug Carbine),4
+Jump Platoon (Mortar),3
+Jump Platoon (LRM),3
+Jump Platoon (Pulse Laser),3
+Jump Platoon (Heavy Laser),4
+Jump Platoon (PPC),3
+CCAF Jump Platoon (Plasma),2
+Mechanized Hover Platoon (Rifle),15
+Mechanized Hover Platoon (MG),4
+Mechanized Hover Platoon (Flamer),3
+Mechanized Hover Platoon (SRM),4
+Mechanized Hover Platoon (Laser),4
+Mechanized Hover Platoon (Heavy MG),3
+Mechanized Hover Platoon (Autocannon),2
+Mechanized Hover Platoon (Grenade Launcher),2
+Mechanized Hover Platoon (Recoilless),2
+CCAF Mechanized Hover Platoon (Gyroslug Carbine),2
+Mechanized Hover Platoon (Mortar),2
+Mechanized Hover Platoon (LRM),2
+Mechanized Hover Platoon (Pulse Laser),1
+Mechanized Hover Platoon (Heavy Laser),2
+Mechanized Hover Platoon (PPC),1
+CCAF Mechanized Hover Platoon (Plasma),1
+Field Gunners (AC2),2
+Field Gunners (AC5),3
+Field Gunners (AC10),3
+Field Gunners (AC20),2
+Field Gunners (UAC2),2
+Field Gunners (UAC5),3
+Field Gunners (UAC10),3
+Field Gunners (UAC20),2
+Field Gunners (LBX2),4
+Field Gunners (LBX5),4
+Field Gunners (LBX10),6
+Field Gunners (LBX20),5
+Field Gunners (RAC2),1
+Field Gunners (RAC5),2
+Field Gunners (Light Gauss),5
+Field Gunners (Gauss),3
+Hover Assault Infantry Johnston Industries Rapid Response Force,6
+Heavy Support Infantry Irian Technologies SWAT Team,4
+Jump Support Infantry Star Corps Jump Assault Infantry,6
+Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry,6
+Heavy Infantry Heavy Urban Response Platoon,4
+Pirate Lady Death's 'Pacification' Squads,2
+SRM Foot Infantry Taurian Citizens' Militia,3
+Sniper House Dai Da Chi Snipers,1
+Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard (Magistracy Cavaliers),3
+Commando Battlefield Infiltration Units,2
+Field Gun Infantry (Motorized Batteries),3

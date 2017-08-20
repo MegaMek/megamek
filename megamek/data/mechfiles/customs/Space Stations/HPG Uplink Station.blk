@@ -1,0 +1,122 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SpaceStation
+</UnitType>
+
+<Name>
+Orbital Communications Uplink
+</Name>
+
+<Model>
+</Model>
+
+<Tonnage>
+5000
+</Tonnage>
+
+<Armor>
+6
+6
+6
+6
+6
+6
+</Armor>
+
+<Nose Equipment>
+ISMobileHPG
+ISElectronicWarfareEquipment
+</Nose Equipment>
+
+<Front Left Side Equipment>
+CommsGear:15
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+CommsGear:15
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+CommsGear:15
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+CommsGear:15
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<heatsinks>
+65
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+200
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2790
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:1:1
+CargoBay:500:1
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+0
+</grav_deck>
+
+<escape_pod>
+0
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+12
+</crew>
+
+<passengers>
+</passengers>
+
+<History>
+Specialty unit from JHS:3070 campaign.
+</history>

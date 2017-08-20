@@ -1,0 +1,359 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Udaloy IIIa
+</Name>
+<Model>
+Destroyer
+</Model>
+<Tonnage>
+497000
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+115
+141
+141
+141
+141
+115
+</Armor>
+<Nose Equipment>
+NC3
+(B) NL45
+NL45
+(B) NL45
+NL45
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5 Ammo:600
+(B) ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5 Ammo:600
+(B) ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20 Ammo:120
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:160
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Nose Equipment>
+<Front Left Side Equipment>
+(B) NL45
+NL45
+Medium NPPC
+Medium NPPC
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5 Ammo:600
+(B) ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20 Ammo:120
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:160
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+(B) NL45
+NL45
+Medium NPPC
+Medium NPPC
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5 Ammo:600
+(B) ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20 Ammo:120
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:160
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+Medium NPPC
+Medium NPPC
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+Medium NPPC
+Medium NPPC
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+(B) NL45
+NL45
+Medium NPPC
+Medium NPPC
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5 Ammo:600
+(B) ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20 Ammo:120
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:160
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+(B) NL45
+NL45
+Medium NPPC
+Medium NPPC
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5 Ammo:600
+(B) ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20 Ammo:120
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:160
+</Aft Right Side Equipment>
+<Aft Equipment>
+(B) NL45
+NL45
+(B) NL45
+NL45
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5 Ammo:600
+(B) ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5
+ISHVAC5 Ammo:600
+(B) ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20
+ISThunderbolt20 Ammo:120
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:160
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Aft Equipment>
+<structural_integrity>
+75
+</structural_integrity>
+<heatsinks>
+2450
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+10000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3081
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+12
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:3:1
+CargoBay:431.5:1
+ASFBay:12:4
+CargoBay:2400:2
+</transporters>
+<docking_collar>
+2
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+64
+</escape_pod>
+<life_boat>
+24
+</life_boat>
+<crew>
+486
+</crew>
+<passengers>
+</passengers>
+<HPG>
+</HPG>
+<lithium-fusion>
+</lithium-fusion>

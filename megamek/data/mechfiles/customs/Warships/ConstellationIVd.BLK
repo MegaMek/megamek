@@ -1,0 +1,518 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Constellation Mk IVd
+</Name>
+<Model>
+Dreadnought
+</Model>
+<Tonnage>
+2500000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+1039
+1125
+1125
+1125
+1125
+1039
+</Armor>
+<Nose Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) KillerWhale
+KillerWhale Ammo:20
+(B) KillerWhale
+KillerWhale Ammo:20
+(B) KillerWhale
+KillerWhale Ammo:20
+(B) KillerWhale
+KillerWhale Ammo:20
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+ISNC3
+</Nose Equipment>
+<Front Left Side Equipment>
+(B) ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:480
+(B) ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:480
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser 
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+(B) ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:480
+(B) ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:480
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) NL55
+NL55
+NL55
+NL55
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+Kraken
+Kraken Ammo:25
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+(B) ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:480
+(B) ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:480
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser 
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+(B) ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:480
+(B) ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtendedLRM20 Ammo:480
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+MediumNGauss
+MediumNGauss Ammo:150
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+</Aft Right Side Equipment>
+<Aft Equipment>
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) ISLaserAntiMissileSystem
+ISLaserAntiMissileSystem
+(B) NL55
+NL55
+NL55
+NL55 
+(B) NL55
+NL55
+NL55
+NL55 
+</Aft Equipment>
+<structural_integrity>
+130
+</structural_integrity>
+<heatsinks>
+5400
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+25000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3120
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+12
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:36:6
+CargoBay:14400:1
+ASFBay:36:6
+CargoBay:14400:1
+SmallCraftBay:4:4
+CargoBay:2400:1
+SmallCraftBay:4:4
+CargoBay:2400:1
+CargoBay:38595:4
+</transporters>
+<docking_collar>
+4
+</docking_collar>
+<grav_deck>
+3
+</grav_deck>
+<escape_pod>
+162
+</escape_pod>
+<life_boat>
+80
+</life_boat>
+<crew>
+1460
+</crew>
+<passengers>
+35
+</passengers>
+<lithium-fusion>
+</lithium-fusion>
+<HPG>
+</HPG>
+<History>
+Placeholder
+</History>

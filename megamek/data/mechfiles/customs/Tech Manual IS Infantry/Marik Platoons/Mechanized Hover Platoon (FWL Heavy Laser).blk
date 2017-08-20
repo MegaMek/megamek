@@ -1,0 +1,46 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+FWL Mechanized Hover Platoon
+</Name>
+<Model>
+(Heavy Laser)
+</Model>
+<squad_size>
+5
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+Intek Laser Rifle
+</Primary>
+<Secondary>
+Infantry Support Laser
+</Secondary>
+<Secondn>
+2
+</Secondn>
+<InfantryArmor>
+2
+</InfantryArmor>
+<EncumberingArmor>
+</EncumberingArmor>
+<type>
+IS
+</type>
+<year>
+3035
+</year>
+<motion_type>
+Hover
+</motion_type>

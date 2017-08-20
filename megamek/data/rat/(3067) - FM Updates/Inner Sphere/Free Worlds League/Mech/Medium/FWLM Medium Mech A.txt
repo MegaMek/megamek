@@ -1,0 +1,12 @@
+FWLM Medium Mechs A 3067
+Apollo APL-1M,1
+Phoenix Hawk PXH-3M,2
+Shadow Hawk SHD-7M,3
+Wolverine WVR-7M,4
+Hermes II HER-5S,5
+Trebuchet TBT-7M,6
+Griffin GRF-5M,5
+Bloodhound B1-HND,4
+Wraith TR1,3
+Vulcan VT-5M,2
+Blackjack BJ2-O,1

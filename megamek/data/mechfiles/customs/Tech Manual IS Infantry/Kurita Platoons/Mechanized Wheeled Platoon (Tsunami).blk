@@ -1,0 +1,41 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+DC Mechanized Wheeled Platoon
+</Name>
+<Model>
+(Tsunami)
+</Model>
+<squad_size>
+6
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+Auto Rifle
+</Primary>
+<Secondary>
+Infantry Tsunami Heavy Gauss Rifle
+</Secondary>
+<Secondn>
+2
+</Secondn>
+<type>
+IS
+</type>
+<year>
+3056
+</year>
+<motion_type>
+Wheeled
+</motion_type>

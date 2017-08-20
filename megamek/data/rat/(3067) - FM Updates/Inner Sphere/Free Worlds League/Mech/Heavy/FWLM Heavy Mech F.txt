@@ -1,0 +1,12 @@
+FWLM Heavy Mechs F 3067
+Ostsol OTL-4D,1
+Warhammer WHM-6R,2
+Marauder MAD-3M,3
+Thunderbolt TDR-5S,4
+Archer ARC-2R,5
+Orion ON1-K,6
+Crusader CRD-3R,5
+Quickdraw QKD-4G,4
+Rifleman RFL-3N,3
+Grasshopper GHR-5H,2
+Archer ARC-4M,1

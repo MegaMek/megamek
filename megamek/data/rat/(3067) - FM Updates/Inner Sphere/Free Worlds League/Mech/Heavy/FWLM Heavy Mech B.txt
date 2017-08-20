@@ -1,0 +1,12 @@
+FWLM Heavy Mechs B 3067
+Yeoman YMN-6Y,1
+Quickdraw QKD-5M,2
+Rifleman RFL-7M,3
+Marauder MAD-9M,4
+Archer ARC-8M,5
+Thunderbolt TDR-9M,6
+Ostsol OTL-7M,5
+Guillotine GLT-5M,4
+Tempest TMP-3M,3
+Perseus P1,2
+Orion ON1-M,1

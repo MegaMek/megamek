@@ -1,0 +1,76 @@
+3067-3081 Federated Suns Conventional Infantry
+FS Motorized Platoon (Rifle),120
+FS Motorized Platoon (Heavy MG),68
+FS Motorized Platoon (Flamer),24
+FS Motorized Platoon (SRM),36
+FS Motorized Platoon (Laser),40
+FS Motorized Platoon (Heavy Laser),20
+FS Motorized Platoon (Assault),40
+FS Motorized Platoon (LRM),16
+FS Motorized Platoon (Gauss),24
+FS Motorized Platoon (Heavy Gauss),12
+FS Mechanized Tracked Platoon (Rifle),45
+FS Mechanized Tracked Platoon (Heavy MG),26
+FS Mechanized Tracked Platoon (Flamer),9
+FS Mechanized Tracked Platoon (SRM),13
+FS Mechanized Tracked Platoon (Laser),15
+FS Mechanized Tracked Platoon (Heavy Laser),8
+FS Mechanized Tracked Platoon (Assault),15
+FS Mechanized Tracked Platoon (LRM),6
+FS Mechanized Tracked Platoon (Gauss),9
+FS Mechanized Tracked Platoon (Heavy Gauss),4
+FS Mechanized Wheeled Platoon (Rifle),45
+FS Mechanized Wheeled Platoon (Heavy MG),26
+FS Mechanized Wheeled Platoon (Flamer),9
+FS Mechanized Wheeled Platoon (SRM),13
+FS Mechanized Wheeled Platoon (Laser),15
+FS Mechanized Wheeled Platoon (Heavy Laser),8
+FS Mechanized Wheeled Platoon (Assault),15
+FS Mechanized Wheeled Platoon (LRM),6
+FS Mechanized Wheeled Platoon (Gauss),9
+FS Mechanized Wheeled Platoon (Heavy Gauss),4
+FS Jump Platoon (Rifle),45
+FS Jump Platoon (Heavy MG),26
+FS Jump Platoon (Flamer),9
+FS Jump Platoon (SRM),13
+FS Jump Platoon (Laser),15
+FS Jump Platoon (Heavy Laser),8
+FS Jump Platoon (Assault),15
+FS Jump Platoon (LRM),6
+FS Jump Platoon (Gauss),9
+FS Jump Platoon (Heavy Gauss),4
+FS Mechanized Hover Platoon (Rifle),15
+FS Mechanized Hover Platoon (Heavy MG),9
+FS Mechanized Hover Platoon (Flamer),3
+FS Mechanized Hover Platoon (SRM),4
+FS Mechanized Hover Platoon (Laser),5
+FS Mechanized Hover Platoon (Heavy Laser),3
+FS Mechanized Hover Platoon (Assault),5
+FS Mechanized Hover Platoon (LRM),2
+FS Mechanized Hover Platoon (Gauss),3
+FS Mechanized Hover Platoon (Heavy Gauss),1
+Field Gunners (AC2),2
+Field Gunners (AC5),3
+Field Gunners (AC10),3
+Field Gunners (AC20),2
+Field Gunners (UAC2),4
+Field Gunners (UAC5),6
+Field Gunners (UAC10),6
+Field Gunners (UAC20),4
+Field Gunners (LBX2),4
+Field Gunners (LBX5),6
+Field Gunners (LBX10),6
+Field Gunners (LBX20),4
+Field Gunners (RAC2),2
+Field Gunners (RAC5),3
+Field Gunners (Light Gauss),3
+Field Gunners (Gauss),2
+Hover Assault Infantry Johnston Industries Rapid Response Force,6
+Heavy Support Infantry Irian Technologies SWAT Team,6
+Jump Support Infantry Star Corps Jump Assault Infantry,6
+Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry,6
+Heavy Infantry Heavy Urban Response Platoon,6
+Frogmen Blue Water Marine Response Teams (Frogmen),3
+Mountaineer 45th Cerulean Mountain Infantry (2nd Davion Guards),3
+Firefighter Twenty-fourth Hellfire Firefighting Battalion (84th Avalon LI) (17th Avalon Hussars),3
+SpecOps Paratrooper MI6 Extraction Team,1

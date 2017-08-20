@@ -1,0 +1,44 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+LCAF Mechanized Wheeled Platoon
+</Name>
+<Model>
+(SRM)
+</Model>
+<squad_size>
+6
+</squad_size>
+<squadn>
+4
+</squadn>
+<InfantryArmor>
+2
+</InfantryArmor>
+<Primary>
+InfantryTKAssaultRifle
+</Primary>
+<Secondary>
+Infantry Heavy SRM Launcher
+</Secondary>
+<secondn>
+2
+</secondn>
+<type>
+IS
+</type>
+<year>
+3061
+</year>
+<motion_type>
+Wheeled
+</motion_type>

@@ -1,0 +1,30 @@
+DCMS Battle Armor 3067
+Void Medium Battle Armor (Standard),1
+Kage Light Battle Armor [Laser],1
+Kage Light Battle Armor [Flamer],1
+Kanazuchi Assault Battle Armor [Battle Claw],3
+Kage Light Battle Armor (Space),1
+Kage Light Battle Armor [ECM],1
+Kage Light Battle Armor [TAG],1
+Kage Light Battle Armor (DEST),1
+Raiden Battle Armor (Original),4
+Raiden Battle Armor (Anti-Infantry),1
+Raiden Battle Armor [Laser],1
+Raiden Battle Armor [MRM],1
+Raiden Battle Armor [Tsunami],1
+Raiden Battle Armor [MG],1
+Raiden Battle Armor [Flamer],1
+Raiden Battle Armor (Anti-Infantry),1
+IS Standard Battle Armor [Laser],1
+IS Standard Battle Armor [SRM],1
+IS Standard Battle Armor [Flamer],1
+IS Standard Battle Armor [LRR],1
+IS Standard Battle Armor [MG],1
+Kage Light Battle Armor [Laser],1
+Kage Light Battle Armor [Flamer],1
+Kage Light Battle Armor [MG],1
+Kage Light Battle Armor (DEST),1
+Kanazuchi Assault Battle Armor [Battle Claw],3
+Kanazuchi Assault Battle Armor [Industrial Drill],1
+Kanazuchi Assault Battle Armor [Salvage Arm],1
+Void Medium Battle Armor (Standard),1

@@ -1,0 +1,46 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+FWL Mechanized Tracked Platoon
+</Name>
+<Model>
+(King David Lt Gauss)
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+Imperator AX-22 Assault Rifle
+</Primary>
+<Secondary>
+Infantry King David Light Gauss Rifle
+</Secondary>
+<secondn>
+2
+</secondn>
+<InfantryArmor>
+2
+</InfantryArmor>
+<encumberingarmor>
+</encumberingarmor>
+<type>
+IS
+</type>
+<year>
+3063
+</year>
+<motion_type>
+Tracked
+</motion_type>

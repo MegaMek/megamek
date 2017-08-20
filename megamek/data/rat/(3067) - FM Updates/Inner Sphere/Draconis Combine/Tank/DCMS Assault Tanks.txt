@@ -1,0 +1,17 @@
+DCMS Assault Vehicles 3067
+Alacorn Heavy Tank Mk VI,1
+Sturmfeur Heavy Tank (Standard),2
+Schrek PPC Carrier (Standard),4
+Partisan Air Defense Tank (Standard),1
+Partisan Air Defense Tank (Standard),1
+Partisan Air Defense Tank (Standard),1
+Partisan Air Defense Tank (Company Command),1
+Partisan Air Defense Tank (Lance Command),1
+Ontos Heavy Tank (3053 Upgrade),6
+Heavy LRM Carrier (Standard),5
+Schrek PPC Carrier (Standard),4
+Partisan Air Defense Tank (Standard),1
+Partisan Air Defense Tank (Company Command),1
+Partisan Air Defense Tank (Lance Command),1
+Behemoth Heavy Tank (Kurita),2
+Challenger MBT X,1

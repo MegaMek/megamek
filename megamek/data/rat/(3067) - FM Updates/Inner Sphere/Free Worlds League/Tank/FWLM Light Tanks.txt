@@ -1,0 +1,12 @@
+FWLM Light Vehicles 3067 
+Yellow Jacket Gunship (Standard),1
+Striker Light Tank (3053 Upgrade),2
+Mantis Light Attack VTOL (Standard),3
+Plainsman Medium Hovertank (Standard),4
+Main Gauche Light Support Tank (Standard),5
+Saracen Medium Hover Tank (Standard),6
+Hawk Moth Gunship (Standard),5
+Pegasus Scout Hover Tank (3058 Upgrade),4
+Galleon Light Tank GAL-102,3
+Saladin Assault Hover Tank (Standard),2
+Warrior Attack Helicopter H-8,1

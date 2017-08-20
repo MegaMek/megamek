@@ -1,0 +1,12 @@
+FWLM Light Mechs F 3067
+UrbanMech UM-R60,1
+Javelin JVN-10N,2
+Javelin JVN-10N,3
+Stinger STG-3R,4
+Wasp WSP-1A,5
+Locust LCT-1V,6
+Spider SDR-5V,5
+Spider SDR-5V,4
+Javelin JVN-10N,3
+Javelin JVN-10N,2
+Panther PNT-9R,1

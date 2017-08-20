@@ -1,0 +1,84 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Challenger MBT
+</Name>
+<Model>
+XII Mk II
+</Model>
+<year>
+3078
+</year>
+<type>
+IS Level 2
+</type>
+<motion_type>
+Tracked
+</motion_type>
+<cruiseMP>
+3
+</cruiseMP>
+<engine_type>
+2
+</engine_type>
+<armor_type>
+6
+</armor_type>
+<armor_tech>
+1
+</armor_tech>
+<armor>
+62
+52
+52
+42
+59
+</armor>
+<Body Equipment>
+ISGuardianECMSuite
+ISC3SlaveUnit
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+IS Streak SRM 4 Ammo
+ISCASE
+</Body Equipment>
+<Front Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Front Equipment>
+<Right Equipment>
+</Right Equipment>
+<Left Equipment>
+</Left Equipment>
+<Rear Equipment>
+</Rear Equipment>
+<Turret Equipment>
+ISGaussRifle
+ISRotaryAC2
+LRM 15
+ISArtemisIV
+ISStreakSRM4
+</Turret Equipment>
+<source>
+Jihad
+</source>
+<tonnage>
+90.0
+</tonnage>
+
+		

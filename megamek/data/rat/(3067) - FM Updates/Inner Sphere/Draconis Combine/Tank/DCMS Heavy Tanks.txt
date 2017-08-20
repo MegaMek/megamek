@@ -1,0 +1,15 @@
+DCMS Heavy Tanks 3067
+Zhukov Heavy Tank (Standard),1
+Patton Tank (Standard),2
+Po Heavy Tank (Standard),3
+Manticore Heavy Tank (3055 Upgrade),4
+Tokugawa Heavy Tank (Standard),2
+Tokugawa Heavy Tank (Streak),1
+Tokugawa Heavy Tank (MRM),1
+Tokugawa Heavy Tank (C3),1
+LRM Carrier (3055 Upgrade),6
+SRM Carrier (3054 Upgrade),5
+Bulldog Medium Tank (Standard),4
+Von Luckner Heavy Tank VNL-K75N,3
+Pilum Heavy Tank (Standard),2
+Pike Support Vehicle (Standard),1

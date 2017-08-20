@@ -2,19 +2,25 @@
 
 <unit version="0.43.4-git" >
 
-		<entity chassis="Badger Tracked Transport" model="G" type="Tracked" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="713ad9d5-a8f4-4c1e-aab7-c33ba9dc0cbb" camoCategory="-- No Camo --">
-			<pilot size="2" name="Terjo Vihko" nick="" gunnery="4" piloting="5" artillery="4" externalId="beeb0fbd-a2cd-47a6-b2d1-70d66d4b240e" ejected="false"/>
-      <motive damage="1" penalty="2"/>
-      <tcriticals sensors="1"/>
+		<entity chassis="Ajax Assault Tank" model="Prime" type="Tracked" commander="false" offboard="false" hidden="false" deployment="0" deploymentZone="-1" neverDeployed="true" externalId="55e05d8c-fdec-43c2-b0ed-6b51729212cf" c3UUID="1c43b538-abfa-4606-88b7-ded6ffc33c4e" camoCategory="-- No Camo --">
+			<pilot size="6" name="Tymon Silivan" nick="" gunnery="4" piloting="5" artillery="4" externalId="70d47552-355d-4422-896b-dcb16cd08624" ejected="false"/>
+      <motive damage="0" penalty="0"/>
+      <turretlock direction="0"/>
+      <tcriticals sensors="2" engine="hit"/>
       Tanks have special needs, so don't delete any ammo slots.
       The first slot in a location is at index="1".
 			<location index="0"> Body
-				<slot index="1" type="IS Ammo SRM-2" shots="50"/>
+				<slot index="1" type="IS Ultra AC/10 Ammo" shots="10"/>
+				<slot index="2" type="IS Ultra AC/10 Ammo" shots="10"/>
+				<slot index="3" type="IS Ultra AC/10 Ammo" shots="10"/>
+				<slot index="4" type="IS Gauss Ammo" shots="8"/>
+				<slot index="5" type="IS Gauss Ammo" shots="8"/>
+				<slot index="6" type="IS Streak SRM 4 Ammo" shots="25"/>
 			</location>
 			<location index="1"> Front
 				<stabilizer isHit="true"/>
 			</location>
-			<location index="3"> Left
+			<location index="2"> Right
 				<stabilizer isHit="true"/>
 			</location>
 		</entity>

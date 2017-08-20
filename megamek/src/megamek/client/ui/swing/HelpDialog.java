@@ -1,7 +1,7 @@
 package megamek.client.ui.swing;
 
 import megamek.common.logging.LogLevel;
-import megamek.common.logging.Logger;
+import megamek.common.logging.DefaultMmLogger;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -63,7 +63,7 @@ public class HelpDialog extends JDialog {
     }
 
     private void handleError(String methName, Throwable t, boolean quiet) {
-        new Logger().log(getClass(), methName, LogLevel.ERROR, t);
+        DefaultMmLogger.getInstance().log(getClass(), methName, LogLevel.ERROR, t);
 
         if (quiet) return;
         JOptionPane.showMessageDialog(this, t.getMessage(), "ERROR", JOptionPane.ERROR_MESSAGE);

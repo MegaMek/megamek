@@ -20,6 +20,7 @@ package megamek.common.weapons.bayweapons;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mounted;
+import megamek.common.TechAdvancement;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -40,6 +41,11 @@ public abstract class BayWeapon extends Weapon {
 
     public BayWeapon() {
         super();
+        // Tech progression for Dropship, using primitive for production and standard for common.
+        techAdvancement = new TechAdvancement(TECH_BASE_ALL)
+                .setAdvancement(DATE_ES, 2200, 2490).setProductionFactions(F_TA)
+                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_E, RATING_D, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     }
 
     @Override

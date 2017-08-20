@@ -353,27 +353,32 @@ public class BattleArmor extends Infantry {
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(2710, DATE_NONE, 3058, 2766, 2905)
                 .setClanAdvancement(2710, DATE_NONE, 3058).setPrototypeFactions(F_TH)
                 .setReintroductionFactions(F_CS).setTechRating(RATING_D)
-                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D), //ultralight
+                .setAvailability(RATING_F, RATING_X, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //ultralight
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3050, 3050)
                 .setClanAdvancement(2865, 2870, 2900).setPrototypeFactions(F_CWF)
                 .setProductionFactions(F_CIH, F_FS, F_LC).setClanApproximate(true, false, false)
                 .setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D), //light
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //light
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3052, 3052)
                 .setClanAdvancement(2840, 2868, 2875)
                 .setClanApproximate(true, false, false).setPrototypeFactions(F_CGS)
                 .setProductionFactions(F_CWF, F_FS, F_LC, F_CS).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_D), //medium
+                .setAvailability(RATING_X, RATING_D, RATING_D, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), //medium
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3050, 3058)
                 .setClanAdvancement(2867, 2875, 3058)
                 .setClanApproximate(true, false, false).setPrototypeFactions(F_CWF)
                 .setProductionFactions(F_CHH, F_FS, F_LC).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D), // heavy
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD), // heavy
             new TechAdvancement(TECH_BASE_ALL).setISAdvancement(DATE_NONE, 3058, 3060)
                 .setClanAdvancement(2870, 2877, 3060)
                 .setClanApproximate(true, false, false).setPrototypeFactions(F_CNC)
                 .setProductionFactions(F_CGB, F_DC).setTechRating(RATING_E)
-                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D) // assault
+                .setAvailability(RATING_X, RATING_F, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD) // assault
     };
     
     @Override

@@ -64,7 +64,8 @@ public class ConvFighter extends Aero {
 
     protected static final TechAdvancement TA_CONV_FIGHTER = new TechAdvancement(TECH_BASE_ALL)
                 .setAdvancement(DATE_NONE, 2470, 2490).setProductionFactions(F_TH)
-                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B);
+                .setTechRating(RATING_D).setAvailability(RATING_C, RATING_D, RATING_C, RATING_B)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
     
     @Override
     protected TechAdvancement getConstructionTechAdvancement() {

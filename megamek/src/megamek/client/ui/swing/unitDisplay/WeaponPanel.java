@@ -57,6 +57,7 @@ import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.SmallCraft;
@@ -1039,6 +1040,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         for (int i = 0; i < entity.getWeaponList().size(); i++) {
             Mounted mounted = entity.getWeaponList().get(i);
 
+            // Don't add bomb weapons for LAMs in mech mode except RL and TAG.
+            if ((entity instanceof LandAirMech)
+                    && (entity.getConversionMode() == LandAirMech.CONV_MODE_MECH)
+                    && mounted.getType().hasFlag(WeaponType.F_BOMB_WEAPON)
+                    && ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_RL_BOMB
+                    && !mounted.getType().hasFlag(WeaponType.F_TAG)) {
+                continue;
+            }
+            
             ((WeaponListModel) weaponList.getModel()).addWeapon(mounted);
             if (mounted.isUsedThisRound()
                 && (game.getPhase() == mounted.usedInPhase())

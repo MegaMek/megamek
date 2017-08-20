@@ -26,10 +26,11 @@ public class ISLAC2 extends LACWeapon {
 
     public ISLAC2() {
         super();
-        name = "LAC/2";
+        name = "Light AC/2";
         setInternalName("Light Auto Cannon/2");
         addLookupName("IS Light AutoCannon/2");
         addLookupName("ISLAC2");
+        addLookupName("LAC/2");
         addLookupName("IS Light Autocannon/2");
         heat = 1;
         damage = 2;

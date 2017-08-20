@@ -38,6 +38,7 @@ public class LegAttack extends InfantryAttack {
         this.name = "Leg Attack";
         this.setInternalName(Infantry.LEG_ATTACK);
         techAdvancement.setTechBase(TECH_BASE_ALL).setAdvancement(2456, 2460, 2500)
+            .setStaticTechLevel(SimpleTechLevel.STANDARD)
             .setApproximate(true, false, false).setTechBase(RATING_D)
             .setPrototypeFactions(F_LC).setProductionFactions(F_LC)
             .setAvailability(RATING_D, RATING_D, RATING_D, RATING_D);

@@ -29,6 +29,7 @@ import java.util.Iterator;
 
 import megamek.client.ui.Messages;
 import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.weapons.bayweapons.BayWeapon;
 
@@ -79,7 +80,7 @@ public class MechView {
         if (!entity.usesWeaponBays() || !showDetail) {
             sLoadout.append(getAmmo()).append("<br>"); //$NON-NLS-1$
         }
-        if (entity instanceof Aero) {
+        if (entity.isBomber()) {
             sLoadout.append(getBombs()).append("<br>"); //$NON-NLS-1$
         }
         sLoadout.append(getMisc()) // has to occur before basic is processed
@@ -136,8 +137,7 @@ public class MechView {
                 sHead.append(Messages.getString("MechView.MixedIS"));
             }
         } else {
-            sHead.append(TechConstants.getLevelDisplayableName(entity
-                    .getTechLevel()));
+            sHead.append(entity.getStaticTechLevel().toString());
         }
         sHead.append("<br>"); //$NON-NLS-1$
         
@@ -198,10 +198,8 @@ public class MechView {
         }
 
         //We may have altered the starting mode during configuration, so we save the current one here to restore it
-        EntityMovementMode originalMode = entity.getMovementMode();
-        if (entity instanceof QuadVee) {
-            entity.setMovementMode(EntityMovementMode.QUAD);
-        }
+        int originalMode = entity.getConversionMode();
+        entity.setConversionMode(0);
         if (!isGunEmplacement) {
             sBasic.append("<br>"); //$NON-NLS-1$
             sBasic.append(Messages.getString("MechView.Movement")) //$NON-NLS-1$
@@ -237,13 +235,26 @@ public class MechView {
             sBasic.append("<br><i>(").append(Messages.getString("MechView.DWPBurdened")).append(")</i>"); //$NON-NLS-1$
         }
         if (entity instanceof QuadVee) {
-            entity.setMovementMode(((QuadVee)entity).getMotiveType() == QuadVee.MOTIVE_WHEEL?
-                    EntityMovementMode.WHEELED : EntityMovementMode.TRACKED);
+            entity.setConversionMode(QuadVee.CONV_MODE_VEHICLE);
             sBasic.append("<br>").append(Messages.getString("MovementType."
                     + entity.getMovementModeAsString())).append(": ") //$NON-NLS-1$
                 .append(entity.getWalkMP()).append("/") //$NON-NLS-1$
                 .append(entity.getRunMPasString());
-            entity.setMovementMode(originalMode);
+            entity.setConversionMode(originalMode);
+        } else if (entity instanceof LandAirMech) {
+            if (((LandAirMech)entity).getLAMType() == LandAirMech.LAM_STANDARD) {
+                sBasic.append("<br>").append(Messages.getString("MovementType.AirMech")).append(": ") //$NON-NLS-1$
+                .append(((LandAirMech)entity).getAirMechWalkMP()).append("/")
+                .append(((LandAirMech)entity).getAirMechRunMP()).append("/")
+                .append(((LandAirMech)entity).getAirMechCruiseMP()).append("/")
+                .append(((LandAirMech)entity).getAirMechFlankMP());
+            }
+
+            entity.setConversionMode(LandAirMech.CONV_MODE_FIGHTER);
+            sBasic.append("<br>").append(Messages.getString("MovementType.Fighter")).append(": ") //$NON-NLS-1$            
+            .append(entity.getWalkMP()).append("/") //$NON-NLS-1$
+            .append(entity.getRunMP());
+            entity.setConversionMode(originalMode);
         }
         if (isVehicle) {
             sBasic.append(" (") //$NON-NLS-1$
@@ -868,8 +879,8 @@ public class MechView {
 
     private String getBombs() {
         StringBuffer sBombs = new StringBuffer();
-        Aero a = (Aero) entity;
-        int[] choices = a.getBombChoices();
+        IBomber b = (IBomber) entity;
+        int[] choices = b.getBombChoices();
         for (int type = 0; type < BombType.B_NUM; type++) {
             if (choices[type] > 0) {
                 sBombs.append(BombType.getBombName(type)).append(" (")

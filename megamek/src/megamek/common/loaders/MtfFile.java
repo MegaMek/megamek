@@ -489,6 +489,12 @@ public class MtfFile implements IMechLoader {
             for (int x = 0; x < rearLocationOrder.length; x++) {
                 mech.initializeRearArmor(Integer.parseInt(armorValues[x + locationOrder.length].substring(10)), rearLocationOrder[x]);
             }
+            
+            // Set capital fighter stats for LAMs
+            if (mech instanceof LandAirMech) {
+                ((LandAirMech)mech).autoSetCapArmor();
+                ((LandAirMech)mech).autoSetFatalThresh();
+            }
 
             // oog, crits.
             compactCriticals(mech);
@@ -688,7 +694,7 @@ public class MtfFile implements IMechLoader {
                             }
                         }
                         if (bFound && (m != null)) {
-                            m.setFoundCrits(m.getFoundCrits() + 1);
+                            m.setFoundCrits(m.getFoundCrits() + (mech.isSuperHeavy()? 1 : 2));
                             if (m.getFoundCrits() >= etype.getCriticals(mech)) {
                                 vSplitWeapons.removeElement(m);
                             }

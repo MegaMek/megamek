@@ -46,6 +46,8 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
+import megamek.common.logging.FakeLogger;
+import megamek.common.logging.MMLogger;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -172,7 +174,9 @@ public class FireControlTest {
 
     @Before
     public void setUp() {
+        MMLogger fakeLogger = new FakeLogger();
         mockPrincess = Mockito.mock(Princess.class);
+        Mockito.when(mockPrincess.getLogger()).thenReturn(fakeLogger);
 
         BehaviorSettings mockBehavior = Mockito.mock(BehaviorSettings.class);
         Mockito.when(mockPrincess.getBehaviorSettings()).thenReturn(mockBehavior);

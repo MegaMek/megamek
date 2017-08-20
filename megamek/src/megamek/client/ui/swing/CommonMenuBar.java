@@ -165,6 +165,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem moveThrust = null;
     private JMenuItem moveYaw = null;
     private JMenuItem moveEndOver= null;
+    private JMenuItem moveStrafe = null;
+    private JMenuItem moveBomb = null;
     private JMenuItem fireFire;
     private JMenuItem fireSkip;
     private JMenuItem fireNextTarg;
@@ -599,6 +601,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         moveThrust = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveThrust"), MovementDisplay.MoveCommand.MOVE_THRUST.getCmd()); //$NON-NLS-1$
         moveYaw = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveYaw"), MovementDisplay.MoveCommand.MOVE_YAW.getCmd()); //$NON-NLS-1$
         moveEndOver = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveEndOver"), MovementDisplay.MoveCommand.MOVE_END_OVER.getCmd()); //$NON-NLS-1$
+        moveStrafe = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveStrafe"), MovementDisplay.MoveCommand.MOVE_STRAFE.getCmd()); //$NON-NLS-1$
+        moveBomb = createMenuItem(aeromenu, Messages.getString("CommonMenuBar.moveBomb"), MovementDisplay.MoveCommand.MOVE_BOMB.getCmd()); //$NON-NLS-1$
 
         menu.addSeparator();
         menu.add(aeromenu);
@@ -1273,6 +1277,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     }
     public synchronized void setMoveEndOverEnabled(boolean enabled) {
         moveEndOver.setEnabled(enabled);
+    }
+    public synchronized void setMoveStrafeEnabled(boolean enabled) {
+        moveStrafe.setEnabled(enabled);
+    }
+    public synchronized void setMoveBombEnabled(boolean enabled) {
+        moveBomb.setEnabled(enabled);
     }
 
     // Manages deploy menu items...

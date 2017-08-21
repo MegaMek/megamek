@@ -71,8 +71,9 @@ public final class SmallCraftBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only ASFs or Small Craft
-        if ((unit.isAero()) && !(unit instanceof FighterSquadron) && !(unit instanceof Dropship) && !(unit instanceof Jumpship)) {
+        // Only ASFs, Fighter-mode LAMs or Small Craft
+        // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
+        if (((unit.isAero()) && !(unit instanceof FighterSquadron) && !(unit instanceof Dropship) && !(unit instanceof Jumpship)) || (unit instanceof LandAirMech && unit.getConversionMode() == LandAirMech.CONV_MODE_FIGHTER)) {
             result = true;
         }
 

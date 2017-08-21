@@ -64,6 +64,7 @@ import megamek.common.IAero;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
+import megamek.common.Jumpship;
 import megamek.common.LAMPilot;
 import megamek.common.LandAirMech;
 import megamek.common.Mech;
@@ -72,6 +73,7 @@ import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
 import megamek.common.Protomech;
 import megamek.common.QuadVee;
+import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.VTOL;
@@ -180,6 +182,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             Messages.getString("CustomMechDialog.labStartingMode"), SwingConstants.RIGHT); //$NON-NLS-1$
     
     private JComboBox<String> choStartingMode = new JComboBox<>();
+    
+    private JLabel labStartFuel = new JLabel(
+            Messages.getString("CustomMechDialog.labStartFuel"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JTextField fldStartFuel = new JTextField(7);
+    
+    private JLabel labCurrentFuel = new JLabel(
+            Messages.getString("CustomMechDialog.labCurrentFuel"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JTextField fldCurrentFuel = new JTextField(7);
 
     private JLabel labStartVelocity = new JLabel(
             Messages.getString("CustomMechDialog.labStartVelocity"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -240,6 +252,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private OffBoardDirection direction = OffBoardDirection.NONE;
 
     private int distance = 17;
+    
+    private int fuel = 0;
 
     /**
      * Creates new CustomMechDialog
@@ -266,6 +280,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 .getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS);
         final Entity entity = entities.get(0);
         boolean isAero = true;
+        boolean isShip = true;
         boolean isMech = true;
         boolean isVTOL = true;
         boolean isWiGE = true;
@@ -275,7 +290,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean eligibleForOffBoard = true;
         
         for (Entity e : entities) {
-            isAero &= e instanceof Aero;
+            isAero &= e instanceof Aero && !(e instanceof SmallCraft || e instanceof Jumpship);
+            isShip &= e instanceof SmallCraft || e instanceof Jumpship;
             isMech &= e instanceof Mech;
             isVTOL &= e instanceof VTOL;
             isWiGE &= e instanceof Tank && e.getMovementMode() == EntityMovementMode.WIGE;
@@ -410,12 +426,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     "CustomMechDialog.labDeployAirborne"), SwingConstants.RIGHT), GBC.std()); //$NON-NLS-1$
             panDeploy.add(chDeployAirborne, GBC.eol());
         }
-        if (isAero || isLAM) {
+        if (isAero || isLAM || isShip) {
             panDeploy.add(labStartVelocity, GBC.std());
             panDeploy.add(fldStartVelocity, GBC.eol());
 
             panDeploy.add(labStartAltitude, GBC.std());
             panDeploy.add(fldStartAltitude, GBC.eol());
+            
+            panDeploy.add(labStartFuel, GBC.std());
+            panDeploy.add(fldStartFuel, GBC.eol());
+            
+            panDeploy.add(labCurrentFuel, GBC.std());
+            panDeploy.add(fldCurrentFuel, GBC.eol());
         }
 
         choDeploymentRound.addItemListener(this);
@@ -494,7 +516,32 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
+            
+            fldStartFuel.setText(new Integer(a.getFuel())
+                    .toString());
+            fuel = a.getFuel();
+            fldCurrentFuel.setText(new Integer(a.getFuel()) //TODO: This needs to be current fuel when implemented
+                    .toString());
+            fldCurrentFuel.addActionListener(this);
         }
+        
+        if (isShip) {
+            Aero a = (Aero) entity;
+            fldStartVelocity.setText(new Integer(a.getCurrentVelocity())
+                    .toString());
+            fldStartVelocity.addActionListener(this);
+
+            fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
+            fldStartAltitude.addActionListener(this);
+            
+            fldStartFuel.setText(new Integer(a.getFuel())
+                    .toString());
+            fuel = a.getFuel();
+            fldCurrentFuel.setText(new Integer(a.getCurrentFuel())
+                    .toString());
+            fldCurrentFuel.addActionListener(this);
+        }
+              
         if (isVTOL || isLAM || isGlider) {
             fldStartHeight.setText(new Integer(entity.getElevation()).toString());
             fldStartHeight.addActionListener(this);
@@ -519,6 +566,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldOffBoardDistance.setEnabled(false);
             fldStartVelocity.setEnabled(false);
             fldStartAltitude.setEnabled(false);
+            fldStartFuel.setEnabled(false);
+            fldCurrentFuel.setEnabled(false);
             fldStartHeight.setEnabled(false);
             chDeployAirborne.setEnabled(false);
             m_equip.initialize();
@@ -940,6 +989,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         // Set instanceof flags
         String msg, title;
         boolean isAero = true;
+        boolean isShip = true;
         boolean isVTOL = true;
         boolean isWiGE = true;
         boolean isQuadVee = true;
@@ -947,11 +997,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         boolean isAirMech = true;
         boolean isGlider = true;
         for (Entity e : entities) {
-            isAero &= e instanceof Aero
+            isAero &= (e instanceof Aero && !(e instanceof SmallCraft || e instanceof Jumpship))
                     || e instanceof LandAirMech
                         && (choStartingMode.getSelectedIndex() == 2
                             || ((LandAirMech)e).getLAMType() == LandAirMech.LAM_BIMODAL
                                 && choStartingMode.getSelectedIndex() == 1);
+            isShip &= e instanceof SmallCraft || e instanceof Jumpship;
             isVTOL &= e instanceof VTOL;
             isWiGE &= e instanceof Tank && e.getMovementMode() == EntityMovementMode.WIGE;
             isQuadVee &= e instanceof QuadVee;
@@ -968,15 +1019,17 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         int command = 0;
         int velocity = 0;
         int altitude = 0;
+        int currentfuel = 0;
         int height = 0;
         int offBoardDistance;
         try {
             init = Integer.parseInt(fldInit.getText());
             fatigue = Integer.parseInt(fldFatigue.getText());
             command = Integer.parseInt(fldCommandInit.getText());
-            if (isAero) {
+            if (isAero || isShip) {
                 velocity = Integer.parseInt(fldStartVelocity.getText());
                 altitude = Integer.parseInt(fldStartAltitude.getText());
+                currentfuel = Integer.parseInt(fldCurrentFuel.getText());
             }
             if (isVTOL || isAirMech) {
                 height = Integer.parseInt(fldStartHeight.getText());
@@ -992,7 +1045,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             return;
         }
         
-        if (isAero) {
+        if (isAero || isShip) {
             if ((velocity > (2 * entities.get(0).getWalkMP()))
                     || (velocity < 0)) {
                 msg = Messages
@@ -1012,7 +1065,19 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            if (isShip) {
+                if ((currentfuel < 0) || (currentfuel > fuel)) {           	
+                msg = Messages
+                        .getString("CustomMechDialog.EnterCorrectFuel"); //$NON-NLS-1$
+                title = Messages
+                        .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
+                JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                        JOptionPane.ERROR_MESSAGE);
+                return;            
+                }
+            }
         }
+        
 
         if (isVTOL && (height > 50)
                 || (isAirMech && height > 25)
@@ -1212,6 +1277,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 IAero a = (IAero) entity;
                 a.setCurrentVelocity(velocity);
                 a.setNextVelocity(velocity);
+            	// a.setCurrentFuel(currentfuel); not yet implemented for iAero
                 // we need to determine whether this aero is airborne or not in
                 // order for prohibited terrain and stacking to work right in
                 // the
@@ -1223,6 +1289,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 } else {
                     a.liftOff(altitude);
                 }
+            }
+            if (isShip) {
+            	Aero a = (Aero) entity;
+            	a.setCurrentFuel(currentfuel);
             }
 
             if (isVTOL || isWiGE || isAirMech || isGlider) {

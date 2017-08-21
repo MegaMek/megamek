@@ -68,8 +68,9 @@ public final class SuperHeavyVehicleBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only tanks equal or less than 200 tons
-        if (((unit instanceof Tank) || (unit instanceof SuperHeavyTank)) && (unit.getWeight() <= 200)) {
+        // Only tanks or vehicle-mode QuadVees equal or less than 200 tons
+        // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
+        if (((unit instanceof Tank) || (unit instanceof SuperHeavyTank) || (unit instanceof QuadVee && unit.getConversionMode() == QuadVee.CONV_MODE_VEHICLE)) && (unit.getWeight() <= 200)) {
             result = true;
         }
 

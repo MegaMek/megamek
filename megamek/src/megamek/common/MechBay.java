@@ -68,8 +68,9 @@ public final class MechBay extends Bay {
         // Assume that we cannot carry the unit.
         boolean result = false;
 
-        // Only mechs and Land-Air Mechs
-        if ((unit instanceof Mech) || (unit instanceof LandAirMech)) {
+        // Only mechs, mech-mode quadvees and mech or airmech-mode Land-Air Mechs 
+        // (See IO Battleforce section for the rules that allow converted QVs and LAMs to use other bay types)
+        if ((unit instanceof Mech) || (unit instanceof QuadVee && unit.getConversionMode() == QuadVee.CONV_MODE_MECH) || (unit instanceof LandAirMech && unit.getConversionMode() != LandAirMech.CONV_MODE_FIGHTER)) {
             result = true;
         }
 

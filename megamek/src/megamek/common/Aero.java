@@ -169,12 +169,12 @@ public class Aero extends Entity {
 
     // fuel - number of fuel points
     private int fuel = 0;
+    private int currentfuel = 0;
 
     // these are used by more advanced aeros
     private boolean lifeSupport = true;
     private int leftThrustHits = 0;
     private int rightThrustHits = 0;
-    private int MechBayHits = 0;
 
     // out of control
     private boolean outControl = false;
@@ -320,7 +320,7 @@ public class Aero extends Entity {
     }
 
     /**
-     * Thi is the same as getWalkMP, but does not divide by 2 when grounded
+     * This is the same as getWalkMP, but does not divide by 2 when grounded
      *
      * @return
      */
@@ -672,10 +672,11 @@ public class Aero extends Entity {
     public int getFuel() {
         return fuel;
     }
+    
+    public int getCurrentFuel() {
+    	return currentfuel;
+    }
 
-    /**
-     * Damages a randomly determined mech bay on the vessel, if one exists
-     */
 
     /**
      * Sets the number of fuel points.
@@ -683,6 +684,11 @@ public class Aero extends Entity {
      */
     public void setFuel(int gas) {
         fuel = gas;
+        currentfuel = gas;
+    }
+    
+    public void setCurrentFuel(int gas) {
+    	currentfuel = gas;
     }
 
     public double getFuelPointsPerTon(){
@@ -3835,7 +3841,7 @@ public class Aero extends Entity {
      * @param fuel  The number of fuel points to use
      */
     public void useFuel(int fuelUsed) {
-        setFuel(Math.max(0, getFuel() - fuelUsed));
+        setCurrentFuel(Math.max(0, getCurrentFuel() - fuelUsed));
     }
 
     public void updateWeaponGroups() {

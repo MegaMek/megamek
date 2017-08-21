@@ -3187,8 +3187,18 @@ public abstract class Mech extends Entity {
                 .setISApproximate(true, false).setTechRating(RATING_D)
                 .setPrototypeFactions(F_FW).setProductionFactions(F_FW)
                 .setAvailability(RATING_X, RATING_F, RATING_F, RATING_F)
-                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy industrial            
+                .setStaticTechLevel(SimpleTechLevel.ADVANCED), //Superheavy industrial
     };
+    
+    // Advanced fire control for industrial mechs is implemented with a standard cockpit,
+    // but the tech progression is different.
+    public static TechAdvancement getIndustrialAdvFireConTA() {
+        return new TechAdvancement(TECH_BASE_ALL).setAdvancement(2469, 2470, 2491)
+                .setApproximate(true, false, false).setPrototypeFactions(F_TA)
+                .setProductionFactions(F_TH).setTechRating(RATING_D)
+                .setAvailability(RATING_D, RATING_E, RATING_E, RATING_D)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+    }
 
     public static TechAdvancement getCockpitTechAdvancement(int cockpitType) {
         if (cockpitType >= 0 && cockpitType < COCKPIT_TA.length) {
@@ -3198,6 +3208,9 @@ public abstract class Mech extends Entity {
     }
     
     public TechAdvancement getCockpitTechAdvancement() {
+        if (isIndustrial() && (getCockpitType() == COCKPIT_STANDARD)) {
+            return getIndustrialAdvFireConTA();
+        }
         return getCockpitTechAdvancement(getCockpitType());
     }
     

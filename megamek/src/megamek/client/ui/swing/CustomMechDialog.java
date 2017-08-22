@@ -182,12 +182,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             Messages.getString("CustomMechDialog.labStartingMode"), SwingConstants.RIGHT); //$NON-NLS-1$
     
     private JComboBox<String> choStartingMode = new JComboBox<>();
-    
-    private JLabel labStartFuel = new JLabel(
-            Messages.getString("CustomMechDialog.labStartFuel"), SwingConstants.RIGHT); //$NON-NLS-1$
-
-    private JTextField fldStartFuel = new JTextField(7);
-    
+        
     private JLabel labCurrentFuel = new JLabel(
             Messages.getString("CustomMechDialog.labCurrentFuel"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -433,9 +428,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panDeploy.add(labStartAltitude, GBC.std());
             panDeploy.add(fldStartAltitude, GBC.eol());
             
-            panDeploy.add(labStartFuel, GBC.std());
-            panDeploy.add(fldStartFuel, GBC.eol());
-            
             panDeploy.add(labCurrentFuel, GBC.std());
             panDeploy.add(fldCurrentFuel, GBC.eol());
         }
@@ -516,9 +508,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
-            
-            fldStartFuel.setText(new Integer(a.getFuel())
-                    .toString());
+
             fuel = a.getFuel();
             fldCurrentFuel.setText(new Integer(a.getFuel()) //TODO: This needs to be current fuel when implemented
                     .toString());
@@ -533,9 +523,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             fldStartAltitude.setText(new Integer(entity.getAltitude()).toString());
             fldStartAltitude.addActionListener(this);
-            
-            fldStartFuel.setText(new Integer(a.getFuel())
-                    .toString());
+
             fuel = a.getFuel();
             fldCurrentFuel.setText(new Integer(a.getCurrentFuel())
                     .toString());
@@ -566,7 +554,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldOffBoardDistance.setEnabled(false);
             fldStartVelocity.setEnabled(false);
             fldStartAltitude.setEnabled(false);
-            fldStartFuel.setEnabled(false);
             fldCurrentFuel.setEnabled(false);
             fldStartHeight.setEnabled(false);
             chDeployAirborne.setEnabled(false);
@@ -1065,10 +1052,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if (isShip) {
+            if (isShip) {  //TODO: include isAero after IAero gets finished.
                 if ((currentfuel < 0) || (currentfuel > fuel)) {           	
-                msg = Messages
-                        .getString("CustomMechDialog.EnterCorrectFuel"); //$NON-NLS-1$
+                msg = (Messages
+                        .getString("CustomMechDialog.EnterCorrectFuel") + fuel + "."); //$NON-NLS-1$
                 title = Messages
                         .getString("CustomMechDialog.NumberFormatError"); //$NON-NLS-1$
                 JOptionPane.showMessageDialog(clientgui.frame, msg, title,

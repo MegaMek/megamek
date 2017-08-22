@@ -886,18 +886,15 @@ public class Server implements Runnable {
                        + MegaMek.VERSION + ", Client reports: " + version);
             System.out.println("ERROR: Client/Server Version Mismatch -- Client: "+version+" Server: "+MegaMek.VERSION);
             needs = true;
-        }
-        else if (clientChecksum == null) {    // print a message indicating client doesn't have jar file
+        } else if (clientChecksum == null) {    // print a message indicating client doesn't have jar file
             buf.append("Client Checksum is null. Client may not have a jar file");
             System.out.println("ERROR: Client does not have a jar file");
             needs = true;      	
-        }
-        else if (serverChecksum == null) {    // print message indicating server doesn't have jar file
+        } else if (serverChecksum == null) {    // print message indicating server doesn't have jar file
             buf.append("Server Checksum is null. Server may not have a jar file");
             System.out.println("ERROR: Server does not have a jar file");
             needs = true; 
-        }
-        if (!clientChecksum.equals(serverChecksum)) {
+        } else if (!clientChecksum.equals(serverChecksum)) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append(System.lineSeparator());
             }

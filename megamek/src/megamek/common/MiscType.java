@@ -398,30 +398,27 @@ public class MiscType extends EquipmentType {
             return tonnage;
         }
         // check for known formulas
-        if (hasFlag(F_JUMP_JET)) {
-            if (hasSubType(S_IMPROVED) && !hasSubType(S_PROTOTYPE)) {
-                if (entity.getWeight() <= 55.0f) {
-                    return 1.0f;
-                } else if (entity.getWeight() <= 85.0f) {
-                    return 2.0f;
+        if (hasFlag(F_JUMP_JET) || hasFlag(F_UMU)) {
+            double multiplier = 1.0;
+            if (hasSubType(S_IMPROVED)) {
+                multiplier = 2.0;
+            }
+            if (hasFlag(F_PROTOMECH_EQUIPMENT)) {
+                if (entity.getWeight() < 6) {
+                    return 0.05 * multiplier;
+                } else if (entity.getWeight() < 10) {
+                    return 0.1 * multiplier;
                 } else {
-                    return 4.0f;
+                    return 0.15 * multiplier;
                 }
-            }
-            if (entity.getWeight() <= 55.0f) {
-                return 0.5f;
-            } else if (entity.getWeight() <= 85.0f) {
-                return 1.0f;
             } else {
-                return 2.0f;
-            }
-        } else if (hasFlag(F_UMU)) {
-            if (entity.getWeight() <= 55.0f) {
-                return 0.5f;
-            } else if (entity.getWeight() <= 85.0f) {
-                return 1.0f;
-            } else {
-                return 2.0f;
+                if (entity.getWeight() <= 55.0) {
+                    return multiplier;
+                } else if (entity.getWeight() <= 85.0) {
+                    return 2.0 * multiplier;
+                } else {
+                    return 4.0 * multiplier;
+                }
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_MECH_EQUIPMENT)) {
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
@@ -1304,6 +1301,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createFieldKitchen());
 
         EquipmentType.addType(MiscType.createImprovedJumpJet());
+        EquipmentType.addType(MiscType.createVehicluarJumpJet());
         EquipmentType.addType(MiscType.createJumpBooster());
         EquipmentType.addType(MiscType.createFerroFibrousPrototype());
         EquipmentType.addType(MiscType.createFerroAlumPrototype());
@@ -1477,7 +1475,9 @@ public class MiscType extends EquipmentType {
         // ProtoMek Stuff
         EquipmentType.addType(MiscType.createCLProtoMyomerBooster());
         EquipmentType.addType(MiscType.createProtoPartialWing());
+        EquipmentType.addType(MiscType.createProtomechJumpJet());
         EquipmentType.addType(MiscType.createExtendedJumpJet());
+        EquipmentType.addType(MiscType.createProtomechUMU());
 
         // Start BattleArmor equipment
         EquipmentType.addType(MiscType.createISBAStandardArmor());
@@ -1791,14 +1791,55 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createVehicluarJumpJet() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Jump Jet";
+        misc.setInternalName("VehicleJumpJet");
+        misc.setInternalName("VJJ");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 1;
+        misc.flags = misc.flags.or(F_JUMP_JET).or(F_TANK_EQUIPMENT);
+        misc.subType |= S_STANDARD;
+        misc.bv = 0;
+        misc.rulesRefs = "348,TO";
+        misc.techAdvancement.setTechBase(TECH_BASE_ALL).setISAdvancement(2650,3083)
+                .setApproximate(false, true).setPrototypeFactions(F_TH)
+                .setProductionFactions(F_CHH).setTechRating(RATING_E)
+                .setAvailability(RATING_E, RATING_X, RATING_F, RATING_E)
+                .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+        return misc;
+    }
+
     // TODO Protomech Jump Jets See IO, pg 35
+    
+    public static MiscType createProtomechJumpJet() {
+        MiscType misc = new MiscType();
+        misc.name = "Jump Jet";
+        misc.setInternalName("ProtomechJumpJet");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_JUMP_JET).or(F_PROTOMECH_EQUIPMENT);
+        misc.subType |= S_STANDARD;
+        misc.bv = 0;
+        misc.rulesRefs = "225,TM";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3055,3060,3060)
+                .setClanApproximate(true, false, false).setPrototypeFactions(F_CSJ)
+                .setProductionFactions(F_CSJ).setTechRating(RATING_D)
+                .setAvailability(RATING_X, RATING_X, RATING_C, RATING_C)
+                .setStaticTechLevel(SimpleTechLevel.STANDARD);
+        return misc;
+    }
 
     public static MiscType createExtendedJumpJet() {
         MiscType misc = new MiscType();
         // TODO Game Rules.
         misc.name = "Extended Jump Jet System";
         misc.setInternalName("ExtendedJumpJetSystem");
-        misc.tonnage = 0;
+        misc.addLookupName("XJJ");
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_JUMP_JET).or(F_PROTOMECH_EQUIPMENT);
@@ -1809,6 +1850,25 @@ public class MiscType extends EquipmentType {
                 .setClanApproximate(true, false, false, false, false).setPrototypeFactions(F_CSR)
                 .setProductionFactions(F_CSR).setTechRating(RATING_F)
                 .setAvailability(RATING_X, RATING_X, RATING_F, RATING_D);
+        return misc;
+    }
+
+    public static MiscType createProtomechUMU() {
+        MiscType misc = new MiscType();
+        // TODO Game Rules.
+        misc.name = "UMU";
+        misc.setInternalName("ProtomechUMU");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 1;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_UMU).or(F_PROTOMECH_EQUIPMENT);
+        misc.subType |= S_STANDARD;
+        misc.bv = 0;
+        misc.rulesRefs = "101,IO";
+        misc.techAdvancement.setTechBase(TECH_BASE_CLAN).setClanAdvancement(3065, 3075, 3084)
+                .setClanApproximate(true, true, false).setPrototypeFactions(F_CBS)
+                .setProductionFactions(F_CBS).setTechRating(RATING_E)
+                .setAvailability(RATING_X, RATING_X, RATING_E, RATING_D);
         return misc;
     }
 
@@ -1961,7 +2021,8 @@ public class MiscType extends EquipmentType {
     public static MiscType createISUMU() {
         MiscType misc = new MiscType();
         misc.name = "UMU";
-        misc.setInternalName("ISUMU");
+        misc.setInternalName("UMU");
+        misc.addLookupName("ISUMU");
         misc.addLookupName("CLUMU");
         misc.addLookupName("IS Underwater Maneuvering Unit");
         misc.tonnage = TONNAGE_VARIABLE;
